@@ -1,0 +1,140 @@
+/* Base styles for widget */
+body, input, textarea {
+  font-family: Arial;
+  font-size: 14px;
+}
+
+h1 {
+  text-align: center;
+  margin: 30px;
+}
+
+
+/* groups */
+.fieldGroup {
+  margin: 30px 0;
+  background-color: #FFFFFF;
+}
+.fieldGroup table {
+  border-collapse: collapse;
+  padding: 0;
+}
+
+.groupHeader {
+  font-family: "Ubuntu";
+  background-color: #458AC5;
+  color: #FFF;
+  font-size: 120%;
+  overflow: hidden;
+  padding: 7px 0 7px 0px;
+  margin: 0;
+}
+
+.groupHeader span {
+  padding-left: 10px;
+}
+
+.groupHeader a {
+  color: #FFFFFF;
+}
+
+.fieldExpColDiv {
+
+}
+
+.fieldsTable {
+  table-layout: fixed;
+  width: 100%;
+  border: 1px solid #73A0C8;
+}
+
+.fieldsTable th {
+  overflow: hidden;
+  text-align: left;
+  vertical-align: top;
+}
+
+/*.fieldsTable td {*/
+  /*overflow: hidden;*/
+/*}*/
+
+.fieldsTable button {
+  border: 0 none;
+  cursor: pointer;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+}
+
+.fieldsTableHeader {
+  background: none repeat scroll 0 0 #E8E8E8;
+  border: 0 none;
+  padding-left: 5px;
+  text-align: left ;
+  color: #666666;
+  font-weight: 400;
+}
+
+
+/*tr.panel_l1 td:first-child {*/
+  /*padding-left: 0;*/
+/*}*/
+/*tr.panel_l2 td:first-child {*/
+  /*padding-left: 25px;*/
+/*}*/
+/*tr.panel_l3 td:first-child {*/
+  /*padding-left: 50px;*/
+/*}*/
+/*tr.panel_l4 td:first-child {*/
+  /*padding-left: 75px;*/
+/*}*/
+/*tr.panel_l5 td:first-child {*/
+  /*padding-left: 100px;*/
+/*}*/
+
+.fieldsTable th {
+  overflow: hidden;
+  text-align: left;
+  vertical-align: top;
+  line-height: 28px;
+}
+
+.fieldsTable input {
+  border: 1px solid #ced5d9 ;
+  height: 30px;
+  min-height: 14px;
+  overflow: hidden;
+  padding: 4px 4px 4px 6px;
+  width: 100%;
+  color: #333333;
+  font-size: 90%;
+  font-weight: 700;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.fieldsTable input:focus {
+  background: none repeat scroll 0 0 #FFF8C6
+}
+
+
+.fieldsTable tr {
+  border-color: #CED5D9;
+  border-style: solid;
+  border-width: 1px;
+}
+.fieldsTable tr.panel_header {
+  background: #E8E8E8;
+}
+
+.fieldsTable td {
+  border-color: #CED5D9;
+  border-style: solid;
+  border-width:  0 0 0 1px;
+  color: #333333;
+  padding: 2px;
+
+}
+
+
+

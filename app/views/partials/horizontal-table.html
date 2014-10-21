@@ -1,0 +1,63 @@
+
+<div class="t-treeline-field">
+  <div class="t-treeline-wrapper" ng-include="'views/partials/tree.html'">  <!-- tree lines -->
+  </div>
+  <div class="name_label">
+    <div ng-if="firstOneRepeatingItem(item)" class="hTableTitle">
+      {{item.question}}
+      <!--<button class="float-button" ng-click="switchLayout(item)">Switch Layout</button>-->
+    </div>
+
+    <table class="fieldsTable horizontal-table">
+      <colgroup>
+        <col style="width:5em; min-width: 5em;">
+        <col ng-repeat="colName in getHorizontalTableColumns($index)">
+      </colgroup>
+      <thead ng-if="firstOneRepeatingItem(item)">
+      <tr>
+        <th class="fieldsTableHeader"></th>
+        <th class="fieldsTableHeader" ng-repeat="colName in getHorizontalTableColumns($index)">{{colName}}</th>
+      </tr>
+      </thead>
+      <tbody id="" class="">
+      <tr ng-repeat="row in getHorizontalTableRows($index)">
+        <td class="button-col">
+          <button ng-show="isRepeatable(item)" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this row of '{{ item.question }}'">-</button>
+          <button ng-show="isRepeatable(item)" ng-if="lastOneRepeatingItem(item)" class="float-button"  id="{{item._codePath+item._idPath}}" ng-click="addOneRepeatingItem(item)" title="Add another row of '{{ item.question }}'">+</button>
+        </td>
+
+        <td ng-repeat="cell in getHorizontalTableCellsInRow(row)" ng-switch on="getFieldType(cell)" class="hasTooltip">
+          <ng-form name="innerForm2">
+            <div class="cellData tooltipContainer">
+            <span class="tooltipContent">
+              <div class="errorMsg errorRequired">"{{ cell.question }}" requires a value.</div>
+              <div class="errorMsg errorPattern">"{{ cell.question }}" requires a text pattern.</div>
+              <div class="errorMsg errorMax">"{{ cell.question }}" requires a maximum value of ??.</div>
+              <div class="errorMsg errorMin">"{{ cell.question }}" requires a minimum value of ??.</div>
+              <div class="errorMsg errorMaxlength">"{{ cell.question }}" requires a maximum length of ??.</div>
+              <div class="errorMsg errorMinlength">"{{ cell.question }}" requires a minimum length of ??.</div>
+              <div class="errorMsg errorURL">"{{ cell.question }}" requires a url.</div>
+              <div class="errorMsg errorEmail">"{{ cell.question }}" requires an email.</div>
+              <div class="errorMsg errorNumber">"{{ cell.question }}" requires a numeric value.</div>
+              <div class="errorMsg errorREAL">"{{ cell.question }}" requires a decimal value.</div>
+              <div class="errorMsg errorINT">"{{ cell.question }}" requires a integer value.</div>
+              <div class="errorMsg errorTM">"{{ cell.question }}" requires a time value.</div>
+              <div class="errorMsg errorDT">"{{ cell.question }}" requires a date value.</div>
+            </span>  <!-- validation error messages -->
+              <span ng-switch-when="" > </span>
+              <div ng-switch-when="CNE-1" name="{{cell.question}}" ng-required="isAnswerRequired2(cell)" ng-model="cell._value" ui-select2="select2Opt(cell)" ng-readonly="isReadOnly(cell)"></div>
+              <input ng-switch-when="REAL1" name="{{cell.question}}" type="number" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell )"></input>
+              <input ng-switch-when="CNE1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" placeholder="Select a value" ng-model="cell._value" lf-autocomplete="lfListOpt(cell )" ng-readonly="isReadOnly(cell)"></input>
+              <input ng-switch-when="DT1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(cell)"></input>
+              <input ng-switch-default name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell)"></input>
+            </div>
+          </ng-form>
+        </td>
+
+
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

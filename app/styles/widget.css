@@ -1,0 +1,398 @@
+/* lform widget styles */
+
+.fieldsTable .float-button {
+  min-width: 24px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  background-color: #006dcc; /*#458AC5;*/
+  font-weight: bold;
+  color: white;
+  padding: 2px;
+  margin-right: 2px;
+  margin-left:2px;
+}
+.fieldsTable .button-col {
+  border-left: none;
+}
+
+/* overwrite select2 styles */
+.fieldsTable div.select2-container {
+  margin: 0;
+}
+.fieldsTable tr.repeatingLine td input.select2-input {
+  border: 0 !important;
+  font-weight: 700;
+  width: 100% !important;
+  padding: 4px;
+  height: 26px;
+  font-family: "Arial";
+  font-size: 12.6px;
+  color: #333333;
+}
+
+.repeatingLine .select2-container-multi .select2-choices {
+  background-image: none;
+  border: 1px solid #CED5D9 !important;
+  border-radius: 4px 4px 4px 4px;
+
+  font-weight: 700;
+  font-family: "Arial";
+  font-size: 12.6px;
+  color: #333333;
+
+}
+.select2-drop-active input:focus,
+.select2-container-multi .select2-choices .select2-search-field input:focus {
+    background: none repeat scroll 0 0 #FFF8C6 !important;
+}
+.select2-container.select2-container-active.select2-dropdown-open .select2-choice {
+  background: none !important;
+}
+.select2-container.select2-container-active.select2-dropdown-open {
+    background-color: #ECF3F8;
+}
+.select2-drop {
+    background-color: #ECF3F8;
+}
+
+td.name span.prompt {
+    font-style: italic;
+    font-size: 75%;
+}
+
+td.name span.sn {
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    background-color: #006dcc; /*#458AC5;*/
+    font-weight: bold;
+    color: white;
+    padding: 2px 8px;
+}
+
+/* form stop sign */
+.stopped {
+    text-align: center;
+    width:500px;
+    height: 50px;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-bottom: 20px;
+    vertical-align: top;
+}
+.stopped span {
+    font-size: 300%;
+    vertical-align: top;
+    color: red;
+}
+.stop-sign {
+    background-image: url("/images/signal-stop.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 48px;
+    height: 48px; /*100%; */
+}
+
+/* html5 tooltip style */
+input:-moz-placeholder,          /* ==> not needed on firefox ?? */
+input:-ms-input-placeholder {    /* ==> doesn't work on ie 11 ??? */
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    opacity: 1;
+}
+
+
+/* date picker */
+.ui-datepicker {
+  font-size: 80%;
+}
+.cellData {
+    position: relative;
+}
+.cellData .ui-datepicker-trigger {
+    position: absolute;
+    background: url("/images/calendar.png") no-repeat scroll transparent;
+    top: 8px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    z-index: 100;
+}
+.cellData .ui-datepicker-trigger:hover {
+  background-image: url("/images/calendar-hover.png");
+}
+
+
+/* autocomplete */
+.ui-autocomplete {
+    max-height: 360px;
+    overflow-y: auto;
+    max-width: 480px;
+}
+
+/* skip rules */
+tr.target-show.panel_l1 td:first-child {
+  /*padding-left: 25px;*/
+}
+tr.target-show.panel_l2 td:first-child {
+  /*padding-left: 25px;*/
+}
+tr.target-hide {
+  display: none;
+}
+tr.target-show {
+  display: table-row;
+}
+
+
+/* background color fading out for newly added and new target*/
+.fieldsTable {
+    background-color: white !important;
+}
+.fieldsTable tr.newly_added {
+    background-color: #D0E1F0 !important;
+}
+.fieldsTable tr.target-show.newly_shown {
+    /*background-color: #D0E1F0 !important;*/
+}
+.fieldsTable tr.in_transition {
+    transition: background-color 3s linear 1s;
+    -webkit-transition: background-color 3s linear 1s;
+}
+.fieldsTable tr.repeatingLine:hover {
+    background-color: #87CEEB !important;
+}
+
+
+/* units, overwrite autocomplete default styles */
+.units {
+  color: #333333 !important;
+  font-weight: 400 !important;
+}
+
+
+/* please specify (extra row) */
+tr.extra-row td.extra-field {
+  padding-left: 20px;
+  border-left: none;
+}
+
+/* borders for invalid fields */
+input.ng-invalid.ng-dirty,
+div.ng-invalid.ng-dirty {
+  border: 2px solid #FF0000;
+}
+/* messages for invalid fields */
+td.hasTooltip {
+  overflow: visible;
+}
+/* method 1, not used */
+.ng-invalid > .tooltipContent2:hover:after {
+  content: attr(title);
+  border-radius: 5px;
+  bottom: 35px;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  left: 5px;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 98;
+  width: 260px;
+}
+.ng-invalid > .tooltipContent2:hover:before{
+  border: solid;
+  border-color: #fcf8e3 transparent;
+  border-width: 10px 10px 0 10px;
+  bottom: 25px;
+  content: "";
+  left: 25%;
+  position: absolute;
+  z-index: 99;
+}
+
+/* method 2 */
+.tooltipContent {
+  display: none;
+
+}
+.tooltipContent div.errorMsg{
+  display: none;
+}
+
+.ng-invalid > .tooltipContainer:hover .tooltipContent {
+  border-radius: 5px;
+  bottom: 35px;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  left: 5px;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 98;
+  width: 260px;
+  display: inline;
+}
+.ng-invalid > .tooltipContainer:hover:before{
+  border: solid;
+  border-color: #fcf8e3 transparent;
+  border-width: 10px 10px 0 10px;
+  bottom: 25px;
+  content: "";
+  left: 25%;
+  position: absolute;
+  z-index: 99;
+}
+ng-form.ng-invalid-required div.errorMsg.errorRequired {
+  display: block;
+}
+ng-form.ng-invalid-number div.errorMsg.errorNumber {
+  display: block;
+}
+ng-form.ng-invalid-required div.errorMsg.errorRequired {
+  display: block;
+}
+ng-form.ng-invalid-max div.errorMsg.errorMax {
+  display: block;
+}
+ng-form.ng-invalid-min div.errorMsg.errorMin {
+  display: block;
+}
+ng-form.ng-invalid-url div.errorMsg.errorURL {
+  display: block;
+}
+ng-form.ng-invalid-maxlength div.errorMsg.errorMaxlength {
+  display: block;
+}
+ng-form.ng-invalid-minlength div.errorMsg.errorMinlength {
+  display: block;
+}
+ng-form.ng-invalid-email div.errorMsg.errorEmail {
+  display: block;
+}
+
+
+/* horizontal table */
+/* title */
+.hTableTitle {
+  text-align: left;
+}
+tr .horizontal-table td.button-col {
+  padding-left: 2px;
+  border-right: none;
+}
+
+.fieldsTable tr.panel_header.horizontal {
+  background-color:white;
+
+}
+tr .horizontal-table {
+  border: none;
+}
+tr .horizontal-table tr {
+  border: none;
+}
+tr .horizontal-table tr td {
+  border-right: none;
+  border-left: none;
+}
+/*tr.horizontal > td {*/
+  /*padding-top: 0;*/
+  /*padding-bottom: 0;*/
+/*}*/
+
+
+/* to make the height of the div within td 100% of the td's height.
+ * because height: 100% only works when the containing element has a fixed height,
+ * using 100% all the way up until an element has a fixed height or to the root
+ */
+tr.repeatingLine,
+td.has_treeline.name,
+div.t-treeline-field {
+  height: 100%;
+}
+
+
+
+/* tree line style setup */
+td.has_treeline {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.t-treeline-field {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.t-treeline-field .name_label {
+  vertical-align: top;
+  padding-left: 2px;
+  width: 100%;
+  /*for tree lines to be aligned */
+  /*line-height: 33px;*/
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.t-treeline-wrapper {
+  float: left;
+  margin-top:-135px;
+  margin-bottom:-225px;
+  vertical-align: middle;
+  display: block;
+}
+
+.t-treeline {
+  background-repeat: no-repeat;
+  background-position: left center;
+  width: 22px;
+  height: 360px;
+  display: inline-block;
+  position: relative;
+}
+.t-treeline.no_display {
+  display: none;
+}
+.t-treeline.line3 {
+  background-image: url("/images/line3.png");
+}
+.t-treeline.line2 {
+  background-image: url("/images/line2.png");
+}
+.t-treeline.line1 {
+  background-image: url("/images/line1.png");
+}
+
+
+.panel_l1 .t-treeline-field {
+  padding-left: 25px;
+}
+.panel_l2 .t-treeline-field {
+  padding-left: 50px;
+}
+.panel_l3 .t-treeline-field {
+  padding-left: 75px;
+}
+.panel_l4 .t-treeline-field {
+  padding-left: 100px;
+}
+.panel_l5 .t-treeline-field {
+  padding-left: 125px;
+}
+
+.panel_l1 .t-treeline-wrapper {
+  margin-left: -25px;
+}
+.panel_l2 .t-treeline-wrapper {
+  margin-left: -50px;
+}
+.panel_l3 .t-treeline-wrapper {
+  margin-left: -75px;
+}
+.panel_l4 .t-treeline-wrapper {
+   margin-left: -100px;
+}
+.panel_l5 .t-treeline-wrapper {
+  margin-left: -125px;
+}
+/* end of tree line style setup */
