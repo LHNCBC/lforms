@@ -82,13 +82,7 @@
                       <span ng-switch-when="none" > </span>
                     </td>
                     <td ng-if="!inHorizontalTable($index)">{{item.range}}</td>
-
-
                     <td ng-if="isHorizontalTableTitle($index)" class="horizontal has_treeline" colspan="5" ng-include="'views/partials/horizontal-table.html'"></td>
-
-
-
-
                   </tr>
                   <tr ng-repeat-end ng-if="needExtra(item) && !inHorizontalTable($index)" style="width: 99%" class="extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}">
                     <td class="name has_treeline" >
@@ -114,10 +108,5 @@
         </table>
       </div>
     </div>
-
   </form>
-
-  <!--<button class="btn btn-primary" ng-click="resetPanelWidgetData()">Update</button>-->
-
-  <button ng-click="onclick()">Click to debug Panel Controller</button>
 </div>

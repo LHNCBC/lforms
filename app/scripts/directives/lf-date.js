@@ -25,12 +25,10 @@ angular.module('lformsWidget')
             // (calling directive user's function too if provided)
             var _onSelect = opts.onSelect || angular.noop;
             opts.onSelect = function (value, picker) {
-//              scope.$apply(function() {             // not needed for angular 1.2
-                showing = true;
-                controller.$setViewValue(element.datepicker("getDate"));
-                _onSelect(value, picker);
-                element.change();
-//              });
+              showing = true;
+              controller.$setViewValue(element.datepicker("getDate"));
+              _onSelect(value, picker);
+              element.change();
             };
             opts.beforeShow = function() {
               showing = true;

@@ -1,12 +1,4 @@
 /**
- * Created with JetBrains RubyMine.
- * User: wangye
- * Date: 9/10/13
- * Time: 4:27 PM
- * To change this template use File | Settings | File Templates.
- */
-
-/**
  * Modified USSG-FHT panel data
  */
 var expectedFHTData = {

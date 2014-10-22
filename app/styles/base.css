@@ -9,7 +9,6 @@ h1 {
   margin: 30px;
 }
 
-
 /* groups */
 .fieldGroup {
   margin: 30px 0;
@@ -54,10 +53,6 @@ h1 {
   vertical-align: top;
 }
 
-/*.fieldsTable td {*/
-  /*overflow: hidden;*/
-/*}*/
-
 .fieldsTable button {
   border: 0 none;
   cursor: pointer;
@@ -74,23 +69,6 @@ h1 {
   color: #666666;
   font-weight: 400;
 }
-
-
-/*tr.panel_l1 td:first-child {*/
-  /*padding-left: 0;*/
-/*}*/
-/*tr.panel_l2 td:first-child {*/
-  /*padding-left: 25px;*/
-/*}*/
-/*tr.panel_l3 td:first-child {*/
-  /*padding-left: 50px;*/
-/*}*/
-/*tr.panel_l4 td:first-child {*/
-  /*padding-left: 75px;*/
-/*}*/
-/*tr.panel_l5 td:first-child {*/
-  /*padding-left: 100px;*/
-/*}*/
 
 .fieldsTable th {
   overflow: hidden;
@@ -117,7 +95,6 @@ h1 {
   background: none repeat scroll 0 0 #FFF8C6
 }
 
-
 .fieldsTable tr {
   border-color: #CED5D9;
   border-style: solid;
@@ -133,7 +110,6 @@ h1 {
   border-width:  0 0 0 1px;
   color: #333333;
   padding: 2px;
-
 }
 
 

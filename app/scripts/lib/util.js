@@ -1,5 +1,5 @@
 /**
- * Created by wangye on 5/7/14.
+ * Misc functions used by widget
  */
 function checkDataType(dataType, value) {
   var ret = false;

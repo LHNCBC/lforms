@@ -368,11 +368,6 @@ angular.module('lformsWidget')
        * @returns {{}}
        */
       $scope.lfListOpt = function(item) {
-//        if (item.questionCode == "54123-5") {
-//          console.log("in lfListOpt " + item.question)
-//          console.log(item._value)
-//        }
-
         var source = [], preSelected = 0, answers = [], ret ={};
 
         if ( item.dataType === "CNE" && item.answers) {
@@ -794,60 +789,10 @@ angular.module('lformsWidget')
         return extra;
       };
 
-
       // for debugging only, not used,
       $scope.refresh = function(widgetContainer) {
         $compile(widgetContainer)($scope);
         $scope.$apply();
       };
-
-      // for debuggin only
-      $scope.onclick = function () {
-        debugger
-        var i=1;
-      };
-
-
-
-
-//      // Functions to support revisions of data. Need a rewrite. Not used. Not to remove either.
-//
-//      $scope.revisions = {};
-//      $scope.selectedRevision = "";
-//      $scope.revisionList = [];
-//      $scope.saveRevision = function() {
-//        var pwData = []
-//        var ts = (new Date).getTime();
-//        pwData.push( $.extend(true, {}, $scope.lfData));
-//        // deep clone does not work for [] ???
-//        //var pwData = $.extend(true, [], $scope.lfData);
-//        $scope.revisions[ts] = pwData;
-//        $scope.updateRevisionList();
-//      };
-//      $scope.switchToRevision = function() {
-//        if ($scope.selectedRevision && $scope.selectedRevision.id) {
-//          var pwData = $.extend(true, [],$scope.revisions[$scope.selectedRevision.id]);
-//          $scope.lfData = pwData;
-//        }
-//      };
-//      $scope.updateRevisionList = function() {
-//        var list = [];
-//        for (var k in $scope.revisions) {
-//          var ts = parseInt(k)
-//          var dateObj = new Date(ts);
-//          var label = dateObj.toLocaleString();
-//          list.push({text: label, id: ts})
-//        }
-//        $scope.revisionList = list;
-//      }
-//      $scope.revisionOpt = function() {
-//        var answerList = $scope.revisionList
-//
-//        return $.extend({}, $scope.tagOptions, {
-//          data:answerList,
-//          placeholder: "Select a revision"
-//        });
-//      };
-//
 
     });
