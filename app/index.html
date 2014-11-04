@@ -15,6 +15,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(app) styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/phr_autocomp/auto_completion.css" />
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/select2/select2.css" />
     <!-- endbower -->
@@ -66,6 +67,27 @@
     <!-- build:js(app) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/jquery-noConflict/main.js"></script>
+    <script src="bower_components/prototypejs-bower/prototype.js"></script>
+    <script src="bower_components/scriptaculous-bower/scriptaculous.js"></script>
+    <script src="bower_components/scriptaculous-bower/effects.js"></script>
+    <script src="bower_components/scriptaculous-bower/controls.js"></script>
+    <script src="bower_components/jquery-ui/ui/core.js"></script>
+    <script src="bower_components/jquery-ui/ui/widget.js"></script>
+    <script src="bower_components/jquery-ui/ui/button.js"></script>
+    <script src="bower_components/jquery-ui/ui/dialog.js"></script>
+    <script src="bower_components/phr_autocomp/effectScroll.js"></script>
+    <script src="bower_components/phr_autocomp/event.simulate.js"></script>
+    <script src="bower_components/phr_autocomp/observable.js"></script>
+    <script src="bower_components/phr_autocomp/recordDataRequester.js"></script>
+    <script src="bower_components/phr_autocomp/fieldAlarms.js"></script>
+    <script src="bower_components/phr_autocomp/dialog.js"></script>
+    <script src="bower_components/phr_autocomp/autoCompBase.js"></script>
+    <script src="bower_components/phr_autocomp/suggestionDialog.js"></script>
+    <script src="bower_components/phr_autocomp/autoCompPrefetch.js"></script>
+    <script src="bower_components/phr_autocomp/autoCompSearch.js"></script>
+    <script src="bower_components/phr_autocomp/autoCompEvents.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/json3/lib/json3.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -77,7 +99,6 @@
     <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
     <script src="bower_components/select2/select2.js"></script>
     <script src="bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="bower_components/angular-ui-date/src/date.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
@@ -97,7 +118,7 @@
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/panel-search.js"></script>
     <script src="scripts/controllers/panel-table.js"></script>
-    <script src="scripts/directives/lf-autocomplete.js"></script>
+    <script src="scripts/directives/phr-autocomplete.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <script src="scripts/services/selected-panel.js"></script>
 
