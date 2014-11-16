@@ -1,6 +1,6 @@
 Informational Notice: 
 
-This software, LForms, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).
+This software, LForms, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH), with support from the Regenstrief Institute.
 
 Please cite as: http://lhncbc.nlm.nih.gov/project/lforms
 
