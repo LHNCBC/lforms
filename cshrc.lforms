@@ -1,21 +1,18 @@
-#     The following is the standard cshrc file for the PHR
+#     The following is the standard cshrc file for the LForms 
 # development team.  You should explicitly source
 # this first from your .cshrc and then do your own environment
 # customizations.
 #     You may set variables before sourcing this to change execution
 # of it.
 
-# Sets PROJECT_DIR if it is not defined.
-if (! $?PROJECT_DIR) then
-  # Previously, we attempted to set this depending on the path to the
-  # cshrc.def file being sourced.  This worked except on login,
-  # when all the information we get (in $0) is -tcsh.
-  setenv PROJECT_DIR ~/lforms
-endif
 
-set path = ($PROJECT_DIR/bin $PROJECT_DIR/node_modules/.bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc)
+# Use the globally installed node and its modules
+setenv PATH /depot/packages/node/bin:${PATH}
+# Set node in development mode
+unsetenv NODE_ENV
+
+# Set editor for git
 setenv EDITOR /usr/bin/vim
-setenv TESTOPTS "--v --seed 1"
 
 # We setup a couple things only if in an interactive shell
 if ($?prompt) then
