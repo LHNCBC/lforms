@@ -7,7 +7,9 @@
 
 
 # Use the globally installed node and its modules
-setenv PATH /depot/packages/node/bin:${PATH}
+set LFORMS_NODE=node-v0.10.26_lforms.v1
+# Set path
+setenv PATH /depot/packages/${LFORMS_NODE}/bin:${PATH}
 # Set node in development mode
 unsetenv NODE_ENV
 
