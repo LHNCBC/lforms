@@ -31,12 +31,14 @@ angular.module('lformsWidget')
               itemTextToItem[itemLabel] = item;
             }
             var phrAutoOpts = {matchListValue: !opts.allowFreeText}
-            var defaultIndex;
+
+            // Set the default value, if there is one
+            var defaultIndex = -1;
             if (opts.selectFirst)
               defaultIndex = 0;
-            else if (opts.preSelected)
+            else if (opts.preSelected !== undefined)
               defaultIndex = opts.preSelected;
-            if (defaultIndex) {
+            if (defaultIndex >= 0) {
               itemLabel = itemText[defaultIndex];
               phrAutoOpts.defaultValue = itemLabel;
               element.val(itemLabel);
