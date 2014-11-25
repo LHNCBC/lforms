@@ -5,7 +5,7 @@ angular.module('lformsWidget', [
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'ui.bootstrap',
+    "mgcrea.ngStrap",
     'ui.select2'
 ])
   .config(function ($routeProvider, $locationProvider) {
@@ -29,7 +29,10 @@ angular.module('lformsWidget', [
       $http.get('views/partials/tree.html', {cache:$templateCache});
       $http.get('views/partials/tree-extra.html', {cache:$templateCache});
       $http.get('views/partials/validation.html', {cache:$templateCache});
-  });
+      $http.get('views/partials/loading.html', {cache:$templateCache});
+      $http.get('views/partials/initial.html', {cache:$templateCache});
+
+    });
 
 
 // Overrides the default autocomplete filter function to search only from the beginning of each word

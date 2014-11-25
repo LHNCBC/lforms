@@ -89,8 +89,8 @@ angular.module('lformsWidget')
           // Create the new autocomplete widget
           element.autocomplete(opts);
         };
-        // Watch for changes to the directives options
-        scope.$watch(getOptions, initWidget, true);
+        // Run initWiget once
+        scope.$watch({}, initWidget, true);
       }
     };
   }]

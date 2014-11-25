@@ -194,11 +194,6 @@ WidgetUtil = {
 
     // temporary changes on the data from RI
     for(var i= 0, iLen=itemList.length; i<iLen; i++) {
-      // itemQuestion should be question
-      if (!itemList[i].question && itemList[i].itemQuestion) {
-        itemList[i].question = itemList[i].itemQuestion;
-        delete itemList[i].itemQuestion;
-      }
       // header is true/false, not 'Y'/'N'
       if (itemList[i].header && (itemList[i].header =="Y" || itemList[i].header == true)) {
         itemList[i].header = true;
@@ -210,26 +205,47 @@ WidgetUtil = {
       if (itemList[i].answers && itemList[i].answers.length > 0) {
         itemList[i].dataType = 'CNE';
       }
-      // switch the values of questionCardinality and answerCardinality
-      var cardinality = itemList[i].questionCardinality;
-      itemList[i].questionCardinality = itemList[i].answerCardinality;
-      itemList[i].answerCardinality = cardinality;
+
+      // move the "calculationMethod" to "formula"
+      if (itemList[i].calculationMethod == "TOTALSCORE") {
+        itemList[i].formula = {"name": "TOTALSCORE", "value":[]}
+      }
 
       // value of max/min in questionCardinality and answerCardinality is integer
       if (itemList[i].questionCardinality) {
         if (itemList[i].questionCardinality.max) {
-          itemList[i].questionCardinality.max = parseInt(itemList[i].questionCardinality.max)
+          if (itemList[i].questionCardinality.max == "*") {
+            itemList[i].questionCardinality.max = -1;
+          }
+          else {
+            itemList[i].questionCardinality.max = parseInt(itemList[i].questionCardinality.max)
+          }
         }
         if (itemList[i].questionCardinality.min) {
-          itemList[i].questionCardinality.min = parseInt(itemList[i].questionCardinality.min)
+          if (itemList[i].questionCardinality.min == "*") {
+            itemList[i].questionCardinality.min = -1;
+          }
+          else {
+            itemList[i].questionCardinality.min = parseInt(itemList[i].questionCardinality.min)
+          }
         }
       }
       if (itemList[i].answerCardinality) {
         if (itemList[i].answerCardinality.max) {
-          itemList[i].answerCardinality.max = parseInt(itemList[i].answerCardinality.max)
+          if (itemList[i].answerCardinality.max == "*") {
+            itemList[i].answerCardinality.max = -1;
+          }
+          else {
+            itemList[i].answerCardinality.max = parseInt(itemList[i].answerCardinality.max)
+          }
         }
         if (itemList[i].answerCardinality.min) {
-          itemList[i].answerCardinality.min = parseInt(itemList[i].answerCardinality.min)
+          if (itemList[i].answerCardinality.min == "*") {
+            itemList[i].answerCardinality.min = -1;
+          }
+          else {
+            itemList[i].answerCardinality.min = parseInt(itemList[i].answerCardinality.min)
+          }
         }
       }
     }

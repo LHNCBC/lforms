@@ -37,8 +37,13 @@ angular.module('lformsWidget')
        * by listening on a broadcast event
        */
       $scope.$on('NewTemplate', function (event, panelData) {
+        // clean up the initial message
+        $scope.initialLoad = false;
 
-        if (!panelData.template) {
+        if (!panelData) {
+          $scope.selectedTemplate = "partials/loading";
+        }
+        else if (!panelData.template) {
           $scope.selectedTemplate = "views/partials/panel-table-v.html";
         }
         else {

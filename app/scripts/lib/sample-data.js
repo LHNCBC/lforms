@@ -1,14 +1,14 @@
 /**
  * Modified USSG-FHT panel data
  */
-var expectedFHTData = {
+var FHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
   // form type, required. Other possible types: "SDC"
   type: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
-  name: "US Surgeon General family health portrait [USSG-FHT]",
+  name: "USSG-FHT, (with mock-up items for skip logic demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
   template: "panelTableV",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
@@ -24,7 +24,7 @@ var expectedFHTData = {
     {"questionCode": "54128-4", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54135-9", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "8302-2", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [
-      {"name": "ft-inches", "default": true},
+      {"name": "inches", "default": true},
       {"name": "centimeters"}
     ], "header": false, "skipLogic": [
       {"trigger": {"value": 12}, "action": "show", "targets": ["8302-2X"]},
@@ -60,12 +60,11 @@ var expectedFHTData = {
     {"questionCode": "54122-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54119-3", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54120-1", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-    {"questionCode": "54117-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": -1}, "question": "This person's diseases historyThis family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true},
+    {"questionCode": "54117-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": -1}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true},
     {"questionCode": "54116-9", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54115-1", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "8302-2", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [
-      {"name": "ft", "default": true},
-      {"name": "ft-inches"},
+      {"name": "inches", "default": true},
       {"name": "centimeters"}
     ], "header": false},
     {"questionCode": "29463-7", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [
@@ -315,7 +314,7 @@ var expectedFHTData = {
 
 
 /**
- * Modified USSG-FHT panel data with support for horizontal table layout
+ * Expected form definition data from a repository, supporting horizontal table layout
  */
 var horizontalFHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
@@ -324,7 +323,7 @@ var horizontalFHTData = {
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6H",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
-  name: "US Surgeon General family health portrait [USSG-FHT] -H",
+  name: "USSG-FHT, (with mock-up items for horizontal layout demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
   template: "panelTableH",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
@@ -340,7 +339,7 @@ var horizontalFHTData = {
     {"questionCode": "54128-4", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54135-9", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "8302-2", "parentQuestionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [
-      {"name": "ft-inches", "default": true},
+      {"name": "inches", "default": true},
       {"name": "centimeters"}
     ], "header": false, "skipLogic": [
       {"trigger": {"value": 12}, "action": "show", "targets": ["8302-2X"]},
@@ -376,27 +375,26 @@ var horizontalFHTData = {
     {"questionCode": "54122-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54119-3", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
     {"questionCode": "54120-1", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-    {"questionCode": "54117-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": -1}, "question": "This person's diseases historyThis family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true, "layout": "horizontal"},
+    {"questionCode": "54117-7", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": -1}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true, "layout": "horizontal"},
     {"questionCode": "54116-9", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false, "answerCardinality": {"min": 1, "max": 1} },
     {"questionCode": "54115-1", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-    {"questionCode": "54119-3N", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Race N", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-    {"questionCode": "8302-2", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [
-      {"name": "ft-inches", "default": true},
+//    {"questionCode": "54119-3N", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+    {"questionCode": "8302-2", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Height", "codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [
+      {"name": "inches", "default": true},
       {"name": "centimeters"}
     ], "header": false, "skipLogic": [
-      {"trigger": {"value": 12}, "action": "show", "targets": ["8302-2X"]},
-      {"trigger": {"minInclusive": 10}, "action": "show", "targets": ["8302-2Y"]}
+//      {"trigger": {"value": 12}, "action": "show", "targets": ["8302-2X"]},
+//      {"trigger": {"minInclusive": 10}, "action": "show", "targets": ["8302-2Y"]}
     ]},
-    {"questionCode": "8302-2X", "parentQuestionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false},
-    {"questionCode": "8302-2Y", "parentQuestionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false},
+//    {"questionCode": "8302-2X", "parentQuestionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false},
+//    {"questionCode": "8302-2Y", "parentQuestionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false},
     {"questionCode": "29463-7", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [
       {"name": "lbs", "default": true},
       {"name": "kgs"}
     ], "header": false},
-    {"questionCode": "39156-5", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "REAL", "units": "", "header": false, "formula":{"name":"BMI","value":["29463-7","8302-2"]}},
+    {"questionCode": "39156-5", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: BMI", "answers": "", "dataType": "REAL", "units": "", "header": false, "formula":{"name":"BMI","value":["29463-7","8302-2"]}},
 
-    {"questionCode": "54119-3X", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race X", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-    {"questionCode": "54119-3Y", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race Y", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+    {"questionCode": "54119-3", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
   ],
 
   // answer list could be embedded directly in the "answers" field in "items", or,

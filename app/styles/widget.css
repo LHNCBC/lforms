@@ -7,11 +7,66 @@
   font-weight: bold;
   color: white;
   padding: 2px;
-  margin-right: 2px;
-  margin-left:2px;
+  margin: 2px;
 }
 .fieldsTable .button-col {
   border-left: none;
+}
+
+/* the help button */
+.fieldsTable .help-button {
+  width: 18px;
+  height: 18px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+  background-color: #5bc0de;
+  font-weight: bold;
+  color: white;
+  padding: 0;
+  margin-right: 2px;
+  margin-left:2px;
+}
+
+.panel-selected {
+  /*background-color: #5cb85c;*/
+  /*border-color: #4cae4c;*/
+  /*color: #fff;*/
+  /*background-color: #337ab7;*/
+  /*border-color: #2e6da4;*/
+  /*color: #fff;*/
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
+
+/* autocomplete menu */
+.ui-autocomplete.ui-widget-content {
+  background: #ECF3F8;
+}
+
+/* side collapse panel */
+.panel-default .panel-heading {
+  background-color: #d9edf7;
+}
+
+/* loading msg */
+
+.loading {
+  background-color: #458ac5;
+  color: white;
+  height: 60px;
+  width: 400px;
+  margin-top: 20px;
+  margin-left: 20px;
+  font-size: 24px;
+  padding: 15px;
+}
+.loading span {
+  margin: 25px;
+}
+.loading.initial {
+  width: 500px;
+  font-size: 18px;
 }
 
 /* overwrite select2 styles */
@@ -151,8 +206,12 @@ tr.target-show {
     -webkit-transition: background-color 3s linear 1s;
 }
 .fieldsTable tr.repeatingLine:hover {
-    background-color: #87CEEB !important;
+    background-color: #AFEEEE !important;
 }
+.fieldsTable tr.repeatingLine.active-row {
+  background-color:  	#87CEEB  !important;
+}
+
 
 /* units, overwrite autocomplete default styles */
 .units {
@@ -290,8 +349,8 @@ td.has_treeline {
 
 .t-treeline-wrapper {
   float: left;
-  margin-top:-135px;
-  margin-bottom:-225px;
+  margin-top:-315px;
+  margin-bottom:-405px;
   vertical-align: middle;
   display: block;
 }
@@ -300,7 +359,7 @@ td.has_treeline {
   background-repeat: no-repeat;
   background-position: left center;
   width: 22px;
-  height: 360px;
+  height: 720px;
   display: inline-block;
   position: relative;
 }

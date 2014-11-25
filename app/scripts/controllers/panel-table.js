@@ -5,7 +5,9 @@ angular.module('lformsWidget')
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
-        showQuestionCode: false   // whether question code is displayed next to the question
+        showQuestionCode: false,   // whether question code is displayed next to the question
+        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+        useSpecialKeyNavi: false // whether to use specialized keyboard navigation that works on data fields only and skips links, buttons, and etc.
       };
 
       // Default option for calendar
@@ -37,24 +39,26 @@ angular.module('lformsWidget')
         // simple_tags: false
       };
 
+      // index of active row
+      $scope.activeRow = null;
 
-      // Not used. Combo option for ui-select2. Not to remove for now.
-      $scope.comboOpt = function(answerId) {
-        var answerList = $scope.lfData.answerLists[answerId];
+      /**
+       * Set the active row in table
+       * @param index Row index
+       */
+      $scope.setActiveRow = function(index) {
+        $scope.activeRow = index;
+      }
 
-        return jQuery.extend({}, $scope.tagOptions, {
-          data:answerList,
-          placeholder: "Select or type a location",
-          //Allow manually entered text in drop down
-          createSearchChoice: function(term, data) {
-            if ( jQuery(data).filter( function() {
-              return this.text.localeCompare(term)===0;
-            }).length===0) {
-              return {id:term, text:term};
-            }
-          }
-        });
-      };
+      /**
+       * Get the css class for the active row
+       * @param index
+       * @returns {string}
+       */
+      $scope.getActiveRowClass = function(index) {
+        return $scope.activeRow === index ? "active-row" : "";
+
+      }
 
       /**
        * Reset lfData, by assign the object from the service directly
@@ -70,36 +74,56 @@ angular.module('lformsWidget')
       $scope.$on('NewFormData', function(event, panelData) {
         $scope.lfData = panelData;
 
-        console.log("in panel-table.js, lfData received")
+//        console.log("in panel-table.js, lfData received")
 
       });
 
-
+      /**
+       * Check if the current question item is to be displayed in a horizontal table
+       * @param index
+       * @returns {*}
+       */
       $scope.inHorizontalTable = function(index) {
         return $scope.lfData.inHorizontalTable(index);
       }
 
+      /**
+       * Check if the current question is a title for a horizontal table
+       * @param index
+       * @returns {*}
+       */
       $scope.isHorizontalTableTitle = function(index) {
         return $scope.lfData.isHorizontalTableTitle(index);
       }
 
+      /**
+       * Get all columns in a horizontal table
+       * @param index
+       * @returns {*}
+       */
       $scope.getHorizontalTableColumns = function(index) {
-        console.log("in getHorizontalTableColumns")
         return $scope.lfData.getHorizontalTableColumns(index);
       }
 
+      /**
+       * Get all rows in a horizontal table
+       * @param index
+       * @returns {*}
+       */
       $scope.getHorizontalTableRows = function(index) {
-        console.log("in getHorizontalTableRows")
         return $scope.lfData.getHorizontalTableRows(index);
       }
 
+      /**
+       * Get all data cells in a row in a horizontal table
+       * @param row
+       * @returns {Array}
+       */
       $scope.getHorizontalTableCellsInRow = function(row) {
         var cells = [];
         for(var i= 0, iLen=row.length; i<iLen; i++) {
           cells.push($scope.lfData.items[row[i]]);
         }
-
-        console.log("in getHorizontalTableCellsInRow")
         return cells;
       }
 
@@ -133,15 +157,6 @@ angular.module('lformsWidget')
        * @returns {boolean}
        */
       $scope.isAnswerRequired = function(item) {
-        var ret=false;
-        if (item.answerCardinality &&
-            item.answerCardinality.min &&
-            item.answerCardinality.min >= 1) {
-          ret = true
-        }
-        return ret;
-      };
-      $scope.isAnswerRequired2 = function(item) {
         var ret=false;
         if (item.answerCardinality &&
             item.answerCardinality.min &&
@@ -234,6 +249,19 @@ angular.module('lformsWidget')
       };
 
       /**
+       * Check if the item has coding instructions
+       * @param item
+       * @returns {string}
+       */
+      $scope.hasCodingInstructions = function(item) {
+        var ret;
+        if (item.codingInstructions && item.codingInstructions.length > 0) {
+          ret = true;
+        }
+        return ret;
+      };
+
+      /**
        * Get formatted coding instructions
        * @param item
        * @returns {string}
@@ -319,7 +347,7 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Prepare the answer list for CWE (combo) field for pp-autocomplete,
+       * Prepare the answer list for CWE (combo) field for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item
        * @returns {{}}
@@ -362,7 +390,7 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Prepare the answer list for CNE field for pp-autocomplete,
+       * Prepare the answer list for CNE field for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item
        * @returns {{}}
@@ -410,7 +438,7 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Prepare the units list for pp-autocomplete,
+       * Prepare the units list for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item
        * @returns hash

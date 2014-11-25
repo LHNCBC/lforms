@@ -68,8 +68,9 @@ angular.module('lformsWidget')
             controller.$render();
           }
         };
-        // Watch for changes to the directives options
-        scope.$watch(getOptions, initDateWidget, true);
+        // Run initDateWiget once
+        scope.$watch({}, initDateWidget, true);
+
       }
     };
   }

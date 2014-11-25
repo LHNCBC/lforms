@@ -35,10 +35,10 @@ var WidgetData = Class.extend({
   //    {name:, value:}
   // a "target" key is added to the formula format in the _formulas array:
   //    {name:, value:, target:}
-  // for now, there's only two formulas: SCORE, BMI
+  // for now, there's only two formulas: TOTALSCORE, BMI
   _formulas: [],
 
-  // if there's a SCORE formula
+  // if there's a TOTALSCORE formula
   _hasScoreRule: null,
 
   // the status of current shown skip logic targets
@@ -211,8 +211,8 @@ var WidgetData = Class.extend({
     this._hasScoreRule = false;
 
     for (var i = 0, iLen = this._formulas.length; i < iLen; i++) {
-      // check if there is a SCORE rule
-      if (this._formulas[i]["name"] == "SCORE") {
+      // check if there is a TOTALSCORE rule
+      if (this._formulas[i]["name"] == "TOTALSCORE") {
         this._formulas[i]["value"] = [];
         this._formulas[i]["valueIndex"] = [];
         // set values for _hasScoreRule
@@ -243,7 +243,7 @@ var WidgetData = Class.extend({
           } // end if there's an answer list
         } // end of items loop
         break;
-      } // end of SCORE rule
+      } // end of TOTALSCORE rule
     } // end of formulas loop
 
   },
@@ -265,11 +265,11 @@ var WidgetData = Class.extend({
     if (!this.templateOption || jQuery.isEmptyObject(this.templateOption)) {
       this.templateOption = {
         obxTableColumns: [
-          {"name" : "Name", "formatting":{"width": "55%", "min-width": "4em"}},
+          {"name" : "Name", "formatting":{"width": "50%", "min-width": "4em"}},
           {"name" : "", "formatting":{"width": "5em", "min-width": "5em"}},
           {"name" : "Value", "formatting":{"width": "35%", "min-width": "4em"}},
-          {"name" : "Units", "formatting":{"width": "6em", "min-width": "4em"}},
-          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}
+          {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+//          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
@@ -877,7 +877,7 @@ var WidgetData = Class.extend({
     var ret = false;
     if (this._hasScoreRule) {
       for (var i= 0,ilen=this._formulas.length; i<ilen; i++) {
-        if (this._formulas[i].name == 'SCORE' && this._formulas[i].target == codePath) {
+        if (this._formulas[i].name == 'TOTALSCORE' && this._formulas[i].target == codePath) {
           ret = true;
           break;
         }
@@ -914,7 +914,7 @@ var WidgetData = Class.extend({
       for (var j= 0,jlen=this._formulas.length; j<jlen; j++) {
         var formula = this._formulas[j];
         // run non-score rules
-        if (formula.name != 'SCORE') {
+        if (formula.name != 'TOTALSCORE') {
           // find the sources and target
           var valuesInStandardUnit = this.findFormulaSourcesInStandardUnit_(formula);
 
@@ -983,7 +983,7 @@ var WidgetData = Class.extend({
   Formulas: {
     calculations_: {
       precision_: 2,
-      'SCORE': function (sources) {
+      'TOTALSCORE': function (sources) {
         var totalScore = 0;
         for (var i = 0, ilen = sources.length; i < ilen; i++) {
           totalScore += sources[i];

@@ -6,8 +6,8 @@ angular.module('lformsWidget')
     $scope.pIndex = 0;
 
     $scope.panelList = [
-      {text: 'USSG-FHT, (vertical layout)', id: '54127-6N'},
-      {text: 'USSG-FHT, (with horizontal table layout)', id: '54127-6H'}
+      {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
+      {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'}
     ];
 
     // base config for ui-select2
@@ -39,7 +39,7 @@ angular.module('lformsWidget')
       }
       if (loinc_num) {
         if (loinc_num == '54127-6N') {
-          selectedFormData.updateForm(new WidgetData(angular.copy(expectedFHTData)));
+          selectedFormData.updateForm(new WidgetData(angular.copy(FHTData)));
         }
         else if (loinc_num == '54127-6H') {
           selectedFormData.updateForm(new WidgetData(angular.copy(horizontalFHTData)));
