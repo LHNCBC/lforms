@@ -3,7 +3,7 @@
   </div>
   <div class="name_label">
     <div ng-if="firstOneRepeatingItem(item)" class="hTableTitle">
-      {{item.question}}
+      {{::item.question}}
     </div>
 
     <table class="fieldsTable horizontal-table">
@@ -44,10 +44,10 @@
             </span>  <!-- validation error messages -->
               <span ng-switch-when="" > </span>
               <div ng-switch-when="CNE-1" name="{{cell.question}}" ng-required="isAnswerRequired2(cell)" ng-model="cell._value" ui-select2="select2Opt(cell)" ng-readonly="isReadOnly(cell)"></div>
-              <input ng-switch-when="REAL1" name="{{cell.question}}" type="number" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell )"></input>
-              <input ng-switch-when="CNE1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" placeholder="Select a value" ng-model="cell._value" lf-autocomplete="lfListOpt(cell )" ng-readonly="isReadOnly(cell)"></input>
-              <input ng-switch-when="DT1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(cell)"></input>
-              <input ng-switch-default name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell)"></input>
+              <input ng-switch-when="REAL1" name="{{cell.question}}" type="number" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell )">
+              <input ng-switch-when="CNE1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" placeholder="Select one" ng-model="cell._value" phr-autocomplete="lfListOpt(cell )" ng-readonly="isReadOnly(cell)">
+              <input ng-switch-when="DT1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(cell)">
+              <input ng-switch-default name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell)">
             </div>
           </ng-form>
         </td>
