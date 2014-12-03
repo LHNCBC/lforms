@@ -347,11 +347,15 @@ td.has_treeline {
   padding-bottom: 7px;
 }
 
+.horizontal .t-treeline-field .name_label {
+  padding: 0;
+}
+
 .t-treeline-wrapper {
   float: left;
-  margin-top:-315px;
-  margin-bottom:-405px;
-  vertical-align: middle;
+  margin-top:-18px;
+  margin-bottom:-702px;
+  vertical-align: top;
   display: block;
 }
 
