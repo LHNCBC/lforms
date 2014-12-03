@@ -18,10 +18,49 @@
     "jquery-ui": "~1.11.2",
     "angular-ui-bootstrap-bower": "~0.11.2",
     "angular-strap": "~2.1.3"
+
   },
   "devDependencies": {
     "angular-mocks": "~1.3.1",
     "angular-scenario": "~1.3.1"
   },
-  "appPath": "app"
+  "appPath": "app",
+  "authors": [
+    "Ye Wang <wangye@mail.nih.gov>"
+  ],
+  "description": "An angular directive that displays forms defined in the lforms standard format.",
+  "main": [
+    "app/lforms.js",
+    "app/scripts/controllers/panel-table.js",
+    "app/scripts/directives/lf-date.js",
+    "app/scripts/directives/phr-autocomplete.js",
+    "app/lib/date.js",
+    "app/lib/js-class.js",
+    "app/lib/util.js",
+    "app/lib/widget-data.js",
+    "app/services/selected-panel.js",
+    "app/styles/base.css",
+    "app/styles/main.css",
+    "app/styles/widget.css"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "lforms",
+    "angular",
+    "LOINC",
+    "form",
+    "panel"
+  ],
+  "license": "MIT",
+  "homepage": "lhcs-formtool.nlm.nih.gov",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
