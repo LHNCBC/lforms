@@ -1,4 +1,4 @@
-#     The following is the standard cshrc file for the LForms 
+#     The following is the standard cshrc file for the LForms
 # development team.  You should explicitly source
 # this first from your .cshrc and then do your own environment
 # customizations.
@@ -9,7 +9,7 @@
 # Use the globally installed node and its modules
 set LFORMS_NODE=node-v0.10.33_lforms.v1
 # Set path
-setenv PATH /depot/packages/${LFORMS_NODE}/bin:${PATH}
+set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc)
 # Set node in development mode
 unsetenv NODE_ENV
 
