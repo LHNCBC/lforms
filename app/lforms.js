@@ -8,7 +8,7 @@ angular.module('lformsWidget', [
     restrict: 'E',
     transclude: true,
     controller: 'PanelTableCtrl',
-    templateUrl: 'app/scripts/views/panel-table-v.html'
+    templateUrl: 'panel-table-v.html'
   };
 })
 .directive('lformsPanelH', function() {
@@ -16,7 +16,7 @@ angular.module('lformsWidget', [
     restrict: 'E',
     transclude: true,
     controller: 'PanelTableCtrl',
-    templateUrl: 'app/scripts/views/panel-table-h.html'
+    templateUrl: 'panel-table-h.html'
   };
 });
 ;
