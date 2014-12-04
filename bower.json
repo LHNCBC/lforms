@@ -40,7 +40,8 @@
     "app/scripts/services/selected-panel.js",
     "app/styles/base.css",
     "app/styles/main.css",
-    "app/styles/widget.css"
+    "app/styles/widget.css",
+    "app/lforms.tpl.js"
   ],
   "keywords": [
     "lforms",
