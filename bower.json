@@ -37,7 +37,7 @@
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/util.js",
     "app/scripts/lib/widget-data.js",
-    "app/services/selected-panel.js",
+    "app/scripts/services/selected-panel.js",
     "app/styles/base.css",
     "app/styles/main.css",
     "app/styles/widget.css"
