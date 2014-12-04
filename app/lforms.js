@@ -8,7 +8,7 @@ angular.module('lformsWidget', [
     restrict: 'E',
     transclude: true,
     controller: 'PanelTableCtrl',
-    templateUrl: 'panel-table-v.html'
+    templateUrl: 'panel-table-v-flat.html'
   };
 })
 .directive('lformsPanelH', function() {
