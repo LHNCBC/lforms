@@ -1,4 +1,4 @@
-angular.module('lforms.widget', [])
+angular.module('lformsWidget', [])
 .directive('lformsPanelV', function() {
   return {
     restrict: 'E',
