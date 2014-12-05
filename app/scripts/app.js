@@ -21,16 +21,16 @@ angular.module('lformsWidget', [
   })
   // pre-load all the templates
   .run(function($templateCache,$http){
-      //$templateCache.put('first.html', 'First template');
-      $http.get('views/main.html', {cache:$templateCache});
-      $http.get('views/partials/panel-table-v.html', {cache:$templateCache});
-      $http.get('views/partials/panel-table-h.html', {cache:$templateCache});
-      $http.get('views/partials/horizontal-table.html', {cache:$templateCache});
-      $http.get('views/partials/tree.html', {cache:$templateCache});
-      $http.get('views/partials/tree-extra.html', {cache:$templateCache});
-      $http.get('views/partials/validation.html', {cache:$templateCache});
-      $http.get('views/partials/loading.html', {cache:$templateCache});
-      $http.get('views/partials/initial.html', {cache:$templateCache});
+      // the template names are used in the app, not the actually file path
+      $templateCache.put('main.html', $http.get('views/main.html'));
+      $templateCache.put('panel-table-v.html', $http.get('views/partials/panel-table-v.html'));
+      $templateCache.put('panel-table-h.html', $http.get('views/partials/panel-table-h.html'));
+      $templateCache.put('horizontal-table.html', $http.get('views/partials/horizontal-table.html'));
+      $templateCache.put('tree.html', $http.get('views/partials/tree.html'));
+      $templateCache.put('tree-extra.html', $http.get('views/partials/tree-extra.html'));
+      $templateCache.put('validation.html', $http.get('views/partials/validation.html'));
+      $templateCache.put('loading.html', $http.get('views/partials/loading.html'));
+      $templateCache.put('initial.html', $http.get('views/partials/initial.html'));
 
     });
 
