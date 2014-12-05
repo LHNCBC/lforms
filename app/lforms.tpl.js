@@ -3,7 +3,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('horizontal-table.html',
     "<div class=\"t-treeline-field\">\n" +
-    "  <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree.html'\">  <!-- tree lines -->\n" +
+    "  <div class=\"t-treeline-wrapper\" ng-include=\"'tree.html'\">  <!-- tree lines -->\n" +
     "  </div>\n" +
     "  <div class=\"name_label\">\n" +
     "    <div ng-if=\"firstOneRepeatingItem(item)\" class=\"hTableTitle\">\n" +
@@ -101,7 +101,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div ng-controller=\"PanelTableCtrl\">\n" +
     "  <form name=\"panel\" novalidate>\n" +
     "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"/images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
+    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "      <div class=\"row\">\n" +
     "        <div class=\"col-md-3 col-xs-3\">\n" +
     "          <div class=\"checkbox\">\n" +
@@ -143,7 +143,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\" ng-switch on=\"item.dataType\">\n" +
     "              <ng-form name=\"innerForm\">\n" +
     "                  <div class=\"cellData tooltipContainer\">\n" +
-    "                    <span class=\"tooltipContent\" ng-include=\"'views/partials/validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" phr-autocomplete=\"::lfComboOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"  ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\">\n" +
@@ -167,7 +167,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <tr style=\"width: 99%\" class=\"repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}\" ng-repeat-start=\"item in lfData.items track by $id(item)\" ng-click=\"setActiveRow($index)\">\n" +
     "                    <td ng-if=\"::!inHorizontalTable($index)\" class=\"name has_treeline\">\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
@@ -185,7 +185,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <td ng-if=\"::!inHorizontalTable($index)\" ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +
     "                        <div class=\"cellData tooltipContainer\">\n" +
-    "                          <span class=\"tooltipContent\" ng-include=\"'views/partials/validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
     "                          <div ng-switch-when=\"CNE-1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" ui-select2=\"::select2Opt(item)\" ng-readonly=\"::isReadOnly(item)\"></div>\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
@@ -200,13 +200,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      <span ng-switch-when=\"none\" > </span>\n" +
     "                    </td>\n" +
     "                    <!--<td ng-if=\"!inHorizontalTable($index)\">{{item.range}}</td>-->\n" +
-    "                    <td ng-if=\"::isHorizontalTableTitle($index)\" class=\"horizontal has_treeline\" colspan=\"5\" ng-include=\"'views/partials/horizontal-table.html'\"></td>\n" +
+    "                    <td ng-if=\"::isHorizontalTableTitle($index)\" class=\"horizontal has_treeline\" colspan=\"5\" ng-include=\"'horizontal-table.html'\"></td>\n" +
     "                  </tr>\n" +
     "                  <!-- extra question -->\n" +
     "                  <tr ng-if=\"::!inHorizontalTable($index) && needExtra(item)\" style=\"width: 99%\" class=\"extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree-extra.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree-extra.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <span>&nbsp;</span>\n" +
@@ -222,7 +222,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <tr ng-repeat-end ng-if=\"isLastItemInRepeatingItems($index)\" class=\"buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\" >\n" +
     "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree-extra.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree-extra.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{::repeatingItem._codePath+repeatingItem._idPath}}\" ng-click=\"::addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
@@ -270,7 +270,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        </div>\n" +
     "\n" +
     "      </div>\n" +
-    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"/images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
+    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "      <h3 class=\"groupHeader\">\n" +
     "        <span>{{::lfData.name}}</span>\n" +
     "        <span ng-if=\"formConfig.showQuestionCode\"><a tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
@@ -450,7 +450,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div ng-controller=\"PanelTableCtrl\">\n" +
     "  <form name=\"panel\" novalidate>\n" +
     "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"/images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
+    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "      <div class=\"row\">\n" +
     "        <div class=\"col-md-3 col-xs-3\">\n" +
     "          <div class=\"checkbox\">\n" +
@@ -490,7 +490,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\" ng-switch on=\"item.dataType\">\n" +
     "              <ng-form name=\"innerForm\">\n" +
     "                  <div class=\"cellData tooltipContainer\">\n" +
-    "                    <span class=\"tooltipContent\" ng-include=\"'views/partials/validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" phr-autocomplete=\"::lfComboOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"  ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\">\n" +
@@ -514,7 +514,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <tr style=\"width: 99%\" class=\"repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}\" ng-repeat-start=\"item in lfData.items track by $id(item)\" ng-click=\"setActiveRow($index)\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
@@ -532,7 +532,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <td ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +
     "                        <div class=\"cellData tooltipContainer\">\n" +
-    "                          <span class=\"tooltipContent\" ng-include=\"'views/partials/validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
     "                          <div ng-switch-when=\"CNE-1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" ui-select2=\"::select2Opt(item)\" ng-readonly=\"::isReadOnly(item)\"></div>\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
@@ -552,7 +552,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <tr ng-if=\"needExtra(item)\" style=\"width: 99%\" class=\"extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree-extra.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree-extra.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <span>&nbsp;</span>\n" +
@@ -568,7 +568,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <tr ng-repeat-end ng-if=\"isLastItemInRepeatingItems($index)\" class=\"buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\" >\n" +
     "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
     "                      <div class=\"t-treeline-field\">\n" +
-    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'views/partials/tree-extra.html'\">  <!-- tree lines -->\n" +
+    "                        <div class=\"t-treeline-wrapper\" ng-include=\"'tree-extra.html'\">  <!-- tree lines -->\n" +
     "                        </div>\n" +
     "                        <div class=\"name_label\">\n" +
     "                          <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{::repeatingItem._codePath+repeatingItem._idPath}}\" ng-click=\"::addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
