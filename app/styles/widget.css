@@ -139,7 +139,7 @@ td.name span.sn {
     color: red;
 }
 .stop-sign {
-    background-image: url("/images/signal-stop.png");
+    background-image: url("../images/signal-stop.png");
     background-repeat: no-repeat;
     background-position: left center;
     width: 48px;
@@ -164,7 +164,7 @@ input:-ms-input-placeholder {
 }
 .cellData .ui-datepicker-trigger {
     position: absolute;
-    background: url("/images/calendar.png") no-repeat scroll transparent;
+    background: url("../images/calendar.png") no-repeat scroll transparent;
     top: 8px;
     right: 4px;
     width: 16px;
@@ -172,7 +172,7 @@ input:-ms-input-placeholder {
     z-index: 100;
 }
 .cellData .ui-datepicker-trigger:hover {
-  background-image: url("/images/calendar-hover.png");
+  background-image: url("../images/calendar-hover.png");
 }
 
 /* autocomplete */
@@ -371,13 +371,13 @@ td.has_treeline {
   display: none;
 }
 .t-treeline.line3 {
-  background-image: url("/images/line3.png");
+  background-image: url("../images/line3.png");
 }
 .t-treeline.line2 {
-  background-image: url("/images/line2.png");
+  background-image: url("../images/line2.png");
 }
 .t-treeline.line1 {
-  background-image: url("/images/line1.png");
+  background-image: url("../images/line1.png");
 }
 
 
