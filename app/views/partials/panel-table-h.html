@@ -2,7 +2,7 @@
   <form name="panel" novalidate>
     <div class="panelGroup fieldGroup" ng-if="lfData" >
       <div class="stopped" ng-show="isFormDone()"><img src="../images/blank.gif" class="stop-sign"><span>This form is complete.</span></div>
-      <div class="row">
+      <div class="row" ng-hide="hide_check_boxes">
         <div class="col-md-3 col-xs-3">
           <div class="checkbox">
             <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
