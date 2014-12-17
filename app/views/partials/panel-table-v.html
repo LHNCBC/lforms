@@ -29,7 +29,7 @@
       <div class="fieldExpColDiv">
         <table cellspacing="0" cellpadding="0" class="fieldsTable">
           <colgroup>
-            <col ng-repeat="item in ::lfData.templateOption.obrItems" style="width: {{::item.formatting.width}}; min-width: {{::item.formatting['min-width']}}">
+            <col ng-repeat="item in ::lfData.templateOption.obrItems" ng-style="{'width': '{{::item.formatting.width}}', 'min-width': '{{::item.formatting['min-width']}}'}">
           </colgroup>
           <thead>
           <tr>
@@ -54,7 +54,7 @@
               <div>
                 <table cellspacing="0" cellpadding="0" class="fieldsTable">
                   <colgroup>
-                    <col ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns" style="width: {{::obxCol.formatting.width}}; min-width: {{::obxCol.formatting['min-width']}}">
+                    <col ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns" ng-style="{'width': '{{::obxCol.formatting.width}}', 'min-width': '{{::obxCol.formatting['min-width']}}'}">
                   </colgroup>
                   <thead>
                   <tr>
