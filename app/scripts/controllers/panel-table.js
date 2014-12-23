@@ -823,8 +823,9 @@ angular.module('lformsWidget')
         $scope.$apply();
       };
 
+      // for debug only. to be removed.
       $scope.onclick = function() {
         debugger
-        i = 1;
+        var i = 1;
       }
     });
