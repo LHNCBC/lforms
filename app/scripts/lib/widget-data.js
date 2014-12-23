@@ -805,7 +805,7 @@ var WidgetData = Class.extend({
         // or it's a non-repeating table.
         else {
           // same methods for repeating items could be used for non-repeating items too.
-          // Need to renames functions names in those 'repeatable' functions.
+          // Need to rename function names in those 'repeatable' functions.
           var range = this._getRepeatableItemsRange(this.items[i]);
           // get column info (names for now)
           var cols =[];
