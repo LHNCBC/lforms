@@ -17,7 +17,7 @@ if (! $?PROJECT_DIR) then
   setenv PROJECT_DIR ~/lforms
 endif
 #
-set path = (/depot/packages/${LFORMS_NODE}/bin $PROJECT_DIR/node_modules/.bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc)
+set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin)
 # Set node in development mode
 unsetenv NODE_ENV
 
