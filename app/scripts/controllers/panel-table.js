@@ -823,4 +823,8 @@ angular.module('lformsWidget')
         $scope.$apply();
       };
 
+      $scope.onclick = function() {
+        debugger
+        i = 1;
+      }
     });
