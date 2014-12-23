@@ -21,11 +21,29 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  grunt.loadNpmTasks('grunt-angular-templates');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
     // Project settings
     yeoman: appConfig,
+
+    ngtemplates:  {
+      lformsWidget:        {
+        cwd: '<%= yeoman.app %>/views/partials',
+        src: '{,*/}*.html',
+        dest: '<%= yeoman.app %>/lforms.tpl.js'
+      }
+    },
+
+    directivejs: {
+
+    },
+
+    directivecss: {
+
+    },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
