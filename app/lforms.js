@@ -6,6 +6,9 @@ angular.module('lformsWidget', [
 .directive('lformsPanelV', function() {
   return {
     restrict: 'E',
+    scope: {
+      hideCheckBoxes: '=?'
+    },
     transclude: true,
     controller: 'PanelTableCtrl',
     templateUrl: 'panel-table-v-flat.html'
@@ -14,6 +17,9 @@ angular.module('lformsWidget', [
 .directive('lformsPanelH', function() {
   return {
     restrict: 'E',
+    scope: {
+      hideCheckBoxes: '=?'
+    },
     transclude: true,
     controller: 'PanelTableCtrl',
     templateUrl: 'panel-table-h.html'
