@@ -21,12 +21,12 @@ angular.module('lformsWidget')
       },
 
       updateTemplate: function() {
-        $rootScope.$broadcast('NewTemplate', selected.lfData)
+        $rootScope.$broadcast('NewTemplate', selected.lfData);
 
       },
 
       updateFormData: function() {
-        $rootScope.$broadcast('NewFormData', selected.lfData)
+        $rootScope.$broadcast('NewFormData', selected.lfData);
 
       }
 

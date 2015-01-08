@@ -9,7 +9,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css(app) styles/vendor.css -->
+
+    <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/autocomp-phr/auto_completion.css" />
     <link rel="stylesheet" href="bower_components/select2/select2.css" />
@@ -61,7 +62,7 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- build:js(app) scripts/vendor.js -->
+    <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/jquery-ui/jquery-ui.js"></script>
@@ -108,6 +109,7 @@
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <!-- widget js -->
     <script src="scripts/lib/js-class.js"></script>
+    <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/date.js"></script>
     <script src="scripts/lib/widget-data.js"></script>
     <script src="scripts/lib/util.js"></script>
@@ -118,10 +120,9 @@
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/panel-search.js"></script>
     <script src="scripts/controllers/panel-table.js"></script>
-    <script src="scripts/directives/phr-autocomplete.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <script src="scripts/services/selected-panel.js"></script>
-
+    <script src="bower_components/autocomp-phr/phr-autocomplete.js"></script>
     <!-- endbuild -->
 
 
