@@ -171,7 +171,7 @@ var WidgetData = Class.extend({
 
     this._resetRepeatableItems();
 
-    this._resetFieldsForHorizontalTableLayout();
+    this._resetHorizontalTableInfo();
 
     this._updateLastSiblingStatus();
 
@@ -193,7 +193,7 @@ var WidgetData = Class.extend({
     // update score rule if there is one
     this._updateScoreRule();
 
-    this._resetFieldsForHorizontalTableLayout();
+    this._resetHorizontalTableInfo();
 
     this._updateLastSiblingStatus();
 
@@ -737,8 +737,8 @@ var WidgetData = Class.extend({
         inRepeatableItems = true;
       }
       if (inRepeatableItems &&
-          this.items[i]._idPath.indexOf(item._idPath) == 0 &&
-          this.items[i]._codePath.indexOf(item._codePath) == 0 ) {
+          (this.items[i]._idPath + "/").indexOf(item._idPath + "/") == 0 &&
+          (this.items[i]._codePath + "/").indexOf(item._codePath + "/") == 0 ) {
         idxEnd = i;
       }
     }
@@ -785,47 +785,76 @@ var WidgetData = Class.extend({
    *
    * @private
    */
-  _resetFieldsForHorizontalTableLayout: function() {
-    this._horizontalTableItems = {};
+
+  _resetHorizontalTableInfo: function() {
+    this._horizontalTableInfo = {};
+
+    var tableHeaderCodePath = null;
+    var parentIdPath = null;
+    var lastTableHeaderIndex = null;
+    var hasHorizontalLayout = false;
+
     for (var i= 0, iLen=this.items.length; i<iLen; i++) {
       // header item and horizontal layout
       if (this.items[i].header && this.items[i].layout == "horizontal" ) {
-        // if it's a repeating table
-        if (this._questionRepeatable(this.items[i])) {
+        hasHorizontalLayout = true;
+        // same methods for repeating items could be used for repeating and non-repeating items.
+        // (need to rename function names in those 'repeatable' functions.)
+        var itemsInRow = [];
+        var colNames = [];
+        this.items[i]._inHorizontalTable = true;
+        this.items[i]._isLastTableHeaderInGroup = false;
+        lastTableHeaderIndex = i;
+        // if it's the first row (header) of the first table,
+        if (tableHeaderCodePath === null) {
+          // indicate this item is the table header
+          this.items[i]._horizontalTableHeader = true;
+
           var range = this._getRepeatableItemsRange(this.items[i]);
-          // get column info (names for now)
-          var cols =[];
-          var itemsInRow = [];
-          for (var c=range.start+1; c<=range.end; c++) {
-            cols.push(this.items[c].question)
-            itemsInRow.push(c)
+          for (var j=range.start+1; j<=range.end; j++) {
+            itemsInRow.push(j);
+            colNames.push(this.items[j].question);
+            // indicate the item is in a horizontal table
+            this.items[j]._inHorizontalTable = true;
           }
-          this._horizontalTableItems[i] = {start: range.start+1, end: range.end, columns: cols, rows: [itemsInRow]};
+
+          tableHeaderCodePath = this.items[i]._codePath;
+          parentIdPath = this.items[i]._parentIdPath_;
+          this._horizontalTableInfo[tableHeaderCodePath] = {
+            tableStartIndex: i,
+            tableEndIndex: range.end,
+            columnNames: colNames,
+            tableRows: [{ header: i, cells : itemsInRow }],
+            tableHeaders: [i]
+          };
         }
-        // or it's a non-repeating table.
-        else {
-          // same methods for repeating items could be used for non-repeating items too.
-          // Need to rename function names in those 'repeatable' functions.
+        // if it's the following rows, update the tableRows and tableEndIndex
+        else if (tableHeaderCodePath === this.items[i]._codePath &&
+            parentIdPath === this.items[i]._parentIdPath_ ) {
           var range = this._getRepeatableItemsRange(this.items[i]);
-          // get column info (names for now)
-          var cols =[];
           var itemsInRow = [];
-          for (var c=range.start+1; c<=range.end; c++) {
-            cols.push(this.items[c].question)
-            itemsInRow.push(c)
+          for (var j=range.start+1; j<=range.end; j++) {
+            itemsInRow.push(j);
+            // indicate the item is in a horizontal table
+            this.items[j]._inHorizontalTable = true;
           }
-          this._horizontalTableItems[i] = {start: range.start+1, end: range.end, columns: cols, rows: [itemsInRow]};
+          // update rows index
+          this._horizontalTableInfo[tableHeaderCodePath].tableRows.push({header: i, cells : itemsInRow});
+          // update headers index (hidden)
+          this._horizontalTableInfo[tableHeaderCodePath].tableHeaders.push(i);
+          // update last item index in the table
+          this._horizontalTableInfo[tableHeaderCodePath].tableEndIndex = range.end;
+
         }
       }
     }
 
+    // update the last table header flag
+    if (hasHorizontalLayout) {
+      this.items[lastTableHeaderIndex]._isLastTableHeaderInGroup = true;
+    }
+
   },
-
-
-  addRepeatingItemsForHorizontalTable: function(rowIndex) {
-
-  },
-
 
   /**
    * Add a repeating item or a repeating group
@@ -1188,43 +1217,6 @@ var WidgetData = Class.extend({
     } // end of valid range and numValue
 
     return inRange;
-
-  },
-
-  inHorizontalTable: function(index) {
-    var ret = false;
-    var titles = Object.keys(this._horizontalTableItems);
-    for (var i= 0, iLen=titles.length; i<iLen; i++) {
-      // if it's the table title item
-      if (index == titles[i]) {
-        ret = true;
-        break;
-      }
-      // horizontal table items
-      else {
-        var table = this._horizontalTableItems[titles[i]];
-        if (index >= table.start && index <=table.end ) {
-          ret = true;
-          break;
-        }
-      } // end if it's the table title item
-    } // end of the loop of horizontal tables
-
-    return ret;
-  },
-
-  isHorizontalTableTitle: function(index) {
-    var ret = false;
-    var titles = Object.keys(this._horizontalTableItems);
-    for (var i= 0, iLen=titles.length; i<iLen; i++) {
-      // if it's the table title item
-      if (index == titles[i]) {
-        ret = true;
-        break;
-      }
-    } // end of the loop of horizontal tables
-
-    return ret;
 
   },
 

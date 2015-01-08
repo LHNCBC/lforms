@@ -539,6 +539,44 @@ angular.module('lformsWidget')
         return ret;
       };
 
+      $scope.getHorizontalLayoutTreeLevelClass = function(level,  itemIndex) {
+        var ret ='';
+        var widgetData = $scope.lfData;
+
+        var statusLast = widgetData._lastSiblingStatus[itemIndex];
+
+        switch(level) {
+          // leaf node
+          case 0:
+            if (statusLast[level]) {
+              ret = 'line2'
+            }
+            else {
+              ret = 'line2';
+            }
+            break;
+          // parents nodes
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            if (statusLast[level] === undefined) {
+              ret = 'no_display';
+            }
+            else if (statusLast[level]) {
+              ret = '';
+            }
+            else {
+              ret = 'line1';
+            }
+            break;
+          default:
+            ret = '';
+        }
+        return ret;
+      };
+
       /**
        *  Get the CSS class for the extra row that holds the field for "Please Specify" value
        *  The class name depends on the tree level class that this row id depending on.
@@ -754,16 +792,34 @@ angular.module('lformsWidget')
         return recCount > 1 ? false : true;
       };
 
+
+
       /**
        * Check if the current item is the last repeating item in a group
        * (so that the "add" button will show on this item.)
-       * @param item
+       * @param index
        * @returns {boolean}
        */
       $scope.lastOneRepeatingItem = function(item) {
         var maxRecId = $scope.lfData.getRepeatingItemMaxId(item);
         var recId = parseInt(item._id)
         return recId == maxRecId;
+      };
+
+      $scope.hasOneRepeatingRow = function(item) {
+        var ret = false;
+        var tableInfo = $scope.lfData._horizontalTableInfo[item._codePath];
+        if (tableInfo && tableInfo.tableRows && tableInfo.tableRows.length === 1) {
+          ret = true;
+        }
+
+        return ret;
+      };
+
+      $scope.isLastOneRepeatingRow = function(item) {
+
+        return item._isLastTableHeaderInGroup;
+
       };
 
       /**
@@ -798,13 +854,6 @@ angular.module('lformsWidget')
       $scope.getParentRepeatingItemsOfLastItem = function(index) {
         return $scope.lfData.getParentRepeatingItemsOfLastItem(index);
       };
-
-
-      $scope.firstOneRepeatingItem = function(item) {
-        var minRecId = $scope.lfData.getRepeatingItemMinId(item);
-        var recId = parseInt(item._id)
-        return recId == minRecId;
-      }
 
       /**
        * Check if the question needs an extra input

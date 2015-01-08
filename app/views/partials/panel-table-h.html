@@ -69,7 +69,7 @@
                   </thead>
                   <tbody id="obx_table" class="fieldExpColDiv">
                   <tr style="width: 99%" class="repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}" ng-repeat-start="item in lfData.items track by $id(item)" ng-click="setActiveRow($index)">
-                    <td ng-if="::!inHorizontalTable($index)" class="name has_treeline">
+                    <td ng-if="::!item._inHorizontalTable" class="name has_treeline">
                       <div class="t-treeline-field">
                         <div class="t-treeline-wrapper" ng-include="'tree.html'">  <!-- tree lines -->
                         </div>
@@ -83,10 +83,10 @@
                         </div>
                       </div>
                     </td>
-                    <td ng-if="::!inHorizontalTable($index)" class="button-col">
+                    <td ng-if="::!item._inHorizontalTable" class="button-col">
                       <button ng-show="::isRepeatable(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="::!hasOneRepeatingItem(item)" class="float-button"  ng-click="::removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
                     </td>
-                    <td ng-if="::!inHorizontalTable($index)" ng-switch on="::getFieldType(item)" class="hasTooltip">
+                    <td ng-if="::!item._inHorizontalTable" ng-switch on="::getFieldType(item)" class="hasTooltip">
                       <ng-form name="innerForm2">
                         <div class="cellData tooltipContainer">
                           <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
@@ -99,15 +99,15 @@
                         </div>
                       </ng-form>
                     </td>
-                    <td ng-if="::!inHorizontalTable($index)" ng-switch on="::checkUnits(item)">
+                    <td ng-if="::!item._inHorizontalTable" ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{ updateOn: 'default' }" ng-model="item._unit" phr-autocomplete="lfUnitsListOpt(item )" ></input>
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td ng-if="!inHorizontalTable($index)">{{item.range}}</td>-->
-                    <td ng-if="::isHorizontalTableTitle($index)" class="horizontal has_treeline" colspan="5" ng-include="'horizontal-table.html'"></td>
+                    <td ng-if="::item._horizontalTableHeader" class="horizontal has_treeline" colspan="5" ng-include="'horizontal-table.html'"></td>
                   </tr>
                   <!-- extra question -->
-                  <tr ng-if="::!inHorizontalTable($index) && needExtra(item)" style="width: 99%" class="extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}">
+                  <tr ng-if="::!item._inHorizontalTable && needExtra(item)" style="width: 99%" class="extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}">
                     <td class="name has_treeline">
                       <div class="t-treeline-field">
                         <div class="t-treeline-wrapper" ng-include="'tree-extra.html'">  <!-- tree lines -->
@@ -145,4 +145,5 @@
       </div>
     </div>
   </form>
+  <button ng-click="onclick()">Click to debug Panel Table controller</button>
 </div>

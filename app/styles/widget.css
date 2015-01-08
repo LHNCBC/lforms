@@ -333,7 +333,7 @@ td.has_treeline {
 
 .t-treeline-field {
   overflow: hidden;
-  display: inline-block;
+  /*display: inline-block;*/
   vertical-align: top;
 }
 
@@ -353,7 +353,7 @@ td.has_treeline {
 
 .t-treeline-wrapper {
   float: left;
-  margin-top:-18px;
+  /*margin-top:-18px;*/
   margin-bottom:-702px;
   vertical-align: top;
   display: block;
@@ -365,19 +365,22 @@ td.has_treeline {
   width: 22px;
   height: 720px;
   display: inline-block;
-  position: relative;
+  /*position: relative;*/
 }
 .t-treeline.no_display {
   display: none;
 }
 .t-treeline.line3 {
   background-image: url("../images/line3.png");
+  background-position: 0px -18px;
 }
 .t-treeline.line2 {
   background-image: url("../images/line2.png");
+  background-position: 0px -18px;
 }
 .t-treeline.line1 {
   background-image: url("../images/line1.png");
+  background-position: 0px -18px;
 }
 
 

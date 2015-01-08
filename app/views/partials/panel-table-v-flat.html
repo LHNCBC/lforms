@@ -105,7 +105,7 @@
                       </div>
                     </td>
                     <td class="button-col">
-                      <button ng-show="::isRepeatable(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="::!hasOneRepeatingItem(item)" class="float-button"  ng-click="::removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
+                      <button ng-show="::isRepeatable(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="::removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
                       <!--<button ng-show="isRepeatable(item)" ng-if="lastOneRepeatingItem(item)" class="float-button"  id="{{item._codePath+item._idPath}}" ng-click="addOneRepeatingItem(item)" title="Add another'{{ item.question }}'">+</button>-->
                     </td>
                     <td ng-switch on="::getFieldType(item)" class="hasTooltip">
