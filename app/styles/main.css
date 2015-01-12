@@ -116,3 +116,11 @@ body {
   height: 0px;
   width: 0px;
 }
+
+/* 
+Fix for LF-29. 
+Override color of select boxes in calendar widget title bar.
+*/
+.ui-datepicker-title select {
+  color: initial;
+}
