@@ -416,3 +416,51 @@ td.has_treeline {
   margin-left: -125px;
 }
 /* end of tree line style setup */
+
+
+.x-treeline.line3 {
+  background-image: url("../images/dot.png"), url("../images/line-h.png");
+  background-position: 8px 0px, 8px 18px;
+  background-repeat: repeat-y, no-repeat;
+}
+.x-treeline.line2 {
+  background-image: url("../images/angle.png");
+  background-position: 8px -54px;
+  background-repeat: no-repeat;
+}
+.x-treeline.line1 {
+  background-image: url("../images/dot.png");
+  background-position: 8px 0px;
+  background-repeat: repeat-y;
+}
+.x-treeline.no_display {
+  display: none;
+}
+table.x-treeline-field,
+table.x-treeline-field tr,
+table.x-treeline-field td {
+  border: none;
+}
+
+table.x-treeline-field {
+  height: 100%;
+}
+.x-treeline-field .name_label {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  /*display: inline-block;*/
+  /*float: left;*/
+  overflow: hidden;
+  border: none;
+}
+
+
+
+td.x-treeline {
+
+  width: 26px;
+  border: none;
+  padding: 0;
+
+}
+

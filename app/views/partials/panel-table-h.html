@@ -70,18 +70,26 @@
                   <tbody id="obx_table" class="fieldExpColDiv">
                   <tr style="width: 99%" class="repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}" ng-repeat-start="item in lfData.items track by $id(item)" ng-click="setActiveRow($index)">
                     <td ng-if="::!item._inHorizontalTable" class="name has_treeline">
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
-                          <span>{{::item.question}} </span>
-                          <span ng-show="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
-                          <span ng-show="formConfig.showCodingInstruction" class="prompt">{{ ::getCodingInstructions(item) }}</span>
-                          <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
-                          </button>
-                        </div>
-                      </div>
+                      <table class="x-treeline-field" >
+                        <tr>
+                          <td class="x-treeline x-level-5" ng-class="getTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-4" ng-class="getTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-3" ng-class="getTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-2" ng-class="getTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-1" ng-class="getTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-0" ng-class="getTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
+                              <span>{{::item.question}} </span>
+                              <span ng-show="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
+                              <span ng-show="formConfig.showCodingInstruction" class="prompt">{{ ::getCodingInstructions(item) }}</span>
+                              <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                     <td ng-if="::!item._inHorizontalTable" class="button-col">
                       <button ng-show="::isRepeatable(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="::!hasOneRepeatingItem(item)" class="float-button"  ng-click="::removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
@@ -109,13 +117,21 @@
                   <!-- extra question -->
                   <tr ng-if="::!item._inHorizontalTable && needExtra(item)" style="width: 99%" class="extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}">
                     <td class="name has_treeline">
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree-extra.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <span>&nbsp;</span>
-                        </div>
-                      </div>
+                      <table class="x-treeline-field" >
+                        <tr>
+                          <td class="x-treeline x-level-5" ng-class="getExtraRowTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-4" ng-class="getExtraRowTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-3" ng-class="getExtraRowTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-2" ng-class="getExtraRowTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-1" ng-class="getExtraRowTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-0" ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <span>&nbsp;</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                     <td class="button-col"></td>
                     <td colspan="5" class="extra-field">
@@ -125,13 +141,21 @@
                   <!--a button row at the end of each repeating section-->
                   <tr ng-repeat-end ng-if="isLastItemInRepeatingItems($index)" class="buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}" >
                     <td colspan="6" class="name has_treeline" >
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree-extra.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{::repeatingItem._codePath+repeatingItem._idPath}}" ng-click="::addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
-                        </div>
-                      </div>
+                      <table class="x-treeline-field" >
+                        <tr>
+                          <td class="x-treeline x-level-5" ng-class="getExtraRowTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-4" ng-class="getExtraRowTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-3" ng-class="getExtraRowTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-2" ng-class="getExtraRowTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-1" ng-class="getExtraRowTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="x-treeline x-level-0" ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{::repeatingItem._codePath+repeatingItem._idPath}}" ng-click="::addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
 
