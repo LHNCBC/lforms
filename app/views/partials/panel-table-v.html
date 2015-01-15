@@ -47,7 +47,7 @@
                     <input ng-switch-when="CWE" name="{{::item.question}}"
                      ng-required="::isAnswerRequired(item)" placeholder="Select or type a value"
                      ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                     phr-autocomplete="::lfComboOpt(item)" ng-readonly="::isReadOnly(item)">
+                     phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)">
                     <input ng-switch-when="DT" name="{{::item.question}}"  ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)">
                     <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)">
                   </div>
@@ -92,11 +92,15 @@
                         <div class="cellData tooltipContainer">
                           <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
                           <span ng-switch-when="" > </span>
-                          <div ng-switch-when="CNE-1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" ui-select2="::select2Opt(item)" ng-readonly="::isReadOnly(item)"></div>
+                          <input ng-switch-when="CNE-1" name="{{::item.question +'_'+ $id}}"
+                           ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
+                           ng-model="item._value" phr-autocomplete="::phrAutocompOpt(item)"
+                           ng-readonly="::isReadOnly(item)"></input>
                           <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )"></input>
-                          <input ng-switch-when="CNE1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)"
+                          <input ng-switch-when="CNE1" name="{{::item.question +
+                          '_'+ $id}}" ng-required="::isAnswerRequired(item)"
                            placeholder="Select one" ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                           phr-autocomplete="::lfListOpt(item)" ng-readonly="::isReadOnly(item)"></input>
+                           phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)"></input>
                           <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)"></input>
                           <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)"></input>
                         </div>
@@ -104,7 +108,7 @@
                     </td>
                     <td ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{updateOn: 'change'}"
-                       ng-model="item._unit" phr-autocomplete="lfUnitsListOpt(item)" ></input>
+                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)" ></input>
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td>{{item.range}}</td>-->

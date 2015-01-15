@@ -390,7 +390,8 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Prepare the answer list for CNE field for pp-autocomplete & phr-autocomplete,
+       * Obsolete.  2015/1/13
+       * Prepare the answer list for CNE field for pp-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item
        * @returns {{}}
@@ -436,6 +437,88 @@ angular.module('lformsWidget')
         }
         return ret;
       };
+
+
+      /**
+       *  Returns the list options hash needed by the phr-autocomplete
+       *  directive.
+       * @param questionInfo the data structure for the question on the form
+       */
+      $scope.phrAutocompOpt = function(questionInfo) {
+        var source = [], answers = [], ret ={};
+
+        if (angular.isArray(questionInfo.answers)) {
+          answers = questionInfo.answers;
+        }
+        else if (questionInfo.answers !== "") {
+          answers = $scope.lfData.answerLists[questionInfo.answers];
+        }
+
+        // Modify the label (question text) for each question.
+        var defaultValue;
+        for(var i= 0, ilen = answers.length; i<ilen; i++) {
+          var answerData = angular.copy(answers[i]);
+          var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
+          answerData.label = label;
+          source.push(answerData);
+
+          // check the current selected value
+          if (questionInfo._value && questionInfo._value.label == label && questionInfo._value.code == answers[i].code) {
+            defaultValue = questionInfo._value.label;
+          }
+        }
+
+        var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
+        if (maxSelect !== '*') {
+          if (maxSelect == -1) // -1 or "-1"
+            maxSelect = '*';
+          else if (typeof maxSelect === 'string')
+            maxSelect = parseInt(maxSelect);
+        }
+
+        ret = {
+          source: source,
+          placeholder: "Select a value",
+          matchListValue: questionInfo.dataType === "CNE",
+          maxSelect: maxSelect
+        };
+        if (defaultValue !== undefined)
+          rtn.defaultValue = defaultValue;
+
+        return ret;
+      };
+
+
+      /**
+       *  Returns the list options hash needed by the phr-autocomplete
+       *  directive for the units field.
+       * @param questionInfo the data structure for the question on the form
+       */
+      $scope.phrUnitsAutocompOpt = function(questionInfo) {
+        var source = [], answers = questionInfo.units, ret ={};
+
+        // Modify the label (question text) for each question.
+        var defaultValue;
+        for (var i= 0, ilen = answers.length; i<ilen; i++) {
+          var answerData = answers[i];
+          source.push({label: answerData.name,
+                       value: answerData.name,
+                       code: answerData.code})
+          if (answerData.default)
+            defaultValue = answerData.name;
+        }
+
+        ret = {
+          source: source,
+          placeholder: "Select a unit",
+          matchListValue: true
+        };
+        if (defaultValue !== undefined)
+          ret.defaultValue = defaultValue;
+
+        return ret;
+      };
+
 
       /**
        * Prepare the units list for pp-autocomplete & phr-autocomplete,
