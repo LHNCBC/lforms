@@ -27,8 +27,6 @@ angular.module('lformsWidget', [
       $templateCache.put('panel-table-v.html', $http.get('views/partials/panel-table-v.html'));
       $templateCache.put('panel-table-h.html', $http.get('views/partials/panel-table-h.html'));
       $templateCache.put('horizontal-table.html', $http.get('views/partials/horizontal-table.html'));
-      $templateCache.put('tree.html', $http.get('views/partials/tree.html'));
-      $templateCache.put('tree-extra.html', $http.get('views/partials/tree-extra.html'));
       $templateCache.put('validation.html', $http.get('views/partials/validation.html'));
       $templateCache.put('loading.html', $http.get('views/partials/loading.html'));
       $templateCache.put('initial.html', $http.get('views/partials/initial.html'));

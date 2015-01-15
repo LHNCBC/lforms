@@ -51,7 +51,7 @@
     "panel"
   ],
   "license": "MIT",
-  "homepage": "lhcs-formtool.nlm.nih.gov",
+  "homepage": "lforms.nlm.nih.gov",
   "private": true,
   "ignore": [
     "**/.*",
