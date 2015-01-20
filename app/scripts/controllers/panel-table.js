@@ -539,6 +539,12 @@ angular.module('lformsWidget')
         return ret;
       };
 
+      /**
+       * Get CSS class for tree lines of horizontal table
+       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
+       * @param itemIndex
+       * @returns {string} 'line1', 'line2', 'line3', or 'no_display'
+       */
       $scope.getHorizontalLayoutTreeLevelClass = function(level,  itemIndex) {
         var ret ='';
         var widgetData = $scope.lfData;
@@ -548,12 +554,7 @@ angular.module('lformsWidget')
         switch(level) {
           // leaf node
           case 0:
-            if (statusLast[level]) {
-              ret = 'line2'
-            }
-            else {
-              ret = 'line2';
-            }
+            ret = 'line2';
             break;
           // parents nodes
           case 1:
@@ -793,19 +794,11 @@ angular.module('lformsWidget')
       };
 
 
-
       /**
-       * Check if the current item is the last repeating item in a group
-       * (so that the "add" button will show on this item.)
-       * @param index
+       * Check if the current horizontal table has one row only
+       * @param item
        * @returns {boolean}
        */
-      $scope.lastOneRepeatingItem = function(item) {
-        var maxRecId = $scope.lfData.getRepeatingItemMaxId(item);
-        var recId = parseInt(item._id)
-        return recId == maxRecId;
-      };
-
       $scope.hasOneRepeatingRow = function(item) {
         var ret = false;
         var tableInfo = $scope.lfData._horizontalTableInfo[item._codePath + item._parentIdPath_];
@@ -816,23 +809,6 @@ angular.module('lformsWidget')
         return ret;
       };
 
-      $scope.isLastOneRepeatingRow = function(item) {
-
-        return item._isLastTableHeaderInGroup;
-
-      };
-
-      /**
-       * If the current item is the last item within one or more
-       * repeating items (or groups) and return those containing repeating
-       * items (or groups)
-       * If more than one item are returned, the returned items are ordered by the hierarchy level from bottom to top.
-       * @param item
-       * @return {array}
-       */
-      $scope.parentRepeatingItems = function(item) {
-
-      };
 
       /**
        * Check if the current item is the last item within one or more
