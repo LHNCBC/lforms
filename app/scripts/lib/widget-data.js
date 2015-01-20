@@ -803,10 +803,11 @@ var WidgetData = Class.extend({
         var colNames = [];
         this.items[i]._inHorizontalTable = true;
         this.items[i]._isLastTableHeaderInGroup = false;
+        var itemCodePathAndParentIdPath = this.items[i]._codePath + this.items[i]._parentIdPath_;
         lastTableHeaderIndex = i;
         // if it's the first row (header) of the first table,
         if (tableHeaderCodePathAndParentIdPath === null ||
-            tableHeaderCodePathAndParentIdPath !== this.items[i]._codePath + this.items[i]._parentIdPath_) {
+            tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
           // indicate this item is the table header
           this.items[i]._horizontalTableHeader = true;
 
@@ -818,7 +819,7 @@ var WidgetData = Class.extend({
             this.items[j]._inHorizontalTable = true;
           }
 
-          tableHeaderCodePathAndParentIdPath = this.items[i]._codePath + this.items[i]._parentIdPath_;
+          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
             tableStartIndex: i,
             tableEndIndex: range.end,
@@ -832,7 +833,7 @@ var WidgetData = Class.extend({
 
         }
         // if it's the following rows, update the tableRows and tableEndIndex
-        else if (tableHeaderCodePathAndParentIdPath === this.items[i]._codePath + this.items[i]._parentIdPath_ ) {
+        else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
           var range = this._getRepeatableItemsRange(this.items[i]);
           var itemsInRow = [];
           for (var j=range.start+1; j<=range.end; j++) {
