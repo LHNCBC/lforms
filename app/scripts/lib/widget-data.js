@@ -341,11 +341,11 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Get the codePaths of a given list of the codes
+   * Get the code paths and indexes of target items of a skip logic rule
    * Note: in skip logic, the target items are the siblings or descendants of the source item
    * @param sourceItemIndex index of an item in the form items array
    * @param rule a skip logic rule
-   * @returns rule a skip logic rule
+   * @returns rule a skip logic rule with updated code paths and indexes of target items
    * @private
    */
   _updateSkipLogicTargetCodePathAndIndex: function(sourceItemIndex, rule) {
@@ -373,14 +373,14 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Get the codePath for the formula's source items, and add source index
+   * Get the code paths and indexes of source items of a formula
    * Note:
    * a source item and the target item should be siblings, or
    * a source item should be the target item's descendant, or
    * the target item should be a source item's descendant
    * @param targetItemIndex index of an item in the form items array
    * @param formula a formula
-   * @returns formula a formula
+   * @returns formula a formula with updated code paths and indexes of source items
    * @private
    */
   _updateFormulaSourceCodePathAndIndex: function(targetItemIndex, formula) {
