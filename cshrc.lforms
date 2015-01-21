@@ -1,3 +1,4 @@
+#!/bin/tcsh     
 #     The following is the standard cshrc file for the LForms
 # development team.  You should explicitly source
 # this first from your .cshrc and then do your own environment
@@ -5,10 +6,9 @@
 #     You may set variables before sourcing this to change execution
 # of it.
 
-
 # Use the globally installed node and its modules
 set LFORMS_NODE=node-v0.10.33_lforms.v2
-# Set path
+
 # Sets PROJECT_DIR if it is not defined.
 if (! $?PROJECT_DIR) then
   # Previously, we attempted to set this depending on the path to the
@@ -16,8 +16,10 @@ if (! $?PROJECT_DIR) then
   # when all the information we get (in $0) is -tcsh.
   setenv PROJECT_DIR ~/lforms
 endif
-#
-set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin)
+
+# Set path
+set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin `/depot/packages/${LFORMS_NODE}/bin/npm bin` )
+
 # Set node in development mode
 unsetenv NODE_ENV
 

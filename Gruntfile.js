@@ -137,7 +137,10 @@ module.exports = function (grunt) {
         args: {
           // Arguments passed to the command
           browser: ['firefox'],
-          specs: ['test/protractor/autocomp_list.js']
+          specs: [
+            'test/protractor/autocomp_list.js',
+            'test/protractor/lforms_horizontal.js'
+            ]
         }
       },
       all: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.

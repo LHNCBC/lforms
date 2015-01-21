@@ -334,85 +334,43 @@ td.has_treeline {
   padding-bottom: 0;
 }
 
-.t-treeline-field {
-  overflow: hidden;
-  display: inline-block;
-  vertical-align: top;
+.t-treeline.line3 {
+  background-image: url("../images/dot.png"), url("../images/line-h.png");
+  background-position: 8px 0px, 8px 16px;
+  background-repeat: repeat-y, no-repeat;
 }
-
-.t-treeline-field .name_label {
-  vertical-align: top;
-  padding-left: 2px;
-  width: 100%;
-  /*for tree lines to be aligned */
-  /*line-height: 33px;*/
-  padding-top: 7px;
-  padding-bottom: 7px;
-}
-
-.horizontal .t-treeline-field .name_label {
-  padding: 0;
-}
-
-.t-treeline-wrapper {
-  float: left;
-  margin-top:-18px;
-  margin-bottom:-702px;
-  vertical-align: top;
-  display: block;
-}
-
-.t-treeline {
+.t-treeline.line2 {
+  background-image: url("../images/angle.png");
+  background-position: 8px -56px;
   background-repeat: no-repeat;
-  background-position: left center;
-  width: 22px;
-  height: 720px;
-  display: inline-block;
-  position: relative;
+}
+.t-treeline.line1 {
+  background-image: url("../images/dot.png");
+  background-position: 8px 0px;
+  background-repeat: repeat-y;
 }
 .t-treeline.no_display {
   display: none;
 }
-.t-treeline.line3 {
-  background-image: url("../images/line3.png");
-}
-.t-treeline.line2 {
-  background-image: url("../images/line2.png");
-}
-.t-treeline.line1 {
-  background-image: url("../images/line1.png");
+.t-treeline-field,
+.t-treeline-field tr,
+.t-treeline-field td {
+  border: none;
 }
 
-
-.panel_l1 .t-treeline-field {
-  padding-left: 25px;
+.t-treeline-field {
+  height: 100%;
 }
-.panel_l2 .t-treeline-field {
-  padding-left: 50px;
+.t-treeline-field .name_label {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  overflow: hidden;
+  border: none;
 }
-.panel_l3 .t-treeline-field {
-  padding-left: 75px;
-}
-.panel_l4 .t-treeline-field {
-  padding-left: 100px;
-}
-.panel_l5 .t-treeline-field {
-  padding-left: 125px;
+.t-treeline {
+  width: 26px;
+  border: none;
+  padding: 0;
 }
 
-.panel_l1 .t-treeline-wrapper {
-  margin-left: -25px;
-}
-.panel_l2 .t-treeline-wrapper {
-  margin-left: -50px;
-}
-.panel_l3 .t-treeline-wrapper {
-  margin-left: -75px;
-}
-.panel_l4 .t-treeline-wrapper {
-   margin-left: -100px;
-}
-.panel_l5 .t-treeline-wrapper {
-  margin-left: -125px;
-}
 /* end of tree line style setup */

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "autocomp-phr": "#master",
     "angular": "~1.3.1",
@@ -32,7 +32,6 @@
     "app/lforms.js",
     "app/scripts/controllers/panel-table.js",
     "app/scripts/directives/lf-date.js",
-    "app/scripts/directives/phr-autocomplete.js",
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/util.js",
@@ -52,7 +51,6 @@
   ],
   "license": "MIT",
   "homepage": "lhcs-formtool.nlm.nih.gov",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",

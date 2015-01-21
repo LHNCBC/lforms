@@ -44,7 +44,7 @@ angular.module('lformsWidget')
 
       /**
        * Set the active row in table
-       * @param index Row index
+       * @param index index of an item in the lforms form items array
        */
       $scope.setActiveRow = function(index) {
         $scope.activeRow = index;
@@ -52,7 +52,7 @@ angular.module('lformsWidget')
 
       /**
        * Get the css class for the active row
-       * @param index
+       * @param index index of an item in the lforms form items array
        * @returns {string}
        */
       $scope.getActiveRowClass = function(index) {
@@ -89,43 +89,13 @@ angular.module('lformsWidget')
 
       /**
        * Check if the current question is a title for a horizontal table
-       * @param index
+       * @param index index of an item in the lforms form items array
        * @returns {*}
        */
       $scope.isHorizontalTableTitle = function(index) {
         return $scope.lfData.isHorizontalTableTitle(index);
       }
 
-      /**
-       * Get all columns in a horizontal table
-       * @param index
-       * @returns {*}
-       */
-      $scope.getHorizontalTableColumns = function(index) {
-        return $scope.lfData.getHorizontalTableColumns(index);
-      }
-
-      /**
-       * Get all rows in a horizontal table
-       * @param index
-       * @returns {*}
-       */
-      $scope.getHorizontalTableRows = function(index) {
-        return $scope.lfData.getHorizontalTableRows(index);
-      }
-
-      /**
-       * Get all data cells in a row in a horizontal table
-       * @param row
-       * @returns {Array}
-       */
-      $scope.getHorizontalTableCellsInRow = function(row) {
-        var cells = [];
-        for(var i= 0, iLen=row.length; i<iLen; i++) {
-          cells.push($scope.lfData.items[row[i]]);
-        }
-        return cells;
-      }
 
       /**
        * Check if the form is finished
@@ -137,7 +107,7 @@ angular.module('lformsWidget')
 
       /**
        * Check if input field is readonly(0), writable(1), or readonly for existing data, writable for new data(2)
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
       $scope.isReadOnly = function(item) {
@@ -153,7 +123,7 @@ angular.module('lformsWidget')
 
       /**
        * Check if an answer is required
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
       $scope.isAnswerRequired = function(item) {
@@ -168,7 +138,7 @@ angular.module('lformsWidget')
 
       /**
        * Check if multiple answers are allowed
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
       $scope.hasMultipleAnswers = function(item) {
@@ -183,7 +153,7 @@ angular.module('lformsWidget')
 
       /**
        * Check data type and answer cardinality
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.getFieldType = function(item) {
@@ -208,7 +178,7 @@ angular.module('lformsWidget')
 
       /**
        * Check if there's a unit list
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.checkUnits = function(item) {
@@ -224,7 +194,7 @@ angular.module('lformsWidget')
 
       /**
        * Get the CSS class for items in the targets of a skip logic
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string|*}
        */
       $scope.getSkipLogicTargetClass = function(item) {
@@ -233,6 +203,7 @@ angular.module('lformsWidget')
       };
 
       // seems not right. need a rewrite. not to remove
+      // to be completed, for skip logic animation
       $scope.checkSkipLogicKeys = function() {
         var widgetData = $scope.lfData;
         if (widgetData) {
@@ -250,7 +221,7 @@ angular.module('lformsWidget')
 
       /**
        * Check if the item has coding instructions
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.hasCodingInstructions = function(item) {
@@ -263,7 +234,7 @@ angular.module('lformsWidget')
 
       /**
        * Get formatted coding instructions
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.getCodingInstructions = function(item) {
@@ -280,7 +251,7 @@ angular.module('lformsWidget')
        * i.e. questionCardinality.max > 1
        * Note: questionCardinality.min should always be 1. 0 is meaningless imho.
        * todo: should also check the current number of the repeating items
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
       $scope.isRepeatable = function(item) {
@@ -294,7 +265,7 @@ angular.module('lformsWidget')
 
       /**
        * Get the sequence number for the current repeating item
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.getRepeatingSN = function(item) {
@@ -349,7 +320,7 @@ angular.module('lformsWidget')
       /**
        * Prepare the answer list for CWE (combo) field for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {{}}
        */
       $scope.lfComboOpt = function(item) {
@@ -393,7 +364,7 @@ angular.module('lformsWidget')
        * Obsolete.  2015/1/13
        * Prepare the answer list for CNE field for pp-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {{}}
        */
       $scope.lfListOpt = function(item) {
@@ -483,7 +454,7 @@ angular.module('lformsWidget')
           maxSelect: maxSelect
         };
         if (defaultValue !== undefined)
-          rtn.defaultValue = defaultValue;
+          ret.defaultValue = defaultValue;
 
         return ret;
       };
@@ -523,7 +494,7 @@ angular.module('lformsWidget')
       /**
        * Prepare the units list for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns hash
        */
       $scope.lfUnitsListOpt = function(item) {
@@ -550,7 +521,7 @@ angular.module('lformsWidget')
 
       /**
        * Get the CSS class on each item row
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {string}
        */
       $scope.getRowClass = function(item) {
@@ -623,6 +594,45 @@ angular.module('lformsWidget')
       };
 
       /**
+       * Get CSS class for tree lines of horizontal table
+       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
+       * @param itemIndex
+       * @returns {string} 'line1', 'line2', 'line3', or 'no_display'
+       */
+      $scope.getHorizontalLayoutTreeLevelClass = function(level,  itemIndex) {
+        var ret ='';
+        var widgetData = $scope.lfData;
+
+        var statusLast = widgetData._lastSiblingStatus[itemIndex];
+
+        switch(level) {
+          // leaf node
+          case 0:
+            ret = 'line2';
+            break;
+          // parents nodes
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            if (statusLast[level] === undefined) {
+              ret = 'no_display';
+            }
+            else if (statusLast[level]) {
+              ret = '';
+            }
+            else {
+              ret = 'line1';
+            }
+            break;
+          default:
+            ret = '';
+        }
+        return ret;
+      };
+
+      /**
        *  Get the CSS class for the extra row that holds the field for "Please Specify" value
        *  The class name depends on the tree level class that this row id depending on.
        * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
@@ -654,7 +664,7 @@ angular.module('lformsWidget')
 
       /**
        * Set up option for select2 directive
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {{}}
        */
       $scope.select2Opt = function(item) {
@@ -701,7 +711,7 @@ angular.module('lformsWidget')
 
       /**
        * Add a repeating item or a repeating group
-       * @param item
+       * @param item an item in the lforms form items array
        */
       $scope.addOneRepeatingItem = function(item) {
         var objWidgetData = $scope.lfData;
@@ -803,15 +813,10 @@ angular.module('lformsWidget')
 
       /**
        * Remove one repeating item in a group
-       * @param item
+       * @param item an item in the lforms form items array
        */
       $scope.removeOneRepeatingItem = function(item) {
         $scope.lfData.removeRepeatingItems(item);
-      };
-
-
-      $scope.removeOneRepeatingItemRowInHorizontalTable = function(index) {
-        $scope.lfData.removeOneRepeatingItemRowInHorizontalTable(index);
       };
 
       // temp. for testing
@@ -829,7 +834,7 @@ angular.module('lformsWidget')
       /**
        * Check if there's only one repeating item in a group
        * (so that the 'remove' button won't show on this item)
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
       $scope.hasOneRepeatingItem = function(item) {
@@ -837,35 +842,28 @@ angular.module('lformsWidget')
         return recCount > 1 ? false : true;
       };
 
+
       /**
-       * Check if the current item is the last repeating item in a group
-       * (so that the "add" button will show on this item.)
-       * @param item
+       * Check if the current horizontal table has one row only
+       * @param item an item in the lforms form items array
        * @returns {boolean}
        */
-      $scope.lastOneRepeatingItem = function(item) {
-        var maxRecId = $scope.lfData.getRepeatingItemMaxId(item);
-        var recId = parseInt(item._id)
-        return recId == maxRecId;
+      $scope.hasOneRepeatingRow = function(item) {
+        var ret = false;
+        var tableInfo = $scope.lfData._horizontalTableInfo[item._codePath + item._parentIdPath_];
+        if (tableInfo && tableInfo.tableRows && tableInfo.tableRows.length === 1) {
+          ret = true;
+        }
+
+        return ret;
       };
 
-      /**
-       * If the current item is the last item within one or more
-       * repeating items (or groups) and return those containing repeating
-       * items (or groups)
-       * If more than one item are returned, the returned items are ordered by the hierarchy level from bottom to top.
-       * @param item
-       * @return {array}
-       */
-      $scope.parentRepeatingItems = function(item) {
-
-      };
 
       /**
        * Check if the current item is the last item within one or more
        * repeating items (or groups) and return those containing repeating
        * items (or groups)
-       * @param item
+       * @param item an item in the lforms form items array
        * @return {boolean}
        */
       $scope.isLastItemInRepeatingItems = function(index) {
@@ -875,23 +873,16 @@ angular.module('lformsWidget')
       /**
        * Get the containing repeating item of the last item of repeating items or sections.
        * The containing item is itself if it the last item of a repeating items.
-       * @param index
+       * @param index index of an item in the lforms form items array
        * @returns {Array}
        */
       $scope.getParentRepeatingItemsOfLastItem = function(index) {
         return $scope.lfData.getParentRepeatingItemsOfLastItem(index);
       };
 
-
-      $scope.firstOneRepeatingItem = function(item) {
-        var minRecId = $scope.lfData.getRepeatingItemMinId(item);
-        var recId = parseInt(item._id)
-        return recId == minRecId;
-      }
-
       /**
        * Check if the question needs an extra input
-       * @param item
+       * @param item an item in the lforms form items array
        * @returns {*}
        */
       $scope.needExtra = function(item) {
