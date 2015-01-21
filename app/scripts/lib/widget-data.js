@@ -101,12 +101,13 @@ var WidgetData = Class.extend({
     "URL",     // sub-type of "ST"
     "EMAIL",   // sub-type of "ST"
     "PHONE",   // sub-type of "ST"
-    "", // for header, no input field
+    "",        // for header, no input field
   ],
 
-  // functions
-
-  // constructor
+  /**
+   * Constructor
+   * @param data the lforms form definition data
+   */
   init: function(data) {
 
     var start = new Date().getTime();
@@ -171,7 +172,7 @@ var WidgetData = Class.extend({
 
     this._resetRepeatableItems();
 
-    this._resetFieldsForHorizontalTableLayout();
+    this._resetHorizontalTableInfo();
 
     this._updateLastSiblingStatus();
 
@@ -193,7 +194,7 @@ var WidgetData = Class.extend({
     // update score rule if there is one
     this._updateScoreRule();
 
-    this._resetFieldsForHorizontalTableLayout();
+    this._resetHorizontalTableInfo();
 
     this._updateLastSiblingStatus();
 
@@ -340,11 +341,11 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Get the codePaths of a given list of the codes
+   * Get the code paths and indexes of target items of a skip logic rule
    * Note: in skip logic, the target items are the siblings or descendants of the source item
-   * @param sourceItemIndex
-   * @param rule
-   * @returns rule
+   * @param sourceItemIndex index of an item in the form items array
+   * @param rule a skip logic rule
+   * @returns rule a skip logic rule with updated code paths and indexes of target items
    * @private
    */
   _updateSkipLogicTargetCodePathAndIndex: function(sourceItemIndex, rule) {
@@ -372,14 +373,14 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Get the codePath for the formula's source items, and add source index
+   * Get the code paths and indexes of source items of a formula
    * Note:
    * a source item and the target item should be siblings, or
    * a source item should be the target item's descendant, or
    * the target item should be a source item's descendant
-   * @param targetItemIndex
-   * @param formula
-   * @returns formula
+   * @param targetItemIndex index of an item in the form items array
+   * @param formula a formula
+   * @returns formula a formula with updated code paths and indexes of source items
    * @private
    */
   _updateFormulaSourceCodePathAndIndex: function(targetItemIndex, formula) {
@@ -470,7 +471,7 @@ var WidgetData = Class.extend({
 
   /**
    * Check if an item has children
-   * @param itemIndex
+   * @param itemIndex index of an item in the form items array
    * @returns {boolean}
    * @private
    */
@@ -489,7 +490,7 @@ var WidgetData = Class.extend({
 
   /**
    * Find the max _id of the same question within the its parent node
-   * @param item
+   * @param item an item in the form items array
    * @returns {number}
    */
   getRepeatingItemMaxId: function(item) {
@@ -507,7 +508,7 @@ var WidgetData = Class.extend({
 
   /**
    * Find the min _id of the same question within the its parent node
-   * @param item
+   * @param item an item in the form items array
    * @returns {number}
    */
   getRepeatingItemMinId: function(item) {
@@ -525,7 +526,7 @@ var WidgetData = Class.extend({
 
   /**
    * Find the number of the same question within the its parent node
-   * @param item
+   * @param item an item in the form items array
    * @returns {number}
    */
   getRepeatingItemCount: function(item) {
@@ -572,7 +573,7 @@ var WidgetData = Class.extend({
   /**
    * Check if an item is the last item of the repeating items or sections.
    * If it is a repeating section, the last item is the last leaf node within the last repeating section.
-   * @param index
+   * @param index index of an item in the form items array
    * @returns {boolean}
    */
   isLastItemInRepeatingItems: function(index) {
@@ -588,7 +589,7 @@ var WidgetData = Class.extend({
   /**
    * Get the containing repeating item of the last item of repeating items or sections.
    * The containing item is itself if it the last item of a repeating items.
-   * @param index
+   * @param index index of an item in the form items array
    * @returns {Array}
    */
   getParentRepeatingItemsOfLastItem: function(index) {
@@ -631,7 +632,7 @@ var WidgetData = Class.extend({
 
   /**
    * Check if the record is the last one (position in the array) within the parent node
-   * @param item
+   * @param item an item in the form items array
    * @returns {boolean}
    * @private
    */
@@ -668,7 +669,7 @@ var WidgetData = Class.extend({
 
   /**
    * Get the parent item
-   * @param item
+   * @param item an item in the form items array
    * @returns false if the parent is on the top level,
    *          or the parent item
    * @private
@@ -695,8 +696,8 @@ var WidgetData = Class.extend({
   /**
    * Update the _id, _idPath and _parentIdPath_ in the newly added repeating items
    * Note: _id is only unique for the repeating items within a same parent item
-   * @param newItems
-   * @param parentIdPath
+   * @param newItems a newly added item in the form items array
+   * @param parentIdPath idPath of the repeating item's parent item
    * @param newId
    * @private
    */
@@ -722,7 +723,7 @@ var WidgetData = Class.extend({
   /**
    * Find the start index and end index in the items array of a repeatable item or
    * a repeatable group. It is used for adding and removing a repeatable items
-   * @param item
+   * @param item an item in the form items array
    * @returns {{}}
    * @private
    */
@@ -737,8 +738,8 @@ var WidgetData = Class.extend({
         inRepeatableItems = true;
       }
       if (inRepeatableItems &&
-          this.items[i]._idPath.indexOf(item._idPath) == 0 &&
-          this.items[i]._codePath.indexOf(item._codePath) == 0 ) {
+          (this.items[i]._idPath + "/").indexOf(item._idPath + "/") == 0 &&
+          (this.items[i]._codePath + "/").indexOf(item._codePath + "/") == 0 ) {
         idxEnd = i;
       }
     }
@@ -747,7 +748,7 @@ var WidgetData = Class.extend({
 
   /**
    * Check if multiple answers are allowed
-   * @param item
+   * @param item an item in the form items array
    * @returns {boolean}
    * @private
    */
@@ -785,52 +786,82 @@ var WidgetData = Class.extend({
    *
    * @private
    */
-  _resetFieldsForHorizontalTableLayout: function() {
-    this._horizontalTableItems = {};
+
+  _resetHorizontalTableInfo: function() {
+    this._horizontalTableInfo = {};
+
+    var tableHeaderCodePathAndParentIdPath = null;
+    var lastTableHeaderIndex = null;
+    var hasHorizontalLayout = false;
+
     for (var i= 0, iLen=this.items.length; i<iLen; i++) {
       // header item and horizontal layout
       if (this.items[i].header && this.items[i].layout == "horizontal" ) {
-        // if it's a repeating table
-        if (this._questionRepeatable(this.items[i])) {
+        hasHorizontalLayout = true;
+        // same methods for repeating items could be used for repeating and non-repeating items.
+        // (need to rename function names in those 'repeatable' functions.)
+        var itemsInRow = [];
+        var colNames = [];
+        this.items[i]._inHorizontalTable = true;
+        this.items[i]._isLastTableHeaderInGroup = false;
+        var itemCodePathAndParentIdPath = this.items[i]._codePath + this.items[i]._parentIdPath_;
+        lastTableHeaderIndex = i;
+        // if it's the first row (header) of the first table,
+        if (tableHeaderCodePathAndParentIdPath === null ||
+            tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
+          // indicate this item is the table header
+          this.items[i]._horizontalTableHeader = true;
+
           var range = this._getRepeatableItemsRange(this.items[i]);
-          // get column info (names for now)
-          var cols =[];
-          var itemsInRow = [];
-          for (var c=range.start+1; c<=range.end; c++) {
-            cols.push(this.items[c].question)
-            itemsInRow.push(c)
+          for (var j=range.start+1; j<=range.end; j++) {
+            itemsInRow.push(j);
+            colNames.push(this.items[j].question);
+            // indicate the item is in a horizontal table
+            this.items[j]._inHorizontalTable = true;
           }
-          this._horizontalTableItems[i] = {start: range.start+1, end: range.end, columns: cols, rows: [itemsInRow]};
+
+          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
+            tableStartIndex: i,
+            tableEndIndex: range.end,
+            columnNames: colNames,
+            tableRows: [{ header: i, cells : itemsInRow }],
+            tableHeaders: [i]
+          };
+
+          // set the last table/row in horizontal group/table flag
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
+
         }
-        // or it's a non-repeating table.
-        else {
-          // same methods for repeating items could be used for non-repeating items too.
-          // Need to rename function names in those 'repeatable' functions.
+        // if it's the following rows, update the tableRows and tableEndIndex
+        else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
           var range = this._getRepeatableItemsRange(this.items[i]);
-          // get column info (names for now)
-          var cols =[];
           var itemsInRow = [];
-          for (var c=range.start+1; c<=range.end; c++) {
-            cols.push(this.items[c].question)
-            itemsInRow.push(c)
+          for (var j=range.start+1; j<=range.end; j++) {
+            itemsInRow.push(j);
+            // indicate the item is in a horizontal table
+            this.items[j]._inHorizontalTable = true;
           }
-          this._horizontalTableItems[i] = {start: range.start+1, end: range.end, columns: cols, rows: [itemsInRow]};
+          // update rows index
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableRows.push({header: i, cells : itemsInRow});
+          // update headers index (hidden)
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(i);
+          // update last item index in the table
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = range.end;
+
+          // set the last table/row in horizontal group/table flag
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
         }
       }
     }
 
-  },
-
-
-  addRepeatingItemsForHorizontalTable: function(rowIndex) {
 
   },
-
 
   /**
    * Add a repeating item or a repeating group
    * and update related form status
-   * @param item
+   * @param item an item in the form items array
    */
   addRepeatingItems: function(item) {
 
@@ -850,7 +881,7 @@ var WidgetData = Class.extend({
 
   /**
    * Remove a repeating item or group
-   * @param item
+   * @param item an item in the form items array
    */
   removeRepeatingItems: function(item) {
 
@@ -860,16 +891,11 @@ var WidgetData = Class.extend({
     this._resetInternalData();
   },
 
-//  formula : {
-//    name: 'BMI',
-//    value: ['/12345-1', '/23498-2'],
-//    target: '/38743-3'
-//  }
-
-  // support for score rules
-  /** determine if a loinc test is a place to store the total score for score rules
+  /**
+   * Check if an item has a total score formula.
+   * This is a special case of formula, where sources are not explicitly specified.
    *
-   * @param codePath the LOINC test's LOINC path
+   * @param codePath the item's code path.
    * @returns true/false
    */
   isScoreRuleTarget: function(codePath) {
@@ -887,8 +913,8 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Calculate the total score and set the value of the score rule target field
-   * @param scoreRule
+   * Calculate the total score and set the value of the total score formula target field
+   * @param scoreRule a total score formula
    * @private
    */
   _calculateTotalScore: function(scoreRule) {
@@ -916,7 +942,7 @@ var WidgetData = Class.extend({
         // run non-score rules
         if (formula.name != 'TOTALSCORE') {
           // find the sources and target
-          var valuesInStandardUnit = this.findFormulaSourcesInStandardUnit_(formula);
+          var valuesInStandardUnit = this._findFormulaSourcesInStandardUnit(formula);
 
           // calculate the formula result
           var result = this.Formulas.calculations_[formula.name](valuesInStandardUnit)
@@ -932,7 +958,14 @@ var WidgetData = Class.extend({
       }
   },
 
-  findFormulaSourcesInStandardUnit_ : function(formula) {
+
+  /**
+   * Find all source items of a formula
+   * @param formula a formula
+   * @returns {Array}
+   * @private
+   */
+  _findFormulaSourcesInStandardUnit : function(formula) {
     var values = [];
 
     for (var i= 0, iLen = formula.valueIndex.length; i<iLen; i++ ) {
@@ -951,6 +984,10 @@ var WidgetData = Class.extend({
     return values;
   },
 
+  /**
+   * Units modules
+   * Embedded in widget-data.js. To be separated as a independent file.
+   */
   Units: {
     getValueInStandardUnit: function(value, unit) {
       var result = value * this.units_[unit];
@@ -980,6 +1017,10 @@ var WidgetData = Class.extend({
     }
   },
 
+  /**
+   * Formula modules
+   * Embedded in widget-data.js. To be separated as a independent file.
+   */
   Formulas: {
     calculations_: {
       precision_: 2,
@@ -1018,15 +1059,9 @@ var WidgetData = Class.extend({
   },
 
 
-
-  // functions for skip logic support
-  // only 'CNE' and 'CWE' type are supported, only 'show action' is supported
-  // TODO: 1) numeric value as a trigger, 2) 'hide' action
-
-
   /**
    * Check if a item is part of the target of a skip logic rule
-   * @param codePath
+   * @param codePath an item's code path
    * @returns {boolean}
    */
   isSkipLogicTarget: function(codePath) {
@@ -1043,9 +1078,9 @@ var WidgetData = Class.extend({
 
   /**
    * Get the target of a skip logic rule, given the source's codePath and the trigger value
-   * @param codePath
-   * @param dataType
-   * @param currentValue
+   * @param codePath an item's code path
+   * @param dataType an item's data type
+   * @param currentValue an item's current value
    * @returns {Array}
    * @private
    */
@@ -1117,8 +1152,8 @@ var WidgetData = Class.extend({
    * Check if a number is within a range.
    * keys in a range are "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
    * range example: {"minInclusive": 3, "maxInclusive":10}
-   * @param range
-   * @param numValue
+   * @param range data range
+   * @param numValue an item's numeric value
    * @returns {boolean}
    * @private
    */
@@ -1191,64 +1226,6 @@ var WidgetData = Class.extend({
 
   },
 
-  inHorizontalTable: function(index) {
-    var ret = false;
-    var titles = Object.keys(this._horizontalTableItems);
-    for (var i= 0, iLen=titles.length; i<iLen; i++) {
-      // if it's the table title item
-      if (index == titles[i]) {
-        ret = true;
-        break;
-      }
-      // horizontal table items
-      else {
-        var table = this._horizontalTableItems[titles[i]];
-        if (index >= table.start && index <=table.end ) {
-          ret = true;
-          break;
-        }
-      } // end if it's the table title item
-    } // end of the loop of horizontal tables
-
-    return ret;
-  },
-
-  isHorizontalTableTitle: function(index) {
-    var ret = false;
-    var titles = Object.keys(this._horizontalTableItems);
-    for (var i= 0, iLen=titles.length; i<iLen; i++) {
-      // if it's the table title item
-      if (index == titles[i]) {
-        ret = true;
-        break;
-      }
-    } // end of the loop of horizontal tables
-
-    return ret;
-
-  },
-
-  getHorizontalTableColumns: function(titleItemIndex) {
-    //return this._horizontalTableItems[titleItemIndex][0].columns;
-    return this._horizontalTableItems[titleItemIndex].columns
-  },
-
-  getHorizontalTableRows: function(titleItemIndex) {
-
-    return this._horizontalTableItems[titleItemIndex].rows
-//    var ret = [];
-//    var rows = this._horizontalTableItems[titleItemIndex];
-//    for (var i= 0, iLen=rows.length; i<iLen; i++) {
-//      var itemsInRow = [];
-//      for (var c=rows[i].start; c<=rows[i].end; c++) {
-//        itemsInRow.push(this.c)
-//      }
-//      ret.push(itemsInRow);
-//    }
-//
-//    return ret;
-  },
-
   /**
    * Compare two JavaScript objects
    * @param obj1
@@ -1300,7 +1277,7 @@ var WidgetData = Class.extend({
 
   /**
    * Get the CSS classes for a give item
-   * @param item
+   * @param item an item in the lforms form items array
    * @returns {string}
    */
   getSkipLogicTargetClass: function(item) {
@@ -1330,6 +1307,7 @@ var WidgetData = Class.extend({
 
   // check skip logic target keys ???
   // seems not finished yet. used to make style changes in the transition of show/hide target items
+  // to be completed, for skip logic animation
   checkSkipLogicKeys: function() {
     var ret = false;
     if (!jQuery.isEmptyObject(this._skipLogicShownTargetKeys)) {
@@ -1341,7 +1319,7 @@ var WidgetData = Class.extend({
 
   /**
    * Check if a skip logic target item is shown
-   * @param item
+   * @param item an item in the lforms form items array
    * @returns {boolean}
    */
   isTargetShown: function(item) {
@@ -1396,9 +1374,9 @@ var WidgetData = Class.extend({
   /**
    * Update the status of the skip logic rules.
    * Called by checkAnswerCode
-   * @param item
-   * @param currentValue
-   * @param prevSkipLogicShownTargets
+   * @param item an item in the lforms form items array
+   * @param currentValue the current value of the item
+   * @param prevSkipLogicShownTargets an array of previously shown targets
    * @private
    */
   _updateSkipLogicStatus: function(item, currentValue, prevSkipLogicShownTargets) {
@@ -1424,10 +1402,10 @@ var WidgetData = Class.extend({
   /**
    * Reset each target item's value if its triggering item's value is changed by another triggering item.
    * It's called recursively until all the triggered target items are checked.
-   * @param currentCodePath
-   * @param parentIdPath
-   * @param currentValue
-   * @param prevSkipLogicShownTargets
+   * @param currentCodePath code path of the current item
+   * @param parentIdPath id path of the current item's parent item
+   * @param currentValue value of the current item
+   * @param prevSkipLogicShownTargets an array of previously shown targets
    * @private
    */
   _resetSkipLogicTargetValue: function(currentCodePath, parentIdPath, currentValue, prevSkipLogicShownTargets) {
@@ -1475,7 +1453,7 @@ var WidgetData = Class.extend({
 
   /**
    * Check if the question needs an extra input
-   * @param item
+   * @param item an item in the lforms form items array
    * @returns {boolean}
    */
   needExtra: function(item) {
