@@ -51,7 +51,6 @@
   ],
   "license": "MIT",
   "homepage": "lhcs-formtool.nlm.nih.gov",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
