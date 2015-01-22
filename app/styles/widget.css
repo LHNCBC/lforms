@@ -291,6 +291,9 @@ ng-form.ng-invalid-minlength div.errorMsg.errorMinlength {
 ng-form.ng-invalid-email div.errorMsg.errorEmail {
   display: block;
 }
+ng-form.ng-invalid-parse div.errorMsg.errorInvalidParse {
+  display: block;
+}
 
 /* horizontal table */
 /* title */

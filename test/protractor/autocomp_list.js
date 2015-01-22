@@ -2,9 +2,12 @@ describe('autocomp list', function() {
   var listFieldID = '#ac4'; // "Were you adopted?"
   var showPanel = $('.btn');
   var searchResults = $('#searchResults');
+  var formSearch = $('#s2id_loinc_num1 a');
+  var raceFieldID = '#ac19';
+  var raceField = $(raceFieldID);
+
   it('should not be visible when the form loads', function() {
     browser.get('http://0.0.0.0:9001/');
-    var formSearch = $('#s2id_loinc_num1 a');
     browser.wait(function() {
       return formSearch.isDisplayed();
     }, 10000);
@@ -25,11 +28,16 @@ describe('autocomp list', function() {
     }, 10000);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
+  it('should work with multiple-select fields', function() {
+    expect(raceField.isDisplayed()).toBeTruthy();
+    expect(browser.driver.executeScript('return typeof jQuery("'+raceFieldID+
+      '")[0].autocomp')).toBe('object');
+  });
+
   it('should interoperate with score rules', function() {
     // The data model needs to be correctly updated
     // when the user enters a new value.
     browser.get('http://0.0.0.0:9001/');
-    var formSearch = $('#s2id_loinc_num1 a');
     formSearch.click();
     var glasgow = $('.select2-result:last-child');
     glasgow.click();
@@ -58,4 +66,5 @@ describe('autocomp list', function() {
     eyeField.sendKeys(protractor.Key.TAB);
     expect(scoreField.getAttribute('value')).toEqual('3');
   });
+
 });
