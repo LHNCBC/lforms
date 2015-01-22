@@ -91,10 +91,14 @@ h1 {
   border-radius: 4px;
 }
 
+/* override some settings from autocomp-phr */
 .autocomp_selected {
   border: 1px solid #ced5d9;
   border-radius: 4px;
   width: 100%;
+}
+.autocomp_selected ul {
+  margin: 0 0 0 0.25em;
 }
 
 .fieldsTable input:focus {
