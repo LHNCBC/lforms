@@ -323,9 +323,11 @@ tr .horizontal-table tr td {
  * using 100% all the way up until an element has a fixed height or to the root
  */
 tr.repeatingLine,
-td.has_treeline.name,
 div.t-treeline-field {
   height: 100%;
+}
+td.has_treeline.name {
+  height: 1px;
 }
 
 /* tree line style setup */
@@ -374,3 +376,8 @@ td.has_treeline {
 }
 
 /* end of tree line style setup */
+
+/* override some settings from autocomp-phr */
+.autocomp_selected ul {
+ margin: 0 0 0 0.25em;
+}
