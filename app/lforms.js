@@ -1,7 +1,10 @@
+'use strict';
+
 angular.module('lformsWidget', [
     'ngRoute',
     "mgcrea.ngStrap",
-    'ui.select2'
+    'ui.select2',
+    'autocompPhr'
 ])
 .directive('lformsPanelV', function() {
   return {
