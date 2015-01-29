@@ -54,9 +54,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      <div class=\"errorMsg errorDT\">\"{{ lfData.items[cell].question }}\" requires a date value.</div>\n" +
     "                    </span>  <!-- validation error messages -->\n" +
     "                    <span ng-switch-when=\"\" > </span>\n" +
-    "                    <div ng-switch-when=\"CNE-1\" name=\"{{lfData.items[cell].question}}\" ng-required=\"isAnswerRequired2(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\" ui-select2=\"select2Opt(lfData.items[cell])\" ng-readonly=\"isReadOnly(lfData.items[cell])\"></div>\n" +
+    "                    <div ng-switch-when=\"CNE-1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
+    "                     ng-required=\"isAnswerRequired2(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
+    "                     phr-autocomplete=\"phrAutocompOpt(lfData.items[cell])\" ng-model-options=\"{updateOn: 'change'}\"\n" +
+    "                     ng-readonly=\"isReadOnly(lfData.items[cell])\"></div>\n" +
     "                    <input ng-switch-when=\"REAL1\" name=\"{{lfData.items[cell].question}}\" type=\"number\" ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\" placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell] )\">\n" +
-    "                    <input ng-switch-when=\"CNE1\" name=\"{{lfData.items[cell].question}}\" ng-required=\"isAnswerRequired(lfData.items[cell])\" placeholder=\"Select one\" ng-model=\"lfData.items[cell]._value\" phr-autocomplete=\"lfListOpt(lfData.items[cell])\" ng-readonly=\"isReadOnly(lfData.items[cell])\" ng-model-options=\"{updateOn: 'change'}\">\n" +
+    "                    <input ng-switch-when=\"CNE1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
+    "                     ng-required=\"isAnswerRequired(lfData.items[cell])\" placeholder=\"Select one\"\n" +
+    "                     ng-model=\"lfData.items[cell]._value\" phr-autocomplete=\"phrAutocompOpt(lfData.items[cell])\"\n" +
+    "                     ng-readonly=\"isReadOnly(lfData.items[cell])\" ng-model-options=\"{updateOn: 'change'}\">\n" +
     "                    <input ng-switch-when=\"DT1\" name=\"{{lfData.items[cell].question}}\" ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\" lf-date=\"dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"isReadOnly(lfData.items[cell])\">\n" +
     "                    <input ng-switch-default name=\"{{lfData.items[cell].question}}\" ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\" placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell])\">\n" +
     "                  </div>\n" +
@@ -69,7 +75,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      </td>\n" +
     "    </tr>\n" +
-    "  </table>"
+    "  </table>\n"
   );
 
 
@@ -158,7 +164,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
     "                     placeholder=\"Select or type a value\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                     ng-model=\"item._value\" phr-autocomplete=\"::lfComboOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
+    "                     ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
+    "                     ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"  ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                  </div>\n" +
@@ -211,18 +218,24 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <div ng-switch-when=\"CNE-1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" ui-select2=\"::select2Opt(item)\" ng-readonly=\"::isReadOnly(item)\"></div>\n" +
+    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question + '_' + $id}}\"\n" +
+    "                           ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{updateOn: 'change'}\"\n" +
+    "                           ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
+    "                           ng-readonly=\"::isReadOnly(item)\">\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
-    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_' + $id}}\"\n" +
+    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
     "                           placeholder=\"Select one\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                           ng-model=\"item._value\" phr-autocomplete=\"::lfListOpt(item)\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
+    "                           ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
+    "                           ng-readonly=\"::isReadOnly(item)\">\n" +
     "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                        </div>\n" +
     "                      </ng-form>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::checkUnits(item)\">\n" +
-    "                      <input class=\"units\" ng-switch-when=\"list\" ng-model-options=\"{ updateOn: 'change' }\" ng-model=\"item._unit\" phr-autocomplete=\"lfUnitsListOpt(item )\" ></input>\n" +
+    "                      <input class=\"units\" ng-switch-when=\"list\" ng-model-options=\"{updateOn: 'change'}\"\n" +
+    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\"></input>\n" +
     "                      <span ng-switch-when=\"none\" > </span>\n" +
     "                    </td>\n" +
     "                    <!--<td ng-if=\"!inHorizontalTable($index)\">{{item.range}}</td>-->\n" +
@@ -338,7 +351,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
     "                     ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
     "                     ng-model-options=\"{updateOn: 'change'}\" ng-model=\"item._value\"\n" +
-    "                     phr-autocomplete=\"::lfComboOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
+    "                     phr-autocomplete=\"::phrAutocompOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"  ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                    <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\">\n" +
     "                  </div>\n" +
@@ -391,11 +404,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <div ng-switch-when=\"CNE-1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" ui-select2=\"::select2Opt(item)\" ng-readonly=\"::isReadOnly(item)\"></div>\n" +
+    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                           ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{updateOn: 'change'}\"\n" +
+    "                           ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
+    "                           ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
-    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
+    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
     "                           placeholder=\"Select one\" ng-model-options=\"{updateOn: 'change'}\" ng-model=\"item._value\"\n" +
-    "                           phr-autocomplete=\"::lfListOpt(item)\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
+    "                           phr-autocomplete=\"::phrAutocompOpt(item)\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"></input>\n" +
     "                        </div>\n" +
@@ -403,7 +420,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </td>\n" +
     "                    <td ng-switch on=\"::checkUnits(item)\">\n" +
     "                      <input class=\"units\" ng-switch-when=\"list\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                       ng-model=\"item._unit\" phr-autocomplete=\"lfUnitsListOpt(item)\" ></input>\n" +
+    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\" ></input>\n" +
     "                      <span ng-switch-when=\"none\" > </span>\n" +
     "                    </td>\n" +
     "                    <!--<td>{{item.range}}</td>-->\n" +
@@ -480,7 +497,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"errorMsg errorREAL\">\"{{ ::item.question }}\" requires a decimal value.</div>\n" +
     "<div class=\"errorMsg errorINT\">\"{{ ::item.question }}\" requires a integer value.</div>\n" +
     "<div class=\"errorMsg errorTM\">\"{{ ::item.question }}\" requires a time value.</div>\n" +
-    "<div class=\"errorMsg errorDT\">\"{{ ::item.question }}\" requires a date value.</div>\n"
+    "<div class=\"errorMsg errorDT\">\"{{ ::item.question }}\" requires a date value.</div>\n" +
+    "<div class=\"errorMsg errorInvalidParse\">\"{{ ::item.question }}\" requires a selection from the list.</div>\n"
   );
 
 }]);

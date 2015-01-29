@@ -139,7 +139,8 @@ module.exports = function (grunt) {
           browser: ['firefox'],
           specs: [
             'test/protractor/autocomp_list.js',
-            'test/protractor/lforms_horizontal.js'
+            'test/protractor/lforms_horizontal.js',
+            'test/protractor/lforms_directive.js'
             ]
         }
       },
