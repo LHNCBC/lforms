@@ -105,7 +105,7 @@
                           <input ng-switch-when="CNE-1" name="{{::item.question + '_' + $id}}"
                            ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
                            ng-model="item._value" phr-autocomplete="::phrAutocompOpt(item)"
-                           ng-readonly="::isReadOnly(item)">
+                           ng-readonly="::isReadOnly(item)" placeholder="Select one or more">
                           <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )"></input>
                           <input ng-switch-when="CNE1" name="{{::item.question + '_' + $id}}"
                            ng-required="::isAnswerRequired(item)"
@@ -119,7 +119,7 @@
                     </td>
                     <td ng-if="::!item._inHorizontalTable" ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{updateOn: 'change'}"
-                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)"></input>
+                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)" placeholder="Select one"></input>
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td ng-if="!inHorizontalTable($index)">{{item.range}}</td>-->

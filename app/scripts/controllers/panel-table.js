@@ -449,7 +449,6 @@ angular.module('lformsWidget')
 
         ret = {
           source: source,
-          placeholder: "Select a value",
           matchListValue: questionInfo.dataType === "CNE",
           maxSelect: maxSelect
         };
@@ -481,7 +480,6 @@ angular.module('lformsWidget')
 
         ret = {
           source: source,
-          placeholder: "Select a unit",
           matchListValue: true
         };
         if (defaultValue !== undefined)

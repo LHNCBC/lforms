@@ -53,7 +53,7 @@
                     <div ng-switch-when="CNE-1" name="{{lfData.items[cell].question + '_' + $id}}"
                      ng-required="isAnswerRequired2(lfData.items[cell])" ng-model="lfData.items[cell]._value"
                      phr-autocomplete="phrAutocompOpt(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
-                     ng-readonly="isReadOnly(lfData.items[cell])"></div>
+                     ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more"></div>
                     <input ng-switch-when="REAL1" name="{{lfData.items[cell].question}}" type="number" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell] )">
                     <input ng-switch-when="CNE1" name="{{lfData.items[cell].question + '_' + $id}}"
                      ng-required="isAnswerRequired(lfData.items[cell])" placeholder="Select one"
