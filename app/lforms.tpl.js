@@ -57,7 +57,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <div ng-switch-when=\"CNE-1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
     "                     ng-required=\"isAnswerRequired2(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
     "                     phr-autocomplete=\"phrAutocompOpt(lfData.items[cell])\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                     ng-readonly=\"isReadOnly(lfData.items[cell])\"></div>\n" +
+    "                     ng-readonly=\"isReadOnly(lfData.items[cell])\" placeholder=\"Select one or more\"></div>\n" +
     "                    <input ng-switch-when=\"REAL1\" name=\"{{lfData.items[cell].question}}\" type=\"number\" ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\" placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell] )\">\n" +
     "                    <input ng-switch-when=\"CNE1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
     "                     ng-required=\"isAnswerRequired(lfData.items[cell])\" placeholder=\"Select one\"\n" +
@@ -221,7 +221,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question + '_' + $id}}\"\n" +
     "                           ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{updateOn: 'change'}\"\n" +
     "                           ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
-    "                           ng-readonly=\"::isReadOnly(item)\">\n" +
+    "                           ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\">\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
     "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_' + $id}}\"\n" +
     "                           ng-required=\"::isAnswerRequired(item)\"\n" +
@@ -235,7 +235,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::checkUnits(item)\">\n" +
     "                      <input class=\"units\" ng-switch-when=\"list\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\"></input>\n" +
+    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\" placeholder=\"Select one\"></input>\n" +
     "                      <span ng-switch-when=\"none\" > </span>\n" +
     "                    </td>\n" +
     "                    <!--<td ng-if=\"!inHorizontalTable($index)\">{{item.range}}</td>-->\n" +
@@ -407,7 +407,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                           ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{updateOn: 'change'}\"\n" +
     "                           ng-model=\"item._value\" phr-autocomplete=\"::phrAutocompOpt(item)\"\n" +
-    "                           ng-readonly=\"::isReadOnly(item)\"></input>\n" +
+    "                           ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"></input>\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item )\"></input>\n" +
     "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
     "                           ng-required=\"::isAnswerRequired(item)\"\n" +
@@ -420,7 +420,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </td>\n" +
     "                    <td ng-switch on=\"::checkUnits(item)\">\n" +
     "                      <input class=\"units\" ng-switch-when=\"list\" ng-model-options=\"{updateOn: 'change'}\"\n" +
-    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\" ></input>\n" +
+    "                       ng-model=\"item._unit\" phr-autocomplete=\"phrUnitsAutocompOpt(item)\" placeholder=\"Select one\"></input>\n" +
     "                      <span ng-switch-when=\"none\" > </span>\n" +
     "                    </td>\n" +
     "                    <!--<td>{{item.range}}</td>-->\n" +
