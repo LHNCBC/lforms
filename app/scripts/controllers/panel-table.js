@@ -430,12 +430,12 @@ angular.module('lformsWidget')
         for(var i= 0, ilen = answers.length; i<ilen; i++) {
           var answerData = angular.copy(answers[i]);
           var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
-          answerData.label = label;
+          answerData.text = label;
           source.push(answerData);
 
           // check the current selected value
-          if (questionInfo._value && questionInfo._value.label == label && questionInfo._value.code == answers[i].code) {
-            defaultValue = questionInfo._value.label;
+          if (questionInfo._value && questionInfo._value.text == label && questionInfo._value.code == answers[i].code) {
+            defaultValue = questionInfo._value.text;
           }
         }
 
@@ -471,7 +471,7 @@ angular.module('lformsWidget')
         var defaultValue;
         for (var i= 0, ilen = answers.length; i<ilen; i++) {
           var answerData = answers[i];
-          source.push({label: answerData.name,
+          source.push({text: answerData.name,
                        value: answerData.name,
                        code: answerData.code})
           if (answerData.default)
