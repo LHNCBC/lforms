@@ -899,5 +899,35 @@ angular.module('lformsWidget')
       $scope.onclick = function() {
         debugger
         var i = 1;
+      };
+
+      /**
+       * Handle navigation keys
+       * @param event keypress event
+       */
+      $scope.handleNavigationKeyEvent = function(event) {
+
+        // supported arrow keys
+        var arrow = {left: 37, up: 38, right: 39, down: 40};
+
+        // only when control key is also pressed
+        if (event.ctrlKey &&
+            jQuery.inArray(event.keyCode, [arrow.left, arrow.up, arrow.right, arrow.down]) >= 0 ) {
+
+          var objWidgetData = $scope.lfData;
+          // get the DOM element id of next field
+          var nextId = objWidgetData.Navigation.getNextFieldId(event.keyCode, event.target['id']);
+          // get the next DOM element by ID
+          var nextElement = document.getElementById(nextId);
+          // bypass the invisible elements
+          while(nextId && (!nextElement || !jQuery(nextElement).is(":visible"))) {
+            nextId = objWidgetData.Navigation.getNextFieldId(event.keyCode, nextId);
+            nextElement = document.getElementById(nextId);
+          }
+          // set the focus
+          if (nextElement) {
+            nextElement.focus();
+          }
+        }
       }
     });

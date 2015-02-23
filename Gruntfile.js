@@ -140,7 +140,8 @@ module.exports = function (grunt) {
           specs: [
             'test/protractor/autocomp_list.js',
             'test/protractor/lforms_horizontal.js',
-            'test/protractor/lforms_directive.js'
+            'test/protractor/lforms_directive.js',
+            'test/protractor/lforms_keyboard_navi.js'
             ]
         }
       },
