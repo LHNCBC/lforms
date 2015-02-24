@@ -1505,7 +1505,7 @@ var WidgetData = Class.extend({
         // not in horizontal tables
         if (!items[i]._inHorizontalTable) {
           // TODO: if it is not a hidden target fields of skip logic rules
-          this.navigationMap.push([items[i]._codePath + items[i]._idPath])
+          this.navigationMap.push([items[i]._elementId_])
         }
         // in horizontal tables and it is a table header
         else if (items[i]._horizontalTableHeader) {
@@ -1516,8 +1516,7 @@ var WidgetData = Class.extend({
             for (var j= 0, jLen = tableInfo[tableKey].tableRows.length; j < jLen; j++) {
               var tableRowMap = [];
               for (var k= 0, kLen = tableInfo[tableKey].tableRows[j].cells.length; k < kLen; k++) {
-                tableRowMap.push(items[tableInfo[tableKey].tableRows[j].cells[k]]._codePath +
-                    items[tableInfo[tableKey].tableRows[j].cells[k]]._idPath);
+                tableRowMap.push(items[tableInfo[tableKey].tableRows[j].cells[k]]._elementId_);
               }
               this.navigationMap.push(tableRowMap)
             }

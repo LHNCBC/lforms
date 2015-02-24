@@ -915,15 +915,16 @@ angular.module('lformsWidget')
             jQuery.inArray(event.keyCode, [arrow.left, arrow.up, arrow.right, arrow.down]) >= 0 ) {
 
           var objWidgetData = $scope.lfData;
-          // get the DOM element id of next field
-          var nextId = objWidgetData.Navigation.getNextFieldId(event.keyCode, event.target['id']);
-          // get the next DOM element by ID
-          var nextElement = document.getElementById(nextId);
-          // bypass the invisible elements
-          while(nextId && (!nextElement || !jQuery(nextElement).is(":visible"))) {
+
+          var nextId = event.target['id'], nextElement;
+          // find the next element, bypass the invisible elements
+          do {
+            // get the DOM element id of next field
             nextId = objWidgetData.Navigation.getNextFieldId(event.keyCode, nextId);
+            // get the next DOM element by ID
             nextElement = document.getElementById(nextId);
-          }
+          } while (nextId && (!nextElement || !jQuery(nextElement).is(":visible")));
+
           // set the focus
           if (nextElement) {
             nextElement.focus();

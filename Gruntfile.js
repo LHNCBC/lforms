@@ -132,25 +132,9 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "test/protractor/conf.js", // Default config file
-        keepAlive: true, // If false, the grunt process stops when the test fails.
-        noColor: false, // If true, protractor will not use colors in its output.
-        args: {
-          // Arguments passed to the command
-          browser: ['firefox'],
-          specs: [
-            'test/protractor/autocomp_list.js',
-            'test/protractor/lforms_horizontal.js',
-            'test/protractor/lforms_directive.js',
-            'test/protractor/lforms_keyboard_navi.js'
-            ]
-        }
+        keepAlive: true // If false, the grunt process stops when the test fails.
       },
-      all: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
-        /*options: {
-          configFile: "protractor/conf.js", // Target-specific config file
-          args: {} // Target-specific arguments
-        }*/
-      },
+      all: {}   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
     },
 
     // Make sure code styles are up to par and there are no obvious mistakes
