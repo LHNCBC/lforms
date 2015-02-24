@@ -1,4 +1,4 @@
-<div ng-controller="PanelTableCtrl">
+<div ng-controller="PanelTableCtrl" ng-keypress="handleNavigationKeyEvent($event)">
   <form name="panel" novalidate>
     <div class="panelGroup fieldGroup" ng-if="lfData" >
       <div class="stopped" ng-show="isFormDone()"><img src="../images/blank.gif" class="stop-sign"><span>This form is complete.</span></div>
@@ -103,14 +103,14 @@
                           <input ng-switch-when="CNE-1" name="{{::item.question +'_'+ $id}}"
                            ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
                            ng-model="item._value" phr-autocomplete="::phrAutocompOpt(item)"
-                           ng-readonly="::isReadOnly(item)" placeholder="Select one or more"></input>
-                          <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )"></input>
+                           ng-readonly="::isReadOnly(item)" placeholder="Select one or more" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )" id="{{::item._elementId_}}"></input>
                           <input ng-switch-when="CNE1" name="{{::item.question + '_'+ $id}}"
                            ng-required="::isAnswerRequired(item)"
                            placeholder="Select one" ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                           phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)"></input>
-                          <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)"></input>
-                          <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)"></input>
+                           phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
                         </div>
                       </ng-form>
                     </td>
@@ -158,7 +158,7 @@
                           <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
                           <td>
                             <div class="name_label">
-                              <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{repeatingItem._codePath+repeatingItem._idPath}}" ng-click="addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
+                              <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{repeatingItem._elementId_}}" ng-click="addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
                             </div>
                           </td>
                         </tr>
@@ -175,5 +175,5 @@
       </div>
     </div>
   </form>
-  <!--<button ng-click="onclick()">Click to debug Panel Controller</button>-->
+  <button ng-click="onclick()">Click to debug Panel Controller</button>
 </div>

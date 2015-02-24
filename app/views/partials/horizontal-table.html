@@ -50,17 +50,17 @@
                       <div class="errorMsg errorDT">"{{ lfData.items[cell].question }}" requires a date value.</div>
                     </span>  <!-- validation error messages -->
                     <span ng-switch-when="" > </span>
-                    <div ng-switch-when="CNE-1" name="{{lfData.items[cell].question + '_' + $id}}"
+                    <input ng-switch-when="CNE-1" name="{{lfData.items[cell].question + '_' + $id}}"
                      ng-required="isAnswerRequired2(lfData.items[cell])" ng-model="lfData.items[cell]._value"
                      phr-autocomplete="phrAutocompOpt(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
-                     ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more"></div>
-                    <input ng-switch-when="REAL1" name="{{lfData.items[cell].question}}" type="number" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell] )">
+                     ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more" id="{{::lfData.items[cell]._elementId_}}"></input>
+                    <input ng-switch-when="REAL1" name="{{lfData.items[cell].question}}" type="number" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
                     <input ng-switch-when="CNE1" name="{{lfData.items[cell].question + '_' + $id}}"
                      ng-required="isAnswerRequired(lfData.items[cell])" placeholder="Select one"
                      ng-model="lfData.items[cell]._value" phr-autocomplete="phrAutocompOpt(lfData.items[cell])"
-                     ng-readonly="isReadOnly(lfData.items[cell])" ng-model-options="{updateOn: 'change'}">
-                    <input ng-switch-when="DT1" name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(lfData.items[cell])">
-                    <input ng-switch-default name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell])">
+                     ng-readonly="isReadOnly(lfData.items[cell])" ng-model-options="{updateOn: 'change'}" id="{{::lfData.items[cell]._elementId_}}">
+                    <input ng-switch-when="DT1" name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
+                    <input ng-switch-default name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
                   </div>
                 </ng-form>
               </td>

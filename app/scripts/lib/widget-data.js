@@ -168,8 +168,6 @@ var WidgetData = Class.extend({
     // update score rule if there is one
     this._updateScoreRule();
 
-    // merge answers in all items into this.answerLists if answers are not already in this.answerLists --- not necessary
-
     this._resetRepeatableItems();
 
     this._resetHorizontalTableInfo();
@@ -177,6 +175,8 @@ var WidgetData = Class.extend({
     this._updateLastSiblingStatus();
 
     this._updateLastItemInRepeatingItemsStatus();
+
+    this.Navigation.setupNavigationMap(this);
 
   },
 
@@ -199,6 +199,8 @@ var WidgetData = Class.extend({
     this._updateLastSiblingStatus();
 
     this._updateLastItemInRepeatingItemsStatus();
+
+    this.Navigation.setupNavigationMap(this);
 
   },
 
@@ -465,6 +467,9 @@ var WidgetData = Class.extend({
       item._parentCodePath_ = item._codePath.slice(0,idx)
       item._displayLevel_ = item._idPath.split(this.PATH_DELIMITER).length - 1;
 
+      item._elementId_ = item._codePath + item._idPath;
+
+
     } // end of the items loop
 
   },
@@ -698,7 +703,7 @@ var WidgetData = Class.extend({
    * Note: _id is only unique for the repeating items within a same parent item
    * @param newItems a newly added item in the form items array
    * @param parentIdPath idPath of the repeating item's parent item
-   * @param newId
+   * @param newId id of the newly added item
    * @private
    */
   _updateIdAndPath: function(newItems, parentIdPath, newId) {
@@ -706,7 +711,9 @@ var WidgetData = Class.extend({
     var newIdPath = parentIdPath + this.PATH_DELIMITER + newId;
     newItems[0]._id = newId;
     newItems[0]._idPath = newIdPath;
-    newItems[0]._parentIdPath_ = parentIdPath
+    newItems[0]._parentIdPath_ = parentIdPath;
+    newItems[0]._elementId_ = newItems[0]._codePath + newItems[0]._idPath;
+
     var idx = parentIdPath.length;
     // update the rest items if it is a group
     for (var i= 1, iLen=newItems.length; i<iLen; i++) {
@@ -717,6 +724,9 @@ var WidgetData = Class.extend({
       var idx3 = newItems[i]._idPath.lastIndexOf(this.PATH_DELIMITER);
       newItems[i]._parentIdPath_ = newItems[i]._idPath.slice(0,idx3)
       // the _id does not need to be updated. the initial value is always "1"
+
+      // update element id
+      newItems[i]._elementId_ = newItems[i]._codePath + newItems[i]._idPath;
     }
   },
 
@@ -1432,7 +1442,7 @@ var WidgetData = Class.extend({
               this.items[k]._idPath.indexOf(parentIdPath) == 0 ) {
             // reset its value
             // this.items[k]._value = "";
-            this.items[k]._value;  // date value cannot be string. so it's safer than assign a "" or null to it.
+            delete this.items[k]._value;  // date value cannot be string. so it's safer than assign a "" or null to it.
             // check the skip logic that is depending on this test and its value
             var idx = this.items[k]._idPath.lastIndexOf(this.PATH_DELIMITER);
             var nextParentIdPath = this.items[k]._idPath.slice(0,idx);
@@ -1478,6 +1488,162 @@ var WidgetData = Class.extend({
 
   },
 
+  // Form navigation by keyboard
+  Navigation: {
+    // keys
+    ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
+    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId_) of every questions.
+    _reverseNavigationMap: {}, // a reverse mapping from element id to position, for quick search of positions.
+
+    /**
+     * Set up or update the navigation map of all active fields
+     * @param lfData the WidgetData object of a form
+     */
+    setupNavigationMap: function(lfData) {
+      var items = lfData.items,
+          posX = 0; posY = 0;
+      this._navigationMap = [];
+      this._reverseNavigationMap = {};
+      for (var i=0, iLen=items.length; i<iLen; i++) {
+        // not in horizontal tables
+        if (!items[i]._inHorizontalTable) {
+          // TODO: if it is not a hidden target fields of skip logic rules
+
+          posX = 0; // set x to 0
+          this._navigationMap.push([items[i]._elementId_]);
+          this._reverseNavigationMap[items[i]._elementId_] = {x: posX, y: posY};
+          posY += 1; // have added a row
+        }
+        // in horizontal tables and it is a table header
+        else if (items[i]._horizontalTableHeader) {
+          var tableKey = [items[i]._codePath + items[i]._parentIdPath_];
+          var tableInfo = lfData._horizontalTableInfo[tableKey];
+          // it is the first table header
+          if (tableInfo && tableInfo.tableStartIndex === i) {
+            for (var j= 0, jLen = tableInfo.tableRows.length; j < jLen; j++) {
+              var tableRowMap = [];
+              var tableRow = tableInfo.tableRows[j];
+              posX = 0; // new row, set x to 0
+              for (var k= 0, kLen = tableRow.cells.length; k < kLen; k++) {
+                var cellItem = items[tableRow.cells[k]];
+                tableRowMap.push(cellItem._elementId_);
+                this._reverseNavigationMap[cellItem._elementId_] = {x: posX, y: posY};
+                posX += 1; // have added a field in the row
+              }
+              this._navigationMap.push(tableRowMap)
+              posY += 1; // have added a row
+            }
+            // move i to the item right after the horizontal table
+            i = tableInfo.tableEndIndex;
+          }
+        }
+        // non header items in horizontal tables are handled above
+      }
+    },
+
+    /**
+     * Find a field's position in navigationMap from its element id
+     * @param id id of a DOM element
+     * @returns {*} the position in the navigation map array
+     */
+    getCurrentPosition: function(id) {
+      return id ? this._reverseNavigationMap[id] : null;
+    },
+
+    /**
+     * Find the next field to get focus
+     * @param kCode code value of a keyboard key
+     * @param id id of a DOM element
+     */
+    getNextFieldId: function(kCode, id) {
+      var nextPos, nextId;
+      // if the current position is known
+      var curPos = this.getCurrentPosition(id);
+      if (curPos) {
+        switch(kCode) {
+          // Move left
+          case this.ARROW.LEFT: {
+            // move left one step
+            if (curPos.x > 0) {
+              nextPos = {
+                x: curPos.x - 1,
+                y: curPos.y
+              };
+            }
+            // on the leftmost already, move to the end of upper row if there's an upper row
+            else if (curPos.y > 0) {
+              nextPos = {
+                x: this._navigationMap[curPos.y - 1].length - 1,
+                y: curPos.y - 1
+              };
+            }
+            // else, it is already the field on the left top corner. do nothing
+            break;
+          }
+          // Move right
+          case this.ARROW.RIGHT: {
+            // move right one step
+            if (curPos.x < this._navigationMap[curPos.y].length - 1) {
+              nextPos = {
+                x: curPos.x + 1,
+                y: curPos.y
+              };
+            }
+            // on the rightmost already, move to the beginning of lower row if there's a lower row
+            else if (curPos.y < this._navigationMap.length - 1) {
+              nextPos = {
+                x: 0,
+                y: curPos.y + 1 };
+            }
+            // else it is already the field on the right bottom corner. do nothing
+            break;
+          }
+          // Move up
+          case this.ARROW.UP: {
+            // move up one step
+            if (curPos.y > 0) {
+              // if upper row does not have a field at the same column
+              // choose the rightmost field
+              var nearbyX = curPos.x;
+              if (nearbyX >= this._navigationMap[curPos.y - 1].length) {
+                nearbyX = this._navigationMap[curPos.y - 1].length - 1;
+              }
+              // set new position
+              nextPos = {
+                x: nearbyX,
+                y: curPos.y - 1
+              };
+            }
+            break;
+          }
+          // Move down
+          case this.ARROW.DOWN: {
+            // move up one step
+            if (curPos.y < this._navigationMap.length - 1) {
+              // if lower row does not have a field at the same column
+              // choose the rightmost field
+              var nearbyX = curPos.x;
+              if (nearbyX >= this._navigationMap[curPos.y + 1].length) {
+                nearbyX = this._navigationMap[curPos.y + 1].length - 1;
+              }
+              // set new position
+              nextPos = {
+                x: nearbyX,
+                y: curPos.y + 1
+              };
+            }
+            break;
+          }
+        } // end of switch
+        if (nextPos) {
+          nextId = this._navigationMap[nextPos.y][nextPos.x];
+        }
+      }
+
+      return nextId;
+    }
+
+  },
 
   // TODO: Methods to support versions of auto-saved data
   History: {

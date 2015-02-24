@@ -54,12 +54,12 @@ describe('horizontal table', function() {
 
     browser.get('http://0.0.0.0:9001/directiveTest.html');
 
-    var listFieldID = '#ac4'; // "Were you adopted?"
+    var listFieldID = '/54126-8/54128-4/1/1'; // "Were you adopted?"
     var showPanel = $('.btn');
     var searchResults = $('#searchResults');
 
     it('should be visible after the user clicks in a field', function() {
-      var listField = $(listFieldID);
+      var listField = element(by.id(listFieldID));
       browser.wait(function() {
         return listField.isDisplayed();
       }, 10000);
