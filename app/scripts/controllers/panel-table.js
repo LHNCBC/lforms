@@ -908,11 +908,11 @@ angular.module('lformsWidget')
       $scope.handleNavigationKeyEvent = function(event) {
 
         // supported arrow keys
-        var arrow = {left: 37, up: 38, right: 39, down: 40};
+        var arrow = $scope.lfData.Navigation.ARROW;
 
         // only when control key is also pressed
         if (event.ctrlKey &&
-            jQuery.inArray(event.keyCode, [arrow.left, arrow.up, arrow.right, arrow.down]) >= 0 ) {
+            jQuery.inArray(event.keyCode, [arrow.LEFT, arrow.UP, arrow.RIGHT, arrow.DOWN]) >= 0 ) {
 
           var objWidgetData = $scope.lfData;
 

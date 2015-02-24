@@ -703,7 +703,7 @@ var WidgetData = Class.extend({
    * Note: _id is only unique for the repeating items within a same parent item
    * @param newItems a newly added item in the form items array
    * @param parentIdPath idPath of the repeating item's parent item
-   * @param newId
+   * @param newId id of the newly added item
    * @private
    */
   _updateIdAndPath: function(newItems, parentIdPath, newId) {
@@ -1491,39 +1491,50 @@ var WidgetData = Class.extend({
   // Form navigation by keyboard
   Navigation: {
     // keys
-    ARROW: {left: 37, up: 38, right: 39, down: 40},
-    navigationMap: [], // of _codePath + _idPath of every active questions
+    ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
+    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId_) of every questions.
+    _reverseNavigationMap: {}, // a reverse mapping from element id to position, for quick search of positions.
 
     /**
      * Set up or update the navigation map of all active fields
      * @param lfData the WidgetData object of a form
      */
     setupNavigationMap: function(lfData) {
-      var items = lfData.items;
-      this.navigationMap = [];
+      var items = lfData.items,
+          posX = 0; posY = 0;
+      this._navigationMap = [];
+      this._reverseNavigationMap = {};
       for (var i=0, iLen=items.length; i<iLen; i++) {
         // not in horizontal tables
         if (!items[i]._inHorizontalTable) {
           // TODO: if it is not a hidden target fields of skip logic rules
-          this.navigationMap.push([items[i]._elementId_])
+
+          posX = 0; // set x to 0
+          this._navigationMap.push([items[i]._elementId_]);
+          this._reverseNavigationMap[items[i]._elementId_] = {x: posX, y: posY};
+          posY += 1; // have added a row
         }
         // in horizontal tables and it is a table header
         else if (items[i]._horizontalTableHeader) {
-          var tableInfo = lfData._horizontalTableInfo;
           var tableKey = [items[i]._codePath + items[i]._parentIdPath_];
+          var tableInfo = lfData._horizontalTableInfo[tableKey];
           // it is the first table header
-          if (tableInfo[tableKey] && tableInfo[tableKey].tableStartIndex === i) {
-            for (var j= 0, jLen = tableInfo[tableKey].tableRows.length; j < jLen; j++) {
+          if (tableInfo && tableInfo.tableStartIndex === i) {
+            for (var j= 0, jLen = tableInfo.tableRows.length; j < jLen; j++) {
               var tableRowMap = [];
-              for (var k= 0, kLen = tableInfo[tableKey].tableRows[j].cells.length; k < kLen; k++) {
-                tableRowMap.push(items[tableInfo[tableKey].tableRows[j].cells[k]]._elementId_);
+              posX = 0; // new row, set x to 0
+              for (var k= 0, kLen = tableInfo.tableRows[j].cells.length; k < kLen; k++) {
+                var cellItem = items[tableInfo.tableRows[j].cells[k]];
+                tableRowMap.push(cellItem._elementId_);
+                this._reverseNavigationMap[cellItem._elementId_] = {x: posX, y: posY};
+                posX += 1; // have added a field in the row
               }
-              this.navigationMap.push(tableRowMap)
+              this._navigationMap.push(tableRowMap)
+              posY += 1; // have added a row
             }
             // move i to the item right after the horizontal table
-            i = tableInfo[tableKey].tableEndIndex;
+            i = tableInfo.tableEndIndex;
           }
-
         }
         // non header items in horizontal tables are handled above
       }
@@ -1535,19 +1546,7 @@ var WidgetData = Class.extend({
      * @returns {*} the position in the navigation map array
      */
     getCurrentPosition: function(id) {
-      var curPos;
-      if (id) {
-outer:
-        for (var i=0, iLen=this.navigationMap.length; i<iLen; i++) {
-          for (var j=0, jLen=this.navigationMap[i].length; j<jLen; j++) {
-            if (id == this.navigationMap[i][j]) {
-              curPos = {x:j, y:i};
-              break outer;
-            }
-          }
-        }
-      }
-      return curPos;
+      return id ? this._reverseNavigationMap[id] : null;
     },
 
     /**
@@ -1562,7 +1561,7 @@ outer:
       if (curPos) {
         switch(kCode) {
           // Move left
-          case this.ARROW.left: {
+          case this.ARROW.LEFT: {
             // move left one step
             if (curPos.x > 0) {
               nextPos = {
@@ -1573,44 +1572,40 @@ outer:
             // on the leftmost already, move to the end of upper row if there's an upper row
             else if (curPos.y > 0) {
               nextPos = {
-                x: this.navigationMap[curPos.y - 1].length - 1,
+                x: this._navigationMap[curPos.y - 1].length - 1,
                 y: curPos.y - 1
               };
             }
-            // it is already the field on the left top corner. do nothing
-            else {
-            }
+            // else, it is already the field on the left top corner. do nothing
             break;
           }
           // Move right
-          case this.ARROW.right: {
+          case this.ARROW.RIGHT: {
             // move right one step
-            if (curPos.x < this.navigationMap[curPos.y].length - 1) {
+            if (curPos.x < this._navigationMap[curPos.y].length - 1) {
               nextPos = {
                 x: curPos.x + 1,
                 y: curPos.y
               };
             }
             // on the rightmost already, move to the beginning of lower row if there's a lower row
-            else if (curPos.y < this.navigationMap.length - 1) {
+            else if (curPos.y < this._navigationMap.length - 1) {
               nextPos = {
                 x: 0,
                 y: curPos.y + 1 };
             }
-            // it is already the field on the right bottom corner. do nothing
-            else {
-            }
+            // else it is already the field on the right bottom corner. do nothing
             break;
           }
           // Move up
-          case this.ARROW.up: {
+          case this.ARROW.UP: {
             // move up one step
             if (curPos.y > 0) {
               // if upper row does not have a field at the same column
-              // check the one on the left till the leftmost field (x==0)
+              // choose the rightmost field
               var nearbyX = curPos.x;
-              while (!this.navigationMap[curPos.y-1][nearbyX]) {
-                nearbyX -= 1;
+              if (nearbyX >= this._navigationMap[curPos.y - 1].length) {
+                nearbyX = this._navigationMap[curPos.y - 1].length - 1;
               }
               // set new position
               nextPos = {
@@ -1621,14 +1616,14 @@ outer:
             break;
           }
           // Move down
-          case this.ARROW.down: {
+          case this.ARROW.DOWN: {
             // move up one step
-            if (curPos.y < this.navigationMap.length - 1) {
-              // if upper row does not have a field at the same column
-              // check the one on the left till the leftmost field (x==0)
+            if (curPos.y < this._navigationMap.length - 1) {
+              // if lower row does not have a field at the same column
+              // choose the rightmost field
               var nearbyX = curPos.x;
-              while (!this.navigationMap[curPos.y+1][nearbyX]) {
-                nearbyX -= 1;
+              if (nearbyX >= this._navigationMap[curPos.y + 1].length) {
+                nearbyX = this._navigationMap[curPos.y + 1].length - 1;
               }
               // set new position
               nextPos = {
@@ -1640,7 +1635,7 @@ outer:
           }
         } // end of switch
         if (nextPos) {
-          nextId = this.navigationMap[nextPos.y][nextPos.x];
+          nextId = this._navigationMap[nextPos.y][nextPos.x];
         }
       }
 
