@@ -1,4 +1,4 @@
-#!/bin/tcsh     
+#!/bin/tcsh
 #     The following is the standard cshrc file for the LForms
 # development team.  You should explicitly source
 # this first from your .cshrc and then do your own environment
@@ -18,7 +18,7 @@ if (! $?PROJECT_DIR) then
 endif
 
 # Set path
-set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin `/depot/packages/${LFORMS_NODE}/bin/npm bin` )
+set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin `/depot/packages/${LFORMS_NODE}/bin/npm bin` )
 
 # Set node in development mode
 unsetenv NODE_ENV
