@@ -1522,9 +1522,10 @@ var WidgetData = Class.extend({
           if (tableInfo && tableInfo.tableStartIndex === i) {
             for (var j= 0, jLen = tableInfo.tableRows.length; j < jLen; j++) {
               var tableRowMap = [];
+              var tableRow = tableInfo.tableRows[j];
               posX = 0; // new row, set x to 0
-              for (var k= 0, kLen = tableInfo.tableRows[j].cells.length; k < kLen; k++) {
-                var cellItem = items[tableInfo.tableRows[j].cells[k]];
+              for (var k= 0, kLen = tableRow.cells.length; k < kLen; k++) {
+                var cellItem = items[tableRow.cells[k]];
                 tableRowMap.push(cellItem._elementId_);
                 this._reverseNavigationMap[cellItem._elementId_] = {x: posX, y: posY};
                 posX += 1; // have added a field in the row
