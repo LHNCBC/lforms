@@ -1,6 +1,27 @@
 angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('form-header.html',
+    "<div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
+    "<div class=\"row\">\n" +
+    "  <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 \">\n" +
+    "    <div style=\"margin: 10px\">Total # of Questions: {{lfData.items.length}}</div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('horizontal-table.html',
     "  <table class=\"t-treeline-field\" >\n" +
     "    <tr>\n" +
@@ -117,32 +138,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div ng-controller=\"PanelTableCtrl\" ng-keypress=\"handleNavigationKeyEvent($event)\">\n" +
     "  <form name=\"panel\" novalidate>\n" +
     "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
-    "      <div class=\"row\">\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.useSpecialKeyNavi\">Keyboard Navigation on Data Fields Only</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3 \">\n" +
-    "          <div style=\"margin: 10px\">Total # of Questions: {{lfData.items.length}}</div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "      </div>\n" +
+    "      <div ng-include=\"'form-header.html'\"></div>\n" +
     "\n" +
     "      <h3 class=\"groupHeader\">\n" +
     "        <span>{{::lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\"><a tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
+    "        <span ng-if=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
     "      <div class=\"fieldExpColDiv\">\n" +
     "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
@@ -201,9 +201,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <div class=\"name_label\">\n" +
     "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                              <span>{{::item.question}} </span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\"><a tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
+    "                              <span ng-show=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
     "                              <span ng-show=\"formConfig.showCodingInstruction\" class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
+    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                              </button>\n" +
     "                            </div>\n" +
     "                          </td>\n" +
@@ -211,7 +211,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      </table>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"button-col\">\n" +
-    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
+    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +
@@ -278,7 +278,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
-    "                              <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{repeatingItem._codePath+repeatingItem._idPath}}\" ng-click=\"addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
+    "                              <button ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{repeatingItem._codePath+repeatingItem._idPath}}\" ng-click=\"addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
     "                            </div>\n" +
     "                          </td>\n" +
     "                        </tr>\n" +
@@ -305,30 +305,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div ng-controller=\"PanelTableCtrl\" ng-keypress=\"handleNavigationKeyEvent($event)\">\n" +
     "  <form name=\"panel\" novalidate>\n" +
     "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
-    "      <div class=\"row\">\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3\">\n" +
-    "          <div class=\"checkbox\">\n" +
-    "            <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.useSpecialKeyNavi\">Keyboard Navigation on Data Fields Only</label>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "        <div class=\"col-md-3 col-xs-3 \">\n" +
-    "          <div style=\"margin: 10px\">Total # of Questions: {{lfData.items.length}}</div>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
+    "      <div ng-include=\"'form-header.html'\"></div>\n" +
+    "\n" +
     "      <h3 class=\"groupHeader\">\n" +
     "        <span>{{::lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\"><a tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
+    "        <span ng-if=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
     "      <div class=\"fieldExpColDiv\">\n" +
     "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
@@ -387,9 +368,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <div class=\"name_label\">\n" +
     "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                              <span>{{::item.question}} </span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\"><a tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
+    "                              <span ng-show=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
     "                              <span ng-show=\"formConfig.showCodingInstruction\" class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
+    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                              </button>\n" +
     "                            </div>\n" +
     "                          </td>\n" +
@@ -397,7 +378,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      </table>\n" +
     "                    </td>\n" +
     "                    <td class=\"button-col\">\n" +
-    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
+    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +
@@ -462,7 +443,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
-    "                              <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{repeatingItem._elementId_}}\" ng-click=\"addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
+    "                              <button ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\" class=\"float-button\"  id=\"{{repeatingItem._elementId_}}\" ng-click=\"addOneRepeatingItem(repeatingItem)\" title=\"Add another '{{ ::repeatingItem.question }}'\">Add another '{{::repeatingItem.question}}'</button>\n" +
     "                            </div>\n" +
     "                          </td>\n" +
     "                        </tr>\n" +

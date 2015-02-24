@@ -6,8 +6,7 @@ angular.module('lformsWidget')
       // Configuration data that controls form's UI
       $scope.formConfig = {
         showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-        useSpecialKeyNavi: false // whether to use specialized keyboard navigation that works on data fields only and skips links, buttons, and etc.
+        showCodingInstruction: false // whether to show coding instruction inline. (false: inline; true: in popup)
       };
 
       // Default option for calendar
