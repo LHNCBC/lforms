@@ -1,30 +1,11 @@
 <div ng-controller="PanelTableCtrl" ng-keypress="handleNavigationKeyEvent($event)">
   <form name="panel" novalidate>
     <div class="panelGroup fieldGroup" ng-if="lfData" >
-      <div class="stopped" ng-show="isFormDone()"><img src="../images/blank.gif" class="stop-sign"><span>This form is complete.</span></div>
-      <div class="row">
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.useSpecialKeyNavi">Keyboard Navigation on Data Fields Only</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3 ">
-          <div style="margin: 10px">Total # of Questions: {{lfData.items.length}}</div>
-        </div>
-      </div>
+      <div ng-include="'form-header.html'"></div>
+
       <h3 class="groupHeader">
         <span>{{::lfData.name}}</span>
-        <span ng-if="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
+        <span ng-if="formConfig.showQuestionCode"><a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
       </h3>
       <div class="fieldExpColDiv">
         <table cellspacing="0" cellpadding="0" class="fieldsTable">
@@ -83,9 +64,9 @@
                             <div class="name_label">
                               <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
                               <span>{{::item.question}} </span>
-                              <span ng-show="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
+                              <span ng-show="formConfig.showQuestionCode"><a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
                               <span ng-show="formConfig.showCodingInstruction" class="prompt">{{ ::getCodingInstructions(item) }}</span>
-                              <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
+                              <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
                               </button>
                             </div>
                           </td>
@@ -93,7 +74,7 @@
                       </table>
                     </td>
                     <td class="button-col">
-                      <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
+                      <button ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
                     </td>
                     <td ng-switch on="::getFieldType(item)" class="hasTooltip">
                       <ng-form name="innerForm2">
@@ -158,7 +139,7 @@
                           <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
                           <td>
                             <div class="name_label">
-                              <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{repeatingItem._elementId_}}" ng-click="addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
+                              <button ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{repeatingItem._elementId_}}" ng-click="addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
                             </div>
                           </td>
                         </tr>
