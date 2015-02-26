@@ -1299,7 +1299,7 @@ var WidgetData = Class.extend({
         if (item._codePath == this._skipLogicShownTargets[i][2]) {
           // and the target item is a sibling or a descendant of the source item
           if (item._idPath.indexOf(this._skipLogicShownTargets[i][3]) == 0 ) {
-            var key = item._codePath + item._parentIdPath_;
+            var key = item._elementId_;
             if (this._skipLogicShownTargetKeys[key]) {
               ret = 'target-show newly_shown'
             }
@@ -1310,7 +1310,16 @@ var WidgetData = Class.extend({
           }
         }
       } // end of the _skipLogicShownTargets loop
+
+      if (item._prevSkipLogicTargetClass !== ret) {
+        if (item._prevSkipLogicTargetClass !== undefined) {
+          var msg = ret.indexOf('target-show') >= 0 ? 'Showing ' : 'Hiding ';
+          WidgetData.screenReaderLog(msg+item.question);
+        }
+        item._prevSkipLogicTargetClass = ret;
+      }
     } // end of if the item is a target
+
     return ret;
   },
 
@@ -1678,3 +1687,4 @@ var WidgetData = Class.extend({
   }
 
 });
+WidgetData.screenReaderLog = Def.Autocompleter.screenReaderLog;
