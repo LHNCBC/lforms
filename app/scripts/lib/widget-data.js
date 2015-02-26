@@ -887,6 +887,9 @@ var WidgetData = Class.extend({
     }
 
     this._resetInternalData();
+    var readerMsg = 'Added ' + (item._inHorizontalTable ?
+      'row' : 'section');
+    WidgetData.screenReaderLog(readerMsg);
   },
 
   /**
@@ -899,6 +902,9 @@ var WidgetData = Class.extend({
     this.items.splice(range.start, range.end-range.start+1);
 
     this._resetInternalData();
+    var readerMsg = 'Removed ' + (item._inHorizontalTable ?
+      'row' : 'section');
+    WidgetData.screenReaderLog(readerMsg);
   },
 
   /**

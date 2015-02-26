@@ -16,7 +16,7 @@ describe('screen reader log', function() {
       return formSearch.isDisplayed();
     }, 10000);
     formSearch.click();
-    $('.select2-result:first-of-type').click();
+    $('.select2-result:nth-of-type(2)').click();
     showPanel.click();
     browser.wait(function() {
       return heightField.isDisplayed();
@@ -48,5 +48,29 @@ describe('screen reader log', function() {
     expect(readerLogEntries.getText()).toEqual(
       ['Showing Mock-up item: Shown when Height >= 10',
        'Hiding Mock-up item: Shown when Height >= 10']);
+  });
+  it('should add an entry when a section is added or removed', function () {
+    // Reset the reader log
+    browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+    expect(readerLogEntries.getText()).toEqual([]);
+    // Add a section
+    element(by.id('/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
+    expect(readerLogEntries.getText()).toEqual(['Added section']);
+    // Remove the section
+    element(by.css("button[title=\"Remove this'Your diseases history'\"]")).click();
+    expect(readerLogEntries.getText()).toEqual(['Added section', 'Removed section']);
+  });
+  it('should add an entry when a row is added or removed', function () {
+    // Reset the reader log
+    browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+    expect(readerLogEntries.getText()).toEqual([]);
+    // Add a row
+    element(by.id('/54114-4/54117-7/1/1')).click();  // The + button on the table
+    expect(readerLogEntries.getText()).toEqual(['Added row']);
+    // Remove the row
+    var minusButton = element(by.css(
+      "button[title=\"Remove this row of 'This family member's history of disease'\"]"));
+    minusButton.click();
+    expect(readerLogEntries.getText()).toEqual(['Added row', 'Removed row']);
   });
 });
