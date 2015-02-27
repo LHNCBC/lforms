@@ -887,6 +887,8 @@ var WidgetData = Class.extend({
     }
 
     this._resetInternalData();
+    var readerMsg = 'Added ' + this.itemDescription(item);
+    WidgetData.screenReaderLog(readerMsg);
   },
 
   /**
@@ -899,7 +901,19 @@ var WidgetData = Class.extend({
     this.items.splice(range.start, range.end-range.start+1);
 
     this._resetInternalData();
+    var readerMsg = 'Removed ' + this.itemDescription(item);
+    WidgetData.screenReaderLog(readerMsg);
   },
+
+
+  /**
+   *  Returns the description of an item (section/question/row).
+   * @param item the item whose type is needed
+   */
+  itemDescription: function(item) {
+    return item._inHorizontalTable ?  'row' : item.header? 'section' : 'question';
+  },
+
 
   /**
    * Check if an item has a total score formula.
@@ -1310,7 +1324,16 @@ var WidgetData = Class.extend({
           }
         }
       } // end of the _skipLogicShownTargets loop
+
+      if (item._prevSkipLogicTargetClass !== ret) {
+        if (item._prevSkipLogicTargetClass !== undefined) {
+          var msg = ret.indexOf('target-show') >= 0 ? 'Showing ' : 'Hiding ';
+          WidgetData.screenReaderLog(msg+item.question);
+        }
+        item._prevSkipLogicTargetClass = ret;
+      }
     } // end of if the item is a target
+
     return ret;
   },
 
@@ -1678,3 +1701,4 @@ var WidgetData = Class.extend({
   }
 
 });
+WidgetData.screenReaderLog = Def.Autocompleter.screenReaderLog;
