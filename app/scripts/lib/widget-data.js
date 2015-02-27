@@ -1305,7 +1305,7 @@ var WidgetData = Class.extend({
         if (item._codePath == this._skipLogicShownTargets[i][2]) {
           // and the target item is a sibling or a descendant of the source item
           if (item._idPath.indexOf(this._skipLogicShownTargets[i][3]) == 0 ) {
-            var key = item._elementId_;
+            var key = item._codePath + item._parentIdPath_;
             if (this._skipLogicShownTargetKeys[key]) {
               ret = 'target-show newly_shown'
             }
