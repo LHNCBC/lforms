@@ -57,20 +57,42 @@ describe('screen reader log', function() {
     element(by.id('/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
     expect(readerLogEntries.getText()).toEqual(['Added section']);
     // Remove the section
-    element(by.css("button[title=\"Remove this'Your diseases history'\"]")).click();
+    var minusButtonCSS = "button[title=\"Remove this 'Your diseases history'\"]";
+    element.all(by.css(minusButtonCSS)).first().click();
     expect(readerLogEntries.getText()).toEqual(['Added section', 'Removed section']);
   });
   it('should add an entry when a row is added or removed', function () {
     // Reset the reader log
     browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
     expect(readerLogEntries.getText()).toEqual([]);
-    // Add a row
-    element(by.id('/54114-4/54117-7/1/1')).click();  // The + button on the table
+    // Add a row.  Currently both the + button and the "add another" button have
+    // the same element ID, so we use the first one.
+    element.all(by.id('/54114-4/54117-7/1/1')).first().click();  // The + button on the table
     expect(readerLogEntries.getText()).toEqual(['Added row']);
     // Remove the row
-    var minusButton = element(by.css(
-      "button[title=\"Remove this row of 'This family member's history of disease'\"]"));
-    minusButton.click();
+    var minusButtonCSS =
+      "button[title=\"Remove this row of 'This family member's history of disease'\"]";
+    element.all(by.css(minusButtonCSS)).first().click();
     expect(readerLogEntries.getText()).toEqual(['Added row', 'Removed row']);
+  });
+  it('should add an entry when a question is added or removed', function () {
+    // Switch to the first form, which has a repeating question
+    formSearch.click();
+    $('.select2-result:first-child').click();
+    showPanel.click();
+    var addNameCSS = "button[title=\"Add another 'Name'\"]";
+    var addNameButton = element(by.css(addNameCSS));
+    browser.wait(function() {
+      return addNameButton.isPresent();
+    }, 10000);
+    // Reset the reader log
+    browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+    expect(readerLogEntries.getText()).toEqual([]);
+    // Add a question
+    addNameButton.click();
+    expect(readerLogEntries.getText()).toEqual(['Added question']);
+    // Remove the question
+    element.all(by.css("button[title=\"Remove this 'Name'\"]")).first().click();
+    expect(readerLogEntries.getText()).toEqual(['Added question', 'Removed question']);
   });
 });

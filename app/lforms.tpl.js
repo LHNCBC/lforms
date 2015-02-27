@@ -211,7 +211,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      </table>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"button-col\">\n" +
-    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
+    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +
@@ -397,7 +397,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      </table>\n" +
     "                    </td>\n" +
     "                    <td class=\"button-col\">\n" +
-    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this'{{ ::item.question }}'\">-</button>\n" +
+    "                      <button tabindex=\"{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}\" ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
     "                      <ng-form name=\"innerForm2\">\n" +

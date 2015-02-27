@@ -93,7 +93,7 @@
                       </table>
                     </td>
                     <td class="button-col">
-                      <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
+                      <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this '{{ ::item.question }}'">-</button>
                     </td>
                     <td ng-switch on="::getFieldType(item)" class="hasTooltip">
                       <ng-form name="innerForm2">
