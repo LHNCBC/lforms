@@ -15,6 +15,13 @@ describe('screen reader log', function() {
     browser.wait(function() {
       return formSearch.isDisplayed();
     }, 10000);
+    // Make the screen reader log visible so that getText() will be
+    // able to read it.
+    browser.driver.executeScript(function() {
+      var r = $('reader_log');
+      r.style.height = 'auto';
+      r.style.width = 'auto'
+    });
     formSearch.click();
     $('.select2-result:nth-of-type(2)').click();
     showPanel.click();
