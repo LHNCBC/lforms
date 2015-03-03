@@ -21,6 +21,8 @@ describe('screen reader log', function() {
       var r = $('reader_log');
       r.style.height = 'auto';
       r.style.width = 'auto'
+      r.style.top = 'auto'
+      r.style.left = 'auto'
     });
     formSearch.click();
     $('.select2-result:nth-of-type(2)').click();
