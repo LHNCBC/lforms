@@ -1,30 +1,11 @@
-<div ng-controller="PanelTableCtrl">
+<div ng-controller="PanelTableCtrl" ng-keypress="handleNavigationKeyEvent($event)">
   <form name="panel" novalidate>
     <div class="panelGroup fieldGroup" ng-if="lfData" >
-      <div class="stopped" ng-show="isFormDone()"><img src="../images/blank.gif" class="stop-sign"><span>This form is complete.</span></div>
-      <div class="row" ng-hide="{{hideCheckBoxes}}">
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3">
-          <div class="checkbox">
-            <label><input type="checkbox" value="" ng-model="formConfig.useSpecialKeyNavi">Keyboard Navigation on Data Fields Only</label>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-3 ">
-          <div style="margin: 10px">Total # of Questions: {{lfData.items.length}}</div>
-        </div>
-      </div>
+      <div ng-include="'form-header.html'"></div>
+
       <h3 class="groupHeader">
         <span>{{::lfData.name}}</span>
-        <span ng-if="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
+        <span ng-if="formConfig.showQuestionCode"><a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
       </h3>
       <div class="fieldExpColDiv">
         <table cellspacing="0" cellpadding="0" class="fieldsTable">
@@ -47,7 +28,7 @@
                     <input ng-switch-when="CWE" name="{{::item.question}}"
                      ng-required="::isAnswerRequired(item)" placeholder="Select or type a value"
                      ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                     phr-autocomplete="::lfComboOpt(item)" ng-readonly="::isReadOnly(item)">
+                     phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)">
                     <input ng-switch-when="DT" name="{{::item.question}}"  ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)">
                     <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)">
                   </div>
@@ -71,40 +52,52 @@
                   <tbody id="obx_table" class="fieldExpColDiv">
                   <tr style="width: 99%" class="repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}" ng-repeat-start="item in lfData.items track by $id(item)" ng-click="setActiveRow($index)">
                     <td class="name has_treeline">
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
-                          <span>{{::item.question}} </span>
-                          <span ng-show="formConfig.showQuestionCode"><a tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
-                          <span ng-show="formConfig.showCodingInstruction" class="prompt">{{ ::getCodingInstructions(item) }}</span>
-                          <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
-                          </button>
-                        </div>
-                      </div>
+                      <table class="t-treeline-field" >
+                        <tr>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
+                              <span>{{::item.question}} </span>
+                              <span ng-show="formConfig.showQuestionCode"><a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html" target="_blank">[{{ item.questionCode }}]</a></span>
+                              <span ng-show="formConfig.showCodingInstruction" class="prompt">{{ ::getCodingInstructions(item) }}</span>
+                              <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)" class="help-button" bs-popover="::item.codingInstructions" data-auto-close="true" data-placement="right"  title="Instruction">?</button>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                     <td class="button-col">
-                      <button ng-show="::isRepeatable(item)" tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-if="::!hasOneRepeatingItem(item)" class="float-button"  ng-click="::removeOneRepeatingItem(item)" title="Remove this'{{ ::item.question }}'">-</button>
+                      <button ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this '{{ ::item.question }}'">-</button>
                     </td>
                     <td ng-switch on="::getFieldType(item)" class="hasTooltip">
                       <ng-form name="innerForm2">
                         <div class="cellData tooltipContainer">
                           <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
                           <span ng-switch-when="" > </span>
-                          <div ng-switch-when="CNE-1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" ui-select2="::select2Opt(item)" ng-readonly="::isReadOnly(item)"></div>
-                          <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )"></input>
-                          <input ng-switch-when="CNE1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)"
+                          <input ng-switch-when="CNE-1" name="{{::item.question +'_'+ $id}}"
+                           ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
+                           ng-model="item._value" phr-autocomplete="::phrAutocompOpt(item)"
+                           ng-readonly="::isReadOnly(item)" placeholder="Select one or more" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-when="REAL1" name="{{::item.question}}" type="number" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item )" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-when="CNE1" name="{{::item.question + '_'+ $id}}"
+                           ng-required="::isAnswerRequired(item)"
                            placeholder="Select one" ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                           phr-autocomplete="::lfListOpt(item)" ng-readonly="::isReadOnly(item)"></input>
-                          <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)"></input>
-                          <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)"></input>
+                           phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
+                          <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)" id="{{::item._elementId_}}"></input>
                         </div>
                       </ng-form>
                     </td>
                     <td ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{updateOn: 'change'}"
-                       ng-model="item._unit" phr-autocomplete="lfUnitsListOpt(item)" ></input>
+                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)" placeholder="Select one"></input>
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td>{{item.range}}</td>-->
@@ -112,13 +105,21 @@
                   <!-- extra question -->
                   <tr ng-if="needExtra(item)" style="width: 99%" class="extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}">
                     <td class="name has_treeline">
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree-extra.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <span>&nbsp;</span>
-                        </div>
-                      </div>
+                      <table class="t-treeline-field" >
+                        <tr>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <span>&nbsp;</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                     <td class="button-col"></td>
                     <td colspan="5" class="extra-field">
@@ -128,13 +129,21 @@
                   <!--a button row at the end of each repeating section-->
                   <tr ng-repeat-end ng-if="isLastItemInRepeatingItems($index)" class="buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}" >
                     <td colspan="6" class="name has_treeline" >
-                      <div class="t-treeline-field">
-                        <div class="t-treeline-wrapper" ng-include="'tree-extra.html'">  <!-- tree lines -->
-                        </div>
-                        <div class="name_label">
-                          <button tabindex="{{ formConfig.useSpecialKeyNavi ? '-1' : '' }}" ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{::repeatingItem._codePath+repeatingItem._idPath}}" ng-click="::addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
-                        </div>
-                      </div>
+                      <table class="t-treeline-field" >
+                        <tr>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(5, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(4, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(3, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(2, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(1, $index) "> &nbsp; </td>
+                          <td class="t-treeline " ng-class="getExtraRowTreeLevelClass(0, $index) "> &nbsp; </td>
+                          <td>
+                            <div class="name_label">
+                              <button ng-repeat="repeatingItem in getParentRepeatingItemsOfLastItem($index)" class="float-button"  id="{{repeatingItem._elementId_}}" ng-click="addOneRepeatingItem(repeatingItem)" title="Add another '{{ ::repeatingItem.question }}'">Add another '{{::repeatingItem.question}}'</button>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
                   </tbody>
@@ -147,5 +156,5 @@
       </div>
     </div>
   </form>
-  <!--<button ng-click="onclick()">Click to debug Panel Controller</button>-->
+  <button ng-click="onclick()">Click to debug Panel Controller</button>
 </div>

@@ -84,11 +84,11 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: 9002,
         // Change this to '0.0.0.0' to access the server from outside.
         //hostname: 'localhost',
         hostname: '0.0.0.0',
-        livereload: 35729
+        livereload: 35731
       },
       livereload: {
         options: {
@@ -132,20 +132,9 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "test/protractor/conf.js", // Default config file
-        keepAlive: true, // If false, the grunt process stops when the test fails.
-        noColor: false, // If true, protractor will not use colors in its output.
-        args: {
-          // Arguments passed to the command
-          browser: ['firefox'],
-          specs: ['test/protractor/autocomp_list.js']
-        }
+        keepAlive: true // If false, the grunt process stops when the test fails.
       },
-      all: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
-        /*options: {
-          configFile: "protractor/conf.js", // Target-specific config file
-          args: {} // Target-specific arguments
-        }*/
-      },
+      all: {}   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
     },
 
     // Make sure code styles are up to par and there are no obvious mistakes
@@ -401,6 +390,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'wiredep',
+      'ngtemplates',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',

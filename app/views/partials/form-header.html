@@ -1,0 +1,17 @@
+<div class="stopped" ng-show="isFormDone()"><img src="../images/blank.gif" class="stop-sign"><span>This form is complete.</span></div>
+<div class="row">
+  <div class="col-md-3 col-xs-3">
+    <div class="checkbox">
+      <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
+    </div>
+  </div>
+  <div class="col-md-3 col-xs-3">
+    <div class="checkbox">
+      <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
+    </div>
+  </div>
+  <div class="col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 ">
+    <div style="margin: 10px">Total # of Questions: {{lfData.items.length}}</div>
+  </div>
+
+</div>

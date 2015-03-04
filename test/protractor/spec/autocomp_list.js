@@ -1,40 +1,48 @@
 describe('autocomp list', function() {
-  var listFieldID = '#ac4'; // "Were you adopted?"
+
+  var listFieldID = '/54126-8/54128-4/1/1'; // "Were you adopted?"
   var showPanel = $('.btn');
   var searchResults = $('#searchResults');
+  var formSearch = $('#s2id_loinc_num1 a');
+  var raceFieldID = '/54126-8/54134-2/1/1';
+  var raceField = element(by.id(raceFieldID));
+
   it('should not be visible when the form loads', function() {
     browser.get('http://0.0.0.0:9001/');
-    var formSearch = $('#s2id_loinc_num1 a');
     browser.wait(function() {
       return formSearch.isDisplayed();
     }, 10000);
     formSearch.click();
     $('.select2-result:first-of-type').click();
     $('.btn').click();
-    var listField = $(listFieldID);
+    var listField = element(by.id(listFieldID));
     browser.wait(function() {
       return listField.isDisplayed();
     }, 10000);
     expect(searchResults.isDisplayed()).toBeFalsy();
   });
   it('should be visible after the user clicks in a field', function() {
-    var listField = $(listFieldID);
+    var listField = element(by.id(listFieldID));
     listField.click();
     browser.wait(function() {
       return searchResults.isDisplayed();
     }, 10000);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
+  it('should work with multiple-select fields', function() {
+    expect(raceField.isDisplayed()).toBeTruthy();
+    expect(browser.driver.executeScript('return typeof jQuery(document.getElementById("/54126-8/54134-2/1/1"))[0].autocomp')).toBe('object');
+  });
+
   it('should interoperate with score rules', function() {
     // The data model needs to be correctly updated
     // when the user enters a new value.
     browser.get('http://0.0.0.0:9001/');
-    var formSearch = $('#s2id_loinc_num1 a');
     formSearch.click();
     var glasgow = $('.select2-result:last-child');
     glasgow.click();
     showPanel.click();
-    var eyeField = $('#ac2');
+    var eyeField = element(by.id('/9267-6/1'));
     browser.wait(function() {
       return eyeField.isDisplayed();
     }, 10000);
@@ -58,4 +66,5 @@ describe('autocomp list', function() {
     eyeField.sendKeys(protractor.Key.TAB);
     expect(scoreField.getAttribute('value')).toEqual('3');
   });
+
 });

@@ -1,60 +1,74 @@
-<div class="t-treeline-field">
-  <div class="t-treeline-wrapper" ng-include="'tree.html'">  <!-- tree lines -->
-  </div>
-  <div class="name_label">
-    <div ng-if="firstOneRepeatingItem(item)" class="hTableTitle">
-      {{::item.question}}
-    </div>
+  <table class="t-treeline-field" >
+    <tr>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(5, $index) "> &nbsp; </td>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(4, $index) "> &nbsp; </td>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(3, $index) "> &nbsp; </td>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(2, $index) "> &nbsp; </td>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(1, $index) "> &nbsp; </td>
+      <td class="t-treeline " ng-class="getHorizontalLayoutTreeLevelClass(0, $index) "> &nbsp; </td>
 
-    <table class="fieldsTable horizontal-table">
-      <colgroup>
-        <col style="width:5em; min-width: 5em;">
-        <col ng-repeat="colName in getHorizontalTableColumns($index)">
-      </colgroup>
-      <thead ng-if="firstOneRepeatingItem(item)">
-      <tr>
-        <th class="fieldsTableHeader"></th>
-        <th class="fieldsTableHeader" ng-repeat="colName in getHorizontalTableColumns($index)">{{colName}}</th>
-      </tr>
-      </thead>
-      <tbody id="" class="">
-      <tr ng-repeat="row in getHorizontalTableRows($index)">
-        <td class="button-col">
-          <button ng-show="isRepeatable(item)" ng-if="!hasOneRepeatingItem(item)" class="float-button"  ng-click="removeOneRepeatingItem(item)" title="Remove this row of '{{ item.question }}'">-</button>
-          <button ng-show="isRepeatable(item)" ng-if="lastOneRepeatingItem(item)" class="float-button"  id="{{item._codePath+item._idPath}}" ng-click="addOneRepeatingItem(item)" title="Add another row of '{{ item.question }}'">+</button>
-        </td>
+      <td>
+        <div class="name_label">
+          <div class="hTableTitle">
+            {{item.question}}
+          </div>
 
-        <td ng-repeat="cell in getHorizontalTableCellsInRow(row)" ng-switch on="getFieldType(cell)" class="hasTooltip">
-          <ng-form name="innerForm2">
-            <div class="cellData tooltipContainer">
-            <span class="tooltipContent">
-              <div class="errorMsg errorRequired">"{{ cell.question }}" requires a value.</div>
-              <div class="errorMsg errorPattern">"{{ cell.question }}" requires a text pattern.</div>
-              <div class="errorMsg errorMax">"{{ cell.question }}" requires a maximum value of ??.</div>
-              <div class="errorMsg errorMin">"{{ cell.question }}" requires a minimum value of ??.</div>
-              <div class="errorMsg errorMaxlength">"{{ cell.question }}" requires a maximum length of ??.</div>
-              <div class="errorMsg errorMinlength">"{{ cell.question }}" requires a minimum length of ??.</div>
-              <div class="errorMsg errorURL">"{{ cell.question }}" requires a url.</div>
-              <div class="errorMsg errorEmail">"{{ cell.question }}" requires an email.</div>
-              <div class="errorMsg errorNumber">"{{ cell.question }}" requires a numeric value.</div>
-              <div class="errorMsg errorREAL">"{{ cell.question }}" requires a decimal value.</div>
-              <div class="errorMsg errorINT">"{{ cell.question }}" requires a integer value.</div>
-              <div class="errorMsg errorTM">"{{ cell.question }}" requires a time value.</div>
-              <div class="errorMsg errorDT">"{{ cell.question }}" requires a date value.</div>
-            </span>  <!-- validation error messages -->
-              <span ng-switch-when="" > </span>
-              <div ng-switch-when="CNE-1" name="{{cell.question}}" ng-required="isAnswerRequired2(cell)" ng-model="cell._value" ui-select2="select2Opt(cell)" ng-readonly="isReadOnly(cell)"></div>
-              <input ng-switch-when="REAL1" name="{{cell.question}}" type="number" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell )">
-              <input ng-switch-when="CNE1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)"
-               placeholder="Select one" ng-model="cell._value" phr-autocomplete="lfListOpt(cell)"
-               ng-readonly="isReadOnly(cell)" ng-model-options="{updateOn: 'change'}">
-              <input ng-switch-when="DT1" name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(cell)">
-              <input ng-switch-default name="{{cell.question}}" ng-required="isAnswerRequired(cell)" ng-model="cell._value" placeholder="Type a value" ng-readonly="isReadOnly(cell)">
-            </div>
-          </ng-form>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+          <table class="fieldsTable horizontal-table">
+            <colgroup>
+              <col style="width:5em; min-width: 5em;">
+              <col ng-repeat="colName in lfData._horizontalTableInfo[item._codePath + item._parentIdPath_].columnNames">
+            </colgroup>
+            <thead>
+            <tr>
+              <th class="fieldsTableHeader"></th>
+              <th class="fieldsTableHeader" ng-repeat="colName in lfData._horizontalTableInfo[item._codePath + item._parentIdPath_].columnNames">{{colName}}</th>
+            </tr>
+            </thead>
+            <tbody id="" class="">
+            <tr ng-repeat="row in lfData._horizontalTableInfo[item._codePath + item._parentIdPath_].tableRows">
+              <td class="button-col">
+                <button ng-if="!hasOneRepeatingRow(item)" class="float-button"  ng-click="removeOneRepeatingItem(lfData.items[row.header])" title="Remove this row of '{{ item.question }}'">-</button>
+                <button ng-if="row.header == lfData._horizontalTableInfo[item._codePath + item._parentIdPath_].lastHeaderIndex" class="float-button"  id="{{lfData.items[row.header]._codePath+lfData.items[row.header]._idPath}}" ng-click="addOneRepeatingItem(lfData.items[row.header])" title="Add another row of '{{ item.question }}'">+</button>
+              </td>
+
+              <td ng-repeat="cell in row.cells" ng-switch on="getFieldType(lfData.items[cell])" class="hasTooltip">
+                <ng-form name="innerForm2">
+                  <div class="cellData tooltipContainer">
+                    <span class="tooltipContent">
+                      <div class="errorMsg errorRequired">"{{ lfData.items[cell].question }}" requires a value.</div>
+                      <div class="errorMsg errorPattern">"{{ lfData.items[cell].question }}" requires a text pattern.</div>
+                      <div class="errorMsg errorMax">"{{ lfData.items[cell].question }}" requires a maximum value of ??.</div>
+                      <div class="errorMsg errorMin">"{{ lfData.items[cell].question }}" requires a minimum value of ??.</div>
+                      <div class="errorMsg errorMaxlength">"{{ lfData.items[cell].question }}" requires a maximum length of ??.</div>
+                      <div class="errorMsg errorMinlength">"{{ lfData.items[cell].question }}" requires a minimum length of ??.</div>
+                      <div class="errorMsg errorURL">"{{ lfData.items[cell].question }}" requires a url.</div>
+                      <div class="errorMsg errorEmail">"{{ lfData.items[cell].question }}" requires an email.</div>
+                      <div class="errorMsg errorNumber">"{{ lfData.items[cell].question }}" requires a numeric value.</div>
+                      <div class="errorMsg errorREAL">"{{ lfData.items[cell].question }}" requires a decimal value.</div>
+                      <div class="errorMsg errorINT">"{{ lfData.items[cell].question }}" requires a integer value.</div>
+                      <div class="errorMsg errorTM">"{{ lfData.items[cell].question }}" requires a time value.</div>
+                      <div class="errorMsg errorDT">"{{ lfData.items[cell].question }}" requires a date value.</div>
+                    </span>  <!-- validation error messages -->
+                    <span ng-switch-when="" > </span>
+                    <input ng-switch-when="CNE-1" name="{{lfData.items[cell].question + '_' + $id}}"
+                     ng-required="isAnswerRequired2(lfData.items[cell])" ng-model="lfData.items[cell]._value"
+                     phr-autocomplete="phrAutocompOpt(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
+                     ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more" id="{{::lfData.items[cell]._elementId_}}"></input>
+                    <input ng-switch-when="REAL1" name="{{lfData.items[cell].question}}" type="number" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
+                    <input ng-switch-when="CNE1" name="{{lfData.items[cell].question + '_' + $id}}"
+                     ng-required="isAnswerRequired(lfData.items[cell])" placeholder="Select one"
+                     ng-model="lfData.items[cell]._value" phr-autocomplete="phrAutocompOpt(lfData.items[cell])"
+                     ng-readonly="isReadOnly(lfData.items[cell])" ng-model-options="{updateOn: 'change'}" id="{{::lfData.items[cell]._elementId_}}">
+                    <input ng-switch-when="DT1" name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
+                    <input ng-switch-default name="{{lfData.items[cell].question}}" ng-required="isAnswerRequired(lfData.items[cell])" ng-model="lfData.items[cell]._value" placeholder="Type a value" ng-readonly="isReadOnly(lfData.items[cell])" id="{{::lfData.items[cell]._elementId_}}">
+                  </div>
+                </ng-form>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </td>
+    </tr>
+  </table>
