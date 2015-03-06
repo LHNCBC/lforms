@@ -377,3 +377,8 @@ td.has_treeline {
 
 /* end of tree line style setup */
 
+label {
+  /* Keep the font-weight on the questions normal */
+  font-weight: normal;
+  margin-bottom: 0;
+}
