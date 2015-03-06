@@ -200,7 +200,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
     "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
-    "                              <span>{{::item.question}} </span>\n" +
+    "                              <span><label for=\"{{::item._elementId_}}\">{{::item.question}}</label></span>\n" +
     "                              <span ng-show=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
     "                              <span ng-show=\"formConfig.showCodingInstruction\" class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
     "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
@@ -367,7 +367,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
     "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
-    "                              <span>{{::item.question}} </span>\n" +
+    "                              <span><label for=\"{{::item._elementId_}}\">{{::item.question}}</label></span>\n" +
     "                              <span ng-show=\"formConfig.showQuestionCode\"><a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\" target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
     "                              <span ng-show=\"formConfig.showCodingInstruction\" class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
     "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\" class=\"help-button\" bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
