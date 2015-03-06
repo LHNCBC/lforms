@@ -38,8 +38,6 @@ angular.module('lformsWidget')
         // simple_tags: false
       };
 
-      // True hides the checkboxes at the top of table.
-      //$scope.hideCheckBoxes = $scope.hideCheckBoxes ? $scope.hideCheckBoxes : false;  
       // index of active row
       $scope.activeRow = null;
 
