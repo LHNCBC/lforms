@@ -1,7 +1,7 @@
 describe('horizontal table', function() {
 
   it('should have one add button in the horizontal table when the form loads', function() {
-    browser.get('http://0.0.0.0:9001/directiveTest.html');
+    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
 
     browser.waitForAngular();
     var hForm = element(by.css('#horizontal-form'));
@@ -52,7 +52,7 @@ describe('horizontal table', function() {
 
   describe('autocomp list inside lforms directive', function() {
 
-    browser.get('http://0.0.0.0:9001/directiveTest.html');
+    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
 
     var listFieldID = '/54126-8/54128-4/1/1'; // "Were you adopted?"
     var showPanel = $('.btn');

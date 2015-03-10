@@ -5,12 +5,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "<div class=\"row\">\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
-    "    <div class=\"checkbox\">\n" +
+    "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
     "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
-    "    <div class=\"checkbox\">\n" +
+    "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
     "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
     "    </div>\n" +
     "  </div>\n" +

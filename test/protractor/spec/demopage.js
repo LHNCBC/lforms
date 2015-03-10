@@ -51,7 +51,7 @@ var DemoPage = function() {
      *  Opens the directive test page.
      */
     openDirectiveTest: function() {
-      browser.get('http://0.0.0.0:9001/directiveTest.html');
+      browser.get('http://0.0.0.0:9001/test/directiveTest.html');
     }
   }
 };
