@@ -122,11 +122,11 @@
             templateUrl: "horizontal-form-hide-check-boxes-false.html"
           }).
           otherwise({redirectTo: "/vertical-form-default"})
-        })
-        .controller('lformsTestControllerV', ['$scope', function ($scope) {
+        }).
+        controller('lformsTestControllerV', ['$scope', function ($scope) {
           $scope.lfData = new WidgetData(angular.copy(FHTData));
-        }])
-        .controller('lformsTestControllerH', ['$scope', function ($scope) {
+        }]).
+        controller('lformsTestControllerH', ['$scope', function ($scope) {
           $scope.lfData = new WidgetData(angular.copy(horizontalFHTData));
         }]);
     </script>
