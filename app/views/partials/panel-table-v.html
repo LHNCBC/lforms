@@ -16,7 +16,9 @@
           </colgroup>
           <thead>
           <tr>
-            <th class="fieldsTableHeader" ng-repeat="item in ::lfData.templateOption.obrItems">{{::item.question}}</th>
+            <th class="fieldsTableHeader"
+             ng-repeat="item in ::lfData.templateOption.obrItems"><label
+             for="obr_{{::item.question}}">{{::item.question}}</label></th>
           </tr>
           </thead>
           <tbody>
@@ -28,9 +30,20 @@
                     <input ng-switch-when="CWE" name="{{::item.question}}"
                      ng-required="::isAnswerRequired(item)" placeholder="Select or type a value"
                      ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                     phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)">
-                    <input ng-switch-when="DT" name="{{::item.question}}"  ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)">
-                    <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)" ng-model-options="{ updateOn: 'default' }" ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)">
+                     phr-autocomplete="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)"
+                     id="obr_{{::item.question}}">
+                    <input ng-switch-when="DT" name="{{::item.question}}"
+                     ng-required="::isAnswerRequired(item)"
+                     ng-model-options="{ updateOn: 'default' }"
+                     ng-model="item._value" lf-date="::dateOptions"
+                     placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)"
+                     id="obr_{{::item.question}}">
+                    <input ng-switch-default name="{{::item.question}}"
+                     ng-required="::isAnswerRequired(item)"
+                     ng-model-options="{ updateOn: 'default' }"
+                     ng-model="item._value" placeholder="Type a value"
+                     ng-readonly="::isReadOnly(item)"
+                     id="obr_{{::item.question}}">
                   </div>
               </ng-form>
             </td>
@@ -46,7 +59,8 @@
                   </colgroup>
                   <thead>
                   <tr>
-                    <th class="fieldsTableHeader" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns">{{::obxCol.name}}</th>
+                    <th class="fieldsTableHeader" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
+                     id="th_{{obxCol.name}}">{{::obxCol.name}}</th>
                   </tr>
                   </thead>
                   <tbody id="obx_table" class="fieldExpColDiv">
@@ -97,7 +111,8 @@
                     </td>
                     <td ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{updateOn: 'change'}"
-                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)" placeholder="Select one"></input>
+                       ng-model="item._unit" phr-autocomplete="phrUnitsAutocompOpt(item)"
+                       placeholder="Select one" aria-labelledby="th_Units"></input>
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td>{{item.range}}</td>-->

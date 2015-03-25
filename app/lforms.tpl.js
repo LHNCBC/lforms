@@ -322,7 +322,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          </colgroup>\n" +
     "          <thead>\n" +
     "          <tr>\n" +
-    "            <th class=\"fieldsTableHeader\" ng-repeat=\"item in ::lfData.templateOption.obrItems\">{{::item.question}}</th>\n" +
+    "            <th class=\"fieldsTableHeader\"\n" +
+    "             ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
+    "             for=\"obr_{{::item.question}}\">{::item.question}}</label></th>\n" +
     "          </tr>\n" +
     "          </thead>\n" +
     "          <tbody>\n" +
@@ -334,9 +336,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
     "                     ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
     "                     ng-model-options=\"{updateOn: 'change'}\" ng-model=\"item._value\"\n" +
-    "                     phr-autocomplete=\"::phrAutocompOpt(item)\" ng-readonly=\"::isReadOnly(item)\">\n" +
-    "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"  ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\">\n" +
-    "                    <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\">\n" +
+    "                     phr-autocomplete=\"::phrAutocompOpt(item)\" ng-readonly=\"::isReadOnly(item)\"\n" +
+    "                     id=\"obr_{{::item.question}}\">\n" +
+    "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
+    "                     ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                     ng-model-options=\"{ updateOn: 'default' }\"\n" +
+    "                     ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
+    "                     placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
+    "                     id=\"obr_{{::item.question}}\">\n" +
+    "                    <input ng-switch-default name=\"{{::item.question}}\"\n" +
+    "                     ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                     ng-model-options=\"{ updateOn: 'default' }\"\n" +
+    "                     ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
+    "                     ng-readonly=\"::isReadOnly(item)\"\n" +
+    "                     id=\"obr_{{::item.question}}\">\n" +
     "                  </div>\n" +
     "              </ng-form>\n" +
     "            </td>\n" +
