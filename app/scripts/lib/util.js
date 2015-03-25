@@ -185,11 +185,17 @@ WidgetUtil = {
    * and other changes to make the data valid to the widget
    */
 
-  convertFromEmbeddedToReference: function(dataEmbedded) {
-    var dataReference = {};
+  /**
+   * Convert the form definition data from embedded format to reference list
+   * and other changes to make the data valid to the widget
+   *
+   * @param formData
+   * @returns {*}
+   */
+  convertFromEmbeddedToReference: function(formData) {
     var itemList = [];
 
-    var items = dataEmbedded.items;
+    var items = formData.items;
     this._convertSubItems(items, itemList, null);
 
     // temporary changes on the data from RI
@@ -250,12 +256,9 @@ WidgetUtil = {
       }
     }
 
-    dataReference.type = dataEmbedded.type;
-    dataReference.code = dataEmbedded.code;
-    dataReference.name = dataEmbedded.name;
-    dataReference.items = itemList;
+    formData.items = itemList;
 
-    return dataReference;
+    return formData;
   },
 
   /*
