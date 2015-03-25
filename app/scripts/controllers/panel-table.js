@@ -15,7 +15,10 @@ angular.module('lformsWidget')
         changeMonth: true,
         yearRange: '1900:-0',
         showOn: 'button',
-        buttonImage: "../images/blank.gif",
+        // Provide blank image to satisfy img tag. Bower packaging forces us to 
+        // avoid using image files from html templates, therefore using base64 
+        // encoding for a 1x1 blank gif file.
+        buttonImage: "data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw==",
         buttonImageOnly: true,
 
         constrainInput: false,
