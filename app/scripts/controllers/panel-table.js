@@ -17,7 +17,7 @@ angular.module('lformsWidget')
         // Provide blank image to satisfy img tag. Bower packaging forces us to 
         // avoid using image files from html templates, therefore using base64 
         // encoding for a 1x1 blank gif file.
-      $scope.BlankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
+      $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
       
       // Default option for calendar
       $scope.dateOptions = {
@@ -25,7 +25,7 @@ angular.module('lformsWidget')
         changeMonth: true,
         yearRange: '1900:-0',
         showOn: 'button',
-        buttonImage: $scope.BlankGifDataUrl,
+        buttonImage: LF_CONSTANTS.BLANK_GIF_DATAURL,
         buttonImageOnly: true,
 
         constrainInput: false,
