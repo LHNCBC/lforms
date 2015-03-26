@@ -26,7 +26,6 @@ angular.module('lformsWidget')
         yearRange: '1900:-0',
         showOn: 'button',
         buttonImage: $scope.BlankGifDataUrl,
-//        buttonImage: "data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw==",
         buttonImageOnly: true,
 
         constrainInput: false,
