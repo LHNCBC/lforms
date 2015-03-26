@@ -2,7 +2,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('form-header.html',
-    "<div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"../images/blank.gif\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
+    "<div class=\"stopped\" ng-show=\"isFormDone()\"><img src=\"{{BlankGifDataUrl}}\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "<div class=\"row\">\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
