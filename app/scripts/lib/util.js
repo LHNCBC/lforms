@@ -177,20 +177,18 @@ RegExp.escape= function(s) {
 };
 
 
-// Utility tools and validations
+
+/**
+ * Utility tools and validations
+ */
 WidgetUtil = {
 
-  /*
-   * Convert the form definition data from embedded format to reference list
-   * and other changes to make the data valid to the widget
-   */
-
   /**
-   * Convert the form definition data from embedded format to reference list
+   * Convert 'items' of the form definition data from embedded format to reference list
    * and other changes to make the data valid to the widget
    *
-   * @param formData
-   * @returns {*}
+   * @param formData the form definition data (the object will be modified)
+   * @returns formData the form definition data with modified 'items'
    */
   convertFromEmbeddedToReference: function(formData) {
     var itemList = [];
@@ -261,11 +259,11 @@ WidgetUtil = {
     return formData;
   },
 
-  /*
+  /**
    * Convert the "items" from the embedded format to reference format
-   * @param items
-   * @param itemList
-   * @parentQuestionCode
+   * @param items an object that contains all sub items of a certain section/group item
+   * @param itemList an object that contains all sub items of a certain section/group item
+   * @parentQuestionCode the section/group item's question code
    */
   _convertSubItems: function(items, itemList, parentQuestionCode) {
 
