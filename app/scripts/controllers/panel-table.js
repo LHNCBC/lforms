@@ -1,9 +1,6 @@
 'use strict';
 
 angular.module('lformsWidget')
-  .constant('LF_CONSTANTS', {
-    BLANK_GIF_DATAURL: "data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw=="
-  })
   .controller('PanelTableCtrl', 
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS', 
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {

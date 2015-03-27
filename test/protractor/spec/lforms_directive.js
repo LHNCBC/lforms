@@ -1,4 +1,18 @@
 describe('horizontal table', function() {
+  var BLANK_GIF_DATAURL = 'data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw==';
+
+  describe('should have BLANK_GIF_DATAURL', function() {
+    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    browser.waitForAngular();
+    it('in datepicker img tags', function() {
+      expect(element.all(by.css('img.ui-datepicker-trigger'))
+        .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
+    });
+    it('in datepicker stop-sign image tag', function() {
+      expect(element.all(by.css('img.stop-sign'))
+        .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
+    });
+  });
 
   it('should have one add button in the horizontal table when the form loads', function() {
     browser.get('http://0.0.0.0:9001/test/directiveTest.html');

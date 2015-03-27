@@ -5,6 +5,10 @@ angular.module('lformsWidget', [
     'ui.select2',
     'autocompPhr'
 ])
+.constant('LF_CONSTANTS', {
+  BLANK_GIF_DATAURL: "data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw=="
+})
+
 .directive('lformsPanelV', function() {
   return {
     restrict: 'E',
