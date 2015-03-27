@@ -757,7 +757,7 @@ var WidgetData = Class.extend({
   },
 
   /**
-   * Check if multiple answers are allowed
+   * Check if multiple instances of the question are allowed
    * @param item an item in the form items array
    * @returns {boolean}
    * @private

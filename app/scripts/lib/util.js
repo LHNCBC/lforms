@@ -187,8 +187,8 @@ WidgetUtil = {
    * Convert 'items' of the form definition data from embedded format to reference list
    * and other changes to make the data valid to the widget
    *
-   * @param formData the form definition data (the object will be modified)
-   * @returns formData the form definition data with modified 'items'
+   * @param formData the form definition data (the object will be modified with a flattened 'items' array)
+   * @returns formData the form definition data with a flattened 'items' array
    */
   convertFromEmbeddedToReference: function(formData) {
     var itemList = [];
@@ -261,8 +261,8 @@ WidgetUtil = {
 
   /**
    * Convert the "items" from the embedded format to reference format
-   * @param items an object that contains all sub items of a certain section/group item
-   * @param itemList an object that contains all sub items of a certain section/group item
+   * @param items an array that contains all sub items of a certain section/group item
+   * @param itemList a flattened array that contains sub items of a certain section/group item
    * @parentQuestionCode the section/group item's question code
    */
   _convertSubItems: function(items, itemList, parentQuestionCode) {
