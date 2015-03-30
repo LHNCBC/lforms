@@ -354,10 +354,14 @@ var WidgetData = Class.extend({
     var codePaths = [], targetsIndex = [];
     var sourceItem = this.items[sourceItemIndex];
     // check each question after the source item
-    for (var i=sourceItemIndex+1, iLen = this.items.length; i<iLen; i++) {
-      // if it's a sibling or a descendant
-      if (this.items[i]._idPath.indexOf(sourceItem._idPath) == 0 &&
-          this.items[i]._codePath.indexOf(sourceItem._codePath) == 0 ) {
+    // (target can appear before the source item if they are siblings)
+    for (var i=0, iLen = this.items.length; i<iLen; i++) {
+      // if it's a sibling of the source item
+      if (this.items[i]._parentCodePath_ == sourceItem._parentCodePath_ &&
+          this.items[i]._parentIdPath_ == sourceItem._parentIdPath_ ||
+          // or it is a descendant of the source item
+          this.items[i]._codePath.indexOf(sourceItem._codePath) == 0 &&
+          this.items[i]._idPath.indexOf(sourceItem._idPath) == 0 ) {
         // check each code
         for (var j= 0, jLen = rule.targets.length; j<jLen; j++) {
           if (this.items[i].questionCode == rule.targets[j]) {
@@ -393,14 +397,18 @@ var WidgetData = Class.extend({
       for (var i=0, iLen = this.items.length; i<iLen; i++) {
         // the if code matches
         if (this.items[i].questionCode == formula.value[j]) {
-          // if the source item and target item are siblings or one is the other's descendant
-          if (this.items[i]._parentIdPath_.indexOf(targetItem._parentIdPath_) == 0 &&
-              this.items[i]._parentCodePath_.indexOf(targetItem._parentCodePath_) == 0 ||
-              targetItem._parentIdPath_.indexOf(this.items[i]._parentIdPath_) == 0 &&
-              targetItem._parentCodePath_.indexOf(this.items[i]._parentCodePath_) == 0 ) {
+          // if the source item and the target item are siblings
+          if (this.items[i]._parentCodePath_ === targetItem._parentCodePath_ &&
+              this.items[i]._parentIdPath_ === targetItem._parentIdPath_ ||
+              // or the target item is the source item's descendant
+              this.items[i]._codePath.indexOf(targetItem._codePath) &&
+              this.items[i]._idPath.indexOf(targetItem._idPath) ||
+              // or the source item is the target item's descendant
+              targetItem._codePath.indexOf(this.items[i]._codePath) &&
+              targetItem._idPath.indexOf(this.items[i]._idPath) ) {
+            // add codePath and index
             codePaths.push(this.items[i]._codePath)
             valueIndex.push(i);
-
           }
         } //end if code matches
       } // end of each question
