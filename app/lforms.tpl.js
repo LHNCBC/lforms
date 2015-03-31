@@ -451,7 +451,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
     "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
     "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
-    "                              </button>\n" +
     "                            </div>\n" +
     "                          </td>\n" +
     "                        </tr>\n" +
