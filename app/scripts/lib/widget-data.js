@@ -477,7 +477,7 @@ var WidgetData = Class.extend({
       item._parentCodePath_ = item._codePath.slice(0,idx)
       item._displayLevel_ = item._idPath.split(this.PATH_DELIMITER).length - 1;
 
-      item._elementId_ = item._codePath + item._idPath;
+      item._elementId = item._codePath + item._idPath;
 
 
     } // end of the items loop
@@ -722,7 +722,7 @@ var WidgetData = Class.extend({
     newItems[0]._id = newId;
     newItems[0]._idPath = newIdPath;
     newItems[0]._parentIdPath_ = parentIdPath;
-    newItems[0]._elementId_ = newItems[0]._codePath + newItems[0]._idPath;
+    newItems[0]._elementId = newItems[0]._codePath + newItems[0]._idPath;
 
     var idx = parentIdPath.length;
     // update the rest items if it is a group
@@ -736,7 +736,7 @@ var WidgetData = Class.extend({
       // the _id does not need to be updated. the initial value is always "1"
 
       // update element id
-      newItems[i]._elementId_ = newItems[i]._codePath + newItems[i]._idPath;
+      newItems[i]._elementId = newItems[i]._codePath + newItems[i]._idPath;
     }
   },
 
@@ -804,10 +804,27 @@ var WidgetData = Class.extend({
    * 4) _repeatableItems is reused for adding a repeating row in a horizontal table. but the header item will not be added.
    * i.e. the table should not have more than one table titles
    *
+   * _horizontalTableInfo structure:
+   * _horizontalTableInfo: {
+   *    headerItem._horizontalTableId : {
+   *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
+   *      tableEndIndex:   lastItemIndex,
+   *      columnHeaders:     [ { label: item.question, id: 'col' + item.elementId }, {...}, ...],
+   *      tableHeaders:    [h1, h2, ...]
+   *      tableRows:       [{ header: h1, cells : [h1+1, h1+2], ... },
+   *                        { header: h2, cells : [h2+1, h2+2], ... },
+   *                        ... ],
+   *      lastHeaderIndex: lastHeaderItemIndex
+   *    }
+   *  }
+   *
    * @private
    */
 
   _resetHorizontalTableInfo: function() {
+
+
+
     this._horizontalTableInfo = {};
 
     var tableHeaderCodePathAndParentIdPath = null;
@@ -815,47 +832,48 @@ var WidgetData = Class.extend({
     var hasHorizontalLayout = false;
 
     for (var i= 0, iLen=this.items.length; i<iLen; i++) {
+      var item = this.items[i];
       // header item and horizontal layout
-      if (this.items[i].header && this.items[i].layout == "horizontal" ) {
+      if (item.header && item.layout == "horizontal" ) {
         hasHorizontalLayout = true;
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];
-        var colNames = [];
-        this.items[i]._inHorizontalTable = true;
-        this.items[i]._isLastTableHeaderInGroup = false;
-        var itemCodePathAndParentIdPath = this.items[i]._codePath + this.items[i]._parentIdPath_;
+        var columnHeaders = [];
+        item._inHorizontalTable = true;
+        item._isLastTableHeaderInGroup = false;
+        var itemCodePathAndParentIdPath = item._codePath + item._parentIdPath_;
         lastTableHeaderIndex = i;
         // if it's the first row (header) of the first table,
         if (tableHeaderCodePathAndParentIdPath === null ||
             tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
           // indicate this item is the table header
-          this.items[i]._horizontalTableHeader = true;
+          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
+          item._horizontalTableHeader = true;
+          item._horizontalTableId = tableHeaderCodePathAndParentIdPath;
 
-          var range = this._getRepeatableItemsRange(this.items[i]);
+          var range = this._getRepeatableItemsRange(item);
           for (var j=range.start+1; j<=range.end; j++) {
             itemsInRow.push(j);
-            colNames.push(this.items[j].question);
+            columnHeaders.push({label: this.items[j].question, id: "col" + this.items[j]._elementId});
             // indicate the item is in a horizontal table
             this.items[j]._inHorizontalTable = true;
           }
 
-          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
             tableStartIndex: i,
             tableEndIndex: range.end,
-            columnNames: colNames,
+            columnHeaders: columnHeaders,
             tableRows: [{ header: i, cells : itemsInRow }],
             tableHeaders: [i]
           };
 
           // set the last table/row in horizontal group/table flag
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
-
         }
         // if it's the following rows, update the tableRows and tableEndIndex
         else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
-          var range = this._getRepeatableItemsRange(this.items[i]);
+          var range = this._getRepeatableItemsRange(item);
           var itemsInRow = [];
           for (var j=range.start+1; j<=range.end; j++) {
             itemsInRow.push(j);
@@ -868,7 +886,6 @@ var WidgetData = Class.extend({
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(i);
           // update last item index in the table
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = range.end;
-
           // set the last table/row in horizontal group/table flag
           this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
         }
@@ -1525,7 +1542,7 @@ var WidgetData = Class.extend({
   Navigation: {
     // keys
     ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
-    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId_) of every questions.
+    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId) of every questions.
     _reverseNavigationMap: {}, // a reverse mapping from element id to position, for quick search of positions.
 
     /**
@@ -1543,8 +1560,8 @@ var WidgetData = Class.extend({
           // TODO: if it is not a hidden target fields of skip logic rules
 
           posX = 0; // set x to 0
-          this._navigationMap.push([items[i]._elementId_]);
-          this._reverseNavigationMap[items[i]._elementId_] = {x: posX, y: posY};
+          this._navigationMap.push([items[i]._elementId]);
+          this._reverseNavigationMap[items[i]._elementId] = {x: posX, y: posY};
           posY += 1; // have added a row
         }
         // in horizontal tables and it is a table header
@@ -1559,8 +1576,8 @@ var WidgetData = Class.extend({
               posX = 0; // new row, set x to 0
               for (var k= 0, kLen = tableRow.cells.length; k < kLen; k++) {
                 var cellItem = items[tableRow.cells[k]];
-                tableRowMap.push(cellItem._elementId_);
-                this._reverseNavigationMap[cellItem._elementId_] = {x: posX, y: posY};
+                tableRowMap.push(cellItem._elementId);
+                this._reverseNavigationMap[cellItem._elementId] = {x: posX, y: posY};
                 posX += 1; // have added a field in the row
               }
               this._navigationMap.push(tableRowMap)
