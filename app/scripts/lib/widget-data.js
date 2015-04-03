@@ -802,7 +802,7 @@ var WidgetData = Class.extend({
    * 2) any items within a 'horizontal' table must be a leaf node. i.e. it cannot contain any sub items.
    * 3) all items within a 'horizontal' table has it's "_inHorizontalTable_" set to true, but not the header item itself.
    * 4) _repeatableItems is reused for adding a repeating row in a horizontal table. but the header item will not be added.
-   * i.e. the table should not have more than one table titles
+   * i.e. the table should not have more than one table title
    *
    * _horizontalTableInfo structure:
    * _horizontalTableInfo: {
@@ -841,7 +841,6 @@ var WidgetData = Class.extend({
         var itemsInRow = [];
         var columnHeaders = [];
         item._inHorizontalTable = true;
-        item._isLastTableHeaderInGroup = false;
         var itemCodePathAndParentIdPath = item._codePath + item._parentIdPath_;
         lastTableHeaderIndex = i;
         // if it's the first row (header) of the first table,
