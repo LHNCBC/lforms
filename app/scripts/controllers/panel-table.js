@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('lformsWidget')
-  .controller('PanelTableCtrl', function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData) {
+  .controller('PanelTableCtrl', 
+    ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS', 
+      function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
@@ -9,13 +11,18 @@ angular.module('lformsWidget')
         showCodingInstruction: false // whether to show coding instruction inline. (false: inline; true: in popup)
       };
 
+        // Provide blank image to satisfy img tag. Bower packaging forces us to 
+        // avoid using image files from html templates, therefore using base64 
+        // encoding for a 1x1 blank gif file.
+      $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
+      
       // Default option for calendar
       $scope.dateOptions = {
         changeYear: true,
         changeMonth: true,
         yearRange: '1900:-0',
         showOn: 'button',
-        buttonImage: "../images/blank.gif",
+        buttonImage: LF_CONSTANTS.BLANK_GIF_DATAURL,
         buttonImageOnly: true,
 
         constrainInput: false,
@@ -930,4 +937,4 @@ angular.module('lformsWidget')
           }
         }
       }
-    });
+    }]);

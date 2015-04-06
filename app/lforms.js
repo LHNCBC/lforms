@@ -3,7 +3,8 @@
 angular.module('lformsWidget', [
     "mgcrea.ngStrap",
     'ui.select2',
-    'autocompPhr'
+    'autocompPhr',
+    'lfConstants'
 ])
 .directive('lformsPanelV', function() {
   return {
