@@ -104,6 +104,10 @@ var WidgetData = Class.extend({
     "",        // for header, no input field
   ],
 
+  // All accessory attributes of an item
+  // (move all other properties into this _opt eventually.)
+  _opt: {},
+
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -1128,9 +1132,9 @@ var WidgetData = Class.extend({
 
   /**
    * Get the target of a skip logic rule, given the source's codePath and the trigger value
-   * @param codePath an item's code path
-   * @param dataType an item's data type
-   * @param currentValue an item's current value
+   * @param codePath a source item's code path
+   * @param dataType a source item's data type
+   * @param currentValue a source item's current value
    * @returns {Array}
    * @private
    */
@@ -1325,6 +1329,7 @@ var WidgetData = Class.extend({
     return ret;
   },
 
+
   /**
    * Get the CSS classes for a give item
    * @param item an item in the lforms form items array
@@ -1339,13 +1344,7 @@ var WidgetData = Class.extend({
         if (item._codePath == this._skipLogicShownTargets[i][2]) {
           // and the target item is a sibling or a descendant of the source item
           if (item._idPath.indexOf(this._skipLogicShownTargets[i][3]) == 0 ) {
-            var key = item._codePath + item._parentIdPath_;
-            if (this._skipLogicShownTargetKeys[key]) {
-              ret = 'target-show newly_shown'
-            }
-            else {
-              ret = 'target-show'
-            }
+            ret = 'target-show'
             break;
           }
         }
@@ -1359,19 +1358,6 @@ var WidgetData = Class.extend({
         item._prevSkipLogicTargetClass = ret;
       }
     } // end of if the item is a target
-
-    return ret;
-  },
-
-
-  // check skip logic target keys ???
-  // seems not finished yet. used to make style changes in the transition of show/hide target items
-  // to be completed, for skip logic animation
-  checkSkipLogicKeys: function() {
-    var ret = false;
-    if (!jQuery.isEmptyObject(this._skipLogicShownTargetKeys)) {
-      ret = true;
-    }
 
     return ret;
   },
@@ -1395,7 +1381,7 @@ var WidgetData = Class.extend({
   /**
    * Update skip rule status if any source items have a data change
    */
-  checkAnswerCode: function() {
+  checkAllSkipLogic: function() {
 
     // _skipLogicShownTargets format: [source._codePath, answer_code, target._codePath, source._parentIdPath_]
 
@@ -1407,7 +1393,7 @@ var WidgetData = Class.extend({
     this._formDone = false;
 
     // go through all the items (is there a way to just go though changed items???)
-    for (var j= 0, jlen = this.items.length; j<jlen; j++) {
+    for (var j= 0, jLen = this.items.length; j<jLen; j++) {
       var item = this.items[j];
       if (item &&
           (item.dataType == 'CNE' || item.dataType == 'CWE' ||   // answer lists
@@ -1417,7 +1403,7 @@ var WidgetData = Class.extend({
           item._value) {
         // if the field accepts multiple values from the answer list
         if (Array.isArray(item._value)) {
-          for (var m= 0, mlen = item._value.length; m<mlen; m++) {
+          for (var m= 0, mLen = item._value.length; m<mLen; m++) {
             this._updateSkipLogicStatus(item, item._value[m], prevSkipLogicShownTargets)
           }
         }
@@ -1432,10 +1418,10 @@ var WidgetData = Class.extend({
 
   /**
    * Update the status of the skip logic rules.
-   * Called by checkAnswerCode
-   * @param item an item in the lforms form items array
-   * @param currentValue the current value of the item
-   * @param prevSkipLogicShownTargets an array of previously shown targets
+   * Called by checkAllSkipLogic
+   * @param item the source item
+   * @param currentValue the current value of the source item
+   * @param prevSkipLogicShownTargets an array of previously shown target items
    * @private
    */
   _updateSkipLogicStatus: function(item, currentValue, prevSkipLogicShownTargets) {
@@ -1445,7 +1431,7 @@ var WidgetData = Class.extend({
 
     // update skip logic status
     var targets = this._getSkipLogicTarget(item._codePath, item.dataType, currentValue);
-    for (var k=0, klen = targets.length; k<klen; k++) {
+    for (var k=0, kLen = targets.length; k<kLen; k++) {
       var key = targets[k] + item._parentIdPath_;
       if (this._skipLogicShownTargetKeys[key] === undefined) {
         this._skipLogicShownTargetKeys[key]= true;
@@ -1458,8 +1444,9 @@ var WidgetData = Class.extend({
     }
   },
 
+  // So if the target is a section's header, the value of every items within this section should be all reset
   /**
-   * Reset each target item's value if its triggering item's value is changed by another triggering item.
+   * Reset (clean up) each target item's value if its triggering item's value is changed by another triggering item.
    * It's called recursively until all the triggered target items are checked.
    * @param currentCodePath code path of the current item
    * @param parentIdPath id path of the current item's parent item
@@ -1476,7 +1463,7 @@ var WidgetData = Class.extend({
     for (var i=0, iLen = prevSkipLogicShownTargets.length; i<iLen; i++) {
       var prevStatus = prevSkipLogicShownTargets[i]
       // if its _codePath and _parentIdPath_ are same but its answer code is different than the current item
-      // need to check the matching rule's target itmes
+      // need to check the matching rule's target items
       if (prevStatus[0] == currentCodePath &&
           prevStatus[3] == parentIdPath &&
           !this._objectEqual(prevStatus[1], currentValue)) {
@@ -1492,7 +1479,7 @@ var WidgetData = Class.extend({
             // reset its value
             // this.items[k]._value = "";
             delete this.items[k]._value;  // date value cannot be string. so it's safer than assign a "" or null to it.
-            // check the skip logic that is depending on this test and its value
+            // check the skip logic that is depending on this item and its value
             var idx = this.items[k]._idPath.lastIndexOf(this.PATH_DELIMITER);
             var nextParentIdPath = this.items[k]._idPath.slice(0,idx);
             this._resetSkipLogicTargetValue(this.items[k]._codePath, nextParentIdPath, "", prevSkipLogicShownTargets)
