@@ -30,7 +30,7 @@
   "description": "An angular directive that displays forms defined in the lforms standard format.",
   "main": [
     "app/lforms.js",
-    "app/lforms-constants.js",
+    "app/scripts/lforms-constants.js",
     "app/scripts/controllers/panel-table.js",
     "app/scripts/directives/lf-date.js",
     "app/scripts/lib/date.js",
