@@ -408,7 +408,7 @@ angular.module('lformsWidget')
             placeholder: "Select a value",
             openOnFocus: true,
             allowFreeText: false,
-            preSelected:preSelected,
+            preSelected:preSelected
             //selectFirst: true
           };
         }
@@ -422,13 +422,16 @@ angular.module('lformsWidget')
        * @param questionInfo the data structure for the question on the form
        */
       $scope.phrAutocompOpt = function(questionInfo) {
-        var source = [], answers = [], ret ={};
+        var source = [], answers = [];
 
-        if (angular.isArray(questionInfo.answers)) {
-          answers = questionInfo.answers;
-        }
-        else if (questionInfo.answers !== "") {
-          answers = $scope.lfData.answerLists[questionInfo.answers];
+        // 'answers' might be null even for CWE
+        if (questionInfo.answers) {
+          if (angular.isArray(questionInfo.answers)) {
+            answers = questionInfo.answers;
+          }
+          else if (questionInfo.answers !== "" && $scope.lfData.answerLists) {
+            answers = $scope.lfData.answerLists[questionInfo.answers];
+          }
         }
 
         // Modify the label (question text) for each question.
@@ -453,7 +456,7 @@ angular.module('lformsWidget')
             maxSelect = parseInt(maxSelect);
         }
 
-        ret = {
+        var ret = {
           source: source,
           matchListValue: questionInfo.dataType === "CNE",
           maxSelect: maxSelect
