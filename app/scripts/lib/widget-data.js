@@ -43,7 +43,6 @@ var WidgetData = Class.extend({
 
   // the status of current shown skip logic targets
   _skipLogicShownTargets : [],    // format: [source._codePath, answer_code, target._codePath, source._parentIdPath_]
-  _skipLogicShownTargetKeys : {}, // format: {target._codePath : true/false}
 
   // repeatable question items derived from items
   _repeatableItems : {},
@@ -1149,14 +1148,9 @@ var WidgetData = Class.extend({
             // the key is one of the keys in the answers.
             case "CNE":
             case "CWE":
-              var targetField = Object.keys(skipLogicRule.trigger)[0] ; // fields should have only one item
-              var valueField = targetField;
-              // special case: In jQuery Autocomplete "label" is used for a different purpose (the text displayed in the list)
-              // so the value of 'label' in answers is stored in 'origLabel' when constructing for jQuery Autocomplete.
-              // here it's changed back to 'label'
-              if (targetField == "label") valueField = "origLabel";
-              if (skipLogicRule.trigger.hasOwnProperty(targetField) && currentValue.hasOwnProperty(valueField) &&
-                  this._objectEqual(skipLogicRule.trigger[targetField], currentValue[valueField]) ) {
+              var field = Object.keys(skipLogicRule.trigger)[0] ; // trigger should have only one key
+              if (skipLogicRule.trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) &&
+                  this._objectEqual(skipLogicRule.trigger[field], currentValue[field]) ) {
                 ret = ret.concat(skipLogicRule.targets);
               }
               break;
@@ -1339,7 +1333,7 @@ var WidgetData = Class.extend({
     var ret = '';
     if (this.isSkipLogicTarget(item._codePath)) {
       ret = 'target-hide';
-      for (var i= 0, ilen=this._skipLogicShownTargets.length; i<ilen; i++) {
+      for (var i= 0, iLen=this._skipLogicShownTargets.length; i<iLen; i++) {
         // if the _codePath matches
         if (item._codePath == this._skipLogicShownTargets[i][2]) {
           // and the target item is a sibling or a descendant of the source item
@@ -1432,10 +1426,6 @@ var WidgetData = Class.extend({
     // update skip logic status
     var targets = this._getSkipLogicTarget(item._codePath, item.dataType, currentValue);
     for (var k=0, kLen = targets.length; k<kLen; k++) {
-      var key = targets[k] + item._parentIdPath_;
-      if (this._skipLogicShownTargetKeys[key] === undefined) {
-        this._skipLogicShownTargetKeys[key]= true;
-      }
       this._skipLogicShownTargets.push([item._codePath, currentValue, targets[k], item._parentIdPath_])
       // check if it's done
       if ( targets[k] == 'DONE') {

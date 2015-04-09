@@ -278,10 +278,10 @@ angular.module('lformsWidget')
       /**
        * Check each item's skip logic when there's a data change
        */
-      $scope.checkAnswerCode = function() {
+      $scope.checkAllSkipLogic = function() {
         var widgetData = $scope.lfData;
         if (widgetData) {
-          widgetData.checkAnswerCode();
+          widgetData.checkAllSkipLogic();
         }
       };
 
@@ -307,6 +307,7 @@ angular.module('lformsWidget')
       };
 
       /**
+       * Obsolete
        * Prepare the answer list for CWE (combo) field for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item an item in the lforms form items array
@@ -491,6 +492,7 @@ angular.module('lformsWidget')
 
 
       /**
+       * Obsolete
        * Prepare the units list for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item an item in the lforms form items array
@@ -662,6 +664,7 @@ angular.module('lformsWidget')
       };
 
       /**
+       * Obsolete
        * Set up option for select2 directive
        * @param item an item in the lforms form items array
        * @returns {{}}

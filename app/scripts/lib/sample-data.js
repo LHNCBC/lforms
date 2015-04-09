@@ -674,3 +674,122 @@ var glasgow =
 
 var glasgowRI = 
 {"type":"LOINC","code":"35088-4","name":"Glasgow coma scale","dataType":null,"header":true,"units":null,"codingInstructions":"The Glasgow Coma Scale is a neurological scale for assessing a person's level of consciousness, both for initial as well as continuing assessment. A patient is assessed against the criteria of the scale, and the resulting points give the Glasgow Coma Score (or GCS).","copyrightNotice":null,"items":[{"questionCode":"9267-6","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS eye","answers":[{"label":"1","code":"LA6553-7","text":"No eye opening","score":1,"other":null},{"label":"2","code":"LA6554-5","text":"Eye opening to pain","score":2,"other":null},{"label":"3","code":"LA6555-2","text":"Eye opening to verbal command","score":3,"other":null},{"label":"4","code":"LA6556-0","text":"Eyes open spontaneously","score":4,"other":null}],"skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},{"questionCode":"9268-4","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS motor","answers":[{"label":"1","code":"LA6562-8","text":"No motor response","score":1,"other":null},{"label":"2","code":"LA6563-6","text":"Extension to pain","score":2,"other":null},{"label":"3","code":"LA6564-4","text":"Flexion to pain","score":3,"other":null},{"label":"4","code":"LA6565-1","text":"Withdrawl from pain","score":4,"other":null},{"label":"5","code":"LA6566-9","text":"Localizing pain","score":5,"other":null},{"label":"6","code":"LA6567-7","text":"Obeys commands","score":6,"other":null}],"skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},{"questionCode":"9270-0","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS verbal","answers":[{"label":"1","code":"LA6557-8","text":"No verbal response (>2 yrs); no vocal response (<=2 yrs)","score":1,"other":null},{"label":"2","code":"LA6558-6","text":"Incomprehensible sounds","score":2,"other":null},{"label":"3","code":"LA6559-4","text":"Inappropriate words","score":3,"other":null},{"label":"4","code":"LA6560-2","text":"Confused","score":4,"other":null},{"label":"5","code":"LA6561-0","text":"Oriented","score":5,"other":null}],"skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},{"questionCode":"9269-2","localQuestionCode":null,"dataType":null,"header":false,"units":[{"name":"{score}","default":false,"normalRange":null,"absoluteRange":null}],"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS total","answers":null,"skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":"TOTALSCORE","items":null}]};
+
+
+var allInOne =
+{ "type": "LOINC",
+  "code": "all-in-one",
+  "name": "Full-Featured Demo",
+  "dataType": null,
+  "header": true,
+  "units": null,
+  "codingInstructions": "NIH/NLM/LHNCBC",
+  "copyrightNotice": null,
+  "items": [
+    // different data type
+    {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type3", "dataType": "REAL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type REAL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type6", "dataType": "DT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type7", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type8", "dataType": "TM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type TM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type9", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE", "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null},
+      {"code": "c2", "text": "Answer 2", "other": null},
+      {"code": "c3", "text": "Answer 3", "other": null},
+      {"code": "c4", "text": "Other:", "other": true}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
+      {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
+      {"label": "2", "code": "c02", "text": "With a label 2", "score": 2, "other": null},
+      {"label": "3", "code": "c03", "text": "With a label 3", "score": 3, "other": null}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type11", "dataType": "RTO", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type RTO", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type12", "dataType": "QTY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type QTY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type13", "dataType": "YEAR", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type YEAR", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type14", "dataType": "MONTH", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type MONTH", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type15", "dataType": "DAY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DAY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type16", "dataType": "URL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type URL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type17", "dataType": "EMAIL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type EMAIL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type18", "dataType": "PHONE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type PHONE", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+    // multi-select CNE
+    {"questionCode": "multiSelectCNE", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CNE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    // multi-select CWE
+    {"questionCode": "multiSelectCWE", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+
+    // editable: readonly(0), writable(1), or readonly for existing data, writable for new data(2)
+
+    // repeating items on level 1
+    // bmi rule
+
+    // level 2 sub section 1, non-repeating -- a
+    // repeating items on level 2
+    // skip logic rule
+
+    // level 3 sub section 1, non-repeating ---- aa
+    // repeating items on level 3
+    // answers,
+    // multiple answers
+    // skip logic rule
+    // bmi rule
+
+    // level 3 sub section 2, repeating, with everything in (aa) ---- ab
+
+    // level 2 sub section 2, repeating, with everything in (a) -- b
+
+    // total score
+
+  ]};
