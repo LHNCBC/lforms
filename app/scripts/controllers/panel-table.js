@@ -434,11 +434,19 @@ angular.module('lformsWidget')
           }
         }
 
+        // Just check the first answer to see if there's a label
+        // (Labels should be on all answers if one has a label.)
+        var hasLabel;
+        if (answers.length > 0 && answers[0].label &&
+            typeof answers[0].label === 'string' && answers[0].label.trim()) {
+          hasLabel = true;
+        }
+
         // Modify the label (question text) for each question.
         var defaultValue;
-        for(var i= 0, ilen = answers.length; i<ilen; i++) {
+        for(var i= 0, iLen = answers.length; i<iLen; i++) {
           var answerData = angular.copy(answers[i]);
-          var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
+          var label = hasLabel ? answerData.label + ". " + answerData.text : answerData.text;
           answerData.text = label;
           source.push(answerData);
 
@@ -459,7 +467,8 @@ angular.module('lformsWidget')
         var ret = {
           source: source,
           matchListValue: questionInfo.dataType === "CNE",
-          maxSelect: maxSelect
+          maxSelect: maxSelect,
+          addSeqNum: !hasLabel
         };
         if (defaultValue !== undefined)
           ret.defaultValue = defaultValue;
