@@ -5,6 +5,8 @@ angular.module('lformsWidget')
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS', 
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
+      $scope.debug = true;
+
       // Configuration data that controls form's UI
       $scope.formConfig = {
         showQuestionCode: false,   // whether question code is displayed next to the question
@@ -206,6 +208,8 @@ angular.module('lformsWidget')
       $scope.getSkipLogicTargetClass = function(item) {
         var widgetData = $scope.lfData;
         return widgetData.getSkipLogicTargetClass(item);
+
+        // return item._opt.targetStatus
       };
 
       /**

@@ -681,7 +681,7 @@ var allInOne =
   "code": "all-in-one",
   "name": "Full-Featured Demo",
   "dataType": null,
-  "header": true,
+  "header": null,
   "units": null,
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": null,
@@ -754,7 +754,7 @@ var allInOne =
 
     // multi-select CNE
     {"questionCode": "multiSelectCNE", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
-      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CNE", "answers": [
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "-1"}, "question": "Multi Selection on CNE", "answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
@@ -762,7 +762,7 @@ var allInOne =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
     // multi-select CWE
     {"questionCode": "multiSelectCWE", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
-      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "-1"}, "question": "Multi Selection on CWE", "answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
@@ -770,7 +770,53 @@ var allInOne =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
 
 
+    // skip logic, controlling sibling items
+    // skip logic, controlling sibling headers
+    {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
+      "skipLogic": [
+          {"trigger": {"value": 1}, "action": "show", "targets": ["slTargetItem1"]},
+          {"trigger": {"minInclusive": 2}, "action": "show", "targets": ["slTargetItem2"]},
+          // targets includes a header and all its children, just for testing of a temp solution that make skip logic work on sections
+          // only headers are needed in future.
+          {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1","slTargetSubItem1","slTargetSubItem2"]},
+//        {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1"]},
+//        {"trigger": {"minExclusive": 6}, "action": "show", "targets": ["slTargetSubItem3"]}   // child of a sibling, not allowed
+      ],
+      "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetSubItem1", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetSubItem2", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+//    {"questionCode": "slTargetSubItem3", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+//      "questionCardinality": null, "answerCardinality": null, "question": "T6: Hidden when my section header is hidden, even if I am told to show when 'Skip Logic Source #1' > 6", "answers": null,
+//      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+    // skip logic, controlling child items and headers (one level below)
+    // skip logic, controlling descendant items and headers (two levels below)
+
+    // skip logic, controlling repeating sibling items
+    // skip logic, controlling repeating sibling headers
+    // skip logic, controlling repeating child items and headers (one level below)
+    // skip logic, controlling repeating descendant items and headers (two levels below)
+
+    // skip logic, one instance of repeating item (as source) controlling sibling items/headers and descendants items/headers
+
+    // skip logic, one instance of repeating item (as source) controlling repeating sibling items/headers and repeating descendant items/headers
+
     // editable: readonly(0), writable(1), or readonly for existing data, writable for new data(2)
+
 
     // repeating items on level 1
     // bmi rule

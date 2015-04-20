@@ -206,7 +206,7 @@ WidgetUtil = {
         itemList[i].header = false;
       }
       // dateType should not be null for questions have answers
-      if (itemList[i].answers && itemList[i].answers.length > 0) {
+      if (!itemList[i].dataType && itemList[i].answers && itemList[i].answers.length > 0 ) {
         itemList[i].dataType = 'CNE';
       }
 

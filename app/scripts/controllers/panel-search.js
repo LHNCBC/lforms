@@ -54,7 +54,7 @@ angular.module('lformsWidget')
           selectedFormData.updateForm(new WidgetData(angular.copy(glasgow)));
         }
         else if (loinc_num == 'all-in-one') {
-          selectedFormData.updateForm(new WidgetData(WidgetUtil.convertFromEmbeddedToReference(angular.copy(allInOne))));
+          selectedFormData.updateForm(new WidgetData(angular.copy(allInOne)));
         }
       }
     };

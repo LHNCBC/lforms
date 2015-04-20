@@ -347,7 +347,7 @@ var WidgetData = Class.extend({
 
   /**
    * Get the code paths and indexes of target items of a skip logic rule
-   * Note: in skip logic, the target items are the siblings or descendants of the source item
+   * Note: in skip logic, the target items are the descendants or siblings or descendants of siblings of the source item
    * @param sourceItemIndex index of an item in the form items array
    * @param rule a skip logic rule
    * @returns rule a skip logic rule with updated code paths and indexes of target items
@@ -361,11 +361,10 @@ var WidgetData = Class.extend({
     for (var i=0, iLen = this.items.length; i<iLen; i++) {
       var item = this.items[i];
       // if it's a sibling of the source item
-      if (item._parentCodePath_ == sourceItem._parentCodePath_ &&
-          item._parentIdPath_ == sourceItem._parentIdPath_ ||
-          // or it is a descendant of the source item
-          item._codePath.indexOf(sourceItem._codePath) == 0 &&
-          item._idPath.indexOf(sourceItem._idPath) == 0 ) {
+      // or it is a descendant of the source item
+      // or it is a descendant of siblings of the source item
+      if (item._codePath.indexOf(sourceItem._parentCodePath_) == 0 &&
+          item._idPath.indexOf(sourceItem._parentIdPath_) == 0 ) {
         // check each code
         for (var j= 0, jLen = rule.targets.length; j<jLen; j++) {
           if (item.questionCode == rule.targets[j]) {
