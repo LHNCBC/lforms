@@ -31,7 +31,7 @@ demo, try the following:
 
 ## Licensing and Copyright Notice
 The LForms software employs the LOINC data model, including LOINC® codes and
-LOINC® table which are copyright © 1995-2014, Regenstrief Institute, Inc. and
+LOINC® table which are copyrighted © 1995-2014, Regenstrief Institute, Inc. and
 the Logical Observation Identifiers Names and Codes (LOINC) Committee. The LOINC
 Terms of Use and Copyright Notice and License apply. LOINC® is a registered
 United States trademark of Regenstrief Institute, Inc.
