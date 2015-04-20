@@ -23,6 +23,7 @@ Reports.
 ## Installation
 LForms installs using the bower package manager (“bower install lforms”).  For a
 demo, try the following:
+
 1. git clone https://github.com/lhncbc/lforms.git
 2. cd lforms
 3. npm install
