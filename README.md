@@ -23,11 +23,11 @@ Reports.
 ## Installation
 LForms installs using the bower package manager (“bower install lforms”).  For a
 demo, try the following:
-1.  git clone https://github.com/lhncbc/lforms.git
-2.  cd lforms
-3.  npm install
-4.  bower install
-5.  grunt serve
+1. git clone https://github.com/lhncbc/lforms.git
+2. cd lforms
+3. npm install
+4. bower install
+5. grunt serve
 
 ## Licensing and Copyright Notice
 The LForms software employs the LOINC data model, including LOINC® codes and
