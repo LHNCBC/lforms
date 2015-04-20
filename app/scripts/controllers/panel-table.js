@@ -5,7 +5,7 @@ angular.module('lformsWidget')
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS', 
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
-      $scope.debug = true;
+      $scope.debug = false;
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
