@@ -458,11 +458,12 @@ var WidgetData = Class.extend({
         }
         // else, find the parent's parent, and check again
         else {
-          currentParent = parents.pop();
+          parents.pop();
+          currentParent = parents.last();
         }
       }
 
-      // it current item is a parent
+      // if current item is a parent
       if (this._isParent(i)) {
         // push the current item into the parents queue
         parents.push(item);

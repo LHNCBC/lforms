@@ -269,7 +269,7 @@ WidgetUtil = {
 
     for (var i= 0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
-      var subItems = item.items
+      var subItems = item.items;
       // remove the "items" that is not needed in the reference list
       delete item.items;
       // add it to the reference list
