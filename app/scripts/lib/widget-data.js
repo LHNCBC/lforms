@@ -1133,7 +1133,7 @@ var WidgetData = Class.extend({
    * @param codePath a source item's code path
    * @param dataType a source item's data type
    * @param currentValue a source item's current value
-   * @returns {Array}
+   * @returns an array of all targets
    * @private
    */
   _getSkipLogicTarget: function(codePath, dataType, currentValue) {
@@ -1335,7 +1335,7 @@ var WidgetData = Class.extend({
       for (var i= 0, iLen=this._skipLogicShownTargets.length; i<iLen; i++) {
         // if the _codePath matches
         if (item._codePath == this._skipLogicShownTargets[i][2]) {
-          // and the target item is a sibling or a descendant of the source item
+          // and the target item is the source item's sibling, descendant, or descendant of a sibling
           if (item._idPath.indexOf(this._skipLogicShownTargets[i][3]) == 0 ) {
             ret = 'target-show'
             break;
