@@ -10,7 +10,7 @@ describe('skip logic', function() {
     }, 10000);
     formSearch.click();
     //$('.select2-result:nth-of-type(2)').click();
-    element(by.css('.select2-result:nth-of-type(6)')).click();
+    element(by.css('.select2-result:nth-of-type(5)')).click();
     //$('.btn').click();
     element(by.css('.btn')).click();
 

@@ -394,7 +394,7 @@ var horizontalFHTData = {
     ], "header": false},
     {"questionCode": "39156-5", "parentQuestionCode": "54117-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: BMI", "answers": "", "dataType": "REAL", "units": "", "header": false, "formula":{"name":"BMI","value":["29463-7","8302-2"]}},
 
-    {"questionCode": "54119-3", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+    {"questionCode": "54119-3R", "parentQuestionCode": "54114-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
   ],
 
   // answer list could be embedded directly in the "answers" field in "items", or,

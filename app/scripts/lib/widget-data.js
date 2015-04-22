@@ -550,8 +550,8 @@ var WidgetData = Class.extend({
   getRepeatingItemCount: function(item) {
     var count = 0;
     for (var i= 0, iLen=this.items.length; i<iLen; i++) {
-      if (this.items[i]._codePath == item._codePath &&
-          this.items[i]._parentIdPath_ == item._parentIdPath_ ) {
+      if (this.items[i]._codePath === item._codePath &&
+          this.items[i]._parentIdPath_ === item._parentIdPath_ ) {
         count++;
       }
     }
