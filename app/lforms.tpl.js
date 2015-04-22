@@ -174,7 +174,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-include=\"'form-header.html'\"></div>\n" +
     "\n" +
     "      <h3 class=\"groupHeader\">\n" +
-    "        <span>{{::lfData.name}}</span>\n" +
+    "        <span>{{lfData.name}}</span>\n" +
     "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
     "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
@@ -384,7 +384,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "  </form>\n" +
-    "  <button ng-click=\"onclick()\">Click to debug Panel Table controller</button>\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Table controller</button>\n" +
     "</div>\n"
   );
 
@@ -396,7 +396,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-include=\"'form-header.html'\"></div>\n" +
     "\n" +
     "      <h3 class=\"groupHeader\">\n" +
-    "        <span>{{::lfData.name}}</span>\n" +
+    "        <span>{{lfData.name}}</span>\n" +
     "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
     "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
@@ -604,9 +604,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "  </form>\n" +
-    "  <!--\n" +
-    "  <button ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
-    "  -->\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
     "</div>\n"
   );
 

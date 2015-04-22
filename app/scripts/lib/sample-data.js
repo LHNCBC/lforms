@@ -729,3 +729,167 @@ var formBuilder =
     }]
   }]
 };
+
+var allInOne =
+{ "type": "LOINC",
+  "code": "all-in-one",
+  "name": "Full-Featured Demo",
+  "dataType": null,
+  "header": null,
+  "units": null,
+  "codingInstructions": "NIH/NLM/LHNCBC",
+  "copyrightNotice": null,
+  "items": [
+    // different data type
+    {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type3", "dataType": "REAL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type REAL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type6", "dataType": "DT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type7", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type8", "dataType": "TM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type TM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type9", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE", "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null},
+      {"code": "c2", "text": "Answer 2", "other": null},
+      {"code": "c3", "text": "Answer 3", "other": null},
+      {"code": "c4", "text": "Other:", "other": true}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
+      {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
+      {"label": "2", "code": "c02", "text": "With a label 2", "score": 2, "other": null},
+      {"label": "3", "code": "c03", "text": "With a label 3", "score": 3, "other": null}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type11", "dataType": "RTO", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type RTO", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type12", "dataType": "QTY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type QTY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type13", "dataType": "YEAR", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type YEAR", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type14", "dataType": "MONTH", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type MONTH", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type15", "dataType": "DAY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DAY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type16", "dataType": "URL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type URL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type17", "dataType": "EMAIL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type EMAIL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "type18", "dataType": "PHONE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type PHONE", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+    // multi-select CNE
+    {"questionCode": "multiSelectCNE", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "-1"}, "question": "Multi Selection on CNE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    // multi-select CWE
+    {"questionCode": "multiSelectCWE", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "-1"}, "question": "Multi Selection on CWE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+
+    // skip logic, controlling sibling items
+    // skip logic, controlling sibling headers
+    {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
+      "skipLogic": [
+          {"trigger": {"value": 1}, "action": "show", "targets": ["slTargetItem1"]},
+          {"trigger": {"minInclusive": 2}, "action": "show", "targets": ["slTargetItem2"]},
+          // targets includes a header and all its children, just for testing of a temp solution that make skip logic work on sections
+          // only headers are needed in future.
+          {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1","slTargetSubItem1","slTargetSubItem2"]},
+//        {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1"]},
+//        {"trigger": {"minExclusive": 6}, "action": "show", "targets": ["slTargetSubItem3"]}   // child of a sibling, not allowed
+      ],
+      "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetSubItem1", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+    {"questionCode": "slTargetSubItem2", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+//    {"questionCode": "slTargetSubItem3", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+//      "questionCardinality": null, "answerCardinality": null, "question": "T6: Hidden when my section header is hidden, even if I am told to show when 'Skip Logic Source #1' > 6", "answers": null,
+//      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "formula": null, "items": null},
+
+    // skip logic, controlling child items and headers (one level below)
+    // skip logic, controlling descendant items and headers (two levels below)
+
+    // skip logic, controlling repeating sibling items
+    // skip logic, controlling repeating sibling headers
+    // skip logic, controlling repeating child items and headers (one level below)
+    // skip logic, controlling repeating descendant items and headers (two levels below)
+
+    // skip logic, one instance of repeating item (as source) controlling sibling items/headers and descendants items/headers
+
+    // skip logic, one instance of repeating item (as source) controlling repeating sibling items/headers and repeating descendant items/headers
+
+    // editable: readonly(0), writable(1), or readonly for existing data, writable for new data(2)
+
+
+    // repeating items on level 1
+    // bmi rule
+
+    // level 2 sub section 1, non-repeating -- a
+    // repeating items on level 2
+    // skip logic rule
+
+    // level 3 sub section 1, non-repeating ---- aa
+    // repeating items on level 3
+    // answers,
+    // multiple answers
+    // skip logic rule
+    // bmi rule
+
+    // level 3 sub section 2, repeating, with everything in (aa) ---- ab
+
+    // level 2 sub section 2, repeating, with everything in (a) -- b
+
+    // total score
+
+  ]};

@@ -39,7 +39,7 @@ describe('autocomp list', function() {
     // when the user enters a new value.
     browser.get('http://0.0.0.0:9001/');
     formSearch.click();
-    var glasgow = $('.select2-result:last-child');
+    var glasgow = $('.select2-result:nth-child(4)');
     glasgow.click();
     showPanel.click();
     var eyeField = element(by.id('/9267-6/1'));
