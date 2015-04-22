@@ -25,12 +25,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('horizontal-table.html',
     "  <table class=\"t-treeline-field\" >\n" +
     "    <tr>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getHorizontalLayoutTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
     "\n" +
     "      <td>\n" +
     "        <div class=\"name_label\">\n" +
