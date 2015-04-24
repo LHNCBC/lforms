@@ -344,8 +344,10 @@ angular.module('lformsWidget')
          };
 
         var url = questionInfo.externallyDefined;
-        if (url)
+        if (url) {
           ret.url = url;
+          ret.autocomp = true;
+        }
         else {
           var source = [], answers = [];
 
