@@ -102,7 +102,7 @@ h1 {
 }
 
 .fieldsTable input:focus {
-  background: none repeat scroll 0 0 #FFF8C6
+  background-color: #FFF8C6
 }
 
 .fieldsTable tr {
