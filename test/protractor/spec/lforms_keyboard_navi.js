@@ -28,7 +28,7 @@ describe('keyboard navigation', function() {
     var eleDOB = element(by.id('/54126-8/21112-8/1/1'));
 
     var eleEthnicity = element(by.id('/54114-4/54120-1/1/1'));
-    var eleRace = element(by.id('/54119-3/1'));
+    var eleRace = element(by.id('/54114-4/54119-3R/1/1'));
 
     var eleDisease1 = element(by.id('/54114-4/54117-7/54116-9/1/1/1'));
     var eleAgeAtD1 = element(by.id('/54114-4/54117-7/54115-1/1/1/1'));

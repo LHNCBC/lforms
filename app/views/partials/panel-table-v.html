@@ -4,7 +4,7 @@
       <div ng-include="'form-header.html'"></div>
 
       <h3 class="groupHeader">
-        <span>{{::lfData.name}}</span>
+        <span>{{lfData.name}}</span>
         <span ng-if="formConfig.showQuestionCode">
           <a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
       </h3>
@@ -212,7 +212,5 @@
       </div>
     </div>
   </form>
-
   <button ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>
-
 </div>
