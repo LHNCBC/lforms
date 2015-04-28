@@ -35,6 +35,7 @@
     "app/scripts/directives/lf-date.js",
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",
+    "app/scripts/lib/cross_browser.js",
     "app/scripts/lib/util.js",
     "app/scripts/lib/widget-data.js",
     "app/scripts/services/selected-panel.js",
