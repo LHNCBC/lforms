@@ -5,6 +5,8 @@ angular.module('lformsWidget')
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS',
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
+      $scope.debug = false;
+
       // Configuration data that controls form's UI
       $scope.formConfig = {
         showQuestionCode: false,   // whether question code is displayed next to the question
@@ -206,23 +208,8 @@ angular.module('lformsWidget')
       $scope.getSkipLogicTargetClass = function(item) {
         var widgetData = $scope.lfData;
         return widgetData.getSkipLogicTargetClass(item);
-      };
 
-      // seems not right. need a rewrite. not to remove
-      // to be completed, for skip logic animation
-      $scope.checkSkipLogicKeys = function() {
-        var widgetData = $scope.lfData;
-        if (widgetData) {
-
-          widgetData.checkSkipLogicKeys();
-
-          setTimeout(function() {
-            $scope.removeAllNewlyShownFlag();
-          }, 10);
-          setTimeout(function() {
-            $scope.removeAllInTransitionFlag();
-          }, 3000);
-        }
+        // return item._opt.targetStatus
       };
 
       /**
@@ -287,7 +274,7 @@ angular.module('lformsWidget')
        * Watch on the changes on lfData
        */
       $scope.$watch('lfData', function() {
-          $scope.checkAnswerCode();
+          $scope.checkAllSkipLogic();
           $scope.checkAllFormulas();
           $scope.updateLastSiblingStatus();
       }, true );
@@ -295,10 +282,10 @@ angular.module('lformsWidget')
       /**
        * Check each item's skip logic when there's a data change
        */
-      $scope.checkAnswerCode = function() {
+      $scope.checkAllSkipLogic = function() {
         var widgetData = $scope.lfData;
         if (widgetData) {
-          widgetData.checkAnswerCode();
+          widgetData.checkAllSkipLogic();
         }
       };
 
@@ -424,6 +411,7 @@ angular.module('lformsWidget')
 
 
       /**
+       * Obsolete
        * Prepare the units list for pp-autocomplete & phr-autocomplete,
        * where each item in the list requires a 'label' and a 'value'
        * @param item an item in the lforms form items array
@@ -595,6 +583,7 @@ angular.module('lformsWidget')
       };
 
       /**
+       * Obsolete
        * Set up option for select2 directive
        * @param item an item in the lforms form items array
        * @returns {{}}
@@ -699,47 +688,6 @@ angular.module('lformsWidget')
             }
           }
           $scope.$apply();
-        }
-      };
-
-      /**
-       * Remove the all newly shown flags for CSS transition effect
-       */
-      $scope.removeAllNewlyShownFlag = function() {
-        //console.log('in remove newly added flag')
-
-        for (var i= 0, ilen = $scope.lfData.length; i<ilen; i++) {
-          var objWidgetData = $scope.lfData[i];
-          if (objWidgetData) {
-            for (var j=0, jLen=objWidgetData.items.length; j<jLen; j++) {
-              var idx = objWidgetData.items[j]._idPath.lastIndexOf('/');
-              var parentRecIdPath = objWidgetData.items[j]._idPath.slice(0,idx);
-              var key = objWidgetData.items[j]._codePath+parentRecIdPath;
-              if (objWidgetData._skipLogicShownTargetKeys[key]) {
-                delete objWidgetData._skipLogicShownTargetKeys[key];
-                objWidgetData.items[j].inTransition = true;
-              }
-            }
-            $scope.$apply();
-          }
-        }
-      };
-
-      /**
-       * Remove the all flags for CSS transition effect.
-       */
-      $scope.removeAllInTransitionFlag = function() {
-        //console.log('in remove newly added flag')
-        for (var i= 0, ilen = $scope.lfData.length; i<ilen; i++) {
-          var objWidgetData = $scope.lfData[i];
-          if (objWidgetData) {
-            for (var j= 0, jLen=objWidgetData.items.length; j<jLen; j++) {
-              if (objWidgetData.items[j].inTransition)     {
-                objWidgetData.items[j].inTransition = false;
-              }
-            }
-            $scope.$apply();
-          }
         }
       };
 

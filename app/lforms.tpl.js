@@ -501,7 +501,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "  </form>\n" +
-    "  <button ng-click=\"onclick()\">Click to debug Panel Table controller</button>\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Table controller</button>\n" +
     "</div>\n"
   );
 
@@ -721,9 +721,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "  </form>\n" +
-    "  <!--\n" +
-    "  <button ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
-    "  -->\n" +
+    "\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
+    "\n" +
     "</div>\n"
   );
 
