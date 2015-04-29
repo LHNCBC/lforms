@@ -10,7 +10,8 @@ angular.module('lformsWidget')
       {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
       {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
       {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
-      {text: 'Full-Featured Demo', id: 'all-in-one'}
+      {text: 'Full-Featured Demo', id: 'all-in-one'},
+      {text: 'Form Builder created test form', id: 'formC'}
     ];
 
     // base config for ui-select2
@@ -55,6 +56,9 @@ angular.module('lformsWidget')
         }
         else if (loinc_num == 'all-in-one') {
           selectedFormData.updateForm(new WidgetData(angular.copy(allInOne)));
+        }
+        else if (loinc_num == 'formC') {
+          selectedFormData.updateForm(new WidgetData(WidgetUtil.convertFromEmbeddedToReference(angular.copy(formBuilder))));
         }
       }
     };

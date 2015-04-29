@@ -473,7 +473,8 @@ angular.module('lformsWidget')
        *  Only 5 levels are supported for now, which is good enough for known panels. It could support unlimited levels
        *  in theory.
        * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
-       * @return 'line1', 'line2', 'line3', or 'no_display'
+       * @param itemIndex the index of the item in items array
+       * @return {string} 'line1', 'line2', 'line3', or 'no_display'
        */
       $scope.getTreeLevelClass = function(level,  itemIndex) {
         var ret ='';
@@ -490,45 +491,6 @@ angular.module('lformsWidget')
             else {
               ret = 'line3';
             }
-            break;
-          // parents nodes
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 5:
-            if (statusLast[level] === undefined) {
-              ret = 'no_display';
-            }
-            else if (statusLast[level]) {
-              ret = '';
-            }
-            else {
-              ret = 'line1';
-            }
-            break;
-          default:
-            ret = '';
-        }
-        return ret;
-      };
-
-      /**
-       * Get CSS class for tree lines of horizontal table
-       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
-       * @param itemIndex
-       * @returns {string} 'line1', 'line2', 'line3', or 'no_display'
-       */
-      $scope.getHorizontalLayoutTreeLevelClass = function(level,  itemIndex) {
-        var ret ='';
-        var widgetData = $scope.lfData;
-
-        var statusLast = widgetData._lastSiblingStatus[itemIndex];
-
-        switch(level) {
-          // leaf node
-          case 0:
-            ret = 'line2';
             break;
           // parents nodes
           case 1:
