@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('lformsWidget')
-  .controller('PanelTableCtrl', 
-    ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS', 
+  .controller('PanelTableCtrl',
+    ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS',
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
       $scope.debug = false;
@@ -13,11 +13,11 @@ angular.module('lformsWidget')
         showCodingInstruction: false // whether to show coding instruction inline. (false: inline; true: in popup)
       };
 
-        // Provide blank image to satisfy img tag. Bower packaging forces us to 
-        // avoid using image files from html templates, therefore using base64 
+        // Provide blank image to satisfy img tag. Bower packaging forces us to
+        // avoid using image files from html templates, therefore using base64
         // encoding for a 1x1 blank gif file.
       $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
-      
+
       // Default option for calendar
       $scope.dateOptions = {
         changeYear: true,
@@ -310,99 +310,6 @@ angular.module('lformsWidget')
         }
       };
 
-      /**
-       * Obsolete
-       * Prepare the answer list for CWE (combo) field for pp-autocomplete & phr-autocomplete,
-       * where each item in the list requires a 'label' and a 'value'
-       * @param item an item in the lforms form items array
-       * @returns {{}}
-       */
-      $scope.lfComboOpt = function(item) {
-        var source = [], preSelected = 0, answers = [], ret ={};
-
-        if ( item.dataType === "CWE" && item.answers) {
-          if ( jQuery.isArray(item.answers) ) {
-            answers = item.answers
-          } else if (item.answers !="") {
-            answers = $scope.lfData.answerLists[item.answers];
-          }
-
-          for(var i= 0, ilen = answers.length; i<ilen; i++) {
-            source.push({
-              "label": answers[i].label ? answers[i].label + " " + answers[i].text : answers[i].text,
-              "origLabel": answers[i].label,
-              "value": answers[i].text,
-              "text": answers[i].text,
-              "score": answers[i].score,
-              "other": answers[i].other,
-              "code": answers[i].code
-            });
-
-            // todo: check default answer
-          }
-
-          ret = {
-            source:source,
-            position: { collision: 'flip'},
-            placeholder: "Select or type a value",
-            openOnFocus: true,
-            allowFreeText: true
-            //selectFirst: true,
-            //preSelected:preSelected
-          };
-        }
-        return ret;
-      };
-
-      /**
-       * Obsolete.  2015/1/13
-       * Prepare the answer list for CNE field for pp-autocomplete,
-       * where each item in the list requires a 'label' and a 'value'
-       * @param item an item in the lforms form items array
-       * @returns {{}}
-       */
-      $scope.lfListOpt = function(item) {
-        var source = [], preSelected = 0, answers = [], ret ={};
-
-        if ( item.dataType === "CNE" && item.answers) {
-          if ( jQuery.isArray(item.answers) ) {
-            answers = item.answers
-          } else if (item.answers !="") {
-            answers = $scope.lfData.answerLists[item.answers];
-          }
-          preSelected = -1;
-          for(var i= 0, ilen = answers.length; i<ilen; i++) {
-            var label = answers[i].label ? answers[i].label + ". " + answers[i].text : answers[i].text;
-            source.push({
-              "label": label,
-              "origLabel": answers[i].label,
-              "value": answers[i].text,
-              "text": answers[i].text,
-              "score": answers[i].score,
-              "other": answers[i].other,
-              "code": answers[i].code
-            });
-
-            // check the current selected value
-            if (item._value && item._value.label == label && item._value.code == answers[i].code) {
-              preSelected = i;
-            }
-            // todo: check default answer
-          }
-
-          ret = {
-            source:source,
-            position: {my: "left top", at:"left bottom",  collision: 'flip'},
-            placeholder: "Select a value",
-            openOnFocus: true,
-            allowFreeText: false,
-            preSelected:preSelected
-            //selectFirst: true
-          };
-        }
-        return ret;
-      };
-
 
       /**
        *  Returns the list options hash needed by the phr-autocomplete
@@ -410,40 +317,6 @@ angular.module('lformsWidget')
        * @param questionInfo the data structure for the question on the form
        */
       $scope.phrAutocompOpt = function(questionInfo) {
-        var source = [], answers = [];
-
-        // 'answers' might be null even for CWE
-        if (questionInfo.answers) {
-          if (angular.isArray(questionInfo.answers)) {
-            answers = questionInfo.answers;
-          }
-          else if (questionInfo.answers !== "" && $scope.lfData.answerLists) {
-            answers = $scope.lfData.answerLists[questionInfo.answers];
-          }
-        }
-
-        // Just check the first answer to see if there's a label
-        // (Labels should be on all answers if one has a label.)
-        var hasLabel;
-        if (answers.length > 0 && answers[0].label &&
-            typeof answers[0].label === 'string' && answers[0].label.trim()) {
-          hasLabel = true;
-        }
-
-        // Modify the label (question text) for each question.
-        var defaultValue;
-        for(var i= 0, iLen = answers.length; i<iLen; i++) {
-          var answerData = angular.copy(answers[i]);
-          var label = hasLabel ? answerData.label + ". " + answerData.text : answerData.text;
-          answerData.text = label;
-          source.push(answerData);
-
-          // check the current selected value
-          if (questionInfo._value && questionInfo._value.text == label && questionInfo._value.code == answers[i].code) {
-            defaultValue = questionInfo._value.text;
-          }
-        }
-
         var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
         if (maxSelect !== '*') {
           if (maxSelect == -1) // -1 or "-1"
@@ -453,13 +326,55 @@ angular.module('lformsWidget')
         }
 
         var ret = {
-          source: source,
           matchListValue: questionInfo.dataType === "CNE",
           maxSelect: maxSelect,
-          addSeqNum: !hasLabel
-        };
-        if (defaultValue !== undefined)
-          ret.defaultValue = defaultValue;
+         };
+
+        var url = questionInfo.externallyDefined;
+        if (url) {
+          ret.url = url;
+          ret.autocomp = true;
+        }
+        else {
+          var source = [], answers = [];
+
+          // 'answers' might be null even for CWE
+          if (questionInfo.answers) {
+            if (angular.isArray(questionInfo.answers)) {
+              answers = questionInfo.answers;
+            }
+            else if (questionInfo.answers !== "" && $scope.lfData.answerLists) {
+              answers = $scope.lfData.answerLists[questionInfo.answers];
+            }
+          }
+
+          // Just check the first answer to see if there's a label
+          // (Labels should be on all answers if one has a label.)
+          var hasLabel;
+          if (answers.length > 0 && answers[0].label &&
+              typeof answers[0].label === 'string' && answers[0].label.trim()) {
+            hasLabel = true;
+          }
+          ret.addSeqNum = !hasLabel
+
+          // Modify the label (question text) for each question.
+          var defaultValue;
+          for(var i= 0, iLen = answers.length; i<iLen; i++) {
+            var answerData = angular.copy(answers[i]);
+            var label = hasLabel ? answerData.label + ". " + answerData.text : answerData.text;
+            answerData.text = label;
+            source.push(answerData);
+
+            // check the current selected value
+            if (questionInfo._value && questionInfo._value.text == label && questionInfo._value.code == answers[i].code) {
+              defaultValue = questionInfo._value.text;
+            }
+          }
+
+          ret.source = source;
+          if (defaultValue !== undefined)
+            ret.defaultValue = defaultValue;
+        }
 
         return ret;
       };
