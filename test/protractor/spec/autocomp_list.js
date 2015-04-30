@@ -64,7 +64,19 @@ describe('autocomp list', function() {
     eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     eyeField.sendKeys(protractor.Key.TAB);
+    expect(eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command");
     expect(scoreField.getAttribute('value')).toEqual('3');
+
+    // Try the 4th answer, which has a null label
+    eyeField.click();
+    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    eyeField.sendKeys(protractor.Key.TAB);
+    expect(eyeField.getAttribute('value')).toBe("Eyes open spontaneously");
+    expect(scoreField.getAttribute('value')).toEqual('4');
+
   });
 
 });
