@@ -361,7 +361,7 @@ angular.module('lformsWidget')
           var defaultValue;
           for(var i= 0, iLen = answers.length; i<iLen; i++) {
             var answerData = angular.copy(answers[i]);
-            var label = hasLabel ? answerData.label + ". " + answerData.text : answerData.text;
+            var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
             answerData.text = label;
             source.push(answerData);
 
