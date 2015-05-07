@@ -271,13 +271,24 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Watch on the changes on lfData
+       * Watch on the values of each item
+       * When in a deep watch mode, angular makes a copy of the watched object.
+       * Only the input values need to be watch. Not the entire lfData,
+       * which could be huge depends on the actual form data.
        */
-      $scope.$watch('lfData', function() {
+      $scope.$watch(
+        //get the values and watch on those values only
+        function () {
+          return $scope.lfData.items.map(function(item) {return item._value;});
+        },
+        function() {
           $scope.checkAllSkipLogic();
           $scope.checkAllFormulas();
           $scope.updateLastSiblingStatus();
-      }, true );
+        },
+        true
+      );
+
 
       /**
        * Check each item's skip logic when there's a data change
