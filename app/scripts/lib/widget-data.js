@@ -11,7 +11,7 @@ var WidgetData = Class.extend({
 
   // a pre-defined view template used to display the form
   template: null,
-  // additional options that controls the seleted view template
+  // additional options that controls the selected view template
   templateOption: {},
 
   // the question items defined in a form
