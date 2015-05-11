@@ -279,7 +279,7 @@ angular.module('lformsWidget')
       $scope.$watch(
         //get the values and watch on those values only
         function () {
-          return $scope.lfData.items.map(function(item) {return item._value;});
+          return $scope.lfData && $scope.lfData.items ? $scope.lfData.items.map(function(item) {return item._value;}) : null;
         },
         function() {
           $scope.checkAllSkipLogic();
