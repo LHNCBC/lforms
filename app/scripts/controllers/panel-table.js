@@ -345,6 +345,7 @@ angular.module('lformsWidget')
         if (url) {
           ret.url = url;
           ret.autocomp = true;
+          ret.nonMatchSuggestions = false;
         }
         else {
           var source = [], answers = [];
