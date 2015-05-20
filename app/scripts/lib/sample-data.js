@@ -672,7 +672,7 @@ var glasgow =
 ]};
 
 
-var glasgowRI = 
+var glasgowRI =
 { "type":"LOINC",
   "code":"35088-4",
   "name":"Glasgow coma scale",
@@ -682,7 +682,7 @@ var glasgowRI =
   "codingInstructions":"The Glasgow Coma Scale is a neurological scale for assessing a person's level of consciousness, both for initial as well as continuing assessment. A patient is assessed against the criteria of the scale, and the resulting points give the Glasgow Coma Score (or GCS).",
   "copyrightNotice":null,
   "items":[
-    {"questionCode":"9267-6","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS eye",
+    {"questionCode":"9267-6","localQuestionCode":null,"dataType":"CE","header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS eye",
       "answers":[
         {"label":"1","code":"LA6553-7","text":"No eye opening","score":1,"other":null},
         {"label":"2","code":"LA6554-5","text":"Eye opening to pain","score":2,"other":null},
