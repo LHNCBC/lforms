@@ -405,11 +405,11 @@ var WidgetData = Class.extend({
           if (item._parentCodePath_ === targetItem._parentCodePath_ &&
               item._parentIdPath_ === targetItem._parentIdPath_ ||
               // or the target item is the source item's descendant
-              item._codePath.indexOf(targetItem._codePath) &&
-              item._idPath.indexOf(targetItem._idPath) ||
+              item._codePath.indexOf(targetItem._codePath) === 0 &&
+              item._idPath.indexOf(targetItem._idPath) === 0 ||
               // or the source item is the target item's descendant
-              targetItem._codePath.indexOf(item._codePath) &&
-              targetItem._idPath.indexOf(item._idPath) ) {
+              targetItem._codePath.indexOf(item._codePath) === 0 &&
+              targetItem._idPath.indexOf(item._idPath) === 0 ) {
             // add codePath and index
             codePaths.push(item._codePath)
             valueIndex.push(i);
