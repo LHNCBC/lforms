@@ -1,5 +1,5 @@
 exports.config = {
-  directConnect: true,
+  // directConnect: true,
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
     'browserName': 'firefox'

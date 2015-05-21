@@ -206,7 +206,9 @@ WidgetUtil = {
         itemList[i].header = false;
       }
       // dataType should not be null for questions have answers
-      if (!itemList[i].dataType && itemList[i].answers && itemList[i].answers.length > 0 ) {
+      // dateType might be 'CE' in data files from RI that have answers
+      if (itemList[i].answers && itemList[i].answers.length > 0 &&
+          (!itemList[i].dataType || itemList[i].dataType !=='CNE' && itemList[i].dataType !== 'CWE')) {
         itemList[i].dataType = 'CNE';
       }
 
