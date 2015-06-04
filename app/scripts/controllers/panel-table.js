@@ -327,7 +327,7 @@ angular.module('lformsWidget')
        *  directive.
        * @param questionInfo the data structure for the question on the form
        */
-      $scope.phrAutocompOpt = function(questionInfo) {
+      $scope.autocompLhcOpt = function(questionInfo) {
         var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
         if (maxSelect !== '*') {
           if (maxSelect == -1) // -1 or "-1"
@@ -397,7 +397,7 @@ angular.module('lformsWidget')
        *  directive for the units field.
        * @param questionInfo the data structure for the question on the form
        */
-      $scope.phrUnitsAutocompOpt = function(questionInfo) {
+      $scope.unitsAutocompLhcOpt = function(questionInfo) {
         var listItems = [], answers = questionInfo.units, ret ={};
 
         // Modify the label (question text) for each question.

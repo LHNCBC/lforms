@@ -32,7 +32,7 @@
                     <input ng-switch-when="CWE" name="{{::item.question}}"
                            ng-required="::isAnswerRequired(item)" placeholder="Select or type a value"
                            ng-model-options="{updateOn: 'change'}" ng-model="item._value"
-                           autocomplete-lhc="::phrAutocompOpt(item)" ng-readonly="::isReadOnly(item)"
+                           autocomplete-lhc="::autocompLhcOpt(item)" ng-readonly="::isReadOnly(item)"
                            id="obr_{{::item.question}}">
                     <input ng-switch-when="DT" name="{{::item.question}}"
                            ng-required="::isAnswerRequired(item)"
@@ -107,12 +107,12 @@
                           <span ng-switch-when="" > </span>
                           <input ng-switch-when="CNE-1" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
-                                 ng-model="item._value" autocomplete-lhc="::phrAutocompOpt(item)"
+                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::isReadOnly(item)" placeholder="Select one or more"
                                  id="{{::item._elementId}}">
                           <input ng-switch-when="CWE-1" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::isAnswerRequired(item)" ng-model-options="{updateOn: 'change'}"
-                                 ng-model="item._value" autocomplete-lhc="::phrAutocompOpt(item)"
+                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::isReadOnly(item)" placeholder="Select one or more or type a value"
                                  id="{{::item._elementId}}">
                           <input ng-switch-when="REAL1" name="{{::item.question}}" type="number"
@@ -126,12 +126,12 @@
                           <input ng-switch-when="CNE1" name="{{::item.question + '_'+ $id}}"
                                  ng-required="::isAnswerRequired(item)"
                                  placeholder="Select one" ng-model-options="{updateOn: 'change'}"
-                                 ng-model="item._value" autocomplete-lhc="::phrAutocompOpt(item)"
+                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::isReadOnly(item)" id="{{::item._elementId}}">
                           <input ng-switch-when="CWE1" name="{{::item.question + '_'+ $id}}"
                                  ng-required="::isAnswerRequired(item)"
                                  placeholder="Select one  or type a value" ng-model-options="{updateOn: 'change'}"
-                                 ng-model="item._value" autocomplete-lhc="::phrAutocompOpt(item)"
+                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::isReadOnly(item)" id="{{::item._elementId}}">
                           <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::isAnswerRequired(item)"
                                  ng-model-options="{ updateOn: 'default' }" ng-model="item._value"
@@ -146,7 +146,7 @@
                     </td>
                     <td ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list" ng-model-options="{updateOn: 'change'}"
-                             ng-model="item._unit" autocomplete-lhc="phrUnitsAutocompOpt(item)"
+                             ng-model="item._unit" autocomplete-lhc="::unitsAutocompLhcOpt(item)"
                              placeholder="Select one" aria-labelledby="th_Units">
                       <span ng-switch-when="none" > </span>
                     </td>
