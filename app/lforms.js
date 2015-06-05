@@ -3,7 +3,7 @@
 angular.module('lformsWidget', [
     "mgcrea.ngStrap",
     'ui.select2',
-    'autocompPhr',
+    'autocompleteLhcMod',
     'lfConstants'
 ])
 .directive('lformsPanelV', function() {
@@ -27,10 +27,10 @@ angular.module('lformsWidget', [
 
 /**
  * Add element attributes to the scope.
- * 
+ *
  * @param {Object} scope
- * @param {Object} element 
- * @param {Object} attributes 
+ * @param {Object} element
+ * @param {Object} attributes
  * @returns {void}
  */
 function linkFunction(scope, element, attributes) {

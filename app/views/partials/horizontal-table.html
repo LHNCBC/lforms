@@ -52,13 +52,13 @@
                     <span ng-switch-when="" > </span>
                     <input ng-switch-when="CNE-1" name="{{lfData.items[cell].question + '_' + $id}}"
                            ng-required="isAnswerRequired2(lfData.items[cell])" ng-model="lfData.items[cell]._value"
-                           phr-autocomplete="phrAutocompOpt(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
+                           autocomplete-lhc="autocompLhcOpt(lfData.items[cell])"
                            ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more"
                            id="{{::lfData.items[cell]._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="CWE-1" name="{{lfData.items[cell].question + '_' + $id}}"
                            ng-required="isAnswerRequired2(lfData.items[cell])" ng-model="lfData.items[cell]._value"
-                           phr-autocomplete="phrAutocompOpt(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
+                           autocomplete-lhc="autocompLhcOpt(lfData.items[cell])"
                            ng-readonly="isReadOnly(lfData.items[cell])" placeholder="Select one or more or type a value"
                            id="{{::lfData.items[cell]._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
@@ -74,14 +74,14 @@
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="CNE1" name="{{lfData.items[cell].question + '_' + $id}}"
                            ng-required="isAnswerRequired(lfData.items[cell])" placeholder="Select one"
-                           ng-model="lfData.items[cell]._value" phr-autocomplete="phrAutocompOpt(lfData.items[cell])"
-                           ng-readonly="isReadOnly(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
+                           ng-model="lfData.items[cell]._value" autocomplete-lhc="autocompLhcOpt(lfData.items[cell])"
+                           ng-readonly="isReadOnly(lfData.items[cell])"
                            id="{{::lfData.items[cell]._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="CWE1" name="{{lfData.items[cell].question + '_' + $id}}"
                            ng-required="isAnswerRequired(lfData.items[cell])" placeholder="Select one or type a value"
-                           ng-model="lfData.items[cell]._value" phr-autocomplete="phrAutocompOpt(lfData.items[cell])"
-                           ng-readonly="isReadOnly(lfData.items[cell])" ng-model-options="{updateOn: 'change'}"
+                           ng-model="lfData.items[cell]._value" autocomplete-lhc="autocompLhcOpt(lfData.items[cell])"
+                           ng-readonly="isReadOnly(lfData.items[cell])"
                            id="{{::lfData.items[cell]._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="DT1" name="{{lfData.items[cell].question}}"

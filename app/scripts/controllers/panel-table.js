@@ -323,11 +323,11 @@ angular.module('lformsWidget')
 
 
       /**
-       *  Returns the list options hash needed by the phr-autocomplete
+       *  Returns the list options hash needed by the autocomplete-lhc
        *  directive.
        * @param questionInfo the data structure for the question on the form
        */
-      $scope.phrAutocompOpt = function(questionInfo) {
+      $scope.autocompLhcOpt = function(questionInfo) {
         var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
         if (maxSelect !== '*') {
           if (maxSelect == -1) // -1 or "-1"
@@ -348,7 +348,7 @@ angular.module('lformsWidget')
           ret.nonMatchSuggestions = false;
         }
         else {
-          var source = [], answers = [];
+          var listItems = [], answers = [];
 
           // 'answers' might be null even for CWE
           if (questionInfo.answers) {
@@ -375,7 +375,7 @@ angular.module('lformsWidget')
             var answerData = angular.copy(answers[i]);
             var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
             answerData.text = label;
-            source.push(answerData);
+            listItems.push(answerData);
 
             // check the current selected value
             if (questionInfo._value && questionInfo._value.text == label && questionInfo._value.code == answers[i].code) {
@@ -383,7 +383,7 @@ angular.module('lformsWidget')
             }
           }
 
-          ret.source = source;
+          ret.listItems = listItems;
           if (defaultValue !== undefined)
             ret.defaultValue = defaultValue;
         }
@@ -393,18 +393,18 @@ angular.module('lformsWidget')
 
 
       /**
-       *  Returns the list options hash needed by the phr-autocomplete
+       *  Returns the list options hash needed by the autocomplete-lhc
        *  directive for the units field.
        * @param questionInfo the data structure for the question on the form
        */
-      $scope.phrUnitsAutocompOpt = function(questionInfo) {
-        var source = [], answers = questionInfo.units, ret ={};
+      $scope.unitsAutocompLhcOpt = function(questionInfo) {
+        var listItems = [], answers = questionInfo.units, ret ={};
 
         // Modify the label (question text) for each question.
         var defaultValue;
         for (var i= 0, ilen = answers.length; i<ilen; i++) {
           var answerData = answers[i];
-          source.push({text: answerData.name,
+          listItems.push({text: answerData.name,
                        value: answerData.name,
                        code: answerData.code})
           if (answerData.default)
@@ -412,7 +412,7 @@ angular.module('lformsWidget')
         }
 
         ret = {
-          source: source,
+          listItems: listItems,
           matchListValue: true
         };
         if (defaultValue !== undefined)
@@ -424,7 +424,7 @@ angular.module('lformsWidget')
 
       /**
        * Obsolete
-       * Prepare the units list for pp-autocomplete & phr-autocomplete,
+       * Prepare the units list for pp-autocomplete & autocomplete-lhc,
        * where each item in the list requires a 'label' and a 'value'
        * @param item an item in the lforms form items array
        * @returns hash

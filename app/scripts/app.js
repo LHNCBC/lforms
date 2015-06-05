@@ -7,7 +7,7 @@ angular.module('lformsWidget', [
     'ngRoute',
     "mgcrea.ngStrap",
     'ui.select2',
-    'autocompPhr',
+    'autocompleteLhcMod',
     'lfConstants'
 ])
   .config(function ($routeProvider, $locationProvider) {
