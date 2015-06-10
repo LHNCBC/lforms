@@ -30,6 +30,14 @@ demo, try the following:
 4. bower install
 5. grunt serve
 
+## Form Definition Format
+Form definitions are stored in a JSON structure.  Although we hope to soon have
+some documentation for that structure, in the meantime take a look at the
+sample JSON structures in
+[app/scripts/lib/sample-data.js](app/scripts/lib/sample-data.js).  Hopefully the
+key names plus the sample data values will make things clear.  These are the
+samples that you will see rendered if you following the demo installation steps above.
+
 ## Licensing and Copyright Notice
 The LForms software employs the LOINC data model, including LOINC® codes and
 LOINC® table which are copyrighted © 1995-2014, Regenstrief Institute, Inc. and
