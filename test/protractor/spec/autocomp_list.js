@@ -6,6 +6,7 @@ describe('autocomp list', function() {
   var formSearch = $('#s2id_loinc_num1 a');
   var raceFieldID = '/54126-8/54134-2/1/1';
   var raceField = element(by.id(raceFieldID));
+  var dp = require('./demopage');
 
   it('should not be visible when the form loads', function() {
     browser.get('http://0.0.0.0:9001/');
@@ -76,7 +77,13 @@ describe('autocomp list', function() {
     eyeField.sendKeys(protractor.Key.TAB);
     expect(eyeField.getAttribute('value')).toBe("Eyes open spontaneously");
     expect(scoreField.getAttribute('value')).toEqual('4');
+  });
 
+
+  it('should receive default values set via defaultAnswer', function() {
+    dp.openFullFeaturedForm();
+    var ff = require('./fullFeaturedForm');
+    expect(ff.cneField.getAttribute('value')).toEqual('Answer 2');
   });
 
 });

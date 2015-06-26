@@ -132,7 +132,9 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "test/protractor/conf.js", // Default config file
-        keepAlive: true // If false, the grunt process stops when the test fails.
+        // If keepAlive it true, grunt test finishes with the statement "Done,
+        // without errors" even when there are errors.
+        //keepAlive: true // If false, the grunt process stops when the test fails.
       },
       all: {}   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
     },
