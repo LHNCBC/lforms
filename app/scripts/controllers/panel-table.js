@@ -5,7 +5,7 @@ angular.module('lformsWidget')
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS',
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
-      $scope.debug = false;
+      $scope.debug = true;
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
@@ -182,6 +182,7 @@ angular.module('lformsWidget')
           ret = item.dataType
         }
         return ret;
+
       };
 
       /**
@@ -209,7 +210,11 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         return widgetData.getSkipLogicTargetClass(item);
 
-        // return item._opt.targetStatus
+      };
+
+      $scope.getSkipLogicClass_New = function(item) {
+        var widgetData = $scope.lfData;
+        return widgetData.getSkipLogicClass_New(item);
       };
 
       /**
@@ -282,9 +287,9 @@ angular.module('lformsWidget')
           return $scope.lfData && $scope.lfData.items ? $scope.lfData.items.map(function(item) {return item._value;}) : null;
         },
         function() {
-          $scope.checkAllSkipLogic();
+          //$scope.checkAllSkipLogic();
           $scope.checkAllFormulas();
-          $scope.updateLastSiblingStatus();
+         // $scope.updateLastSiblingStatus();
         },
         true
       );
@@ -488,7 +493,58 @@ angular.module('lformsWidget')
        * @param itemIndex the index of the item in items array
        * @return {string} 'line1', 'line2', 'line3', or 'no_display'
        */
-      $scope.getTreeLevelClass = function(level,  itemIndex) {
+      $scope.getTreeLevelClass2 = function(level, lastStatusList) {
+        var ret ='';
+        // leaf node
+        if (level === lastStatusList.length-1) {
+          if (lastStatusList[level]) {
+            ret = 'line2'
+          }
+          else {
+            ret = 'line3';
+          }
+        }
+        // non-leaf node
+        else {
+          if (lastStatusList[level] === undefined) {
+            ret = 'no_display';
+          }
+          else if (lastStatusList[level]) {
+            ret = '';
+          }
+          else {
+            ret = 'line1';
+          }
+        }
+        return ret;
+      };
+
+      $scope.getExtraRowTreeLevelClass2 = function(level, lastStatusList) {
+        var ret = '', cssClass = $scope.getTreeLevelClass2(level, lastStatusList);
+        switch(cssClass) {
+          case 'line1':
+            ret = 'line1';
+            break;
+          case 'line2':
+            ret = '';
+            break;
+          case 'line3':
+            ret = 'line1';
+            break;
+          case '':
+            ret = ''
+            break;
+          case 'no_display':
+            ret = 'no_display';
+            break;
+          default:
+            ret = '';
+        }
+        return ret;
+      };
+
+
+        $scope.getTreeLevelClass = function(level,  itemIndex) {
         var ret ='';
         var widgetData = $scope.lfData;
 
@@ -628,6 +684,26 @@ angular.module('lformsWidget')
         }, 3000);
       };
 
+      $scope.addOneRepeatingItem_NEW = function(item) {
+        var objWidgetData = $scope.lfData;
+
+        objWidgetData.addRepeatingItems_NEW(item);
+
+        // scroll to the newly added item/group
+        var prevHash = $location.hash();
+        $location.hash(item._codePath+item._idPath);
+        $anchorScroll();
+        // restore the previous hash. otherwise the url displayed in browser will have the anchor value added
+        $location.hash(prevHash);
+
+        setTimeout(function() {
+          $scope.removeNewlyAddedFlag();
+        }, 10);
+        setTimeout(function() {
+          $scope.removeInTransitionFlag();
+        }, 3000);
+      };
+
 
       $scope.addOneRepeatingItemRowInHorizontalTable = function(item) {
 
@@ -672,6 +748,9 @@ angular.module('lformsWidget')
       $scope.removeOneRepeatingItem = function(item) {
         $scope.lfData.removeRepeatingItems(item);
       };
+      $scope.removeOneRepeatingItem_NEW = function(item) {
+        $scope.lfData.removeRepeatingItems_NEW(item);
+      };
 
       // temp. for testing
       $scope.switchLayout = function(item) {
@@ -691,11 +770,15 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
-      $scope.hasOneRepeatingItem = function(item) {
+      $scope.hasOneRepeatingItem =function(item) {
         var recCount = $scope.lfData.getRepeatingItemCount(item);
         return recCount > 1 ? false : true;
       };
 
+      $scope.hasOneRepeatingItem_NEW =function(item) {
+        var recCount = $scope.lfData.getRepeatingItemCount_NEW(item);
+        return recCount > 1 ? false : true;
+      };
 
       /**
        * Check if the current horizontal table has one row only
@@ -733,6 +816,11 @@ angular.module('lformsWidget')
       $scope.getParentRepeatingItemsOfLastItem = function(index) {
         return $scope.lfData.getParentRepeatingItemsOfLastItem(index);
       };
+
+      $scope.getParentRepeatingItemsOfLastItem_NEW = function(item) {
+        return $scope.lfData.getParentRepeatingItemsOfLastItem_NEW(item);
+      };
+
 
       /**
        * Check if the question needs an extra input

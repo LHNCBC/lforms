@@ -17,7 +17,8 @@ angular.module('lformsWidget')
       },
 
       setFormData : function (formData) {
-        selected.lfData = formData;
+        selected.lfItem = selected.lfData = formData;
+
       },
 
       updateTemplate: function() {

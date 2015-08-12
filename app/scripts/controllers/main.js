@@ -57,6 +57,9 @@ angular.module('lformsWidget')
             case "panelTable":
               $scope.selectedTemplate = "views/partials/panel-table-v.html";
               break;
+            case "form-view-a":
+              $scope.selectedTemplate = "views/partials/form-view-a.html";
+              break;
             default:
               $scope.selectedTemplate = "views/partials/panel-table-v.html";
           }
