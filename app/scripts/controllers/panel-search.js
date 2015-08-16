@@ -7,10 +7,10 @@ angular.module('lformsWidget')
 
     $scope.panelList = [
       {text: 'USSG-FHT, (new data structure)', id: '54127-6NEW'},
+      {text: 'Glasgow Coma Score (new data structure)', id: '35088-4B'},
       {text: 'MDS3, (new data structure)', id: '54580-6NEW'},
       {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
       {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
-      {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
       {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
       {text: 'Full-Featured Demo', id: 'all-in-one'},
       {text: 'Form Builder created test form', id: 'formC'}
@@ -60,7 +60,7 @@ angular.module('lformsWidget')
           selectedFormData.updateForm(new WidgetData(WidgetUtil.convertFromEmbeddedToReference(angular.copy(glasgowRI))));
         }
         else if (loinc_num == '35088-4B') {
-          selectedFormData.updateForm(new WidgetData(angular.copy(glasgow)));
+          selectedFormData.updateForm(new LFormsData(angular.copy(glasgow)));
         }
         else if (loinc_num == 'all-in-one') {
           selectedFormData.updateForm(new WidgetData(angular.copy(allInOne)));

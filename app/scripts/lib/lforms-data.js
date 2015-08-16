@@ -169,6 +169,8 @@ var LFormsData = Class.extend({
     this.itemRefs = [];
     this._updateItemReferenceList(this.items);
 
+    this._standardizeScoreRule_NEW(this.itemRefs);
+
   },
 
   /**
@@ -270,6 +272,39 @@ var LFormsData = Class.extend({
         break;
       } // end of TOTALSCORE rule
     } // end of formulas loop
+
+  },
+
+
+  _standardizeScoreRule_NEW: function(itemRefs) {
+    for (var i=0, iLen=itemRefs.length; i<iLen; i++) {
+      var totalScoreItem = itemRefs[i];
+
+      if (totalScoreItem.calculationMethod && totalScoreItem.calculationMethod.name === 'TOTALSCORE') {
+
+        // TBD, if the parameters values are already supplied,
+        totalScoreItem.calculationMethod.value = [];
+
+        for (var j = 0, jLen = itemRefs.length; j < jLen; j++) {
+          var item = itemRefs[j];
+          // it has an answer list
+          if (item.answers) {
+            var answers = [];
+            if (jQuery.isArray(item.answers)) {
+              answers = item.answers;
+            }
+            // check if any one of the answers has a score
+            for (var k = 0, kLen = item.answers.length; k < kLen; k++) {
+              if (item.answers[k] && item.answers[k].score >= 0) {
+                totalScoreItem.calculationMethod.value.push(item.questionCode);
+                break;
+              }
+            } // end of answers loop
+          } // end if there's an answer list
+        } // end of items loop
+        break;
+      }
+    }
 
   },
 
@@ -807,6 +842,7 @@ var LFormsData = Class.extend({
     return ret;
   },
 
+
   /**
    * Calculate the total score and set the value of the total score formula target field
    * @param scoreRule a total score formula
@@ -824,6 +860,101 @@ var LFormsData = Class.extend({
     // update total score field
     this.items[scoreRule.targetIndex]._value = totalScore;
 
+  },
+
+  _getScores_NEW: function(item, formula) {
+    var scores = [];
+    var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
+
+    for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
+      var item = sourceItems[i];
+      var score = 0;
+      if (item && item._value && item._value.score ) {
+       score = item._value.score
+      }
+      scores.push(score);
+    }
+    return scores;
+  },
+
+  _getFormulaSourceItems_NEW: function(item, questionCodes) {
+    var sourceItems = [];
+
+    for (var i= 0, iLen=questionCodes.length; i<iLen; i++) {
+      var questionCode = questionCodes[i];
+      var sourceItem = null;
+      // check siblings
+      if (item._parentItem && Array.isArray(item._parentItem.items)) {
+        for (var j= 0, jLen= item._parentItem.items.length; j<jLen; j++) {
+          if (item._parentItem.items[j].questionCode === questionCode) {
+            sourceItem = item._parentItem.items[j];
+            break;
+          }
+        }
+      }
+      // check ancestors
+      if (!sourceItem) {
+        var parentItem = item._parentItem;
+        while (parentItem) {
+          if (parentItem.questionCode === questionCode) {
+            sourceItem = parentItem;
+            break;
+          }
+          parentItem = parentItem._parentItem;
+        }
+      }
+      sourceItems.push(sourceItem);
+    }
+    return sourceItems;
+  },
+
+  _getValuesInStardardUnit_NEW : function(item, formula) {
+    var values = [];
+    var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
+
+    for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
+      var valueInStandardUnit = '';
+      var item = sourceItems[i];
+      if (item._value) {
+        if (item._unit && item._unit.value) {
+          valueInStandardUnit = this.Units.getValueInStandardUnit(item._value, item._unit.value);
+        }
+        else {
+          valueInStandardUnit = item._value;
+        }
+      }
+      values.push(valueInStandardUnit);
+    }
+    return values;
+  },
+
+  getFormulaResult_NEW: function(item) {
+    var result ='';
+    var parameterValues = [];
+    if (item.calculationMethod) {
+      var formula = item.calculationMethod;
+      // run score rule (there should be one score rule only in a form)
+      if (formula.name === 'TOTALSCORE') {
+        parameterValues = this._getScores_NEW(item, formula);
+      }
+      // run non-score rules
+      else {
+        // find the sources and target
+        parameterValues = this._getValuesInStardardUnit_NEW(item,formula);
+      }
+      // calculate the formula result
+      result = this.Formulas.calculations_[formula.name](parameterValues)
+    }
+    return result;
+  },
+
+  runFormulas_NEW: function() {
+    for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
+      var item = this.itemRefs[i];
+      if (item.calculationMethod) {
+        item._value = this.getFormulaResult_NEW(item);
+      }
+    }
   },
 
   /**

@@ -15,7 +15,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 \">\n" +
-    "    <div style=\"margin: 10px\">Total # of Questions: {{lfData.items.length}}</div>\n" +
+    "    <div style=\"margin: 10px\">Total # of Questions: {{lfData.itemRefs.length}}</div>\n" +
     "  </div>\n" +
     "\n" +
     "</div>\n"

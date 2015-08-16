@@ -134,7 +134,7 @@
                                  id="{{::item._elementId}}">
                           <input ng-switch-default name="{{::item.question}}" ng-required="::isAnswerRequired(item)"
                                  ng-model-options="{ updateOn: 'default' }" ng-model="item._value"
-                                 placeholder="Type a value" ng-readonly="::isReadOnly(item)"
+                                 placeholder="Type a value" ng-readonly="::isReadOnly(item)" ng-value="runFormula_NEW(item)"
                                  id="{{::item._elementId}}">
                         </div>
                       </ng-form>

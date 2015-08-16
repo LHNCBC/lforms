@@ -118,15 +118,24 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
+      // isReadOnly_NEW
       $scope.isReadOnly = function(item) {
         var ret = false;
         if (item.editable && item.editable == "0") {
           ret = true;
         }
-        else {
-          ret = $scope.lfData.isScoreRuleTarget(item._codePath)
+        else if (item.calculationMethod) {
+          ret = true;
         }
         return ret;
+      };
+
+
+      $scope.runFormula_NEW = function(item) {
+        if (item.calculationMethod && item.calculationMethod.name) {
+          var result = $scope.lfData.getFormulaResult_NEW(item);
+          item._value = result;
+        }
       };
 
       /**
@@ -284,11 +293,11 @@ angular.module('lformsWidget')
       $scope.$watch(
         //get the values and watch on those values only
         function () {
-          return $scope.lfData && $scope.lfData.items ? $scope.lfData.items.map(function(item) {return item._value;}) : null;
+          return $scope.lfData && $scope.lfData.itemRefs ? $scope.lfData.itemRefs.map(function(item) {return item._value;}) : null;
         },
         function() {
           //$scope.checkAllSkipLogic();
-          $scope.checkAllFormulas();
+          //$scope.checkAllFormulas_NEW();
          // $scope.updateLastSiblingStatus();
         },
         true
@@ -308,11 +317,11 @@ angular.module('lformsWidget')
       /**
        * Run each item's formula when there's a data change
        */
-      $scope.checkAllFormulas = function() {
+      $scope.checkAllFormulas_NEW = function() {
         //  console.log('in checkAllFormulas')
         var widgetData = $scope.lfData;
         if (widgetData) {
-          widgetData.runFormulas();
+          widgetData.runFormulas_NEW();
         }
       };
 
