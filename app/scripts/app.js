@@ -33,6 +33,8 @@ angular.module('lformsWidget', [
       $templateCache.put('initial.html', $http.get('views/partials/initial.html'));
       $templateCache.put('form-header.html', $http.get('views/partials/form-header.html'));
       $templateCache.put('form-view-a.html', $http.get('views/partials/form-view-a.html'));
+      $templateCache.put('form-view-b.html', $http.get('views/partials/form-view-b.html'));
+      $templateCache.put('h-table.html', $http.get('views/partials/h-table.html'));
 
     });
 

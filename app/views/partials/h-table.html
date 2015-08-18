@@ -1,0 +1,101 @@
+  <table class="t-treeline-field" >
+    <tr>
+      <td class="t-treeline " ng-class="getTreeLevelClass2($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+      <td>
+        <div class="name_label">
+          <div class="hTableTitle">
+            {{item.question}}
+          </div>
+
+          <table class="fieldsTable horizontal-table">
+            <colgroup>
+              <col style="width:5em; min-width: 5em;">
+              <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders">
+            </colgroup>
+            <thead>
+            <tr>
+              <th class="fieldsTableHeader"></th>
+              <th class="fieldsTableHeader" ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders" id="{{col.id}}">{{col.label}}</th>
+            </tr>
+            </thead>
+            <tbody id="" class="">
+            <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
+              <td class="button-col">
+                <button ng-if="!hasOneRepeatingItem_NEW(item)" class="float-button"  ng-click="removeOneRepeatingItem_NEW(row.header)" title="Remove this row of '{{ item.question }}'">-</button>
+                <button ng-if="row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId" class="float-button"  id="{{row.header._codePath+row.header._idPath}}" ng-click="addOneRepeatingItem_NEW(row.header)" title="Add another row of '{{ item.question }}'">+</button>
+              </td>
+
+              <td ng-repeat="cell in row.cells" ng-switch on="getFieldType(cell)" class="hasTooltip">
+                <ng-form name="innerForm2">
+                  <div class="cellData tooltipContainer">
+                    <span class="tooltipContent">
+                      <div class="errorMsg errorRequired">"{{ cell.question }}" requires a value.</div>
+                      <div class="errorMsg errorPattern">"{{ cell.question }}" requires a text pattern.</div>
+                      <div class="errorMsg errorMax">"{{ cell.question }}" requires a maximum value of ??.</div>
+                      <div class="errorMsg errorMin">"{{ cell.question }}" requires a minimum value of ??.</div>
+                      <div class="errorMsg errorMaxlength">"{{ cell.question }}" requires a maximum length of ??.</div>
+                      <div class="errorMsg errorMinlength">"{{ cell.question }}" requires a minimum length of ??.</div>
+                      <div class="errorMsg errorURL">"{{ cell.question }}" requires a url.</div>
+                      <div class="errorMsg errorEmail">"{{ cell.question }}" requires an email.</div>
+                      <div class="errorMsg errorNumber">"{{ cell.question }}" requires a numeric value.</div>
+                      <div class="errorMsg errorREAL">"{{ cell.question }}" requires a decimal value.</div>
+                      <div class="errorMsg errorINT">"{{ cell.question }}" requires a integer value.</div>
+                      <div class="errorMsg errorTM">"{{ cell.question }}" requires a time value.</div>
+                      <div class="errorMsg errorDT">"{{ cell.question }}" requires a date value.</div>
+                    </span>  <!-- validation error messages -->
+                    <span ng-switch-when="" > </span>
+                    <input ng-switch-when="CNE-1" name="{{cell.question + '_' + $id}}"
+                           ng-required="isAnswerRequired2(cell)" ng-model="cell._value"
+                           autocomplete-lhc="autocompLhcOpt(cell)"
+                           ng-readonly="isReadOnly(cell)" placeholder="Select one or more"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="CWE-1" name="{{cell.question + '_' + $id}}"
+                           ng-required="isAnswerRequired2(cell)" ng-model="cell._value"
+                           autocomplete-lhc="autocompLhcOpt(cell)"
+                           ng-readonly="isReadOnly(cell)" placeholder="Select one or more or type a value"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="REAL1" name="{{cell.question}}" type="number"
+                           ng-required="isAnswerRequired(cell)" ng-model="cell._value"
+                           placeholder="Type a value" ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="INT1" name="{{cell.question}}" type="number"
+                           ng-required="isAnswerRequired(cell)" ng-model="cell._value"
+                           placeholder="Type a value" ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="CNE1" name="{{cell.question + '_' + $id}}"
+                           ng-required="isAnswerRequired(cell)" placeholder="Select one"
+                           ng-model="cell._value" autocomplete-lhc="autocompLhcOpt(cell)"
+                           ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="CWE1" name="{{cell.question + '_' + $id}}"
+                           ng-required="isAnswerRequired(cell)" placeholder="Select one or type a value"
+                           ng-model="cell._value" autocomplete-lhc="autocompLhcOpt(cell)"
+                           ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-when="DT1" name="{{cell.question}}"
+                           ng-required="isAnswerRequired(cell)" ng-model="cell._value"
+                           lf-date="dateOptions" placeholder="MM/DD/YYYY" ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                    <input ng-switch-default name="{{cell.question}}"
+                           ng-required="isAnswerRequired(cell)" ng-model="cell._value"
+                           placeholder="Type a value" ng-readonly="isReadOnly(cell)"
+                           id="{{::cell._elementId}}" ng-value="runFormula_NEW(cell)"
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                  </div>
+                </ng-form>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </td>
+    </tr>
+  </table>

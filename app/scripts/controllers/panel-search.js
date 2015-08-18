@@ -7,6 +7,7 @@ angular.module('lformsWidget')
 
     $scope.panelList = [
       {text: 'USSG-FHT, (new data structure)', id: '54127-6NEW'},
+      {text: 'USSG-FHT, (new data structure, horizontal layout)', id: '54127-6HNEW'},
       {text: 'Glasgow Coma Score (new data structure)', id: '35088-4B'},
       {text: 'MDS3, (new data structure)', id: '54580-6NEW'},
       {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -46,6 +47,9 @@ angular.module('lformsWidget')
       if (loinc_num) {
         if (loinc_num == '54127-6NEW') {
           selectedFormData.updateForm(new LFormsData(angular.copy(FHTDataNew)));
+        }
+        else if (loinc_num == '54127-6HNEW') {
+          selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTDataNew)));
         }
         else if (loinc_num == '54580-6NEW') {
           selectedFormData.updateForm(new LFormsData(angular.copy(MDS3)));

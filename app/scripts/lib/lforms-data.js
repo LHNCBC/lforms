@@ -111,7 +111,7 @@ var LFormsData = Class.extend({
     // when the skip logic rule says the form is done
     this._formDone = false;
 
-    // update internal data (_id, _idPath, _codePath, _displayLevel_, _parentIdPath_, and _parentCodePath_),
+    // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
     this._initializeInternalData_NEW();
 
@@ -127,12 +127,12 @@ var LFormsData = Class.extend({
    * structural data, (TBD: unless they are already included (when hasUserData == true) ):
    *    _id, _idPath, _codePath
    * data for widget control and/or performance improvement:
-   *    _displayLevel_, _parentIdPath_, and _parentCodePath_
+   *    _displayLevel_,
    * @private
    */
   _initializeInternalData_NEW: function() {
     // set default values
-    this._setDefaultValues();
+    this._setDefaultValues_NEW();
 
 
     //TODO, process form data that includes user data
@@ -140,36 +140,26 @@ var LFormsData = Class.extend({
     //TODO, validate form data
 
     // set values for _id, _idPath, _codePath based on the questionCode and parentQuestionCode
-    // also set values for _displayLevel_, _parentIdPath_, _parentCodePath_
+    // also set values for _displayLevel_
 
     this._repeatableItems = {};
     this._updateTreePathFields_NEW(this.items, this);
-
-
-
-    // merge skipLogic in all items into this._skipLogicRules
-    // merge formula in all items into this._formulas
-  //  this._mergeComplexFields();
-
-    // update score rule if there is one
-  //  this._updateScoreRule();
-
-  //  this._resetHorizontalTableInfo();
-
 
     this._updateLastSiblingStatus_NEW(this.items, null);
 
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
 
-//    this._updateLastItemInRepeatingItemsStatus();
 
-    this.Navigation.setupNavigationMap(this);
 
     this.itemRefs = [];
-    this._updateItemReferenceList(this.items);
+    this._updateItemReferenceList_NEW(this.items);
 
     this._standardizeScoreRule_NEW(this.itemRefs);
+
+    this._resetHorizontalTableInfo_NEW();
+
+    this.Navigation.setupNavigationMap(this);
 
   },
 
@@ -186,25 +176,29 @@ var LFormsData = Class.extend({
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
 
-    this.Navigation.setupNavigationMap(this);
 
     this.itemRefs = [];
-    this._updateItemReferenceList(this.items);
+    this._updateItemReferenceList_NEW(this.items);
 
+    this._standardizeScoreRule_NEW(this.itemRefs);
+
+    this._resetHorizontalTableInfo_NEW();
+
+    this.Navigation.setupNavigationMap(this);
   },
 
   /**
    * Keep a list of items references
    * @private
    */
-  _updateItemReferenceList: function(items) {
+  _updateItemReferenceList_NEW: function(items) {
 
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       this.itemRefs.push(item);
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateItemReferenceList(item.items);
+        this._updateItemReferenceList_NEW(item.items);
       }
     }
   },
@@ -234,46 +228,6 @@ var LFormsData = Class.extend({
   },
 
 
-  /**
-   * Update the score rule if there is one
-   * @private
-   */
-  _updateScoreRule: function() {
-
-    this._hasScoreRule = false;
-
-    for (var i = 0, iLen = this._formulas.length; i < iLen; i++) {
-      // check if there is a TOTALSCORE rule
-      if (this._formulas[i]["name"] == "TOTALSCORE") {
-        this._formulas[i]["value"] = [];
-        this._formulas[i]["valueIndex"] = [];
-        // set values for _hasScoreRule
-        this._hasScoreRule = true;
-        // update source item's codePath
-        // all the sources should be unique in the form.
-        for (var j= 0,jLen=this.items.length; j<jLen; j++) {
-          var item = this.items[j];
-          // it has an answer list
-          if (item.answers) {
-            var answers = [];
-            if (jQuery.isArray(item.answers)) {
-              answers = item.answers;
-            }
-            // check if any one of the answers has a score
-            for (var k = 0, kLen = item.answers.length; k < kLen; k++) {
-              if (item.answers[k] && item.answers[k].score >= 0) {
-                this._formulas[i]["value"].push(item._codePath);
-                this._formulas[i]["valueIndex"].push(j);
-                break;
-              }
-            } // end of answers loop
-          } // end if there's an answer list
-        } // end of items loop
-        break;
-      } // end of TOTALSCORE rule
-    } // end of formulas loop
-
-  },
 
 
   _standardizeScoreRule_NEW: function(itemRefs) {
@@ -312,7 +266,7 @@ var LFormsData = Class.extend({
    * Set default values if the data is missing.
    * @private
    */
-  _setDefaultValues: function() {
+  _setDefaultValues_NEW: function() {
 
     this._codePath = "";
     this._idPath = "";
@@ -348,84 +302,6 @@ var LFormsData = Class.extend({
   },
 
 
-  /**
-   * Merge data in skipLogic and formula in all records into
-   * this._skipLogicRules and this._formulas, respectively
-   * @private
-   */
-  _mergeComplexFields: function() {
-    this._skipLogicRules = [];
-    this._formulas = [];
-    for (var i=0, iLen=this.items.length; i<iLen; i++) {
-      var item = this.items[i];
-      // merge skipLogic in all items into this._skipLogicRules
-      if (item.skipLogic && jQuery.isArray(item.skipLogic)) {
-        for (var j= 0, jLen = item.skipLogic.length; j<jLen; j++) {
-          if (!jQuery.isEmptyObject(item.skipLogic[j])) {
-            var rule = angular.copy(item.skipLogic[j]);
-            rule["source"] = item._codePath;
-            rule["sourceIndex"] = i;
-            // replace the code in targets with codePath
-            rule = this._updateSkipLogicTargetCodePathAndIndex(i, rule)
-            this._skipLogicRules.push(rule)
-          }
-        }
-      }
-      // merge formula in all items into this._formulas
-      if (item.formula && !jQuery.isEmptyObject(item.formula)) {
-        var formula = angular.copy(item.formula)
-        formula["target"] = item._codePath;
-        formula["targetIndex"] = i;
-        // replace the code in source with codePath, and add source index
-        formula = this._updateFormulaSourceCodePathAndIndex(i, formula)
-        this._formulas.push(formula)
-      }
-    }
-
-  },
-
-  /**
-   * Get the code paths and indexes of source items of a formula
-   * Note:
-   * a source item and the target item should be siblings, or
-   * a source item should be the target item's descendant, or
-   * the target item should be a source item's descendant
-   * @param targetItemIndex index of an item in the form items array
-   * @param formula a formula
-   * @returns formula a formula with updated code paths and indexes of source items
-   * @private
-   */
-  _updateFormulaSourceCodePathAndIndex: function(targetItemIndex, formula) {
-    var codePaths = [], valueIndex = [];
-    var targetItem = this.items[targetItemIndex];
-    for (var j= 0, jLen = formula.value.length; j<jLen; j++) {
-      // check each question
-      for (var i=0, iLen = this.items.length; i<iLen; i++) {
-        var item = this.items[i];
-        // the if code matches
-        if (item.questionCode == formula.value[j]) {
-          // if the source item and the target item are siblings
-          if (item._parentCodePath_ === targetItem._parentCodePath_ &&
-              item._parentIdPath_ === targetItem._parentIdPath_ ||
-              // or the target item is the source item's descendant
-              item._codePath.indexOf(targetItem._codePath) === 0 &&
-              item._idPath.indexOf(targetItem._idPath) === 0 ||
-              // or the source item is the target item's descendant
-              targetItem._codePath.indexOf(item._codePath) === 0 &&
-              targetItem._idPath.indexOf(item._idPath) === 0 ) {
-            // add codePath and index
-            codePaths.push(item._codePath)
-            valueIndex.push(i);
-          }
-        } //end if code matches
-      } // end of each question
-    } // end of each code
-
-    formula["value"] = codePaths;
-    formula["valueIndex"] = valueIndex;
-
-    return formula;
-  },
 
   /**
    * Update values of the fields of _id, _idPath, _codePath
@@ -449,6 +325,7 @@ var LFormsData = Class.extend({
       item._elementId = item._codePath + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
       item._parentItem = parentItem;
+
 
       // set last sibling status
       item._lastSibling = i === iLen-1;
@@ -477,8 +354,6 @@ var LFormsData = Class.extend({
         this._repeatableItems[item._codePath] = angular.copy(item);
         item._repeatable = true;
       }
-
-
     }
   },
 
@@ -542,15 +417,11 @@ var LFormsData = Class.extend({
    * @private
    */
   _updateLastRepeatingItemsStatus_NEW: function(items) {
-
-
     var iLen = items.length;
-
     var prevCodePath = '';
     // process all items in the array except the last one
     for (var i=0; i<iLen; i++) {
       var item = items[i];
-
       if (prevCodePath !== '') {
         // it's a different item, and
         // previous item is a repeating item, set the flag as the last in the repeating set
@@ -581,6 +452,11 @@ var LFormsData = Class.extend({
 
   },
 
+  /**
+   *
+   * @param items
+   * @private
+   */
   _resetTreeNodes_NEW: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       items[i]._repeatingSectionList = null;
@@ -633,19 +509,6 @@ var LFormsData = Class.extend({
 
   },
 
-  // NEW
-  _traverseTree: function(item, doThing) {
-    if (item) {
-      doThing(item);
-    }
-    if (item.items) {
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        this._traverseTree(item.items[i]);
-      }
-    }
-  },
-
-
   /**
    * Check if multiple instances of the question are allowed
    * @param item an item in the form items array
@@ -667,7 +530,7 @@ var LFormsData = Class.extend({
    * Note:
    * 1) "layout" values 'horizontal' and 'vertical' are only set on items whose "header" is true
    * 2) any items within a 'horizontal' table must be a leaf node. i.e. it cannot contain any sub items.
-   * 3) all items within a 'horizontal' table has it's "_inHorizontalTable_" set to true, but not the header item itself.
+   * 3) all items within a 'horizontal' table has it's "_inHorizontalTable" set to true.
    * 4) _repeatableItems is reused for adding a repeating row in a horizontal table. but the header item will not be added.
    * i.e. the table should not have more than one table title
    *
@@ -688,8 +551,72 @@ var LFormsData = Class.extend({
    * @private
    */
 
-  _resetHorizontalTableInfo: function() {
 
+  _resetHorizontalTableInfo_NEW: function() {
+
+    this._horizontalTableInfo = {};
+
+    var tableHeaderCodePathAndParentIdPath = null;
+    var lastHeaderId = null;
+
+    for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
+      var item = this.itemRefs[i];
+      // header item and horizontal layout
+      if (item.header && item.layout == "horizontal" ) {
+        // same methods for repeating items could be used for repeating and non-repeating items.
+        // (need to rename function names in those 'repeatable' functions.)
+        var itemsInRow = [];
+        var columnHeaders = [];
+        item._inHorizontalTable = true;
+        var itemCodePathAndParentIdPath = item._codePath + item._parentItem._idPath;
+        lastHeaderId = item._elementId;
+        // if it's the first row (header) of the first table,
+        if (tableHeaderCodePathAndParentIdPath === null ||
+          tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
+          // indicate this item is the table header
+          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
+          item._horizontalTableHeader = true;
+          item._horizontalTableId = tableHeaderCodePathAndParentIdPath;
+
+          itemsInRow = item.items;
+          for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
+            columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId});
+            // indicate the item is in a horizontal table
+            itemsInRow[j]._inHorizontalTable = true;
+          }
+
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
+            tableStartIndex: i,
+            tableEndIndex: i+itemsInRow.length,
+            columnHeaders: columnHeaders,
+            tableRows: [{ header: item, cells : itemsInRow }],
+            tableHeaders: [item]
+          };
+
+          // set the last table/row in horizontal group/table flag
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+        }
+        // if it's the following rows, update the tableRows and tableEndIndex
+        else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
+          itemsInRow = item.items;
+          for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
+            // indicate the item is in a horizontal table
+            itemsInRow[j]._inHorizontalTable = true;
+          }
+          // update rows index
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableRows.push({header: item, cells : itemsInRow});
+          // update headers index (hidden)
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(item);
+          // update last item index in the table
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = i + itemsInRow.length;
+          // set the last table/row in horizontal group/table flag
+          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+        }
+      }
+    }
+  },
+
+  _resetHorizontalTableInfo: function() {
 
 
     this._horizontalTableInfo = {};
@@ -821,46 +748,6 @@ var LFormsData = Class.extend({
   },
 
 
-  /**
-   * Check if an item has a total score formula.
-   * This is a special case of formula, where sources are not explicitly specified.
-   *
-   * @param codePath the item's code path.
-   * @returns true/false
-   */
-  isScoreRuleTarget: function(codePath) {
-
-    var ret = false;
-    if (this._hasScoreRule) {
-      for (var i= 0,ilen=this._formulas.length; i<ilen; i++) {
-        if (this._formulas[i].name == 'TOTALSCORE' && this._formulas[i].target == codePath) {
-          ret = true;
-          break;
-        }
-      }
-    }
-    return ret;
-  },
-
-
-  /**
-   * Calculate the total score and set the value of the total score formula target field
-   * @param scoreRule a total score formula
-   * @private
-   */
-  _calculateTotalScore: function(scoreRule) {
-    var totalScore = 0;
-    // check all source items
-    for(var i= 0, iLen=scoreRule.valueIndex.length; i<iLen; i++) {
-      var item = this.items[scoreRule.valueIndex[i]];
-      if (item._value && item._value.score ) {
-        totalScore += item._value.score;
-      }
-    }
-    // update total score field
-    this.items[scoreRule.targetIndex]._value = totalScore;
-
-  },
 
   _getScores_NEW: function(item, formula) {
     var scores = [];
@@ -908,7 +795,7 @@ var LFormsData = Class.extend({
     return sourceItems;
   },
 
-  _getValuesInStardardUnit_NEW : function(item, formula) {
+  _getValuesInStandardUnit_NEW : function(item, formula) {
     var values = [];
     var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
 
@@ -940,7 +827,7 @@ var LFormsData = Class.extend({
       // run non-score rules
       else {
         // find the sources and target
-        parameterValues = this._getValuesInStardardUnit_NEW(item,formula);
+        parameterValues = this._getValuesInStandardUnit_NEW(item,formula);
       }
       // calculate the formula result
       result = this.Formulas.calculations_[formula.name](parameterValues)
@@ -948,6 +835,7 @@ var LFormsData = Class.extend({
     return result;
   },
 
+  // not used
   runFormulas_NEW: function() {
     for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
       var item = this.itemRefs[i];
@@ -957,58 +845,6 @@ var LFormsData = Class.extend({
     }
   },
 
-  /**
-   * Run all formulas
-   */
-  runFormulas: function() {
-
-      // for each the formula, get the parameters values and units
-      for (var j= 0,jlen=this._formulas.length; j<jlen; j++) {
-        var formula = this._formulas[j];
-        // run non-score rules
-        if (formula.name != 'TOTALSCORE') {
-          // find the sources and target
-          var valuesInStandardUnit = this._findFormulaSourcesInStandardUnit(formula);
-
-          // calculate the formula result
-          var result = this.Formulas.calculations_[formula.name](valuesInStandardUnit)
-
-          // update target field
-          this.items[formula.targetIndex]._value = result;
-        }
-        // run score rule (there should be one score rule only in a form)
-        else {
-          this._calculateTotalScore(formula);
-        }
-
-      }
-  },
-
-
-  /**
-   * Find all source items of a formula
-   * @param formula a formula
-   * @returns {Array}
-   * @private
-   */
-  _findFormulaSourcesInStandardUnit : function(formula) {
-    var values = [];
-
-    for (var i= 0, iLen = formula.valueIndex.length; i<iLen; i++ ) {
-      var item = this.items[formula.valueIndex[i]];
-      var valueInStandardUnit = '';
-      if (item._value) {
-        if (item._unit && item._unit.value) {
-          valueInStandardUnit = this.Units.getValueInStandardUnit(item._value, item._unit.value);
-        }
-        else {
-          valueInStandardUnit = item._value;
-        }
-      }
-      values.push(valueInStandardUnit);
-    }
-    return values;
-  },
 
   /**
    * Units modules
@@ -1405,8 +1241,8 @@ var LFormsData = Class.extend({
      * @param lfData the LFormsData object of a form
      */
     setupNavigationMap: function(lfData) {
-      var items = lfData.items,
-          posX = 0; posY = 0;
+      var items = lfData.itemRefs,
+          posX = 0, posY = 0;
       this._navigationMap = [];
       this._reverseNavigationMap = {};
       for (var i=0, iLen=items.length; i<iLen; i++) {
@@ -1421,7 +1257,7 @@ var LFormsData = Class.extend({
         }
         // in horizontal tables and it is a table header
         else if (items[i]._horizontalTableHeader) {
-          var tableKey = [items[i]._codePath + items[i]._parentIdPath_];
+          var tableKey = [items[i]._codePath + items[i]._parentItem._idPath];
           var tableInfo = lfData._horizontalTableInfo[tableKey];
           // it is the first table header
           if (tableInfo && tableInfo.tableStartIndex === i) {
@@ -1430,7 +1266,7 @@ var LFormsData = Class.extend({
               var tableRow = tableInfo.tableRows[j];
               posX = 0; // new row, set x to 0
               for (var k= 0, kLen = tableRow.cells.length; k < kLen; k++) {
-                var cellItem = items[tableRow.cells[k]];
+                var cellItem = tableRow.cells[k];
                 tableRowMap.push(cellItem._elementId);
                 this._reverseNavigationMap[cellItem._elementId] = {x: posX, y: posY};
                 posX += 1; // have added a field in the row
@@ -1548,39 +1384,8 @@ var LFormsData = Class.extend({
       return nextId;
     }
 
-  },
-
-  // TODO: Methods to support versions of auto-saved data
-  History: {
-    _versions: [],
-    _historicalData: [
-      { _timeStamp: null,
-        _lfData: []
-      }
-    ],
-
-    goToVersion: function (index) {
-
-    },
-    unDoNSteps: function (n) {
-
-    },
-    reDoNSteps: function (n) {
-
-    },
-    addToVersionList: function () {
-
-    },
-    removeVersion: function (index) {
-
-    },
-    getVersionDetail: function (index) {
-
-    },
-    getVersionList: function () {
-
-    }
   }
+
 
 });
 LFormsData.screenReaderLog = Def.Autocompleter.screenReaderLog;

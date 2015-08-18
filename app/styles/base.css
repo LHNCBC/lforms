@@ -71,6 +71,7 @@ h1 {
 }
 
 .fieldsTable th {
+  border: 1px solid #ced5d9 ;
   overflow: hidden;
   text-align: left;
   vertical-align: top;
@@ -117,7 +118,7 @@ h1 {
 .fieldsTable td {
   border-color: #CED5D9;
   border-style: solid;
-  border-width:  0 0 0 1px;
+  border-width: 0 1px;
   color: #333333;
   padding: 2px;
 }

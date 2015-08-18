@@ -356,6 +356,365 @@ var FHTDataNew = {
   }
 };
 
+
+/**
+ * Modified USSG-FHT panel data for new tree structure, supporting horizontal table layout
+ */
+var horizontalFHTDataNew = {
+  // this is an example showing the JSON format based on the US Surgeon General family health portrait.
+  // form type, required. Other possible types: "SDC"
+  type: "LOINC",
+  // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
+  code: "54127-6HNEW",
+  // form name, required. the top-level LOINC item's name in a panel is listed here.
+  name: "USSG-FHT, (with mock-up items for horizontal layout demo)",
+  // predefined template name. optional, if not provided, a default template will be used for certain form "type"
+  template: "form-view-b",
+  // template configuration data. optional, if not provided, a default configuration will be used for the selected
+  // template. the format/content is not ready for publish yet.
+  templateOption: {},
+  // question items, required, level 1
+  items: [
+    {"questionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
+      // level 2
+      "items": [
+        {"questionCode": "54125-0", "questionCardinality": {"min": 1, "max": -1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54131-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+          {"text": "Male", "code": "LA2-8"},
+          {"text": "Female", "code": "LA3-6"},
+          {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
+        ], "answerCardinality": {"min": 1, "max": 1},"dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "21112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
+        {"questionCode": "54132-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54128-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54135-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+          // level 3
+          "items": [
+            {"questionCode": "8302-2X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 12}}],
+                "action": "show"}
+            },
+            {"questionCode": "8302-2Y", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minInclusive": 10}}],
+                "action": "show"}
+            },
+            {"questionCode": "8302-2Z", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15}}],
+                "action": "show"}
+            }
+          ]
+        },
+        {"questionCode": "54137-5X", "questionCardinality": {"min": 1, "max": -1}, "question": "Mock-up section: Shown when Height = 15", "answers": "", "dataType": "", "units": "", "header": true,
+          "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 15}}],
+            "action": "show"},
+          // level 3
+          "items": [
+            {"questionCode": "54140-9X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #1", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+          ]
+        },
+        {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+        {"questionCode": "54134-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54133-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54137-5", "questionCardinality": {"min": 1, "max": -1}, "question": "Your diseases history", "answers": "", "dataType": "", "units": "", "header": true,
+          // level 3
+          "items": [
+            {"questionCode": "54140-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+          ]
+        },
+      ]
+    },
+    // level 1, continue
+    {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": 1, "max": -1}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
+      // level 2
+      "items": [
+        {"questionCode": "54136-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54138-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54123-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+          {"text": "Male", "code": "LA2-8"},
+          {"text": "Female", "code": "LA3-6"},
+          {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
+        ], "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54139-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Living?", "answers": 624, "dataType": "CNE", "units": "", "header": false,
+          // level 3
+          "items": [
+            {"questionCode": "54124-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+                "action": "show"}
+            },
+            {"questionCode": "54141-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+                "action": "show"}
+            },
+            {"questionCode": "54112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+                "action": "show"}
+            },
+            {"questionCode": "54113-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+                "action": "show"}
+            },
+          ]
+        },
+        // level 2, continue
+        {"questionCode": "54121-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54122-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54119-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54120-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54117-7", "questionCardinality": {"min": 1, "max": -1}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true,"layout": "horizontal",
+          // level 3
+          "items":[
+            {"questionCode": "54116-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54115-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+          ]
+        }
+      ]
+    }
+  ],
+
+  //answer list could be embedded directly in the "answers" field in "items", or,
+  //all answer lists could be merged together in a separate "answerLists" object by creating an answer list id for
+  //each list, as listed below, so that duplicated answer lists only need to be included once.
+  answerLists: {
+    "622": [
+      {"text": "Male", "code": "LA2-8"},
+      {"text": "Female", "code": "LA3-6"},
+      {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
+    ],
+    "623": [
+      {"text": "Yes - Identical (Same)", "code": "LA10427-5", "label": "A"},
+      {"text": "Yes - Fraternal (Different)", "code": "LA10428-3", "label": "B"},
+      {"text": "No", "code": "LA32-8", "label": "C"}
+    ],
+    "361": [
+      {"text": "Yes", "code": "LA33-6"},
+      {"text": "No", "code": "LA32-8"}
+    ],
+    "629": [
+      {"text": "American  Indian or Alaska Native", "code": "LA10608-0"},
+      {"text": "Asian", "code": "LA6156-9"},
+      {"text": "-- Asian Indian", "code": "LA10614-8"},
+      {"text": "-- Chinese", "code": "LA10615-5"},
+      {"text": "-- Filipino", "code": "LA10616-3"},
+      {"text": "-- Japanese", "code": "LA10617-1"},
+      {"text": "-- Korean", "code": "LA10618-9"},
+      {"text": "-- Vietnamese", "code": "LA10620-5"},
+      {"text": "-- Other Asian", "code": "LA10619-7"},
+      {"text": "Black or African American", "code": "LA10610-6"},
+      {"text": "Native Hawaiian or Other Pacific Islander", "code": "LA10611-4"},
+      {"text": "-- Native Hawaiian", "code": "LA10623-9"},
+      {"text": "-- Guamanian", "code": "LA10622-1"},
+      {"text": "-- Chamorro", "code": "LA10621-3"},
+      {"text": "-- Samoan", "code": "LA10625-4"},
+      {"text": "-- Other Pacific Islander", "code": "LA10624-7"},
+      {"text": "White", "code": "LA4457-3"},
+      {"text": "Other/Unknown/Refuse To Answer", "code": "LA10613-0"}
+    ],
+    "628": [
+      {"text": "Hispanic or Latino", "code": "LA6214-6"},
+      {"text": "-- Central American", "code": "LA10599-1"},
+      {"text": "-- Cuban", "code": "LA10600-7"},
+      {"text": "-- Dominican(Republic)", "code": "LA10601-5"},
+      {"text": "-- Mexican", "code": "LA10602-3"},
+      {"text": "-- Puerto Rican", "code": "LA10605-6"},
+      {"text": "-- South American", "code": "LA10606-4"},
+      {"text": "-- Other Latin American", "code": "LA10604-9"},
+      {"text": "-- Other Hispanic/Latino/Spanish", "code": "LA10603-1"},
+      {"text": "Non-Hispanic or Latino", "code": "LA10597-5"},
+      {"text": "Ashkenazi Jewish", "code": "LA10598-3"},
+      {"text": "Unknown/No answer", "code": "LA10607-2"}
+    ],
+    "626": [
+      {"text": "Blood Clots", "code": "LA10533-0"},
+      {"text": "-- Blood Clot in Leg", "code": "LA10572-8"},
+      {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"},
+      {"text": "Cancer", "code": "LA10524-9"},
+      {"text": "-- Bone", "code": "LA10549-6"},
+      {"text": "-- Breast Cancer", "code": "LA10536-3"},
+      {"text": "-- Colon Cancer", "code": "LA10537-1"},
+      {"text": "-- Esophageal Cancer", "code": "LA10548-8"},
+      {"text": "-- Gastric Cancer", "code": "LA10547-0"},
+      {"text": "-- Kidney Cancer", "code": "LA10541-3"},
+      {"text": "-- Leukemia", "code": "LA10545-4"},
+      {"text": "-- Lung Cancer", "code": "LA10542-1"},
+      {"text": "-- Muscle Cancer", "code": "LA10546-2"},
+      {"text": "-- Ovarian Cancer", "code": "LA10539-7"},
+      {"text": "-- Prostate Cancer", "code": "LA10538-9"},
+      {"text": "-- Skin Cancer", "code": "LA10543-9"},
+      {"text": "-- Thyroid Cancer", "code": "LA10540-5"},
+      {"text": "-- Uterine Cancer", "code": "LA10544-7"},
+      {"text": "-- Other Cancer", "code": "LA10550-4"},
+      {"text": "Diabetes", "code": "LA10529-8"},
+      {"text": "-- Diabetes Type 1", "code": "LA10551-2"},
+      {"text": "-- Diabetes Type 2", "code": "LA10552-0"},
+      {"text": "-- Gestational Diabetes", "code": "LA10553-8"},
+      {"text": "Gastrointestinal Disease", "code": "LA10532-2"},
+      {"text": "-- Crohn's Disease", "code": "LA10554-6"},
+      {"text": "-- Irritable Bowel Syndrome", "code": "LA10555-3"},
+      {"text": "-- Ulceritive Colitis", "code": "LA10556-1"},
+      {"text": "-- Colon Polyps", "code": "LA10557-9"},
+      {"text": "Heart Disease", "code": "LA10523-1"},
+      {"text": "-- Heart Attack", "code": "LA10558-7"},
+      {"text": "High Cholesterol/Hyperlipidemia", "code": "LA10526-4"},
+      {"text": "Hypertension", "code": "LA7444-8"},
+      {"text": "Kidney Disease", "code": "LA10528-0"},
+      {"text": "-- Cystic Kidney Disease", "code": "LA10565-2"},
+      {"text": "-- Kidney Disease Present From Birth", "code": "LA10566-0"},
+      {"text": "-- Nephrosis", "code": "LA10567-8"},
+      {"text": "-- Nephritis", "code": "LA10568-6"},
+      {"text": "-- Nephrotic Syndrome", "code": "LA10569-4"},
+      {"text": "-- Diabetic Kidney Disease", "code": "LA10570-2"},
+      {"text": "-- Other/Unknown", "code": "LA10571-0"},
+      {"text": "Lung Disease", "code": "LA10531-4"},
+      {"text": "-- COPD", "code": "LA10559-5"},
+      {"text": "-- Chronic Bronchitis", "code": "LA10560-3"},
+      {"text": "-- Emphysema", "code": "LA10561-1"},
+      {"text": "-- Chronic Lower Respiratory Disease", "code": "LA10562-9"},
+      {"text": "-- Influenza/Pneumonia", "code": "LA10563-7"},
+      {"text": "-- Asthma", "code": "LA10564-5"},
+      {"text": "Neurological Disorders", "code": "LA10590-0"},
+      {"text": "Osteoporosis", "code": "LA10527-2"},
+      {"text": "Psychological Disorders", "code": "LA10535-5"},
+      {"text": "-- Anxiety", "code": "LA10574-4"},
+      {"text": "-- Bipolar/Manic Depressive Disorder", "code": "LA10575-1"},
+      {"text": "-- Depression", "code": "LA10576-9"},
+      {"text": "-- Attention Deficit Hyper Activity", "code": "LA10577-7"},
+      {"text": "-- Autism", "code": "LA10578-5"},
+      {"text": "-- Personality Disorder", "code": "LA10579-3"},
+      {"text": "-- Eating Disorder", "code": "LA10580-1"},
+      {"text": "-- Obsessive Compulsive Disorder", "code": "LA10581-9"},
+      {"text": "-- Panic Disorder", "code": "LA10582-7"},
+      {"text": "-- Post Traumatic Stress Disorder", "code": "LA10583-5"},
+      {"text": "-- Schizophrenia", "code": "LA10584-3"},
+      {"text": "-- Social Phobia", "code": "LA10585-0"},
+      {"text": "-- Dementia", "code": "LA10586-8"},
+      {"text": "Septicemia", "code": "LA10591-8"},
+      {"text": "Stroke/Brain Attack", "code": "LA10522-3"},
+      {"text": "Sudden Infant Death Syndrome", "code": "LA10530-6"}
+    ],
+    "619": [
+      {"text": "Pre-Birth", "code": "LA10402-8"},
+      {"text": "Newborn", "code": "LA10403-6"},
+      {"text": "Infancy", "code": "LA10394-7"},
+      {"text": "Childhood", "code": "LA10395-4"},
+      {"text": "Adolescence", "code": "LA10404-4"},
+      {"text": "20-29", "code": "LA10396-2"},
+      {"text": "30-39", "code": "LA10397-0"},
+      {"text": "40-49", "code": "LA10398-8"},
+      {"text": "50-59", "code": "LA10399-6"},
+      {"text": "OVER 60", "code": "LA10400-2"},
+      {"text": "Unknown", "code": "LA4489-6"}
+    ],
+    "621": [
+      {"text": "Daughter", "code": "LA10405-1"},
+      {"text": "Granddaughter", "code": "LA10406-9"},
+      {"text": "Grandson", "code": "LA10407-7"},
+      {"text": "Half-brother", "code": "LA10408-5"},
+      {"text": "Half-sister", "code": "LA10409-3"},
+      {"text": "Maternal Aunt", "code": "LA10410-1"},
+      {"text": "Maternal Cousin", "code": "LA10411-9"},
+      {"text": "Maternal Grandfather", "code": "LA10412-7"},
+      {"text": "Maternal Grandmother", "code": "LA10413-5"},
+      {"text": "Maternal Uncle", "code": "LA10414-3"},
+      {"text": "Brother", "code": "LA10415-0"},
+      {"text": "Father", "code": "LA10416-8"},
+      {"text": "Mother", "code": "LA10417-6"},
+      {"text": "Sister", "code": "LA10418-4"},
+      {"text": "Nephew", "code": "LA10419-2"},
+      {"text": "Niece", "code": "LA10420-0"},
+      {"text": "Paternal Aunt", "code": "LA10421-8"},
+      {"text": "Paternal Cousin", "code": "LA10422-6"},
+      {"text": "Paternal Grandfather", "code": "LA10423-4"},
+      {"text": "Paternal Grandmother", "code": "LA10424-2"},
+      {"text": "Paternal Uncle", "code": "LA10425-9"},
+      {"text": "Son", "code": "LA10426-7"}
+    ],
+    "624": [
+      {"text": "Yes", "code": "LA33-6"},
+      {"text": "No", "code": "LA32-8"},
+      {"text": "Unknown", "code": "LA4489-6"}
+    ],
+    "627": [
+      {"text": "Blood Clots", "code": "LA10533-0"},
+      {"text": "-- Blood Clot in Leg", "code": "LA10572-8"},
+      {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"},
+      {"text": "Cancer", "code": "LA10524-9"},
+      {"text": "-- Bone", "code": "LA10549-6"},
+      {"text": "-- Breast Cancer", "code": "LA10536-3"},
+      {"text": "-- Colon Cancer", "code": "LA10537-1"},
+      {"text": "-- Esophageal Cancer", "code": "LA10548-8"},
+      {"text": "-- Gastric Cancer", "code": "LA10547-0"},
+      {"text": "-- Kidney Cancer", "code": "LA10541-3"},
+      {"text": "-- Leukemia", "code": "LA10545-4"},
+      {"text": "-- Lung Cancer", "code": "LA10542-1"},
+      {"text": "-- Muscle Cancer", "code": "LA10546-2"},
+      {"text": "-- Ovarian Cancer", "code": "LA10539-7"},
+      {"text": "-- Prostate Cancer", "code": "LA10538-9"},
+      {"text": "-- Skin Cancer", "code": "LA10543-9"},
+      {"text": "-- Thyroid Cancer", "code": "LA10540-5"},
+      {"text": "-- Uterine Cancer", "code": "LA10544-7"},
+      {"text": "-- Other Cancer", "code": "LA10550-4"},
+      {"text": "Diabetes", "code": "LA10529-8"},
+      {"text": "-- Diabetes Type 1", "code": "LA10551-2"},
+      {"text": "-- Diabetes Type 2", "code": "LA10552-0"},
+      {"text": "-- Gestational Diabetes", "code": "LA10553-8"},
+      {"text": "Gastrointestinal Disease", "code": "LA10532-2"},
+      {"text": "-- Crohn's Disease", "code": "LA10554-6"},
+      {"text": "-- Irritable Bowel Syndrome", "code": "LA10555-3"},
+      {"text": "-- Ulceritive Colitis", "code": "LA10556-1"},
+      {"text": "-- Colon Polyps", "code": "LA10557-9"},
+      {"text": "Heart Disease", "code": "LA10523-1"},
+      {"text": "-- Heart Attack", "code": "LA10558-7"},
+      {"text": "High Cholesterol/Hyperlipidemia", "code": "LA10526-4"},
+      {"text": "Hypertension", "code": "LA7444-8"},
+      {"text": "Kidney Disease", "code": "LA10528-0"},
+      {"text": "-- Cystic Kidney Disease", "code": "LA10565-2"},
+      {"text": "-- Kidney Disease Present From Birth", "code": "LA10566-0"},
+      {"text": "-- Nephrosis", "code": "LA10567-8"},
+      {"text": "-- Nephritis", "code": "LA10568-6"},
+      {"text": "-- Nephrotic Syndrome", "code": "LA10569-4"},
+      {"text": "-- Diabetic Kidney Disease", "code": "LA10570-2"},
+      {"text": "-- Other/Unknown", "code": "LA10571-0"},
+      {"text": "Lung Disease", "code": "LA10531-4"},
+      {"text": "-- COPD", "code": "LA10559-5"},
+      {"text": "-- Chronic Bronchitis", "code": "LA10560-3"},
+      {"text": "-- Emphysema", "code": "LA10561-1"},
+      {"text": "-- Chronic Lower Respiratory Disease", "code": "LA10562-9"},
+      {"text": "-- Influenza/Pneumonia", "code": "LA10563-7"},
+      {"text": "-- Asthma", "code": "LA10564-5"},
+      {"text": "Neurological Disorders", "code": "LA10590-0"},
+      {"text": "Osteoporosis", "code": "LA10527-2"},
+      {"text": "Psychological Disorders", "code": "LA10535-5"},
+      {"text": "-- Anxiety", "code": "LA10574-4"},
+      {"text": "-- Bipolar/Manic Depressive Disorder", "code": "LA10575-1"},
+      {"text": "-- Depression", "code": "LA10576-9"},
+      {"text": "-- Attention Deficit Hyper Activity", "code": "LA10577-7"},
+      {"text": "-- Autism", "code": "LA10578-5"},
+      {"text": "-- Personality Disorder", "code": "LA10579-3"},
+      {"text": "-- Eating Disorder", "code": "LA10580-1"},
+      {"text": "-- Obsessive Compulsive Disorder", "code": "LA10581-9"},
+      {"text": "-- Panic Disorder", "code": "LA10582-7"},
+      {"text": "-- Post Traumatic Stress Disorder", "code": "LA10583-5"},
+      {"text": "-- Schizophrenia", "code": "LA10584-3"},
+      {"text": "-- Social Phobia", "code": "LA10585-0"},
+      {"text": "-- Dementia", "code": "LA10586-8"},
+      {"text": "Septicemia", "code": "LA10591-8"},
+      {"text": "Stroke/Brain Attack", "code": "LA10522-3"},
+      {"text": "Sudden Infant Death Syndrome", "code": "LA10530-6"},
+      {"text": "Cause of Death", "code": "LA10595-9"},
+      {"text": "-- Suicide", "code": "LA10587-6"},
+      {"text": "-- Accidental Death", "code": "LA10588-4"},
+      {"text": "-- Other/Unexpected", "code": "LA10589-2", "other": "Please Specify"}
+    ]
+  }
+};
+
 /**
  * Modified USSG-FHT panel data
  */
