@@ -143,7 +143,7 @@ var LFormsData = Class.extend({
     // also set values for _displayLevel_
 
     this._repeatableItems = {};
-    this._updateTreePathFields_NEW(this.items, this);
+    this._setTreeNodes_NEW(this.items, this);
 
     this._updateLastSiblingStatus_NEW(this.items, null);
 
@@ -169,7 +169,6 @@ var LFormsData = Class.extend({
    */
   _resetInternalData: function() {
 
-    this._resetTreeNodes_NEW(this.items);
     this._updateTreeNodes_NEW(this.items,this);
     this._updateLastSiblingStatus_NEW(this.items, null);
 
@@ -185,6 +184,11 @@ var LFormsData = Class.extend({
     this._resetHorizontalTableInfo_NEW();
 
     this.Navigation.setupNavigationMap(this);
+  },
+
+  watchOnValueChange: function() {
+    this._updateTreeNodes_NEW(this.items,this);
+    this._updateLastSiblingStatus_NEW(this.items, null);
   },
 
   /**
@@ -315,7 +319,7 @@ var LFormsData = Class.extend({
    * }
    * @private
    */
-  _updateTreePathFields_NEW: function(items, parentItem) {
+  _setTreeNodes_NEW: function(items, parentItem) {
     // for each item on this level
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -346,7 +350,7 @@ var LFormsData = Class.extend({
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateTreePathFields_NEW(item.items, item);
+        this._setTreeNodes_NEW(item.items, item);
       }
 
       // keep a copy of the repeatable items
@@ -357,9 +361,12 @@ var LFormsData = Class.extend({
     }
   },
 
+
   _updateTreeNodes_NEW: function(items, parentItem) {
     // for each item on this level
-    for (var i=0, iLen=items.length; i<iLen; i++) {
+    var iLen=items.length;
+    var foundLastSibling = false;
+    for (var i=iLen-1; i>=0; i--) {
       var item = items[i];
       if (!item._id) item._id = 1;
       item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
@@ -368,8 +375,20 @@ var LFormsData = Class.extend({
       item._displayLevel = parentItem._displayLevel + 1;
       item._parentItem = parentItem;
 
+      item._repeatingSectionList = null;
+
       // set last sibling status
       item._lastSibling = i === iLen-1;
+      // consider if the last sibling is hidden by skip logic
+      if (!foundLastSibling) {
+        if (item._skipLogicStatus === "target-hide") {
+          item._lastSibling = false;
+        }
+        else {
+          item._lastSibling = true;
+          foundLastSibling = true;
+        }
+      }
 
       // process the sub items
       if (item.items && item.items.length > 0) {
@@ -393,8 +412,6 @@ var LFormsData = Class.extend({
         }
       }
     }
-
-    //console.log(maxId)
     return maxId;
   },
 
@@ -407,7 +424,6 @@ var LFormsData = Class.extend({
         }
       }
     }
-
     return count;
   },
 
@@ -452,21 +468,6 @@ var LFormsData = Class.extend({
 
   },
 
-  /**
-   *
-   * @param items
-   * @private
-   */
-  _resetTreeNodes_NEW: function(items) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      items[i]._repeatingSectionList = null;
-      // process the sub items
-      if (items[i].items && items[i].items.length > 0) {
-        this._resetTreeNodes_NEW(items[i].items);
-      }
-    }
-
-  },
 
   _updateLastItemInRepeatingSection_NEW: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
@@ -1188,7 +1189,10 @@ var LFormsData = Class.extend({
       else if (item.skipLogic.action === "hide") {
         ret = takeAction ? 'target-hide' : "target-show";
       }
+
+      item._skipLogicStatus = ret;
     }
+
 
     return ret;
 

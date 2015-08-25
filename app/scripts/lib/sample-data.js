@@ -41,7 +41,7 @@ var FHTDataNew = {
                             "action": "show"}
             },
             {"questionCode": "8302-2Z", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15}}],
+              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15, "maxInclusive": 20}}],
                             "action": "show"}
             }
           ]
@@ -400,7 +400,7 @@ var horizontalFHTDataNew = {
                 "action": "show"}
             },
             {"questionCode": "8302-2Z", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15}}],
+              "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15, "maxInclusive": 20}}],
                 "action": "show"}
             }
           ]

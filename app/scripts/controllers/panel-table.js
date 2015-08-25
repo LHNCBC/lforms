@@ -299,9 +299,17 @@ angular.module('lformsWidget')
           //$scope.checkAllSkipLogic();
           //$scope.checkAllFormulas_NEW();
          // $scope.updateLastSiblingStatus();
+          $scope.watchOnValueChange();
         },
         true
       );
+
+      $scope.watchOnValueChange = function() {
+        var widgetData = $scope.lfData;
+        if (widgetData) {
+          widgetData.watchOnValueChange();
+        }
+      };
 
 
       /**
