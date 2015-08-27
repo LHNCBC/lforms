@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "dependencies": {
     "angular": "~1.3.1",
     "json3": "~3.3.1",
@@ -37,7 +37,7 @@
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/cross_browser.js",
     "app/scripts/lib/util.js",
-    "app/scripts/lib/widget-data.js",
+    "app/scripts/lib/lforms-data.js",
     "app/scripts/services/selected-panel.js",
     "app/styles/base.css",
     "app/styles/main.css",
