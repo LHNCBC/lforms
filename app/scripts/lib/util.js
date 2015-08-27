@@ -203,7 +203,7 @@ WidgetUtil = {
 
       // move the "calculationMethod" to "formula"
       if (item.calculationMethod == "TOTALSCORE") {
-        item.formula = {"name": "TOTALSCORE", "value":[]}
+        item.calculationMethod = {"name": "TOTALSCORE", "value":[]}
       }
 
       // value of max/min in questionCardinality and answerCardinality is integer
