@@ -187,8 +187,54 @@ var LFormsData = Class.extend({
   },
 
   watchOnValueChange: function() {
+    // check skip logic
+    this._updateSkipLogicStatus_NEW(this.items, null);
+
+    // update tree line status
     this._updateTreeNodes_NEW(this.items,this);
     this._updateLastSiblingStatus_NEW(this.items, null);
+    // update repeating items status
+    //this._updateLastRepeatingItemsStatus_NEW(this.items);
+    this._updateLastItemInRepeatingSection_NEW(this.items);
+
+  },
+
+  _updateSkipLogicStatus_NEW: function(items, hide) {
+    for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+      // if one item is hidden all of its decedents should be hidden.
+      // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
+      if (hide) {
+        item._skipLogicStatus = "target-hide";
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          this._updateSkipLogicStatus_NEW(item.items, hide);
+        }
+      }
+      // if one is not hidden, show all its decedents unless they are hidden by other skip logic.
+      else {
+        if (item.skipLogic) {
+          var takeAction = this._checkSkipLogic_NEW(item);
+
+          if (!item.skipLogic.action || item.skipLogic.action === "show") {
+            item._skipLogicStatus = takeAction ? 'target-show' : "target-hide";
+          }
+          else if (item.skipLogic.action === "hide") {
+            item._skipLogicStatus = takeAction ? 'target-hide' : "target-show";
+          }
+        }
+        // no skip logic, show it, in case it was hidden because one of its ancestors was hidden
+        else if (item._skipLogicStatus === "target-hide") {
+          item._skipLogicStatus = "target-show";
+        }
+        var isHidden = item._skipLogicStatus === "target-hide";
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          this._updateSkipLogicStatus_NEW(item.items, isHidden);
+        }
+      }
+    }
+
   },
 
   /**
@@ -471,7 +517,8 @@ var LFormsData = Class.extend({
 
   _updateLastItemInRepeatingSection_NEW: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
-      if (items[i]._lastRepeatingItem) {
+      // if it is the last repeating item, and it is not hidden by skip logic
+      if (items[i]._lastRepeatingItem && items[i]._skipLogicStatus !== "target-hide") {
         var lastItem = this._getLastSubItem_NEW(items[i]);
         if (lastItem._repeatingSectionList && Array.isArray(lastItem._repeatingSectionList)) {
           lastItem._repeatingSectionList.unshift(items[i]);
@@ -480,8 +527,8 @@ var LFormsData = Class.extend({
           lastItem._repeatingSectionList = [items[i]];
         }
       }
-      // process the sub items
-      if (items[i].items && items[i].items.length > 0) {
+      // process the sub items if it's not hidden
+      if (items[i]._skipLogicStatus !== "target-hide" && items[i].items && items[i].items.length > 0) {
         this._updateLastItemInRepeatingSection_NEW(items[i].items);
       }
     }
@@ -489,8 +536,27 @@ var LFormsData = Class.extend({
   },
 
   _getLastSubItem_NEW: function(item) {
-    return (item && Array.isArray(item.items) && item.items.length > 0) ?
-        this._getLastSubItem_NEW(item.items[item.items.length-1]) : item;
+    var retItem = item;
+    if (item && Array.isArray(item.items) && item.items.length > 0) {
+      var i = item.items.length -1;
+      var lastItem = item.items[i];
+      var found = false;
+      // found a last item that is not hidden
+      while(!found) {
+        if (lastItem._skipLogicStatus !== "target-hide") {
+          found = true;
+          break;
+        }
+        lastItem = item.items[--i];
+      }
+
+      if (found) {
+        retItem = this._getLastSubItem_NEW(lastItem);
+      }
+    }
+
+    return retItem;
+
   },
 
   /**
@@ -1145,7 +1211,7 @@ var LFormsData = Class.extend({
     return action;
   },
 
-  _checkSkipLogicStatus_NEW: function(item) {
+  _checkSkipLogic_NEW: function(item) {
     var takeAction = false;
     if (item.skipLogic) {
       var actions = [];
@@ -1178,24 +1244,7 @@ var LFormsData = Class.extend({
   },
 
   getSkipLogicClass_New: function(item) {
-
-    var ret = '';
-    if (item.skipLogic) {
-      var takeAction = this._checkSkipLogicStatus_NEW(item);
-
-      if (!item.skipLogic.action || item.skipLogic.action === "show") {
-        ret = takeAction ? 'target-show' : "target-hide";
-      }
-      else if (item.skipLogic.action === "hide") {
-        ret = takeAction ? 'target-hide' : "target-show";
-      }
-
-      item._skipLogicStatus = ret;
-    }
-
-
-    return ret;
-
+      return item._skipLogicStatus;
   },
 
   /**

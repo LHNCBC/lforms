@@ -261,7 +261,7 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
-      $scope.isRepeatable = function(item) {
+      $scope.isRepeatable_NEW = function(item) {
         var ret = false;
         if (item.questionCardinality &&
             (item.questionCardinality.max == -1 || item.questionCardinality.max >1) ) {
@@ -275,11 +275,11 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {string}
        */
-      $scope.getRepeatingSN = function(item) {
+      $scope.getRepeatingSN_NEW = function(item) {
         var ret = '';
-        if ($scope.isRepeatable(item)) {
+        if ($scope.isRepeatable_NEW(item)) {
           var sn = item._idPath.slice(1);
-          ret = sn.replace(/\//,'.');
+          ret = sn.replace(/\//g,'.');
         }
         return ret;
       };

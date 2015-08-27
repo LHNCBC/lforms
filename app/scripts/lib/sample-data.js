@@ -63,7 +63,16 @@ var FHTDataNew = {
           // level 3
           "items": [
             {"questionCode": "54140-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54130-0", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+            {"questionCode": "54130-0", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54137-5XA", "questionCardinality": {"min": 1, "max": -1}, "question": "Mock-up section: Shown when Age at Diagnosis is Pre-Birth", "answers": "", "dataType": "", "units": "", "header": true,
+              "skipLogic": {"conditions":[{"source": "54130-0", "trigger": {"code": "LA10402-8"}}],
+                "action": "show"},
+              // level 4
+              "items": [
+                {"questionCode": "54140-9XA", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #A", "answers": null, "dataType": "", "units": "", "header": false},
+                {"questionCode": "54130-0XA", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #B", "answers": null, "dataType": "", "units": "", "header": false}
+              ]
+            },
           ]
         },
       ]

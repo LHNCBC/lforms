@@ -1,4 +1,4 @@
-<div ng-controller="PanelTableCtrl" ng-keypress="handleNavigationKeyEvent($event)">
+<div ng-controller="PanelTableCtrl" ng-keydown="handleNavigationKeyEvent($event)">
   <form name="panel" novalidate autocomplete="false">
     <div class="panelGroup fieldGroup" ng-if="lfData" >
       <div ng-include="'form-header.html'"></div>
@@ -72,7 +72,7 @@
                           <td class="t-treeline " ng-class="getTreeLevelClass2($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                           <td>
                             <div class="name_label">
-                              <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
+                              <span ng-show="::isRepeatable_NEW(item)" class="sn">{{::getRepeatingSN_NEW(item) }}</span>
                               <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
                               <span ng-show="formConfig.showQuestionCode">
                                 <a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html"
