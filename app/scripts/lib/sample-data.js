@@ -482,7 +482,8 @@ var horizontalFHTDataNew = {
             {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
             {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
           ]
-        }
+        },
+        //{"questionCode": "8302-2L", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Last Item", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
       ]
     }
   ],

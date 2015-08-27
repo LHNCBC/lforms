@@ -145,7 +145,7 @@ var LFormsData = Class.extend({
     this._repeatableItems = {};
     this._setTreeNodes_NEW(this.items, this);
 
-    this._updateLastSiblingStatus_NEW(this.items, null);
+    this._updateLastSiblingList_NEW(this.items, null);
 
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
@@ -170,7 +170,7 @@ var LFormsData = Class.extend({
   _resetInternalData: function() {
 
     this._updateTreeNodes_NEW(this.items,this);
-    this._updateLastSiblingStatus_NEW(this.items, null);
+    this._updateLastSiblingList_NEW(this.items, null);
 
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
@@ -192,7 +192,7 @@ var LFormsData = Class.extend({
 
     // update tree line status
     this._updateTreeNodes_NEW(this.items,this);
-    this._updateLastSiblingStatus_NEW(this.items, null);
+    this._updateLastSiblingList_NEW(this.items, null);
     // update repeating items status
     //this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
@@ -254,7 +254,7 @@ var LFormsData = Class.extend({
   },
 
 
-  _updateLastSiblingStatus_NEW: function(items, parentSiblingList) {
+  _updateLastSiblingList_NEW: function(items, parentSiblingList) {
 
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -272,7 +272,7 @@ var LFormsData = Class.extend({
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateLastSiblingStatus_NEW(item.items, item._lastSiblingList);
+        this._updateLastSiblingList_NEW(item.items, item._lastSiblingList);
       }
     }
   },
@@ -425,9 +425,16 @@ var LFormsData = Class.extend({
 
       // set last sibling status
       item._lastSibling = i === iLen-1;
+
+      // if it is a horizontal table header (the first section header)
+      // treat it (the first sibling) as the last sibling (the other siblings don't have their own tree lines)
+      //if (item._horizontalTableHeader) {
+      //  item._lastSibling = true;
+      //}
+
       // consider if the last sibling is hidden by skip logic
       if (!foundLastSibling) {
-        if (item._skipLogicStatus === "target-hide") {
+        if (item._skipLogicStatus === "target-hide" ) {
           item._lastSibling = false;
         }
         else {
@@ -517,19 +524,21 @@ var LFormsData = Class.extend({
 
   _updateLastItemInRepeatingSection_NEW: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+
       // if it is the last repeating item, and it is not hidden by skip logic
-      if (items[i]._lastRepeatingItem && items[i]._skipLogicStatus !== "target-hide") {
-        var lastItem = this._getLastSubItem_NEW(items[i]);
+      if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
+        var lastItem = this._getLastSubItem_NEW(item);
         if (lastItem._repeatingSectionList && Array.isArray(lastItem._repeatingSectionList)) {
-          lastItem._repeatingSectionList.unshift(items[i]);
+          lastItem._repeatingSectionList.unshift(item);
         }
         else {
-          lastItem._repeatingSectionList = [items[i]];
+          lastItem._repeatingSectionList = [item];
         }
       }
       // process the sub items if it's not hidden
-      if (items[i]._skipLogicStatus !== "target-hide" && items[i].items && items[i].items.length > 0) {
-        this._updateLastItemInRepeatingSection_NEW(items[i].items);
+      if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
+        this._updateLastItemInRepeatingSection_NEW(item.items);
       }
     }
 
@@ -559,22 +568,6 @@ var LFormsData = Class.extend({
 
   },
 
-  /**
-   * Get the containing repeating item of the last item of repeating items or sections.
-   * The containing item is itself if it the last item of a repeating items.
-   * @param index index of an item in the form items array
-   * @returns {Array}
-   */
-  getParentRepeatingItemsOfLastItem_NEW: function(item) {
-    var ret =[];
-    var upItem = item;
-    while (upItem && upItem._lastRepeatingItem) {
-      ret.push(upItem);
-      upItem= upItem._parentItem;
-    }
-    return ret;
-
-  },
 
   /**
    * Check if multiple instances of the question are allowed
@@ -683,77 +676,6 @@ var LFormsData = Class.extend({
     }
   },
 
-  _resetHorizontalTableInfo: function() {
-
-
-    this._horizontalTableInfo = {};
-
-    var tableHeaderCodePathAndParentIdPath = null;
-    var lastTableHeaderIndex = null;
-    var hasHorizontalLayout = false;
-
-    for (var i= 0, iLen=this.items.length; i<iLen; i++) {
-      var item = this.items[i];
-      // header item and horizontal layout
-      if (item.header && item.layout == "horizontal" ) {
-        hasHorizontalLayout = true;
-        // same methods for repeating items could be used for repeating and non-repeating items.
-        // (need to rename function names in those 'repeatable' functions.)
-        var itemsInRow = [];
-        var columnHeaders = [];
-        item._inHorizontalTable = true;
-        var itemCodePathAndParentIdPath = item._codePath + item._parentIdPath_;
-        lastTableHeaderIndex = i;
-        // if it's the first row (header) of the first table,
-        if (tableHeaderCodePathAndParentIdPath === null ||
-            tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
-          // indicate this item is the table header
-          tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
-          item._horizontalTableHeader = true;
-          item._horizontalTableId = tableHeaderCodePathAndParentIdPath;
-
-          var range = this._getRepeatableItemsRange(item);
-          for (var j=range.start+1; j<=range.end; j++) {
-            itemsInRow.push(j);
-            columnHeaders.push({label: this.items[j].question, id: "col" + this.items[j]._elementId});
-            // indicate the item is in a horizontal table
-            this.items[j]._inHorizontalTable = true;
-          }
-
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
-            tableStartIndex: i,
-            tableEndIndex: range.end,
-            columnHeaders: columnHeaders,
-            tableRows: [{ header: i, cells : itemsInRow }],
-            tableHeaders: [i]
-          };
-
-          // set the last table/row in horizontal group/table flag
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
-        }
-        // if it's the following rows, update the tableRows and tableEndIndex
-        else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
-          var range = this._getRepeatableItemsRange(item);
-          var itemsInRow = [];
-          for (var j=range.start+1; j<=range.end; j++) {
-            itemsInRow.push(j);
-            // indicate the item is in a horizontal table
-            this.items[j]._inHorizontalTable = true;
-          }
-          // update rows index
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableRows.push({header: i, cells : itemsInRow});
-          // update headers index (hidden)
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(i);
-          // update last item index in the table
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = range.end;
-          // set the last table/row in horizontal group/table flag
-          this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderIndex'] = lastTableHeaderIndex
-        }
-      }
-    }
-
-
-  },
 
   /**
    * Add a repeating item or a repeating group

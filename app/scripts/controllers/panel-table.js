@@ -536,6 +536,12 @@ angular.module('lformsWidget')
         return ret;
       };
 
+      /**
+       *  Get the CSS class for the extra row that holds the field for "Please Specify" value
+       *  The class name depends on the tree level class that this row id depending on.
+       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
+       * @return 'line1', 'line2', 'line3', or 'no_display'
+       */
       $scope.getExtraRowTreeLevelClass2 = function(level, lastStatusList) {
         var ret = '', cssClass = $scope.getTreeLevelClass2(level, lastStatusList);
         switch(cssClass) {
@@ -560,74 +566,6 @@ angular.module('lformsWidget')
         return ret;
       };
 
-
-        $scope.getTreeLevelClass = function(level,  itemIndex) {
-        var ret ='';
-        var widgetData = $scope.lfData;
-
-        var statusLast = widgetData._lastSiblingStatus[itemIndex];
-
-        switch(level) {
-          // leaf node
-          case 0:
-            if (statusLast[level]) {
-              ret = 'line2'
-            }
-            else {
-              ret = 'line3';
-            }
-            break;
-          // parents nodes
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 5:
-            if (statusLast[level] === undefined) {
-              ret = 'no_display';
-            }
-            else if (statusLast[level]) {
-              ret = '';
-            }
-            else {
-              ret = 'line1';
-            }
-            break;
-          default:
-            ret = '';
-        }
-        return ret;
-      };
-
-      /**
-       *  Get the CSS class for the extra row that holds the field for "Please Specify" value
-       *  The class name depends on the tree level class that this row id depending on.
-       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
-       * @return 'line1', 'line2', 'line3', or 'no_display'
-       */
-      $scope.getExtraRowTreeLevelClass = function(level, itemIndex) {
-        var ret = '', cssClass = $scope.getTreeLevelClass(level, itemIndex);
-        switch(cssClass) {
-          case 'line1':
-            ret = 'line1';
-            break;
-          case 'line2':
-            ret = '';
-            break;
-          case 'line3':
-            ret = 'line1';
-            break;
-          case '':
-            ret = ''
-            break;
-          case 'no_display':
-            ret = 'no_display';
-            break;
-          default:
-            ret = '';
-        }
-        return ret;
-      };
 
       /**
        * Obsolete
@@ -822,20 +760,6 @@ angular.module('lformsWidget')
        */
       $scope.isLastItemInRepeatingItems = function(index) {
         return $scope.lfData.isLastItemInRepeatingItems(index);
-      };
-
-      /**
-       * Get the containing repeating item of the last item of repeating items or sections.
-       * The containing item is itself if it the last item of a repeating items.
-       * @param index index of an item in the lforms form items array
-       * @returns {Array}
-       */
-      $scope.getParentRepeatingItemsOfLastItem = function(index) {
-        return $scope.lfData.getParentRepeatingItemsOfLastItem(index);
-      };
-
-      $scope.getParentRepeatingItemsOfLastItem_NEW = function(item) {
-        return $scope.lfData.getParentRepeatingItemsOfLastItem_NEW(item);
       };
 
 
