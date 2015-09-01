@@ -39,7 +39,7 @@ describe('508', function() {
       browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
       expect(dp.readerLogEntries.getText()).toEqual([]);
       // Add a section
-      element(by.id('/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
+      element(by.id('add-/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
       expect(dp.readerLogEntries.getText()).toEqual(['Added section']);
       // Remove the section
       var minusButtonCSS = "button[title=\"Remove this 'Your diseases history'\"]";
@@ -52,7 +52,7 @@ describe('508', function() {
       expect(dp.readerLogEntries.getText()).toEqual([]);
       // Add a row.  Currently both the + button and the "add another" button have
       // the same element ID, so we use the first one.
-      element.all(by.id('/54114-4/54117-7/1/1')).first().click();  // The + button on the table
+      element.all(by.id('add-/54114-4/54117-7/1/1')).first().click();  // The + button on the table
       expect(dp.readerLogEntries.getText()).toEqual(['Added row']);
       // Remove the row
       var minusButtonCSS =

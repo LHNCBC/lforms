@@ -1,7 +1,7 @@
 /**
  * Modified USSG-FHT panel data for new tree structure
  */
-var FHTDataNew = {
+var FHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
   // form type, required. Other possible types: "SDC"
   type: "LOINC",
@@ -369,7 +369,7 @@ var FHTDataNew = {
 /**
  * Modified USSG-FHT panel data for new tree structure, supporting horizontal table layout
  */
-var horizontalFHTDataNew = {
+var horizontalFHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
   // form type, required. Other possible types: "SDC"
   type: "LOINC",
@@ -483,11 +483,10 @@ var horizontalFHTDataNew = {
             {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
           ]
         },
-        {"questionCode": "8302-2L", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Last Item", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+        {"questionCode": "54119-3R", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
       ]
     }
   ],
-
   //answer list could be embedded directly in the "answers" field in "items", or,
   //all answer lists could be merged together in a separate "answerLists" object by creating an answer list id for
   //each list, as listed below, so that duplicated answer lists only need to be included once.
@@ -728,7 +727,7 @@ var horizontalFHTDataNew = {
 // A panel with score rule
 var glasgow =
 { "type": "LOINC",
-  "code": "35088-4",
+  "code": "35088-4B",
   "name": "Glasgow coma scale (with score rules)",
   "dataType": null,
   "template":"form-view-a",
@@ -762,6 +761,42 @@ var glasgow =
     {"name": "{score}", "default": false, "normalRange": null, "absoluteRange": null}
   ], "codingInstructions": null, "copyrightNotice": null, "questionCardinality": null, "answerCardinality": null, "question": "GCS total", "answers": null, "skipLogic": null, "restrictions": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": {"name": "TOTALSCORE", "value":[]}, "items": null}
 ]};
+
+var glasgowRI =
+{ "type":"LOINC",
+  "code":"35088-4",
+  "name":"Glasgow coma scale",
+  "dataType":null,
+  "header":true,
+  "units":null,
+  "codingInstructions":"The Glasgow Coma Scale is a neurological scale for assessing a person's level of consciousness, both for initial as well as continuing assessment. A patient is assessed against the criteria of the scale, and the resulting points give the Glasgow Coma Score (or GCS).",
+  "copyrightNotice":null,
+  "items":[
+    {"questionCode":"9267-6","localQuestionCode":null,"dataType":"CE","header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS eye",
+      "answers":[
+        {"label":"1","code":"LA6553-7","text":"No eye opening","score":1,"other":null},
+        {"label":"2","code":"LA6554-5","text":"Eye opening to pain","score":2,"other":null},
+        {"label":"3","code":"LA6555-2","text":"Eye opening to verbal command","score":3,"other":null},
+        {"label":null,"code":"LA6556-0","text":"Eyes open spontaneously","score":4,"other":null}],
+      "skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},
+    {"questionCode":"9268-4","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS motor",
+      "answers":[
+        {"label":"1","code":"LA6562-8","text":"No motor response","score":1,"other":null},
+        {"label":"2","code":"LA6563-6","text":"Extension to pain","score":2,"other":null},
+        {"label":"3","code":"LA6564-4","text":"Flexion to pain","score":3,"other":null},
+        {"label":"4","code":"LA6565-1","text":"Withdrawl from pain","score":4,"other":null},
+        {"label":"5","code":"LA6566-9","text":"Localizing pain","score":5,"other":null},
+        {"label":"6","code":"LA6567-7","text":"Obeys commands","score":6,"other":null}],
+      "skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},
+    {"questionCode":"9270-0","localQuestionCode":null,"dataType":null,"header":false,"units":null,"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS verbal",
+      "answers":[
+        {"label":"1","code":"LA6557-8","text":"No verbal response (>2 yrs); no vocal response (<=2 yrs)","score":1,"other":null},
+        {"label":"2","code":"LA6558-6","text":"Incomprehensible sounds","score":2,"other":null},
+        {"label":"3","code":"LA6559-4","text":"Inappropriate words","score":3,"other":null},
+        {"label":"4","code":"LA6560-2","text":"Confused","score":4,"other":null},
+        {"label":"5","code":"LA6561-0","text":"Oriented","score":5,"other":null}],
+      "skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":null,"items":null},
+    {"questionCode":"9269-2","localQuestionCode":null,"dataType":null,"header":false,"units":[{"name":"{score}","default":false,"normalRange":null,"absoluteRange":null}],"codingInstructions":null,"copyrightNotice":null,"questionCardinality":null,"answerCardinality":null,"question":"GCS total","answers":null,"skipLogic":null,"restrictions":null,"editable":null,"defaultAnswer":null,"formatting":null,"calculationMethod":"TOTALSCORE","items":null}]};
 
 
 var formBuilder =
@@ -916,31 +951,31 @@ var allInOne =
     // skip logic, controlling sibling headers
     {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
       "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
-      "skipLogic": [
-          {"trigger": {"value": 1}, "action": "show", "targets": ["slTargetItem1"]},
-          {"trigger": {"minInclusive": 2}, "action": "show", "targets": ["slTargetItem2"]},
-          // targets includes a header and all its children, just for testing of a temp solution that make skip logic work on sections
-          // only headers are needed in future.
-          {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1","slTargetSubItem1","slTargetSubItem2"]},
-//        {"trigger": {"maxInclusive": 5}, "action": "show", "targets": ["slTargetHeader1"]},
-//        {"trigger": {"minExclusive": 6}, "action": "show", "targets": ["slTargetSubItem3"]}   // child of a sibling, not allowed
-      ],
       "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"value": 1}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"minInclusive": 2}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
-    {"questionCode": "slTargetSubItem1", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
-      "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
-    {"questionCode": "slTargetSubItem2", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
-      "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+      "items": [
+        {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+        {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      ]
+    },
 //    {"questionCode": "slTargetSubItem3", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
 //      "questionCardinality": null, "answerCardinality": null, "question": "T6: Hidden when my section header is hidden, even if I am told to show when 'Skip Logic Source #1' > 6", "answers": null,
 //      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},

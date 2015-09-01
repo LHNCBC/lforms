@@ -198,27 +198,29 @@ var LFormsData = Class.extend({
       // if one item is hidden all of its decedents should be hidden.
       // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
       if (hide) {
-        item._skipLogicStatus = "target-hide";
+        this._setSkipLogicStatusValue(item, "target-hide");
         // process the sub items
         if (item.items && item.items.length > 0) {
           this._updateSkipLogicStatus_NEW(item.items, hide);
         }
       }
-      // if one is not hidden, show all its decedents unless they are hidden by other skip logic.
+      // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
       else {
         if (item.skipLogic) {
           var takeAction = this._checkSkipLogic_NEW(item);
 
           if (!item.skipLogic.action || item.skipLogic.action === "show") {
-            item._skipLogicStatus = takeAction ? 'target-show' : "target-hide";
+            var newStatus = takeAction ? 'target-show' : "target-hide";
+            this._setSkipLogicStatusValue(item, newStatus);
           }
           else if (item.skipLogic.action === "hide") {
-            item._skipLogicStatus = takeAction ? 'target-hide' : "target-show";
+            var newStatus = takeAction ? 'target-hide' : "target-show";
+            this._setSkipLogicStatusValue(item, newStatus);
           }
         }
-        // no skip logic, show it, in case it was hidden because one of its ancestors was hidden
+        // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
         else if (item._skipLogicStatus === "target-hide") {
-          item._skipLogicStatus = "target-show";
+          this._setSkipLogicStatusValue(item, "target-show");
         }
         var isHidden = item._skipLogicStatus === "target-hide";
         // process the sub items
@@ -227,7 +229,23 @@ var LFormsData = Class.extend({
         }
       }
     }
+  },
 
+  /**
+   * Set the skip logic status value on an item and create a sreen reader log
+   * @param item an item
+   * @param newStatus the new skip logic status
+   * @private
+   */
+  _setSkipLogicStatusValue: function(item, newStatus) {
+    item._preSkipLogicStatus = item._skipLogicStatus;
+    item._skipLogicStatus = newStatus;
+    if (item._preSkipLogicStatus !== newStatus) {
+      if (item._preSkipLogicStatus) {
+        var msg = newStatus === "target-hide" ? 'Hiding ' : 'Showing ' ;
+        LFormsData.screenReaderLog(msg+item.question);
+      }
+    }
   },
 
   /**

@@ -8,10 +8,11 @@ angular.module('lformsWidget')
     $scope.panelList = [
       {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
       {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
-      {text: 'Glasgow Coma Score (with score rules)', id: '35088-4'},
+      {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
+      {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
       {text: 'Full-Featured Demo', id: 'all-in-one'},
       {text: 'Form Builder created test form', id: 'formC'},
-      //{text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'}
+      {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'}
     ];
 
     // base config for ui-select2
@@ -43,19 +44,24 @@ angular.module('lformsWidget')
       }
       if (loinc_num) {
         if (loinc_num == '54127-6N') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(FHTDataNew)));
+          selectedFormData.updateForm(new LFormsData(angular.copy(FHTData)));
         }
         else if (loinc_num == '54127-6H') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTDataNew)));
+          selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTData)));
         }
         else if (loinc_num == '54580-6NEW') {
           selectedFormData.updateForm(new LFormsData(angular.copy(MDS3)));
         }
-        else if (loinc_num == '35088-4') {
+        else if (loinc_num == '35088-4B') {
           selectedFormData.updateForm(new LFormsData(angular.copy(glasgow)));
         }
+        else if (loinc_num == '35088-4') {
+          var newData = angular.copy(glasgowRI);
+          WidgetUtil.preprocessRIData(newData.items);
+          selectedFormData.updateForm(new LFormsData(newData));
+        }
         else if (loinc_num == 'all-in-one') {
-          selectedFormData.updateForm(new WidgetData(angular.copy(allInOne)));
+          selectedFormData.updateForm(new LFormsData(angular.copy(allInOne)));
         }
         else if (loinc_num == 'formC') {
           selectedFormData.updateForm(new LFormsData(angular.copy(formBuilder)));

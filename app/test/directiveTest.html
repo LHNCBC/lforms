@@ -83,7 +83,7 @@
     <script src="scripts/lib/date.js"></script>
     <script src="scripts/lib/js-class.js"></script>
     <script src="scripts/lib/util.js"></script>
-    <script src="scripts/lib/widget-data.js"></script>
+    <script src="scripts/lib/lforms-data.js"></script>
     <script src="scripts/services/selected-panel.js"></script>
     <script src="scripts/lforms-constants.js"></script>
     <script src="lforms.tpl.js"></script>
@@ -97,10 +97,10 @@
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestControllerV', ['$scope', function ($scope) {
-            $scope.lfData = new WidgetData(angular.copy(FHTData));
+            $scope.lfData = new LFormsData(angular.copy(FHTData));
           }])
           .controller('lformsTestControllerH', ['$scope', function ($scope) {
-            $scope.lfData = new WidgetData(angular.copy(horizontalFHTData));
+            $scope.lfData = new LFormsData(angular.copy(horizontalFHTData));
           }]);
     </script>
 
