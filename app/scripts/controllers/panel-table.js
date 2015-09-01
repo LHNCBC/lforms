@@ -93,7 +93,7 @@ angular.module('lformsWidget')
        */
       $scope.inHorizontalTable = function(index) {
         return $scope.lfData.inHorizontalTable(index);
-      }
+      };
 
       /**
        * Check if the current question is a title for a horizontal table
@@ -102,8 +102,7 @@ angular.module('lformsWidget')
        */
       $scope.isHorizontalTableTitle = function(index) {
         return $scope.lfData.isHorizontalTableTitle(index);
-      }
-
+      };
 
       /**
        * Check if the form is finished
@@ -118,7 +117,6 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
-      // isReadOnly_NEW
       $scope.isReadOnly = function(item) {
         var ret = false;
         if (item.editable && item.editable == "0") {
@@ -130,7 +128,7 @@ angular.module('lformsWidget')
         return ret;
       };
 
-
+      //not used
       $scope.runFormula_NEW = function(item) {
         if (item.calculationMethod && item.calculationMethod.name) {
           var result = $scope.lfData.getFormulaResult_NEW(item);
@@ -215,12 +213,6 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {string|*}
        */
-      $scope.getSkipLogicTargetClass = function(item) {
-        var widgetData = $scope.lfData;
-        return widgetData.getSkipLogicTargetClass(item);
-
-      };
-
       $scope.getSkipLogicClass_New = function(item) {
         var widgetData = $scope.lfData;
         return widgetData.getSkipLogicClass_New(item);
@@ -257,7 +249,6 @@ angular.module('lformsWidget')
        * Check if the item or the group is repeatable
        * i.e. questionCardinality.max > 1
        * Note: questionCardinality.min should always be 1. 0 is meaningless imho.
-       * todo: should also check the current number of the repeating items
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
@@ -289,6 +280,7 @@ angular.module('lformsWidget')
        * When in a deep watch mode, angular makes a copy of the watched object.
        * Only the input values need to be watch. Not the entire lfData,
        * which could be huge depends on the actual form data.
+       * todo: performance optimization!!!
        */
       $scope.$watch(
         //get the values and watch on those values only
@@ -566,7 +558,6 @@ angular.module('lformsWidget')
         return ret;
       };
 
-
       /**
        * Obsolete
        * Set up option for select2 directive
@@ -619,26 +610,6 @@ angular.module('lformsWidget')
        * Add a repeating item or a repeating group
        * @param item an item in the lforms form items array
        */
-      $scope.addOneRepeatingItem = function(item) {
-        var objWidgetData = $scope.lfData;
-
-        objWidgetData.addRepeatingItems(item);
-
-        // scroll to the newly added item/group
-        var prevHash = $location.hash();
-        $location.hash(item._codePath+item._idPath);
-        $anchorScroll();
-        // restore the previous hash. otherwise the url displayed in browser will have the anchor value added
-        $location.hash(prevHash);
-
-        setTimeout(function() {
-          $scope.removeNewlyAddedFlag();
-        }, 10);
-        setTimeout(function() {
-          $scope.removeInTransitionFlag();
-        }, 3000);
-      };
-
       $scope.addOneRepeatingItem_NEW = function(item) {
         var objWidgetData = $scope.lfData;
 
@@ -658,12 +629,6 @@ angular.module('lformsWidget')
           $scope.removeInTransitionFlag();
         }, 3000);
       };
-
-
-      $scope.addOneRepeatingItemRowInHorizontalTable = function(item) {
-
-      };
-
 
       /**
        * Remove the newly shown flag for CSS transition effect

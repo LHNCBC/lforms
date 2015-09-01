@@ -44,27 +44,21 @@ angular.module('lformsWidget')
           $scope.selectedTemplate = "partials/loading";
         }
         else if (!panelData.template) {
-          $scope.selectedTemplate = "views/partials/panel-table-v.html";
+          $scope.selectedTemplate = "views/partials/form-view-a.html";
         }
         else {
           switch (panelData.template) {
-            case "panelTableV":
-              $scope.selectedTemplate = "views/partials/panel-table-v.html";
-              break;
-            case "panelTableH":
-              $scope.selectedTemplate = "views/partials/panel-table-h.html";
-              break;
             case "panelTable":
-              $scope.selectedTemplate = "views/partials/panel-table-v.html";
-              break;
+            case "panelTableV":
             case "form-view-a":
               $scope.selectedTemplate = "views/partials/form-view-a.html";
               break;
+            case "panelTableH":
             case "form-view-b":
               $scope.selectedTemplate = "views/partials/form-view-b.html";
               break;
             default:
-              $scope.selectedTemplate = "views/partials/panel-table-v.html";
+              $scope.selectedTemplate = "views/partials/form-view-a.html";
           }
         }
 

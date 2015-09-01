@@ -6,15 +6,12 @@ angular.module('lformsWidget')
     $scope.pIndex = 0;
 
     $scope.panelList = [
-      {text: 'USSG-FHT, (new data structure)', id: '54127-6NEW'},
-      {text: 'USSG-FHT, (new data structure, horizontal layout)', id: '54127-6HNEW'},
-      {text: 'Glasgow Coma Score (new data structure)', id: '35088-4B'},
-      {text: 'MDS3, (new data structure)', id: '54580-6NEW'},
       {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
       {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
-      {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
+      {text: 'Glasgow Coma Score (with score rules)', id: '35088-4'},
       {text: 'Full-Featured Demo', id: 'all-in-one'},
-      {text: 'Form Builder created test form', id: 'formC'}
+      {text: 'Form Builder created test form', id: 'formC'},
+      //{text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'}
     ];
 
     // base config for ui-select2
@@ -45,32 +42,23 @@ angular.module('lformsWidget')
         var loinc_num = $scope.selectedPanel[tabIndex].id;
       }
       if (loinc_num) {
-        if (loinc_num == '54127-6NEW') {
+        if (loinc_num == '54127-6N') {
           selectedFormData.updateForm(new LFormsData(angular.copy(FHTDataNew)));
         }
-        else if (loinc_num == '54127-6HNEW') {
+        else if (loinc_num == '54127-6H') {
           selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTDataNew)));
         }
         else if (loinc_num == '54580-6NEW') {
           selectedFormData.updateForm(new LFormsData(angular.copy(MDS3)));
         }
-        else if (loinc_num == '54127-6N') {
-          selectedFormData.updateForm(new WidgetData(angular.copy(FHTData)));
-        }
-        else if (loinc_num == '54127-6H') {
-          selectedFormData.updateForm(new WidgetData(angular.copy(horizontalFHTData)));
-        }
         else if (loinc_num == '35088-4') {
-          selectedFormData.updateForm(new WidgetData(WidgetUtil.convertFromEmbeddedToReference(angular.copy(glasgowRI))));
-        }
-        else if (loinc_num == '35088-4B') {
           selectedFormData.updateForm(new LFormsData(angular.copy(glasgow)));
         }
         else if (loinc_num == 'all-in-one') {
           selectedFormData.updateForm(new WidgetData(angular.copy(allInOne)));
         }
         else if (loinc_num == 'formC') {
-          selectedFormData.updateForm(new WidgetData(WidgetUtil.convertFromEmbeddedToReference(angular.copy(formBuilder))));
+          selectedFormData.updateForm(new LFormsData(angular.copy(formBuilder)));
         }
       }
     };

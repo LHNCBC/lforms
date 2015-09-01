@@ -20,17 +20,6 @@ var LFormsData = Class.extend({
   // a delimiter used in code path and id path
   PATH_DELIMITER : "/",
 
-  // formulas used by questions, by merging all the formula directly embedded in items
-  // embedded formula format:
-  //    {name:, value:}
-  // a "target" key is added to the formula format in the _formulas array:
-  //    {name:, value:, target:}
-  // for now, there's only two formulas: TOTALSCORE, BMI
-  _formulas: [],
-
-  // if there's a TOTALSCORE formula
-  _hasScoreRule: null,
-
   // repeatable question items derived from items
   _repeatableItems : {},
 
@@ -134,13 +123,9 @@ var LFormsData = Class.extend({
     // set default values
     this._setDefaultValues_NEW();
 
-
     //TODO, process form data that includes user data
 
     //TODO, validate form data
-
-    // set values for _id, _idPath, _codePath based on the questionCode and parentQuestionCode
-    // also set values for _displayLevel_
 
     this._repeatableItems = {};
     this._setTreeNodes_NEW(this.items, this);
@@ -150,8 +135,7 @@ var LFormsData = Class.extend({
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
 
-
-
+    // create a reference list of all items in the tree
     this.itemRefs = [];
     this._updateItemReferenceList_NEW(this.items);
 
@@ -175,7 +159,6 @@ var LFormsData = Class.extend({
     this._updateLastRepeatingItemsStatus_NEW(this.items);
     this._updateLastItemInRepeatingSection_NEW(this.items);
 
-
     this.itemRefs = [];
     this._updateItemReferenceList_NEW(this.items);
 
@@ -186,6 +169,10 @@ var LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
   },
 
+  /**
+   * Functions to run when values in the model change
+   * To be optimized for performance.
+   */
   watchOnValueChange: function() {
     // check skip logic
     this._updateSkipLogicStatus_NEW(this.items, null);
@@ -199,6 +186,12 @@ var LFormsData = Class.extend({
 
   },
 
+  /**
+   * Update each items skip logic status
+   * @param items sibling items on one level of the tree
+   * @param hide if the parent item is already hidden
+   * @private
+   */
   _updateSkipLogicStatus_NEW: function(items, hide) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -238,7 +231,8 @@ var LFormsData = Class.extend({
   },
 
   /**
-   * Keep a list of items references
+   * Create a list of reference to the items in the tree
+   * @param items sibling items on one level of the tree
    * @private
    */
   _updateItemReferenceList_NEW: function(items) {
@@ -253,7 +247,12 @@ var LFormsData = Class.extend({
     }
   },
 
-
+  /**
+   * Update the list that contains the last sibling status of the parent item on each level from the item up to the root
+   * @param items sibling items on one level of the tree
+   * @param parentSiblingList the last sibling status list of the prarent item
+   * @private
+   */
   _updateLastSiblingList_NEW: function(items, parentSiblingList) {
 
     for (var i=0, iLen=items.length; i<iLen; i++) {
@@ -277,9 +276,11 @@ var LFormsData = Class.extend({
     }
   },
 
-
-
-
+  /**
+   * Convert the score rule definition to the standard formula definition
+   * @param itemRefs the reference list of the items in the tree
+   * @private
+   */
   _standardizeScoreRule_NEW: function(itemRefs) {
     for (var i=0, iLen=itemRefs.length; i<iLen; i++) {
       var totalScoreItem = itemRefs[i];
@@ -354,15 +355,9 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Update values of the fields of _id, _idPath, _codePath
-   * based on the questionCode and parentQuestionCode
-   * and the number of repeating questions
-   * tree node type:
-   * {"_idPath": idPath of item,
-   *  "_codePath": codePath of item,
-   *  "index": index in items array,
-   *  "children":[tree node 1, ..., tree node n]
-   * }
+   * Set up the internal data for each item in the tree
+   * @param items sibling items on one level of the tree
+   * @param parentItem the parent item
    * @private
    */
   _setTreeNodes_NEW: function(items, parentItem) {
@@ -375,7 +370,6 @@ var LFormsData = Class.extend({
       item._elementId = item._codePath + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
       item._parentItem = parentItem;
-
 
       // set last sibling status
       item._lastSibling = i === iLen-1;
@@ -407,7 +401,12 @@ var LFormsData = Class.extend({
     }
   },
 
-
+  /**
+   * Update the internal data for each item in the tree when items are added or removed or the values change
+   * @param items sibling items on one level of the tree
+   * @param parentItem the parent item
+   * @private
+   */
   _updateTreeNodes_NEW: function(items, parentItem) {
     // for each item on this level
     var iLen=items.length;
@@ -425,12 +424,6 @@ var LFormsData = Class.extend({
 
       // set last sibling status
       item._lastSibling = i === iLen-1;
-
-      // if it is a horizontal table header (the first section header)
-      // treat it (the first sibling) as the last sibling (the other siblings don't have their own tree lines)
-      //if (item._horizontalTableHeader) {
-      //  item._lastSibling = true;
-      //}
 
       // consider if the last sibling is hidden by skip logic
       if (!foundLastSibling) {
@@ -451,8 +444,8 @@ var LFormsData = Class.extend({
   },
 
   /**
-   * Find the max _id of the same question within the its parent node
-   * @param item an item in the form items array
+   * Get the max _id of the repeating item on the same level
+   * @param item an item
    * @returns {number}
    */
   getRepeatingItemMaxId_NEW: function(item) {
@@ -468,6 +461,11 @@ var LFormsData = Class.extend({
     return maxId;
   },
 
+  /**
+   * Get the count of the repeating item on the same level
+   * @param item an item
+   * @returns {number}
+   */
   getRepeatingItemCount_NEW: function(item) {
     var count = 0;
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -481,8 +479,8 @@ var LFormsData = Class.extend({
   },
 
   /**
-   * Update the status array that includes the last items of each repeating items and sections
-   * If it is a repeating section, the last item is the last leaf node within the last repeating section.
+   * Update the last repeating item status on each item
+   * @param items sibling items on one level of the tree
    * @private
    */
   _updateLastRepeatingItemsStatus_NEW: function(items) {
@@ -522,6 +520,13 @@ var LFormsData = Class.extend({
   },
 
 
+  /**
+   * Update the status list that includes the last items of each repeating items and sections from the item up to
+   * the root.
+   * If it is a repeating section, the last item is the last leaf node within the last repeating section.
+   * @param items sibling items on one level of the tree
+   * @private
+   */
   _updateLastItemInRepeatingSection_NEW: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -544,6 +549,12 @@ var LFormsData = Class.extend({
 
   },
 
+  /**
+   * Get the last item that will be displayed in a repeating section
+   * @param item an item
+   * @returns {*}
+   * @private
+   */
   _getLastSubItem_NEW: function(item) {
     var retItem = item;
     if (item && Array.isArray(item.items) && item.items.length > 0) {
@@ -558,20 +569,16 @@ var LFormsData = Class.extend({
         }
         lastItem = item.items[--i];
       }
-
       if (found) {
         retItem = this._getLastSubItem_NEW(lastItem);
       }
     }
-
     return retItem;
-
   },
 
-
   /**
-   * Check if multiple instances of the question are allowed
-   * @param item an item in the form items array
+   * Check if multiple instances of the item are allowed
+   * @param item an item
    * @returns {boolean}
    * @private
    */
@@ -584,9 +591,8 @@ var LFormsData = Class.extend({
   return ret;
   },
 
-
   /**
-   * Set internal field values for horizontal table layout
+   * Set up the internal data for handling the horizontal table
    * Note:
    * 1) "layout" values 'horizontal' and 'vertical' are only set on items whose "header" is true
    * 2) any items within a 'horizontal' table must be a leaf node. i.e. it cannot contain any sub items.
@@ -599,19 +605,17 @@ var LFormsData = Class.extend({
    *    headerItem._horizontalTableId : {
    *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
    *      tableEndIndex:   lastItemIndex,
-   *      columnHeaders:     [ { label: item.question, id: 'col' + item.elementId }, {...}, ...],
-   *      tableHeaders:    [h1, h2, ...]
-   *      tableRows:       [{ header: h1, cells : [h1+1, h1+2], ... },
-   *                        { header: h2, cells : [h2+1, h2+2], ... },
-   *                        ... ],
-   *      lastHeaderIndex: lastHeaderItemIndex
+   *      columnHeaders:   [ { label: item.question, id: 'col' + item.elementId },
+   *                       ...],
+   *      tableHeaders:    [headerItem1, headerItem2, ...]
+   *      tableRows:       [{ header: headerItem1, cells : [rowItem11, rowItem12,...]},
+   *                        { header: headerItem2, cells : [rowItem21, rowItem22,...]},
+   *                       ... ],
+   *      lastHeaderId:    lastHeaderId
    *    }
    *  }
-   *
    * @private
    */
-
-
   _resetHorizontalTableInfo_NEW: function() {
 
     this._horizontalTableInfo = {};
@@ -678,9 +682,8 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Add a repeating item or a repeating group
-   * and update related form status
-   * @param item an item in the form items array
+   * Add a repeating item or a repeating section and update form status
+   * @param item an item
    */
   addRepeatingItems_NEW: function(item) {
 
@@ -707,8 +710,8 @@ var LFormsData = Class.extend({
   },
 
   /**
-   * Remove a repeating item or group
-   * @param item an item in the form items array
+   * Remove a repeating item or a repeating section and update form status
+   * @param item an item
    */
   removeRepeatingItems_NEW: function(item) {
 
@@ -737,7 +740,13 @@ var LFormsData = Class.extend({
   },
 
 
-
+  /**
+   * Get the scores from source items
+   * @param item the target item where the score rule is defined
+   * @param formula the score rule formula
+   * @returns {Array}
+   * @private
+   */
   _getScores_NEW: function(item, formula) {
     var scores = [];
     var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
@@ -753,6 +762,13 @@ var LFormsData = Class.extend({
     return scores;
   },
 
+  /**
+   * Get a source item from the question code defined in a score rule
+   * @param item the target item where a score rule is defined
+   * @param questionCodes the code of a source item
+   * @returns {Array}
+   * @private
+   */
   _getFormulaSourceItems_NEW: function(item, questionCodes) {
     var sourceItems = [];
 
@@ -784,6 +800,13 @@ var LFormsData = Class.extend({
     return sourceItems;
   },
 
+  /**
+   * Convert an item's value in its selected unit to the value in standard unit used for calculation
+   * @param item an item
+   * @param formula the formula defined on the item
+   * @returns {Array}
+   * @private
+   */
   _getValuesInStandardUnit_NEW : function(item, formula) {
     var values = [];
     var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
@@ -804,6 +827,11 @@ var LFormsData = Class.extend({
     return values;
   },
 
+  /**
+   * Run the formula on the item and get the result
+   * @param item an item
+   * @returns {string}
+   */
   getFormulaResult_NEW: function(item) {
     var result ='';
     var parameterValues = [];
@@ -825,6 +853,7 @@ var LFormsData = Class.extend({
   },
 
   // not used
+  // it might be needed for performance optimization
   runFormulas_NEW: function() {
     for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
       var item = this.itemRefs[i];
@@ -845,7 +874,7 @@ var LFormsData = Class.extend({
       return result.toFixed(this.precision_);
     },
     getStandardUnit: function() {
-      // to be done when 'units_' is redesigned
+      // TBD when 'units_' is redesigned
     },
 
     precision_ : 4,
@@ -1037,6 +1066,13 @@ var LFormsData = Class.extend({
   },
 
 
+  /**
+   * Get a source item from the question code defined in a skip logic
+   * @param item the target item where a skip logic is defined
+   * @param questionCodes the code of a source item
+   * @returns {Array}
+   * @private
+   */
   _getSkipLogicSourceItem_NEW: function(item, questionCode) {
     var sourceItem = null;
 
@@ -1064,6 +1100,13 @@ var LFormsData = Class.extend({
     return sourceItem;
   },
 
+  /**
+   * Check if a source item's value meet a skip logic condition/trigger
+   * @param item a source item of a skip logic
+   * @param trigger a trigger of a skip logic
+   * @returns {boolean}
+   * @private
+   */
   _checkSkipLogicCondition_NEW: function(item, trigger) {
     var action = false;
     if (item._value) {
@@ -1133,6 +1176,12 @@ var LFormsData = Class.extend({
     return action;
   },
 
+  /**
+   * Check if all the conditions/triggers are met for a skip logic
+   * @param item a target item where a skip logic is defined
+   * @returns {boolean}
+   * @private
+   */
   _checkSkipLogic_NEW: function(item) {
     var takeAction = false;
     if (item.skipLogic) {
@@ -1165,6 +1214,11 @@ var LFormsData = Class.extend({
     return takeAction;
   },
 
+  /**
+   * Get the css class on the skip logic target field
+   * @param item
+   * @returns {string|string|*|string}
+   */
   getSkipLogicClass_New: function(item) {
       return item._skipLogicStatus;
   },
@@ -1355,10 +1409,8 @@ var LFormsData = Class.extend({
           nextId = this._navigationMap[nextPos.y][nextPos.x];
         }
       }
-
       return nextId;
     }
-
   }
 
 
