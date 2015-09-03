@@ -359,7 +359,11 @@ angular.module('lformsWidget')
           }
 
           ret.listItems = listItems;
-          if (defaultValue !== undefined)
+          if (defaultValue === undefined) {
+            // See if there is a default value defined for the question.
+            defaultValue = questionInfo.defaultAnswer;
+          }
+          if (defaultValue !== undefined && defaultValue !== null)
             ret.defaultValue = defaultValue;
         }
 

@@ -897,7 +897,7 @@ var allInOne =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "formatting": null, "calculationMethod": null, "items": null},
     {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
       {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
