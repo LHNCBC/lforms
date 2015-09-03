@@ -81,9 +81,6 @@ angular.module('lformsWidget')
        */
       $scope.$on('NewFormData', function(event, panelData) {
         $scope.lfData = panelData;
-
-//        console.log("in panel-table.js, lfData received")
-
       });
 
       /**
@@ -288,9 +285,6 @@ angular.module('lformsWidget')
           return $scope.lfData && $scope.lfData.itemRefs ? $scope.lfData.itemRefs.map(function(item) {return item._value;}) : null;
         },
         function() {
-          //$scope.checkAllSkipLogic();
-          //$scope.checkAllFormulas_NEW();
-         // $scope.updateLastSiblingStatus();
           $scope.watchOnValueChange();
         },
         true
@@ -302,39 +296,6 @@ angular.module('lformsWidget')
           widgetData.watchOnValueChange();
         }
       };
-
-
-      /**
-       * Check each item's skip logic when there's a data change
-       */
-      $scope.checkAllSkipLogic = function() {
-        var widgetData = $scope.lfData;
-        if (widgetData) {
-          widgetData.checkAllSkipLogic();
-        }
-      };
-
-      /**
-       * Run each item's formula when there's a data change
-       */
-      $scope.checkAllFormulas_NEW = function() {
-        //  console.log('in checkAllFormulas')
-        var widgetData = $scope.lfData;
-        if (widgetData) {
-          widgetData.runFormulas_NEW();
-        }
-      };
-
-      /**
-       * Update sibling status when there's a data change
-       */
-      $scope.updateLastSiblingStatus = function() {
-        var widgetData = $scope.lfData;
-        if (widgetData) {
-          widgetData._updateLastSiblingStatus();
-        }
-      };
-
 
       /**
        *  Returns the list options hash needed by the autocomplete-lhc
@@ -777,7 +738,11 @@ angular.module('lformsWidget')
 
           // set the focus
           if (nextElement) {
-            nextElement.focus();
+            var currentElement = event.target;
+            setTimeout(function() {
+              nextElement.focus();
+            }, 1);
+            currentElement.blur();
           }
         }
       }

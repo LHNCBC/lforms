@@ -34,14 +34,3 @@ angular.module('lformsWidget', [
       $templateCache.put('h-table.html', $http.get('views/partials/h-table.html'));
 
     });
-
-
-// Overrides the default autocomplete filter function to search only from the beginning of each word
-jQuery.extend( jQuery.ui.autocomplete, {
-  filter: function(array, term) {
-    var matcher = new RegExp("\\b" + jQuery.ui.autocomplete.escapeRegex(term), "i");
-    return jQuery.grep( array, function(value) {
-      return matcher.test( value.label || value.value || value );
-    });
-  }
-});

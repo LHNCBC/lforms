@@ -88,7 +88,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
     "                  </tr>\n" +
     "                  </thead>\n" +
-    "                  <tbody id=\"obx_table\" class=\"fieldExpColDiv\">\n" +
+    "                  <tbody class=\"fieldExpColDiv\">\n" +
     "                  <tr class=\"repeatingLine {{ getSkipLogicClass_New(item) }} {{getRowClass(item)}} \"\n" +
     "                      ng-repeat-start=\"item in lfData.itemRefs \" ng-click=\"setActiveRow($index)\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
@@ -114,7 +114,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </td>\n" +
     "                    <td class=\"button-col\">\n" +
     "                      <button ng-if=\"!hasOneRepeatingItem_NEW(item)\" class=\"float-button\"\n" +
-    "                              ng-click=\"removeOneRepeatingItem_NEW(item)\"\n" +
+    "                              ng-click=\"removeOneRepeatingItem_NEW(item)\" id=\"del-{{item._elementId}}\"\n" +
     "                              title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
@@ -198,7 +198,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
     "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
-    "                                      class=\"float-button\"  id=\"{{repeatingItem._elementId}}\"\n" +
+    "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
     "                                      ng-click=\"addOneRepeatingItem_NEW(repeatingItem)\"\n" +
     "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
     "                                Add another '{{::repeatingItem.question}}'</button>\n" +
@@ -289,7 +289,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
     "                  </tr>\n" +
     "                  </thead>\n" +
-    "                  <tbody id=\"obx_table\" class=\"fieldExpColDiv\">\n" +
+    "                  <tbody class=\"fieldExpColDiv\">\n" +
     "                  <tr class=\"repeatingLine {{ getSkipLogicClass_New(item) }} {{getRowClass(item)}} \"\n" +
     "                      ng-repeat-start=\"item in lfData.itemRefs \" ng-click=\"setActiveRow($index)\">\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"name has_treeline\">\n" +
@@ -315,7 +315,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"button-col\">\n" +
     "                      <button ng-if=\"!hasOneRepeatingItem_NEW(item)\" class=\"float-button\"\n" +
-    "                              ng-click=\"removeOneRepeatingItem_NEW(item)\"\n" +
+    "                              ng-click=\"removeOneRepeatingItem_NEW(item)\" id=\"del-{{item._elementId}}\"\n" +
     "                              title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
     "                    </td>\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
@@ -403,7 +403,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <td>\n" +
     "                            <div class=\"name_label\">\n" +
     "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
-    "                                      class=\"float-button\"  id=\"{{repeatingItem._elementId}}\"\n" +
+    "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
     "                                      ng-click=\"addOneRepeatingItem_NEW(repeatingItem)\"\n" +
     "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
     "                                Add another '{{::repeatingItem.question}}'</button>\n" +
@@ -452,8 +452,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <tbody id=\"\" class=\"\">\n" +
     "            <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
     "              <td class=\"button-col\">\n" +
-    "                <button ng-if=\"!hasOneRepeatingItem_NEW(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem_NEW(row.header)\" title=\"Remove this row of '{{ item.question }}'\">-</button>\n" +
-    "                <button ng-if=\"row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId\" class=\"float-button\"  id=\"{{row.header._codePath+row.header._idPath}}\" ng-click=\"addOneRepeatingItem_NEW(row.header)\" title=\"Add another row of '{{ item.question }}'\">+</button>\n" +
+    "                <button ng-if=\"!hasOneRepeatingItem_NEW(item)\" id=\"del-{{item._elementId}}\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem_NEW(row.header)\" title=\"Remove this row of '{{ item.question }}'\">-</button>\n" +
+    "                <button ng-if=\"row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId\" id=\"add-{{item._elementId}}\" class=\"float-button\"  id=\"{{row.header._codePath+row.header._idPath}}\" ng-click=\"addOneRepeatingItem_NEW(row.header)\" title=\"Add another row of '{{ item.question }}'\">+</button>\n" +
     "              </td>\n" +
     "\n" +
     "              <td ng-repeat=\"cell in row.cells\" ng-switch on=\"getFieldType(cell)\" class=\"hasTooltip\">\n" +

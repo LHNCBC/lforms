@@ -85,7 +85,7 @@ var LFormsData = Class.extend({
    */
   init: function(data) {
 
-    var start = new Date().getTime();
+//    var start = new Date().getTime();
 
     this.items = data.items;
     this.code = data.code;
@@ -102,11 +102,13 @@ var LFormsData = Class.extend({
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
+
+
     this._initializeInternalData_NEW();
 
-    var time = 'LFormsData is initialized in ' +(new Date().getTime() - start)/1000 +
-        ' seconds';
-    console.log(time);
+    //var time = 'LFormsData is initialized in ' +(new Date().getTime() - start)/1000 +
+    //    ' seconds';
+    //console.log(time);
   },
 
 
@@ -387,7 +389,6 @@ var LFormsData = Class.extend({
       item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
       item._elementId = item._codePath + item._idPath;
       item._displayLevel = parentItem._displayLevel + 1;
-      item._parentItem = parentItem;
 
       // set last sibling status
       item._lastSibling = i === iLen-1;
@@ -412,10 +413,14 @@ var LFormsData = Class.extend({
       }
 
       // keep a copy of the repeatable items
+      // before the parentItem is added to avoid circular reference that make the angular.copy really slow
       if (this._questionRepeatable(item)) {
         this._repeatableItems[item._codePath] = angular.copy(item);
         item._repeatable = true;
       }
+      // set a reference to its parent item
+      item._parentItem = parentItem;
+
     }
   },
 
