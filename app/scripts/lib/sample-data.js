@@ -16,64 +16,64 @@ var FHTData = {
   templateOption: {},
   // question items, required, level 1
   items: [
-    {"questionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
+    {"questionCode": "54126-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54125-0", "questionCardinality": {"min": 1, "max": -1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
-        {"questionCode": "54131-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+        {"questionCode": "54125-0", "questionCardinality": {"min": "1", "max": "*"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54131-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
-        ], "answerCardinality": {"min": 1, "max": 1},"dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "21112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
-        {"questionCode": "54132-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54128-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
+        ], "answerCardinality": {"min": "1", "max": "1"},"dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "21112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
+        {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54125-0", "trigger": {"value": "Alex"}}],
             "action": "show"}
         },
-        {"questionCode": "54135-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+        {"questionCode": "54135-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3
           "items": [
-            {"questionCode": "8302-2X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 12}}],
                             "action": "show"}
             },
-            {"questionCode": "8302-2Y", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2Y", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minInclusive": 10}}],
                             "action": "show"}
             },
-            {"questionCode": "8302-2Z", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2Z", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15, "maxInclusive": 20}}],
                             "action": "show"}
             }
           ]
         },
-        {"questionCode": "54137-5X", "questionCardinality": {"min": 1, "max": -1}, "question": "Mock-up section: Shown when Height = 15", "answers": "", "dataType": "", "units": "", "header": true,
+        {"questionCode": "54137-5X", "questionCardinality": {"min": "1", "max": "*"}, "question": "Mock-up section: Shown when Height = 15", "answers": "", "dataType": "", "units": "", "header": true,
           "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 15}}],
             "action": "show"},
           // level 3
           "items": [
-            {"questionCode": "54140-9X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #1", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54130-0X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+            {"questionCode": "54140-9X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #1", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
           ]
         },
-        {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-        {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
-        {"questionCode": "54134-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54133-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54137-5", "questionCardinality": {"min": 1, "max": -1}, "question": "Your diseases history", "answers": "", "dataType": "", "units": "", "header": true,
+        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+        {"questionCode": "54134-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54133-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54137-5", "questionCardinality": {"min": "1", "max": "*"}, "question": "Your diseases history", "answers": "", "dataType": "", "units": "", "header": true,
           // level 3
           "items": [
-            {"questionCode": "54140-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54130-0", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54137-5XA", "questionCardinality": {"min": 1, "max": -1}, "question": "Mock-up section: Shown when Age at Diagnosis is Pre-Birth", "answers": "", "dataType": "", "units": "", "header": true,
+            {"questionCode": "54140-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54137-5XA", "questionCardinality": {"min": "1", "max": "*"}, "question": "Mock-up section: Shown when Age at Diagnosis is Pre-Birth", "answers": "", "dataType": "", "units": "", "header": true,
               "skipLogic": {"conditions":[{"source": "54130-0", "trigger": {"code": "LA10402-8"}}],
                 "action": "show"},
               // level 4
               "items": [
-                {"questionCode": "54140-9XA", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #A", "answers": null, "dataType": "", "units": "", "header": false},
-                {"questionCode": "54130-0XA", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #B", "answers": null, "dataType": "", "units": "", "header": false}
+                {"questionCode": "54140-9XA", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #A", "answers": null, "dataType": "", "units": "", "header": false},
+                {"questionCode": "54130-0XA", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #B", "answers": null, "dataType": "", "units": "", "header": false}
               ]
             },
           ]
@@ -81,50 +81,50 @@ var FHTData = {
       ]
     },
     // level 1, continue
-    {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": 1, "max": -1}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
+    {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": "1", "max": "*"}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54136-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54138-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
-        {"questionCode": "54123-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+        {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54138-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54123-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
         ], "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54139-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Living?", "answers": 624, "dataType": "CNE", "units": "", "header": false,
+        {"questionCode": "54139-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?", "answers": 624, "dataType": "CNE", "units": "", "header": false,
           // level 3
           "items": [
-            {"questionCode": "54124-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+            {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
                             "action": "show"}
             },
-            {"questionCode": "54141-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
                             "action": "show"}
             },
-            {"questionCode": "54112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
+            {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                             "action": "show"}
             },
-            {"questionCode": "54113-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
+            {"questionCode": "54113-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                             "action": "show"}
             },
           ]
         },
         // level 2, continue
-        {"questionCode": "54121-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54122-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54119-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54120-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54117-7", "questionCardinality": {"min": 1, "max": -1}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true,
+        {"questionCode": "54121-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Was this person born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54122-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54119-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54120-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54117-7", "questionCardinality": {"min": "1", "max": "*"}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true,
           // level 3
           "items":[
-            {"questionCode": "54116-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54115-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
-            {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-            {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+            {"questionCode": "54116-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54115-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
           ]
         }
       ]
@@ -387,106 +387,106 @@ var horizontalFHTData = {
   templateOption: {},
   // question items, required, level 1
   items: [
-    {"questionCode": "54126-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
+    {"questionCode": "54126-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54125-0", "questionCardinality": {"min": 1, "max": -1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
-        {"questionCode": "54131-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+        {"questionCode": "54125-0", "questionCardinality": {"min": "1", "max": "*"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54131-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
-        ], "answerCardinality": {"min": 1, "max": 1},"dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "21112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
-        {"questionCode": "54132-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54128-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54135-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+        ], "answerCardinality": {"min": "1", "max": "1"},"dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "21112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
+        {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54135-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3
           "items": [
-            {"questionCode": "8302-2X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 12}}],
                 "action": "show"}
             },
-            {"questionCode": "8302-2Y", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2Y", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height >= 10", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minInclusive": 10}}],
                 "action": "show"}
             },
-            {"questionCode": "8302-2Z", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "8302-2Z", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height >15 and Height <= 20", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"minExclusive": 15, "maxInclusive": 20}}],
                 "action": "show"}
             }
           ]
         },
-        {"questionCode": "54137-5X", "questionCardinality": {"min": 1, "max": -1}, "question": "Mock-up section: Shown when Height = 15", "answers": "", "dataType": "", "units": "", "header": true,
+        {"questionCode": "54137-5X", "questionCardinality": {"min": "1", "max": "*"}, "question": "Mock-up section: Shown when Height = 15", "answers": "", "dataType": "", "units": "", "header": true,
           "skipLogic": {"conditions":[{"source": "8302-2", "trigger": {"value": 15}}],
             "action": "show"},
           // level 3
           "items": [
-            {"questionCode": "54140-9X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #1", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54130-0X", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+            {"questionCode": "54140-9X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #1", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
           ]
         },
-        {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-        {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
-        {"questionCode": "54134-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54133-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54137-5", "questionCardinality": {"min": 1, "max": -1}, "question": "Your diseases history", "answers": "", "dataType": "", "units": "", "header": true,
+        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+        {"questionCode": "54134-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54133-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54137-5", "questionCardinality": {"min": "1", "max": "*"}, "question": "Your diseases history", "answers": "", "dataType": "", "units": "", "header": true,
           // level 3
           "items": [
-            {"questionCode": "54140-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54130-0", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false}
+            {"questionCode": "54140-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54130-0", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false}
           ]
         },
       ]
     },
     // level 1, continue
-    {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": 1, "max": -1}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
+    {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": "1", "max": "*"}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54136-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54138-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
-        {"questionCode": "54123-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Gender", "answers": [
+        {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54138-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54123-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
         ], "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54139-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Living?", "answers": 624, "dataType": "CNE", "units": "", "header": false,
+        {"questionCode": "54139-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?", "answers": 624, "dataType": "CNE", "units": "", "header": false,
           // level 3
           "items": [
-            {"questionCode": "54124-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+            {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
                 "action": "show"}
             },
-            {"questionCode": "54141-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
+            {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
                 "action": "show"}
             },
-            {"questionCode": "54112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
+            {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                 "action": "show"}
             },
-            {"questionCode": "54113-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
+            {"questionCode": "54113-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                 "action": "show"}
             },
           ]
         },
         // level 2, continue
-        {"questionCode": "54121-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54122-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54119-3", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54120-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Ethnicity", "answerCardinality": {"min": 0, "max": -1}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54117-7", "questionCardinality": {"min": 1, "max": -1}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true,"layout": "horizontal",
+        {"questionCode": "54121-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Was this person born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54122-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Was this person adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54119-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54120-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54117-7", "questionCardinality": {"min": "1", "max": "*"}, "question": "This family member's history of disease", "answers": "", "dataType": "", "units": "", "header": true,"layout": "horizontal",
           // level 3
           "items":[
-            {"questionCode": "54116-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "54115-1", "questionCardinality": {"min": 1, "max": 1}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
-            {"questionCode": "29463-7", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-            {"questionCode": "39156-5", "questionCardinality": {"min": 1, "max": 1}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+            {"questionCode": "54116-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "54115-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
           ]
         },
-        {"questionCode": "54119-3R", "questionCardinality": {"min": 1, "max": 1}, "question": "Race", "answerCardinality": {"min": 0, "max": -1}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54119-3R", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
       ]
     }
   ],

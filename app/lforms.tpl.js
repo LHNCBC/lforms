@@ -122,12 +122,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                          <input ng-switch-when=\"CNE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                          <input ng-switch-when=\"CWE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +
@@ -323,12 +323,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                          <input ng-switch-when=\"CNE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                          <input ng-switch-when=\"CWE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +

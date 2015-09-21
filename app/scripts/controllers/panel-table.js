@@ -145,7 +145,7 @@ angular.module('lformsWidget')
         var ret=false;
         if (item.answerCardinality &&
             item.answerCardinality.min &&
-            item.answerCardinality.min >= 1) {
+            parseInt(item.answerCardinality.min) >= 1) {
           ret = true
         }
         return ret;
@@ -160,7 +160,7 @@ angular.module('lformsWidget')
         var ret=false;
         if (item.answerCardinality &&
             item.answerCardinality.max &&
-            (item.answerCardinality.max >= 1 || item.answerCardinality.max ==-1) ) {
+            (parseInt(item.answerCardinality.max) >= 1 || item.answerCardinality.max === "*") ) {
           ret = true
         }
         return ret;
@@ -255,7 +255,7 @@ angular.module('lformsWidget')
       $scope.isRepeatable = function(item) {
         var ret = false;
         if (item.questionCardinality &&
-            (item.questionCardinality.max == -1 || item.questionCardinality.max >1) ) {
+            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1 ) ) {
           ret = true;
         }
         return ret;
@@ -307,11 +307,8 @@ angular.module('lformsWidget')
        */
       $scope.autocompLhcOpt = function(questionInfo) {
         var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
-        if (maxSelect !== '*') {
-          if (maxSelect == -1) // -1 or "-1"
-            maxSelect = '*';
-          else if (typeof maxSelect === 'string')
-            maxSelect = parseInt(maxSelect);
+        if (maxSelect !== '*' && typeof maxSelect === 'string') {
+          maxSelect = parseInt(maxSelect);
         }
 
         var ret = {

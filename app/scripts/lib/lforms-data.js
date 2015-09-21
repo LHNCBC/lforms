@@ -303,8 +303,10 @@ var LFormsData = Class.extend({
     for (var i=0, iLen=itemList.length; i<iLen; i++) {
       var totalScoreItem = itemList[i];
 
-      if (totalScoreItem.calculationMethod && totalScoreItem.calculationMethod.name === 'TOTALSCORE') {
-
+      if (totalScoreItem.calculationMethod &&
+        (totalScoreItem.calculationMethod.name === 'TOTALSCORE' ||
+        totalScoreItem.calculationMethod === 'TOTALSCORE') ) {
+        totalScoreItem.calculationMethod.name = 'TOTALSCORE';
         // TBD, if the parameters values are already supplied,
         totalScoreItem.calculationMethod.value = [];
 
@@ -361,7 +363,7 @@ var LFormsData = Class.extend({
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
-          {"question":"Date Done","dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":1, "max":1}},
+          {"question":"Date Done","dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}},
           {"question":"Time Done","dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
           {"question":"Where Done","dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
           {"question":"Comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
@@ -395,11 +397,11 @@ var LFormsData = Class.extend({
       // set default values on the item
       // questionCardinality
       if (!item.questionCardinality) {
-        item.questionCardinality = {"min":1, "max":1};
+        item.questionCardinality = {"min":"1", "max":"1"};
       }
       // answerCardinality
       if (!item.answerCardinality) {
-        item.answerCardinality = {"min":0, "max":1};
+        item.answerCardinality = {"min":"0", "max":"1"};
       }
       // dataType
       if (!item.dataType) {
@@ -618,8 +620,8 @@ var LFormsData = Class.extend({
    */
   _questionRepeatable : function(item) {
     return (item.questionCardinality &&
-        (item.questionCardinality.max > 1 ||
-        item.questionCardinality.max === -1 )
+        (item.questionCardinality.max === "*" ||
+        parseInt(item.questionCardinality.max) > 1)
     );
   },
 

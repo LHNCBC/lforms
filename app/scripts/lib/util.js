@@ -280,48 +280,44 @@ WidgetUtil = {
         itemList[i].dataType = 'CNE';
       }
 
-      // move the "calculationMethod" to "formula"
-      if (itemList[i].calculationMethod == "TOTALSCORE") {
-        itemList[i].formula = {"name": "TOTALSCORE", "value":[]}
-      }
-
-      // value of max/min in questionCardinality and answerCardinality is integer
-      if (itemList[i].questionCardinality) {
-        if (itemList[i].questionCardinality.max) {
-          if (itemList[i].questionCardinality.max == "*") {
-            itemList[i].questionCardinality.max = -1;
-          }
-          else {
-            itemList[i].questionCardinality.max = parseInt(itemList[i].questionCardinality.max)
-          }
-        }
-        if (itemList[i].questionCardinality.min) {
-          if (itemList[i].questionCardinality.min == "*") {
-            itemList[i].questionCardinality.min = -1;
-          }
-          else {
-            itemList[i].questionCardinality.min = parseInt(itemList[i].questionCardinality.min)
-          }
-        }
-      }
-      if (itemList[i].answerCardinality) {
-        if (itemList[i].answerCardinality.max) {
-          if (itemList[i].answerCardinality.max == "*") {
-            itemList[i].answerCardinality.max = -1;
-          }
-          else {
-            itemList[i].answerCardinality.max = parseInt(itemList[i].answerCardinality.max)
-          }
-        }
-        if (itemList[i].answerCardinality.min) {
-          if (itemList[i].answerCardinality.min == "*") {
-            itemList[i].answerCardinality.min = -1;
-          }
-          else {
-            itemList[i].answerCardinality.min = parseInt(itemList[i].answerCardinality.min)
-          }
-        }
-      }
+    //  // value of max/min in questionCardinality and answerCardinality is integer
+    //  if (itemList[i].questionCardinality) {
+    //    if (itemList[i].questionCardinality.max) {
+    //      if (itemList[i].questionCardinality.max == "*") {
+    //        itemList[i].questionCardinality.max = -1;
+    //      }
+    //      else {
+    //        itemList[i].questionCardinality.max = parseInt(itemList[i].questionCardinality.max)
+    //      }
+    //    }
+    //    if (itemList[i].questionCardinality.min) {
+    //      if (itemList[i].questionCardinality.min == "*") {
+    //        itemList[i].questionCardinality.min = -1;
+    //      }
+    //      else {
+    //        itemList[i].questionCardinality.min = parseInt(itemList[i].questionCardinality.min)
+    //      }
+    //    }
+    //  }
+    //  if (itemList[i].answerCardinality) {
+    //    if (itemList[i].answerCardinality.max) {
+    //      if (itemList[i].answerCardinality.max == "*") {
+    //        itemList[i].answerCardinality.max = -1;
+    //      }
+    //      else {
+    //        itemList[i].answerCardinality.max = parseInt(itemList[i].answerCardinality.max)
+    //      }
+    //    }
+    //    if (itemList[i].answerCardinality.min) {
+    //      if (itemList[i].answerCardinality.min == "*") {
+    //        itemList[i].answerCardinality.min = -1;
+    //      }
+    //      else {
+    //        itemList[i].answerCardinality.min = parseInt(itemList[i].answerCardinality.min)
+    //      }
+    //    }
+    //  }
+      
     }
 
     formData.items = itemList;
