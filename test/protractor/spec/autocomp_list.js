@@ -1,6 +1,7 @@
 describe('autocomp list', function() {
 
-  var listFieldID = '/54126-8/54128-4/1/1'; // "Were you adopted?"
+
+  var listFieldID = '/54126-8/54132-6/1/1'; // "Were you born a twin?"
   var showPanel = $('.btn');
   var searchResults = $('#searchResults');
   var formSearch = $('#s2id_loinc_num1 a');

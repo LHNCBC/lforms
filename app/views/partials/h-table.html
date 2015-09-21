@@ -1,6 +1,6 @@
   <table class="t-treeline-field" >
     <tr>
-      <td class="t-treeline " ng-class="getTreeLevelClass2($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+      <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
       <td>
         <div class="name_label">
           <div class="hTableTitle">
@@ -21,8 +21,8 @@
             <tbody id="" class="">
             <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
               <td class="button-col">
-                <button ng-if="!hasOneRepeatingItem_NEW(item)" id="del-{{item._elementId}}" class="float-button"  ng-click="removeOneRepeatingItem_NEW(row.header)" title="Remove this row of '{{ item.question }}'">-</button>
-                <button ng-if="row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId" id="add-{{item._elementId}}" class="float-button"  id="{{row.header._codePath+row.header._idPath}}" ng-click="addOneRepeatingItem_NEW(row.header)" title="Add another row of '{{ item.question }}'">+</button>
+                <button ng-if="!hasOneRepeatingItem(item)" id="del-{{item._elementId}}" class="float-button"  ng-click="removeOneRepeatingItem(row.header)" title="Remove this row of '{{ item.question }}'">-</button>
+                <button ng-if="row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId" id="add-{{item._elementId}}" class="float-button"  id="{{row.header._codePath+row.header._idPath}}" ng-click="addOneRepeatingItem(row.header)" title="Add another row of '{{ item.question }}'">+</button>
               </td>
 
               <td ng-repeat="cell in row.cells" ng-switch on="getFieldType(cell)" class="hasTooltip">
@@ -86,7 +86,7 @@
                     <input ng-switch-default name="{{cell.question}}"
                            ng-required="isAnswerRequired(cell)" ng-model="cell._value"
                            placeholder="Type a value" ng-readonly="isReadOnly(cell)"
-                           id="{{::cell._elementId}}" ng-value="runFormula_NEW(cell)"
+                           id="{{::cell._elementId}}" ng-value="runFormula(cell)"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                   </div>
                 </ng-form>

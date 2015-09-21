@@ -5,7 +5,7 @@ angular.module('lformsWidget')
     ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS',
       function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
 
-      $scope.debug = true;
+      $scope.debug = false;
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
@@ -125,10 +125,13 @@ angular.module('lformsWidget')
         return ret;
       };
 
-      //not used
-      $scope.runFormula_NEW = function(item) {
+      /**
+       * Run a formula that is defined on the item.
+       * @param item the 'target' item where the calculation result is set.
+       */
+      $scope.runFormula = function(item) {
         if (item.calculationMethod && item.calculationMethod.name) {
-          var result = $scope.lfData.getFormulaResult_NEW(item);
+          var result = $scope.lfData.getFormulaResult(item);
           item._value = result;
         }
       };
@@ -210,9 +213,9 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {string|*}
        */
-      $scope.getSkipLogicClass_New = function(item) {
+      $scope.getSkipLogicClass = function(item) {
         var widgetData = $scope.lfData;
-        return widgetData.getSkipLogicClass_New(item);
+        return widgetData.getSkipLogicClass(item);
       };
 
       /**
@@ -249,7 +252,7 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {boolean}
        */
-      $scope.isRepeatable_NEW = function(item) {
+      $scope.isRepeatable = function(item) {
         var ret = false;
         if (item.questionCardinality &&
             (item.questionCardinality.max == -1 || item.questionCardinality.max >1) ) {
@@ -263,9 +266,9 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        * @returns {string}
        */
-      $scope.getRepeatingSN_NEW = function(item) {
+      $scope.getRepeatingSN = function(item) {
         var ret = '';
-        if ($scope.isRepeatable_NEW(item)) {
+        if ($scope.isRepeatable(item)) {
           var sn = item._idPath.slice(1);
           ret = sn.replace(/\//g,'.');
         }
@@ -282,7 +285,7 @@ angular.module('lformsWidget')
       $scope.$watch(
         //get the values and watch on those values only
         function () {
-          return $scope.lfData && $scope.lfData.itemRefs ? $scope.lfData.itemRefs.map(function(item) {return item._value;}) : null;
+          return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return item._value;}) : null;
         },
         function() {
           $scope.watchOnValueChange();
@@ -344,7 +347,7 @@ angular.module('lformsWidget')
           }
           ret.addSeqNum = !hasLabel
 
-          // Modify the label (question text) for each question.
+          // Modify the display label (answer text) for each answer.
           var defaultValue;
           for(var i= 0, iLen = answers.length; i<iLen; i++) {
             var answerData = angular.copy(answers[i]);
@@ -400,36 +403,6 @@ angular.module('lformsWidget')
         return ret;
       };
 
-
-      /**
-       * Obsolete
-       * Prepare the units list for pp-autocomplete & autocomplete-lhc,
-       * where each item in the list requires a 'label' and a 'value'
-       * @param item an item in the lforms form items array
-       * @returns hash
-       */
-      $scope.lfUnitsListOpt = function(item) {
-
-        var source = [], preSelected = 0;
-
-        for(var i= 0, ilen = item.units.length; i<ilen; i++) {
-          source.push( { label: item.units[i].name,
-                         value: item.units[i].name,
-                         code: item.units[i].code} )
-          if (item.units[i].default) preSelected = i;
-        }
-
-        return {
-          source:source,
-          position: { collision: 'flip'},
-          placeholder: "Select a unit",
-          openOnFocus: true,
-          allowFreeText: false,
-          //selectFirst: true,
-          preSelected:preSelected
-        };
-      };
-
       /**
        * Get the CSS class on each item row
        * @param item an item in the lforms form items array
@@ -461,13 +434,12 @@ angular.module('lformsWidget')
 
       /**
        *  Get the CSS class for tree lines at the current level.
-       *  Only 5 levels are supported for now, which is good enough for known panels. It could support unlimited levels
-       *  in theory.
-       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
-       * @param itemIndex the index of the item in items array
+       *  Unlimited levels are supported, although the screen size limits the number of the levels that can be shown.
+       * @param level the tree level index from left/root to right starting with 0
+       * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
        * @return {string} 'line1', 'line2', 'line3', or 'no_display'
        */
-      $scope.getTreeLevelClass2 = function(level, lastStatusList) {
+      $scope.getTreeLevelClass = function(level, lastStatusList) {
         var ret ='';
         // leaf node
         if (level === lastStatusList.length-1) {
@@ -496,11 +468,12 @@ angular.module('lformsWidget')
       /**
        *  Get the CSS class for the extra row that holds the field for "Please Specify" value
        *  The class name depends on the tree level class that this row id depending on.
-       * @param level 5 levels from LEFT to RIGHT numbered as 5,4,3,2,1 and a leaf node numbered as 0
+       * @param level the tree level index from left/root to right starting with 0
+       * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
        * @return 'line1', 'line2', 'line3', or 'no_display'
        */
-      $scope.getExtraRowTreeLevelClass2 = function(level, lastStatusList) {
-        var ret = '', cssClass = $scope.getTreeLevelClass2(level, lastStatusList);
+      $scope.getExtraRowTreeLevelClass = function(level, lastStatusList) {
+        var ret = '', cssClass = $scope.getTreeLevelClass(level, lastStatusList);
         switch(cssClass) {
           case 'line1':
             ret = 'line1';
@@ -524,61 +497,13 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Obsolete
-       * Set up option for select2 directive
-       * @param item an item in the lforms form items array
-       * @returns {{}}
-       */
-      $scope.select2Opt = function(item) {
-        var source = [], preSelected = 0, answers = [], ret ={};
-
-        if ( item.dataType === "CNE" && item.answers) {
-          if ( jQuery.isArray(item.answers) ) {
-            answers = item.answers
-          } else if (item.answers !="") {
-            answers = $scope.lfData.answerLists[item.answers];
-          }
-
-          for(var i= 0, ilen = answers.length; i<ilen; i++) {
-            source.push( {
-              "id": answers[i].code,
-              "text": answers[i].text,
-              "value": answers[i].value,
-              "score": answers[i].score,
-              "other": answers[i].other,
-              "code": answers[i].code} )
-
-            // todo: check default answer
-          }
-
-          if (item.answerCardinality && item.answerCardinality && (item.answerCardinality.max >1 || item.answerCardinality.max ==-1) ) {
-            jQuery.extend(ret, $scope.tagOptions, {
-              data:source,
-              placeholder: "Select one or more values",
-              multiple: true,
-              closeOnSelect: false,
-              maximumSelectionSize: 0
-            });
-          }
-          else {
-            jQuery.extend(ret, $scope.tagOptions, {
-              data:source,
-              placeholder: "Select a value"
-            });
-          }
-        }
-        return ret;
-
-      };
-
-      /**
        * Add a repeating item or a repeating group
        * @param item an item in the lforms form items array
        */
-      $scope.addOneRepeatingItem_NEW = function(item) {
+      $scope.addOneRepeatingItem = function(item) {
         var objWidgetData = $scope.lfData;
 
-        objWidgetData.addRepeatingItems_NEW(item);
+        objWidgetData.addRepeatingItems(item);
 
         // scroll to the newly added item/group
         var prevHash = $location.hash();
@@ -633,9 +558,6 @@ angular.module('lformsWidget')
       $scope.removeOneRepeatingItem = function(item) {
         $scope.lfData.removeRepeatingItems(item);
       };
-      $scope.removeOneRepeatingItem_NEW = function(item) {
-        $scope.lfData.removeRepeatingItems_NEW(item);
-      };
 
       // temp. for testing
       $scope.switchLayout = function(item) {
@@ -657,11 +579,6 @@ angular.module('lformsWidget')
        */
       $scope.hasOneRepeatingItem =function(item) {
         var recCount = $scope.lfData.getRepeatingItemCount(item);
-        return recCount > 1 ? false : true;
-      };
-
-      $scope.hasOneRepeatingItem_NEW =function(item) {
-        var recCount = $scope.lfData.getRepeatingItemCount_NEW(item);
         return recCount > 1 ? false : true;
       };
 
@@ -702,12 +619,6 @@ angular.module('lformsWidget')
         var objWidgetData = $scope.lfData;
         var extra = objWidgetData.needExtra(item);
         return extra;
-      };
-
-      // for debugging only, not used,
-      $scope.refresh = function(widgetContainer) {
-        $compile(widgetContainer)($scope);
-        $scope.$apply();
       };
 
       // for debug only. to be removed.

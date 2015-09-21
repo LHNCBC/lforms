@@ -27,7 +27,10 @@ var FHTData = {
         ], "answerCardinality": {"min": 1, "max": 1},"dataType": "CNE", "units": "", "header": false},
         {"questionCode": "21112-8", "questionCardinality": {"min": 1, "max": 1}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
         {"questionCode": "54132-6", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54128-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54128-4", "questionCardinality": {"min": 1, "max": 1}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54125-0", "trigger": {"value": "Alex"}}],
+            "action": "show"}
+        },
         {"questionCode": "54135-9", "questionCardinality": {"min": 1, "max": 1}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "8302-2", "questionCardinality": {"min": 1, "max": 1}, "question": "Height", "answerCardinality": {"min": 1, "max": 1},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3

@@ -39,31 +39,30 @@ angular.module('lformsWidget')
 
       // get the widget data
       // some selected panels
-      if($scope.selectedPanel[tabIndex]) {
-        var loinc_num = $scope.selectedPanel[tabIndex].id;
-      }
-      if (loinc_num) {
-        if (loinc_num == '54127-6N') {
+      if($scope.selectedPanel[tabIndex] && $scope.selectedPanel[tabIndex].id) {
+        var loincNum = $scope.selectedPanel[tabIndex].id;
+
+        if (loincNum == '54127-6N') {
           selectedFormData.updateForm(new LFormsData(angular.copy(FHTData)));
         }
-        else if (loinc_num == '54127-6H') {
+        else if (loincNum == '54127-6H') {
           selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTData)));
         }
-        else if (loinc_num == '54580-6NEW') {
+        else if (loincNum == '54580-6NEW') {
           selectedFormData.updateForm(new LFormsData(angular.copy(MDS3)));
         }
-        else if (loinc_num == '35088-4B') {
+        else if (loincNum == '35088-4B') {
           selectedFormData.updateForm(new LFormsData(angular.copy(glasgow)));
         }
-        else if (loinc_num == '35088-4') {
+        else if (loincNum == '35088-4') {
           var newData = angular.copy(glasgowRI);
           WidgetUtil.preprocessRIData(newData.items);
           selectedFormData.updateForm(new LFormsData(newData));
         }
-        else if (loinc_num == 'all-in-one') {
+        else if (loincNum == 'all-in-one') {
           selectedFormData.updateForm(new LFormsData(angular.copy(allInOne)));
         }
-        else if (loinc_num == 'formC') {
+        else if (loincNum == 'formC') {
           selectedFormData.updateForm(new LFormsData(angular.copy(formBuilder)));
         }
       }

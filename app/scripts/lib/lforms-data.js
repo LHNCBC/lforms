@@ -104,7 +104,7 @@ var LFormsData = Class.extend({
     // that are used for widget control and/or for performance improvement.
 
 
-    this._initializeInternalData_NEW();
+    this._initializeInternalData();
 
     //var time = 'LFormsData is initialized in ' +(new Date().getTime() - start)/1000 +
     //    ' seconds';
@@ -121,29 +121,29 @@ var LFormsData = Class.extend({
    *    _displayLevel_,
    * @private
    */
-  _initializeInternalData_NEW: function() {
+  _initializeInternalData: function() {
     // set default values
-    this._setDefaultValues_NEW();
+    this._setDefaultValues();
 
     //TODO, process form data that includes user data
 
     //TODO, validate form data
 
     this._repeatableItems = {};
-    this._setTreeNodes_NEW(this.items, this);
+    this._setTreeNodes(this.items, this);
 
-    this._updateLastSiblingList_NEW(this.items, null);
+    this._updateLastSiblingList(this.items, null);
 
-    this._updateLastRepeatingItemsStatus_NEW(this.items);
-    this._updateLastItemInRepeatingSection_NEW(this.items);
+    this._updateLastRepeatingItemsStatus(this.items);
+    this._updateLastItemInRepeatingSection(this.items);
 
     // create a reference list of all items in the tree
-    this.itemRefs = [];
-    this._updateItemReferenceList_NEW(this.items);
+    this.itemList = [];
+    this._updateItemReferenceList(this.items);
 
-    this._standardizeScoreRule_NEW(this.itemRefs);
+    this._standardizeScoreRule(this.itemList);
 
-    this._resetHorizontalTableInfo_NEW();
+    this._resetHorizontalTableInfo();
 
     this.Navigation.setupNavigationMap(this);
 
@@ -155,18 +155,18 @@ var LFormsData = Class.extend({
    */
   _resetInternalData: function() {
 
-    this._updateTreeNodes_NEW(this.items,this);
-    this._updateLastSiblingList_NEW(this.items, null);
+    this._updateTreeNodes(this.items,this);
+    this._updateLastSiblingList(this.items, null);
 
-    this._updateLastRepeatingItemsStatus_NEW(this.items);
-    this._updateLastItemInRepeatingSection_NEW(this.items);
+    this._updateLastRepeatingItemsStatus(this.items);
+    this._updateLastItemInRepeatingSection(this.items);
 
-    this.itemRefs = [];
-    this._updateItemReferenceList_NEW(this.items);
+    this.itemList = [];
+    this._updateItemReferenceList(this.items);
 
-    this._standardizeScoreRule_NEW(this.itemRefs);
+    this._standardizeScoreRule(this.itemList);
 
-    this._resetHorizontalTableInfo_NEW();
+    this._resetHorizontalTableInfo();
 
     this.Navigation.setupNavigationMap(this);
   },
@@ -177,14 +177,14 @@ var LFormsData = Class.extend({
    */
   watchOnValueChange: function() {
     // check skip logic
-    this._updateSkipLogicStatus_NEW(this.items, null);
+    this._updateSkipLogicStatus(this.items, null);
 
     // update tree line status
-    this._updateTreeNodes_NEW(this.items,this);
-    this._updateLastSiblingList_NEW(this.items, null);
+    this._updateTreeNodes(this.items,this);
+    this._updateLastSiblingList(this.items, null);
     // update repeating items status
-    //this._updateLastRepeatingItemsStatus_NEW(this.items);
-    this._updateLastItemInRepeatingSection_NEW(this.items);
+    //this._updateLastRepeatingItemsStatus(this.items);
+    this._updateLastItemInRepeatingSection(this.items);
 
   },
 
@@ -194,22 +194,19 @@ var LFormsData = Class.extend({
    * @param hide if the parent item is already hidden
    * @private
    */
-  _updateSkipLogicStatus_NEW: function(items, hide) {
+  _updateSkipLogicStatus: function(items, hide) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       // if one item is hidden all of its decedents should be hidden.
       // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
       if (hide) {
         this._setSkipLogicStatusValue(item, "target-hide");
-        // process the sub items
-        if (item.items && item.items.length > 0) {
-          this._updateSkipLogicStatus_NEW(item.items, hide);
-        }
+        var isHidden = true;
       }
       // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
       else {
         if (item.skipLogic) {
-          var takeAction = this._checkSkipLogic_NEW(item);
+          var takeAction = this._checkSkipLogic(item);
 
           if (!item.skipLogic.action || item.skipLogic.action === "show") {
             var newStatus = takeAction ? 'target-show' : "target-hide";
@@ -225,28 +222,29 @@ var LFormsData = Class.extend({
           this._setSkipLogicStatusValue(item, "target-show");
         }
         var isHidden = item._skipLogicStatus === "target-hide";
-        // process the sub items
-        if (item.items && item.items.length > 0) {
-          this._updateSkipLogicStatus_NEW(item.items, isHidden);
-        }
       }
+      // process the sub items
+      if (item.items && item.items.length > 0) {
+        this._updateSkipLogicStatus(item.items, isHidden);
+      }
+
     }
   },
 
   /**
-   * Set the skip logic status value on an item and create a sreen reader log
+   * Set the skip logic status value on an item and create a screen reader log
    * @param item an item
    * @param newStatus the new skip logic status
    * @private
    */
   _setSkipLogicStatusValue: function(item, newStatus) {
-    item._preSkipLogicStatus = item._skipLogicStatus;
-    item._skipLogicStatus = newStatus;
-    if (item._preSkipLogicStatus !== newStatus) {
-      if (item._preSkipLogicStatus) {
+    if (item._skipLogicStatus !== newStatus) {
+      if (item._skipLogicStatus) {
         var msg = newStatus === "target-hide" ? 'Hiding ' : 'Showing ' ;
         LFormsData.screenReaderLog(msg+item.question);
       }
+      item._preSkipLogicStatus = item._skipLogicStatus;
+      item._skipLogicStatus = newStatus;
     }
   },
 
@@ -255,31 +253,31 @@ var LFormsData = Class.extend({
    * @param items sibling items on one level of the tree
    * @private
    */
-  _updateItemReferenceList_NEW: function(items) {
+  _updateItemReferenceList: function(items) {
 
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
-      this.itemRefs.push(item);
+      this.itemList.push(item);
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateItemReferenceList_NEW(item.items);
+        this._updateItemReferenceList(item.items);
       }
     }
   },
 
   /**
-   * Update the list that contains the last sibling status of the parent item on each level from the item up to the root
+   * Update the list that contains the last sibling status of the parent item on each level starting from root
    * @param items sibling items on one level of the tree
-   * @param parentSiblingList the last sibling status list of the prarent item
+   * @param parentSiblingList the last sibling status list of the parent item
    * @private
    */
-  _updateLastSiblingList_NEW: function(items, parentSiblingList) {
+  _updateLastSiblingList: function(items, parentSiblingList) {
 
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       // update last sibling status list
       // sub level
-      if (parentSiblingList && angular.isArray(parentSiblingList)) {
+      if (parentSiblingList && Array.isArray(parentSiblingList)) {
         // make a copy
         item._lastSiblingList = parentSiblingList.slice();
         item._lastSiblingList.push(item._lastSibling);
@@ -291,31 +289,31 @@ var LFormsData = Class.extend({
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateLastSiblingList_NEW(item.items, item._lastSiblingList);
+        this._updateLastSiblingList(item.items, item._lastSiblingList);
       }
     }
   },
 
   /**
    * Convert the score rule definition to the standard formula definition
-   * @param itemRefs the reference list of the items in the tree
+   * @param itemList the reference list of the items in the tree
    * @private
    */
-  _standardizeScoreRule_NEW: function(itemRefs) {
-    for (var i=0, iLen=itemRefs.length; i<iLen; i++) {
-      var totalScoreItem = itemRefs[i];
+  _standardizeScoreRule: function(itemList) {
+    for (var i=0, iLen=itemList.length; i<iLen; i++) {
+      var totalScoreItem = itemList[i];
 
       if (totalScoreItem.calculationMethod && totalScoreItem.calculationMethod.name === 'TOTALSCORE') {
 
         // TBD, if the parameters values are already supplied,
         totalScoreItem.calculationMethod.value = [];
 
-        for (var j = 0, jLen = itemRefs.length; j < jLen; j++) {
-          var item = itemRefs[j];
+        for (var j = 0, jLen = itemList.length; j < jLen; j++) {
+          var item = itemList[j];
           // it has an answer list
           if (item.answers) {
             var answers = [];
-            if (jQuery.isArray(item.answers)) {
+            if (Array.isArray(item.answers)) {
               answers = item.answers;
             }
             // check if any one of the answers has a score
@@ -337,7 +335,7 @@ var LFormsData = Class.extend({
    * Set default values if the data is missing.
    * @private
    */
-  _setDefaultValues_NEW: function() {
+  _setDefaultValues: function() {
 
     this._codePath = "";
     this._idPath = "";
@@ -380,9 +378,10 @@ var LFormsData = Class.extend({
    * @param parentItem the parent item
    * @private
    */
-  _setTreeNodes_NEW: function(items, parentItem) {
+  _setTreeNodes: function(items, parentItem) {
+    var iLen=items.length, lastSiblingIndex = iLen -1;
     // for each item on this level
-    for (var i=0, iLen=items.length; i<iLen; i++) {
+    for (var i=0; i<iLen; i++) {
       var item = items[i];
       if (!item._id) item._id = 1;
       item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
@@ -391,7 +390,7 @@ var LFormsData = Class.extend({
       item._displayLevel = parentItem._displayLevel + 1;
 
       // set last sibling status
-      item._lastSibling = i === iLen-1;
+      item._lastSibling = i === lastSiblingIndex;
 
       // set default values on the item
       // questionCardinality
@@ -409,7 +408,7 @@ var LFormsData = Class.extend({
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._setTreeNodes_NEW(item.items, item);
+        this._setTreeNodes(item.items, item);
       }
 
       // keep a copy of the repeatable items
@@ -430,9 +429,9 @@ var LFormsData = Class.extend({
    * @param parentItem the parent item
    * @private
    */
-  _updateTreeNodes_NEW: function(items, parentItem) {
+  _updateTreeNodes: function(items, parentItem) {
     // for each item on this level
-    var iLen=items.length;
+    var iLen=items.length, lastSiblingIndex = iLen -1;
     var foundLastSibling = false;
     for (var i=iLen-1; i>=0; i--) {
       var item = items[i];
@@ -446,7 +445,7 @@ var LFormsData = Class.extend({
       item._repeatingSectionList = null;
 
       // set last sibling status
-      item._lastSibling = i === iLen-1;
+      item._lastSibling = i === lastSiblingIndex;
 
       // consider if the last sibling is hidden by skip logic
       if (!foundLastSibling) {
@@ -461,7 +460,7 @@ var LFormsData = Class.extend({
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        this._updateTreeNodes_NEW(item.items, item);
+        this._updateTreeNodes(item.items, item);
       }
     }
   },
@@ -471,13 +470,13 @@ var LFormsData = Class.extend({
    * @param item an item
    * @returns {number}
    */
-  getRepeatingItemMaxId_NEW: function(item) {
-    var maxId = parseInt(item._id) ;
+  getRepeatingItemMaxId: function(item) {
+    var maxId = item._id;
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
       for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
         if (item._parentItem.items[i]._codePath == item._codePath &&
-          parseInt(item._parentItem.items[i]._id) > maxId ) {
-          maxId = parseInt(item._parentItem.items[i]._id);
+          item._parentItem.items[i]._id > maxId ) {
+          maxId = item._parentItem.items[i]._id;
         }
       }
     }
@@ -489,7 +488,7 @@ var LFormsData = Class.extend({
    * @param item an item
    * @returns {number}
    */
-  getRepeatingItemCount_NEW: function(item) {
+  getRepeatingItemCount: function(item) {
     var count = 0;
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
       for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
@@ -506,7 +505,7 @@ var LFormsData = Class.extend({
    * @param items sibling items on one level of the tree
    * @private
    */
-  _updateLastRepeatingItemsStatus_NEW: function(items) {
+  _updateLastRepeatingItemsStatus: function(items) {
     var iLen = items.length;
     var prevCodePath = '';
     // process all items in the array except the last one
@@ -525,7 +524,7 @@ var LFormsData = Class.extend({
       prevCodePath = item._codePath;
       // check sub levels
       if (item.items && item.items.length > 0) {
-        this._updateLastRepeatingItemsStatus_NEW(item.items);
+        this._updateLastRepeatingItemsStatus(item.items);
       }
     }
     // the last item in the array
@@ -537,7 +536,7 @@ var LFormsData = Class.extend({
     }
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
-      this._updateLastRepeatingItemsStatus_NEW(items[iLen-1].items);
+      this._updateLastRepeatingItemsStatus(items[iLen-1].items);
     }
 
   },
@@ -550,14 +549,14 @@ var LFormsData = Class.extend({
    * @param items sibling items on one level of the tree
    * @private
    */
-  _updateLastItemInRepeatingSection_NEW: function(items) {
+  _updateLastItemInRepeatingSection: function(items) {
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
 
       // if it is the last repeating item, and it is not hidden by skip logic
       if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
-        var lastItem = this._getLastSubItem_NEW(item);
-        if (lastItem._repeatingSectionList && Array.isArray(lastItem._repeatingSectionList)) {
+        var lastItem = this._getLastSubItem(item);
+        if (lastItem._repeatingSectionList) {
           lastItem._repeatingSectionList.unshift(item);
         }
         else {
@@ -566,7 +565,7 @@ var LFormsData = Class.extend({
       }
       // process the sub items if it's not hidden
       if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
-        this._updateLastItemInRepeatingSection_NEW(item.items);
+        this._updateLastItemInRepeatingSection(item.items);
       }
     }
 
@@ -578,22 +577,34 @@ var LFormsData = Class.extend({
    * @returns {*}
    * @private
    */
-  _getLastSubItem_NEW: function(item) {
+  _getLastSubItem: function(item) {
     var retItem = item;
     if (item && Array.isArray(item.items) && item.items.length > 0) {
-      var i = item.items.length -1;
-      var lastItem = item.items[i];
-      var found = false;
-      // found a last item that is not hidden
-      while(!found) {
+
+      var lastItem, i = item.items.length, found = false;
+      // found the last item that is not hidden
+      do {
+        lastItem = item.items[--i];
         if (lastItem._skipLogicStatus !== "target-hide") {
           found = true;
-          break;
         }
-        lastItem = item.items[--i];
       }
+      while(!found);
+
+      //var i = item.items.length -1;
+      //var lastItem = item.items[i];
+      //var found = false;
+      //// found a last item that is not hidden
+      //while(!found) {
+      //  if (lastItem._skipLogicStatus !== "target-hide") {
+      //    found = true;
+      //    break;
+      //  }
+      //  lastItem = item.items[--i];
+      //}
+
       if (found) {
-        retItem = this._getLastSubItem_NEW(lastItem);
+        retItem = this._getLastSubItem(lastItem);
       }
     }
     return retItem;
@@ -606,12 +617,10 @@ var LFormsData = Class.extend({
    * @private
    */
   _questionRepeatable : function(item) {
-  var ret=false;
-  if (item.questionCardinality &&
-      (item.questionCardinality.max > 1 || item.questionCardinality.max ==-1) ) {
-    ret = true
-  }
-  return ret;
+    return (item.questionCardinality &&
+        (item.questionCardinality.max > 1 ||
+        item.questionCardinality.max === -1 )
+    );
   },
 
   /**
@@ -639,15 +648,15 @@ var LFormsData = Class.extend({
    *  }
    * @private
    */
-  _resetHorizontalTableInfo_NEW: function() {
+  _resetHorizontalTableInfo: function() {
 
     this._horizontalTableInfo = {};
 
     var tableHeaderCodePathAndParentIdPath = null;
     var lastHeaderId = null;
 
-    for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
-      var item = this.itemRefs[i];
+    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
       // header item and horizontal layout
       if (item.header && item.layout == "horizontal" ) {
         // same methods for repeating items could be used for repeating and non-repeating items.
@@ -708,9 +717,9 @@ var LFormsData = Class.extend({
    * Add a repeating item or a repeating section and update form status
    * @param item an item
    */
-  addRepeatingItems_NEW: function(item) {
+  addRepeatingItems: function(item) {
 
-    var maxRecId = this.getRepeatingItemMaxId_NEW(item);
+    var maxRecId = this.getRepeatingItemMaxId(item);
     var newItem = angular.copy(this._repeatableItems[item._codePath]);
     newItem._id = maxRecId + 1;
 
@@ -736,7 +745,7 @@ var LFormsData = Class.extend({
    * Remove a repeating item or a repeating section and update form status
    * @param item an item
    */
-  removeRepeatingItems_NEW: function(item) {
+  removeRepeatingItems: function(item) {
 
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
       for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
@@ -770,9 +779,9 @@ var LFormsData = Class.extend({
    * @returns {Array}
    * @private
    */
-  _getScores_NEW: function(item, formula) {
+  _getScores: function(item, formula) {
     var scores = [];
-    var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
+    var sourceItems = this._getFormulaSourceItems(item, formula.value);
 
     for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
       var item = sourceItems[i];
@@ -792,7 +801,7 @@ var LFormsData = Class.extend({
    * @returns {Array}
    * @private
    */
-  _getFormulaSourceItems_NEW: function(item, questionCodes) {
+  _getFormulaSourceItems: function(item, questionCodes) {
     var sourceItems = [];
 
     for (var i= 0, iLen=questionCodes.length; i<iLen; i++) {
@@ -830,9 +839,9 @@ var LFormsData = Class.extend({
    * @returns {Array}
    * @private
    */
-  _getValuesInStandardUnit_NEW : function(item, formula) {
+  _getValuesInStandardUnit : function(item, formula) {
     var values = [];
-    var sourceItems = this._getFormulaSourceItems_NEW(item, formula.value);
+    var sourceItems = this._getFormulaSourceItems(item, formula.value);
 
     for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
       var valueInStandardUnit = '';
@@ -855,19 +864,19 @@ var LFormsData = Class.extend({
    * @param item an item
    * @returns {string}
    */
-  getFormulaResult_NEW: function(item) {
+  getFormulaResult: function(item) {
     var result ='';
     var parameterValues = [];
     if (item.calculationMethod) {
       var formula = item.calculationMethod;
       // run score rule (there should be one score rule only in a form)
       if (formula.name === 'TOTALSCORE') {
-        parameterValues = this._getScores_NEW(item, formula);
+        parameterValues = this._getScores(item, formula);
       }
       // run non-score rules
       else {
         // find the sources and target
-        parameterValues = this._getValuesInStandardUnit_NEW(item,formula);
+        parameterValues = this._getValuesInStandardUnit(item,formula);
       }
       // calculate the formula result
       result = this.Formulas.calculations_[formula.name](parameterValues)
@@ -875,21 +884,21 @@ var LFormsData = Class.extend({
     return result;
   },
 
-  // not used
-  // it might be needed for performance optimization
-  runFormulas_NEW: function() {
-    for (var i= 0, iLen=this.itemRefs.length; i<iLen; i++) {
-      var item = this.itemRefs[i];
-      if (item.calculationMethod) {
-        item._value = this.getFormulaResult_NEW(item);
-      }
-    }
-  },
+  //// not used
+  //// it might be needed for performance optimization
+  //runFormulas_NEW: function() {
+  //  for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
+  //    var item = this.itemList[i];
+  //    if (item.calculationMethod) {
+  //      item._value = this.getFormulaResult(item);
+  //    }
+  //  }
+  //},
 
 
   /**
    * Units modules
-   * Embedded in widget-data.js. To be separated as a independent file.
+   * Embedded in lforms-data.js. To be separated as a independent file.
    */
   Units: {
     getValueInStandardUnit: function(value, unit) {
@@ -922,7 +931,7 @@ var LFormsData = Class.extend({
 
   /**
    * Formula modules
-   * Embedded in widget-data.js. To be separated as a independent file.
+   * Embedded in lforms-data.js. To be separated as a independent file.
    */
   Formulas: {
     calculations_: {
@@ -976,60 +985,38 @@ var LFormsData = Class.extend({
     if (range && !isNaN(numValue)) {
       var fields = Object.keys(range);
       // one key
-      if (fields.length == 1)  {
+      if (fields.length == 1) {
         switch (fields[0]) {
           case "minInclusive":
-            if (range["minInclusive"] <= numValue) {
-              inRange = true;
-            }
+            inRange = range["minInclusive"] <= numValue;
             break;
           case "minExclusive":
-            if (range["minExclusive"] < numValue) {
-              inRange = true;
-            }
+            inRange = range["minExclusive"] < numValue;
             break;
           case "maxInclusive":
-            if (range["maxInclusive"] >= numValue) {
-              inRange = true;
-            }
+            inRange = range["maxInclusive"] >= numValue;
             break;
           case "maxExclusive":
-            if (range["maxExclusive"] > numValue) {
-              inRange = true;
-            }
+            inRange = range["maxExclusive"] > numValue;
             break;
         } // end of switch
       } // end of one key
       // two keys
-      else {
+      else if (fields.length == 2) {
         // check the lower end
         if (range.hasOwnProperty("minInclusive")) {
-          if (range["minInclusive"] <= numValue) {
-            inRange = true;
-          }
+          inRange = range["minInclusive"] <= numValue;
         }
         else if (range.hasOwnProperty("minExclusive")) {
-          if (range["minExclusive"] < numValue) {
-            inRange = true;
-          }
+          inRange = range["minExclusive"] < numValue;
         }
         // check the upper end
         if (inRange) {
           if (range.hasOwnProperty("maxInclusive")) {
-            if (range["maxInclusive"] >= numValue) {
-              inRange = true;
-            }
-            else {
-              inRange = false;
-            }
+            inRange = range["maxInclusive"] >= numValue;
           }
           else if (range.hasOwnProperty("maxExclusive")) {
-            if (range["maxExclusive"] > numValue) {
-              inRange = true;
-            }
-            else {
-              inRange = false;
-            }
+            inRange = range["maxExclusive"] > numValue;
           }
         } // end if lower end valid
       } // end of two keys
@@ -1040,7 +1027,7 @@ var LFormsData = Class.extend({
   },
 
   /**
-   * Compare two JavaScript objects
+   * Shallowly compares two JavaScript objects to see if their keys and values are equal.
    * @param obj1
    * @param obj2
    * @returns {boolean}
@@ -1063,26 +1050,19 @@ var LFormsData = Class.extend({
     else {
       var keys1 = Object.keys(obj1);
       var keys2 = Object.keys(obj2);
-      if (keys1.length != keys2.length ) {
+      if (keys1.length !== keys2.length ) {
         ret = false;
       }
       else {
-        // from obj1 to obj2
-        for (var i= 0, ilen=keys1.length; i<ilen; i++) {
-          if (obj1[keys1[i]] != obj2[keys1[i]]) {
+        // comparison from obj1 to obj2
+        for (var i= 0, iLen=keys1.length; i<iLen; i++) {
+          if (obj1[keys1[i]] !== obj2[keys1[i]]) {
             ret = false;
             break;
           }
         }
-        // from obj2 to obj1 // not necessary once the lengths have benn checked.
-//        if (ret) {
-//          for (var i= 0, ilen=keys2.length; i<ilen; i++) {
-//            if (obj1[keys2[i]] != obj2[keys2[i]]) {
-//              ret = false;
-//              break;
-//            }
-//          }
-//        }
+        // comparison from obj2 to obj1
+        // is not necessary once the lengths have benn checked.
       }
     }
     return ret;
@@ -1096,12 +1076,12 @@ var LFormsData = Class.extend({
    * @returns {Array}
    * @private
    */
-  _getSkipLogicSourceItem_NEW: function(item, questionCode) {
+  _getSkipLogicSourceItem: function(item, questionCode) {
     var sourceItem = null;
 
     // check siblings
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
-      for (var i= 1, iLen= item._parentItem.items.length; i<iLen; i++) {
+      for (var i= 0, iLen= item._parentItem.items.length; i<iLen; i++) {
         if (item._parentItem.items[i].questionCode === questionCode) {
           sourceItem = item._parentItem.items[i];
           break;
@@ -1130,7 +1110,7 @@ var LFormsData = Class.extend({
    * @returns {boolean}
    * @private
    */
-  _checkSkipLogicCondition_NEW: function(item, trigger) {
+  _checkSkipLogicCondition: function(item, trigger) {
     var action = false;
     if (item._value) {
       var currentValue = item._value;
@@ -1180,16 +1160,16 @@ var LFormsData = Class.extend({
         // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
         // the only key is "value", for now
         case "ST":
-          if (trigger.hasOwnProperty("value") && currentValue.hasOwnProperty("value") &&
-            trigger["value"] === currentValue["value"] ) {
+          if (trigger.hasOwnProperty("value") && currentValue &&
+            trigger["value"] === currentValue ) {
             action = true;
           }
           break;
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
         case "BL":
-          if (trigger.hasOwnProperty("value") && currentValue.hasOwnProperty("value") &&
-            trigger["value"] === currentValue["value"] ) {
+          if (trigger.hasOwnProperty("value") && currentValue &&
+            trigger["value"] === currentValue ) {
             action = true;
           }
           break;
@@ -1205,14 +1185,14 @@ var LFormsData = Class.extend({
    * @returns {boolean}
    * @private
    */
-  _checkSkipLogic_NEW: function(item) {
+  _checkSkipLogic: function(item) {
     var takeAction = false;
     if (item.skipLogic) {
       var actions = [];
       for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
-        var sourceItem = this._getSkipLogicSourceItem_NEW(item, condition.source);
-        actions.push(this._checkSkipLogicCondition_NEW(sourceItem, condition.trigger));
+        var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
+        actions.push(this._checkSkipLogicCondition(sourceItem, condition.trigger));
       }
 
       if (!item.skipLogic.logic || item.skipLogic.logic === "AND") {
@@ -1242,7 +1222,7 @@ var LFormsData = Class.extend({
    * @param item
    * @returns {string|string|*|string}
    */
-  getSkipLogicClass_New: function(item) {
+  getSkipLogicClass: function(item) {
       return item._skipLogicStatus;
   },
 
@@ -1262,7 +1242,7 @@ var LFormsData = Class.extend({
   needExtra: function(item) {
     var extra = false;
     if (item && item._value) {
-      if (jQuery.isArray(item._value)) {
+      if (Array.isArray(item._value)) {
         jQuery.each(item._value, function(index, answer) {
           if (answer.other) {
             extra = true;
@@ -1285,7 +1265,7 @@ var LFormsData = Class.extend({
   Navigation: {
     // keys
     ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
-    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId) of every questions.
+    _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId) of every question.
     _reverseNavigationMap: {}, // a reverse mapping from element id to position, for quick search of positions.
 
     /**
@@ -1293,7 +1273,7 @@ var LFormsData = Class.extend({
      * @param lfData the LFormsData object of a form
      */
     setupNavigationMap: function(lfData) {
-      var items = lfData.itemRefs,
+      var items = lfData.itemList,
           posX = 0, posY = 0;
       this._navigationMap = [];
       this._reverseNavigationMap = {};
@@ -1336,8 +1316,8 @@ var LFormsData = Class.extend({
 
     /**
      * Find a field's position in navigationMap from its element id
-     * @param id id of a DOM element
-     * @returns {*} the position in the navigation map array
+     * @param id the ID of the currently focused DOM element
+     * @returns {*} the position in the navigation map array of the currently focused DOM element
      */
     getCurrentPosition: function(id) {
       return id ? this._reverseNavigationMap[id] : null;
@@ -1346,7 +1326,8 @@ var LFormsData = Class.extend({
     /**
      * Find the next field to get focus
      * @param kCode code value of a keyboard key
-     * @param id id of a DOM element
+     * @param id the ID of the currently focused DOM element
+     * @returns {*}
      */
     getNextFieldId: function(kCode, id) {
       var nextPos, nextId;
