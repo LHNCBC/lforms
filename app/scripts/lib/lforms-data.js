@@ -363,7 +363,7 @@ var LFormsData = Class.extend({
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
-          {"question":"Date Done","dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}},
+          {"question":"Date Done","dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
           {"question":"Time Done","dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
           {"question":"Where Done","dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
           {"question":"Comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
@@ -403,6 +403,15 @@ var LFormsData = Class.extend({
       if (!item.answerCardinality) {
         item.answerCardinality = {"min":"0", "max":"1"};
       }
+
+      // set up flags for question and answer cardinality
+      item._questionRepeatable = item.questionCardinality.max &&
+          (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+      item._answerRequired = item.answerCardinality.min &&
+          (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
+      item._multipleAnswers = item.answerCardinality.max &&
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+
       // dataType
       if (!item.dataType) {
         item.dataType = "ST";
@@ -415,7 +424,7 @@ var LFormsData = Class.extend({
 
       // keep a copy of the repeatable items
       // before the parentItem is added to avoid circular reference that make the angular.copy really slow
-      if (this._questionRepeatable(item)) {
+      if (item._questionRepeatable) {
         this._repeatableItems[item._codePath] = angular.copy(item);
         item._repeatable = true;
       }
@@ -516,7 +525,7 @@ var LFormsData = Class.extend({
       if (prevCodePath !== '') {
         // it's a different item, and
         // previous item is a repeating item, set the flag as the last in the repeating set
-        if (prevCodePath !== item._codePath && this._questionRepeatable(items[i - 1])) {
+        if (prevCodePath !== item._codePath && items[i - 1]._questionRepeatable) {
           items[i - 1]._lastRepeatingItem = true;
         }
         else {
@@ -530,7 +539,7 @@ var LFormsData = Class.extend({
       }
     }
     // the last item in the array
-    if (this._questionRepeatable(items[iLen-1])) {
+    if (items[iLen-1]._questionRepeatable) {
       items[iLen-1]._lastRepeatingItem = true;
     }
     else {
@@ -610,19 +619,6 @@ var LFormsData = Class.extend({
       }
     }
     return retItem;
-  },
-
-  /**
-   * Check if multiple instances of the item are allowed
-   * @param item an item
-   * @returns {boolean}
-   * @private
-   */
-  _questionRepeatable : function(item) {
-    return (item.questionCardinality &&
-        (item.questionCardinality.max === "*" ||
-        parseInt(item.questionCardinality.max) > 1)
-    );
   },
 
   /**
@@ -1162,11 +1158,6 @@ var LFormsData = Class.extend({
         // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
         // the only key is "value", for now
         case "ST":
-          if (trigger.hasOwnProperty("value") && currentValue &&
-            trigger["value"] === currentValue ) {
-            action = true;
-          }
-          break;
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
         case "BL":

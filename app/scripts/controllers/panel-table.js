@@ -137,36 +137,6 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Check if an answer is required
-       * @param item an item in the lforms form items array
-       * @returns {boolean}
-       */
-      $scope.isAnswerRequired = function(item) {
-        var ret=false;
-        if (item.answerCardinality &&
-            item.answerCardinality.min &&
-            parseInt(item.answerCardinality.min) >= 1) {
-          ret = true
-        }
-        return ret;
-      };
-
-      /**
-       * Check if multiple answers are allowed
-       * @param item an item in the lforms form items array
-       * @returns {boolean}
-       */
-      $scope.hasMultipleAnswers = function(item) {
-        var ret=false;
-        if (item.answerCardinality &&
-            item.answerCardinality.max &&
-            (parseInt(item.answerCardinality.max) >= 1 || item.answerCardinality.max === "*") ) {
-          ret = true
-        }
-        return ret;
-      };
-
-      /**
        * Check data type and answer cardinality
        * @param item an item in the lforms form items array
        * @returns {string}
@@ -179,7 +149,7 @@ angular.module('lformsWidget')
         // if the BMI target item's dataType is "REAL", which is treated as type=number in angular,
         // then the value is not displayed in the field. It seems like a bug in angular.
         // But for now just make it not a number type.
-        else if (item.formula != undefined && !jQuery.isEmptyObject(item.formula)) {
+        else if (item.calculationMethod != undefined && !jQuery.isEmptyObject(item.calculationMethod)) {
           ret = "ST"
         }
         else if (item.answerCardinality && item.answerCardinality.max) {
@@ -407,10 +377,10 @@ angular.module('lformsWidget')
        */
       $scope.getRowClass = function(item) {
         var eleClass = '';
-        if (item._displayLevel_ > 0) {
+        if (item._displayLevel > 0) {
           eleClass = 'panel_l' + item._displayLevel_;
         }
-        if ($scope.isAnswerRequired(item)) {
+        if (item._answerRequired) {
           eleClass += ' test_required';
         }
         if (item.header) {

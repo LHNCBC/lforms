@@ -55,17 +55,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                <div class=\"cellData tooltipContainer\">\n" +
     "                  <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                  <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
+    "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
     "                         ng-model=\"item._value\"\n" +
     "                         autocomplete-lhc=\"::autocompLhcOpt(item)\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
     "                         placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
     "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                         ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
@@ -123,37 +123,37 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
     "                          <input ng-switch-when=\"CNE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CWE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"INT1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 placeholder=\"Select one\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CWE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 placeholder=\"Select one  or type a value\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                                 ng-value=\"runFormula(item)\" id=\"{{::item._elementId}}\">\n" +
     "                        </div>\n" +
@@ -256,17 +256,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                <div class=\"cellData tooltipContainer\">\n" +
     "                  <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                  <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
+    "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
     "                         ng-model=\"item._value\"\n" +
     "                         autocomplete-lhc=\"::autocompLhcOpt(item)\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
     "                         placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
     "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
-    "                         ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                         ng-readonly=\"::isReadOnly(item)\"\n" +
     "                         id=\"obr_{{::item.question}}\">\n" +
@@ -324,37 +324,37 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
     "                          <span ng-switch-when=\"\" > </span>\n" +
     "                          <input ng-switch-when=\"CNE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CWE*\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +
     "                                 id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"INT1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 placeholder=\"Select one\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
     "                          <input ng-switch-when=\"CWE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 placeholder=\"Select one  or type a value\"\n" +
     "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\"\n" +
     "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
+    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item._value\" placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"\n" +
     "                                 ng-value=\"runFormula(item)\" id=\"{{::item._elementId}}\">\n" +
     "                        </div>\n" +
@@ -476,46 +476,46 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </span>  <!-- validation error messages -->\n" +
     "                    <span ng-switch-when=\"\" > </span>\n" +
     "                    <input ng-switch-when=\"CNE-1\" name=\"{{cell.question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired2(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
     "                           ng-readonly=\"isReadOnly(cell)\" placeholder=\"Select one or more\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"CWE-1\" name=\"{{cell.question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired2(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
     "                           ng-readonly=\"isReadOnly(cell)\" placeholder=\"Select one or more or type a value\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"REAL1\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"INT1\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"CNE1\" name=\"{{cell.question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" placeholder=\"Select one\"\n" +
+    "                           ng-required=\"cell._answerRequired\" placeholder=\"Select one\"\n" +
     "                           ng-model=\"cell._value\" autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
     "                           ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"CWE1\" name=\"{{cell.question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" placeholder=\"Select one or type a value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" placeholder=\"Select one or type a value\"\n" +
     "                           ng-model=\"cell._value\" autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
     "                           ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"DT1\" name=\"{{cell.question}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           lf-date=\"dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-default name=\"{{cell.question}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(cell)\" ng-model=\"cell._value\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
     "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(cell)\"\n" +
     "                           id=\"{{::cell._elementId}}\" ng-value=\"runFormula(cell)\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
