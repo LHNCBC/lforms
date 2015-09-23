@@ -304,11 +304,11 @@ var LFormsData = Class.extend({
       var totalScoreItem = itemList[i];
 
       if (totalScoreItem.calculationMethod &&
-        (totalScoreItem.calculationMethod.name === 'TOTALSCORE' ||
-        totalScoreItem.calculationMethod === 'TOTALSCORE') ) {
-        totalScoreItem.calculationMethod.name = 'TOTALSCORE';
+        (totalScoreItem.calculationMethod.name === "TOTALSCORE" ||
+        totalScoreItem.calculationMethod === "TOTALSCORE") ) {
+        totalScoreItem.calculationMethod.name = "TOTALSCORE";
         // TBD, if the parameters values are already supplied,
-        totalScoreItem.calculationMethod.value = [];
+        totalScoreItem.calculationMethod = {"name": "TOTALSCORE", "value": []};
 
         for (var j = 0, jLen = itemList.length; j < jLen; j++) {
           var item = itemList[j];
@@ -394,6 +394,17 @@ var LFormsData = Class.extend({
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
+      // set default dataType
+      // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
+      // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
+      // An error will be thrown in this case and an empty value will be set instead.
+      if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod)) {
+        item.dataType = "ST";
+      }
+      if (item.header) {
+        item.dataType = "";
+      }
+
       // set default values on the item
       // questionCardinality
       if (!item.questionCardinality) {
@@ -404,17 +415,37 @@ var LFormsData = Class.extend({
         item.answerCardinality = {"min":"0", "max":"1"};
       }
 
+
       // set up flags for question and answer cardinality
       item._questionRepeatable = item.questionCardinality.max &&
           (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
       item._answerRequired = item.answerCardinality.min &&
           (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
       item._multipleAnswers = item.answerCardinality.max &&
-          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-      // dataType
-      if (!item.dataType) {
-        item.dataType = "ST";
+      // set up readonly flag
+      item._readOnly = (item.editable && item.editable == "0") || (item.calculationMethod);
+
+      // set up tooltip
+      switch (item.dataType) {
+        case "DT":
+          item._toolTip = "MM/DD/YYYY";
+          break;
+        case "CNE":
+          item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
+          break;
+        case "CWE":
+          item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+          break;
+        case "":
+          item._toolTip = "";
+          break;
+        default: {
+          if (!item.calculationMethod) {
+            item._toolTip = "Type a value";
+          }
+        }
       }
 
       // process the sub items
@@ -601,18 +632,6 @@ var LFormsData = Class.extend({
         }
       }
       while(!found);
-
-      //var i = item.items.length -1;
-      //var lastItem = item.items[i];
-      //var found = false;
-      //// found a last item that is not hidden
-      //while(!found) {
-      //  if (lastItem._skipLogicStatus !== "target-hide") {
-      //    found = true;
-      //    break;
-      //  }
-      //  lastItem = item.items[--i];
-      //}
 
       if (found) {
         retItem = this._getLastSubItem(lastItem);
@@ -1207,6 +1226,35 @@ var LFormsData = Class.extend({
         }
       }
     }
+    return takeAction;
+  },
+  _checkSkipLogic: function(item) {
+    var takeAction = false;
+    if (item.skipLogic) {
+      // set initial value takeAction to true if the 'logic' is not set or its value is 'AND'
+      // otherwise its value is false, including when the 'logic' value is 'OR'
+      takeAction = !item.skipLogic.logic || item.skipLogic.logic === "AND";
+
+      for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
+        var condition = item.skipLogic.conditions[i];
+        var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
+        var conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
+
+        if (!item.skipLogic.logic || item.skipLogic.logic === "AND") {
+          if (!conditionMet) {
+            takeAction = false;
+            break;
+          }
+        }
+        else if (item.skipLogic.logic === "OR") {
+          if (conditionMet) {
+            takeAction = true;
+            break;
+          }
+        }
+      } // end of conditions loop
+    } // end of skipLogic
+
     return takeAction;
   },
 

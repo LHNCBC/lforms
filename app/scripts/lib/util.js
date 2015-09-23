@@ -190,6 +190,7 @@ WidgetUtil = {
       // header is true/false, not 'Y'/'N'
       if (item.header && (item.header =="Y" || item.header == true)) {
         item.header = true;
+        item.dataType = "";
       }
       else {
         item.header = false;
@@ -201,115 +202,11 @@ WidgetUtil = {
         item.dataType = 'CNE';
       }
 
-      // move the "calculationMethod" to "formula"
-      if (item.calculationMethod == "TOTALSCORE") {
-        item.calculationMethod = {"name": "TOTALSCORE", "value":[]}
-      }
-
-      // value of max/min in questionCardinality and answerCardinality is integer
-      if (item.questionCardinality) {
-        if (item.questionCardinality.max) {
-          if (item.questionCardinality.max == "*") {
-            item.questionCardinality.max = -1;
-          }
-          else {
-            item.questionCardinality.max = parseInt(item.questionCardinality.max)
-          }
-        }
-        if (item.questionCardinality.min) {
-          if (item.questionCardinality.min == "*") {
-            item.questionCardinality.min = -1;
-          }
-          else {
-            item.questionCardinality.min = parseInt(item.questionCardinality.min)
-          }
-        }
-      }
-      if (item.answerCardinality) {
-        if (item.answerCardinality.max) {
-          if (item.answerCardinality.max == "*") {
-            item.answerCardinality.max = -1;
-          }
-          else {
-            item.answerCardinality.max = parseInt(item.answerCardinality.max)
-          }
-        }
-        if (item.answerCardinality.min) {
-          if (item.answerCardinality.min == "*") {
-            item.answerCardinality.min = -1;
-          }
-          else {
-            item.answerCardinality.min = parseInt(item.answerCardinality.min)
-          }
-        }
-      }
-
       if (item.items && Array.isArray(item.items)) {
         this.preprocessRIData(item.items);
       }
     }
-
-  },
-
-  /**
-   * Convert 'items' of the form definition data from embedded format to reference list
-   * and other changes to make the data valid to the widget
-   *
-   * @param formData the form definition data (the object will be modified with a flattened 'items' array)
-   * @returns formData the form definition data with a flattened 'items' array
-   */
-  convertFromEmbeddedToReference: function(formData) {
-    var itemList = [];
-
-    var items = formData.items;
-    this._convertSubItems(items, itemList, null);
-
-    // temporary changes on the data from RI
-    for(var i= 0, iLen=itemList.length; i<iLen; i++) {
-      // header is true/false, not 'Y'/'N'
-      if (itemList[i].header && (itemList[i].header =="Y" || itemList[i].header == true)) {
-        itemList[i].header = true;
-      }
-      else {
-        itemList[i].header = false;
-      }
-      // dataType should not be null for questions have answers
-      // dateType might be 'CE' in data files from RI that have answers
-      if (itemList[i].answers && itemList[i].answers.length > 0 &&
-          (!itemList[i].dataType || itemList[i].dataType !=='CNE' && itemList[i].dataType !== 'CWE')) {
-        itemList[i].dataType = 'CNE';
-      }
-
-    }
-
-    formData.items = itemList;
-
-    return formData;
-  },
-
-  /**
-   * Convert the "items" from the embedded format to reference format
-   * @param items an array that contains all sub items of a certain section/group item
-   * @param itemList a flattened array that contains sub items of a certain section/group item
-   * @parentQuestionCode the section/group item's question code
-   */
-  _convertSubItems: function(items, itemList, parentQuestionCode) {
-
-    for (var i= 0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      var subItems = item.items;
-      // remove the "items" that is not needed in the reference list
-      delete item.items;
-      // add it to the reference list
-      item.parentQuestionCode = parentQuestionCode
-      itemList.push(item);
-      if(subItems && subItems.length > 0) {
-        this._convertSubItems(subItems, itemList, item.questionCode);
-      }
-    }
-
   }
-
 
 };
 

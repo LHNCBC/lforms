@@ -32,17 +32,16 @@
                   <input ng-switch-when="CWE" name="{{::item.question}}"
                          ng-required="::item._answerRequired" placeholder="Select or type a value"
                          ng-model="item._value"
-                         autocomplete-lhc="::autocompLhcOpt(item)" ng-readonly="::isReadOnly(item)"
+                         autocomplete-lhc="::autocompLhcOpt(item)"
                          id="obr_{{::item.question}}">
                   <input ng-switch-when="DT" name="{{::item.question}}"
                          ng-required="::item._answerRequired"
                          ng-model="item._value" lf-date="::dateOptions"
-                         placeholder="MM/DD/YYYY" ng-readonly="::isReadOnly(item)"
+                         placeholder="MM/DD/YYYY"
                          id="obr_{{::item.question}}">
                   <input ng-switch-default name="{{::item.question}}"
                          ng-required="::item._answerRequired"
                          ng-model="item._value" placeholder="Type a value"
-                         ng-readonly="::isReadOnly(item)"
                          id="obr_{{::item.question}}">
                 </div>
               </ng-form>
@@ -72,7 +71,7 @@
                           <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                           <td>
                             <div class="name_label">
-                              <span ng-show="::isRepeatable(item)" class="sn">{{::getRepeatingSN(item) }}</span>
+                              <span ng-show="::item._questionRepeatable" class="sn">{{::getRepeatingSN(item) }}</span>
                               <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
                               <span ng-show="formConfig.showQuestionCode">
                                 <a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html"
@@ -92,44 +91,34 @@
                               ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
                               title="Remove this '{{ ::item.question }}'">-</button>
                     </td>
-                    <td ng-switch on="::getFieldType(item)" class="hasTooltip">
+                    <td ng-switch on="item.dataType" class="hasTooltip">
                       <ng-form name="innerForm2">
                         <div class="cellData tooltipContainer">
                           <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
                           <span ng-switch-when="" > </span>
-                          <input ng-switch-when="CNE*" name="{{::item.question +'_'+ $id}}"
+                          <input ng-switch-when="CNE" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::item._answerRequired"
                                  ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
-                                 ng-readonly="::isReadOnly(item)" placeholder="Select one or more"
+                                 ng-readonly="::item._readOnly" placeholder="{{::item._toolTip}}"
                                  id="{{::item._elementId}}">
-                          <input ng-switch-when="CWE*" name="{{::item.question +'_'+ $id}}"
+                          <input ng-switch-when="CWE" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::item._answerRequired"
                                  ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
-                                 ng-readonly="::isReadOnly(item)" placeholder="Select one or more or type a value"
+                                 ng-readonly="::item._readOnly" placeholder="{{::item._toolTip}}"
                                  id="{{::item._elementId}}">
-                          <input ng-switch-when="REAL1" name="{{::item.question}}" type="number"
+                          <input ng-switch-when="REAL" name="{{::item.question}}" type="number"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="Type a value"
-                                 ng-readonly="::isReadOnly(item )" id="{{::item._elementId}}">
-                          <input ng-switch-when="INT1" name="{{::item.question}}" type="number"
+                                 ng-model="item._value" placeholder="{{::item._toolTip}}"
+                                 ng-readonly="::item._readOnly" id="{{::item._elementId}}">
+                          <input ng-switch-when="INT" name="{{::item.question}}" type="number"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="Type a value"
-                                 ng-readonly="::isReadOnly(item )" id="{{::item._elementId}}">
-                          <input ng-switch-when="CNE1" name="{{::item.question + '_'+ $id}}"
-                                 ng-required="::item._answerRequired"
-                                 placeholder="Select one"
-                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
-                                 ng-readonly="::isReadOnly(item)" id="{{::item._elementId}}">
-                          <input ng-switch-when="CWE1" name="{{::item.question + '_'+ $id}}"
-                                 ng-required="::item._answerRequired"
-                                 placeholder="Select one  or type a value"
-                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
-                                 ng-readonly="::isReadOnly(item)" id="{{::item._elementId}}">
-                          <input ng-switch-when="DT1" name="{{::item.question}}" ng-required="::item._answerRequired"
-                                 ng-model="item._value" lf-date="::dateOptions" placeholder="MM/DD/YYYY"
-                                 ng-readonly="::isReadOnly(item)" id="{{::item._elementId}}">
+                                 ng-model="item._value" placeholder="{{::item._toolTip}}"
+                                 ng-readonly="::item._readOnly" id="{{::item._elementId}}">
+                          <input ng-switch-when="DT" name="{{::item.question}}" ng-required="::item._answerRequired"
+                                 ng-model="item._value" lf-date="::dateOptions" placeholder="{{::item._toolTip}}"
+                                 ng-readonly="::item._readOnly" id="{{::item._elementId}}">
                           <input ng-switch-default name="{{::item.question}}" ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="Type a value" ng-readonly="::isReadOnly(item)"
+                                 ng-model="item._value" placeholder="{{::item._toolTip}}" ng-readonly="::item._readOnly"
                                  ng-value="runFormula(item)" id="{{::item._elementId}}">
                         </div>
                       </ng-form>
@@ -159,7 +148,7 @@
                     </td>
                     <td class="button-col"></td>
                     <td colspan="5" class="extra-field">
-                      <input ng-model="item._valueOther" placeholder="Please specify" ng-readonly="::isReadOnly(item)">
+                      <input ng-model="item._valueOther" placeholder="Please specify" ng-readonly="::item._readOnly">
                     </td>
                   </tr>
                   <!--a button row at the end of each repeating section-->

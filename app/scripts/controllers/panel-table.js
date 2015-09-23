@@ -69,13 +69,6 @@ angular.module('lformsWidget')
       }
 
       /**
-       * Reset lfData, by assign the object from the service directly
-       */
-      $scope.resetPanelWidgetData = function() {
-        $scope.lfData = selectedFormData.getFormData();
-      }
-
-      /**
        * Reset the lfData
        * by listening on a broadcast event
        */
@@ -84,45 +77,11 @@ angular.module('lformsWidget')
       });
 
       /**
-       * Check if the current question item is to be displayed in a horizontal table
-       * @param index
-       * @returns {*}
-       */
-      $scope.inHorizontalTable = function(index) {
-        return $scope.lfData.inHorizontalTable(index);
-      };
-
-      /**
-       * Check if the current question is a title for a horizontal table
-       * @param index index of an item in the lforms form items array
-       * @returns {*}
-       */
-      $scope.isHorizontalTableTitle = function(index) {
-        return $scope.lfData.isHorizontalTableTitle(index);
-      };
-
-      /**
        * Check if the form is finished
        * @returns {boolean|*|*}
        */
       $scope.isFormDone = function() {
         return $scope.lfData.isFormDone();
-      };
-
-      /**
-       * Check if input field is readonly(0), writable(1), or readonly for existing data, writable for new data(2)
-       * @param item an item in the lforms form items array
-       * @returns {boolean}
-       */
-      $scope.isReadOnly = function(item) {
-        var ret = false;
-        if (item.editable && item.editable == "0") {
-          ret = true;
-        }
-        else if (item.calculationMethod) {
-          ret = true;
-        }
-        return ret;
       };
 
       /**
@@ -134,32 +93,6 @@ angular.module('lformsWidget')
           var result = $scope.lfData.getFormulaResult(item);
           item._value = result;
         }
-      };
-
-      /**
-       * Check data type and answer cardinality
-       * @param item an item in the lforms form items array
-       * @returns {string}
-       */
-      $scope.getFieldType = function(item) {
-        var ret='';
-        if (item.header) {
-          ret=''
-        }
-        // if the BMI target item's dataType is "REAL", which is treated as type=number in angular,
-        // then the value is not displayed in the field. It seems like a bug in angular.
-        // But for now just make it not a number type.
-        else if (item.calculationMethod != undefined && !jQuery.isEmptyObject(item.calculationMethod)) {
-          ret = "ST"
-        }
-        else if (item.answerCardinality && item.answerCardinality.max) {
-          ret = item.dataType + item.answerCardinality.max
-        }
-        else {
-          ret = item.dataType
-        }
-        return ret;
-
       };
 
       /**
@@ -214,23 +147,6 @@ angular.module('lformsWidget')
         return ret;
       };
 
-
-      /**
-       * Check if the item or the group is repeatable
-       * i.e. questionCardinality.max > 1
-       * Note: questionCardinality.min should always be 1. 0 is meaningless imho.
-       * @param item an item in the lforms form items array
-       * @returns {boolean}
-       */
-      $scope.isRepeatable = function(item) {
-        var ret = false;
-        if (item.questionCardinality &&
-            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1 ) ) {
-          ret = true;
-        }
-        return ret;
-      };
-
       /**
        * Get the sequence number for the current repeating item
        * @param item an item in the lforms form items array
@@ -238,7 +154,7 @@ angular.module('lformsWidget')
        */
       $scope.getRepeatingSN = function(item) {
         var ret = '';
-        if ($scope.isRepeatable(item)) {
+        if (item._questionRepeatable) {
           var sn = item._idPath.slice(1);
           ret = sn.replace(/\//g,'.');
         }

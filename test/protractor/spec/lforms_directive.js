@@ -68,7 +68,7 @@ describe('horizontal table', function() {
 
     browser.get('http://0.0.0.0:9001/test/directiveTest.html');
 
-    var listFieldID = '/54126-8/54128-4/1/1'; // "Were you adopted?"
+    var listFieldID = '/54126-8/54132-6/1/1'; // "Were you born a twin?"
     var showPanel = $('.btn');
     var searchResults = $('#searchResults');
 
