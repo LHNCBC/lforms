@@ -182,7 +182,11 @@ RegExp.escape= function(s) {
  * Utility tools and validations
  */
 WidgetUtil = {
-
+  /**
+   * Process some special cases in the current data files sent from RI.
+   * These processes might change depending on the future data.
+   * @param items
+   */
   preprocessRIData: function(items) {
 
     for(var i= 0, iLen=items.length; i<iLen; i++) {
