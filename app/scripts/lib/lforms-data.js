@@ -306,7 +306,6 @@ var LFormsData = Class.extend({
       if (totalScoreItem.calculationMethod &&
         (totalScoreItem.calculationMethod.name === "TOTALSCORE" ||
         totalScoreItem.calculationMethod === "TOTALSCORE") ) {
-        totalScoreItem.calculationMethod.name = "TOTALSCORE";
         // TBD, if the parameters values are already supplied,
         totalScoreItem.calculationMethod = {"name": "TOTALSCORE", "value": []};
 
@@ -1200,57 +1199,25 @@ var LFormsData = Class.extend({
   _checkSkipLogic: function(item) {
     var takeAction = false;
     if (item.skipLogic) {
-      var actions = [];
-      for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
-        var condition = item.skipLogic.conditions[i];
-        var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
-        actions.push(this._checkSkipLogicCondition(sourceItem, condition.trigger));
-      }
-
-      if (!item.skipLogic.logic || item.skipLogic.logic === "AND") {
-        var action = true;
-        for(var j=0, jLen=actions.length; j<jLen; j++) {
-          if (!actions[j]) {
-            action = false;
-            break;
-          }
-        }
-        takeAction = action;
-      }
-      else if (item.skipLogic.logic === "OR") {
-        for(var j=0, jLen=actions.length; j<jLen; j++) {
-          if (actions[j]) {
-            takeAction = true;
-            break;
-          }
-        }
-      }
-    }
-    return takeAction;
-  },
-  _checkSkipLogic: function(item) {
-    var takeAction = false;
-    if (item.skipLogic) {
+      var hasAnd = !item.skipLogic.logic || item.skipLogic.logic === "AND";
+      var hasOr = item.skipLogic.logic === "OR";
       // set initial value takeAction to true if the 'logic' is not set or its value is 'AND'
       // otherwise its value is false, including when the 'logic' value is 'OR'
-      takeAction = !item.skipLogic.logic || item.skipLogic.logic === "AND";
+      takeAction = hasAnd;
 
       for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
         var conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
-
-        if (!item.skipLogic.logic || item.skipLogic.logic === "AND") {
-          if (!conditionMet) {
-            takeAction = false;
-            break;
-          }
+        // AND: check all conditions until one is not met, or all are met.
+        if (hasAnd && !conditionMet ) {
+          takeAction = false;
+          break;
         }
-        else if (item.skipLogic.logic === "OR") {
-          if (conditionMet) {
-            takeAction = true;
-            break;
-          }
+        // OR: check all conditions until one is met, or none is met.
+        else if (hasOr && conditionMet) {
+          takeAction = true;
+          break;
         }
       } // end of conditions loop
     } // end of skipLogic
