@@ -207,6 +207,8 @@ angular.module('lformsWidget')
           ret.url = url;
           ret.autocomp = true;
           ret.nonMatchSuggestions = false;
+          ret.tableFormat = true;
+          ret.valueCols = [0];
         }
         else {
           var listItems = [], answers = [];
