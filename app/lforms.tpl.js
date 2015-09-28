@@ -15,23 +15,401 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 \">\n" +
-    "    <div style=\"margin: 10px\">Total # of Questions: {{lfData.items.length}}</div>\n" +
+    "    <div style=\"margin: 10px\">Total # of Questions: {{lfData.itemList.length}}</div>\n" +
     "  </div>\n" +
     "\n" +
     "</div>\n"
   );
 
 
-  $templateCache.put('horizontal-table.html',
+  $templateCache.put('form-view-a.html',
+    "<div ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEvent($event)\">\n" +
+    "  <form name=\"panel\" novalidate autocomplete=\"false\">\n" +
+    "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
+    "      <div ng-include=\"'form-header.html'\"></div>\n" +
+    "\n" +
+    "      <h3 class=\"groupHeader\">\n" +
+    "        <span>{{lfData.name}}</span>\n" +
+    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
+    "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
+    "      </h3>\n" +
+    "      <div class=\"fieldExpColDiv\">\n" +
+    "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
+    "          <colgroup>\n" +
+    "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
+    "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
+    "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
+    "          </colgroup>\n" +
+    "          <thead>\n" +
+    "          <tr>\n" +
+    "            <th class=\"fieldsTableHeader\"\n" +
+    "                ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
+    "              for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
+    "          </tr>\n" +
+    "          </thead>\n" +
+    "          <tbody>\n" +
+    "          <tr class=\"repeatingLine\">\n" +
+    "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
+    "                ng-switch on=\"item.dataType\">\n" +
+    "              <ng-form name=\"innerForm\">\n" +
+    "                <div class=\"cellData tooltipContainer\">\n" +
+    "                  <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                  <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
+    "                         ng-model=\"item._value\"\n" +
+    "                         autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
+    "                         ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
+    "                         placeholder=\"MM/DD/YYYY\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
+    "                         ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                </div>\n" +
+    "              </ng-form>\n" +
+    "            </td>\n" +
+    "          </tr>\n" +
+    "          <tr class=\"embeddedRow\">\n" +
+    "            <td colspan=\"5\">\n" +
+    "              <div>\n" +
+    "                <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
+    "                  <colgroup>\n" +
+    "                    <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                         ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
+    "                                    'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
+    "                  </colgroup>\n" +
+    "                  <thead>\n" +
+    "                  <tr>\n" +
+    "                    <th class=\"fieldsTableHeader\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                        id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
+    "                  </tr>\n" +
+    "                  </thead>\n" +
+    "                  <tbody class=\"fieldExpColDiv\">\n" +
+    "                  <tr class=\"repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}} \"\n" +
+    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow($index)\">\n" +
+    "                    <td class=\"name has_treeline\">\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\" ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
+    "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
+    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
+    "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
+    "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
+    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
+    "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
+    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
+    "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                    <td class=\"button-col\">\n" +
+    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
+    "                              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
+    "                              title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
+    "                    </td>\n" +
+    "                    <td ng-switch on=\"item.dataType\" class=\"hasTooltip\">\n" +
+    "                      <ng-form name=\"innerForm2\">\n" +
+    "                        <div class=\"cellData tooltipContainer\">\n" +
+    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                          <span ng-switch-when=\"\" > </span>\n" +
+    "                          <input ng-switch-when=\"CNE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"CWE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"REAL\" name=\"{{::item.question}}\" type=\"number\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"INT\" name=\"{{::item.question}}\" type=\"number\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"DT\" name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\" ng-readonly=\"::item._readOnly\"\n" +
+    "                                 ng-value=\"runFormula(item)\" id=\"{{::item._elementId}}\">\n" +
+    "                        </div>\n" +
+    "                      </ng-form>\n" +
+    "                    </td>\n" +
+    "                    <td ng-switch on=\"::checkUnits(item)\">\n" +
+    "                      <input class=\"units\" ng-switch-when=\"list\"\n" +
+    "                             ng-model=\"item._unit\" autocomplete-lhc=\"::unitsAutocompLhcOpt(item)\"\n" +
+    "                             placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
+    "                      <span ng-switch-when=\"none\" > </span>\n" +
+    "                    </td>\n" +
+    "                    <!--<td>{{item.range}}</td>-->\n" +
+    "                  </tr>\n" +
+    "                  <!-- extra question -->\n" +
+    "                  <tr ng-if=\"needExtra(item)\" class=\"extra-row repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\">\n" +
+    "                    <td class=\"name has_treeline\">\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
+    "                              ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <span>&nbsp;</span>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                    <td class=\"button-col\"></td>\n" +
+    "                    <td colspan=\"5\" class=\"extra-field\">\n" +
+    "                      <input ng-model=\"item._valueOther\" placeholder=\"Please specify\" ng-readonly=\"::item._readOnly\">\n" +
+    "                    </td>\n" +
+    "                  </tr>\n" +
+    "                  <!--a button row at the end of each repeating section-->\n" +
+    "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
+    "                      class=\"buttonRow repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\" >\n" +
+    "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
+    "                              ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
+    "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
+    "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
+    "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
+    "                                Add another '{{::repeatingItem.question}}'</button>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                  </tr>\n" +
+    "                  </tbody>\n" +
+    "                </table>\n" +
+    "              </div>\n" +
+    "            </td>\n" +
+    "          </tr>\n" +
+    "          </tbody>\n" +
+    "        </table>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </form>\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('form-view-b.html',
+    "<div ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEvent($event)\">\n" +
+    "  <form name=\"panel\" novalidate autocomplete=\"false\">\n" +
+    "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
+    "      <div ng-include=\"'form-header.html'\"></div>\n" +
+    "\n" +
+    "      <h3 class=\"groupHeader\">\n" +
+    "        <span>{{lfData.name}}</span>\n" +
+    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
+    "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
+    "      </h3>\n" +
+    "      <div class=\"fieldExpColDiv\">\n" +
+    "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
+    "          <colgroup>\n" +
+    "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
+    "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
+    "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
+    "          </colgroup>\n" +
+    "          <thead>\n" +
+    "          <tr>\n" +
+    "            <th class=\"fieldsTableHeader\"\n" +
+    "                ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
+    "              for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
+    "          </tr>\n" +
+    "          </thead>\n" +
+    "          <tbody>\n" +
+    "          <tr class=\"repeatingLine\">\n" +
+    "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
+    "                ng-switch on=\"item.dataType\">\n" +
+    "              <ng-form name=\"innerForm\">\n" +
+    "                <div class=\"cellData tooltipContainer\">\n" +
+    "                  <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                  <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
+    "                         ng-model=\"item._value\"\n" +
+    "                         autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
+    "                         ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
+    "                         placeholder=\"MM/DD/YYYY\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
+    "                         ng-required=\"::item._answerRequired\"\n" +
+    "                         ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
+    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                </div>\n" +
+    "              </ng-form>\n" +
+    "            </td>\n" +
+    "          </tr>\n" +
+    "          <tr class=\"embeddedRow\">\n" +
+    "            <td colspan=\"5\">\n" +
+    "              <div>\n" +
+    "                <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
+    "                  <colgroup>\n" +
+    "                    <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                         ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
+    "                                    'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
+    "                  </colgroup>\n" +
+    "                  <thead>\n" +
+    "                  <tr>\n" +
+    "                    <th class=\"fieldsTableHeader\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                        id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
+    "                  </tr>\n" +
+    "                  </thead>\n" +
+    "                  <tbody class=\"fieldExpColDiv\">\n" +
+    "                  <tr class=\"repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}} \"\n" +
+    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow($index)\">\n" +
+    "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"name has_treeline\">\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\" ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
+    "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
+    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
+    "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
+    "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
+    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
+    "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
+    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
+    "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"button-col\">\n" +
+    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
+    "                              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
+    "                              title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
+    "                    </td>\n" +
+    "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"item.dataType\" class=\"hasTooltip\">\n" +
+    "                      <ng-form name=\"innerForm2\">\n" +
+    "                        <div class=\"cellData tooltipContainer\">\n" +
+    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "                          <span ng-switch-when=\"\" > </span>\n" +
+    "                          <input ng-switch-when=\"CNE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"CWE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"REAL\" name=\"{{::item.question}}\" type=\"number\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"INT\" name=\"{{::item.question}}\" type=\"number\"\n" +
+    "                                 ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-when=\"DT\" name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" lf-date=\"::dateOptions\" placeholder=\"{{::item._toolTip}}\"\n" +
+    "                                 ng-readonly=\"::item._readOnly\" id=\"{{::item._elementId}}\">\n" +
+    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::item._answerRequired\"\n" +
+    "                                 ng-model=\"item._value\" placeholder=\"{{::item._toolTip}}\" ng-readonly=\"::item._readOnly\"\n" +
+    "                                 ng-value=\"runFormula(item)\" id=\"{{::item._elementId}}\">\n" +
+    "                        </div>\n" +
+    "                      </ng-form>\n" +
+    "                    </td>\n" +
+    "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::checkUnits(item)\">\n" +
+    "                      <input class=\"units\" ng-switch-when=\"list\"\n" +
+    "                             ng-model=\"item._unit\" autocomplete-lhc=\"::unitsAutocompLhcOpt(item)\"\n" +
+    "                             placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
+    "                      <span ng-switch-when=\"none\" > </span>\n" +
+    "                    </td>\n" +
+    "                    <!--<td>{{item.range}}</td>-->\n" +
+    "                    <td ng-if=\"::item._horizontalTableHeader\" class=\"horizontal has_treeline\" colspan=\"5\"\n" +
+    "                        ng-include=\"'h-table.html'\"></td>\n" +
+    "\n" +
+    "                  </tr>\n" +
+    "                  <!-- extra question -->\n" +
+    "                  <tr ng-if=\"::!item._inHorizontalTable && needExtra(item)\"\n" +
+    "                      class=\"extra-row repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\">\n" +
+    "                    <td class=\"name has_treeline\">\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
+    "                              ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <span>&nbsp;</span>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                    <td class=\"button-col\"></td>\n" +
+    "                    <td colspan=\"5\" class=\"extra-field\">\n" +
+    "                      <input ng-model=\"item._valueOther\" placeholder=\"Please specify\" ng-readonly=\"::item._readOnly\">\n" +
+    "                    </td>\n" +
+    "                  </tr>\n" +
+    "                  <!--a button row at the end of each repeating section-->\n" +
+    "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
+    "                      class=\"buttonRow repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\" >\n" +
+    "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
+    "                      <table class=\"t-treeline-field\" >\n" +
+    "                        <tr>\n" +
+    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
+    "                              ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                          <td>\n" +
+    "                            <div class=\"name_label\">\n" +
+    "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
+    "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
+    "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
+    "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
+    "                                Add another '{{::repeatingItem.question}}'</button>\n" +
+    "                            </div>\n" +
+    "                          </td>\n" +
+    "                        </tr>\n" +
+    "                      </table>\n" +
+    "                    </td>\n" +
+    "                  </tr>\n" +
+    "                  </tbody>\n" +
+    "                </table>\n" +
+    "              </div>\n" +
+    "            </td>\n" +
+    "          </tr>\n" +
+    "          </tbody>\n" +
+    "        </table>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </form>\n" +
+    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('h-table.html',
     "  <table class=\"t-treeline-field\" >\n" +
     "    <tr>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "\n" +
+    "      <td class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\" ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
     "      <td>\n" +
     "        <div class=\"name_label\">\n" +
     "          <div class=\"hTableTitle\">\n" +
@@ -52,72 +430,60 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <tbody id=\"\" class=\"\">\n" +
     "            <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
     "              <td class=\"button-col\">\n" +
-    "                <button ng-if=\"!hasOneRepeatingRow(item)\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(lfData.items[row.header])\" title=\"Remove this row of '{{ item.question }}'\">-</button>\n" +
-    "                <button ng-if=\"row.header == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderIndex\" class=\"float-button\"  id=\"{{lfData.items[row.header]._codePath+lfData.items[row.header]._idPath}}\" ng-click=\"addOneRepeatingItem(lfData.items[row.header])\" title=\"Add another row of '{{ item.question }}'\">+</button>\n" +
+    "                <button ng-if=\"!hasOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(row.header)\" title=\"Remove this row of '{{ item.question }}'\">-</button>\n" +
+    "                <button ng-if=\"row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId\" id=\"add-{{item._elementId}}\" class=\"float-button\"  id=\"{{row.header._codePath+row.header._idPath}}\" ng-click=\"addOneRepeatingItem(row.header)\" title=\"Add another row of '{{ item.question }}'\">+</button>\n" +
     "              </td>\n" +
     "\n" +
-    "              <td ng-repeat=\"cell in row.cells\" ng-switch on=\"getFieldType(lfData.items[cell])\" class=\"hasTooltip\">\n" +
+    "              <td ng-repeat=\"cell in row.cells\" ng-switch on=\"cell.dataType\" class=\"hasTooltip\">\n" +
     "                <ng-form name=\"innerForm2\">\n" +
     "                  <div class=\"cellData tooltipContainer\">\n" +
     "                    <span class=\"tooltipContent\">\n" +
-    "                      <div class=\"errorMsg errorRequired\">\"{{ lfData.items[cell].question }}\" requires a value.</div>\n" +
-    "                      <div class=\"errorMsg errorPattern\">\"{{ lfData.items[cell].question }}\" requires a text pattern.</div>\n" +
-    "                      <div class=\"errorMsg errorMax\">\"{{ lfData.items[cell].question }}\" requires a maximum value of ??.</div>\n" +
-    "                      <div class=\"errorMsg errorMin\">\"{{ lfData.items[cell].question }}\" requires a minimum value of ??.</div>\n" +
-    "                      <div class=\"errorMsg errorMaxlength\">\"{{ lfData.items[cell].question }}\" requires a maximum length of ??.</div>\n" +
-    "                      <div class=\"errorMsg errorMinlength\">\"{{ lfData.items[cell].question }}\" requires a minimum length of ??.</div>\n" +
-    "                      <div class=\"errorMsg errorURL\">\"{{ lfData.items[cell].question }}\" requires a url.</div>\n" +
-    "                      <div class=\"errorMsg errorEmail\">\"{{ lfData.items[cell].question }}\" requires an email.</div>\n" +
-    "                      <div class=\"errorMsg errorNumber\">\"{{ lfData.items[cell].question }}\" requires a numeric value.</div>\n" +
-    "                      <div class=\"errorMsg errorREAL\">\"{{ lfData.items[cell].question }}\" requires a decimal value.</div>\n" +
-    "                      <div class=\"errorMsg errorINT\">\"{{ lfData.items[cell].question }}\" requires a integer value.</div>\n" +
-    "                      <div class=\"errorMsg errorTM\">\"{{ lfData.items[cell].question }}\" requires a time value.</div>\n" +
-    "                      <div class=\"errorMsg errorDT\">\"{{ lfData.items[cell].question }}\" requires a date value.</div>\n" +
+    "                      <div class=\"errorMsg errorRequired\">\"{{ cell.question }}\" requires a value.</div>\n" +
+    "                      <div class=\"errorMsg errorPattern\">\"{{ cell.question }}\" requires a text pattern.</div>\n" +
+    "                      <div class=\"errorMsg errorMax\">\"{{ cell.question }}\" requires a maximum value of ??.</div>\n" +
+    "                      <div class=\"errorMsg errorMin\">\"{{ cell.question }}\" requires a minimum value of ??.</div>\n" +
+    "                      <div class=\"errorMsg errorMaxlength\">\"{{ cell.question }}\" requires a maximum length of ??.</div>\n" +
+    "                      <div class=\"errorMsg errorMinlength\">\"{{ cell.question }}\" requires a minimum length of ??.</div>\n" +
+    "                      <div class=\"errorMsg errorURL\">\"{{ cell.question }}\" requires a url.</div>\n" +
+    "                      <div class=\"errorMsg errorEmail\">\"{{ cell.question }}\" requires an email.</div>\n" +
+    "                      <div class=\"errorMsg errorNumber\">\"{{ cell.question }}\" requires a numeric value.</div>\n" +
+    "                      <div class=\"errorMsg errorREAL\">\"{{ cell.question }}\" requires a decimal value.</div>\n" +
+    "                      <div class=\"errorMsg errorINT\">\"{{ cell.question }}\" requires a integer value.</div>\n" +
+    "                      <div class=\"errorMsg errorTM\">\"{{ cell.question }}\" requires a time value.</div>\n" +
+    "                      <div class=\"errorMsg errorDT\">\"{{ cell.question }}\" requires a date value.</div>\n" +
     "                    </span>  <!-- validation error messages -->\n" +
     "                    <span ng-switch-when=\"\" > </span>\n" +
-    "                    <input ng-switch-when=\"CNE-1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired2(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           autocomplete-lhc=\"autocompLhcOpt(lfData.items[cell])\"\n" +
-    "                           ng-readonly=\"isReadOnly(lfData.items[cell])\" placeholder=\"Select one or more\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-when=\"CNE\" name=\"{{::cell.question + '_' + $id}}\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
+    "                           ng-readonly=\"::cell._readOnly\" placeholder=\"{{::cell._toolTip}}\"\n" +
+    "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"CWE-1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired2(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           autocomplete-lhc=\"autocompLhcOpt(lfData.items[cell])\"\n" +
-    "                           ng-readonly=\"isReadOnly(lfData.items[cell])\" placeholder=\"Select one or more or type a value\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-when=\"CWE\" name=\"{{::cell.question + '_' + $id}}\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           autocomplete-lhc=\"autocompLhcOpt(cell)\"\n" +
+    "                           ng-readonly=\"::cell._readOnly\" placeholder=\"{{::cell._toolTip}}\"\n" +
+    "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"REAL1\" name=\"{{lfData.items[cell].question}}\" type=\"number\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-when=\"REAL\" name=\"{{::cell.question}}\" type=\"number\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           placeholder=\"{{::cell._toolTip}}\" ng-readonly=\"::cell._readOnly\"\n" +
+    "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"INT1\" name=\"{{lfData.items[cell].question}}\" type=\"number\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-when=\"INT\" name=\"{{::cell.question}}\" type=\"number\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           placeholder=\"{{::cell._toolTip}}\" ng-readonly=\"::cell._readOnly\"\n" +
+    "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"CNE1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" placeholder=\"Select one\"\n" +
-    "                           ng-model=\"lfData.items[cell]._value\" autocomplete-lhc=\"autocompLhcOpt(lfData.items[cell])\"\n" +
-    "                           ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-when=\"DT\" name=\"{{::cell.question}}\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           lf-date=\"dateOptions\" placeholder=\"{{::cell._toolTip}}\" ng-readonly=\"::cell._readOnly\"\n" +
+    "                           id=\"{{::cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"CWE1\" name=\"{{lfData.items[cell].question + '_' + $id}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" placeholder=\"Select one or type a value\"\n" +
-    "                           ng-model=\"lfData.items[cell]._value\" autocomplete-lhc=\"autocompLhcOpt(lfData.items[cell])\"\n" +
-    "                           ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"DT1\" name=\"{{lfData.items[cell].question}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           lf-date=\"dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-default name=\"{{lfData.items[cell].question}}\"\n" +
-    "                           ng-required=\"isAnswerRequired(lfData.items[cell])\" ng-model=\"lfData.items[cell]._value\"\n" +
-    "                           placeholder=\"Type a value\" ng-readonly=\"isReadOnly(lfData.items[cell])\"\n" +
-    "                           id=\"{{::lfData.items[cell]._elementId}}\"\n" +
+    "                    <input ng-switch-default name=\"{{::cell.question}}\"\n" +
+    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell._value\"\n" +
+    "                           placeholder=\"{{::cell._toolTip}}\" ng-readonly=\"::cell._readOnly\"\n" +
+    "                           id=\"{{::cell._elementId}}\" ng-value=\"runFormula(cell)\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                  </div>\n" +
     "                </ng-form>\n" +
@@ -126,7 +492,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </tbody>\n" +
     "          </table>\n" +
     "        </div>\n" +
-    "\n" +
     "      </td>\n" +
     "    </tr>\n" +
     "  </table>\n"
@@ -164,448 +529,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "</div>\n" +
     "\n" +
     "\n"
-  );
-
-
-  $templateCache.put('panel-table-h.html',
-    "<div ng-controller=\"PanelTableCtrl\" ng-keypress=\"handleNavigationKeyEvent($event)\">\n" +
-    "  <form name=\"panel\" novalidate>\n" +
-    "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div ng-include=\"'form-header.html'\"></div>\n" +
-    "\n" +
-    "      <h3 class=\"groupHeader\">\n" +
-    "        <span>{{lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
-    "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
-    "      </h3>\n" +
-    "      <div class=\"fieldExpColDiv\">\n" +
-    "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
-    "          <colgroup>\n" +
-    "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
-    "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
-    "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
-    "          </colgroup>\n" +
-    "          <thead>\n" +
-    "          <tr>\n" +
-    "            <th class=\"fieldsTableHeader\"\n" +
-    "             ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
-    "             for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
-    "          </tr>\n" +
-    "          </thead>\n" +
-    "          <tbody>\n" +
-    "          <tr class=\"repeatingLine\">\n" +
-    "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\" ng-switch on=\"item.dataType\">\n" +
-    "              <ng-form name=\"innerForm\">\n" +
-    "                  <div class=\"cellData tooltipContainer\">\n" +
-    "                    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
-    "                           ng-model=\"item._value\"\n" +
-    "                           autocomplete-lhc=\"::autocompLhcOpt(item)\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                           ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                           ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
-    "                           placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                    <input ng-switch-default name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                           ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                           ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                           ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                  </div>\n" +
-    "              </ng-form>\n" +
-    "            </td>\n" +
-    "          </tr>\n" +
-    "          <tr class=\"embeddedRow\">\n" +
-    "            <td colspan=\"5\">\n" +
-    "              <div>\n" +
-    "                <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
-    "                  <colgroup>\n" +
-    "                    <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
-    "                         ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
-    "                                    'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
-    "                  </colgroup>\n" +
-    "                  <thead>\n" +
-    "                  <tr>\n" +
-    "                    <th class=\"fieldsTableHeader\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
-    "                     id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
-    "                  </tr>\n" +
-    "                  </thead>\n" +
-    "                  <tbody id=\"obx_table\" class=\"fieldExpColDiv\">\n" +
-    "                  <tr style=\"width: 99%\"\n" +
-    "                      class=\"repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}\"\n" +
-    "                      ng-repeat-start=\"item in lfData.items track by $id(item)\" ng-click=\"setActiveRow($index)\">\n" +
-    "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"name has_treeline\">\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
-    "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
-    "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
-    "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
-    "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\"\n" +
-    "                                      ng-if=\"::hasCodingInstructions(item)\" class=\"help-button\"\n" +
-    "                                      bs-popover=\"::item.codingInstructions\" data-auto-close=\"true\"\n" +
-    "                                      data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"button-col\">\n" +
-    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
-    "                              ng-click=\"removeOneRepeatingItem(item)\" title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
-    "                    </td>\n" +
-    "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
-    "                      <ng-form name=\"innerForm2\">\n" +
-    "                        <div class=\"cellData tooltipContainer\">\n" +
-    "                          <!-- validation error messages -->\n" +
-    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>\n" +
-    "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question + '_' + $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE-1\" name=\"{{::item.question + '_' + $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"INT1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_' + $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 placeholder=\"Select one\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE1\" name=\"{{::item.question + '_' + $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 placeholder=\"Select one or type a value\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\"\n" +
-    "                                 lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\"\n" +
-    "                                 placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                        </div>\n" +
-    "                      </ng-form>\n" +
-    "                    </td>\n" +
-    "                    <td ng-if=\"::!item._inHorizontalTable\" ng-switch on=\"::checkUnits(item)\">\n" +
-    "                      <input class=\"units\" ng-switch-when=\"list\"\n" +
-    "                       ng-model=\"item._unit\" autocomplete-lhc=\"::unitsAutocompLhcOpt(item)\"\n" +
-    "                       placeholder=\"Select one\" aria-labelledby=\"th_Units\"></input>\n" +
-    "                      <span ng-switch-when=\"none\" > </span>\n" +
-    "                    </td>\n" +
-    "                    <!--<td ng-if=\"!inHorizontalTable($index)\">{{item.range}}</td>-->\n" +
-    "                    <td ng-if=\"::item._horizontalTableHeader\" class=\"horizontal has_treeline\" colspan=\"5\"\n" +
-    "                        ng-include=\"'horizontal-table.html'\"></td>\n" +
-    "                  </tr>\n" +
-    "                  <!-- extra question -->\n" +
-    "                  <tr ng-if=\"::!item._inHorizontalTable && needExtra(item)\" style=\"width: 99%\"\n" +
-    "                      class=\"extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\">\n" +
-    "                    <td class=\"name has_treeline\">\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <span>&nbsp;</span>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                    <td class=\"button-col\"></td>\n" +
-    "                    <td colspan=\"5\" class=\"extra-field\">\n" +
-    "                      <input ng-model=\"item._valueOther\" placeholder=\"Please specify\" ng-readonly=\"::isReadOnly(item)\">\n" +
-    "                    </td>\n" +
-    "                  </tr>\n" +
-    "                  <!--a button row at the end of each repeating section-->\n" +
-    "                  <tr ng-repeat-end ng-if=\"isLastItemInRepeatingItems($index)\"\n" +
-    "                      class=\"buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\" >\n" +
-    "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <button ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\"\n" +
-    "                                      class=\"float-button\"  id=\"{{repeatingItem._codePath+repeatingItem._idPath}}\"\n" +
-    "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
-    "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
-    "                                Add another '{{::repeatingItem.question}}'</button>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                  </tr>\n" +
-    "                  </tbody>\n" +
-    "                </table>\n" +
-    "              </div>\n" +
-    "            </td>\n" +
-    "          </tr>\n" +
-    "          </tbody>\n" +
-    "        </table>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "  </form>\n" +
-    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Table controller</button>\n" +
-    "</div>\n"
-  );
-
-
-  $templateCache.put('panel-table-v.html',
-    "<div ng-controller=\"PanelTableCtrl\" ng-keypress=\"handleNavigationKeyEvent($event)\">\n" +
-    "  <form name=\"panel\" novalidate>\n" +
-    "    <div class=\"panelGroup fieldGroup\" ng-if=\"lfData\" >\n" +
-    "      <div ng-include=\"'form-header.html'\"></div>\n" +
-    "\n" +
-    "      <h3 class=\"groupHeader\">\n" +
-    "        <span>{{lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
-    "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
-    "      </h3>\n" +
-    "      <div class=\"fieldExpColDiv\">\n" +
-    "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
-    "          <colgroup>\n" +
-    "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
-    "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
-    "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
-    "          </colgroup>\n" +
-    "          <thead>\n" +
-    "          <tr>\n" +
-    "            <th class=\"fieldsTableHeader\"\n" +
-    "             ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
-    "             for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
-    "          </tr>\n" +
-    "          </thead>\n" +
-    "          <tbody>\n" +
-    "          <tr class=\"repeatingLine\">\n" +
-    "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
-    "                ng-switch on=\"item.dataType\">\n" +
-    "              <ng-form name=\"innerForm\">\n" +
-    "                  <div class=\"cellData tooltipContainer\">\n" +
-    "                    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                    <input ng-switch-when=\"CWE\" name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\" placeholder=\"Select or type a value\"\n" +
-    "                           ng-model=\"item._value\"\n" +
-    "                           autocomplete-lhc=\"::autocompLhcOpt(item)\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                    <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                           ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                           ng-model=\"item._value\" lf-date=\"::dateOptions\"\n" +
-    "                           placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                    <input ng-switch-default name=\"{{::item.question}}\"\n" +
-    "                           ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                           ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                           ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                           ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                           id=\"obr_{{::item.question}}\">\n" +
-    "                  </div>\n" +
-    "              </ng-form>\n" +
-    "            </td>\n" +
-    "          </tr>\n" +
-    "          <tr class=\"embeddedRow\">\n" +
-    "            <td colspan=\"5\">\n" +
-    "              <div>\n" +
-    "                <table cellspacing=\"0\" cellpadding=\"0\" class=\"fieldsTable\">\n" +
-    "                  <colgroup>\n" +
-    "                    <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
-    "                         ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
-    "                                    'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
-    "                  </colgroup>\n" +
-    "                  <thead>\n" +
-    "                  <tr>\n" +
-    "                    <th class=\"fieldsTableHeader\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
-    "                     id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
-    "                  </tr>\n" +
-    "                  </thead>\n" +
-    "                  <tbody id=\"obx_table\" class=\"fieldExpColDiv\">\n" +
-    "                  <tr style=\"width: 99%\"\n" +
-    "                      class=\"repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}} {{getActiveRowClass($index)}}\"\n" +
-    "                      ng-repeat-start=\"item in lfData.items track by $id(item)\" ng-click=\"setActiveRow($index)\">\n" +
-    "                    <td class=\"name has_treeline\">\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <span ng-show=\"::isRepeatable(item)\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
-    "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
-    "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
-    "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
-    "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
-    "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
-    "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                    <td class=\"button-col\">\n" +
-    "                      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
-    "                              ng-click=\"removeOneRepeatingItem(item)\"\n" +
-    "                              title=\"Remove this '{{ ::item.question }}'\">-</button>\n" +
-    "                    </td>\n" +
-    "                    <td ng-switch on=\"::getFieldType(item)\" class=\"hasTooltip\">\n" +
-    "                      <ng-form name=\"innerForm2\">\n" +
-    "                        <div class=\"cellData tooltipContainer\">\n" +
-    "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                          <span ng-switch-when=\"\" > </span>\n" +
-    "                          <input ng-switch-when=\"CNE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE-1\" name=\"{{::item.question +'_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" placeholder=\"Select one or more or type a value\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"REAL1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"INT1\" name=\"{{::item.question}}\" type=\"number\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\" ng-model-options=\"{ updateOn: 'default' }\"\n" +
-    "                                 ng-model=\"item._value\" placeholder=\"Type a value\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item )\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CNE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 placeholder=\"Select one\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"CWE1\" name=\"{{::item.question + '_'+ $id}}\"\n" +
-    "                                 ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 placeholder=\"Select one  or type a value\"\n" +
-    "                                 ng-model=\"item._value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                                 ng-readonly=\"::isReadOnly(item)\" id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-when=\"DT1\" name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\"\n" +
-    "                                 lf-date=\"::dateOptions\" placeholder=\"MM/DD/YYYY\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                          <input ng-switch-default name=\"{{::item.question}}\" ng-required=\"::isAnswerRequired(item)\"\n" +
-    "                                 ng-model-options=\"{ updateOn: 'default' }\" ng-model=\"item._value\"\n" +
-    "                                 placeholder=\"Type a value\" ng-readonly=\"::isReadOnly(item)\"\n" +
-    "                                 id=\"{{::item._elementId}}\">\n" +
-    "                        </div>\n" +
-    "                      </ng-form>\n" +
-    "                    </td>\n" +
-    "                    <td ng-switch on=\"::checkUnits(item)\">\n" +
-    "                      <input class=\"units\" ng-switch-when=\"list\"\n" +
-    "                             ng-model=\"item._unit\" autocomplete-lhc=\"::unitsAutocompLhcOpt(item)\"\n" +
-    "                             placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
-    "                      <span ng-switch-when=\"none\" > </span>\n" +
-    "                    </td>\n" +
-    "                    <!--<td>{{item.range}}</td>-->\n" +
-    "                  </tr>\n" +
-    "                  <!-- extra question -->\n" +
-    "                  <tr ng-if=\"needExtra(item)\" style=\"width: 99%\"\n" +
-    "                      class=\"extra-row repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\">\n" +
-    "                    <td class=\"name has_treeline\">\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <span>&nbsp;</span>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                    <td class=\"button-col\"></td>\n" +
-    "                    <td colspan=\"5\" class=\"extra-field\">\n" +
-    "                      <input ng-model=\"item._valueOther\" placeholder=\"Please specify\" ng-readonly=\"::isReadOnly(item)\">\n" +
-    "                    </td>\n" +
-    "                  </tr>\n" +
-    "                  <!--a button row at the end of each repeating section-->\n" +
-    "                  <tr ng-repeat-end ng-if=\"isLastItemInRepeatingItems($index)\"\n" +
-    "                      class=\"buttonRow repeatingLine {{ getSkipLogicTargetClass(item) }} {{getRowClass(item)}}\" >\n" +
-    "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
-    "                      <table class=\"t-treeline-field\" >\n" +
-    "                        <tr>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(5, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(4, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(3, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(2, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(1, $index) \"> &nbsp; </td>\n" +
-    "                          <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass(0, $index) \"> &nbsp; </td>\n" +
-    "                          <td>\n" +
-    "                            <div class=\"name_label\">\n" +
-    "                              <button ng-repeat=\"repeatingItem in getParentRepeatingItemsOfLastItem($index)\"\n" +
-    "                                      class=\"float-button\"  id=\"{{repeatingItem._elementId}}\"\n" +
-    "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
-    "                                      title=\"Add another '{{ ::repeatingItem.question }}'\">\n" +
-    "                                Add another '{{::repeatingItem.question}}'</button>\n" +
-    "                            </div>\n" +
-    "                          </td>\n" +
-    "                        </tr>\n" +
-    "                      </table>\n" +
-    "                    </td>\n" +
-    "                  </tr>\n" +
-    "                  </tbody>\n" +
-    "                </table>\n" +
-    "              </div>\n" +
-    "            </td>\n" +
-    "          </tr>\n" +
-    "          </tbody>\n" +
-    "        </table>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "  </form>\n" +
-    "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
-    "</div>\n"
   );
 
 

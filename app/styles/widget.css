@@ -44,13 +44,7 @@
   background: #ECF3F8;
 }
 
-/* side collapse panel */
-.panel-default .panel-heading {
-  background-color: #d9edf7;
-}
-
 /* loading msg */
-
 .loading {
   background-color: #458ac5;
   color: white;

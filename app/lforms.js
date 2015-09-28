@@ -12,7 +12,7 @@ angular.module('lformsWidget', [
     link: linkFunction,
     transclude: true,
     controller: 'PanelTableCtrl',
-    templateUrl: 'panel-table-v.html'
+    templateUrl: 'form-view-a.html'
   };
 })
 .directive('lformsPanelH', function() {
@@ -21,7 +21,7 @@ angular.module('lformsWidget', [
     link: linkFunction,
     transclude: true,
     controller: 'PanelTableCtrl',
-    templateUrl: 'panel-table-h.html'
+    templateUrl: 'form-view-b.html'
   };
 });
 
