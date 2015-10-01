@@ -1,6 +1,6 @@
 <div ng-controller="PanelTableCtrl" ng-keydown="handleNavigationKeyEvent($event)">
-  <form name="panel" novalidate autocomplete="false">
-    <div class="panelGroup fieldGroup" ng-if="lfData" >
+  <form name="lf-panel" novalidate autocomplete="false">
+    <div class="panelGroup fieldGroup" ng-if="lfData">
       <div ng-include="'form-header.html'"></div>
 
       <h3 class="groupHeader">
@@ -31,17 +31,17 @@
                   <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
                   <input ng-switch-when="CWE" name="{{::item.question}}"
                          ng-required="::item._answerRequired" placeholder="Select or type a value"
-                         ng-model="item._value"
+                         ng-model="item.value"
                          autocomplete-lhc="::autocompLhcOpt(item)"
                          id="obr_{{::item.question}}">
                   <input ng-switch-when="DT" name="{{::item.question}}"
                          ng-required="::item._answerRequired"
-                         ng-model="item._value" lf-date="::dateOptions"
+                         ng-model="item.value" lf-date="::dateOptions"
                          placeholder="MM/DD/YYYY"
                          id="obr_{{::item.question}}">
                   <input ng-switch-default name="{{::item.question}}"
                          ng-required="::item._answerRequired"
-                         ng-model="item._value" placeholder="Type a value"
+                         ng-model="item.value" placeholder="Type a value"
                          id="obr_{{::item.question}}">
                 </div>
               </ng-form>
@@ -98,34 +98,34 @@
                           <span ng-switch-when="" > </span>
                           <input ng-switch-when="CNE" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
+                                 ng-model="item.value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::item._readOnly" placeholder="{{::item._toolTip}}"
                                  id="{{::item._elementId}}">
                           <input ng-switch-when="CWE" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" autocomplete-lhc="::autocompLhcOpt(item)"
+                                 ng-model="item.value" autocomplete-lhc="::autocompLhcOpt(item)"
                                  ng-readonly="::item._readOnly" placeholder="{{::item._toolTip}}"
                                  id="{{::item._elementId}}">
                           <input ng-switch-when="REAL" name="{{::item.question}}" type="number"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="{{::item._toolTip}}"
+                                 ng-model="item.value" placeholder="{{::item._toolTip}}"
                                  ng-readonly="::item._readOnly" id="{{::item._elementId}}">
                           <input ng-switch-when="INT" name="{{::item.question}}" type="number"
                                  ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="{{::item._toolTip}}"
+                                 ng-model="item.value" placeholder="{{::item._toolTip}}"
                                  ng-readonly="::item._readOnly" id="{{::item._elementId}}">
                           <input ng-switch-when="DT" name="{{::item.question}}" ng-required="::item._answerRequired"
-                                 ng-model="item._value" lf-date="::dateOptions" placeholder="{{::item._toolTip}}"
+                                 ng-model="item.value" lf-date="::dateOptions" placeholder="{{::item._toolTip}}"
                                  ng-readonly="::item._readOnly" id="{{::item._elementId}}">
                           <input ng-switch-default name="{{::item.question}}" ng-required="::item._answerRequired"
-                                 ng-model="item._value" placeholder="{{::item._toolTip}}" ng-readonly="::item._readOnly"
+                                 ng-model="item.value" placeholder="{{::item._toolTip}}" ng-readonly="::item._readOnly"
                                  ng-value="runFormula(item)" id="{{::item._elementId}}">
                         </div>
                       </ng-form>
                     </td>
                     <td ng-switch on="::checkUnits(item)">
                       <input class="units" ng-switch-when="list"
-                             ng-model="item._unit" autocomplete-lhc="::unitsAutocompLhcOpt(item)"
+                             ng-model="item.unit" autocomplete-lhc="::unitsAutocompLhcOpt(item)"
                              placeholder="Select one" aria-labelledby="th_Units">
                       <span ng-switch-when="none" > </span>
                     </td>
@@ -148,7 +148,7 @@
                     </td>
                     <td class="button-col"></td>
                     <td colspan="5" class="extra-field">
-                      <input ng-model="item._valueOther" placeholder="Please specify" ng-readonly="::item._readOnly">
+                      <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="::item._readOnly">
                     </td>
                   </tr>
                   <!--a button row at the end of each repeating section-->
@@ -183,4 +183,5 @@
     </div>
   </form>
   <button ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>
+  <button ng-if="debug" ng-click="getFormData()">Click to get form data</button>
 </div>

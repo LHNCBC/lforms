@@ -210,7 +210,38 @@ WidgetUtil = {
         this.preprocessRIData(item.items);
       }
     }
-  }
+  },
 
+  /**
+   * Get form data from the LForms rendered form
+   * @param elementId the containing HTML element that includes the LForm's rendered form.
+   * @param noFormDefData optional, to include form definition data, the default is false.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   */
+  getFormData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+
+    // find the scope that has the LForms data
+    var theScope, formData;
+    if (!element) element = angular.element("body");
+
+    // <form name="lf-panel"> is one of the easily identifiable elements in the rendered form.
+    var lfPanels = angular.element(element).find("form[name='lf-panel']");
+
+    angular.forEach(lfPanels, function(ele, index) {
+      var lfPanel = angular.element(ele);
+      if (lfPanel.scope().hasOwnProperty("lfData")) {
+        theScope = lfPanel.scope();
+        return false; // break the loop
+      }
+    });
+
+    if (theScope) {
+      formData = theScope.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+    }
+
+    return formData;
+
+  }
 };
 
