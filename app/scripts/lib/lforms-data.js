@@ -740,11 +740,12 @@ var LFormsData = Class.extend({
     var horizontalTables = this._horizontalTableInfo;
 
     for (var tableId in horizontalTables) {
-      if (horizontalTables[tableId].tableHeaders.length > 1) {
+      var tableHeaders = horizontalTables[tableId].tableHeaders;
+      if (tableHeaders.length > 1) {
         // Pass the last header's last sibling status to the first header,
         // which is used for controlling the tree lines of the horizontal table.
-        var firstTableHeader = horizontalTables[tableId].tableHeaders[0];
-        var lastTableHeader = horizontalTables[tableId].tableHeaders[horizontalTables[tableId].tableHeaders.length -1];
+        var firstTableHeader = tableHeaders[0];
+        var lastTableHeader = tableHeaders[tableHeaders.length -1];
         firstTableHeader._lastSibling = lastTableHeader._lastSibling;
         firstTableHeader._lastSiblingList = lastTableHeader._lastSiblingList;
       }
