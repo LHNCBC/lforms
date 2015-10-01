@@ -144,6 +144,7 @@ var LFormsData = Class.extend({
     this._standardizeScoreRule(this.itemList);
 
     this._resetHorizontalTableInfo();
+    this._adjustLastSiblingListForHorizontalLayout();
 
     this.Navigation.setupNavigationMap(this);
 
@@ -167,6 +168,7 @@ var LFormsData = Class.extend({
     this._standardizeScoreRule(this.itemList);
 
     this._resetHorizontalTableInfo();
+    this._adjustLastSiblingListForHorizontalLayout();
 
     this.Navigation.setupNavigationMap(this);
   },
@@ -185,6 +187,7 @@ var LFormsData = Class.extend({
     // update repeating items status
     //this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
+    this._adjustLastSiblingListForHorizontalLayout();
 
   },
 
@@ -730,6 +733,27 @@ var LFormsData = Class.extend({
 
 
   /**
+   * Adjust the last sibling list for the first header item of horizontal tables
+   * @private
+   */
+  _adjustLastSiblingListForHorizontalLayout: function() {
+    var horizontalTables = this._horizontalTableInfo;
+
+    for (var tableId in horizontalTables) {
+      var tableHeaders = horizontalTables[tableId].tableHeaders;
+      if (tableHeaders.length > 1) {
+        // Pass the last header's last sibling status to the first header,
+        // which is used for controlling the tree lines of the horizontal table.
+        var firstTableHeader = tableHeaders[0];
+        var lastTableHeader = tableHeaders[tableHeaders.length -1];
+        firstTableHeader._lastSibling = lastTableHeader._lastSibling;
+        firstTableHeader._lastSiblingList = lastTableHeader._lastSiblingList;
+      }
+    }
+  },
+
+
+/**
    * Add a repeating item or a repeating section and update form status
    * @param item an item
    */
