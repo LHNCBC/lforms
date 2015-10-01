@@ -274,9 +274,11 @@ angular.module('lformsWidget')
         for (var i= 0, ilen = answers.length; i<ilen; i++) {
           // Make a copy of the original unit
           var answerData = angular.copy(answers[i]);
-          listItems.push({text: answerData.name,
-                       code: answerData.code,
-                       _orig: answers[i]
+          listItems.push(
+              {text: answerData.name,
+               value: answerData.name, // value is needed for formula calculation
+               code: answerData.code,
+               _orig: answers[i]
           })
           if (answerData.default)
             defaultValue = answerData.name;
