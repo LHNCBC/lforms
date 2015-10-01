@@ -279,7 +279,7 @@ angular.module('lformsWidget')
                value: answerData.name, // value is needed for formula calculation
                code: answerData.code,
                _orig: answers[i]
-          })
+          });
           if (answerData.default)
             defaultValue = answerData.name;
         }
@@ -516,9 +516,10 @@ angular.module('lformsWidget')
       /**
        * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
        * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
-       * @param noFormDefData optional, to include form definition data, the default is false.
+       * @param noFormDefData optional, to not include form definition data, the default is false.
        * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
        * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+       * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
       $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
         return $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);

@@ -512,9 +512,10 @@ var LFormsData = Class.extend({
   /**
    * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
    * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
-   * @param noFormDefData optional, to include form definition data, the default is false.
+   * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
   getFormData: function(noFormDefData, noEmptyValue, noHiddenItem) {
 
@@ -528,9 +529,10 @@ var LFormsData = Class.extend({
   /**
    * Process each item on each level of the tree structure
    * @param items the items array
-   * @param noFormDefData optional, to include form definition data, the default is false.
+   * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @returns {Array} form data on one tree level
    * @private
    */
   _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem) {
@@ -612,6 +614,7 @@ var LFormsData = Class.extend({
     }
     return retValue;
   },
+
   /**
    * Get the max _id of the repeating item on the same level
    * @param item an item
@@ -930,7 +933,7 @@ var LFormsData = Class.extend({
       var item = sourceItems[i];
       var score = 0;
       if (item && item.value && item.value.score ) {
-       score = item.value.score
+        score = item.value.score
       }
       scores.push(score);
     }

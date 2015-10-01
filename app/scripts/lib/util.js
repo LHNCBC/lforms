@@ -218,6 +218,7 @@ WidgetUtil = {
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
   getFormData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
 
