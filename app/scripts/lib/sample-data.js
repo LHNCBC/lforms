@@ -150,7 +150,7 @@ var FHTData = {
       {"text": "No", "code": "LA32-8"}
     ],
     "629": [
-      {"text": "American  Indian or Alaska Native", "code": "LA10608-0"},
+      {"text": "American Indian or Alaska Native", "code": "LA10608-0"},
       {"text": "Asian", "code": "LA6156-9"},
       {"text": "-- Asian Indian", "code": "LA10614-8"},
       {"text": "-- Chinese", "code": "LA10615-5"},
@@ -509,7 +509,7 @@ var horizontalFHTData = {
       {"text": "No", "code": "LA32-8"}
     ],
     "629": [
-      {"text": "American  Indian or Alaska Native", "code": "LA10608-0"},
+      {"text": "American Indian or Alaska Native", "code": "LA10608-0"},
       {"text": "Asian", "code": "LA6156-9"},
       {"text": "-- Asian Indian", "code": "LA10614-8"},
       {"text": "-- Chinese", "code": "LA10615-5"},
