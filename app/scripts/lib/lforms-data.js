@@ -554,7 +554,7 @@ var LFormsData = Class.extend({
         if (!item.header) {
           if (item.value) itemData.value = this._getOriginalValue(item.value);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
-          if (item.valueOther) itemData.valueOther = this._getOriginalValue(item.valueOther);
+          if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
         }
       }
       // otherwise include form definition data
