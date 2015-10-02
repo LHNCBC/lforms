@@ -562,7 +562,7 @@ var LFormsData = Class.extend({
         // process fields
         for (field in item) {
           // special handling for user input values
-          if (field === "value" || field === "unit" || field === "valueOther") {
+          if (field === "value" || field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
           }
           // ignore the internal lforms data and angular data
