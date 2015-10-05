@@ -1,4 +1,4 @@
-dp = require('./demopage');
+dp = require('./demopage.po');
 describe('508', function() {
 
   describe('screen reader log', function() {
