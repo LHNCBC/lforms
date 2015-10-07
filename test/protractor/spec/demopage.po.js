@@ -24,7 +24,18 @@ var DemoPage = function() {
     readerLogEntries: element.all(by.css('#reader_log p')),
     searchResults: $('#searchResults'),
 
+    // some fields
+    comment: element(by.id('obr_Comment')), // comment, template data
+    name: element(by.id('/54126-8/54125-0/1/1')), // string
+    gender: element(by.id('/54126-8/54131-8/1/1')), // answer
+    race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers
+    dob: element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
+    height: element(by.id('/54126-8/8302-2/1/1')), // number
+    weight: element(by.id('/54126-8/29463-7/1/1')), // number
+    bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
+
     formSearch: $('#s2id_loinc_num1 a'),
+
     /**
      *  Opens the USSG-FHT vertical layout form
      */

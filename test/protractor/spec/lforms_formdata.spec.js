@@ -1,26 +1,9 @@
+dp = require('./demopage.po');
 describe('get form data', function() {
-  var comment = element(by.id('obr_Comment')), // comment, template data
-    name= element(by.id('/54126-8/54125-0/1/1')), // string
-    gender= element(by.id('/54126-8/54131-8/1/1')), // answer
-    race =  element(by.id('/54126-8/54134-2/1/1')), // multiple answers
-    dob= element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
-    height= element(by.id('/54126-8/8302-2/1/1')), // number
-    weight = element(by.id('/54126-8/29463-7/1/1')), // number
-    bmi = element(by.id('/54126-8/39156-5/1/1')); // formula
-
 
   it('should get a form data with 3 optional parameters.', function() {
-    browser.get('http://0.0.0.0:9001/');
-    var formSearch = element(by.css('#s2id_loinc_num1 a'));
 
-    browser.wait(function() {
-      return formSearch.isDisplayed();
-    }, 10000);
-    formSearch.click();
-    element(by.css('.select2-result:nth-of-type(1)')).click();
-    element(by.css('.btn')).click();
-
-    browser.waitForAngular();
+    dp.openUSSGFHTVertical();
 
     // #1 all fields are empty
     browser.driver.executeAsyncScript(function() {
@@ -34,35 +17,35 @@ describe('get form data', function() {
       expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
       expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(8); // name
       // #2 above fields have values, except dob is still empty
-      comment.sendKeys("Some comments");
+      dp.comment.sendKeys("Some comments");
       browser.waitForAngular();
-      name.sendKeys("Not Empty");
+      dp.name.sendKeys("Not Empty");
       browser.waitForAngular();
 
-      gender.click();
+      dp.gender.click();
       browser.waitForAngular();
       // pick the 1st item, centimeters
-      gender.sendKeys(protractor.Key.ARROW_DOWN);
-      gender.sendKeys(protractor.Key.TAB);
+      dp.gender.sendKeys(protractor.Key.ARROW_DOWN);
+      dp.gender.sendKeys(protractor.Key.TAB);
       browser.waitForAngular();
 
-      race.click();
+      dp.race.click();
       browser.waitForAngular();
       // pick the first 2 items, centimeters
-      race.sendKeys(protractor.Key.ARROW_DOWN);
-      race.sendKeys(protractor.Key.TAB);
-      race.click();
+      dp.race.sendKeys(protractor.Key.ARROW_DOWN);
+      dp.race.sendKeys(protractor.Key.TAB);
+      dp.race.click();
       browser.waitForAngular();
-      race.sendKeys(protractor.Key.ARROW_DOWN);
-      race.sendKeys(protractor.Key.TAB);
+      dp.race.sendKeys(protractor.Key.ARROW_DOWN);
+      dp.race.sendKeys(protractor.Key.TAB);
       browser.waitForAngular();
 
-      height.sendKeys("70");
+      dp.height.sendKeys("70");
       browser.waitForAngular();
-      expect(bmi.getAttribute('value')).toBe("");
-      weight.sendKeys("170");
+      expect(dp.bmi.getAttribute('value')).toBe("");
+      dp.weight.sendKeys("170");
       browser.waitForAngular();
-      expect(bmi.getAttribute('value')).toBe("24.39");
+      expect(dp.bmi.getAttribute('value')).toBe("24.39");
 
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
