@@ -510,6 +510,112 @@ var LFormsData = Class.extend({
   },
 
   /**
+   * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
+   * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
+   * @param noFormDefData optional, to not include form definition data, the default is false.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
+   */
+  getFormData: function(noFormDefData, noEmptyValue, noHiddenItem) {
+
+    var formItemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
+    var formTemplateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+
+    return {itemsData: formItemsData,
+            templateData: formTemplateData};
+  },
+
+  /**
+   * Process each item on each level of the tree structure
+   * @param items the items array
+   * @param noFormDefData optional, to not include form definition data, the default is false.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @returns {Array} form data on one tree level
+   * @private
+   */
+  _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem) {
+    var itemsData = [];
+    for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+      var itemData = {};
+
+      // skip the item if the value is empty and the flag is set to ignore the items with empty value
+      // or if the item is hidden and the flag is set to ignore hidden items
+      if (noHiddenItem && item._skipLogicStatus === "target-hide" ||
+          noEmptyValue && !item.value && !item.header) {
+        continue;
+      }
+      // include only the code and the value (and unit, other value) if no form definition data is needed
+      if (noFormDefData) {
+        itemData.questionCode = item.questionCode;
+        // not a header
+        if (!item.header) {
+          if (item.value) itemData.value = this._getOriginalValue(item.value);
+          if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
+          if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
+        }
+      }
+      // otherwise include form definition data
+      else {
+        // process fields
+        for (field in item) {
+          // special handling for user input values
+          if (field === "value" || field === "unit") {
+            itemData[field] = this._getOriginalValue(item[field]);
+          }
+          // ignore the internal lforms data and angular data
+          else if (!field.match(/^[_\$]/)) {
+            itemData[field] = angular.copy(item[field]);
+          }
+        }
+      }
+
+      // process the sub items
+      if (item.items && item.items.length > 0) {
+        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem);
+      }
+      itemsData.push(itemData);
+    }
+    return itemsData;
+
+  },
+
+  /**
+   * Special handling for user input values, to get the original answer or unit object if there is one
+   * @param value
+   * @private
+   */
+  _getOriginalValue: function(value) {
+    var retValue = value;
+    if (value) {
+      // an array
+      if (Array.isArray(value)) {
+        var answers = [];
+        for (var j= 0, jLen=value.length; j<jLen; j++) {
+          if (angular.isObject(value[j]) && value[j]._orig) {
+            answers.push(angular.copy(value[j]._orig));
+          }
+          else {
+            answers.push(angular.copy(value[j]));
+          }
+        }
+        retValue = answers;
+      }
+      // an object
+      else if (angular.isObject(value) && value._orig) {
+        retValue = angular.copy(value._orig);
+      }
+      // not an object or an array
+      else {
+        retValue = angular.copy(value);
+      }
+    }
+    return retValue;
+  },
+
+  /**
    * Get the max _id of the repeating item on the same level
    * @param item an item
    * @returns {number}
@@ -826,8 +932,8 @@ var LFormsData = Class.extend({
     for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
       var item = sourceItems[i];
       var score = 0;
-      if (item && item._value && item._value.score ) {
-       score = item._value.score
+      if (item && item.value && item.value.score ) {
+        score = item.value.score
       }
       scores.push(score);
     }
@@ -886,12 +992,12 @@ var LFormsData = Class.extend({
     for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
       var valueInStandardUnit = '';
       var item = sourceItems[i];
-      if (item._value) {
-        if (item._unit && item._unit.value) {
-          valueInStandardUnit = this.Units.getValueInStandardUnit(item._value, item._unit.value);
+      if (item.value) {
+        if (item.unit && item.unit.value) {
+          valueInStandardUnit = this.Units.getValueInStandardUnit(item.value, item.unit.value);
         }
         else {
-          valueInStandardUnit = item._value;
+          valueInStandardUnit = item.value;
         }
       }
       values.push(valueInStandardUnit);
@@ -930,7 +1036,7 @@ var LFormsData = Class.extend({
   //  for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
   //    var item = this.itemList[i];
   //    if (item.calculationMethod) {
-  //      item._value = this.getFormulaResult(item);
+  //      item.value = this.getFormulaResult(item);
   //    }
   //  }
   //},
@@ -1152,8 +1258,8 @@ var LFormsData = Class.extend({
    */
   _checkSkipLogicCondition: function(item, trigger) {
     var action = false;
-    if (item._value) {
-      var currentValue = item._value;
+    if (item.value) {
+      var currentValue = item.value;
 
       switch (item.dataType) {
         // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
@@ -1273,9 +1379,9 @@ var LFormsData = Class.extend({
    */
   needExtra: function(item) {
     var extra = false;
-    if (item && item._value) {
-      if (Array.isArray(item._value)) {
-        jQuery.each(item._value, function(index, answer) {
+    if (item && item.value) {
+      if (Array.isArray(item.value)) {
+        jQuery.each(item.value, function(index, answer) {
           if (answer.other) {
             extra = true;
             // break
@@ -1284,7 +1390,7 @@ var LFormsData = Class.extend({
         });
       }
       else {
-        if (item._value.other) {
+        if (item.value.other) {
           extra = true;
         }
       }

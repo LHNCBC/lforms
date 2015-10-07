@@ -91,7 +91,7 @@ angular.module('lformsWidget')
       $scope.runFormula = function(item) {
         if (item.calculationMethod && item.calculationMethod.name) {
           var result = $scope.lfData.getFormulaResult(item);
-          item._value = result;
+          item.value = result;
         }
       };
 
@@ -171,7 +171,7 @@ angular.module('lformsWidget')
       $scope.$watch(
         //get the values and watch on those values only
         function () {
-          return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return item._value;}) : null;
+          return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return item.value;}) : null;
         },
         function() {
           $scope.watchOnValueChange();
@@ -230,19 +230,21 @@ angular.module('lformsWidget')
               typeof answers[0].label === 'string' && answers[0].label.trim()) {
             hasLabel = true;
           }
-          ret.addSeqNum = !hasLabel
+          ret.addSeqNum = !hasLabel;
 
           // Modify the display label (answer text) for each answer.
           var defaultValue;
           for(var i= 0, iLen = answers.length; i<iLen; i++) {
+            // Make a copy of the original answer
             var answerData = angular.copy(answers[i]);
             var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
             answerData.text = label;
+            answerData._orig = answers[i];
             listItems.push(answerData);
 
             // check the current selected value
-            if (questionInfo._value && questionInfo._value.text == label && questionInfo._value.code == answers[i].code) {
-              defaultValue = questionInfo._value.text;
+            if (questionInfo.value && questionInfo.value.text == label && questionInfo.value.code == answers[i].code) {
+              defaultValue = questionInfo.value.text;
             }
           }
 
@@ -270,10 +272,14 @@ angular.module('lformsWidget')
         // Modify the label (question text) for each question.
         var defaultValue;
         for (var i= 0, ilen = answers.length; i<ilen; i++) {
-          var answerData = answers[i];
-          listItems.push({text: answerData.name,
-                       value: answerData.name,
-                       code: answerData.code})
+          // Make a copy of the original unit
+          var answerData = angular.copy(answers[i]);
+          listItems.push(
+              {text: answerData.name,
+               value: answerData.name, // value is needed for formula calculation
+               code: answerData.code,
+               _orig: answers[i]
+          });
           if (answerData.default)
             defaultValue = answerData.name;
         }
@@ -287,6 +293,7 @@ angular.module('lformsWidget')
 
         return ret;
       };
+
 
       /**
        * Get the CSS class on each item row
@@ -504,6 +511,18 @@ angular.module('lformsWidget')
         var objWidgetData = $scope.lfData;
         var extra = objWidgetData.needExtra(item);
         return extra;
+      };
+
+      /**
+       * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
+       * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
+       * @param noFormDefData optional, to not include form definition data, the default is false.
+       * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+       * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+       * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
+       */
+      $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
+        return $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
       };
 
       // for debug only. to be removed.
