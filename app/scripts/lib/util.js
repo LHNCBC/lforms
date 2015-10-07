@@ -231,7 +231,7 @@ WidgetUtil = {
 
     angular.forEach(lfPanels, function(ele, index) {
       var lfPanel = angular.element(ele);
-      if (lfPanel.scope().hasOwnProperty("lfData")) {
+      if (lfPanel.scope().lfData) {
         theScope = lfPanel.scope();
         return false; // break the loop
       }
