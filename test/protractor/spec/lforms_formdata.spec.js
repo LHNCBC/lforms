@@ -103,4 +103,19 @@ describe('get form data', function() {
     });
   });
 
+  it('should be able to get data when LForms directive is used', function() {
+    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+
+    browser.waitForAngular();
+    browser.driver.executeAsyncScript(function() {
+      var callback = arguments[arguments.length - 1];
+      var fData = WidgetUtil.getFormData();
+      callback(fData);
+    }).then(function(formData) {
+      // console.log(formData);
+      expect(formData.itemsData.length).toBe(2);
+      expect(formData.itemsData[0].items.length).toBe(13);
+    });
+  });
+
 });
