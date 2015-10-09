@@ -39,11 +39,12 @@ key names plus the sample data values will make things clear.  These are the
 samples that you will see rendered if you following the demo installation steps above.
 
 ## Licensing and Copyright Notice
-The LForms software employs the LOINC data model, including LOINC® codes and
-LOINC® table which are copyrighted © 1995-2014, Regenstrief Institute, Inc. and
-the Logical Observation Identifiers Names and Codes (LOINC) Committee. The LOINC
-Terms of Use and Copyright Notice and License apply. LOINC® is a registered
-United States trademark of Regenstrief Institute, Inc.
+The LForms software employs the LOINC data model, including the LOINC table,
+LOINC codes, LOINC panels and forms file, which are copyrighted © 1995-2015,
+Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and
+Codes (LOINC) Committee, and are available at no cost under the license at
+http://loinc.org/terms-of-use. LOINC® is a registered United States trademark of
+Regenstrief Institute, Inc.
 
 Please cite as: http://lhncbc.nlm.nih.gov/project/lforms
 
