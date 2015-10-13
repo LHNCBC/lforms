@@ -4,6 +4,6 @@ exports.config = {
   capabilities: {
     'browserName': 'firefox'
   },
-  specs: 'spec/*.js'
+  specs: 'spec/*.spec.js'
 
 }
