@@ -82,8 +82,8 @@ describe('autocomp list', function() {
 
 
   it('should receive default values set via defaultAnswer', function() {
-    dp.openFullFeaturedForm();
     var ff = require('./fullFeaturedForm.po');
+    ff.openFullFeaturedForm();
     expect(ff.cneField.getAttribute('value')).toEqual('Answer 2');
   });
 

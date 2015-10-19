@@ -1329,23 +1329,23 @@ var LFormsData = Class.extend({
   _checkSkipLogic: function(item) {
     var takeAction = false;
     if (item.skipLogic) {
-      var hasAnd = !item.skipLogic.logic || item.skipLogic.logic === "AND";
-      var hasOr = item.skipLogic.logic === "OR";
-      // set initial value takeAction to true if the 'logic' is not set or its value is 'AND'
-      // otherwise its value is false, including when the 'logic' value is 'OR'
-      takeAction = hasAnd;
+      var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
+      var hasAny = item.skipLogic.logic === "ANY";
+      // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
+      // otherwise its value is false, including when the 'logic' value is 'ANY'
+      takeAction = hasAll;
 
       for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
         var conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
-        // AND: check all conditions until one is not met, or all are met.
-        if (hasAnd && !conditionMet ) {
+        // ALL: check all conditions until one is not met, or all are met.
+        if (hasAll && !conditionMet ) {
           takeAction = false;
           break;
         }
-        // OR: check all conditions until one is met, or none is met.
-        else if (hasOr && conditionMet) {
+        // ANY: check all conditions until one is met, or none is met.
+        else if (hasAny && conditionMet) {
           takeAction = true;
           break;
         }

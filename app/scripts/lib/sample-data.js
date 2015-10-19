@@ -979,9 +979,29 @@ var allInOne =
           "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
       ]
     },
-//    {"questionCode": "slTargetSubItem3", "parentQuestionCode": "slTargetHeader1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
-//      "questionCardinality": null, "answerCardinality": null, "question": "T6: Hidden when my section header is hidden, even if I am told to show when 'Skip Logic Source #1' > 6", "answers": null,
-//      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+
+
+    // skip logic, with logic ALL
+    {"questionCode": "slALLSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ALL)", "answers": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slALLSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ALL)", "answers": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slALLTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ALL)' == 1 AND Shown when 'Source #2 (ALL)' == 2 ", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slALLSource1", "trigger": {"value": 1}}, {"source": "slALLSource2", "trigger": {"value": 2}}],
+        "action": "show", "logic": "ALL"},
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+
+    // skip logic, with logic ANY
+    {"questionCode": "slANYSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ANY)", "answers": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slANYSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ANY)", "answers": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slANYTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ANY)' == 1 OR Shown when 'Source #2 (ANY)' == 2 ", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slANYSource1", "trigger": {"value": 1}}, {"source": "slANYSource2", "trigger": {"value": 2}}],
+        "action": "show", "logic": "ANY"},
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
 
     // skip logic, controlling child items and headers (one level below)
     // skip logic, controlling descendant items and headers (two levels below)
