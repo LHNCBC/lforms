@@ -17,7 +17,17 @@ var FullFeaturedForm = function() {
     anyTarget: element(by.id('/slANYTargetItem/1')),
 
     formSearch: element(by.css('#s2id_loinc_num1 a')),
-    formShow: element(by.css('.btn')).click()
+    formShow: element(by.css('.btn')).click(),
+
+    /**
+     *  Opens the "full featured" form.
+     */
+    openFullFeaturedForm: function() {
+      browser.get('http://0.0.0.0:9001/');
+      this.formSearch.click();
+      $('.select2-result:nth-of-type(5)').click();
+      this.formShow.click();
+    }
 
   }
 

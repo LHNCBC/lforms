@@ -61,16 +61,6 @@ var DemoPage = function() {
     },
 
     /**
-     *  Opens the "full featured" form.
-     */
-    openFullFeaturedForm: function() {
-      browser.get('http://0.0.0.0:9001/');
-      this.formSearch.click();
-      $('.select2-result:nth-of-type(5)').click();
-      this.showPanel.click();
-    },
-
-    /**
      *  Opens the directive test page.
      */
     openDirectiveTest: function() {

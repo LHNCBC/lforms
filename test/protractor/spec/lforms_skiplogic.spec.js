@@ -2,9 +2,8 @@ describe('skip logic', function() {
 
 
   it('target items should be hidden initially', function() {
-    var dp = require('./demopage.po');
-    dp.openFullFeaturedForm();
     var ff = require('./fullFeaturedForm.po');
+    ff.openFullFeaturedForm();
 
     // initially all hidden
     browser.waitForAngular();
