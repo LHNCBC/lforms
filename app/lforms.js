@@ -34,7 +34,7 @@ angular.module('lformsWidget', [
  * @returns {void}
  */
 function linkFunction(scope, element, attributes) {
-  scope.hideHeader = attributes['hideHeaders'];
+  scope.hideHeader = attributes['hideHeader'];
   scope.hideCheckBoxes = attributes['hideCheckBoxes'];
 }
 

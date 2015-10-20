@@ -1,12 +1,12 @@
 <div class="stopped" ng-show="isFormDone()"><img ng-src="{{::blankGifDataUrl}}" class="stop-sign"><span>This form is complete.</span></div>
-<div class="row" ng-hide="{{hideHeaders}}">
+<div class="row" ng-if="!hideHeader">
   <div class="col-md-3 col-xs-3">
-    <div ng-hide="{{hideCheckBoxes}}" class="checkbox">
+    <div ng-hide="hideCheckBoxes" class="checkbox">
       <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3">
-    <div ng-hide="{{hideCheckBoxes}}" class="checkbox">
+    <div ng-hide="hideCheckBoxes" class="checkbox">
       <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
     </div>
   </div>
