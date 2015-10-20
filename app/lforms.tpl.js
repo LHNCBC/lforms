@@ -3,7 +3,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-header.html',
     "<div class=\"stopped\" ng-show=\"isFormDone()\"><img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
-    "<div class=\"row\">\n" +
+    "<div class=\"row\" ng-if=\"{{!hideHeaders}}\">\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
     "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +

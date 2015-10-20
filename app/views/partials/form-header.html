@@ -1,5 +1,5 @@
 <div class="stopped" ng-show="isFormDone()"><img ng-src="{{::blankGifDataUrl}}" class="stop-sign"><span>This form is complete.</span></div>
-<div class="row">
+<div class="row" ng-if="{{!hideHeaders}}">
   <div class="col-md-3 col-xs-3">
     <div ng-hide="{{hideCheckBoxes}}" class="checkbox">
       <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
