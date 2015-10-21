@@ -28,6 +28,34 @@ function assert_hidden_checkboxes(checkboxes, count, hidden) {
   }
 }
 
+
+/**
+ * Pick header element
+ *
+ * @returns {ElementArrayFinder|!ElementArrayFinder|ElementFinder|!webdriver.promise.Promise|*}
+ */
+function getHeader() {
+  return element.all(by.css('div.row[ng-if="!hideHeader"]'));
+}
+
+
+/**
+ * Assert header presence or absence
+ *
+ * @param header
+ * @param assert
+ */
+function assertHeader(header, isPresent) {
+  if(isPresent) {
+    expect(header.count()).toEqual(1);
+    expect(header.get(0).isDisplayed()).toBeTruthy();
+  }
+  else {
+    expect(header.count()).toEqual(0);
+  }
+}
+
+
 describe('<lforms-panel-x> hide-check-boxes attribute', function() {
   it('default should show check boxes on the vertical panel ', function() {
     browser.get(test_url);
@@ -52,6 +80,38 @@ describe('<lforms-panel-x> hide-check-boxes attribute', function() {
   it('false should show check boxes on the horizontal panel', function() {
     browser.get(test_url+'#'+'/horizontal-form-hide-check-boxes-false');
     assert_hidden_checkboxes(get_checkboxes(), 2, false);
+  });
+  it('false should show check boxes on the vertical panel', function() {
+    browser.get(test_url+'#'+'/vertical-form-hide-check-boxes-absent');
+    assert_hidden_checkboxes(get_checkboxes(), 2, false);
+  });
+  it('false should show check boxes on the horizontal panel', function() {
+    browser.get(test_url+'#'+'/horizontal-form-hide-check-boxes-absent');
+    assert_hidden_checkboxes(get_checkboxes(), 2, false);
+  });
+  it('false should show header on the vertical panel', function() {
+    browser.get(test_url+'#'+'/vertical-form-hide-header-absent');
+    assertHeader(getHeader(), true);
+  });
+  it('false should show header on the horizontal panel', function() {
+    browser.get(test_url+'#'+'/horizontal-form-hide-header-absent');
+    assertHeader(getHeader(), true);
+  });
+  it('false should show header on the vertical panel', function() {
+    browser.get(test_url+'#'+'/vertical-form-hide-header-false');
+    assertHeader(getHeader(), true);
+  });
+  it('false should show header on the horizontal panel', function() {
+    browser.get(test_url+'#'+'/horizontal-form-hide-header-false');
+    assertHeader(getHeader(), true);
+  });
+  it('false should hide header on the vertical panel', function() {
+    browser.get(test_url+'#'+'/vertical-form-hide-header-true');
+    assertHeader(getHeader(), false);
+  });
+  it('false should show header on the horizontal panel', function() {
+    browser.get(test_url+'#'+'/horizontal-form-hide-header-true');
+    assertHeader(getHeader(), false);
   });
 });
 
