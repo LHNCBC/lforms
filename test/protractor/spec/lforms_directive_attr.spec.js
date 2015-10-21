@@ -42,8 +42,8 @@ function getHeader() {
 /**
  * Assert header presence or absence
  *
- * @param header
- * @param assert
+ * @param {Object} header element finder
+ * @param {boolean} isPresent - Assert for presence or absence
  */
 function assertHeader(header, isPresent) {
   if(isPresent) {
