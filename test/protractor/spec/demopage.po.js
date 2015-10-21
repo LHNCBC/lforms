@@ -1,3 +1,6 @@
+var attrTestUrl = 'http://0.0.0.0:9001/test/directiveAttrTest.html';
+
+
 var DemoPage = function() {
   var heightFieldID = '/54126-8/8302-2/1/1';
 
@@ -16,6 +19,8 @@ var DemoPage = function() {
   }
 
   return {
+    checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
+    headerEl: $('div.row[ng-if="!hideHeader"]'),
     heightFieldID: heightFieldID,
     heightField: element(by.id(heightFieldID)),
     heightLabel: element(by.css('label[for="'+heightFieldID+'"]')),
@@ -65,6 +70,15 @@ var DemoPage = function() {
      */
     openDirectiveTest: function() {
       browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    },
+
+
+  /**
+     *  Opens the directive attribute test page.
+     *  @param {String} urlPart -
+     */
+    openDirectiveAttrTest: function(urlPart) {
+      browser.get(attrTestUrl+urlPart);
     }
   }
 };
