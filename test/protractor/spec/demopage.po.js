@@ -73,9 +73,9 @@ var DemoPage = function() {
     },
 
 
-  /**
+    /**
      *  Opens the directive attribute test page.
-     *  @param {String} urlPart -
+     *  @param {String} urlPart - Any thing to attach to base url
      */
     openDirectiveAttrTest: function(urlPart) {
       browser.get(attrTestUrl+urlPart);
