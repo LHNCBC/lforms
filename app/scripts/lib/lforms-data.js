@@ -519,11 +519,14 @@ var LFormsData = Class.extend({
    */
   getFormData: function(noFormDefData, noEmptyValue, noHiddenItem) {
 
-    var formItemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
-    var formTemplateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+    var ret = {};
+    ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
+    // template options could be optional. Include them, only if they are present
+    if(this.templateOption && this.templateOption.obrItems) {
+      ret.templateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+    }
 
-    return {itemsData: formItemsData,
-            templateData: formTemplateData};
+    return ret;
   },
 
   /**

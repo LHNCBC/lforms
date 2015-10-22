@@ -98,31 +98,63 @@
       angular.module('lformsTestApp', ['lformsWidget', 'ngRoute'])
         .config(function ($routeProvider) {
           $routeProvider.
-          when("/vertical-form-default", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-default.html"
-          }).
-          when("/horizontal-form-default", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-default.html"
-          }).
-          when("/vertical-form-hide-check-boxes-true", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-hide-check-boxes-true.html"
-          }).
-          when("/horizontal-form-hide-check-boxes-true", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-hide-check-boxes-true.html"
-          }).
-          when("/vertical-form-hide-check-boxes-false", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-hide-check-boxes-false.html"
-          }).
-          when("/horizontal-form-hide-check-boxes-false", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-hide-check-boxes-false.html"
-          }).
-          otherwise({redirectTo: "/vertical-form-default"})
+            when("/vertical-form-default", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-default.html"
+            }).
+            when("/horizontal-form-default", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-default.html"
+            }).
+            when("/vertical-form-hide-check-boxes-true", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-true.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-true", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-true.html"
+            }).
+            when("/vertical-form-hide-check-boxes-absent", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-absent.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-absent", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-absent.html"
+            }).
+            when("/vertical-form-hide-check-boxes-false", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-false.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-false", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-false.html"
+            }).
+            when("/vertical-form-hide-header-true", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-true.html"
+            }).
+            when("/horizontal-form-hide-header-true", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-true.html"
+            }).
+            when("/vertical-form-hide-header-false", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-false.html"
+            }).
+            when("/horizontal-form-hide-header-false", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-false.html"
+            }).
+            when("/vertical-form-hide-header-absent", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-absent.html"
+            }).
+            when("/horizontal-form-hide-header-absent", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-absent.html"
+            }).
+            otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
           $scope.lfData = new LFormsData(angular.copy(FHTData));
@@ -149,6 +181,31 @@
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-check-boxes-false.html">
       <lforms-panel-h hide-check-boxes="false"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-check-boxes-absent.html">
+      <lforms-panel-v></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-check-boxes-absent.html">
+      <lforms-panel-h></lforms-panel-h>
+    </script>
+
+    <script type="text/ng-template" id="vertical-form-hide-header-true.html">
+      <lforms-panel-v hide-header="true"></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-true.html">
+      <lforms-panel-h hide-header="true"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-header-false.html">
+      <lforms-panel-v hide-header="false"></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-false.html">
+      <lforms-panel-h hide-header="false"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-header-absent.html">
+      <lforms-panel-v></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-absent.html">
+      <lforms-panel-h></lforms-panel-h>
     </script>
 
     <div ng-view=""></div>
