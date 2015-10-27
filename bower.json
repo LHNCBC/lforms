@@ -16,7 +16,7 @@
     "angular-ui-router": "~0.2.11",
     "angular-ui-bootstrap-bower": "~0.11.2",
     "angular-strap": "~2.1.3",
-    "autocomplete-lhc": "^7.0.4"
+    "autocomplete-lhc": "^7.0.5"
   },
   "overrides": {
     "jquery-ui": {
