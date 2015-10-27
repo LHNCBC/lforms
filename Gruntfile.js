@@ -192,7 +192,9 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
-        src: ['<%= yeoman.app %>/index.html'],
+        src: ['<%= yeoman.app %>/index.html',
+              '<%= yeoman.app %>/test/directiveTest.html',
+              '<%= yeoman.app %>/test/directiveAttrTest.html'],
         ignorePath:  /\.\.\//
       }
     },
@@ -411,6 +413,7 @@ module.exports = function (grunt) {
     'autoprefixer',
     'connect:test',
     //'karma'
+    'wiredep',
     'protractor'
   ]);
 
