@@ -25,6 +25,7 @@
         "ui/widget.js",
         "ui/button.js",
         "ui/dialog.js",
+        "ui/datepicker.js",
         "themes/ui-lightness/jquery-ui.min.css"
       ]
     }
