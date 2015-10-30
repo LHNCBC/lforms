@@ -19,7 +19,7 @@
             </tr>
             </thead>
             <tbody id="" class="">
-            <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
+            <tr class="tableRow" ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
               <td class="button-col">
                 <button ng-if="!hasOneRepeatingItem(item)" id="del-{{item._elementId}}" class="float-button"  ng-click="removeOneRepeatingItem(row.header)" title="Remove this row of '{{ item.question }}'">-</button>
                 <button ng-if="row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId" id="add-{{item._elementId}}" class="float-button"  id="{{row.header._codePath+row.header._idPath}}" ng-click="addOneRepeatingItem(row.header)" title="Add another row of '{{ item.question }}'">+</button>

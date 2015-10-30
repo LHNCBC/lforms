@@ -2,16 +2,13 @@ describe('skip logic', function() {
 
   it('entire section should hide and show', function() {
     browser.get('http://0.0.0.0:9001/');
-    //var formSearch = $('#s2id_loinc_num1 a');
     var formSearch = element(by.css('#s2id_loinc_num1 a'));
 
     browser.wait(function() {
       return formSearch.isDisplayed();
     }, 10000);
     formSearch.click();
-    //$('.select2-result:nth-of-type(2)').click();
     element(by.css('.select2-result:nth-of-type(5)')).click();
-    //$('.btn').click();
     element(by.css('.btn')).click();
 
     browser.waitForAngular();
@@ -24,10 +21,10 @@ describe('skip logic', function() {
 
     // initially all hidden
     browser.waitForAngular();
-    expect(t1.isDisplayed()).toBe(false);
-    expect(t2.isDisplayed()).toBe(false);
-    expect(t4.isDisplayed()).toBe(false);
-    expect(t5.isDisplayed()).toBe(false);
+    expect(t1.isPresent()).toBeFalsy();
+    expect(t2.isPresent()).toBeFalsy();
+    expect(t4.isPresent()).toBeFalsy();
+    expect(t5.isPresent()).toBeFalsy();
 
 
     src.sendKeys('1');
@@ -39,7 +36,7 @@ describe('skip logic', function() {
     src.clear();
     src.sendKeys('2');
     browser.waitForAngular();
-    expect(t1.isDisplayed()).toBe(false);
+    expect(t1.isPresent()).toBeFalsy();
     expect(t2.isDisplayed()).toBe(true);
     expect(t4.isDisplayed()).toBe(true);
     expect(t5.isDisplayed()).toBe(true);
@@ -47,10 +44,10 @@ describe('skip logic', function() {
     src.clear();
     src.sendKeys('6');
     browser.waitForAngular();
-    expect(t1.isDisplayed()).toBe(false);
+    expect(t1.isPresent()).toBeFalsy();
     expect(t2.isDisplayed()).toBe(true);
-    expect(t4.isDisplayed()).toBe(false);
-    expect(t5.isDisplayed()).toBe(false);
+    expect(t4.isPresent()).toBeFalsy();
+    expect(t5.isPresent()).toBeFalsy();
 
   });
 });

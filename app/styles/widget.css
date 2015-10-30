@@ -176,34 +176,17 @@ input:-ms-input-placeholder {
     max-width: 480px;
 }
 
-/* skip rules */
-tr.target-hide {
-  display: none;
-}
-tr.target-show {
-  display: table-row;
-}
-
-
 /* background color fading out for newly added and new target*/
 .fieldsTable {
     background-color: white !important;
 }
-.fieldsTable tr.newly_added {
-    background-color: #D0E1F0 !important;
-}
-.fieldsTable tr.target-show.newly_shown {
-    /*background-color: #D0E1F0 !important;*/
-}
-.fieldsTable tr.in_transition {
-    transition: background-color 3s linear 1s;
-    -webkit-transition: background-color 3s linear 1s;
-}
+
 .fieldsTable tr.repeatingLine:hover {
-    background-color: #AFEEEE !important;
+  /*background-color: #AFEEEE;*/
 }
 .fieldsTable tr.repeatingLine.active-row {
-  background-color:  	#87CEEB  !important;
+  /*background-color: #87CEEB;*/
+  background-color: #AFEEEE;
 }
 
 
@@ -212,7 +195,6 @@ tr.target-show {
   color: #333333 !important;
   font-weight: 400 !important;
 }
-
 
 /* please specify (extra row) */
 tr.extra-row td.extra-field {
@@ -368,11 +350,27 @@ td.has_treeline {
   border: none;
   padding: 0;
 }
-
 /* end of tree line style setup */
 
 label {
   /* Keep the font-weight on the questions normal */
   font-weight: normal;
   margin-bottom: 0;
+}
+
+/* ng animate css for adding new repeating items and skip logic items*/
+.repeatingLine.ng-enter {
+  -webkit-transition: 1s;
+  transition: 5s;
+  /*background-color: #458AC5;*/
+  background-color: #AFEEEE;
+}
+.repeatingLine.ng-enter-active {
+  background-color: inherit;
+}
+
+/* visible skip logic target items have different styles */
+.repeatingLine.target-show td {
+  color: #015DAD;
+  tooltip: "triggered by other questions."
 }

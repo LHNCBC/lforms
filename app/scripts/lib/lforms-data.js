@@ -79,13 +79,14 @@ var LFormsData = Class.extend({
   // (move all other properties into this _opt eventually.)
   _opt: {},
 
+  // action logs for screen reader
+  _actionLogs: [],
+
   /**
    * Constructor
    * @param data the lforms form definition data
    */
   init: function(data) {
-
-//    var start = new Date().getTime();
 
     this.items = data.items;
     this.code = data.code;
@@ -102,13 +103,8 @@ var LFormsData = Class.extend({
 
     // update internal data (_id, _idPath, _codePath, _displayLevel_),
     // that are used for widget control and/or for performance improvement.
-
-
     this._initializeInternalData();
 
-    //var time = 'LFormsData is initialized in ' +(new Date().getTime() - start)/1000 +
-    //    ' seconds';
-    //console.log(time);
   },
 
 
@@ -155,6 +151,9 @@ var LFormsData = Class.extend({
    * @private
    */
   _resetInternalData: function() {
+
+    //// check skip logic, b/c repeating items might be the skip logic targets.
+    //this._updateSkipLogicStatus(this.items, null);
 
     this._updateTreeNodes(this.items,this);
     this._updateLastSiblingList(this.items, null);
@@ -235,6 +234,26 @@ var LFormsData = Class.extend({
   },
 
   /**
+   * Preset skip logic status for newly added repeating items
+   * @param item
+   * @param hide
+   * @private
+   */
+  _presetSkipLogicStatus: function(item, hide) {
+    // if it has skip logic or one of its ancestors has skip logic
+    if (item.skipLogic || hide) {
+      this._setSkipLogicStatusValue(item, "target-hide");
+      var isHidden = true;
+      // process the sub items
+      if (item.items) {
+        for (var i=0, iLen=item.items.length; i<iLen; i++) {
+          this._presetSkipLogicStatus(item.items[i], isHidden);
+        }
+      }
+    }
+  },
+
+  /**
    * Set the skip logic status value on an item and create a screen reader log
    * @param item an item
    * @param newStatus the new skip logic status
@@ -243,8 +262,8 @@ var LFormsData = Class.extend({
   _setSkipLogicStatusValue: function(item, newStatus) {
     if (item._skipLogicStatus !== newStatus) {
       if (item._skipLogicStatus) {
-        var msg = newStatus === "target-hide" ? 'Hiding ' : 'Showing ' ;
-        LFormsData.screenReaderLog(msg+item.question);
+        var msg = newStatus === "target-hide" ? 'Hiding ' + item.question : 'Showing ' + item.question;
+        this._actionLogs.push(msg);
       }
       item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
@@ -458,8 +477,8 @@ var LFormsData = Class.extend({
       // keep a copy of the repeatable items
       // before the parentItem is added to avoid circular reference that make the angular.copy really slow
       if (item._questionRepeatable) {
-        this._repeatableItems[item._codePath] = angular.copy(item);
         item._repeatable = true;
+        this._repeatableItems[item._codePath] = angular.copy(item);
       }
       // set a reference to its parent item
       item._parentItem = parentItem;
@@ -859,9 +878,10 @@ var LFormsData = Class.extend({
   },
 
 
-/**
+  /**
    * Add a repeating item or a repeating section and update form status
    * @param item an item
+   * @returns the newly added item or a header item of the newly added section
    */
   addRepeatingItems: function(item) {
 
@@ -880,12 +900,90 @@ var LFormsData = Class.extend({
       }
       item._parentItem.items.splice(insertPosition + 1, 0, newItem);
       newItem._parentItem = item._parentItem;
+
+      // preset the skip logic status to target-hide on the new items
+      this._presetSkipLogicStatus(newItem, null);
     }
 
     this._resetInternalData();
     var readerMsg = 'Added ' + this.itemDescription(item);
-    LFormsData.screenReaderLog(readerMsg);
+    this._actionLogs.push(readerMsg);
+
+    return newItem;
   },
+
+
+  /**
+   * Get a list of repeating items that the current item belongs to.
+   * @param item the current item
+   * @returns {Array}
+   * @private
+   */
+  _getRepeatingItems: function(item) {
+    var repeatingItems = [];
+    if (item._repeatable && item._parentItem && Array.isArray(item._parentItem.items)) {
+      var items = item._parentItem.items;
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        if (items[i]._codePath === item._codePath) {
+          repeatingItems.push(items[i]);
+        }
+      }
+    }
+    return repeatingItems;
+  },
+
+
+  /**
+   * Get the sibling repeating item that is before the current item
+   * @param item the current item
+   * @returns {*} the previous item or null
+   */
+  getPrevRepeatingItem: function(item) {
+    var repeatingItems = this._getRepeatingItems(item);
+    var elementIDs = repeatingItems.map(function(it) {return it._elementId});
+    var posIndex = elementIDs.indexOf(item._elementId);
+    // return null if there is no items before this one
+    return posIndex >0 ? repeatingItems[posIndex - 1] : null;
+  },
+
+
+  /**
+   * Get the sibling repeating item that is after the current item
+   * @param item the current item
+   * @returns {*} the next item or null
+   */
+  getNextRepeatingItem: function(item) {
+    var repeatingItems = this._getRepeatingItems(item);
+    var elementIDs = repeatingItems.map(function(it) {return it._elementId});
+    var posIndex = elementIDs.indexOf(item._elementId);
+    // return null if there is no items after this one
+    return posIndex < repeatingItems.length -1 ? repeatingItems[posIndex + 1] : null;
+  },
+
+
+  /**
+   * Get the sibling repeating item that is the first one
+   * @param item the current item
+   * @returns {*} the first item
+   */
+  getFirstRepeatingItem: function(item) {
+    var repeatingItems = this._getRepeatingItems(item);
+    // always return the first one
+    return repeatingItems[0];
+  },
+
+
+  /**
+   * Get the sibling repeating item that is the last one
+   * @param item the current item
+   * @returns {*} the last item
+   */
+  getLastRepeatingItem: function(item) {
+    var repeatingItems = this._getRepeatingItems(item);
+    // always return the last one
+    return repeatingItems[repeatingItems.length - 1];
+  },
+
 
   /**
    * Remove a repeating item or a repeating section and update form status
@@ -905,7 +1003,7 @@ var LFormsData = Class.extend({
 
     this._resetInternalData();
     var readerMsg = 'Removed ' + this.itemDescription(item);
-    LFormsData.screenReaderLog(readerMsg);
+    this._actionLogs.push(readerMsg);
   },
 
 
@@ -1417,7 +1515,7 @@ var LFormsData = Class.extend({
       this._reverseNavigationMap = {};
       for (var i=0, iLen=items.length; i<iLen; i++) {
         // not in horizontal tables
-        if (!items[i]._inHorizontalTable) {
+        if (!items[i]._inHorizontalTable && !items[i].header) {
           // TODO: if it is not a hidden target fields of skip logic rules
 
           posX = 0; // set x to 0
@@ -1557,4 +1655,4 @@ var LFormsData = Class.extend({
 
 
 });
-LFormsData.screenReaderLog = Def.Autocompleter.screenReaderLog;
+

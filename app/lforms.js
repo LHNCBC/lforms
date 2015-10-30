@@ -2,6 +2,7 @@
 
 angular.module('lformsWidget', [
     "mgcrea.ngStrap",
+    'smoothScroll',
     'ui.select2',
     'autocompleteLhcMod',
     'lfConstants'

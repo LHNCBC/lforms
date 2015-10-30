@@ -88,8 +88,6 @@ describe('keyboard navigation', function() {
     // down to table
     eleEthnicity.sendKeys(protractor.Key.CONTROL,protractor.Key.ARROW_DOWN);
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(eleDisease1.getAttribute('id'));
-
-
     // down to 2nd row
     eleDisease1.sendKeys(protractor.Key.CONTROL,protractor.Key.ARROW_DOWN);
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(eleDisease2.getAttribute('id'));

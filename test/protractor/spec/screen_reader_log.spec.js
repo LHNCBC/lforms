@@ -1,4 +1,4 @@
-dp = require('./demopage.po');
+dp = require('./demopage.po.js');
 describe('508', function() {
 
   describe('screen reader log', function() {
@@ -36,7 +36,7 @@ describe('508', function() {
     });
     it('should add an entry when a section is added or removed', function () {
       // Reset the reader log
-      browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+      dp.resetReaderLog();
       expect(dp.readerLogEntries.getText()).toEqual([]);
       // Add a section
       element(by.id('add-/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
@@ -48,7 +48,7 @@ describe('508', function() {
     });
     it('should add an entry when a row is added or removed', function () {
       // Reset the reader log
-      browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+      dp.resetReaderLog();
       expect(dp.readerLogEntries.getText()).toEqual([]);
       // Add a row.  Currently both the + button and the "add another" button have
       // the same element ID, so we use the first one.
@@ -69,7 +69,7 @@ describe('508', function() {
         return addNameButton.isPresent();
       }, 10000);
       // Reset the reader log
-      browser.driver.executeScript(function() {$('reader_log').innerHTML = ''});
+      dp.resetReaderLog();
       expect(dp.readerLogEntries.getText()).toEqual([]);
       // Add a question
       addNameButton.click();

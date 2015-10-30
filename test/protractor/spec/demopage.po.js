@@ -7,11 +7,8 @@ var DemoPage = function() {
    */
   function makeReaderLogVisible() {
     browser.driver.executeScript(function() {
-      var r = $('reader_log'); // uses prototypejs' $ in the browser
-      r.style.height = 'auto';
-      r.style.width = 'auto'
-      r.style.top = 'auto'
-      r.style.left = 'auto'
+      var r = $('#reader_log');
+      r.css({height: "auto", width: "auto", top: "auto", left: "auto"});
     });
   }
 
@@ -75,7 +72,16 @@ var DemoPage = function() {
      */
     openDirectiveTest: function() {
       browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    },
+
+    /**
+     * Reset reader log
+     */
+    resetReaderLog: function () {
+      browser.driver.executeScript(function () {
+        $('#reader_log').html('')
+      });
     }
-  }
+}
 };
 module.exports = DemoPage();

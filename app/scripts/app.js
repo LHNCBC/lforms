@@ -5,7 +5,9 @@ angular.module('lformsWidget', [
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    "mgcrea.ngStrap",
+    'ngAnimate',
+    'smoothScroll',
+    'mgcrea.ngStrap',
     'ui.select2',
     'autocompleteLhcMod',
     'lfConstants'

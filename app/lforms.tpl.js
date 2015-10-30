@@ -88,8 +88,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  </thead>\n" +
     "                  <tbody class=\"fieldExpColDiv\">\n" +
-    "                  <tr class=\"repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}} \"\n" +
-    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow($index)\">\n" +
+    "                  <tr class=\"dataRow repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -120,7 +120,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      <ng-form name=\"innerForm2\">\n" +
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                          <span ng-switch-when=\"\" > </span>\n" +
+    "                          <span ng-switch-when=\"\" id=\"{{::item._elementId}}\"> </span>\n" +
     "                          <input ng-switch-when=\"CNE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item.value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
@@ -157,7 +157,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <!--<td>{{item.range}}</td>-->\n" +
     "                  </tr>\n" +
     "                  <!-- extra question -->\n" +
-    "                  <tr ng-if=\"needExtra(item)\" class=\"extra-row repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\">\n" +
+    "                  <tr ng-if=\"needExtra(item)\" class=\"extra-row repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -178,7 +178,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  <!--a button row at the end of each repeating section-->\n" +
     "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
-    "                      class=\"buttonRow repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\" >\n" +
+    "                      class=\"buttonRow repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
     "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -279,8 +279,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  </thead>\n" +
     "                  <tbody class=\"fieldExpColDiv\">\n" +
-    "                  <tr class=\"repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}} \"\n" +
-    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow($index)\">\n" +
+    "                  <tr class=\"dataRow repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"name has_treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -311,7 +311,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      <ng-form name=\"innerForm2\">\n" +
     "                        <div class=\"cellData tooltipContainer\">\n" +
     "                          <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                          <span ng-switch-when=\"\" > </span>\n" +
+    "                          <span ng-switch-when=\"\" id=\"{{::item._elementId}}\"> </span>\n" +
     "                          <input ng-switch-when=\"CNE\" name=\"{{::item.question +'_'+ $id}}\"\n" +
     "                                 ng-required=\"::item._answerRequired\"\n" +
     "                                 ng-model=\"item.value\" autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
@@ -352,7 +352,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  <!-- extra question -->\n" +
     "                  <tr ng-if=\"::!item._inHorizontalTable && needExtra(item)\"\n" +
-    "                      class=\"extra-row repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\">\n" +
+    "                      class=\"extra-row repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td class=\"name has_treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -373,7 +373,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  <!--a button row at the end of each repeating section-->\n" +
     "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
-    "                      class=\"buttonRow repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}\" >\n" +
+    "                      class=\"buttonRow repeatingLine {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
     "                    <td colspan=\"6\" class=\"name has_treeline\" >\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -429,7 +429,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </tr>\n" +
     "            </thead>\n" +
     "            <tbody id=\"\" class=\"\">\n" +
-    "            <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
+    "            <tr class=\"tableRow\" ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
     "              <td class=\"button-col\">\n" +
     "                <button ng-if=\"!hasOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\" class=\"float-button\"  ng-click=\"removeOneRepeatingItem(row.header)\" title=\"Remove this row of '{{ item.question }}'\">-</button>\n" +
     "                <button ng-if=\"row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId\" id=\"add-{{item._elementId}}\" class=\"float-button\"  id=\"{{row.header._codePath+row.header._idPath}}\" ng-click=\"addOneRepeatingItem(row.header)\" title=\"Add another row of '{{ item.question }}'\">+</button>\n" +

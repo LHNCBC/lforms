@@ -24,11 +24,14 @@ describe('autocomp list', function() {
     expect(searchResults.isDisplayed()).toBeFalsy();
   });
   it('should be visible after the user clicks in a field', function() {
+    //browser.waitForAngular();
+    //browser.sleep(5000);
     var listField = element(by.id(listFieldID));
     listField.click();
     browser.wait(function() {
       return searchResults.isDisplayed();
     }, 10000);
+    //browser.sleep(5000);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
   it('should work with multiple-select fields', function() {
