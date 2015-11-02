@@ -10,13 +10,24 @@ var DemoPage = function() {
    */
   function makeReaderLogVisible() {
     browser.driver.executeScript(function() {
-      var r = $('reader_log'); // uses prototypejs' $ in the browser
+      var r = Def.PrototypeAPI.$('reader_log');
       r.style.height = 'auto';
       r.style.width = 'auto'
       r.style.top = 'auto'
       r.style.left = 'auto'
     });
   }
+
+
+  /**
+   *  Empties the screen reader log.
+   */
+  function emptyScreenReaderLog() {
+    browser.driver.executeScript(function() {
+      Def.PrototypeAPI.$('reader_log').innerHTML = ''}
+    );
+  }
+
 
   return {
     checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
@@ -28,6 +39,7 @@ var DemoPage = function() {
     readerLog: $('#reader_log'),
     readerLogEntries: element.all(by.css('#reader_log p')),
     searchResults: $('#searchResults'),
+    emptyScreenReaderLog: emptyScreenReaderLog,
 
     // some fields
     USSGFHTVertical: {
