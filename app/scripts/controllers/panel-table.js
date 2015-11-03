@@ -10,7 +10,8 @@ angular.module('lformsWidget')
       // Configuration data that controls form's UI
       $scope.formConfig = {
         showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false // whether to show coding instruction inline. (false: inline; true: in popup)
+        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
       };
 
         // Provide blank image to satisfy img tag. Bower packaging forces us to
@@ -562,10 +563,49 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Handle navigation keys
+       * Handle navigation keys using TAB/ SHIFT+TAB keys
        * @param event keypress event
        */
-      $scope.handleNavigationKeyEvent = function(event) {
+      $scope.handleNavigationKeyEventByTab = function(event) {
+
+        if ($scope.formConfig.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+
+          if (event.shiftKey) {
+            var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;
+          }
+          else {
+            var simArrowCode = $scope.lfData.Navigation.ARROW.RIGHT;
+          }
+
+          var widgetData = $scope.lfData;
+          var nextId = event.target['id'], nextElement;
+          // find the next element, bypass the invisible elements
+          do {
+            // get the DOM element id of next field
+            nextId = widgetData.Navigation.getNextFieldId(simArrowCode, nextId);
+            // get the next DOM element by ID
+            nextElement = document.getElementById(nextId);
+          } while (nextId && (!nextElement || !jQuery(nextElement).is(":visible")));
+
+          // set the focus
+          var currentElement = event.target;
+          if (nextElement && nextElement.id !== currentElement.id) {
+            event.preventDefault();
+            event.stopPropagation();
+            setTimeout(function() {
+              nextElement.focus();
+            }, 1);
+            currentElement.blur();
+          }
+        }
+
+      };
+
+      /**
+       * Handle navigation keys using CTRL+arrow keys
+       * @param event keypress event
+       */
+      $scope.handleNavigationKeyEventByArrowKeys = function(event) {
 
         // supported arrow keys
         var arrow = $scope.lfData.Navigation.ARROW;

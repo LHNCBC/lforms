@@ -1505,6 +1505,7 @@ var LFormsData = Class.extend({
   Navigation: {
     // keys
     ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
+    TAB: 9,
     _navigationMap: [],        // a mapping from position (x, y) to element id (_elementId) of every question.
     _reverseNavigationMap: {}, // a reverse mapping from element id to position, for quick search of positions.
 

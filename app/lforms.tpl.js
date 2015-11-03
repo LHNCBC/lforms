@@ -14,7 +14,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 \">\n" +
+    "  <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div class=\"text-info\" >Total # of Questions: {{lfData.itemList.length}}</div>\n" +
     "  </div>\n" +
     "\n" +
@@ -23,7 +28,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view-a.html',
-    "<div class=\"lf-form\" ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEvent($event)\">\n" +
+    "<div class=\"lf-form\" ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
     "  <form novalidate autocomplete=\"false\">\n" +
     "    <div class=\"lf-form-view\" ng-if=\"lfData\">\n" +
     "      <div class=\"lf-form-header\" ng-include=\"'form-header.html'\"></div>\n" +
@@ -214,7 +219,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view-b.html',
-    "<div ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEvent($event)\">\n" +
+    "<div ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
     "  <form class=\"lf-form\" novalidate autocomplete=\"false\">\n" +
     "    <div class=\"lf-form-view\" ng-if=\"lfData\" >\n" +
     "      <div ng-include=\"'form-header.html'\"></div>\n" +
