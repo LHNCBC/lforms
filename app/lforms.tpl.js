@@ -93,7 +93,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  </thead>\n" +
     "                  <tbody class=\"\">\n" +
-    "                  <tr class=\"dataRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                  <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
     "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td class=\"name has-treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
@@ -183,7 +183,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  <!--a button row at the end of each repeating section-->\n" +
     "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
-    "                      class=\"buttonRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
+    "                      class=\"button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
     "                    <td colspan=\"6\" class=\"name has-treeline\" >\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +
@@ -284,7 +284,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  </thead>\n" +
     "                  <tbody class=\"\">\n" +
-    "                  <tr class=\"dataRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                  <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
     "                      ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                    <td ng-if=\"::!item._inHorizontalTable\" class=\"name has-treeline\">\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
@@ -378,7 +378,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </tr>\n" +
     "                  <!--a button row at the end of each repeating section-->\n" +
     "                  <tr ng-repeat-end ng-if=\"item._repeatingSectionList\"\n" +
-    "                      class=\"buttonRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
+    "                      class=\"button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\" ng-if=\"targetShown(item)\">\n" +
     "                    <td colspan=\"6\" class=\"name has-treeline\" >\n" +
     "                      <table class=\"t-treeline-field\" >\n" +
     "                        <tr>\n" +

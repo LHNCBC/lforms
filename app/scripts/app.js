@@ -23,6 +23,9 @@ angular.module('lformsWidget', [
       });
     $locationProvider.html5Mode(true);
   })
+  .config(function ($animateProvider) {
+    $animateProvider.classNameFilter(/has-ng-animate/);
+  })
   // pre-load all the templates
   .run(function($templateCache,$http){
       // the template names are used in the app, not the actually file path

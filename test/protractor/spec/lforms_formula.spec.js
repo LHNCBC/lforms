@@ -30,6 +30,7 @@ describe('formula', function() {
     browser.waitForAngular();
     expect(bmi1.getAttribute('value')).toBe("24.39");
     height1.clear();
+    browser.waitForAngular();
     height1.sendKeys("80");
     browser.waitForAngular();
     expect(bmi1.getAttribute('value')).toBe("18.68");
@@ -43,18 +44,20 @@ describe('formula', function() {
     heightUnit1.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
     height1.clear();
+    browser.waitForAngular();
     height1.sendKeys("170");
+    browser.waitForAngular();
     expect(bmi1.getAttribute('value')).toBe("26.68");
 
     // change weight unit and check bmi1 again
     weightUnit1.click();
-    browser.waitForAngular();
     // pick the 2nd item, kgs
     weightUnit1.sendKeys(protractor.Key.ARROW_DOWN);
     weightUnit1.sendKeys(protractor.Key.ARROW_DOWN);
     weightUnit1.sendKeys(protractor.Key.TAB);
     weight1.clear();
     weight1.sendKeys("80");
+    browser.waitForAngular();
     expect(bmi1.getAttribute('value')).toBe("27.68");
 
     // check bmi2
@@ -64,6 +67,7 @@ describe('formula', function() {
     expect(bmi2.getAttribute('value')).toBe("24.39");
     height2.clear();
     height2.sendKeys("80");
+    browser.waitForAngular();
     expect(bmi2.getAttribute('value')).toBe("18.68");
   });
 });

@@ -382,12 +382,12 @@
 /* end of tree line style setup */
 
 /* ng animate css for adding new repeating items and skip logic items*/
-.lf-form-body .lf-form-table-row.ng-enter {
-  -webkit-transition: 5s;
-  transition: 5s;
+.lf-form-body .data-row.has-ng-animate.ng-enter {
+  -webkit-transition: 4s;
+  transition: 4s;
   background-color: #AFEEEE;
 }
-.lf-form-body .lf-form-table-row.ng-enter-active {
+.lf-form-body .data-row.has-ng-animate.ng-enter-active {
   background-color: inherit;
 }
 
@@ -395,5 +395,5 @@
 /* visible skip logic target items have different styles */
 .lf-form-body .lf-form-table-row.target-show td {
   color: #015DAD;
-  tooltip: "triggered by other questions."
+  /*tooltip: "triggered by other questions."*/
 }

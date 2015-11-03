@@ -63,7 +63,7 @@
                   </tr>
                   </thead>
                   <tbody class="">
-                  <tr class="dataRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)"
+                  <tr class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)"
                       ng-repeat-start="item in lfData.itemList " ng-click="setActiveRow(item)">
                     <td class="name has-treeline">
                       <table class="t-treeline-field" >
@@ -153,7 +153,7 @@
                   </tr>
                   <!--a button row at the end of each repeating section-->
                   <tr ng-repeat-end ng-if="item._repeatingSectionList"
-                      class="buttonRow lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}" ng-if="targetShown(item)">
+                      class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}" ng-if="targetShown(item)">
                     <td colspan="6" class="name has-treeline" >
                       <table class="t-treeline-field" >
                         <tr>
