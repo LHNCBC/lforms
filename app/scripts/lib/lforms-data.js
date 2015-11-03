@@ -376,9 +376,9 @@ var LFormsData = Class.extend({
     if (!this.templateOption || jQuery.isEmptyObject(this.templateOption)) {
       this.templateOption = {
         obxTableColumns: [
-          {"name" : "Name", "formatting":{"width": "50%", "min-width": "4em"}},
-          {"name" : "", "formatting":{"width": "5em", "min-width": "5em"}},
-          {"name" : "Value", "formatting":{"width": "35%", "min-width": "4em"}},
+          {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
+          {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em"}},
+          {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
           {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
 //          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}
         ],
@@ -461,6 +461,10 @@ var LFormsData = Class.extend({
           break;
         case "":
           item._toolTip = "";
+          break;
+        case "INT":
+        case "REAL":
+          item._toolTip = "Type a number";
           break;
         default: {
           if (!item.calculationMethod) {

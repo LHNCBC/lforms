@@ -224,15 +224,15 @@ WidgetUtil = {
 
     // find the scope that has the LForms data
     var theScope, formData;
-    if (!element) element = angular.element("body");
+    if (!element) element = jQuery("body");
 
-    // <form name="lf-panel"> is one of the easily identifiable elements in the rendered form.
-    var lfPanels = angular.element(element).find("form[name='lf-panel']");
+    // class="lf-form"> is the element that contains rendered form.
+    var lfForms = element.find(".lf-form");
 
-    angular.forEach(lfPanels, function(ele, index) {
-      var lfPanel = angular.element(ele);
-      if (lfPanel.scope().lfData) {
-        theScope = lfPanel.scope();
+    angular.forEach(lfForms, function(ele, index) {
+      var lfForm = angular.element(ele);
+      if (lfForm.scope().lfData) {
+        theScope = lfForm.scope();
         return false; // break the loop
       }
     });

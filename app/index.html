@@ -22,20 +22,16 @@
     <!--<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.4/themes/start/jquery-ui.css" media="all"/>-->
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/start/jquery-ui.css" />
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-
     <!-- endbuild -->
 
     <!-- build:css({.tmp,app}) styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
+    <!--<link rel="stylesheet" href="styles/main.css">-->
     <!-- widget styles -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/widget.css">
+    <link rel="stylesheet" href="styles/lforms.css">
+    <link rel="stylesheet" href="styles/app.css">
     <!-- end widget styles -->
     <!-- endbuild -->
-
-
-
   </head>
   <body ng-app="lformsWidget">
     <!--[if lt IE 7]>
@@ -44,18 +40,6 @@
 
     <!-- Add your site or application content here -->
     <div class="container" ng-view=""></div>
-
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <!--<script>-->
-       <!--(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){-->
-       <!--(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),-->
-       <!--m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)-->
-       <!--})(window,document,'script','//www.google-analytics.com/analytics.js','ga');-->
-
-       <!--ga('create', 'UA-XXXXX-X');-->
-       <!--ga('send', 'pageview');-->
-    <!--</script>-->
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -112,9 +96,7 @@
     <script src="scripts/lforms-constants.js"></script>
     <script src="scripts/lib/ri-data.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
-
     <!-- end widget js -->
-
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/panel-search.js"></script>
@@ -122,17 +104,6 @@
     <script src="scripts/directives/lf-date.js"></script>
     <script src="scripts/services/selected-panel.js"></script>
     <!-- endbuild -->
-
-
-
-
-    <!--<script type="text/javascript">//<![CDATA[-->
-      <!--// Put this here, after all other load event handlers have been set up,-->
-      <!--// so it runs last.-->
-      <!--jQuery(window).load(function() {-->
-
-      <!--});-->
-    <!--</script>-->
 
   </body>
 </html>

@@ -320,10 +320,10 @@ angular.module('lformsWidget')
       $scope.getRowClass = function(item) {
         var eleClass = '';
         if (item._answerRequired) {
-          eleClass += ' test_required';
+          eleClass += ' answer-required';
         }
         if (item.header) {
-          eleClass += ' panel_header';
+          eleClass += ' section-header';
         }
         if (item.layout == 'horizontal') {
           eleClass += ' horizontal';
@@ -416,29 +416,36 @@ angular.module('lformsWidget')
         setTimeout(function() {
           var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-          //var btnAdd = document.getElementById("add-" + newItem._elementId);
-          //var btnPosition = btnAdd.getBoundingClientRect();
-
           var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
-          var headerPosition = headerItem.getBoundingClientRect();
-
-          // scroll down to show about 2 rows of the newly added section
-          // if the new header item is close enough to the bottom so that the first 2 questions are not visible
-          if (headerPosition.bottom > viewportHeight - 70) {
-            smoothScroll(headerItem, {
-              duration: 500,
-              easing: 'easeInQuad',
-              offset: viewportHeight - 105
-            });
+          var btnDel = document.getElementById("del-" + newItem._elementId);
+          // vertical table, find the header item
+          if (headerItem) {
+            var anchorItem = headerItem;
+          }
+          // horizontal table, find the '-' button
+          else if (btnDel) {
+            var anchorItem = btnDel;
           }
 
-          // move the focus to the '-' button of the newly added item/section
-          // a table from the '-' button moves the focus to the next input field
-          var btnDel = document.getElementById("del-" + newItem._elementId);
-          btnDel.focus();
-
+          if (anchorItem) {
+            var anchorPosition = anchorItem.getBoundingClientRect();
+            // scroll down to show about 2 rows of the newly added section
+            // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+            if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+              smoothScroll(headerItem, {
+                duration: 500,
+                easing: 'easeInQuad',
+                offset: viewportHeight - 105
+              });
+            }
+            // move the focus to the '-' button of the newly added item/section
+            // a table from the '-' button moves the focus to the next input field
+            if (btnDel)
+              btnDel.focus();
+          }
         }, 1);
       };
+
 
       /**
        * Remove one repeating item in a group
@@ -482,7 +489,7 @@ angular.module('lformsWidget')
         // set the focus
         setTimeout(function() {
           var btn = document.getElementById(btnId);
-          btn.focus();
+          if (btn) btn.focus();
         }, 1);
       };
 

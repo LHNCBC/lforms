@@ -28,8 +28,6 @@ angular.module('lformsWidget', [
       // the template names are used in the app, not the actually file path
       $templateCache.put('main.html', $http.get('views/main.html'));
       $templateCache.put('validation.html', $http.get('views/partials/validation.html'));
-      $templateCache.put('loading.html', $http.get('views/partials/loading.html'));
-      $templateCache.put('initial.html', $http.get('views/partials/initial.html'));
       $templateCache.put('form-header.html', $http.get('views/partials/form-header.html'));
       $templateCache.put('form-view-a.html', $http.get('views/partials/form-view-a.html'));
       $templateCache.put('form-view-b.html', $http.get('views/partials/form-view-b.html'));

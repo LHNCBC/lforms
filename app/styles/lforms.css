@@ -1,0 +1,399 @@
+/* lforms widget styles */
+.lf-form {
+  font-family: "Arial";
+  font-size: 14px;
+  background-color: #FFFFFF;
+}
+
+/* no spinner */
+.lf-form input[type=number]::-webkit-outer-spin-button,
+.lf-form input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.lf-form input[type=number] {
+  -moz-appearance:textfield;
+}
+
+/* Keep the font-weight on the questions normal */
+.lf-form label {
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+/* form title */
+.lf-form-title {
+  background-color: #458AC5;
+  color: #FFF;
+  font-size: 120%;
+  overflow: hidden;
+  padding: 7px 0 7px 0px;
+  margin: 0;
+}
+.lf-form-title span {
+  padding-left: 10px;
+}
+.lf-form-title a {
+  color: #FFFFFF;
+}
+
+/* table structure in the forms */
+.lf-form table {
+  border-collapse: collapse;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+.lf-form-table {
+  border: 1px solid #73A0C8;
+  color: #333333;
+}
+
+/* column headers in tables */
+.lf-form-table-header {
+  border: 1px solid #ced5d9 ;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 28px;
+  background: none repeat scroll 0 0 #E8E8E8;
+  padding-left: 5px;
+  text-align: left ;
+  color: #666666;
+  font-weight: 400;
+}
+
+/* input fields in tables */
+.lf-form-table input {
+  border: 1px solid #ced5d9 ;
+  width: 100%;
+  height: 28px;
+  min-height: 14px;
+  overflow: hidden;
+  padding: 2px 2px 2px 4px;
+  font-size: 90%;
+  font-weight: 700;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.lf-form-table input:focus {
+  background-color: #FFF8C6
+}
+
+/* rows in tables */
+.lf-form-table .lf-form-table-row {
+  border: 1px solid #ced5d9 ;
+}
+.lf-form-table .lf-form-table-row.section-header {
+  background: #E8E8E8;
+}
+
+/* data cells in tables */
+.lf-form-table td {
+  border-color: #CED5D9;
+  border-style: solid;
+  border-width: 0 0 0 1px;
+  padding: 2px;
+}
+
+/* buttons in tables */
+.lf-form-table .button-col {
+  border-left: none;
+}
+.lf-form-table button {
+  border: 0 none;
+  cursor: pointer;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  background-color: #458AC5;
+}
+.lf-form-table .float-button {
+  min-width: 24px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  padding: 2px;
+  margin: 0 2px;
+}
+.lf-form-table .help-button {
+  width: 18px;
+  height: 18px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+  font-weight: bold;
+  color: white;
+  padding: 0;
+  margin-right: 2px;
+  margin-left:2px;
+}
+
+
+
+
+
+
+/* override some settings from autocomplete-lhc */
+.autocomp_selected {
+  border: 1px solid #ced5d9;
+  border-radius: 4px;
+  width: 100%;
+}
+.autocomp_selected ul {
+  margin: 0 0 0 0.25em;
+}
+
+/* name field */
+.lf-form-table .name-label span.prompt {
+  font-style: italic;
+  font-size: 75%;
+}
+.lf-form-table .name-label span.sn {
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  background-color: #458AC5;
+  font-weight: bold;
+  color: white;
+  padding: 2px 8px;
+}
+
+/* form stop sign */
+.lf-form .stopped {
+  text-align: center;
+  width:500px;
+  height: 50px;
+  margin-left: 30%;
+  margin-right: 30%;
+  margin-bottom: 20px;
+  vertical-align: top;
+}
+.lf-form .stopped span {
+  font-size: 300%;
+  vertical-align: top;
+  color: red;
+}
+.lf-form .stop-sign {
+  background-image: url("../images/signal-stop.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  width: 48px;
+  height: 48px; /*100%; */
+}
+
+/* html5 tooltip style */
+.lf-form input:-moz-placeholder,
+.lf-form input:-ms-input-placeholder {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+  opacity: 1;
+}
+
+/* date picker */
+.lf-form-item-data .ui-datepicker {
+  font-size: 80%;
+}
+.lf-form-item-data {
+  position: relative;
+}
+.lf-form-item-data .ui-datepicker-trigger {
+  position: absolute;
+  background: url("../images/calendar.png") no-repeat scroll transparent;
+  top: 8px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  z-index: 100;
+}
+.lf-form-item-data .ui-datepicker-trigger:hover {
+  background-image: url("../images/calendar-hover.png");
+}
+
+/* active row */
+.lf-form-table-row.active-row {
+  background-color: #AFEEEE;
+}
+
+/* units, overwrite autocomplete default styles */
+.lf-form .units {
+  color: #333333 !important;
+  font-weight: 400 !important;
+}
+
+/* please specify (extra row) */
+.lf-form-table-row.extra-row .extra-field {
+  padding-left: 20px;
+  border-left: none;
+}
+
+/* borders for invalid fields */
+.lf-form input.ng-invalid.ng-dirty,
+.lf-form div.ng-invalid.ng-dirty {
+  border: 2px solid #FF0000;
+}
+
+/* messages for invalid fields */
+.lf-form .hasTooltip {
+  overflow: visible;
+}
+.lf-form .tooltipContent {
+  display: none;
+}
+.lf-form .tooltipContent div.errorMsg{
+  display: none;
+}
+.lf-form .ng-invalid > .tooltipContainer:hover .tooltipContent {
+  border-radius: 5px;
+  bottom: 35px;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  left: 5px;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 98;
+  width: 260px;
+  display: inline;
+}
+.lf-form .ng-invalid > .tooltipContainer:hover:before{
+  border: solid;
+  border-color: #fcf8e3 transparent;
+  border-width: 10px 10px 0 10px;
+  bottom: 25px;
+  content: "";
+  left: 25%;
+  position: absolute;
+  z-index: 99;
+}
+.lf-form .ng-invalid-required div.errorMsg.errorRequired {
+  display: block;
+}
+.lf-form .ng-invalid-number div.errorMsg.errorNumber {
+  display: block;
+}
+.lf-form .ng-invalid-required div.errorMsg.errorRequired {
+  display: block;
+}
+.lf-form .ng-invalid-max div.errorMsg.errorMax {
+  display: block;
+}
+.lf-form .ng-invalid-min div.errorMsg.errorMin {
+  display: block;
+}
+.lf-form .ng-invalid-url div.errorMsg.errorURL {
+  display: block;
+}
+.lf-form .ng-invalid-maxlength div.errorMsg.errorMaxlength {
+  display: block;
+}
+.lf-form .ng-invalid-minlength div.errorMsg.errorMinlength {
+  display: block;
+}
+.lf-form .ng-invalid-email div.errorMsg.errorEmail {
+  display: block;
+}
+.lf-form .ng-invalid-parse div.errorMsg.errorInvalidParse {
+  display: block;
+}
+
+
+/* horizontal table */
+/* title */
+.lf-form-horizontal-table-title {
+  text-align: left;
+}
+.lf-form-horizontal-table td.button-col {
+  padding-left: 2px;
+  border-right: none;
+}
+.lf-form-table .section-header.horizontal {
+  background-color:white;
+}
+.lf-form-horizontal-table {
+  border: none;
+}
+.lf-form-horizontal-table tr {
+  border: none;
+}
+.lf-form-horizontal-table tr td {
+  border-right: none;
+  border-left: none;
+}
+.lf-form-horizontal-table .button-col {
+  width: 2.5em;
+  min-width: 2em;
+}
+
+
+
+/* to make the height of the div within td 100% of the td's height.
+ * because height: 100% only works when the containing element has a fixed height,
+ * using 100% all the way up until an element has a fixed height or to the root
+ */
+.lf-form tr.lf-form-table-row,
+.lf-form div.t-treeline-field {
+  height: 100%;
+}
+.lf-form td.has-treeline.name {
+  height: 1px;
+}
+
+/* tree line style setup */
+.lf-form td.has-treeline {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.lf-form .t-treeline.line3 {
+  background-image: url("../images/dot.png"), url("../images/line-h.png");
+  background-position: 8px 0px, 8px 16px;
+  background-repeat: repeat-y, no-repeat;
+}
+.lf-form .t-treeline.line2 {
+  background-image: url("../images/angle.png");
+  background-position: 8px -56px;
+  background-repeat: no-repeat;
+}
+.lf-form .t-treeline.line1 {
+  background-image: url("../images/dot.png");
+  background-position: 8px 0px;
+  background-repeat: repeat-y;
+}
+.lf-form .t-treeline.no_display {
+  display: none;
+}
+.lf-form .t-treeline-field,
+.lf-form .t-treeline-field tr,
+.lf-form .t-treeline-field td {
+  border: none;
+}
+.lf-form .t-treeline-field {
+  height: 100%;
+}
+.lf-form .t-treeline-field .name-label {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  overflow: hidden;
+  border: none;
+}
+.lf-form .t-treeline {
+  width: 26px;
+  border: none;
+  padding: 0;
+}
+/* end of tree line style setup */
+
+/* ng animate css for adding new repeating items and skip logic items*/
+.lf-form-body .lf-form-table-row.ng-enter {
+  -webkit-transition: 5s;
+  transition: 5s;
+  background-color: #AFEEEE;
+}
+.lf-form-body .lf-form-table-row.ng-enter-active {
+  background-color: inherit;
+}
+
+/* todo */
+/* visible skip logic target items have different styles */
+.lf-form-body .lf-form-table-row.target-show td {
+  color: #015DAD;
+  tooltip: "triggered by other questions."
+}
