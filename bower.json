@@ -16,9 +16,21 @@
     "angular-ui-router": "~0.2.15",
     "angular-bootstrap": "~0.14.2",
     "angular-strap": "~2.3.3",
-    "autocomplete-lhc": "^7.0.3",
+    "autocomplete-lhc": "^7.0.5",
     "bootstrap": "~3.3.5",
     "ngSmoothScroll": "~2.0.0"
+  },
+  "overrides": {
+    "jquery-ui": {
+      "main": [
+        "ui/core.js",
+        "ui/widget.js",
+        "ui/button.js",
+        "ui/dialog.js",
+        "ui/datepicker.js",
+        "themes/ui-lightness/jquery-ui.min.css"
+      ]
+    }
   },
   "devDependencies": {
     "angular-mocks": "~1.4.7",

@@ -35,13 +35,13 @@
     "protractor": "~2.5.1",
     "phantomjs": "^1.9.18",
     "time-grunt": "^1.0.0"
-
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
     "test": "grunt test",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
+    "postinstall": "npm run update-webdriver",
+    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   }
 }

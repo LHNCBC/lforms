@@ -1,4 +1,5 @@
 <!doctype html>
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,9 +9,13 @@
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/autocomplete-lhc/source/auto_completion.css" />
-    <link rel="stylesheet" href="bower_components/jquery-ui/themes/start/jquery-ui.css" />
+
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- bower:css -->
+    <link rel="stylesheet" href="../bower_components/select2/select2.css" />
+    <link rel="stylesheet" href="../bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" />
+    <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
+    <!-- endbower -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
 
     <!-- lforms directive css files -->
@@ -18,7 +23,7 @@
     <link rel="stylesheet" href="styles/lforms.css">
     <!-- end of lforms directive css files -->
 
-</head>
+  </head>
   <body ng-app="lformsTestApp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -30,43 +35,48 @@
     <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- bower packages js files -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/json3/lib/json3.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
-    <script src="bower_components/select2/select2.js"></script>
-    <script src="bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/angular-strap/dist/angular-strap.js"></script>
-    <script src="bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/prototype_api.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/effects.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/effectScroll.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/event.simulate.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/observable.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
-    <script src="bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/dialog.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/suggestionDialog.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
-    <script src="bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
-    <!-- end of bower packages js -->
+    <!-- bower:js -->
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/es5-shim/es5-shim.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/json3/lib/json3.js"></script>
+    <script src="../bower_components/angular-resource/angular-resource.js"></script>
+    <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="../bower_components/angular-touch/angular-touch.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../bower_components/angular-ui-utils/ui-utils.js"></script>
+    <script src="../bower_components/select2/select2.js"></script>
+    <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
+    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/angular-strap/dist/angular-strap.js"></script>
+    <script src="../bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
+    <script src="../bower_components/jquery-ui/ui/core.js"></script>
+    <script src="../bower_components/jquery-ui/ui/widget.js"></script>
+    <script src="../bower_components/jquery-ui/ui/button.js"></script>
+    <script src="../bower_components/jquery-ui/ui/dialog.js"></script>
+    <script src="../bower_components/jquery-ui/ui/datepicker.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/prototype_api.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effects.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effectScroll.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/event.simulate.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/observable.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
+    <script src="../bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/dialog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/suggestionDialog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
+    <!-- endbower -->
 
     <!-- lforms directive js files -->
     <script src="lforms.js"></script>
@@ -90,31 +100,63 @@
       angular.module('lformsTestApp', ['lformsWidget', 'ngRoute'])
         .config(function ($routeProvider) {
           $routeProvider.
-          when("/vertical-form-default", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-default.html"
-          }).
-          when("/horizontal-form-default", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-default.html"
-          }).
-          when("/vertical-form-hide-check-boxes-true", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-hide-check-boxes-true.html"
-          }).
-          when("/horizontal-form-hide-check-boxes-true", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-hide-check-boxes-true.html"
-          }).
-          when("/vertical-form-hide-check-boxes-false", {
-            controller: "lformsTestControllerV",
-            templateUrl: "vertical-form-hide-check-boxes-false.html"
-          }).
-          when("/horizontal-form-hide-check-boxes-false", {
-            controller: "lformsTestControllerH",
-            templateUrl: "horizontal-form-hide-check-boxes-false.html"
-          }).
-          otherwise({redirectTo: "/vertical-form-default"})
+            when("/vertical-form-default", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-default.html"
+            }).
+            when("/horizontal-form-default", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-default.html"
+            }).
+            when("/vertical-form-hide-check-boxes-true", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-true.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-true", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-true.html"
+            }).
+            when("/vertical-form-hide-check-boxes-absent", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-absent.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-absent", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-absent.html"
+            }).
+            when("/vertical-form-hide-check-boxes-false", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-check-boxes-false.html"
+            }).
+            when("/horizontal-form-hide-check-boxes-false", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-check-boxes-false.html"
+            }).
+            when("/vertical-form-hide-header-true", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-true.html"
+            }).
+            when("/horizontal-form-hide-header-true", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-true.html"
+            }).
+            when("/vertical-form-hide-header-false", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-false.html"
+            }).
+            when("/horizontal-form-hide-header-false", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-false.html"
+            }).
+            when("/vertical-form-hide-header-absent", {
+              controller: "lformsTestControllerV",
+              templateUrl: "vertical-form-hide-header-absent.html"
+            }).
+            when("/horizontal-form-hide-header-absent", {
+              controller: "lformsTestControllerH",
+              templateUrl: "horizontal-form-hide-header-absent.html"
+            }).
+            otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
           $scope.lfData = new LFormsData(angular.copy(FHTData));
@@ -141,6 +183,31 @@
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-check-boxes-false.html">
       <lforms-panel-h hide-check-boxes="false"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-check-boxes-absent.html">
+      <lforms-panel-v></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-check-boxes-absent.html">
+      <lforms-panel-h></lforms-panel-h>
+    </script>
+
+    <script type="text/ng-template" id="vertical-form-hide-header-true.html">
+      <lforms-panel-v hide-header="true"></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-true.html">
+      <lforms-panel-h hide-header="true"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-header-false.html">
+      <lforms-panel-v hide-header="false"></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-false.html">
+      <lforms-panel-h hide-header="false"></lforms-panel-h>
+    </script>
+    <script type="text/ng-template" id="vertical-form-hide-header-absent.html">
+      <lforms-panel-v></lforms-panel-v>
+    </script>
+    <script type="text/ng-template" id="horizontal-form-hide-header-absent.html">
+      <lforms-panel-h></lforms-panel-h>
     </script>
 
     <div ng-view=""></div>
