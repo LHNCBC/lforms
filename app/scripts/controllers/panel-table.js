@@ -590,7 +590,7 @@ angular.module('lformsWidget')
             event.stopPropagation();
             setTimeout(function() {
               nextElement.focus();
-              //nextElement.select();
+              nextElement.select();
             }, 1);
             currentElement.blur();
           }
