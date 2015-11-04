@@ -194,13 +194,7 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         if (widgetData) {
           widgetData.watchOnValueChange();
-          if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
-            for (var i= 0, iLen = widgetData._actionLogs.length; i < iLen; i++) {
-              Def.Autocompleter.screenReaderLog(widgetData._actionLogs[i]);
-            }
-            // clean up logs
-            widgetData._actionLogs = [];
-          }
+          $scope.sendActionsToScreenReader();
         }
       };
 
@@ -405,14 +399,7 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         var newItem = widgetData.addRepeatingItems(item);
 
-        if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
-          widgetData._actionLogs.forEach(function(log) {
-            Def.Autocompleter.screenReaderLog(log);
-          });
-          // clean up logs
-          widgetData._actionLogs = [];
-        }
-
+        $scope.sendActionsToScreenReader();
 
         setTimeout(function() {
           var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -447,6 +434,21 @@ angular.module('lformsWidget')
         }, 1);
       };
 
+      /**
+       * Write action logs from the lforms to reader_log element on the page
+       * so that screen readers can read.
+       */
+      $scope.sendActionsToScreenReader = function() {
+        var widgetData = $scope.lfData;
+        if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
+          widgetData._actionLogs.forEach(function(log) {
+            Def.Autocompleter.screenReaderLog(log);
+          });
+          // clean up logs
+          widgetData._actionLogs = [];
+        }
+
+      };
 
       /**
        * Remove one repeating item in a group
@@ -457,13 +459,7 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         var nextItem = widgetData.getNextRepeatingItem(item);
 
-        if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
-          widgetData._actionLogs.forEach(function(log) {
-            Def.Autocompleter.screenReaderLog(log);
-          });
-          // clean up logs
-          widgetData._actionLogs = [];
-        }
+        $scope.sendActionsToScreenReader();
 
         var btnId = '';
         // move the focus to the next '-' button if there's one displayed
@@ -594,6 +590,7 @@ angular.module('lformsWidget')
             event.stopPropagation();
             setTimeout(function() {
               nextElement.focus();
+              //nextElement.select();
             }, 1);
             currentElement.blur();
           }

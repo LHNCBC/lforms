@@ -377,7 +377,7 @@ var LFormsData = Class.extend({
       this.templateOption = {
         obxTableColumns: [
           {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
-          {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em"}},
+          {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
           {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
           {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
 //          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}

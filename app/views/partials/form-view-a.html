@@ -58,7 +58,7 @@
                   </colgroup>
                   <thead>
                   <tr>
-                    <th class="lf-form-table-header" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
+                    <th class="lf-form-table-header {{::obxCol.formatting['class']}}" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
                         id="th_{{obxCol.name}}">{{::obxCol.name}}</th>
                   </tr>
                   </thead>

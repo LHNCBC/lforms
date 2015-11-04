@@ -88,14 +88,23 @@
 }
 
 /* data cells in tables */
+.lf-form-table th,
 .lf-form-table td {
   border-color: #CED5D9;
   border-style: solid;
-  border-width: 0 0 0 1px;
+  border-width: 1px 0 0 1px;
   padding: 2px;
+}
+.lf-form-table th:last-of-type,
+.lf-form-table td:last-of-type {
+  border-right-width: 1px;
+}
+.lf-form-body > td {
+  padding: 0;
 }
 
 /* buttons in tables */
+.lf-form-table-header .button-col,
 .lf-form-table .button-col {
   border-left: none;
 }

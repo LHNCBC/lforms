@@ -19,7 +19,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-3 col-xs-3\">\n" +
+    "  <div class=\"col-md-3 col-xs-3 text-right\">\n" +
     "    <div class=\"text-info\" >Total # of Questions: {{lfData.itemList.length}}</div>\n" +
     "  </div>\n" +
     "\n" +
@@ -88,7 +88,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </colgroup>\n" +
     "                  <thead>\n" +
     "                  <tr>\n" +
-    "                    <th class=\"lf-form-table-header\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                    <th class=\"lf-form-table-header {{::obxCol.formatting['class']}}\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
     "                        id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
     "                  </tr>\n" +
     "                  </thead>\n" +

@@ -20,7 +20,7 @@
             </tr>
             </thead>
             <tbody id="" class="">
-            <tr class="tableRow" ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
+            <tr class="data-row has-ng-animate" ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
               <td class="button-col">
                 <button ng-if="!hasOneRepeatingItem(item)" id="del-{{row.header._elementId}}"
                         class="float-button" ng-click="removeOneRepeatingItem(row.header)"
