@@ -1,10 +1,5 @@
 /* Base styles for widget */
 /* overwrite select2 styles */
-
-.lf-form .text-info {
-  padding-top: 10px;
-}
-
 .select2-drop-active input:focus,
 .select2-container-multi .select2-choices .select2-search-field input:focus {
   background: none repeat scroll 0 0 #FFF8C6 !important;

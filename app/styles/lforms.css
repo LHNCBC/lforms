@@ -406,3 +406,7 @@
   color: #015DAD;
   /*tooltip: "triggered by other questions."*/
 }
+
+.lf-form .text-info {
+  padding-top: 10px;
+}
