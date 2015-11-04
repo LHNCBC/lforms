@@ -52,7 +52,7 @@
     "app/scripts/lib/util.js",
     "app/scripts/lib/lforms-data.js",
     "app/scripts/services/selected-panel.js",
-    "app/styles/widget.css",
+    "app/styles/lforms.css",
     "app/lforms.tpl.js"
   ],
   "keywords": [
