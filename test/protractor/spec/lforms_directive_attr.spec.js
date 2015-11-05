@@ -2,9 +2,9 @@
 var demoPage = require('./demopage.po');
 
 /**
- * 
+ *
  * @param {integer} count Number of elements to assert.
- * @param {boolean} hidden True asserts for hidden 
+ * @param {boolean} hidden True asserts for hidden
  * @returns {Void}
  */
 function assertHiddenCheckboxes(count, hidden) {
@@ -39,35 +39,35 @@ function assertHeader(isPresent) {
 describe('<lforms-panel-x> hide-check-boxes attribute', function() {
   it('default should show check boxes on the vertical panel ', function() {
     demoPage.openDirectiveAttrTest('');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('default should show check boxes on the horizontal panel ', function() {
     demoPage.openDirectiveAttrTest('#/horizontal-form-default');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('true should hide check boxes on the vertical panel', function() {
     demoPage.openDirectiveAttrTest('#/vertical-form-hide-check-boxes-true');
-    assertHiddenCheckboxes(2, true);
+    assertHiddenCheckboxes(3, true);
   });
   it('true should hide check boxes on the horizontal panel', function() {
     demoPage.openDirectiveAttrTest('#/horizontal-form-hide-check-boxes-true');
-    assertHiddenCheckboxes(2, true);
+    assertHiddenCheckboxes(3, true);
   });
   it('false should show check boxes on the vertical panel', function() {
     demoPage.openDirectiveAttrTest('#/vertical-form-hide-check-boxes-false');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('false should show check boxes on the horizontal panel', function() {
     demoPage.openDirectiveAttrTest('#/horizontal-form-hide-check-boxes-false');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('false should show check boxes on the vertical panel', function() {
     demoPage.openDirectiveAttrTest('#/vertical-form-hide-check-boxes-absent');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('false should show check boxes on the horizontal panel', function() {
     demoPage.openDirectiveAttrTest('#/horizontal-form-hide-check-boxes-absent');
-    assertHiddenCheckboxes(2, false);
+    assertHiddenCheckboxes(3, false);
   });
   it('false should show header on the vertical panel', function() {
     demoPage.openDirectiveAttrTest('#/vertical-form-hide-header-absent');

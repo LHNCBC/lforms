@@ -13,12 +13,9 @@ describe('keyboard navigation', function() {
     element(by.css('.select2-result:nth-of-type(2)')).click();
     //$('.btn').click();
     element(by.css('.btn')).click();
-
-    browser.waitForAngular();
-
-    // the first row on the horizontal table has a '+' button
+    // there is an add button
     expect(element.all(by.css('.float-button')).get(2).isPresent()).toBe(true);
-    expect(element.all(by.css('.float-button')).get(2).getText()).toBe('+');
+    expect(element.all(by.css('.float-button')).get(2).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
   it('should move around the lists and the tables by using ctrl-arrow keys', function() {
@@ -60,12 +57,12 @@ describe('keyboard navigation', function() {
 
     // add a 2nd row
     element.all(by.css('.float-button')).get(2).click();
-    browser.waitForAngular();
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
-    // the second row has a '-' button and  a '+' button
+    // the second row has a '-' button
     expect(element.all(by.css('.float-button')).get(3).getText()).toBe('-');
-    expect(element.all(by.css('.float-button')).get(4).getText()).toBe('+');
+    // and an add button
+    expect(element.all(by.css('.float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
 
     var eleDisease2 = element(by.id('/54114-4/54117-7/54116-9/1/2/1'));
     var eleAgeAtD2 = element(by.id('/54114-4/54117-7/54115-1/1/2/1'));
@@ -88,8 +85,6 @@ describe('keyboard navigation', function() {
     // down to table
     eleEthnicity.sendKeys(protractor.Key.CONTROL,protractor.Key.ARROW_DOWN);
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(eleDisease1.getAttribute('id'));
-
-
     // down to 2nd row
     eleDisease1.sendKeys(protractor.Key.CONTROL,protractor.Key.ARROW_DOWN);
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(eleDisease2.getAttribute('id'));

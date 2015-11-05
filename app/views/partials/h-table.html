@@ -2,32 +2,34 @@
     <tr>
       <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
       <td>
-        <div class="name_label">
-          <div class="hTableTitle">
+        <div class="name-label">
+          <div class="lf-form-horizontal-table-title">
             {{item.question}}
           </div>
 
-          <table class="fieldsTable horizontal-table">
+          <table class="lf-form-table lf-form-horizontal-table">
             <colgroup>
-              <col style="width:5em; min-width: 5em;">
+              <col class="button-col"">
               <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders">
             </colgroup>
             <thead>
             <tr>
-              <th class="fieldsTableHeader"></th>
-              <th class="fieldsTableHeader" ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders" id="{{col.id}}">{{col.label}}</th>
+              <th class="lf-form-table-header"></th>
+              <th class="lf-form-table-header" ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders"
+                  id="{{col.id}}">{{col.label}}</th>
             </tr>
             </thead>
             <tbody id="" class="">
-            <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
+            <tr class="data-row has-ng-animate" ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows">
               <td class="button-col">
-                <button ng-if="!hasOneRepeatingItem(item)" id="del-{{item._elementId}}" class="float-button"  ng-click="removeOneRepeatingItem(row.header)" title="Remove this row of '{{ item.question }}'">-</button>
-                <button ng-if="row.header._elementId == lfData._horizontalTableInfo[item._horizontalTableId].lastHeaderId" id="add-{{item._elementId}}" class="float-button"  id="{{row.header._codePath+row.header._idPath}}" ng-click="addOneRepeatingItem(row.header)" title="Add another row of '{{ item.question }}'">+</button>
+                <button ng-if="!hasOneRepeatingItem(item)" id="del-{{row.header._elementId}}"
+                        class="float-button" ng-click="removeOneRepeatingItem(row.header)"
+                        title="Remove this row of '{{ row.header.question }}'">-</button>
               </td>
 
               <td ng-repeat="cell in row.cells" ng-switch on="cell.dataType" class="hasTooltip">
                 <ng-form name="innerForm2">
-                  <div class="cellData tooltipContainer">
+                  <div class="lf-form-item-data tooltipContainer">
                     <span class="tooltipContent">
                       <div class="errorMsg errorRequired">"{{ cell.question }}" requires a value.</div>
                       <div class="errorMsg errorPattern">"{{ cell.question }}" requires a text pattern.</div>

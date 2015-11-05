@@ -2,15 +2,16 @@
 
 angular.module('lformsWidget')
   .controller('PanelTableCtrl',
-    ['$scope', '$compile', '$http', '$location', '$anchorScroll', 'selectedFormData', 'LF_CONSTANTS',
-      function ($scope, $compile, $http, $location, $anchorScroll, selectedFormData, LF_CONSTANTS) {
+    ['$scope', '$compile', '$http', 'smoothScroll', 'selectedFormData', 'LF_CONSTANTS',
+      function ($scope, $compile, $http, smoothScroll, selectedFormData, LF_CONSTANTS) {
 
       $scope.debug = false;
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
         showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false // whether to show coding instruction inline. (false: inline; true: in popup)
+        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
       };
 
         // Provide blank image to satisfy img tag. Bower packaging forces us to
@@ -48,25 +49,25 @@ angular.module('lformsWidget')
       };
 
       // index of active row
-      $scope.activeRow = null;
+      $scope.activeItem = null;
 
       /**
        * Set the active row in table
        * @param index index of an item in the lforms form items array
        */
-      $scope.setActiveRow = function(index) {
-        $scope.activeRow = index;
-      }
+      $scope.setActiveRow = function(item) {
+        $scope.activeItem = item;
+      };
 
       /**
        * Get the css class for the active row
-       * @param index index of an item in the lforms form items array
+       * @param item an item
        * @returns {string}
        */
-      $scope.getActiveRowClass = function(index) {
-        return $scope.activeRow === index ? "active-row" : "";
+      $scope.getActiveRowClass = function(item) {
+        return $scope.activeItem && $scope.activeItem._elementId === item._elementId ? "active-row" : "";
 
-      }
+      };
 
       /**
        * Reset the lfData
@@ -112,13 +113,23 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Get the CSS class for items in the targets of a skip logic
-       * @param item an item in the lforms form items array
-       * @returns {string|*}
+       * Get an item's skip logic status
+       * @param item an item
+       * @returns {*|string}
        */
       $scope.getSkipLogicClass = function(item) {
         var widgetData = $scope.lfData;
         return widgetData.getSkipLogicClass(item);
+      };
+
+      /**
+       * Check an item's skip logic status to decide if the item should be shown
+       * @param item an item
+       * @returns {boolean}
+       */
+      $scope.targetShown = function(item) {
+        var widgetData = $scope.lfData;
+        return widgetData.getSkipLogicClass(item) !== 'target-hide';
       };
 
       /**
@@ -183,6 +194,7 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         if (widgetData) {
           widgetData.watchOnValueChange();
+          $scope.sendActionsToScreenReader();
         }
       };
 
@@ -302,20 +314,11 @@ angular.module('lformsWidget')
        */
       $scope.getRowClass = function(item) {
         var eleClass = '';
-        if (item._displayLevel > 0) {
-          eleClass = 'panel_l' + item._displayLevel_;
-        }
         if (item._answerRequired) {
-          eleClass += ' test_required';
+          eleClass += ' answer-required';
         }
         if (item.header) {
-          eleClass += ' panel_header';
-        }
-        if (item.newlyAdded) {
-          eleClass += ' newly_added';
-        }
-        if (item.inTransition) {
-          eleClass += ' in_transition';
+          eleClass += ' section-header';
         }
         if (item.layout == 'horizontal') {
           eleClass += ' horizontal';
@@ -393,54 +396,58 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        */
       $scope.addOneRepeatingItem = function(item) {
-        var objWidgetData = $scope.lfData;
+        var widgetData = $scope.lfData;
+        var newItem = widgetData.addRepeatingItems(item);
 
-        objWidgetData.addRepeatingItems(item);
-
-        // scroll to the newly added item/group
-        var prevHash = $location.hash();
-        $location.hash(item._codePath+item._idPath);
-        $anchorScroll();
-        // restore the previous hash. otherwise the url displayed in browser will have the anchor value added
-        $location.hash(prevHash);
+        $scope.sendActionsToScreenReader();
 
         setTimeout(function() {
-          $scope.removeNewlyAddedFlag();
-        }, 10);
-        setTimeout(function() {
-          $scope.removeInTransitionFlag();
-        }, 3000);
-      };
+          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-      /**
-       * Remove the newly shown flag for CSS transition effect
-       */
-      $scope.removeNewlyAddedFlag = function() {
-        //console.log('in remove newly added flag')
-        var objWidgetData = $scope.lfData;
-        for (var i= 0, iLen=objWidgetData.items.length; i<iLen; i++) {
-          if (objWidgetData.items[i].newlyAdded)     {
-            objWidgetData.items[i].newlyAdded = false;
-            objWidgetData.items[i].inTransition = true;
+          var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
+          var btnDel = document.getElementById("del-" + newItem._elementId);
+          // vertical table, find the header item
+          if (headerItem) {
+            var anchorItem = headerItem;
           }
-        }
-        $scope.$apply();
-      };
+          // horizontal table, find the '-' button
+          else if (btnDel) {
+            var anchorItem = btnDel;
+          }
 
-      /**
-       * Remove the flag for CSS transition effect.
-       */
-      $scope.removeInTransitionFlag = function() {
-        //console.log('in remove newly added flag')
-        var objWidgetData = $scope.lfData;
-        if (objWidgetData) {
-          for (var i= 0, iLen=objWidgetData.items.length; i<iLen; i++) {
-            if (objWidgetData.items[i].inTransition)     {
-              objWidgetData.items[i].inTransition = false;
+          if (anchorItem) {
+            var anchorPosition = anchorItem.getBoundingClientRect();
+            // scroll down to show about 2 rows of the newly added section
+            // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+            if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+              smoothScroll(headerItem, {
+                duration: 500,
+                easing: 'easeInQuad',
+                offset: viewportHeight - 105
+              });
             }
+            // move the focus to the '-' button of the newly added item/section
+            // a table from the '-' button moves the focus to the next input field
+            if (btnDel)
+              btnDel.focus();
           }
-          $scope.$apply();
+        }, 1);
+      };
+
+      /**
+       * Write action logs from the lforms to reader_log element on the page
+       * so that screen readers can read.
+       */
+      $scope.sendActionsToScreenReader = function() {
+        var widgetData = $scope.lfData;
+        if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
+          widgetData._actionLogs.forEach(function(log) {
+            Def.Autocompleter.screenReaderLog(log);
+          });
+          // clean up logs
+          widgetData._actionLogs = [];
         }
+
       };
 
       /**
@@ -448,19 +455,39 @@ angular.module('lformsWidget')
        * @param item an item in the lforms form items array
        */
       $scope.removeOneRepeatingItem = function(item) {
-        $scope.lfData.removeRepeatingItems(item);
-      };
 
-      // temp. for testing
-      $scope.switchLayout = function(item) {
-        if (item.layout == 'horizontal') {
-          item.layout = 'vertical';
+        var widgetData = $scope.lfData;
+        var nextItem = widgetData.getNextRepeatingItem(item);
+
+        $scope.sendActionsToScreenReader();
+
+        var btnId = '';
+        // move the focus to the next '-' button if there's one displayed
+        // ('-' buttons are shown only when there are two repeating items shown).
+        if (nextItem) {
+          if (widgetData.getRepeatingItemCount(item) === 2) {
+            btnId = 'add-' + nextItem._elementId;
+          }
+          else {
+            btnId = 'del-' + nextItem._elementId;
+          }
         }
+        // otherwise move the focus to the add button of the previous item
         else {
-          item.layout = 'horizontal';
+          var prevItem = widgetData.getPrevRepeatingItem(item);
+          if (prevItem) {
+            btnId = 'add-' + prevItem._elementId;
+          }
         }
 
-        $scope.lfData._resetFieldsForHorizontalTableLayout();
+        // remove the items
+        $scope.lfData.removeRepeatingItems(item);
+
+        // set the focus
+        setTimeout(function() {
+          var btn = document.getElementById(btnId);
+          if (btn) btn.focus();
+        }, 1);
       };
 
       /**
@@ -508,8 +535,8 @@ angular.module('lformsWidget')
        * @returns {*}
        */
       $scope.needExtra = function(item) {
-        var objWidgetData = $scope.lfData;
-        var extra = objWidgetData.needExtra(item);
+        var widgetData = $scope.lfData;
+        var extra = widgetData.needExtra(item);
         return extra;
       };
 
@@ -532,10 +559,50 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Handle navigation keys
+       * Handle navigation keys using TAB/ SHIFT+TAB keys
        * @param event keypress event
        */
-      $scope.handleNavigationKeyEvent = function(event) {
+      $scope.handleNavigationKeyEventByTab = function(event) {
+
+        if ($scope.formConfig.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+
+          if (event.shiftKey) {
+            var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;
+          }
+          else {
+            var simArrowCode = $scope.lfData.Navigation.ARROW.RIGHT;
+          }
+
+          var widgetData = $scope.lfData;
+          var nextId = event.target['id'], nextElement;
+          // find the next element, bypass the invisible elements
+          do {
+            // get the DOM element id of next field
+            nextId = widgetData.Navigation.getNextFieldId(simArrowCode, nextId);
+            // get the next DOM element by ID
+            nextElement = document.getElementById(nextId);
+          } while (nextId && (!nextElement || !jQuery(nextElement).is(":visible")));
+
+          // set the focus
+          var currentElement = event.target;
+          if (nextElement && nextElement.id !== currentElement.id) {
+            event.preventDefault();
+            event.stopPropagation();
+            setTimeout(function() {
+              nextElement.focus();
+              nextElement.select();
+            }, 1);
+            currentElement.blur();
+          }
+        }
+
+      };
+
+      /**
+       * Handle navigation keys using CTRL+arrow keys
+       * @param event keypress event
+       */
+      $scope.handleNavigationKeyEventByArrowKeys = function(event) {
 
         // supported arrow keys
         var arrow = $scope.lfData.Navigation.ARROW;
@@ -544,20 +611,22 @@ angular.module('lformsWidget')
         if (event.ctrlKey &&
             jQuery.inArray(event.keyCode, [arrow.LEFT, arrow.UP, arrow.RIGHT, arrow.DOWN]) >= 0 ) {
 
-          var objWidgetData = $scope.lfData;
+          var widgetData = $scope.lfData;
 
           var nextId = event.target['id'], nextElement;
           // find the next element, bypass the invisible elements
           do {
             // get the DOM element id of next field
-            nextId = objWidgetData.Navigation.getNextFieldId(event.keyCode, nextId);
+            nextId = widgetData.Navigation.getNextFieldId(event.keyCode, nextId);
             // get the next DOM element by ID
             nextElement = document.getElementById(nextId);
           } while (nextId && (!nextElement || !jQuery(nextElement).is(":visible")));
 
           // set the focus
-          if (nextElement) {
-            var currentElement = event.target;
+          var currentElement = event.target;
+          if (nextElement && nextElement.id !== currentElement.id) {
+            event.preventDefault();
+            event.stopPropagation();
             setTimeout(function() {
               nextElement.focus();
             }, 1);

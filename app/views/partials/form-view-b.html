@@ -1,15 +1,15 @@
-<div ng-controller="PanelTableCtrl" ng-keydown="handleNavigationKeyEvent($event)">
-  <form name="lf-panel" novalidate autocomplete="false">
-    <div class="panelGroup fieldGroup" ng-if="lfData" >
+<div ng-controller="PanelTableCtrl" ng-keydown="handleNavigationKeyEventByTab($event)">
+  <form class="lf-form" novalidate autocomplete="false">
+    <div class="lf-form-view" ng-if="lfData" >
       <div ng-include="'form-header.html'"></div>
 
-      <h3 class="groupHeader">
+      <h3 class="lf-form-title">
         <span>{{lfData.name}}</span>
         <span ng-if="formConfig.showQuestionCode">
           <a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
       </h3>
-      <div class="fieldExpColDiv">
-        <table cellspacing="0" cellpadding="0" class="fieldsTable">
+      <div class="lf-form-body">
+        <table cellspacing="0" cellpadding="0" class="lf-form-table">
           <colgroup>
             <col ng-repeat="item in ::lfData.templateOption.obrItems"
                  ng-style="{'width': '{{::item.formatting.width}}',
@@ -17,17 +17,17 @@
           </colgroup>
           <thead>
           <tr>
-            <th class="fieldsTableHeader"
+            <th class="lf-form-table-header"
                 ng-repeat="item in ::lfData.templateOption.obrItems"><label
               for="obr_{{::item.question}}">{{::item.question}}</label></th>
           </tr>
           </thead>
           <tbody>
-          <tr class="repeatingLine">
+          <tr class="lf-form-table-row">
             <td class="rowEditText hasTooltip" ng-repeat="item in lfData.templateOption.obrItems"
                 ng-switch on="item.dataType">
               <ng-form name="innerForm">
-                <div class="cellData tooltipContainer">
+                <div class="lf-form-item-data tooltipContainer">
                   <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
                   <input ng-switch-when="CWE" name="{{::item.question}}"
                          ng-required="::item._answerRequired" placeholder="Select or type a value"
@@ -47,10 +47,10 @@
               </ng-form>
             </td>
           </tr>
-          <tr class="embeddedRow">
+          <tr class="lf-form-table-row lf-form-body">
             <td colspan="5">
               <div>
-                <table cellspacing="0" cellpadding="0" class="fieldsTable">
+                <table cellspacing="0" cellpadding="0" class="lf-form-table">
                   <colgroup>
                     <col ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
                          ng-style="{'width': '{{::obxCol.formatting.width}}',
@@ -58,19 +58,19 @@
                   </colgroup>
                   <thead>
                   <tr>
-                    <th class="fieldsTableHeader" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
+                    <th class="lf-form-table-header" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
                         id="th_{{obxCol.name}}">{{::obxCol.name}}</th>
                   </tr>
                   </thead>
-                  <tbody class="fieldExpColDiv">
-                  <tr class="repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}} "
-                      ng-repeat-start="item in lfData.itemList " ng-click="setActiveRow($index)">
-                    <td ng-if="::!item._inHorizontalTable" class="name has_treeline">
+                  <tbody class="">
+                  <tr class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)"
+                      ng-repeat-start="item in lfData.itemList " ng-click="setActiveRow(item)">
+                    <td ng-if="::!item._inHorizontalTable" class="name has-treeline">
                       <table class="t-treeline-field" >
                         <tr>
                           <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                           <td>
-                            <div class="name_label">
+                            <div class="name-label">
                               <span ng-show="::item._questionRepeatable" class="sn">{{::getRepeatingSN(item) }}</span>
                               <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
                               <span ng-show="formConfig.showQuestionCode">
@@ -93,9 +93,9 @@
                     </td>
                     <td ng-if="::!item._inHorizontalTable" ng-switch on="item.dataType" class="hasTooltip">
                       <ng-form name="innerForm2">
-                        <div class="cellData tooltipContainer">
+                        <div class="lf-form-item-data tooltipContainer">
                           <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
-                          <span ng-switch-when="" > </span>
+                          <span ng-switch-when="" id="{{::item._elementId}}"> </span>
                           <input ng-switch-when="CNE" name="{{::item.question +'_'+ $id}}"
                                  ng-required="::item._answerRequired"
                                  ng-model="item.value" autocomplete-lhc="::autocompLhcOpt(item)"
@@ -130,20 +130,20 @@
                       <span ng-switch-when="none" > </span>
                     </td>
                     <!--<td>{{item.range}}</td>-->
-                    <td ng-if="::item._horizontalTableHeader" class="horizontal has_treeline" colspan="5"
+                    <td ng-if="::item._horizontalTableHeader" class="horizontal has-treeline" colspan="5"
                         ng-include="'h-table.html'"></td>
 
                   </tr>
                   <!-- extra question -->
                   <tr ng-if="::!item._inHorizontalTable && needExtra(item)"
-                      class="extra-row repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}">
-                    <td class="name has_treeline">
+                      class="extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)" ng-click="setActiveRow(item)">
+                    <td class="name has-treeline">
                       <table class="t-treeline-field" >
                         <tr>
                           <td class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"
                               ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                           <td>
-                            <div class="name_label">
+                            <div class="name-label">
                               <span>&nbsp;</span>
                             </div>
                           </td>
@@ -157,14 +157,14 @@
                   </tr>
                   <!--a button row at the end of each repeating section-->
                   <tr ng-repeat-end ng-if="item._repeatingSectionList"
-                      class="buttonRow repeatingLine {{ getSkipLogicClass(item) }} {{getRowClass(item)}}" >
-                    <td colspan="6" class="name has_treeline" >
+                      class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}" ng-if="targetShown(item)">
+                    <td colspan="6" class="name has-treeline" >
                       <table class="t-treeline-field" >
                         <tr>
                           <td class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"
                               ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                           <td>
-                            <div class="name_label">
+                            <div class="name-label">
                               <button ng-repeat="repeatingItem in item._repeatingSectionList"
                                       class="float-button" id="add-{{repeatingItem._elementId}}"
                                       ng-click="addOneRepeatingItem(repeatingItem)"

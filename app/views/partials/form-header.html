@@ -10,8 +10,13 @@
       <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
     </div>
   </div>
-  <div class="col-md-3 col-xs-3 col-md-offset-3 col-xs-offset-3 ">
-    <div style="margin: 10px">Total # of Questions: {{lfData.itemList.length}}</div>
+  <div class="col-md-3 col-xs-3">
+    <div ng-hide="{{hideCheckBoxes}}" class="checkbox">
+      <label><input type="checkbox" value="" ng-model="formConfig.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
+    </div>
+  </div>
+  <div class="col-md-3 col-xs-3 text-right">
+    <div class="text-info" >Total # of Questions: {{lfData.itemList.length}}</div>
   </div>
 
 </div>

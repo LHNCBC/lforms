@@ -18,33 +18,24 @@ describe('get form data', function() {
       expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(8); // name
       // #2 above fields have values, except dob is still empty
       dp.USSGFHTVertical.comment.sendKeys("Some comments");
-      browser.waitForAngular();
       dp.USSGFHTVertical.name.sendKeys("Not Empty");
-      browser.waitForAngular();
 
       dp.USSGFHTVertical.gender.click();
-      browser.waitForAngular();
       // pick the 1st item, centimeters
       dp.USSGFHTVertical.gender.sendKeys(protractor.Key.ARROW_DOWN);
       dp.USSGFHTVertical.gender.sendKeys(protractor.Key.TAB);
-      browser.waitForAngular();
 
       dp.USSGFHTVertical.race.click();
-      browser.waitForAngular();
       // pick the first 2 items, centimeters
       dp.USSGFHTVertical.race.sendKeys(protractor.Key.ARROW_DOWN);
       dp.USSGFHTVertical.race.sendKeys(protractor.Key.TAB);
       dp.USSGFHTVertical.race.click();
-      browser.waitForAngular();
       dp.USSGFHTVertical.race.sendKeys(protractor.Key.ARROW_DOWN);
       dp.USSGFHTVertical.race.sendKeys(protractor.Key.TAB);
-      browser.waitForAngular();
 
       dp.USSGFHTVertical.height.sendKeys("70");
-      browser.waitForAngular();
       expect(dp.USSGFHTVertical.bmi.getAttribute('value')).toBe("");
       dp.USSGFHTVertical.weight.sendKeys("170");
-      browser.waitForAngular();
       expect(dp.USSGFHTVertical.bmi.getAttribute('value')).toBe("24.39");
 
       browser.driver.executeAsyncScript(function () {

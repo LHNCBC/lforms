@@ -1,4 +1,5 @@
 <!doctype html>
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,22 +9,21 @@
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/select2/select2.css" />
     <link rel="stylesheet" href="../bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" />
-    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="../bower_components/angular-motion/dist/angular-motion.css" />
     <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
     <!-- endbower -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
 
     <!-- lforms directive css files -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/widget.css">
+    <link rel="stylesheet" href="styles/app.css">
+    <link rel="stylesheet" href="styles/lforms.css">
     <!-- end of lforms directive css files -->
 
-</head>
+  </head>
   <body ng-app="lformsTestApp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -44,22 +44,20 @@
     <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="../bower_components/angular-touch/angular-touch.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="../bower_components/angular-ui-utils/ui-utils.js"></script>
     <script src="../bower_components/select2/select2.js"></script>
     <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
+    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/angular-strap/dist/angular-strap.js"></script>
+    <script src="../bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
     <script src="../bower_components/jquery-ui/ui/core.js"></script>
     <script src="../bower_components/jquery-ui/ui/widget.js"></script>
     <script src="../bower_components/jquery-ui/ui/button.js"></script>
     <script src="../bower_components/jquery-ui/ui/dialog.js"></script>
     <script src="../bower_components/jquery-ui/ui/datepicker.js"></script>
-    <script src="../bower_components/angular-ui-date/src/date.js"></script>
-    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="../bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
-    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <script src="../bower_components/angular-strap/dist/angular-strap.js"></script>
-    <script src="../bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/prototype_api.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/effects.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/effectScroll.js"></script>
@@ -76,6 +74,8 @@
     <script src="../bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <!-- endbower -->
 
     <!-- lforms directive js files -->

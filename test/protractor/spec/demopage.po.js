@@ -1,6 +1,5 @@
 var attrTestUrl = 'http://0.0.0.0:9001/test/directiveAttrTest.html';
 
-
 var DemoPage = function() {
   var heightFieldID = '/54126-8/8302-2/1/1';
 
@@ -10,36 +9,21 @@ var DemoPage = function() {
    */
   function makeReaderLogVisible() {
     browser.driver.executeScript(function() {
-      var r = Def.PrototypeAPI.$('reader_log');
-      r.style.height = 'auto';
-      r.style.width = 'auto'
-      r.style.top = 'auto'
-      r.style.left = 'auto'
+      var r = $('#reader_log');
+      r.css({height: "auto", width: "auto", top: "auto", left: "auto"});
     });
   }
-
-
-  /**
-   *  Empties the screen reader log.
-   */
-  function emptyScreenReaderLog() {
-    browser.driver.executeScript(function() {
-      Def.PrototypeAPI.$('reader_log').innerHTML = ''}
-    );
-  }
-
 
   return {
     checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
     headerEl: $('div.row[ng-if="!hideHeader"]'),
     heightFieldID: heightFieldID,
     heightField: element(by.id(heightFieldID)),
-    heightLabel: element(by.css('label[for="'+heightFieldID+'"]')),
+    heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),
     showPanel: $('.btn'),
     readerLog: $('#reader_log'),
     readerLogEntries: element.all(by.css('#reader_log p')),
     searchResults: $('#searchResults'),
-    emptyScreenReaderLog: emptyScreenReaderLog,
 
     // some fields
     USSGFHTVertical: {
@@ -50,7 +34,7 @@ var DemoPage = function() {
       dob: element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
       height: element(by.id('/54126-8/8302-2/1/1')), // number
       weight: element(by.id('/54126-8/29463-7/1/1')), // number
-      bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
+      bmi: element(by.id('/54126-8/39156-5/1/1')) // formula
     },
 
     formSearch: $('#s2id_loinc_num1 a'),
@@ -58,7 +42,7 @@ var DemoPage = function() {
     /**
      *  Opens the USSG-FHT vertical layout form
      */
-    openUSSGFHTVertical: function() {
+    openUSSGFHTVertical: function () {
       browser.get('http://0.0.0.0:9001/');
       makeReaderLogVisible();
       this.formSearch.click();
@@ -69,7 +53,7 @@ var DemoPage = function() {
     /**
      *  Opens the USSG-FHT horizontal layout form
      */
-    openUSSGFHTHorizontal: function() {
+    openUSSGFHTHorizontal: function () {
       browser.get('http://0.0.0.0:9001/');
       makeReaderLogVisible();
       this.formSearch.click();
@@ -80,7 +64,7 @@ var DemoPage = function() {
     /**
      *  Opens the directive test page.
      */
-    openDirectiveTest: function() {
+    openDirectiveTest: function () {
       browser.get('http://0.0.0.0:9001/test/directiveTest.html');
     },
 
@@ -89,9 +73,23 @@ var DemoPage = function() {
      *  Opens the directive attribute test page.
      *  @param {String} urlPart - Any thing to attach to base url
      */
-    openDirectiveAttrTest: function(urlPart) {
-      browser.get(attrTestUrl+urlPart);
+    openDirectiveTest: function () {
+      browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    },
+
+    /**
+     * Reset reader log
+     */
+    resetReaderLog: function () {
+      browser.driver.executeScript(function () {
+        $('#reader_log').html('')
+      });
+    },
+
+    openDirectiveAttrTest: function (urlPart) {
+      browser.get(attrTestUrl + urlPart);
     }
   }
 };
+
 module.exports = DemoPage();

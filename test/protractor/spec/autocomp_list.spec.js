@@ -29,6 +29,7 @@ describe('autocomp list', function() {
     browser.wait(function() {
       return searchResults.isDisplayed();
     }, 10000);
+    //browser.sleep(5000);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
   it('should work with multiple-select fields', function() {
