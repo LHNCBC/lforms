@@ -152,9 +152,6 @@ var LFormsData = Class.extend({
    */
   _resetInternalData: function() {
 
-    //// check skip logic, b/c repeating items might be the skip logic targets.
-    //this._updateSkipLogicStatus(this.items, null);
-
     this._updateTreeNodes(this.items,this);
     this._updateLastSiblingList(this.items, null);
 
@@ -235,8 +232,8 @@ var LFormsData = Class.extend({
 
   /**
    * Preset skip logic status for newly added repeating items
-   * @param item
-   * @param hide
+   * @param item an item
+   * @param hide if the parent item is already hidden
    * @private
    */
   _presetSkipLogicStatus: function(item, hide) {
@@ -419,7 +416,8 @@ var LFormsData = Class.extend({
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
       // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
       // An error will be thrown in this case and an empty value will be set instead.
-      if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod)) {
+      if (!item.dataType || item.calculationMethod !== undefined &&
+          !jQuery.isEmptyObject(item.calculationMethod)) {
         item.dataType = "ST";
       }
       if (item.header) {
@@ -909,7 +907,7 @@ var LFormsData = Class.extend({
       newItem._parentItem = item._parentItem;
 
       // preset the skip logic status to target-hide on the new items
-      this._presetSkipLogicStatus(newItem, null);
+      this._presetSkipLogicStatus(newItem, false);
     }
 
     this._resetInternalData();
