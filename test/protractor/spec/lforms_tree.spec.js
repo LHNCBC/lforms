@@ -14,8 +14,6 @@ describe('tree lines', function() {
     //$('.btn').click();
     element(by.css('.btn')).click();
 
-    browser.waitForAngular();
-
     var treeItem1 = element(by.id('/questionHeaderC/answersC/textC/1/1/1')),
         treeItem2 = element(by.id('/questionHeaderC/formulaC/1/1'));
 

@@ -13,9 +13,6 @@ describe('keyboard navigation', function() {
     element(by.css('.select2-result:nth-of-type(2)')).click();
     //$('.btn').click();
     element(by.css('.btn')).click();
-
-    browser.waitForAngular();
-
     // there is an add button
     expect(element.all(by.css('.float-button')).get(2).isPresent()).toBe(true);
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe("Add another 'This family member's history of disease'");
@@ -60,7 +57,6 @@ describe('keyboard navigation', function() {
 
     // add a 2nd row
     element.all(by.css('.float-button')).get(2).click();
-    browser.waitForAngular();
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
     // the second row has a '-' button

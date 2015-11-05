@@ -29,7 +29,6 @@ describe('horizontal table', function() {
 
     element.all(by.css('.float-button')).get(2).click();
 
-    browser.waitForAngular();
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
 
@@ -43,7 +42,6 @@ describe('horizontal table', function() {
   it('should have three remove buttons visible after the user adds a row', function() {
     element.all(by.css('.float-button')).get(4).click();
 
-    browser.waitForAngular();
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
 
@@ -59,7 +57,6 @@ describe('horizontal table', function() {
   it('should have the 2 rows after the user removes the 2nd row', function() {
     element.all(by.css('.float-button')).get(3).click();
 
-    browser.waitForAngular();
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
 

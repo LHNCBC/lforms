@@ -1,6 +1,6 @@
 describe('skip logic', function() {
 
-  it('entire section should hide and show', function() {
+  it('target items should be hidden initially', function() {
     browser.get('http://0.0.0.0:9001/');
     var formSearch = element(by.css('#s2id_loinc_num1 a'));
 
@@ -10,14 +10,11 @@ describe('skip logic', function() {
     formSearch.click();
     element(by.css('.select2-result:nth-of-type(5)')).click();
     element(by.css('.btn')).click();
-  });
 
-  it('target items should be hidden initially', function() {
     var ff = require('./fullFeaturedForm.po');
     ff.openFullFeaturedForm();
 
     // initially all hidden
-    browser.waitForAngular();
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isPresent()).toBeFalsy();
     expect(ff.t4.isPresent()).toBeFalsy();
@@ -27,7 +24,6 @@ describe('skip logic', function() {
   it('should show a sibling and two items in a sibling section', function() {
     var ff = require('./fullFeaturedForm.po');
     ff.src.sendKeys('1');
-    browser.waitForAngular();
     expect(ff.t1.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
@@ -37,7 +33,6 @@ describe('skip logic', function() {
     var ff = require('./fullFeaturedForm.po');
     ff.src.clear();
     ff.src.sendKeys('2');
-    browser.waitForAngular();
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
@@ -48,7 +43,6 @@ describe('skip logic', function() {
     var ff = require('./fullFeaturedForm.po');
     ff.src.clear();
     ff.src.sendKeys('6');
-    browser.waitForAngular();
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isPresent()).toBeFalsy();

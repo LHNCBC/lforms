@@ -24,8 +24,6 @@ describe('autocomp list', function() {
     expect(searchResults.isDisplayed()).toBeFalsy();
   });
   it('should be visible after the user clicks in a field', function() {
-    //browser.waitForAngular();
-    //browser.sleep(5000);
     var listField = element(by.id(listFieldID));
     listField.click();
     browser.wait(function() {
