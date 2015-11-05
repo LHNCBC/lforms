@@ -137,21 +137,6 @@
   margin-left:2px;
 }
 
-
-
-
-
-
-/* override some settings from autocomplete-lhc */
-.autocomp_selected {
-  border: 1px solid #ced5d9;
-  border-radius: 4px;
-  width: 100%;
-}
-.autocomp_selected ul {
-  margin: 0 0 0 0.25em;
-}
-
 /* name field */
 .lf-form-table .name-label span.prompt {
   font-style: italic;
@@ -304,7 +289,6 @@
   display: block;
 }
 
-
 /* horizontal table */
 /* title */
 .lf-form-horizontal-table-title {
@@ -331,8 +315,6 @@
   width: 2.5em;
   min-width: 2em;
 }
-
-
 
 /* to make the height of the div within td 100% of the td's height.
  * because height: 100% only works when the containing element has a fixed height,
@@ -400,13 +382,23 @@
   background-color: inherit;
 }
 
-/* todo */
 /* visible skip logic target items have different styles */
 .lf-form-body .lf-form-table-row.target-show td {
   color: #015DAD;
+  /* todo */
   /*tooltip: "triggered by other questions."*/
 }
 
 .lf-form .text-info {
   padding-top: 10px;
+}
+
+/* override some settings from autocomplete-lhc */
+.autocomp_selected {
+  border: 1px solid #ced5d9;
+  border-radius: 4px;
+  width: 100%;
+}
+.autocomp_selected ul {
+  margin: 0 0 0 0.25em;
 }
