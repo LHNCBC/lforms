@@ -239,7 +239,7 @@ var LFormsData = Class.extend({
   _presetSkipLogicStatus: function(item, hide) {
     // if it has skip logic or one of its ancestors has skip logic
     if (item.skipLogic || hide) {
-      this._setSkipLogicStatusValue(item, "target-hide");
+      this._setSkipLogicStatusValue(item, "target-hide", true);
       var isHidden = true;
       // process the sub items
       if (item.items) {
@@ -254,13 +254,15 @@ var LFormsData = Class.extend({
    * Set the skip logic status value on an item and create a screen reader log
    * @param item an item
    * @param newStatus the new skip logic status
+   * @param noLog optional, a flag that decides whether the action needs to be logged, default is false
    * @private
    */
-  _setSkipLogicStatusValue: function(item, newStatus) {
+  _setSkipLogicStatusValue: function(item, newStatus, noLog) {
     if (item._skipLogicStatus !== newStatus) {
       if (item._skipLogicStatus) {
         var msg = newStatus === "target-hide" ? 'Hiding ' + item.question : 'Showing ' + item.question;
-        this._actionLogs.push(msg);
+        if (!noLog)
+          this._actionLogs.push(msg);
       }
       item._preSkipLogicStatus = item._skipLogicStatus;
       item._skipLogicStatus = newStatus;
