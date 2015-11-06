@@ -227,7 +227,7 @@ WidgetUtil = {
     if (!element) element = jQuery("body");
 
     // class="lf-form"> is the element that contains rendered form.
-    var lfForms = element.find(".lf-form");
+    var lfForms = jQuery(element).find(".lf-form");
 
     angular.forEach(lfForms, function(ele, index) {
       var lfForm = angular.element(ele);

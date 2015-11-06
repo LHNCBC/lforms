@@ -76,8 +76,8 @@ describe('get form data', function() {
             var fData = WidgetUtil.getFormData(null, false, true);
             callback(fData);
           }).then(function (formData) {
-            expect(formData.itemsData.length).toBe(2);
-            expect(formData.itemsData[0].items.length).toBe(8);
+            expect(formData.itemsData.length).toBe(1);
+            expect(formData.itemsData[0].items.length).toBe(6);
 
             //#5 test parameters noHiddenItem
             browser.driver.executeAsyncScript(function () {
