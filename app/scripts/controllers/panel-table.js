@@ -55,7 +55,7 @@ angular.module('lformsWidget')
        * @returns {string}
        */
       $scope.getActiveRowClass = function(item) {
-        $scope.lfData.getActiveRowClass(item);
+        return $scope.lfData.getActiveRowClass(item);
       };
 
       /**
