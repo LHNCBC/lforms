@@ -6,17 +6,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"row\" ng-if=\"!hideHeader\">\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div ng-hide=\"hideCheckBoxes\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showQuestionCode\">Display Question Code</label>\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.showQuestionCode\">Display Question Code</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div ng-hide=\"hideCheckBoxes\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.showCodingInstruction\">Show Help/Description</label>\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.showCodingInstruction\">Show Help/Description</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
     "    <div ng-hide=\"{{hideCheckBoxes}}\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"formConfig.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3 text-right\">\n" +
@@ -35,7 +35,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      <h3 class=\"lf-form-title\">\n" +
     "        <span>{{lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
+    "        <span ng-if=\"lfData.templateOption.showQuestionCode\">\n" +
     "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
     "      <div class=\"lf-form-body\">\n" +
@@ -103,12 +103,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <div class=\"name-label\">\n" +
     "                              <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
+    "                              <span ng-show=\"lfData.templateOption.showQuestionCode\">\n" +
     "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
     "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
+    "                              <span ng-show=\"lfData.templateOption.showCodingInstruction\"\n" +
     "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                              <button ng-show=\"!lfData.templateOption.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
     "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
     "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                            </div>\n" +
@@ -226,7 +226,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      <h3 class=\"lf-form-title\">\n" +
     "        <span>{{lfData.name}}</span>\n" +
-    "        <span ng-if=\"formConfig.showQuestionCode\">\n" +
+    "        <span ng-if=\"lfData.templateOption.showQuestionCode\">\n" +
     "          <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "      </h3>\n" +
     "      <div class=\"lf-form-body\">\n" +
@@ -294,12 +294,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <div class=\"name-label\">\n" +
     "                              <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                              <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                              <span ng-show=\"formConfig.showQuestionCode\">\n" +
+    "                              <span ng-show=\"lfData.templateOption.showQuestionCode\">\n" +
     "                                <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
     "                                   target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                              <span ng-show=\"formConfig.showCodingInstruction\"\n" +
+    "                              <span ng-show=\"lfData.templateOption.showCodingInstruction\"\n" +
     "                                    class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                              <button ng-show=\"!formConfig.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                              <button ng-show=\"!lfData.templateOption.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
     "                                      class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
     "                                      data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                            </div>\n" +

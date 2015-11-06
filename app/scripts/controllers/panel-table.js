@@ -7,16 +7,9 @@ angular.module('lformsWidget')
 
       $scope.debug = false;
 
-      // Configuration data that controls form's UI
-      $scope.formConfig = {
-        showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-      };
-
-        // Provide blank image to satisfy img tag. Bower packaging forces us to
-        // avoid using image files from html templates, therefore using base64
-        // encoding for a 1x1 blank gif file.
+      // Provide blank image to satisfy img tag. Bower packaging forces us to
+      // avoid using image files from html templates, therefore using base64
+      // encoding for a 1x1 blank gif file.
       $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
 
       // Default option for calendar
@@ -48,15 +41,12 @@ angular.module('lformsWidget')
         // simple_tags: false
       };
 
-      // index of active row
-      $scope.activeItem = null;
-
       /**
        * Set the active row in table
        * @param index index of an item in the lforms form items array
        */
       $scope.setActiveRow = function(item) {
-        $scope.activeItem = item;
+        $scope.lfData.setActiveRow(item);
       };
 
       /**
@@ -65,8 +55,7 @@ angular.module('lformsWidget')
        * @returns {string}
        */
       $scope.getActiveRowClass = function(item) {
-        return $scope.activeItem && $scope.activeItem._elementId === item._elementId ? "active-row" : "";
-
+        $scope.lfData.getActiveRowClass(item);
       };
 
       /**
@@ -118,8 +107,7 @@ angular.module('lformsWidget')
        * @returns {*|string}
        */
       $scope.getSkipLogicClass = function(item) {
-        var widgetData = $scope.lfData;
-        return widgetData.getSkipLogicClass(item);
+        return $scope.lfData.getSkipLogicClass(item);
       };
 
       /**
@@ -128,8 +116,7 @@ angular.module('lformsWidget')
        * @returns {boolean}
        */
       $scope.targetShown = function(item) {
-        var widgetData = $scope.lfData;
-        return widgetData.getSkipLogicClass(item) !== 'target-hide';
+        return $scope.lfData.getSkipLogicClass(item) !== 'target-hide';
       };
 
       /**
@@ -564,7 +551,7 @@ angular.module('lformsWidget')
        */
       $scope.handleNavigationKeyEventByTab = function(event) {
 
-        if ($scope.formConfig.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+        if ($scope.lfData.templateOption.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
 
           if (event.shiftKey) {
             var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;

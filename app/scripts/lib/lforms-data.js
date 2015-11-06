@@ -82,6 +82,9 @@ var LFormsData = Class.extend({
   // action logs for screen reader
   _actionLogs: [],
 
+  // active item, where a input field in the row has the focus
+  _activeItem: null,
+
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -362,6 +365,7 @@ var LFormsData = Class.extend({
     this._codePath = "";
     this._idPath = "";
     this._displayLevel = 0;
+    this._activeItem = null;
 
     // type
     if (!this.type || this.type.length == 0) {
@@ -387,8 +391,12 @@ var LFormsData = Class.extend({
           {"question":"Time Done","dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
           {"question":"Where Done","dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
           {"question":"Comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
-        ]
-      }
+        ],
+        // checkbox controls
+        showQuestionCode: false,   // whether question code is displayed next to the question
+        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
+      };
     }
   },
 
@@ -1504,7 +1512,25 @@ var LFormsData = Class.extend({
 
   },
 
-  // Form navigation by keyboard
+  /**
+   * Set the active row in table
+   * @param item an item
+   */
+  setActiveRow: function(item) {
+    this._activeItem = item;
+  },
+
+  /**
+   * Get the css class for the active row
+   * @param item an item
+   * @returns {string}
+   */
+  getActiveRowClass: function(item) {
+    return this._activeItem && this._activeItem._elementId === item._elementId ? "active-row" : "";
+  },
+
+
+// Form navigation by keyboard
   Navigation: {
     // keys
     ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
