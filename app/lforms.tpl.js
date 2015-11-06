@@ -435,7 +435,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </tr>\n" +
     "            </thead>\n" +
     "            <tbody id=\"\" class=\"\">\n" +
-    "            <tr class=\"tableRow\" ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
+    "            <tr class=\"data-row has-ng-animate\" ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\">\n" +
     "              <td class=\"button-col\">\n" +
     "                <button ng-if=\"!hasOneRepeatingItem(item)\" id=\"del-{{row.header._elementId}}\"\n" +
     "                        class=\"float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" +
