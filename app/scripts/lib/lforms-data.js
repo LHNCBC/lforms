@@ -383,7 +383,6 @@ var LFormsData = Class.extend({
           {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
           {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
           {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
-//          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
@@ -1526,7 +1525,7 @@ var LFormsData = Class.extend({
   },
 
 
-// Form navigation by keyboard
+  // Form navigation by keyboard
   Navigation: {
     // keys
     ARROW: {LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40},
