@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "dependencies": {
     "angular": "~1.4.7",
     "json3": "~3.3.2",
