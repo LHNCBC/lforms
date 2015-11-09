@@ -1,12 +1,15 @@
 ## What is LForms?
-LForms is a light-weight, feature-rich, open-source widget that creates input
-forms for Web-based medical applications. It was developed by the National
-Library of Medicine (NLM) Lister Hill National Center for Biomedical
-Communications (LHNCBC), part of the National Institutes of Health (NIH), with
-the collaboration and support from the Regenstrief Institute, Inc. and the LOINC
-Committee.
 
-The LForms software is written entirely in JavaScript, using Google’s Angular JS
+[LForms](https://lhncbc.nlm.nih.gov/project/lforms) is a light-weight,
+feature-rich, open-source widget that creates input forms for Web-based medical
+applications. It was developed by the Lister Hill National Center for Biomedical
+Communications ([LHNCBC](https://lhncbc.nlm.nih.gov)), National Library of
+Medicine ([NLM](https://www.nlm.nih.gov)),  part of the National Institutes of
+Health ([NIH](https://www.nih.gov)), with the collaboration and support from the
+[Regenstrief Institute](https://www.regenstrief.org/), Inc. and the
+[LOINC](https://loinc.org/) Committee.
+
+The LForms software is written entirely in JavaScript, using Google’s AngularJS
 framework, as well as some widgets developed in-house at NLM. A form is defined
 by listing the form questions (e.g. LOINC observations) and incorporating
 metadata for each, including: data type, cardinality, default value, units of
@@ -18,17 +21,112 @@ single questions can repeat. LForms will generate total scores for any set of
 questions whose answers have scores (e.g., Glasgow coma score). Form definitions
 can be specified as JSON data structures or CSV files. We have used LForms to
 generate Web-based forms for many LOINC panels and for AHRQ Patient Safety Event
-Reports.
+Reports.  See the [demo site](https://lforms-demo.nlm.nih.gov) for a working example.
 
 ## Installation
-LForms installs using the bower package manager (“bower install lforms”).  For a
-demo, try the following:
+LForms installs using the [bower](http://bower.io) package manager, i.e. `bower
+install lforms`.
 
-1. git clone https://github.com/lhncbc/lforms.git
-2. cd lforms
-3. npm install
-4. bower install
-5. grunt serve
+## Usage
+
+### HTML
+
+The HTML in your page will look something like:
+
+    <body ng-app="myApp">
+      <div ng-controller="lformsTestControllerH">
+        <lforms-panel-h></lforms-panel-h>
+      </div>
+    </body>
+
+The directive is contained by a controller (in this example named
+"lformsTestControllerH") which will have the responsibility of providing the
+form definition data (as a JSON object).
+
+### JavaScript
+
+In the JavaScript for the AngularJS app, include 'lformsWidget' as a module to
+be loaded. Then, in the JavaScript for the AngularJS controller, construct an
+LFormsData object with the JSON form definition and assign that object to the
+scope variable "lfData".  The form should initialize and display.  For example:
+
+    angular.module('myApp', ['lformsWidget'])
+      .controller('lformsTestControllerH', ['$scope', function ($scope) {
+        $scope.lfData = new LFormsData(myFormDefinition);
+      }]);
+
+### Retrieving User-Entered Data
+
+After the user fills out a form, the data they have entered and things like
+codes for coded answer lists will be stored in the data model.  To retrieve that
+data, LForms provides the following API:
+
+    WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+
+With no arguments (i.e. WidgetUti.getFormData()), the data for the first LForm
+found on that page will be returned, and will include the form definition,
+along with entries for questions the user left blank and for questions that were
+hidden by skip-logic (which the user might not have seen).  This default return
+behavior can be changed by the parameters, but in all cases the returned data
+will follow the structure of the form, in that answers will be nested inside
+containing hashes representing their sections.
+
+The parameters are:
+   1. formElement - an HTML element that includes the LForm's rendered form. If
+      this is ommitted, the "body" tag will be used.  If there is more than one
+      LForm within formElement, the first found will be used.
+   2. noFormDefData (optional, default false) - If this is true, the form
+      definition data will not be returned along with the data.
+   3. noEmptyValue (optional, default false) - If this is true, items that have
+      an empty value will be removed.
+   4. noHiddenItem (optional, default false) - If this is true, items that are
+      hidden by skip logic will be removed.
+
+As an example, here is the data from a partially filled-in vital signs panel,
+returned via `WidgetUtil.getFormData(null, true, true, true)`:
+
+```json
+    {
+      "itemsData": [{
+        "questionCode": "35094-2",
+        "items": [{
+          "questionCode": "8480-6",
+          "value": "100",
+          "unit": {
+            "name": "mm[Hg]",
+            "default": false,
+            "normalRange": null,
+            "absoluteRange": null
+          }
+        }, {
+          "questionCode": "8357-6",
+          "value": {
+            "label": null,
+            "code": "LA24014-5",
+            "text": "Oscillometry",
+            "other": null
+          }
+        }]
+      }, {
+        "questionCode": "35095-9",
+        "items": []
+      }],
+      "templateData": [{
+        "value": "2015-11-09T05:00:00.000Z"
+      }]
+    }
+```
+
+The first section in the returned data "itemsData" contains all of the data from
+the form itself.  LForms (optionally) adds a section to the top of the form that
+includes fields like "Date" and "Comment", and the data for these elements shows
+up in "templateData".  The form definition data was not included in the above
+example, but you can see the structure if you look closely at itemsData.  In
+this form, there was a section (question code "35094-2") which contained both of
+the two filled-in items as data.  That is why there is just one entry in the
+itemsData itself, and that item has two sub-items in "items" array.  One of the
+two items was numeric and had an associated unit field, while the other was a
+coded list field.
 
 ## Form Definition Format
 Form definitions are stored in a JSON structure.  Although we hope to soon have
