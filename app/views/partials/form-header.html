@@ -2,17 +2,17 @@
 <div class="row" ng-if="!hideHeader">
   <div class="col-md-3 col-xs-3">
     <div ng-hide="hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.showQuestionCode">Display Question Code</label>
+      <label><input type="checkbox" value="" ng-model="formConfig.showQuestionCode">Display Question Code</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3">
     <div ng-hide="hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.showCodingInstruction">Show Help/Description</label>
+      <label><input type="checkbox" value="" ng-model="formConfig.showCodingInstruction">Show Help/Description</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3">
     <div ng-hide="{{hideCheckBoxes}}" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
+      <label><input type="checkbox" value="" ng-model="formConfig.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3 text-right">

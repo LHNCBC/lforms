@@ -5,7 +5,7 @@
 
       <h3 class="lf-form-title">
         <span>{{lfData.name}}</span>
-        <span ng-if="lfData.templateOption.showQuestionCode">
+        <span ng-if="formConfig.showQuestionCode">
           <a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
       </h3>
       <div class="lf-form-body">
@@ -73,12 +73,12 @@
                             <div class="name-label">
                               <span ng-show="::item._questionRepeatable" class="sn">{{::getRepeatingSN(item) }}</span>
                               <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
-                              <span ng-show="lfData.templateOption.showQuestionCode">
+                              <span ng-show="formConfig.showQuestionCode">
                                 <a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html"
                                    target="_blank">[{{ item.questionCode }}]</a></span>
-                              <span ng-show="lfData.templateOption.showCodingInstruction"
+                              <span ng-show="formConfig.showCodingInstruction"
                                     class="prompt">{{ ::getCodingInstructions(item) }}</span>
-                              <button ng-show="!lfData.templateOption.showCodingInstruction" ng-if="::hasCodingInstructions(item)"
+                              <button ng-show="!formConfig.showCodingInstruction" ng-if="::hasCodingInstructions(item)"
                                       class="help-button" bs-popover="::item.codingInstructions"
                                       data-auto-close="true" data-placement="right"  title="Instruction">?</button>
                             </div>

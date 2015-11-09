@@ -391,11 +391,7 @@ var LFormsData = Class.extend({
           {"question":"Time Done","dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
           {"question":"Where Done","dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
           {"question":"Comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
-        ],
-        // checkbox controls
-        showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
+        ]
       };
     }
   },
