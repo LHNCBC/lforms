@@ -75,15 +75,15 @@ containing hashes representing their sections.
 
 The parameters are:
 
-    1. formElement - an HTML element that includes the LForm's rendered form. If
-       this is ommitted, the "body" tag will be used.  If there is more than one
-       LForm within formElement, the first found will be used.
-    2. noFormDefData (optional, default false) - If this is true, the form
-       definition data will not be returned along with the data.
-    3. noEmptyValue (optional, default false) - If this is true, items that have
-       an empty value will be removed.
-    4. noHiddenItem (optional, default false) - If this is true, items that are
-       hidden by skip logic will be removed.
+1. formElement - an HTML element that includes the LForm's rendered form. If
+   this is ommitted, the "body" tag will be used.  If there is more than one
+   LForm within formElement, the first found will be used.
+2. noFormDefData (optional, default false) - If this is true, the form
+   definition data will not be returned along with the data.
+3. noEmptyValue (optional, default false) - If this is true, items that have
+   an empty value will be removed.
+4. noHiddenItem (optional, default false) - If this is true, items that are
+   hidden by skip logic will be removed.
 
 As an example, here is the data from a partially filled-in vital signs panel,
 returned via `WidgetUtil.getFormData(null, true, true, true)`:
