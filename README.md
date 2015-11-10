@@ -18,10 +18,11 @@ hierarchy) to other questions, validation checks, skip logic and help messages.
 
 In LForms, questions can accept multiple answers, and groups of questions or
 single questions can repeat. LForms will generate total scores for any set of
-questions whose answers have scores (e.g., Glasgow coma score). Form definitions
-can be specified as JSON data structures or CSV files. We have used LForms to
-generate Web-based forms for many LOINC panels and for AHRQ Patient Safety Event
-Reports.  See the [demo site](https://lforms-demo.nlm.nih.gov) for a working example.
+questions whose answers have scores (e.g., Glasgow coma score). [Form
+definitions](#formdef) can be specified as JSON data structures or CSV files. We
+have used LForms to generate Web-based forms for many LOINC panels and for AHRQ
+Patient Safety Event Reports.  See the [demo
+site](https://lforms-demo.nlm.nih.gov) for a working example.
 
 ## Installation
 LForms installs using the [bower](http://bower.io) package manager, i.e. `bower
@@ -47,8 +48,9 @@ form definition data (as a JSON object).
 
 In the JavaScript for the AngularJS app, include 'lformsWidget' as a module to
 be loaded. Then, in the JavaScript for the AngularJS controller, construct an
-LFormsData object with the JSON form definition and assign that object to the
-scope variable "lfData".  The form should initialize and display.  For example:
+LFormsData object with the JSON [form definition](#formdef) and assign that
+object to the scope variable "lfData".  The form should initialize and display.
+For example:
 
     angular.module('myApp', ['lformsWidget'])
       .controller('lformsTestControllerH', ['$scope', function ($scope) {
@@ -107,9 +109,6 @@ returned via `WidgetUtil.getFormData(null, true, true, true)`:
             "other": null
           }
         }]
-      }, {
-        "questionCode": "35095-9",
-        "items": []
       }],
       "templateData": [{
         "value": "2015-11-09T05:00:00.000Z"
@@ -128,13 +127,12 @@ itemsData itself, and that item has two sub-items in "items" array.  One of the
 two items was numeric and had an associated unit field, while the other was a
 coded list field.
 
-## Form Definition Format
-Form definitions are stored in a JSON structure.  Although we hope to soon have
-some documentation for that structure, in the meantime take a look at the
-sample JSON structures in
-[app/scripts/lib/sample-data.js](app/scripts/lib/sample-data.js).  Hopefully the
-key names plus the sample data values will make things clear.  These are the
-samples that you will see rendered if you following the demo installation steps above.
+## <a name="formdef"></a>Form Definition Format
+
+Form definitions are stored in a JSON structure.  To get a rough idea of what
+these are you can take a look at one of the
+[samples](app/scripts/lib/sample-data.js), or for a detailed description see the
+[form definition documentation](form_definition.md).
 
 ## Licensing and Copyright Notice
 The LForms software employs the LOINC data model, including the LOINC table,
