@@ -7,67 +7,67 @@ about the meaning of each key:
 
 ```
     {
-      "code": [string],
-      "name": [string],
+      "code": string,
+      "name": string,
       "templateOption": {
-        "obrHeader": [boolean],
+        "obrHeader": boolean,
         "obrItems": [{
-          "question": [string],
-          "dataType": [string],
+          "question": string,
+          "dataType": string,
           "answers": [{
-            "text": [string],
-            "code": [string]
+            "text": string,
+            "code": string
           }]
         }],
       },
       "items": [{
-        "questionCode": [string]
+        "questionCode": string
         "questionCardinality": {
            "min": "1",
            "max": "1" or "*"
         },
-        "question": [string],
+        "question": string,
         "answerCardinality": {
           min: "0" or "1",
           max: "1" or "*"
         },
-        "answers": [string] or [{
-          text: [string],
-          code: [string],
-          other: [string],
-          score: [number]
+        "answers": string or [{
+          text: string,
+          code: string,
+          other: string,
+          score: number
         }],
-        "externallyDefined": [string],
-        "dataType": [string],
+        "externallyDefined": string,
+        "dataType": string,
         "units": [{
-          "name": [string],
-          "default": [boolean]
+          "name": string,
+          "default": boolean
         }],
-        "header": [boolean],
+        "header": boolean,
         "skipLogic": {
           "conditions": [{
-            "source": [string]
+            "source": string
             "trigger": {
-              "value": [string] or [number], or
+              "value": string or number, or
               "minExclusive": number,
               "minInclusive": number,
               "maxExclusive": number,
               "maxInclusive": number
             }
           }],
-          "action": [string]
+          "action": string
         },
-        "codingInstructions": [string],
+        "codingInstructions": string,
         "calculationMethod": {
-          "name": [string]
+          "name": string
         }
       }],
       answerLists: [
         "622": [{
-          "text": [string],
-          "code": [string],
-          "other": [string],
-          "label": [string]
+          "text": string,
+          "code": string,
+          "other": string,
+          "label": string
         }]
       ]
     }
