@@ -25,41 +25,51 @@ about the meaning of each key:
            "min": "1",
            "max": "1" or "*"
         },
-       "question": [string],
-       "answers": [string] or [{
-         text: [string]
-         code: [string]
-         other: [string]
-       }],
-       "externallyDefined": [string],
-       "dataType": [string]
-       "units": [{
-         "name": [string],
-         "default": [boolean]
-       }]
-       "header": [boolean]
-       "skipLogic": {
-         "conditions": [{
-           "source": [string]
-           "trigger": {
-             "value": [string] or [number], or
-             "minExclusive": number,
-             "minInclusive": number,
-             "maxExclusive": number,
-             "maxInclusive": number
-           }
-         }],
-         "action": [string]
-       }
-     }],
-     answerLists: [
-      "622": [{
-        "text": [string],
-        "code": [string],
-        "other": [string],
-        "label": [string]
-      }]
-    ],
+        "question": [string],
+        "answerCardinality": {
+          min: "0" or "1",
+          max: "1" or "*"
+        },
+        "answers": [string] or [{
+          text: [string],
+          code: [string],
+          other: [string],
+          score: [number]
+        }],
+        "externallyDefined": [string],
+        "dataType": [string],
+        "units": [{
+          "name": [string],
+          "default": [boolean]
+        }],
+        "header": [boolean],
+        "skipLogic": {
+          "conditions": [{
+            "source": [string]
+            "trigger": {
+              "value": [string] or [number], or
+              "minExclusive": number,
+              "minInclusive": number,
+              "maxExclusive": number,
+              "maxInclusive": number
+            }
+          }],
+          "action": [string]
+        },
+        "codingInstructions": [string],
+        "calculationMethod": {
+          "name": [string]
+        }
+      }],
+      answerLists: [
+        "622": [{
+          "text": [string],
+          "code": [string],
+          "other": [string],
+          "label": [string]
+        }]
+      ]
+    }
 
 Keys:
   * **code** - a code (identifier) for a panel, or in the context of answer
@@ -89,11 +99,12 @@ Keys:
       * formatting - This controls things like the width of the column.  It is a
         hash with the keys "width" and "min-width", the values of both of which
         are the standard CSS values for those style settings.
-      * answerCardinality - For lists, this allows you to control whether list
-        is multi-select or not.  It is a hash that takes two keys, "min" and
-        "max".  By default, these are "1" (as a string).  If you set
-        answerCardinality.max to "*", the list becomes multi-select.  (Other
-        possibilities are not yet supported.)  TBD Y
+      * <a name="answerCardinality"></a>answerCardinality - For lists, this
+        allows you to control whether list is multi-select or not.  It is a hash
+        that takes two keys, "min" and "max".  If you "min" to "1", then the
+        user will be required to provide an answer.  If you set "max" to "*",
+        the list becomes multi-select.  (Other possibilities are not yet
+        supported.)
       * _answerRequired - If true, the field will complain if the user leaves it
         blank.
   * <a name="items"></a> **items** - This is an array of form questions and
@@ -107,19 +118,24 @@ Keys:
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
       If you wish for a question or section to be repeatable, pass in `{"min":
-      "1", "max": "*"}`.  TBD Y
+      "1", "max": "*"}`.
     * question - The label for the question, or the title of the section.
+    * answerCardinality - The same as <a href="#answerCardinality">above</a>.
     * <a name="answers"></a> answers - For questions with answer lists, this is
       either an array of hashes for items in the list, or a string ID as a
       lookup key for such data in the <a href="#answerLists">answerLists</a>
       hash.  When provided as an array, each hash can contain:
         * text - (required) the display string for this list item.  This should
           be unique within the list.
-        * code - an identifier for the list item.  This can be omitted if you do
-          not need coded answers.
+        * code - (optional) an identifier for the list item.  This can be
+          omitted if you do not need coded answers.
         * other - If this answer is an "Other" item, then this "other" key
           provides a label like "Please specify" for an additional field that
           will be available with the user chooses this answer.
+        * <a name="score"></a>score - (optional) Some forms have scored answers
+          which get summed into a total field.  See TOTALSCORE under <a
+          href="#calculationMethod">calculationMethod</a> below for how to
+          specify which field holds the total.
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This usually used of for larger lists for
       which it would not be practical to include the whole list with the form.
@@ -176,11 +192,22 @@ Keys:
       * logic - either "ANY" or "ALL".  If "ANY" is used, then any condition in
         "conditions" being met will trigger the action, while for "ALL" all
         conditions must be met.
+    * codingInstructions - (optional) a string of help text.  When this is
+      present, a help button will appear next to the question, or if the "Show
+      Help/Description" checkbox is used, the text will appear next to the
+      question (so it should be brief).
+    * <a name="calculationMethod"></a>calculationMethod - For fields whose value
+      is calculation for other fields, the means of calculation is specified
+      here.  At present we only support a formula for summing the <a
+      href="#score">scores</a> for all the questions on the form.  We also are
+      working on formulas like computing a body-mass index based on weight and
+      height, but that is still under development.  To have a field be the sum
+      of the scores, set calculation method to `{"name": "TOTALSCORE"}`.
   * <a name="answerLists"></a> **answerLists** - This is a hash of list lookup
-  * keys (string identifiers which can be used with the <a
-  * href="#answers">answers</a> key) to answer lists.  The advantage of
-  * specifying a list here rather than directly with the list item is that if
-  * more than one question uses the same list (e.g. Yes/No) then you do not have
-  * to repeat the list each time it is used.  The values in this hash are the
-  * same arrays as describe above for <a href="#answers">"answers"</a>.
+    keys (string identifiers which can be used with the <a
+    href="#answers">answers</a> key) to answer lists.  The advantage of
+    specifying a list here rather than directly with the list item is that if
+    more than one question uses the same list (e.g. Yes/No) then you do not have
+    to repeat the list each time it is used.  The values in this hash are the
+    same arrays as describe above for <a href="#answers">"answers"</a>.
 
