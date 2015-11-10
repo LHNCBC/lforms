@@ -214,7 +214,7 @@ WidgetUtil = {
 
   /**
    * Get form data from the LForms rendered form
-   * @param elementId the containing HTML element that includes the LForm's rendered form.
+   * @param element the containing HTML element that includes the LForm's rendered form.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.

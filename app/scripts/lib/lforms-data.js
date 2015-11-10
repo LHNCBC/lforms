@@ -606,7 +606,7 @@ var LFormsData = Class.extend({
       // all its children has empty value (thus have not been added either) or it has not children, and
       // it has an empty value or it has an empty array as value
       //// (noEmptyValue && itemData.items && itemData.items.length === 0 && (!item.value || item.value.length === 0) )
-      if (!noEmptyValue || (!itemData.items || itemData.items.length !== 0) || item.value && item.value.legnth !==0) {
+      if (!noEmptyValue || (!itemData.items || itemData.items.length !== 0) || item.value && item.value.length !==0) {
         itemsData.push(itemData);
       }
     }
@@ -1052,37 +1052,18 @@ var LFormsData = Class.extend({
 
   /**
    * Get a source item from the question code defined in a score rule
-   * @param item the target item where a score rule is defined
+   * @param item the target item where a formula is defined
    * @param questionCodes the code of a source item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
    * @returns {Array}
    * @private
    */
-  _getFormulaSourceItems: function(item, questionCodes) {
+  _getFormulaSourceItems: function(item, questionCodes, checkAncestorSibling) {
     var sourceItems = [];
-
     for (var i= 0, iLen=questionCodes.length; i<iLen; i++) {
       var questionCode = questionCodes[i];
-      var sourceItem = null;
-      // check siblings
-      if (item._parentItem && Array.isArray(item._parentItem.items)) {
-        for (var j= 0, jLen= item._parentItem.items.length; j<jLen; j++) {
-          if (item._parentItem.items[j].questionCode === questionCode) {
-            sourceItem = item._parentItem.items[j];
-            break;
-          }
-        }
-      }
-      // check ancestors
-      if (!sourceItem) {
-        var parentItem = item._parentItem;
-        while (parentItem) {
-          if (parentItem.questionCode === questionCode) {
-            sourceItem = parentItem;
-            break;
-          }
-          parentItem = parentItem._parentItem;
-        }
-      }
+
+      var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
       sourceItems.push(sourceItem);
     }
     return sourceItems;
@@ -1324,51 +1305,19 @@ var LFormsData = Class.extend({
     return ret;
   },
 
-
-  ///**
-  // * Get a source item from the question code defined in a skip logic
-  // * @param item the target item where a skip logic is defined
-  // * @param questionCodes the code of a source item
-  // * @returns {Array}
-  // * @private
-  // */
-  //_getSkipLogicSourceItem: function(item, questionCode) {
-  //  var sourceItem = null;
-  //
-  //  // check siblings
-  //  if (item._parentItem && Array.isArray(item._parentItem.items)) {
-  //    for (var i= 0, iLen= item._parentItem.items.length; i<iLen; i++) {
-  //      if (item._parentItem.items[i].questionCode === questionCode) {
-  //        sourceItem = item._parentItem.items[i];
-  //        break;
-  //      }
-  //    }
-  //  }
-  //  // check ancestors
-  //  if (!sourceItem) {
-  //    var parentItem = item._parentItem;
-  //    while (parentItem) {
-  //      if (parentItem.questionCode === questionCode) {
-  //        sourceItem = parentItem;
-  //        break;
-  //      }
-  //      parentItem = parentItem._parentItem;
-  //    }
-  //  }
-  //
-  //  return sourceItem;
-  //},
-
   /**
-   * Get a source item from the question code defined in a skip logic
-   * @param item the target item where a skip logic is defined
-   * @param questionCodes the code of a source item
-   * @param checkAncestorSibling, optional, to check ancestor's siblings also, default is false
-   * @returns {Array}
+   * Search upwards along the tree structure to find the item with a matching questionCode
+   * @param item the item to start with
+   * @param questionCodes the code of an item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
+   * @returns {}
    * @private
    */
-  _getSkipLogicSourceItem: function(item, questionCode, checkAncestorSibling) {
+  _findItemsUpwardsAlongAncestorTree: function(item, questionCode, checkAncestorSibling) {
     var sourceItem = null;
+
+    if (checkAncestorSibling === undefined)
+      checkAncestorSibling = true;
 
     // check siblings
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -1405,8 +1354,18 @@ var LFormsData = Class.extend({
         parentItem = parentItem._parentItem;
       }
     }
-
     return sourceItem;
+  },
+  /**
+   * Get a source item from the question code defined in a skip logic
+   * @param item the target item where a skip logic is defined
+   * @param questionCodes the code of a source item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings also, default is true
+   * @returns {Array}
+   * @private
+   */
+  _getSkipLogicSourceItem: function(item, questionCode, checkAncestorSibling) {
+    return this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
   },
 
   /**
@@ -1497,7 +1456,7 @@ var LFormsData = Class.extend({
 
       for (var i= 0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
-        var sourceItem = this._getSkipLogicSourceItem(item, condition.source, true);
+        var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
         var conditionMet = this._checkSkipLogicCondition(sourceItem, condition.trigger);
         // ALL: check all conditions until one is not met, or all are met.
         if (hasAll && !conditionMet ) {
