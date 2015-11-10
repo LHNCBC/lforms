@@ -40,20 +40,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </h3>\n" +
     "      <div class=\"lf-form-body\">\n" +
     "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
-    "          <colgroup>\n" +
+    "          <colgroup ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
     "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
     "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
     "          </colgroup>\n" +
-    "          <thead>\n" +
+    "          <thead ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "          <tr>\n" +
     "            <th class=\"lf-form-table-header\"\n" +
     "                ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
-    "              for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
+    "              for=\"{{::item.questionCode}}\">{{::item.question}}</label></th>\n" +
     "          </tr>\n" +
     "          </thead>\n" +
     "          <tbody>\n" +
-    "          <tr class=\"lf-form-table-row\">\n" +
+    "          <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
     "                ng-switch on=\"item.dataType\">\n" +
     "              <ng-form name=\"innerForm\">\n" +
@@ -63,16 +63,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
     "                         ng-model=\"item.value\"\n" +
     "                         autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
     "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item.value\" lf-date=\"::dateOptions\"\n" +
     "                         placeholder=\"MM/DD/YYYY\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
     "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item.value\" placeholder=\"Type a value\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                </div>\n" +
     "              </ng-form>\n" +
     "            </td>\n" +
@@ -231,20 +231,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </h3>\n" +
     "      <div class=\"lf-form-body\">\n" +
     "        <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
-    "          <colgroup>\n" +
+    "          <colgroup ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "            <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
     "                 ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
     "                            'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
     "          </colgroup>\n" +
-    "          <thead>\n" +
+    "          <thead ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "          <tr>\n" +
     "            <th class=\"lf-form-table-header\"\n" +
     "                ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
-    "              for=\"obr_{{::item.question}}\">{{::item.question}}</label></th>\n" +
+    "              for=\"{{::item.questionCode}}\">{{::item.question}}</label></th>\n" +
     "          </tr>\n" +
     "          </thead>\n" +
     "          <tbody>\n" +
-    "          <tr class=\"lf-form-table-row\">\n" +
+    "          <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOption.obrHeader\">\n" +
     "            <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
     "                ng-switch on=\"item.dataType\">\n" +
     "              <ng-form name=\"innerForm\">\n" +
@@ -254,16 +254,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                         ng-required=\"::item._answerRequired\" placeholder=\"Select or type a value\"\n" +
     "                         ng-model=\"item.value\"\n" +
     "                         autocomplete-lhc=\"::autocompLhcOpt(item)\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{::item.question}}\"\n" +
     "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item.value\" lf-date=\"::dateOptions\"\n" +
     "                         placeholder=\"MM/DD/YYYY\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                  <input ng-switch-default name=\"{{::item.question}}\"\n" +
     "                         ng-required=\"::item._answerRequired\"\n" +
     "                         ng-model=\"item.value\" placeholder=\"Type a value\"\n" +
-    "                         id=\"obr_{{::item.question}}\">\n" +
+    "                         id=\"{{::item.questionCode}}\">\n" +
     "                </div>\n" +
     "              </ng-form>\n" +
     "            </td>\n" +

@@ -185,15 +185,15 @@ angular.module('lformsWidget')
           return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return item.value;}) : null;
         },
         function() {
-          $scope.watchOnValueChange();
+          $scope.updateOnValueChange();
         },
         true
       );
 
-      $scope.watchOnValueChange = function() {
+      $scope.updateOnValueChange = function() {
         var widgetData = $scope.lfData;
         if (widgetData) {
-          widgetData.watchOnValueChange();
+          widgetData.updateOnValueChange();
           $scope.sendActionsToScreenReader();
         }
       };
