@@ -18,10 +18,10 @@ hierarchy) to other questions, validation checks, skip logic and help messages.
 
 In LForms, questions can accept multiple answers, and groups of questions or
 single questions can repeat. LForms will generate total scores for any set of
-questions whose answers have scores (e.g., Glasgow coma score). [Form
-definitions](#formdef) can be specified as JSON data structures or CSV files. We
-have used LForms to generate Web-based forms for many LOINC panels and for AHRQ
-Patient Safety Event Reports.  See the [demo
+questions whose answers have scores (e.g., Glasgow coma score). <a
+href="#formdef">Form definitions</a> can be specified as JSON data structures or
+CSV files. We have used LForms to generate Web-based forms for many LOINC panels
+and for AHRQ Patient Safety Event Reports.  See the [demo
 site](https://lforms-demo.nlm.nih.gov) for a working example.
 
 ## Installation
