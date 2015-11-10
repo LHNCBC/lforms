@@ -74,6 +74,7 @@ will follow the structure of the form, in that answers will be nested inside
 containing hashes representing their sections.
 
 The parameters are:
+
     1. formElement - an HTML element that includes the LForm's rendered form. If
        this is ommitted, the "body" tag will be used.  If there is more than one
        LForm within formElement, the first found will be used.
