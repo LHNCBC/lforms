@@ -82,6 +82,9 @@ var LFormsData = Class.extend({
   // action logs for screen reader
   _actionLogs: [],
 
+  // active item, where a input field in the row has the focus
+  _activeItem: null,
+
   /**
    * Constructor
    * @param data the lforms form definition data
@@ -362,6 +365,7 @@ var LFormsData = Class.extend({
     this._codePath = "";
     this._idPath = "";
     this._displayLevel = 0;
+    this._activeItem = null;
 
     // type
     if (!this.type || this.type.length == 0) {
@@ -379,7 +383,6 @@ var LFormsData = Class.extend({
           {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
           {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
           {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
-//          {"name" : "Range", "formatting":{"width": "6em", "min-width": "4em"}}
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
@@ -388,7 +391,7 @@ var LFormsData = Class.extend({
           {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
           {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
         ]
-      }
+      };
     }
   },
 
@@ -1555,6 +1558,24 @@ var LFormsData = Class.extend({
     return extra;
 
   },
+
+  /**
+   * Set the active row in table
+   * @param item an item
+   */
+  setActiveRow: function(item) {
+    this._activeItem = item;
+  },
+
+  /**
+   * Get the css class for the active row
+   * @param item an item
+   * @returns {string}
+   */
+  getActiveRowClass: function(item) {
+    return this._activeItem && this._activeItem._elementId === item._elementId ? "active-row" : "";
+  },
+
 
   // Form navigation by keyboard
   Navigation: {
