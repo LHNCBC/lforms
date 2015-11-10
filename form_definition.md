@@ -81,41 +81,42 @@ Keys:
 * **name** - (required) The name of the form (to be shown to the user)
 * **templateOption** - a hash of options for the template.  This can be
   omitted, but supported values are below.
-  * <a name="obrHeader"></a> obrHeader - a boolean that controls whether to
-    show a row fields above the actual form like "Date Date", "Comment", etc.
-    (This control is actually broken at the moment, but will be fixed soon.)
-    The default is true.
-  * obrItems - an array defining fields above the form (see
-    [obrHeader](#obrHeader)).  If you omit templateOption, a default will be
-    provided which will have the fields "Date Done", "Time Done", "Where
-    Done", and "Comment".  If you wish to specify your own definitions, each
-    element in the array should be a hash with the following keys:
-    * question - the field label
-    * dataType - the kind of field.  This can be DT for a date field with a
-      calender widget, ST for a normal input field, CNE for a list field in
-      which values are required to match the list, or CWE for a list field in
-      which values can be off the list.
-    * answers - For data types CNE or CWE, this is an array with the list
-      data.  Each element in the array is a hash with the following keys:
-      * text - the display string for the list item
-      * code - (optional) a code that identifies the list item
-    * formatting - This controls things like the width of the column.  It is a
-      hash with the keys "width" and "min-width", the values of both of which
-      are the standard CSS values for those style settings.
-    * <a name="answerCardinality"></a>answerCardinality - For lists, this
-      allows you to control whether list is multi-select or not.  It is a hash
-      that takes two keys, "min" and "max".  If you "min" to "1", then the
-      user will be required to provide an answer.  If you set "max" to "*",
-      the list becomes multi-select.  (Other possibilities are not yet
-      supported.)
-    * _answerRequired - If true, the field will complain if the user leaves it
-      blank.
+    * <a name="obrHeader"></a> obrHeader - a boolean that controls whether to
+      show a row fields above the actual form like "Date Date", "Comment", etc.
+      (This control is actually broken at the moment, but will be fixed soon.)
+      The default is true.
+    * obrItems - an array defining fields above the form (see
+      [obrHeader](#obrHeader)).  If you omit templateOption, a default will be
+      provided which will have the fields "Date Done", "Time Done", "Where
+      Done", and "Comment".  If you wish to specify your own definitions, each
+      element in the array should be a hash with the following keys:
+        * question - the field label
+        * dataType - the kind of field.  This can be DT for a date field with a
+          calender widget, ST for a normal input field, CNE for a list field in
+          which values are required to match the list, or CWE for a list field in
+          which values can be off the list.
+        * answers - For data types CNE or CWE, this is an array with the list
+          data.  Each element in the array is a hash with the following keys:
+          * text - the display string for the list item
+          * code - (optional) a code that identifies the list item
+        * formatting - This controls things like the width of the column.  It is a
+          hash with the keys "width" and "min-width", the values of both of which
+          are the standard CSS values for those style settings.
+        * <a name="answerCardinality"></a>answerCardinality - For lists, this
+          allows you to control whether list is multi-select or not.  It is a hash
+          that takes two keys, "min" and "max".  If you "min" to "1", then the
+          user will be required to provide an answer.  If you set "max" to "*",
+          the list becomes multi-select.  (Other possibilities are not yet
+          supported.)
+        * _answerRequired - If true, the field will complain if the user leaves it
+          blank.
 * <a name="items"></a> **items** - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) mostly
   represented the same in this array, but a section will contain its own
   "items" array to specify what it contains.  Sections can be nested, but more
   than six levels of nesting will not look very good.  Each question/section
   in the array is represented by a hash with the following keys:
+
   * questionCode - (required) A code identifying the question or section.
   * questionCardinality - This controls whether the there is a button for
     adding another of this question/section.  It is a hash with "min" and
@@ -205,7 +206,7 @@ Keys:
     href="#score">scores</a> for all the questions on the form.  We also are
     working on formulas like computing a body-mass index based on weight and
     height, but that is still under development.  To have a field be the sum
-    of the scores, set calculation method to `{"name": "TOTALSCORE"}`.
+    of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
 * <a name="answerLists"></a> **answerLists** - This is a hash of list lookup
   keys (string identifiers which can be used with the <a
   href="#answers">answers</a> key) to answer lists.  The advantage of
