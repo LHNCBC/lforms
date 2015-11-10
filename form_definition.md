@@ -110,7 +110,7 @@ Keys:
           supported.)
         * _answerRequired - If true, the field will complain if the user leaves it
           blank.
-* <a name="items"></a> **items** - This is an array of form questions and
+* <a name="items"></a>**items** - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) mostly
   represented the same in this array, but a section will contain its own
   "items" array to specify what it contains.  Sections can be nested, but more
@@ -125,7 +125,7 @@ Keys:
       "1", "max": "*"}`.
     * question - The label for the question, or the title of the section.
     * answerCardinality - The same as <a href="#answerCardinality">above</a>.
-    * <a name="answers"></a> answers - For questions with answer lists, this is
+    * <a name="answers"></a>answers - For questions with answer lists, this is
       either an array of hashes for items in the list, or a string ID as a
       lookup key for such data in the <a href="#answerLists">answerLists</a>
       hash.  When provided as an array, each hash can contain:
@@ -207,7 +207,7 @@ Keys:
       working on formulas like computing a body-mass index based on weight and
       height, but that is still under development.  To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
-* <a name="answerLists"></a> **answerLists** - This is a hash of list lookup
+* <a name="answerLists"></a>**answerLists** - This is a hash of list lookup
   keys (string identifiers which can be used with the <a
   href="#answers">answers</a> key) to answer lists.  The advantage of
   specifying a list here rather than directly with the list item is that if
