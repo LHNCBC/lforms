@@ -5,6 +5,7 @@ of which can be seen in [sample-data.js](app/scripts/lib/sample-data.js).  The
 basic structure (some of which is optional) is shown below, followed by comments
 about the meaning of each key:
 
+```
     {
       "code": [string],
       "name": [string],
@@ -70,6 +71,7 @@ about the meaning of each key:
         }]
       ]
     }
+```
 
 Keys:
   * **code** - a code (identifier) for a panel, or in the context of answer
