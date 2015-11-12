@@ -80,4 +80,23 @@ describe('skip logic', function() {
     expect(ff.anyTarget.isDisplayed()).toBe(true);
 
   });
+
+  it('should be able to be controlled by an ancestors sibling', function() {
+    var ff = require('./fullFeaturedForm.po');
+    //
+    ff.rpSrc2.clear();
+    ff.rpSrc2.sendKeys('1');
+    expect(ff.rpTarget2a.isPresent()).toBe(false);
+    ff.rpSrc2.clear();
+    ff.rpSrc2.sendKeys('2');
+    expect(ff.rpTarget2a.isDisplayed()).toBe(true);
+    ff.rpAdd.click();
+
+    expect(ff.rpTarget2a.isDisplayed()).toBe(true);
+    expect(ff.rpTarget2b.isDisplayed()).toBe(true);
+    ff.rpSrc2.clear();
+    ff.rpSrc2.sendKeys('1');
+    expect(ff.rpTarget2a.isPresent()).toBe(false);
+    expect(ff.rpTarget2b.isPresent()).toBe(false);
+  });
 });

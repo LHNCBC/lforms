@@ -27,7 +27,7 @@ var DemoPage = function() {
 
     // some fields
     USSGFHTVertical: {
-      comment: element(by.id('obr_Comment')), // comment, template data
+      comment: element(by.id('comment')), // comment, template data
       name: element(by.id('/54126-8/54125-0/1/1')), // string
       gender: element(by.id('/54126-8/54131-8/1/1')), // answer
       race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers

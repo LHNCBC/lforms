@@ -1003,6 +1003,42 @@ var allInOne =
         "action": "show", "logic": "ANY"},
       "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
 
+    // skip logic, within a repeating section
+    {"questionCode": "rpSource2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "2 to show T2",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #2", "answers": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "repeatingSection1", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
+      "items": [
+        {"questionCode": "rpSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; <=5 to show header T3, and its subitem T4.",
+          "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #1", "answers": null,
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source (repeating) #1' == 1", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"value": 1}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source (repeating) #2' == 2", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource2", "trigger": {"value": 2}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+          "items": [
+            {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+              "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+          ]
+        }
+      ]
+    },
+
+
+
+
     // skip logic, controlling child items and headers (one level below)
     // skip logic, controlling descendant items and headers (two levels below)
 

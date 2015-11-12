@@ -176,7 +176,7 @@ var LFormsData = Class.extend({
    * Functions to run when values in the model change
    * To be optimized for performance.
    */
-  watchOnValueChange: function() {
+  updateOnValueChange: function() {
     // check skip logic
     this._updateSkipLogicStatus(this.items, null);
 
@@ -373,7 +373,7 @@ var LFormsData = Class.extend({
     }
     // template
     if (!this.template || this.template.length == 0) {
-      this.type = "panelTableV"
+      this.template = "panelTableV"
     }
     // templateOption
     if (!this.templateOption || jQuery.isEmptyObject(this.templateOption)) {
@@ -386,16 +386,14 @@ var LFormsData = Class.extend({
         ],
         obrHeader: true,  // controls if the obr table needs to be displayed
         obrItems: [
-          {"question":"Date Done","dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
-          {"question":"Time Done","dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
-          {"question":"Where Done","dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
-          {"question":"Comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+          {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
+          {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
+          {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
+          {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
         ]
       };
     }
   },
-
-
 
   /**
    * Set up the internal data for each item in the tree
@@ -438,7 +436,6 @@ var LFormsData = Class.extend({
       if (!item.answerCardinality) {
         item.answerCardinality = {"min":"0", "max":"1"};
       }
-
 
       // set up flags for question and answer cardinality
       item._questionRepeatable = item.questionCardinality.max &&
@@ -548,7 +545,7 @@ var LFormsData = Class.extend({
     var ret = {};
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
     // template options could be optional. Include them, only if they are present
-    if(this.templateOption && this.templateOption.obrItems) {
+    if(this.templateOption && this.templateOption.obrHeader && this.templateOption.obrItems ) {
       ret.templateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
     }
 
@@ -605,10 +602,15 @@ var LFormsData = Class.extend({
       if (item.items && item.items.length > 0) {
         itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem);
       }
-      itemsData.push(itemData);
+      // not to add the section header if noEmptyValue is set, and
+      // all its children has empty value (thus have not been added either) or it has not children, and
+      // it has an empty value or it has an empty array as value
+      //// (noEmptyValue && itemData.items && itemData.items.length === 0 && (!item.value || item.value.length === 0) )
+      if (!noEmptyValue || (!itemData.items || itemData.items.length !== 0) || item.value && item.value.length !==0) {
+        itemsData.push(itemData);
+      }
     }
     return itemsData;
-
   },
 
   /**
@@ -1050,37 +1052,18 @@ var LFormsData = Class.extend({
 
   /**
    * Get a source item from the question code defined in a score rule
-   * @param item the target item where a score rule is defined
+   * @param item the target item where a formula is defined
    * @param questionCodes the code of a source item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
    * @returns {Array}
    * @private
    */
-  _getFormulaSourceItems: function(item, questionCodes) {
+  _getFormulaSourceItems: function(item, questionCodes, checkAncestorSibling) {
     var sourceItems = [];
-
     for (var i= 0, iLen=questionCodes.length; i<iLen; i++) {
       var questionCode = questionCodes[i];
-      var sourceItem = null;
-      // check siblings
-      if (item._parentItem && Array.isArray(item._parentItem.items)) {
-        for (var j= 0, jLen= item._parentItem.items.length; j<jLen; j++) {
-          if (item._parentItem.items[j].questionCode === questionCode) {
-            sourceItem = item._parentItem.items[j];
-            break;
-          }
-        }
-      }
-      // check ancestors
-      if (!sourceItem) {
-        var parentItem = item._parentItem;
-        while (parentItem) {
-          if (parentItem.questionCode === questionCode) {
-            sourceItem = parentItem;
-            break;
-          }
-          parentItem = parentItem._parentItem;
-        }
-      }
+
+      var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
       sourceItems.push(sourceItem);
     }
     return sourceItems;
@@ -1322,16 +1305,19 @@ var LFormsData = Class.extend({
     return ret;
   },
 
-
   /**
-   * Get a source item from the question code defined in a skip logic
-   * @param item the target item where a skip logic is defined
-   * @param questionCodes the code of a source item
-   * @returns {Array}
+   * Search upwards along the tree structure to find the item with a matching questionCode
+   * @param item the item to start with
+   * @param questionCodes the code of an item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
+   * @returns {}
    * @private
    */
-  _getSkipLogicSourceItem: function(item, questionCode) {
+  _findItemsUpwardsAlongAncestorTree: function(item, questionCode, checkAncestorSibling) {
     var sourceItem = null;
+
+    if (checkAncestorSibling === undefined)
+      checkAncestorSibling = true;
 
     // check siblings
     if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -1342,19 +1328,45 @@ var LFormsData = Class.extend({
         }
       }
     }
-    // check ancestors
+    // check ancestors and each ancestors siblings
     if (!sourceItem) {
       var parentItem = item._parentItem;
       while (parentItem) {
+        var foundSource = false;
+        // check the ancestor
         if (parentItem.questionCode === questionCode) {
           sourceItem = parentItem;
-          break;
+          foundSource = true;
         }
+        // check the ancestors siblings
+        else if (checkAncestorSibling && parentItem._parentItem && Array.isArray(parentItem._parentItem.items)){
+          for (var i= 0, iLen= parentItem._parentItem.items.length; i<iLen; i++) {
+            if (parentItem._parentItem.items[i].questionCode === questionCode) {
+              sourceItem = parentItem._parentItem.items[i];
+              foundSource = true;
+              break;
+            }
+          }
+        }
+        if (foundSource)
+          break;
+
         parentItem = parentItem._parentItem;
       }
     }
-
     return sourceItem;
+  },
+
+  /**
+   * Get a source item from the question code defined in a skip logic
+   * @param item the target item where a skip logic is defined
+   * @param questionCodes the code of a source item
+   * @param checkAncestorSibling, optional, to check ancestor's siblings also, default is true
+   * @returns {Array}
+   * @private
+   */
+  _getSkipLogicSourceItem: function(item, questionCode, checkAncestorSibling) {
+    return this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
   },
 
   /**
@@ -1366,7 +1378,7 @@ var LFormsData = Class.extend({
    */
   _checkSkipLogicCondition: function(item, trigger) {
     var action = false;
-    if (item.value) {
+    if (item && item.value !== undefined && item.value !== null && item.value !== "") {
       var currentValue = item.value;
 
       switch (item.dataType) {
@@ -1417,7 +1429,7 @@ var LFormsData = Class.extend({
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
         case "BL":
-          if (trigger.hasOwnProperty("value") && currentValue &&
+          if (trigger.hasOwnProperty("value") &&
             trigger["value"] === currentValue ) {
             action = true;
           }

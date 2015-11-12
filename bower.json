@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "dependencies": {
     "angular": "~1.4.7",
     "json3": "~3.3.2",
@@ -28,7 +28,7 @@
         "ui/button.js",
         "ui/dialog.js",
         "ui/datepicker.js",
-        "themes/ui-lightness/jquery-ui.min.css"
+        "themes/start/jquery-ui.min.css"
       ]
     }
   },

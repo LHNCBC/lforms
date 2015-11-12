@@ -16,6 +16,11 @@ var FullFeaturedForm = function() {
     anySrc2: element(by.id('/slANYSource2/1')),
     anyTarget: element(by.id('/slANYTargetItem/1')),
 
+    rpSrc2: element(by.id('/rpSource2/1')),
+    rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
+    rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
+    rpAdd: element(by.id('add-/repeatingSection1/1')),
+
     formSearch: element(by.css('#s2id_loinc_num1 a')),
     formShow: element(by.css('.btn')).click(),
 
