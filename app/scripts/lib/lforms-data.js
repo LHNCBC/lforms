@@ -1356,6 +1356,7 @@ var LFormsData = Class.extend({
     }
     return sourceItem;
   },
+
   /**
    * Get a source item from the question code defined in a skip logic
    * @param item the target item where a skip logic is defined
