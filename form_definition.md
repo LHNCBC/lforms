@@ -32,10 +32,11 @@ about the meaning of each key:
           max: "1" or "*"
         },
         "answers": string or [{
-          text: string,
-          code: string,
-          other: string,
-          score: number
+          "text": string,
+          "code": string,
+          "label": string,
+          "other": string,
+          "score": number
         }],
         "externallyDefined": string,
         "dataType": string,
@@ -48,7 +49,7 @@ about the meaning of each key:
           "conditions": [{
             "source": string
             "trigger": {
-              "value": string or number, or
+              "value": string/number/boolean, or
               "minExclusive": number,
               "minInclusive": number,
               "maxExclusive": number,
@@ -62,14 +63,6 @@ about the meaning of each key:
           "name": string
         }
       }],
-      answerLists: [
-        "622": [{
-          "text": string,
-          "code": string,
-          "other": string,
-          "label": string
-        }]
-      ]
     }
 ```
 
@@ -77,7 +70,7 @@ Keys:
 
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
-  optionar.
+  optional.
 * **name** - (required) The name of the form (to be shown to the user)
 * **templateOption** - a hash of options for the template.  This can be
   omitted, but supported values are below.
@@ -108,16 +101,16 @@ Keys:
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
-        * _answerRequired - If true, the field will complain if the user leaves it
-          blank.
 * <a name="items"></a><b>items</b> - This is an array of form questions and
-  sections.  Questions and sections (containing sub-questions) mostly
+  sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
-  "items" array to specify what it contains.  Sections can be nested, but more
-  than six levels of nesting will not look very good.  Each question/section
-  in the array is represented by a hash with the following keys:
+  "items" array to specify what it contains.  Sections can be nested to create
+  sub-sections, so that the definition forms tree-like structure with questions
+  at the leaf nodes.  Each question/section in the array is represented by a hash
+  with the following keys:
 
     * questionCode - (required) A code identifying the question or section.
+      This code needs to be unique among its sibling questions.
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
@@ -126,14 +119,16 @@ Keys:
     * question - The label for the question, or the title of the section.
     * answerCardinality - The same as <a href="#answerCardinality">above</a>.
     * <a name="answers"></a>answers - For questions with answer lists, this is
-      either an array of hashes for items in the list, or a string ID as a
-      lookup key for such data in the <a href="#answerLists">answerLists</a>
-      hash.  When provided as an array, each hash can contain:
+      an array of hashes for items in the list.  Each hash can contain:
         * text - (required) the display string for this list item.  This should
           be unique within the list.
         * code - (optional) an identifier for the list item.  This can be
           omitted if you do not need coded answers.
-        * other - If this answer is an "Other" item, then this "other" key
+        * label - (optional) Some lists have a label for each list item, such as
+          'a', 'b', etc.  This is an array of such labels, corresponding to the
+          items in the "text" array.  When this is present, the automatic number
+          of list items will be turned off avoid confusion.
+        * other - (optional) If this answer is an "Other" item, then this "other" key
           provides a label like "Please specify" for an additional field that
           will be available with the user chooses this answer.
         * <a name="score"></a>score - (optional) Some forms have scored answers
@@ -141,14 +136,14 @@ Keys:
           href="#calculationMethod">calculationMethod</a> below for how to
           specify which field holds the total.
     * externallyDefined - List fields can be configured to obtain their lists
-      from a URL as the user types.  This usually used of for larger lists for
+      from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.
       The [lforms-service](https://lforms-service.nlm.nih.gov/) website provides
-      a number of read-to-use web APIs that can plugged in here to provide
+      a number of ready-to-use web APIs that can plugged in here to provide
       searchable lists of drugs, medical conditions, disease names, and more.
       If you wish to set up your own web API on a website, then you just need to
       understand what query parameters to handle on the webserver, and what the
-      response format nees to be.  LForms uses the
+      response format needs to be.  LForms uses the
       [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) package for
       its lists, so see the documentation for its [url
       parameter](http://lhncbc.github.io/autocomplete-lhc/docs.html#url) if you
@@ -160,7 +155,7 @@ Keys:
         * CNE - an answer list where the user is **not** permitted to enter something
           not on the list.
         * REAL - a number which might not be an integer
-        * INT - a integer
+        * INT - an integer
         * DT - a date field (with a calendar widget)
         * ST - a normal free-text string field
     * units - For numeric answer fields, this is an optional list for the units
@@ -177,12 +172,16 @@ Keys:
       following keys:
         * conditions - An array of the conditions to be met.  Each condition is a
           hash with the following keys:
-            * source - The code of another question
+            * source - The code of another question.  The source must be either
+              a sibling of this question (in the tree), or or one of the
+              questions in in the containing sections.
             * trigger - A hash defining a condition about the value for the
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
               or maxInclusive.  The meaning of the keys is as follows:
-                * value - a value which the value for question "source" must exactly match.
+                * value - a value which the value for question "source" must
+                * exactly match.  For questions with lists, the can either be
+                  the text of the answer, its code, or its label.
                 * minExclusive - a value which the source question's value must exceed
                 * minInclusive - a value which the source question's value must equal
                   or exceed
@@ -190,28 +189,21 @@ Keys:
                   less than
                 * maxInclusive - a value which the source question's value must equal
                   or be less than
-        * action - the action to take when the conditions are met.  For now the
-          one supported value is "show", and when conditions are not met the
-          question or section is hidden.
-        * logic - either "ANY" or "ALL".  If "ANY" is used, then any condition in
+        * action - (optional) the action to take when the conditions are met.  For now the
+          one supported value is "show" (which is also the default), and when
+          conditions are not met the question or section is hidden.
+        * logic - (optional) either "ANY" or "ALL".  If "ANY" is used, then any condition in
           "conditions" being met will trigger the action, while for "ALL" all
-          conditions must be met.
+          conditions must be met.  If not specified, the default is "ANY".
     * codingInstructions - (optional) a string of help text.  When this is
       present, a help button will appear next to the question, or if the "Show
       Help/Description" checkbox is used, the text will appear next to the
       question (so it should be brief).
     * <a name="calculationMethod"></a>calculationMethod - For fields whose value
-      is calculation for other fields, the means of calculation is specified
+      is calculated from other fields, the means of calculation is specified
       here.  At present we only support a formula for summing the <a
       href="#score">scores</a> for all the questions on the form.  We also are
       working on formulas like computing a body-mass index based on weight and
       height, but that is still under development.  To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
-* <a name="answerLists"></a><b>answerLists</b> - This is a hash of list lookup
-  keys (string identifiers which can be used with the <a
-  href="#answers">answers</a> key) to answer lists.  The advantage of
-  specifying a list here rather than directly with the list item is that if
-  more than one question uses the same list (e.g. Yes/No) then you do not have
-  to repeat the list each time it is used.  The values in this hash are the
-  same arrays as describe above for <a href="#answers">"answers"</a>.
 
