@@ -54,7 +54,7 @@ angular.module('lformsWidget')
             controller.$render = function () {
               var date = controller.$viewValue;
               if ( angular.isDefined(date) && date !== null && !angular.isDate(date) && typeof(date) !== "string" ) {
-                throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date);
+                throw new Error('ng-Model value must be a Date object or a string - currently it is a ' + typeof date);
               }
               // convert saved user data into date
               else if (typeof(date) === "string") {

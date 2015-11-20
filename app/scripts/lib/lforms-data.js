@@ -460,7 +460,7 @@ var LFormsData = Class.extend({
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
-      // set up tooltip and precess user data if there's any user data.
+      // set up tooltip and process user data if there's any user data.
       switch (item.dataType) {
         case "DT":
           item._toolTip = "MM/DD/YYYY";
@@ -494,9 +494,9 @@ var LFormsData = Class.extend({
         this._setTreeNodes(item.items, item);
       }
 
-      // keep a copy of the repeatable items
+      // keep a copy of the repeatable items, only for the first of the same repeating items
       // before the parentItem is added to avoid circular reference that make the angular.copy really slow
-      if (item._questionRepeatable) {
+      if (item._questionRepeatable && item._id === 1) {
         var itemRepeatable = angular.copy(item);
         // remove user data
         this._removeUserData(itemRepeatable);
