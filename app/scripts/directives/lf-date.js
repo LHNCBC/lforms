@@ -53,8 +53,12 @@ angular.module('lformsWidget')
             // Update the date picker when the model changes
             controller.$render = function () {
               var date = controller.$viewValue;
-              if ( angular.isDefined(date) && date !== null && !angular.isDate(date) ) {
-                throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date + ' - use lf-date-format to convert it from a string');
+              if ( angular.isDefined(date) && date !== null && !angular.isDate(date) && typeof(date) !== "string" ) {
+                throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date);
+              }
+              // convert saved user data into date
+              else if (typeof(date) === "string") {
+                date = new Date(date);
               }
               element.datepicker("setDate", date);
             };
@@ -74,45 +78,4 @@ angular.module('lformsWidget')
       }
     };
   }
-  ])
-
-  .constant('lfDateFormatConfig', '')
-
-  .directive('lfDateFormat', ['lfDateFormatConfig', function(lfDateFormatConfig) {
-    var directive = {
-      require:'ngModel',
-      link: function(scope, element, attrs, modelCtrl) {
-        var dateFormat = attrs.lfDateFormat || lfDateFormatConfig;
-        if ( dateFormat ) {
-          // Use the datepicker with the attribute value as the dateFormat string to convert to and from a string
-          modelCtrl.$formatters.push(function(value) {
-            if (angular.isString(value) ) {
-              return jQuery.datepicker.parseDate(dateFormat, value);
-            }
-            return null;
-          });
-          modelCtrl.$parsers.push(function(value){
-            if (value) {
-              return jQuery.datepicker.formatDate(dateFormat, value);
-            }
-            return null;
-          });
-        } else {
-          // Default to ISO formatting
-          modelCtrl.$formatters.push(function(value) {
-            if (angular.isString(value) ) {
-              return new Date(value);
-            }
-            return null;
-          });
-          modelCtrl.$parsers.push(function(value){
-            if (value) {
-              return value.toISOString();
-            }
-            return null;
-          });
-        }
-      }
-    };
-    return directive;
-  }]);
+  ]);

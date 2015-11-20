@@ -12,7 +12,8 @@ angular.module('lformsWidget')
       {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
       {text: 'Full-Featured Demo', id: 'all-in-one'},
       {text: 'Form Builder created test form', id: 'formC'},
-      {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'}
+      {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
+      {text: 'Form With User Data', id: 'form-with-user-data'}
     ];
 
     // base config for ui-select2
@@ -64,6 +65,9 @@ angular.module('lformsWidget')
         }
         else if (loincNum == 'formC') {
           selectedFormData.updateForm(new LFormsData(angular.copy(formBuilder)));
+        }
+        else if (loincNum == 'form-with-user-data') {
+          selectedFormData.updateForm(new LFormsData(angular.copy(formWithUserData)));
         }
       }
     };
