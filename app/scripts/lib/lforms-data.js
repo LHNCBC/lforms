@@ -403,17 +403,11 @@ var LFormsData = Class.extend({
    */
   _setTreeNodes: function(items, parentItem) {
     var iLen=items.length, lastSiblingIndex = iLen -1;
+    var prevSibling = null, itemId = 1;
+
     // for each item on this level
     for (var i=0; i<iLen; i++) {
       var item = items[i];
-      if (!item._id) item._id = 1;
-      item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
-      item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
-      item._elementId = item._codePath + item._idPath;
-      item._displayLevel = parentItem._displayLevel + 1;
-
-      // set last sibling status
-      item._lastSibling = i === lastSiblingIndex;
 
       // set default dataType
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
@@ -443,15 +437,37 @@ var LFormsData = Class.extend({
       item._answerRequired = item.answerCardinality.min &&
           (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
       item._multipleAnswers = item.answerCardinality.max &&
-        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
       // set up readonly flag
       item._readOnly = (item.editable && item.editable == "0") || (item.calculationMethod);
 
-      // set up tooltip
+      // id
+      if (item._questionRepeatable && prevSibling && prevSibling.questionCode === item.questionCode) {
+        itemId += 1;
+      }
+      else {
+        itemId = 1;
+      }
+      item._id = itemId;
+
+      // code path, id path, element id
+      item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
+      item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
+      item._elementId = item._codePath + item._idPath;
+      item._displayLevel = parentItem._displayLevel + 1;
+
+      // set last sibling status
+      item._lastSibling = i === lastSiblingIndex;
+
+      // set up tooltip and process user data if there's any user data.
       switch (item.dataType) {
         case "DT":
           item._toolTip = "MM/DD/YYYY";
+          // process user data
+          if (item.value) {
+            item.value = new Date(item.value);
+          }
           break;
         case "CNE":
           item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
@@ -478,15 +494,34 @@ var LFormsData = Class.extend({
         this._setTreeNodes(item.items, item);
       }
 
-      // keep a copy of the repeatable items
+      // keep a copy of the repeatable items, only for the first of the same repeating items
       // before the parentItem is added to avoid circular reference that make the angular.copy really slow
-      if (item._questionRepeatable) {
-        item._repeatable = true;
-        this._repeatableItems[item._codePath] = angular.copy(item);
+      if (item._questionRepeatable && item._id === 1) {
+        var itemRepeatable = angular.copy(item);
+        // remove user data
+        this._removeUserData(itemRepeatable);
+        this._repeatableItems[item._codePath] = itemRepeatable;
       }
       // set a reference to its parent item
       item._parentItem = parentItem;
 
+      // keep a reference to the previous item for checking repeating items.
+      prevSibling = item;
+
+    }
+  },
+
+  /**
+   * Remove user data on an item or on all items in a section
+   * @param item an item
+   * @private
+   */
+  _removeUserData: function(item) {
+    item.value = null;
+    if (item.items && item.items.length > 0) {
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        this._removeUserData(item.items[i]);
+      }
     }
   },
 
@@ -933,7 +968,7 @@ var LFormsData = Class.extend({
    */
   _getRepeatingItems: function(item) {
     var repeatingItems = [];
-    if (item._repeatable && item._parentItem && Array.isArray(item._parentItem.items)) {
+    if (item._questionRepeatable && item._parentItem && Array.isArray(item._parentItem.items)) {
       var items = item._parentItem.items;
       for (var i = 0, iLen = items.length; i < iLen; i++) {
         if (items[i]._codePath === item._codePath) {
