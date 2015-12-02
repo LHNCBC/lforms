@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('lformsWidget')
-  .controller('PanelSearchCtrl', function ($scope, $http, selectedFormData) {
+  .controller('PanelSearchCtrl', function ($scope, lfFormDataService) {
     $scope.selectedPanel = [null,null,null, null];
     $scope.pIndex = 0;
 
@@ -44,30 +44,30 @@ angular.module('lformsWidget')
         var loincNum = $scope.selectedPanel[tabIndex].id;
 
         if (loincNum == '54127-6N') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(FHTData)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(FHTData)));
         }
         else if (loincNum == '54127-6H') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(horizontalFHTData)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(horizontalFHTData)));
         }
         else if (loincNum == '54580-6NEW') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(MDS3)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(MDS3)));
         }
         else if (loincNum == '35088-4B') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(glasgow)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(glasgow)));
         }
         else if (loincNum == '35088-4') {
           var newData = angular.copy(glasgowRI);
           WidgetUtil.preprocessRIData(newData.items);
-          selectedFormData.updateForm(new LFormsData(newData));
+          lfFormDataService.setFormData(new LFormsData(newData));
         }
         else if (loincNum == 'all-in-one') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(allInOne)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(allInOne)));
         }
         else if (loincNum == 'formC') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(formBuilder)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(formBuilder)));
         }
         else if (loincNum == 'form-with-user-data') {
-          selectedFormData.updateForm(new LFormsData(angular.copy(formWithUserData)));
+          lfFormDataService.setFormData(new LFormsData(angular.copy(formWithUserData)));
         }
       }
     };

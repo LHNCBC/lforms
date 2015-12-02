@@ -2,10 +2,12 @@
 
 angular.module('lformsWidget')
   .controller('PanelTableCtrl',
-    ['$scope', '$compile', '$http', 'smoothScroll', 'selectedFormData', 'LF_CONSTANTS',
-      function ($scope, $compile, $http, smoothScroll, selectedFormData, LF_CONSTANTS) {
+    ['$scope', '$compile', '$http', 'smoothScroll', 'lfFormDataService', 'LF_CONSTANTS',
+      function ($scope, $compile, $http, smoothScroll, lfFormDataService, LF_CONSTANTS) {
 
       $scope.debug = false;
+
+      $scope.formOpt = {};
 
       // Configuration data that controls form's UI
       $scope.formConfig = {
@@ -69,9 +71,13 @@ angular.module('lformsWidget')
        * Reset the lfData
        * by listening on a broadcast event
        */
-      $scope.$on('NewFormData', function(event, panelData) {
-        $scope.lfData = panelData;
+      $scope.$on('LF_NEW_DATA', function() {
+        $scope.lfData = lfFormDataService.getFormData();
       });
+
+      $scope.setFormData = function(formData) {
+        $scope.lfData = lfFormDataService.getFormData();
+      };
 
       /**
        * Check if the form is finished
@@ -414,7 +420,7 @@ angular.module('lformsWidget')
             // scroll down to show about 2 rows of the newly added section
             // if the new header item is close enough to the bottom so that the first 2 questions are not visible
             if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
-              smoothScroll(headerItem, {
+              smoothScroll(anchorItem, {
                 duration: 500,
                 easing: 'easeInQuad',
                 offset: viewportHeight - 105

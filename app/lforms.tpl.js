@@ -28,8 +28,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view-a.html',
-    "<div class=\"lf-form\" ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
-    "  <form novalidate autocomplete=\"false\">\n" +
+    "<!--<div  ng-controller=\"PanelTableCtrl\">-->\n" +
+    "  <form class=\"lf-form\" novalidate autocomplete=\"false\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
     "    <div class=\"lf-form-view\" ng-if=\"lfData\">\n" +
     "      <div class=\"lf-form-header\" ng-include=\"'form-header.html'\"></div>\n" +
     "\n" +
@@ -214,13 +214,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  </form>\n" +
     "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
     "  <button ng-if=\"debug\" ng-click=\"getFormData()\">Click to get form data</button>\n" +
-    "</div>\n"
+    "<!--</div>-->\n"
   );
 
 
   $templateCache.put('form-view-b.html',
-    "<div ng-controller=\"PanelTableCtrl\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
-    "  <form class=\"lf-form\" novalidate autocomplete=\"false\">\n" +
+    "<!--<div ng-controller=\"PanelTableCtrl\">-->\n" +
+    "  <form class=\"lf-form\" novalidate autocomplete=\"false\" ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" +
     "    <div class=\"lf-form-view\" ng-if=\"lfData\" >\n" +
     "      <div ng-include=\"'form-header.html'\"></div>\n" +
     "\n" +
@@ -408,6 +408,18 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </form>\n" +
     "  <button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
+    "<!--</div>-->\n"
+  );
+
+
+  $templateCache.put('form-view.html',
+    "<div ng-controller=\"PanelTableCtrl\" ng-switch on=\"lfData.template\">\n" +
+    "    <div ng-switch-when=\"form-view-b\">\n" +
+    "        <div ng-include=\"'form-view-b.html'\"></div>\n" +
+    "    </div>\n" +
+    "    <div ng-switch-default=\"form-view-a\">\n" +
+    "        <div ng-include=\"'form-view-a.html'\"></div>\n" +
+    "    </div>\n" +
     "</div>\n"
   );
 

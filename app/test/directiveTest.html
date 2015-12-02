@@ -91,7 +91,7 @@
     <script src="lforms.tpl.js"></script>
     <!-- end of lforms directive js files -->
 
-    <!-- data file for testing -->
+    <!-- data files for testing -->
     <script src="scripts/lib/sample-data.js"></script>
     <script src="scripts/lib/test-data.js"></script>
     <script src="scripts/lib/ri-data.js"></script>
@@ -101,23 +101,27 @@
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestControllerV', ['$scope', function ($scope) {
-            //$scope.lfData = new LFormsData(angular.copy(FHTData));
-            $scope.lfData = new LFormsData(angular.copy(MDS3));
+            $scope.lfData2 = new LFormsData(angular.copy(FHTData));
+            //$scope.lfData = new LFormsData(angular.copy(MDS3));
 
           }])
           .controller('lformsTestControllerH', ['$scope', function ($scope) {
-            $scope.lfData = new LFormsData(angular.copy(horizontalFHTData));
+            $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+
+            $scope.useFormDataV = function() {
+              $scope.lfData2 = new LFormsData(angular.copy(FHTData));
+            };
+            $scope.useFormDataH = function() {
+              $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+            };
           }]);
     </script>
 
-
-    <!--&lt;!&ndash; lforms test templates &ndash;&gt;-->
-    <!--<div id="vertical-form" ng-controller="lformsTestControllerV">-->
-      <!--<lforms-panel-v></lforms-panel-v>-->
-    <!--</div>-->
-
     <div id="horizontal-form" ng-controller="lformsTestControllerH">
-      <lforms-panel-h></lforms-panel-h>
+      <button ng-click="useFormDataV()">Use a form with vertical layout</button>
+      <button ng-click="useFormDataH()">Use a form with horizontal layout</button>
+      <button ng-click="lfData2.getFormData()">Click to get form data</button>
+      <lforms lf-data="lfData2"></lforms>
     </div>
 
   </body>

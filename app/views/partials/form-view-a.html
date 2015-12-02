@@ -1,5 +1,5 @@
-<div class="lf-form" ng-controller="PanelTableCtrl" ng-keydown="handleNavigationKeyEventByTab($event)">
-  <form novalidate autocomplete="false">
+<!--<div  ng-controller="PanelTableCtrl">-->
+  <form class="lf-form" novalidate autocomplete="false" ng-keydown="handleNavigationKeyEventByTab($event)">
     <div class="lf-form-view" ng-if="lfData">
       <div class="lf-form-header" ng-include="'form-header.html'"></div>
 
@@ -184,4 +184,4 @@
   </form>
   <button ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>
   <button ng-if="debug" ng-click="getFormData()">Click to get form data</button>
-</div>
+<!--</div>-->

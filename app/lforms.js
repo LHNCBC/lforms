@@ -3,26 +3,17 @@
 angular.module('lformsWidget', [
     "mgcrea.ngStrap",
     'smoothScroll',
-    'ui.select2',
     'autocompleteLhcMod',
     'lfConstants'
 ])
-.directive('lformsPanelV', function() {
+.directive('lforms', function() {
   return {
     restrict: 'E',
+    scope: {lfData: '=', lfOpt: '='},
     link: linkFunction,
-    transclude: true,
+    transclude: false,
     controller: 'PanelTableCtrl',
-    templateUrl: 'form-view-a.html'
-  };
-})
-.directive('lformsPanelH', function() {
-  return {
-    restrict: 'E',
-    link: linkFunction,
-    transclude: true,
-    controller: 'PanelTableCtrl',
-    templateUrl: 'form-view-b.html'
+    templateUrl: 'form-view.html'
   };
 });
 
