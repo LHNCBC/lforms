@@ -1,20 +1,11 @@
 'use strict';
 
 angular.module('lformsWidget')
-  .controller('PanelTableCtrl',
-    ['$scope', '$compile', '$http', 'smoothScroll', 'lfFormDataService', 'LF_CONSTANTS',
-      function ($scope, $compile, $http, smoothScroll, lfFormDataService, LF_CONSTANTS) {
+  .controller('LFormsCtrl',
+    ['$scope', 'smoothScroll', 'LF_CONSTANTS',
+      function ($scope, smoothScroll, LF_CONSTANTS) {
 
       $scope.debug = false;
-
-      $scope.formOpt = {};
-
-      // Configuration data that controls form's UI
-      $scope.formConfig = {
-        showQuestionCode: false,   // whether question code is displayed next to the question
-        showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-        tabOnInputFieldsOnly: false // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-      };
 
       // Provide blank image to satisfy img tag. Bower packaging forces us to
       // avoid using image files from html templates, therefore using base64
@@ -69,14 +60,9 @@ angular.module('lformsWidget')
 
       /**
        * Reset the lfData
-       * by listening on a broadcast event
        */
-      $scope.$on('LF_NEW_DATA', function() {
-        $scope.lfData = lfFormDataService.getFormData();
-      });
-
       $scope.setFormData = function(formData) {
-        $scope.lfData = lfFormDataService.getFormData();
+        $scope.lfData = formData;
       };
 
       /**
@@ -564,7 +550,7 @@ angular.module('lformsWidget')
        */
       $scope.handleNavigationKeyEventByTab = function(event) {
 
-        if ($scope.formConfig.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+        if ($scope.templateOption.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
           if (event.shiftKey) {
             var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;
           }

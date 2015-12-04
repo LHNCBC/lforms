@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lformsWidget')
+angular.module('lformsWidgetDev')
   .service('lfFormDataService', function($rootScope) {
     // AngularJS will instantiate a singleton by calling "new" on this function
     var data = { lfData : null };

@@ -61,7 +61,7 @@ var FormWithUserData = function() {
     rpAdd: element(by.id('add-/repeatingSection1/1')),
 
     formSearch: element(by.css('#s2id_loinc_num1 a')),
-    formShow: element(by.css('.btn')).click(),
+    formShow: element(by.css('.btn')),
 
     /**
      *  Opens the "full featured" form.

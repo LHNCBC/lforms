@@ -132,7 +132,7 @@ coded list field.
 
 Form definitions are stored in a JSON structure.  To get a rough idea of what
 these are you can take a look at one of the
-[samples](app/scripts/lib/sample-data.js), or for a detailed description see the
+[samples](app/data/sample-data.js), or for a detailed description see the
 [form definition documentation](form_definition.md).
 
 ## Licensing and Copyright Notice

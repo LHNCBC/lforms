@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lformsWidget')
+angular.module('lformsWidgetDev')
   .controller('PanelSearchCtrl', function ($scope, lfFormDataService) {
     $scope.selectedPanel = [null,null,null, null];
     $scope.pIndex = 0;

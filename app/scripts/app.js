@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lformsWidget', [
+angular.module('lformsWidgetDev', [
     'ngCookies',
     'ngResource',
     'ngSanitize',
@@ -10,7 +10,7 @@ angular.module('lformsWidget', [
     'mgcrea.ngStrap',
     'ui.select2',
     'autocompleteLhcMod',
-    'lfConstants'
+    'lformsWidget'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider

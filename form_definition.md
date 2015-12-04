@@ -1,7 +1,7 @@
 # Form Definition Format
 
 The forms rendered by the LForms widget are defined in a JSON format, an example
-of which can be seen in [sample-data.js](app/scripts/lib/sample-data.js).  The
+of which can be seen in [sample-data.js](app/data/sample-data.js).  The
 basic structure (some of which is optional) is shown below, followed by comments
 about the meaning of each key:
 

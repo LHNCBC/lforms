@@ -44,14 +44,13 @@
   "main": [
     "app/lforms.js",
     "app/scripts/lforms-constants.js",
-    "app/scripts/controllers/panel-table.js",
+    "app/scripts/controllers/lforms-controller.js",
     "app/scripts/directives/lf-date.js",
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/cross_browser.js",
     "app/scripts/lib/util.js",
     "app/scripts/lib/lforms-data.js",
-    "app/scripts/services/selected-panel.js",
     "app/styles/lforms.css",
     "app/lforms.tpl.js"
   ],
@@ -63,7 +62,7 @@
     "panel"
   ],
   "license": "MIT",
-  "homepage": "lhcs-formtool.nlm.nih.gov",
+  "homepage": "https://github.com/lhncbc/lforms",
   "ignore": [
     "**/.*",
     "node_modules",
