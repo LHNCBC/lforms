@@ -550,7 +550,7 @@ angular.module('lformsWidget')
        */
       $scope.handleNavigationKeyEventByTab = function(event) {
 
-        if ($scope.templateOption.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+        if ($scope.templateOptions.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
           if (event.shiftKey) {
             var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;
           }

@@ -4,26 +4,26 @@
 
     <h3 class="lf-form-title">
       <span>{{lfData.name}}</span>
-      <span ng-if="lfData.templateOption.showQuestionCode">
+      <span ng-if="lfData.templateOptions.showQuestionCode">
         <a href="http://s.details.loinc.org/LOINC/{{ lfData.code }}.html" target="_blank">[{{ lfData.code }}]</a></span>
     </h3>
     <div class="lf-form-body">
       <table cellspacing="0" cellpadding="0" class="lf-form-table">
-        <colgroup ng-if="lfData.templateOption.obrHeader">
-          <col ng-repeat="item in ::lfData.templateOption.obrItems"
+        <colgroup ng-if="lfData.templateOptions.obrHeader">
+          <col ng-repeat="item in ::lfData.templateOptions.obrItems"
                ng-style="{'width': '{{::item.formatting.width}}',
                           'min-width': '{{::item.formatting['min-width']}}'}">
         </colgroup>
-        <thead ng-if="lfData.templateOption.obrHeader">
+        <thead ng-if="lfData.templateOptions.obrHeader">
         <tr>
           <th class="lf-form-table-header"
-              ng-repeat="item in ::lfData.templateOption.obrItems"><label
+              ng-repeat="item in ::lfData.templateOptions.obrItems"><label
             for="{{::item.questionCode}}">{{::item.question}}</label></th>
         </tr>
         </thead>
         <tbody>
-        <tr class="lf-form-table-row" ng-if="lfData.templateOption.obrHeader">
-          <td class="rowEditText hasTooltip" ng-repeat="item in lfData.templateOption.obrItems"
+        <tr class="lf-form-table-row" ng-if="lfData.templateOptions.obrHeader">
+          <td class="rowEditText hasTooltip" ng-repeat="item in lfData.templateOptions.obrItems"
               ng-switch on="item.dataType">
             <ng-form name="innerForm">
               <div class="lf-form-item-data tooltipContainer">
@@ -51,13 +51,13 @@
             <div>
               <table cellspacing="0" cellpadding="0" class="lf-form-table">
                 <colgroup>
-                  <col ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
+                  <col ng-repeat="obxCol in ::lfData.templateOptions.obxTableColumns"
                        ng-style="{'width': '{{::obxCol.formatting.width}}',
                                   'min-width': '{{::obxCol.formatting['min-width']}}'}">
                 </colgroup>
                 <thead>
                 <tr>
-                  <th class="lf-form-table-header {{::obxCol.formatting['class']}}" ng-repeat="obxCol in ::lfData.templateOption.obxTableColumns"
+                  <th class="lf-form-table-header {{::obxCol.formatting['class']}}" ng-repeat="obxCol in ::lfData.templateOptions.obxTableColumns"
                       id="th_{{obxCol.name}}">{{::obxCol.name}}</th>
                 </tr>
                 </thead>
@@ -72,12 +72,12 @@
                           <div class="name-label">
                             <span ng-show="::item._questionRepeatable" class="sn">{{::getRepeatingSN(item) }}</span>
                             <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
-                            <span ng-show="lfData.templateOption.showQuestionCode">
+                            <span ng-show="lfData.templateOptions.showQuestionCode">
                               <a href="http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html"
                                  target="_blank">[{{ item.questionCode }}]</a></span>
-                            <span ng-show="lfData.templateOption.showCodingInstruction"
+                            <span ng-show="lfData.templateOptions.showCodingInstruction"
                                   class="prompt">{{ ::getCodingInstructions(item) }}</span>
-                            <button ng-show="!lfData.templateOption.showCodingInstruction" ng-if="::hasCodingInstructions(item)"
+                            <button ng-show="!lfData.templateOptions.showCodingInstruction" ng-if="::hasCodingInstructions(item)"
                                     class="help-button" bs-popover="::item.codingInstructions"
                                     data-auto-close="true" data-placement="right"  title="Instruction">?</button>
                           </div>

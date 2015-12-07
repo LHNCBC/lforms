@@ -89,7 +89,7 @@ describe('horizontal table', function() {
   });
 });
 
-describe('checkbox controlled by templateOption in the form data: ', function() {
+describe('checkbox controlled by templateOptions in the form data: ', function() {
   browser.get('http://0.0.0.0:9001/test/directiveTest.html');
   browser.waitForAngular();
   var loadForm1 = 'load1';

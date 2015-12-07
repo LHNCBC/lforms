@@ -9,7 +9,7 @@ about the meaning of each key:
     {
       "code": string,
       "name": string,
-      "templateOption": {
+      "templateOptions": {
         "obrHeader": boolean,
         "obrItems": [{
           "question": string,
@@ -72,14 +72,14 @@ Keys:
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
 * **name** - (required) The name of the form (to be shown to the user)
-* **templateOption** - a hash of options for the template.  This can be
+* **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       (This control is actually broken at the moment, but will be fixed soon.)
       The default is true.
     * obrItems - an array defining fields above the form (see
-      [obrHeader](#obrHeader)).  If you omit templateOption, a default will be
+      [obrHeader](#obrHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where
       Done", and "Comment".  If you wish to specify your own definitions, each
       element in the array should be a hash with the following keys:

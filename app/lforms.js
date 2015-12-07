@@ -8,7 +8,7 @@ angular.module('lformsWidget', [
 .directive('lforms', function() {
   return {
     restrict: 'E',
-//    scope: {lfData: '=', templateOption: '=lfOption'},
+//    scope: {lfData: '=', templateOptions: '=lfOption'},
     scope: {lfData: '='},
     link: linkFunction,
     transclude: false,

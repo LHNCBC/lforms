@@ -16,7 +16,7 @@ var DemoPage = function() {
 
   return {
     checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
-    headerEl: $('div.row[ng-if="!lfData.templateOption.hideHeader"]'),
+    headerEl: $('div.row[ng-if="!lfData.templateOptions.hideHeader"]'),
     heightFieldID: heightFieldID,
     heightField: element(by.id(heightFieldID)),
     heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),

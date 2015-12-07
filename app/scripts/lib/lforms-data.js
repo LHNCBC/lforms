@@ -12,7 +12,7 @@ var LFormsData = Class.extend({
   // a pre-defined view template used to display the form
   template: null,
   // additional options that controls the selected view template
-  templateOption: {},
+  templateOptions: {},
 
   // the question items defined in a form
   items : [],
@@ -164,7 +164,7 @@ var LFormsData = Class.extend({
     this.type = data.type;
     this.hasUserData = data.hasUserData;
     this.template = data.template;
-    this.templateOption = data.templateOption || {};
+    this.templateOptions = data.templateOptions || {};
     this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
     this.answerLists = data.answerLists;
 
@@ -442,10 +442,10 @@ var LFormsData = Class.extend({
     if (!this.template || this.template.length == 0) {
       this.template = "panel-view-a";
     }
-    // templateOption
+    // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
-    this.templateOption = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOption) :
-        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOption);
+    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
+        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
 
   },
 
@@ -455,7 +455,7 @@ var LFormsData = Class.extend({
    */
   setTemplateOptions: function(options) {
 
-    this.templateOption = jQuery.extend(true, {}, this.templateOption, options);
+    this.templateOptions = jQuery.extend(true, {}, this.templateOptions, options);
 
   },
 
@@ -644,8 +644,8 @@ var LFormsData = Class.extend({
     var ret = {};
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
     // template options could be optional. Include them, only if they are present
-    if(this.templateOption && this.templateOption.obrHeader && this.templateOption.obrItems ) {
-      ret.templateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+    if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
+      ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
     }
 
     return ret;

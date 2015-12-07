@@ -1,18 +1,18 @@
 <div class="stopped" ng-show="isFormDone()"><img ng-src="{{::blankGifDataUrl}}" class="stop-sign"><span>This form is complete.</span></div>
-<div class="row" ng-if="!lfData.templateOption.hideHeader">
+<div class="row" ng-if="!lfData.templateOptions.hideHeader">
   <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOption.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.showQuestionCode">Display Question Code</label>
+    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showQuestionCode">Display Question Code</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOption.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.showCodingInstruction">Show Help/Description</label>
+    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showCodingInstruction">Show Help/Description</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOption.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOption.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
+    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
     </div>
   </div>
   <div class="col-md-3 col-xs-3 text-right">

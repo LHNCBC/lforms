@@ -99,11 +99,6 @@
     <!-- lforms test controller -->
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestControllerV', ['$scope', function ($scope) {
-            $scope.lfData2 = new LFormsData(angular.copy(FHTData));
-            //$scope.lfData = new LFormsData(angular.copy(MDS3));
-
-          }])
           .controller('lformsTestControllerH', ['$scope', function ($scope) {
             $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
 //            $scope.lfOption2 = {

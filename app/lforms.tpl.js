@@ -3,20 +3,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-header.html',
     "<div class=\"stopped\" ng-show=\"isFormDone()\"><img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
-    "<div class=\"row\" ng-if=\"!lfData.templateOption.hideHeader\">\n" +
+    "<div class=\"row\" ng-if=\"!lfData.templateOptions.hideHeader\">\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
-    "    <div ng-hide=\"lfData.templateOption.hideCheckBoxes\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.showQuestionCode\">Display Question Code</label>\n" +
+    "    <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display Question Code</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
-    "    <div ng-hide=\"lfData.templateOption.hideCheckBoxes\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.showCodingInstruction\">Show Help/Description</label>\n" +
+    "    <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show Help/Description</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3\">\n" +
-    "    <div ng-hide=\"lfData.templateOption.hideCheckBoxes\" class=\"checkbox\">\n" +
-    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOption.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
+    "    <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
+    "      <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"col-md-3 col-xs-3 text-right\">\n" +
@@ -34,26 +34,26 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <h3 class=\"lf-form-title\">\n" +
     "      <span>{{lfData.name}}</span>\n" +
-    "      <span ng-if=\"lfData.templateOption.showQuestionCode\">\n" +
+    "      <span ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
-    "        <colgroup ng-if=\"lfData.templateOption.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
+    "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
+    "          <col ng-repeat=\"item in ::lfData.templateOptions.obrItems\"\n" +
     "               ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
     "                          'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
     "        </colgroup>\n" +
-    "        <thead ng-if=\"lfData.templateOption.obrHeader\">\n" +
+    "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
     "          <th class=\"lf-form-table-header\"\n" +
-    "              ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
+    "              ng-repeat=\"item in ::lfData.templateOptions.obrItems\"><label\n" +
     "            for=\"{{::item.questionCode}}\">{{::item.question}}</label></th>\n" +
     "        </tr>\n" +
     "        </thead>\n" +
     "        <tbody>\n" +
-    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOption.obrHeader\">\n" +
-    "          <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
+    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOptions.obrHeader\">\n" +
+    "          <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
     "              ng-switch on=\"item.dataType\">\n" +
     "            <ng-form name=\"innerForm\">\n" +
     "              <div class=\"lf-form-item-data tooltipContainer\">\n" +
@@ -81,13 +81,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                  <col ng-repeat=\"obxCol in ::lfData.templateOptions.obxTableColumns\"\n" +
     "                       ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
     "                                  'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
-    "                  <th class=\"lf-form-table-header {{::obxCol.formatting['class']}}\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                  <th class=\"lf-form-table-header {{::obxCol.formatting['class']}}\" ng-repeat=\"obxCol in ::lfData.templateOptions.obxTableColumns\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +
@@ -102,12 +102,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <div class=\"name-label\">\n" +
     "                            <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                            <span ng-show=\"lfData.templateOption.showQuestionCode\">\n" +
+    "                            <span ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "                              <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
     "                                 target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                            <span ng-show=\"lfData.templateOption.showCodingInstruction\"\n" +
+    "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                            <button ng-show=\"!lfData.templateOption.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
     "                                    class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
     "                                    data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                          </div>\n" +
@@ -223,26 +223,26 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "    <h3 class=\"lf-form-title\">\n" +
     "      <span>{{lfData.name}}</span>\n" +
-    "      <span ng-if=\"lfData.templateOption.showQuestionCode\">\n" +
+    "      <span ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a href=\"http://s.details.loinc.org/LOINC/{{ lfData.code }}.html\" target=\"_blank\">[{{ lfData.code }}]</a></span>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
-    "        <colgroup ng-if=\"lfData.templateOption.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in ::lfData.templateOption.obrItems\"\n" +
+    "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
+    "          <col ng-repeat=\"item in ::lfData.templateOptions.obrItems\"\n" +
     "               ng-style=\"{'width': '{{::item.formatting.width}}',\n" +
     "                          'min-width': '{{::item.formatting['min-width']}}'}\">\n" +
     "        </colgroup>\n" +
-    "        <thead ng-if=\"lfData.templateOption.obrHeader\">\n" +
+    "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
     "          <th class=\"lf-form-table-header\"\n" +
-    "              ng-repeat=\"item in ::lfData.templateOption.obrItems\"><label\n" +
+    "              ng-repeat=\"item in ::lfData.templateOptions.obrItems\"><label\n" +
     "            for=\"{{::item.questionCode}}\">{{::item.question}}</label></th>\n" +
     "        </tr>\n" +
     "        </thead>\n" +
     "        <tbody>\n" +
-    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOption.obrHeader\">\n" +
-    "          <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOption.obrItems\"\n" +
+    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOptions.obrHeader\">\n" +
+    "          <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
     "              ng-switch on=\"item.dataType\">\n" +
     "            <ng-form name=\"innerForm\">\n" +
     "              <div class=\"lf-form-item-data tooltipContainer\">\n" +
@@ -270,13 +270,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                  <col ng-repeat=\"obxCol in ::lfData.templateOptions.obxTableColumns\"\n" +
     "                       ng-style=\"{'width': '{{::obxCol.formatting.width}}',\n" +
     "                                  'min-width': '{{::obxCol.formatting['min-width']}}'}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
-    "                  <th class=\"lf-form-table-header\" ng-repeat=\"obxCol in ::lfData.templateOption.obxTableColumns\"\n" +
+    "                  <th class=\"lf-form-table-header\" ng-repeat=\"obxCol in ::lfData.templateOptions.obxTableColumns\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{::obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +
@@ -291,12 +291,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                          <div class=\"name-label\">\n" +
     "                            <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
-    "                            <span ng-show=\"lfData.templateOption.showQuestionCode\">\n" +
+    "                            <span ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "                              <a href=\"http://s.details.loinc.org/LOINC/{{ item.questionCode }}.html\"\n" +
     "                                 target=\"_blank\">[{{ item.questionCode }}]</a></span>\n" +
-    "                            <span ng-show=\"lfData.templateOption.showCodingInstruction\"\n" +
+    "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
-    "                            <button ng-show=\"!lfData.templateOption.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
+    "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
     "                                    class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
     "                                    data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
     "                          </div>\n" +

@@ -18,7 +18,7 @@ var FHTData = {
   template: "form-view-a",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
   // template. the format/content is not ready for publish yet.
-  templateOption: {},
+  templateOptions: {},
   // question items, required, level 1
   items: [
     {"questionCode": "54126-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
@@ -389,7 +389,7 @@ var horizontalFHTData = {
   template: "form-view-b",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
   // template. the format/content is not ready for publish yet.
-  templateOption: {},
+  templateOptions: {},
   // question items, required, level 1
   items: [
     {"questionCode": "54126-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,

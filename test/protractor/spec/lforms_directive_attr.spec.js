@@ -36,7 +36,7 @@ function assertHeader(isPresent) {
 }
 
 
-describe('<lforms-panel-x> hide-check-boxes attribute', function() {
+describe('<lforms> hide-check-boxes attribute', function() {
   it('default should show check boxes on the vertical panel ', function() {
     demoPage.openDirectiveAttrTest('');
     assertHiddenCheckboxes(3, false);
