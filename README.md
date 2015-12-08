@@ -63,8 +63,12 @@ After the user fills out a form, the data they have entered and things like
 codes for coded answer lists will be stored in the data model.  To retrieve that
 data, LForms provides the following API on the LFormsData object:
 
-    $scope.myFormData.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+    $scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
 
+And if calling from outside the "myController", WidgetUtil provides a similar API:
+
+    WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+    
 With no arguments (i.e. $scope.myFormData.getFormData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were

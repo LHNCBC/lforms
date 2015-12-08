@@ -117,16 +117,16 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
     expect(code.isDisplayed()).toBe(true);
   });
 
-  it('no checkboxes should be checked on form 1', function() {
+  it('1 checkbox should be checked on form 1', function() {
     element(by.id(loadForm1)).click();
     browser.waitForAngular();
     var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
-    expect(checkboxes.get(0).isSelected()).toBe(false);
+    expect(checkboxes.get(0).isSelected()).toBe(true);
     expect(checkboxes.get(1).isSelected()).toBe(false);
     expect(checkboxes.get(2).isSelected()).toBe(false);
     // and the question code is displayed
     var code = element(by.css('a[href="http://s.details.loinc.org/LOINC/54126-8.html"]'));
-    expect(code.isDisplayed()).toBe(false);
+    expect(code.isDisplayed()).toBe(true);
   });
 
 });
