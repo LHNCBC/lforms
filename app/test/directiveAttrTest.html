@@ -80,7 +80,7 @@
 
     <!-- lforms directive js files -->
     <script src="lforms.js"></script>
-    <script src="scripts/controllers/panel-table.js"></script>
+    <script src="scripts/controllers/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <script src="scripts/lib/date.js"></script>
     <script src="scripts/lib/js-class.js"></script>
@@ -92,10 +92,10 @@
     <!-- end of lforms directive js files -->
 
     <!-- data file for testing -->
-    <script src="scripts/lib/sample-data.js"></script>
-    <script src="scripts/lib/test-data.js"></script>
-    <script src="scripts/lib/ri-data.js"></script>
-
+    <script src="data/sample-data.js"></script>
+    <script src="data/test-data.js"></script>
+    <script src="data/ri-data.js"></script>
+    <!-- end of test data files -->
 
     <!-- lforms test controller -->
     <script type="text/javascript">
@@ -117,14 +117,6 @@
             when("/horizontal-form-hide-check-boxes-true", {
               controller: "lformsTestControllerH",
               templateUrl: "horizontal-form-hide-check-boxes-true.html"
-            }).
-            when("/vertical-form-hide-check-boxes-absent", {
-              controller: "lformsTestControllerV",
-              templateUrl: "vertical-form-hide-check-boxes-absent.html"
-            }).
-            when("/horizontal-form-hide-check-boxes-absent", {
-              controller: "lformsTestControllerH",
-              templateUrl: "horizontal-form-hide-check-boxes-absent.html"
             }).
             when("/vertical-form-hide-check-boxes-false", {
               controller: "lformsTestControllerV",
@@ -150,66 +142,54 @@
               controller: "lformsTestControllerH",
               templateUrl: "horizontal-form-hide-header-false.html"
             }).
-            when("/vertical-form-hide-header-absent", {
-              controller: "lformsTestControllerV",
-              templateUrl: "vertical-form-hide-header-absent.html"
-            }).
-            when("/horizontal-form-hide-header-absent", {
-              controller: "lformsTestControllerH",
-              templateUrl: "horizontal-form-hide-header-absent.html"
-            }).
             otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
-          $scope.lfData = new LFormsData(angular.copy(FHTData));
+          $scope.lfData1 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData2 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
+          $scope.lfData3 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]).
         controller('lformsTestControllerH', ['$scope', function ($scope) {
-          $scope.lfData = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData1 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
+          $scope.lfData3 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]);
     </script>
 
     <script type="text/ng-template" id="vertical-form-default.html">
-      <lforms-panel-v></lforms-panel-v>
+      <lforms lf-data="lfData1"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-default.html">
-      <lforms-panel-h></lforms-panel-h>
+      <lforms lf-data="lfData1"></lforms>
     </script>
     <script type="text/ng-template" id="vertical-form-hide-check-boxes-true.html">
-      <lforms-panel-v hide-check-boxes="true"></lforms-panel-v>
+      <lforms lf-data="lfData2"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-check-boxes-true.html">
-      <lforms-panel-h hide-check-boxes="true"></lforms-panel-h>
+      <lforms lf-data="lfData2"></lforms>
     </script>
     <script type="text/ng-template" id="vertical-form-hide-check-boxes-false.html">
-      <lforms-panel-v hide-check-boxes="false"></lforms-panel-v>
+      <lforms lf-data="lfData1"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-check-boxes-false.html">
-      <lforms-panel-h hide-check-boxes="false"></lforms-panel-h>
-    </script>
-    <script type="text/ng-template" id="vertical-form-hide-check-boxes-absent.html">
-      <lforms-panel-v></lforms-panel-v>
-    </script>
-    <script type="text/ng-template" id="horizontal-form-hide-check-boxes-absent.html">
-      <lforms-panel-h></lforms-panel-h>
+      <lforms lf-data="lfData1"></lforms>
     </script>
 
     <script type="text/ng-template" id="vertical-form-hide-header-true.html">
-      <lforms-panel-v hide-header="true"></lforms-panel-v>
+      <lforms lf-data="lfData3"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-header-true.html">
-      <lforms-panel-h hide-header="true"></lforms-panel-h>
+      <lforms lf-data="lfData3"></lforms>
     </script>
     <script type="text/ng-template" id="vertical-form-hide-header-false.html">
-      <lforms-panel-v hide-header="false"></lforms-panel-v>
+      <lforms lf-data="lfData1"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-hide-header-false.html">
-      <lforms-panel-h hide-header="false"></lforms-panel-h>
-    </script>
-    <script type="text/ng-template" id="vertical-form-hide-header-absent.html">
-      <lforms-panel-v></lforms-panel-v>
-    </script>
-    <script type="text/ng-template" id="horizontal-form-hide-header-absent.html">
-      <lforms-panel-h></lforms-panel-h>
+      <lforms lf-data="lfData1"></lforms>
     </script>
 
     <div ng-view=""></div>

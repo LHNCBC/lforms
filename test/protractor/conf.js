@@ -4,7 +4,7 @@ exports.config = {
   capabilities: {
     'browserName': 'firefox'
   },
-  specs: 'spec/*.js',
+  specs: 'spec/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
   rootElement: 'body',
   framework: 'jasmine2',

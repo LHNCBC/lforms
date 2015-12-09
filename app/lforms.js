@@ -3,39 +3,20 @@
 angular.module('lformsWidget', [
     "mgcrea.ngStrap",
     'smoothScroll',
-    'ui.select2',
-    'autocompleteLhcMod',
-    'lfConstants'
+    'autocompleteLhcMod'
 ])
-.directive('lformsPanelV', function() {
+.directive('lforms', function() {
   return {
     restrict: 'E',
-    link: linkFunction,
+    scope: {lfData: '=', lfOptions: '=?'},
+    link: function(scope, elment, attributes) {
+      scope.$watch("lfOptions", function (value){
+        if (value)
+          scope.lfData.setTemplateOptions(value);
+      }, true);
+    },
     transclude: true,
-    controller: 'PanelTableCtrl',
-    templateUrl: 'form-view-a.html'
-  };
-})
-.directive('lformsPanelH', function() {
-  return {
-    restrict: 'E',
-    link: linkFunction,
-    transclude: true,
-    controller: 'PanelTableCtrl',
-    templateUrl: 'form-view-b.html'
+    controller: 'LFormsCtrl',
+    templateUrl: 'form-view.html'
   };
 });
-
-/**
- * Add element attributes to the scope.
- *
- * @param {Object} scope
- * @param {Object} element
- * @param {Object} attributes
- * @returns {void}
- */
-function linkFunction(scope, element, attributes) {
-  scope.hideHeader = attributes['hideHeader'] === 'true' ? true : false ;
-  scope.hideCheckBoxes = attributes['hideCheckBoxes'] === 'true' ? true : false;
-}
-

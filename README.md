@@ -35,14 +35,14 @@ install lforms`.
 The HTML in your page will look something like:
 
     <body ng-app="myApp">
-      <div ng-controller="lformsTestControllerH">
-        <lforms-panel-h></lforms-panel-h>
+      <div ng-controller="myController">
+        <lforms lf-data="myFormData"></lforms>
       </div>
     </body>
 
 The directive is contained by a controller (in this example named
-"lformsTestControllerH") which will have the responsibility of providing the
-form definition data (as a JSON object).
+"myController") which will have the responsibility of providing the
+form definition data as a JSON object (in this example named "myFormData").
 
 ### JavaScript
 
@@ -53,19 +53,23 @@ object to the scope variable "lfData".  The form should initialize and display.
 For example:
 
     angular.module('myApp', ['lformsWidget'])
-      .controller('lformsTestControllerH', ['$scope', function ($scope) {
-        $scope.lfData = new LFormsData(myFormDefinition);
+      .controller('myController', ['$scope', function ($scope) {
+        $scope.myFormData = new LFormsData(myFormDefinition);
       }]);
 
 ### Retrieving User-Entered Data
 
 After the user fills out a form, the data they have entered and things like
 codes for coded answer lists will be stored in the data model.  To retrieve that
-data, LForms provides the following API:
+data, LForms provides the following API on the LFormsData object:
+
+    $scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
+
+And if calling from outside the "myController", WidgetUtil provides a similar API:
 
     WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
-
-With no arguments (i.e. WidgetUti.getFormData()), the data for the first LForm
+    
+With no arguments (i.e. $scope.myFormData.getFormData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
@@ -86,7 +90,7 @@ The parameters are:
    hidden by skip logic will be removed.
 
 As an example, here is the data from a partially filled-in vital signs panel,
-returned via `WidgetUtil.getFormData(null, true, true, true)`:
+returned via `$scope.myFormData.getFormData(null, true, true, true)`:
 
 ```json
     {
@@ -132,7 +136,7 @@ coded list field.
 
 Form definitions are stored in a JSON structure.  To get a rough idea of what
 these are you can take a look at one of the
-[samples](app/scripts/lib/sample-data.js), or for a detailed description see the
+[samples](app/data/sample-data.js), or for a detailed description see the
 [form definition documentation](form_definition.md).
 
 ## Licensing and Copyright Notice

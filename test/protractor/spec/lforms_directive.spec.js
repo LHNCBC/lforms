@@ -88,3 +88,46 @@ describe('horizontal table', function() {
     });
   });
 });
+
+describe('checkbox controlled by templateOptions in the form data: ', function() {
+  browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+  browser.waitForAngular();
+  var loadForm1 = 'load1';
+  var loadForm2 = 'load2';
+
+  it('default value of the checkboxes should not be checked', function() {
+    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    expect(checkboxes.get(0).isSelected()).toBe(false);
+    expect(checkboxes.get(1).isSelected()).toBe(false);
+    expect(checkboxes.get(2).isSelected()).toBe(false);
+
+  });
+
+  it('2 checkboxes should be checked on form 1', function() {
+
+    element(by.id(loadForm2)).click();
+    browser.waitForAngular();
+    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    expect(checkboxes.get(0).isSelected()).toBe(true);
+    expect(checkboxes.get(1).isSelected()).toBe(true);
+    expect(checkboxes.get(2).isSelected()).toBe(false);
+
+    // and the question code is displayed
+    var code = element(by.css('a[href="http://s.details.loinc.org/LOINC/54126-8.html"]'));
+    expect(code.isDisplayed()).toBe(true);
+  });
+
+  it('1 checkbox should be checked on form 1', function() {
+    element(by.id(loadForm1)).click();
+    browser.waitForAngular();
+    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    expect(checkboxes.get(0).isSelected()).toBe(true);
+    expect(checkboxes.get(1).isSelected()).toBe(false);
+    expect(checkboxes.get(2).isSelected()).toBe(false);
+    // and the question code is displayed
+    var code = element(by.css('a[href="http://s.details.loinc.org/LOINC/54126-8.html"]'));
+    expect(code.isDisplayed()).toBe(true);
+  });
+
+});
+

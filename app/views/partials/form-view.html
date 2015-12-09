@@ -1,0 +1,8 @@
+<div ng-controller="LFormsCtrl" ng-switch on="lfData.template">
+    <div ng-switch-when="form-view-b">
+        <div ng-include="'form-view-b.html'"></div>
+    </div>
+    <div ng-switch-default="form-view-a">
+        <div ng-include="'form-view-a.html'"></div>
+    </div>
+</div>

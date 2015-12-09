@@ -30,7 +30,7 @@
     <!-- end widget styles -->
     <!-- endbuild -->
   </head>
-  <body ng-app="lformsWidget">
+  <body ng-app="lformsWidgetDev">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -88,23 +88,30 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <!-- widget js -->
+    <!-- test app js files -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/panel-search.js"></script>
+    <script src="scripts/services/selected-panel.js"></script>
+    <!-- end of test app js files -->
+
+    <!-- lforms directive js files -->
+    <script src="lforms.js"></script>
+    <script src="lforms.tpl.js"></script>
     <script src="scripts/lib/js-class.js"></script>
     <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/date.js"></script>
     <script src="scripts/lib/util.js"></script>
-    <script src="scripts/lib/sample-data.js"></script>
-    <script src="scripts/lib/test-data.js"></script>
-    <script src="scripts/lforms-constants.js"></script>
-    <script src="scripts/lib/ri-data.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
-    <!-- end widget js -->
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
-    <script src="scripts/controllers/panel-search.js"></script>
-    <script src="scripts/controllers/panel-table.js"></script>
+    <script src="scripts/lforms-constants.js"></script>
+    <script src="scripts/controllers/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
-    <script src="scripts/services/selected-panel.js"></script>
+    <!-- end of lforms directive js files -->
+    <!-- test data files -->
+    <script src="data/sample-data.js"></script>
+    <script src="data/test-data.js"></script>
+    <script src="data/ri-data.js"></script>
+    <!-- end of test data files -->
     <!-- endbuild -->
 
   </body>

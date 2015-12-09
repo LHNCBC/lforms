@@ -1,36 +1,19 @@
 'use strict';
 
-angular.module('lformsWidget')
-  .service('selectedFormData', function($rootScope) {
+angular.module('lformsWidgetDev')
+  .service('lfFormDataService', function($rootScope) {
     // AngularJS will instantiate a singleton by calling "new" on this function
-    var selected = { lfData : null };
+    var data = { lfData : null };
 
     // Public API here
     return {
       getFormData : function () {
-        return selected.lfData;
-      },
-
-      updateForm: function(formData) {
-        this.setFormData(formData);
-        this.updateTemplate();
+        return data.lfData;
       },
 
       setFormData : function (formData) {
-        selected.lfItem = selected.lfData = formData;
-
-      },
-
-      updateTemplate: function() {
-        $rootScope.$broadcast('NewTemplate', selected.lfData);
-
-      },
-
-      updateFormData: function() {
-        $rootScope.$broadcast('NewFormData', selected.lfData);
-
+        data.lfData = formData;
+        $rootScope.$broadcast('LF_NEW_DATA');
       }
-
-
     };
   });

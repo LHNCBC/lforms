@@ -12,7 +12,7 @@ var LFormsData = Class.extend({
   // a pre-defined view template used to display the form
   template: null,
   // additional options that controls the selected view template
-  templateOption: {},
+  templateOptions: {},
 
   // the question items defined in a form
   items : [],
@@ -85,7 +85,74 @@ var LFormsData = Class.extend({
   // active item, where a input field in the row has the focus
   _activeItem: null,
 
-  /**
+
+  // default template options
+  _defaultTemplateOptions: {
+    showQuestionCode: false,   // whether question code is displayed next to the question
+    showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+    tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
+    hideHeader: false, // whether to hide the header section on top of the form
+    hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
+    obxTableColumns: [
+      {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
+      {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
+      {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
+      {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+    ],
+    obrHeader: true,  // controls if the obr table needs to be displayed
+    obrItems: [
+      {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
+      {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
+      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
+      {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+    ]
+  },
+  // default options for each supported templates, could move it to a configuration file
+  _defaultOptionsForSupportedTemplates: {
+    "form-view-a": {
+      showQuestionCode: false,
+      showCodingInstruction: false,
+      tabOnInputFieldsOnly: false,
+      hideHeader: false,
+      hideCheckBoxes: false,
+      obxTableColumns: [
+        {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
+        {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
+        {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
+        {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+      ],
+      obrHeader: true,
+      obrItems: [
+        {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
+        {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
+        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
+        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+      ]
+    },
+    "form-view-b": {
+      showQuestionCode: false,
+      showCodingInstruction: false,
+      tabOnInputFieldsOnly: false,
+      hideHeader: false,
+      hideCheckBoxes: false,
+      obxTableColumns: [
+        {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
+        {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
+        {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
+        {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+      ],
+      obrHeader: true,
+      obrItems: [
+        {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
+        {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
+        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
+        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+      ]
+    }
+  },
+
+
+/**
    * Constructor
    * @param data the lforms form definition data
    */
@@ -97,7 +164,7 @@ var LFormsData = Class.extend({
     this.type = data.type;
     this.hasUserData = data.hasUserData;
     this.template = data.template;
-    this.templateOption = data.templateOption || {};
+    this.templateOptions = data.templateOptions || {};
     this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
     this.answerLists = data.answerLists;
 
@@ -373,26 +440,23 @@ var LFormsData = Class.extend({
     }
     // template
     if (!this.template || this.template.length == 0) {
-      this.template = "panelTableV"
+      this.template = "panel-view-a";
     }
-    // templateOption
-    if (!this.templateOption || jQuery.isEmptyObject(this.templateOption)) {
-      this.templateOption = {
-        obxTableColumns: [
-          {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
-          {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
-          {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
-          {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
-        ],
-        obrHeader: true,  // controls if the obr table needs to be displayed
-        obrItems: [
-          {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
-          {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
-          {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
-          {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
-        ]
-      };
-    }
+    // templateOptions
+    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
+    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
+        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
+
+  },
+
+  /**
+   * Set template options
+   * @param options new options
+   */
+  setTemplateOptions: function(options) {
+
+    this.templateOptions = jQuery.extend(true, {}, this.templateOptions, options);
+
   },
 
   /**
@@ -580,8 +644,8 @@ var LFormsData = Class.extend({
     var ret = {};
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
     // template options could be optional. Include them, only if they are present
-    if(this.templateOption && this.templateOption.obrHeader && this.templateOption.obrItems ) {
-      ret.templateData = this._processDataInItems(this.templateOption.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+    if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
+      ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
     }
 
     return ret;

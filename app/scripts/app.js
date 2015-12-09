@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('lformsWidget', [
+angular.module('lformsWidgetDev', [
     'ngCookies',
     'ngResource',
     'ngSanitize',
@@ -10,7 +10,7 @@ angular.module('lformsWidget', [
     'mgcrea.ngStrap',
     'ui.select2',
     'autocompleteLhcMod',
-    'lfConstants'
+    'lformsWidget'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
@@ -32,6 +32,7 @@ angular.module('lformsWidget', [
       $templateCache.put('main.html', $http.get('views/main.html'));
       $templateCache.put('validation.html', $http.get('views/partials/validation.html'));
       $templateCache.put('form-header.html', $http.get('views/partials/form-header.html'));
+      $templateCache.put('form-view.html', $http.get('views/partials/form-view.html'));
       $templateCache.put('form-view-a.html', $http.get('views/partials/form-view-a.html'));
       $templateCache.put('form-view-b.html', $http.get('views/partials/form-view-b.html'));
       $templateCache.put('h-table.html', $http.get('views/partials/h-table.html'));
