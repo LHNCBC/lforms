@@ -78,8 +78,8 @@
                             <span ng-show="lfData.templateOptions.showCodingInstruction"
                                   class="prompt">{{ ::getCodingInstructions(item) }}</span>
                             <button ng-show="!lfData.templateOptions.showCodingInstruction" ng-if="::hasCodingInstructions(item)"
-                                    class="help-button" bs-popover="::item.codingInstructions"
-                                    data-auto-close="true" data-placement="right"  title="Instruction">?</button>
+                                    class="help-button" uib-popover="{{::item.codingInstructions}}"
+                                    popover-trigger="focus" popover-placement="right"  popover-title="Instruction">?</button>
                           </div>
                         </td>
                       </tr>

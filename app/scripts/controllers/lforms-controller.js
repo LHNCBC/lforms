@@ -28,19 +28,6 @@ angular.module('lformsWidget')
         buttonText: ""
       };
 
-      // base config for ui-select2
-      $scope.tagOptions = {
-        width: "100%",
-        maximumSelectionSize:1,
-        minimumInputLength: 0,
-        // minimumResultsForSearch: 6,   // -1 will hide the search(input) field
-        minimumResultsForSearch: -1,
-        allowClear: false,
-        selectOnBlur: false,
-        multiple: false
-        // simple_tags: false
-      };
-
       /**
        * Set the active row in table
        * @param index index of an item in the lforms form items array

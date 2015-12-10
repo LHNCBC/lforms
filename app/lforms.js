@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('lformsWidget', [
-    "mgcrea.ngStrap",
+    "ui.bootstrap",
     'smoothScroll',
     'autocompleteLhcMod'
 ])
