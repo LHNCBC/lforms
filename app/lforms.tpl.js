@@ -297,8 +297,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +
-    "                                    class=\"help-button\" bs-popover=\"::item.codingInstructions\"\n" +
-    "                                    data-auto-close=\"true\" data-placement=\"right\"  title=\"Instruction\">?</button>\n" +
+    "                                    class=\"help-button\" uib-popover=\"{{::item.codingInstructions}}\"\n" +
+    "                                    popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
     "                          </div>\n" +
     "                        </td>\n" +
     "                      </tr>\n" +

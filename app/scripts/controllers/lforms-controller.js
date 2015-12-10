@@ -537,15 +537,15 @@ angular.module('lformsWidget')
        */
       $scope.handleNavigationKeyEventByTab = function(event) {
 
-        if ($scope.templateOptions.tabOnInputFieldsOnly && event.keyCode === $scope.lfData.Navigation.TAB) {
+        var widgetData = $scope.lfData;
+        if (widgetData.templateOptions.tabOnInputFieldsOnly && event.keyCode === widgetData.Navigation.TAB) {
           if (event.shiftKey) {
-            var simArrowCode = $scope.lfData.Navigation.ARROW.LEFT;
+            var simArrowCode = widgetData.Navigation.ARROW.LEFT;
           }
           else {
-            var simArrowCode = $scope.lfData.Navigation.ARROW.RIGHT;
+            var simArrowCode = widgetData.Navigation.ARROW.RIGHT;
           }
 
-          var widgetData = $scope.lfData;
           var nextId = event.target['id'], nextElement;
           // find the next element, bypass the invisible elements
           do {
@@ -576,14 +576,13 @@ angular.module('lformsWidget')
        */
       $scope.handleNavigationKeyEventByArrowKeys = function(event) {
 
+        var widgetData = $scope.lfData;
         // supported arrow keys
-        var arrow = $scope.lfData.Navigation.ARROW;
+        var arrow = widgetData.Navigation.ARROW;
 
         // only when control key is also pressed
         if (event.ctrlKey &&
             jQuery.inArray(event.keyCode, [arrow.LEFT, arrow.UP, arrow.RIGHT, arrow.DOWN]) >= 0 ) {
-
-          var widgetData = $scope.lfData;
 
           var nextId = event.target['id'], nextElement;
           // find the next element, bypass the invisible elements
