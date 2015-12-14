@@ -1,19 +1,9 @@
+var tp = require('./lforms_testpage.po.js');
+var ff = tp.FullFeaturedForm;
 describe('skip logic', function() {
 
   it('target items should be hidden initially', function() {
-    browser.get('http://0.0.0.0:9001/');
-    var formSearch = element(by.css('#s2id_loinc_num1 a'));
-
-    browser.wait(function () {
-      return formSearch.isDisplayed();
-    }, 10000);
-    formSearch.click();
-    element(by.css('.select2-result:nth-of-type(5)')).click();
-    element(by.css('.btn')).click();
-
-    var ff = require('./fullFeaturedForm.po');
-    ff.openFullFeaturedForm();
-
+    tp.openFullFeaturedForm();
     // initially all hidden
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isPresent()).toBeFalsy();
@@ -22,7 +12,6 @@ describe('skip logic', function() {
   });
 
   it('should show a sibling and two items in a sibling section', function() {
-    var ff = require('./fullFeaturedForm.po');
     ff.src.sendKeys('1');
     expect(ff.t1.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
@@ -30,7 +19,6 @@ describe('skip logic', function() {
   });
 
   it('should hide a sibling and show two items in a sibling section', function() {
-    var ff = require('./fullFeaturedForm.po');
     ff.src.clear();
     ff.src.sendKeys('2');
     expect(ff.t1.isPresent()).toBeFalsy();
@@ -40,7 +28,6 @@ describe('skip logic', function() {
   });
 
   it('should show another sibling and hide two items in a sibling section', function() {
-    var ff = require('./fullFeaturedForm.po');
     ff.src.clear();
     ff.src.sendKeys('6');
     expect(ff.t1.isPresent()).toBeFalsy();
@@ -50,7 +37,6 @@ describe('skip logic', function() {
   });
 
   it('should work with logic ALL from two different sources', function() {
-    var ff = require('./fullFeaturedForm.po');
     // check logic ALL
     ff.allSrc1.clear();
     ff.allSrc2.clear();
@@ -64,7 +50,6 @@ describe('skip logic', function() {
   });
 
   it('should work with logic ANY from two different sources', function() {
-    var ff = require('./fullFeaturedForm.po');
     // check logic ANY
     ff.anySrc1.clear();
     ff.anySrc2.clear();
@@ -82,7 +67,6 @@ describe('skip logic', function() {
   });
 
   it('should be able to be controlled by an ancestors sibling', function() {
-    var ff = require('./fullFeaturedForm.po');
     //
     ff.rpSrc2.clear();
     ff.rpSrc2.sendKeys('1');

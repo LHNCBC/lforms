@@ -1,91 +1,68 @@
 describe('autocomp list', function() {
 
-
-  var listFieldID = '/54126-8/54132-6/1/1'; // "Were you born a twin?"
-  var showPanel = $('.btn');
-  var searchResults = $('#searchResults');
-  var formSearch = $('#s2id_loinc_num1 a');
-  var raceFieldID = '/54126-8/54134-2/1/1';
-  var raceField = element(by.id(raceFieldID));
-  var dp = require('./demopage.po');
-
+  var tp = require('./lforms_testpage.po.js');
+  var ff = tp.Autocomp;
   it('should not be visible when the form loads', function() {
-    browser.get('http://0.0.0.0:9001/');
-    browser.wait(function() {
-      return formSearch.isDisplayed();
-    }, 10000);
-    formSearch.click();
-    $('.select2-result:first-of-type').click();
-    $('.btn').click();
-    var listField = element(by.id(listFieldID));
-    browser.wait(function() {
-      return listField.isDisplayed();
-    }, 10000);
-    expect(searchResults.isDisplayed()).toBeFalsy();
+    tp.openUSSGFHTVertical();
+    expect(ff.searchResults.isDisplayed()).toBeFalsy();
   });
+
   it('should be visible after the user clicks in a field', function() {
-    var listField = element(by.id(listFieldID));
-    listField.click();
+    ff.listField.click();
     browser.wait(function() {
-      return searchResults.isDisplayed();
+      return ff.searchResults.isDisplayed();
     }, 10000);
     //browser.sleep(5000);
-    expect(searchResults.isDisplayed()).toBeTruthy();
+    expect(ff.searchResults.isDisplayed()).toBeTruthy();
   });
+
   it('should work with multiple-select fields', function() {
-    expect(raceField.isDisplayed()).toBeTruthy();
+    expect(ff.raceField.isDisplayed()).toBeTruthy();
     expect(browser.driver.executeScript('return typeof jQuery(document.getElementById("/54126-8/54134-2/1/1"))[0].autocomp')).toBe('object');
   });
 
   it('should interoperate with score rules', function() {
     // The data model needs to be correctly updated
     // when the user enters a new value.
-    browser.get('http://0.0.0.0:9001/');
-    formSearch.click();
-    var glasgow = $('.select2-result:nth-child(4)');
-    glasgow.click();
-    showPanel.click();
-    var eyeField = element(by.id('/9267-6/1'));
+    tp.openGlasgowRIForm();
+
     browser.wait(function() {
-      return eyeField.isDisplayed();
+      return ff.eyeField.isDisplayed();
     }, 10000);
-    eyeField.click();
+    ff.eyeField.click();
     browser.wait(function() {
-      return searchResults.isDisplayed();
+      return ff.searchResults.isDisplayed();
     }, 10000);
     // Check pre-condition
-    var scoreField = $('input[name="GCS total"]');
-    expect(scoreField.getAttribute('value')).toEqual('0');
+    expect(ff.scoreField.getAttribute('value')).toEqual('0');
     // Click first item in list, and then the score field to send the change
     // event.
     $('#searchResults li:first-child').click();
-    scoreField.click();
-    expect(scoreField.getAttribute('value')).toEqual('1');
+    ff.scoreField.click();
+    expect(ff.scoreField.getAttribute('value')).toEqual('1');
     // Now try using keystrokes to select the third item.
-    eyeField.click();
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.TAB);
-    expect(eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command");
-    expect(scoreField.getAttribute('value')).toEqual('3');
+    ff.eyeField.click();
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.TAB);
+    expect(ff.eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command");
+    expect(ff.scoreField.getAttribute('value')).toEqual('3');
 
     // Try the 4th answer, which has a null label
-    eyeField.click();
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.ARROW_DOWN);
-    eyeField.sendKeys(protractor.Key.TAB);
-    expect(eyeField.getAttribute('value')).toBe("Eyes open spontaneously");
-    expect(scoreField.getAttribute('value')).toEqual('4');
+    ff.eyeField.click();
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.eyeField.sendKeys(protractor.Key.TAB);
+    expect(ff.eyeField.getAttribute('value')).toBe("Eyes open spontaneously");
+    expect(ff.scoreField.getAttribute('value')).toEqual('4');
   });
 
-
   it('should receive default values set via defaultAnswer', function() {
-    var ff = require('./fullFeaturedForm.po');
-    ff.openFullFeaturedForm();
-    expect(ff.cneField.getAttribute('value')).toEqual('Answer 2');
+    tp.openFullFeaturedForm();
+    expect(tp.FullFeaturedForm.cneField.getAttribute('value')).toEqual('Answer 2');
   });
 
 });

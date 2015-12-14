@@ -1,10 +1,14 @@
 'use strict';
 
 angular.module('lformsWidget', [
-    "ui.bootstrap",
-    'smoothScroll',
-    'autocompleteLhcMod'
+  'ngAnimate',
+  'ui.bootstrap',
+  'smoothScroll',
+  'autocompleteLhcMod'
 ])
+.config(function ($animateProvider) {
+  $animateProvider.classNameFilter(/has-ng-animate/);
+})
 .directive('lforms', function() {
   return {
     restrict: 'E',

@@ -1,19 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <base href="/">
-
-    <title>LForms Widget Demo</title>
-
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- the content of this file is used by grunt tasks only -->
+    <!-- redirect to a test page -->
+    <meta http-equiv="refresh" content="0; url=/test/lforms_testpage.html" />
 
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/select2/select2.css" />
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/start/jquery-ui.min.css" />
     <link rel="stylesheet" href="bower_components/autocomplete-lhc/source/auto_completion.css" />
     <!-- endbower -->
@@ -22,42 +15,17 @@
     <!-- endbuild -->
 
     <!-- build:css({.tmp,app}) styles/main.css -->
-    <!--<link rel="stylesheet" href="styles/main.css">-->
     <!-- widget styles -->
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
     <link rel="stylesheet" href="styles/lforms.css">
-    <link rel="stylesheet" href="styles/app.css">
     <!-- end widget styles -->
     <!-- endbuild -->
   </head>
-  <body ng-app="lformsWidgetDev">
-    <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-
-    <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
-
-    <!--[if lt IE 9]>
-    <script src="bower_components/es5-shim/es5-shim.js"></script>
-    <script src="bower_components/json3/lib/json3.min.js"></script>
-    <![endif]-->
-
+  <body>
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/json3/lib/json3.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
-    <script src="bower_components/select2/select2.js"></script>
-    <script src="bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="bower_components/jquery-ui/ui/core.js"></script>
     <script src="bower_components/jquery-ui/ui/widget.js"></script>
@@ -86,13 +54,6 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <!-- test app js files -->
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
-    <script src="scripts/controllers/panel-search.js"></script>
-    <script src="scripts/services/selected-panel.js"></script>
-    <!-- end of test app js files -->
-
     <!-- lforms directive js files -->
     <script src="lforms.js"></script>
     <script src="lforms.tpl.js"></script>
@@ -105,12 +66,20 @@
     <script src="scripts/controllers/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <!-- end of lforms directive js files -->
+    <!-- endbuild -->
+
+    <!-- test app js files -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/panel-search.js"></script>
+    <script src="scripts/services/selected-panel.js"></script>
+    <!-- end of test app js files -->
+
     <!-- test data files -->
     <script src="data/sample-data.js"></script>
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
     <!-- end of test data files -->
-    <!-- endbuild -->
 
   </body>
 </html>

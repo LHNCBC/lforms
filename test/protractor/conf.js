@@ -43,7 +43,7 @@ exports.config = {
     browser.addMockModule('disableCssAnimate', disableCssAnimate);
 
     // try to load the page first
-    browser.get('http://0.0.0.0:9001/');
+    //browser.get('http://0.0.0.0:9001/');
 
   }
 
