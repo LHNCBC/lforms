@@ -92,6 +92,7 @@
                 showFormInfoQuestions: true // whether to show additional questions about the form
               };
             };
+
             $scope.useFormDataH = function() {
               var lfData2 = new LFormsData(angular.copy(horizontalFHTData));
               var lfOption2 = {
@@ -106,8 +107,10 @@
               $scope.lfOption2 = lfOption2;
               $scope.lfData2 = lfData2;
             };
-            // Get the user data
+
+            // An example of how to get the user data
             $scope.getData = function() {
+              // optional parameters are available to getFormData()
               var data = $scope.lfData2.getFormData();
               console.log(data);
             }

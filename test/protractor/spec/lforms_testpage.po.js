@@ -40,8 +40,6 @@ var TestPage = function() {
     }
   };
 
-
-
   var heightFieldID= '/54126-8/8302-2/1/1';
   return {
     checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
@@ -79,7 +77,6 @@ var TestPage = function() {
       height2: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
       weight2: element(by.id('/54114-4/54117-7/29463-7/1/1/1')),
       bmi2: element(by.id('/54114-4/54117-7/39156-5/1/1/1')),
-
     },
 
     FullFeaturedForm: {
@@ -101,7 +98,6 @@ var TestPage = function() {
       rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
       rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
       rpAdd: element(by.id('add-/repeatingSection1/1'))
-
     },
 
     FormWithUserData: {
@@ -190,13 +186,12 @@ var TestPage = function() {
       browser.waitForAngular();
     },
 
-  /**
+    /**
      * Open the base directive test page
      */
     openBaseTestPage: function() {
       browser.get(testPageUrl);
       browser.waitForAngular();
-
     },
 
     /**
@@ -279,8 +274,6 @@ var TestPage = function() {
       this.openBaseTestPage();
       this.openFormByIndex(8)
     },
-
-
   }
 };
 
