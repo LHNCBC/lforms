@@ -1,10 +1,11 @@
-var ff = require('./form-with-user-data.po');
-
+var tp = require('./lforms_testpage.po.js');
+var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
 
   it('should load ST, DT, INT, answer lists', function() {
 
-    ff.openFormWithUserData();
+    tp.openFormWithUserData();
+
 
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');

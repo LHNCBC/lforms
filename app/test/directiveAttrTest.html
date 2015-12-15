@@ -12,14 +12,12 @@
 
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/select2/select2.css" />
     <link rel="stylesheet" href="../bower_components/jquery-ui/themes/start/jquery-ui.min.css" />
     <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
     <!-- endbower -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
 
     <!-- lforms directive css files -->
-    <link rel="stylesheet" href="styles/app.css">
     <link rel="stylesheet" href="styles/lforms.css">
     <!-- end of lforms directive css files -->
 
@@ -29,30 +27,11 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-
-    <!--[if lt IE 9]>
-    <script src="bower_components/es5-shim/es5-shim.js"></script>
-    <script src="bower_components/json3/lib/json3.min.js"></script>
-    <![endif]-->
-
     <!-- bower:js -->
     <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/es5-shim/es5-shim.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/json3/lib/json3.js"></script>
-    <script src="../bower_components/angular-resource/angular-resource.js"></script>
-    <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="../bower_components/angular-touch/angular-touch.js"></script>
     <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/angular-ui-utils/ui-utils.js"></script>
-    <script src="../bower_components/select2/select2.js"></script>
-    <script src="../bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="../bower_components/angular-strap/dist/angular-strap.js"></script>
-    <script src="../bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
     <script src="../bower_components/jquery-ui/ui/core.js"></script>
     <script src="../bower_components/jquery-ui/ui/widget.js"></script>
     <script src="../bower_components/jquery-ui/ui/button.js"></script>
@@ -78,11 +57,15 @@
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <!-- endbower -->
 
+    <!-- for this test file only -->
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+
     <!-- lforms directive js files -->
     <script src="lforms.js"></script>
     <script src="scripts/controllers/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <script src="scripts/lib/date.js"></script>
+    <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/js-class.js"></script>
     <script src="scripts/lib/util.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
@@ -90,6 +73,7 @@
     <script src="scripts/lforms-constants.js"></script>
     <script src="lforms.tpl.js"></script>
     <!-- end of lforms directive js files -->
+
 
     <!-- data file for testing -->
     <script src="data/sample-data.js"></script>

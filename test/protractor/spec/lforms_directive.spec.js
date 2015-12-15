@@ -1,13 +1,16 @@
 describe('horizontal table', function() {
+
   var BLANK_GIF_DATAURL = 'data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw==';
+  var tp = require('./lforms_testpage.po.js');
 
   describe('should have BLANK_GIF_DATAURL', function() {
-    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
-    browser.waitForAngular();
+    tp.openDirectiveTest();
+
     it('in datepicker img tags', function() {
       expect(element.all(by.css('img.ui-datepicker-trigger'))
         .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
     });
+
     it('in datepicker stop-sign image tag', function() {
       expect(element.all(by.css('img.stop-sign'))
         .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
@@ -15,10 +18,7 @@ describe('horizontal table', function() {
   });
 
   it('should have one add button in the horizontal table when the form loads', function() {
-    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
-
-    browser.waitForAngular();
-    var hForm = element(by.css('#horizontal-form'));
+    tp.openDirectiveTest();
 
     // there is an add button
     expect(element.all(by.css('.float-button')).get(2).isPresent()).toBe(true);
@@ -60,7 +60,6 @@ describe('horizontal table', function() {
     // the first row has a '-' button only
     expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
 
-
     // the second row has a '-' button
     expect(element.all(by.css('.float-button')).get(3).getText()).toBe('-');
     // and an add button
@@ -69,10 +68,9 @@ describe('horizontal table', function() {
 
   describe('autocomp list inside lforms directive', function() {
 
-    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    tp.openDirectiveTest();
 
     var listFieldID = '/54126-8/54132-6/1/1'; // "Were you born a twin?"
-    var showPanel = $('.btn');
     var searchResults = $('#searchResults');
 
     it('should be visible after the user clicks in a field', function() {
@@ -90,8 +88,11 @@ describe('horizontal table', function() {
 });
 
 describe('checkbox controlled by templateOptions in the form data: ', function() {
-  browser.get('http://0.0.0.0:9001/test/directiveTest.html');
-  browser.waitForAngular();
+
+  var tp = require('./lforms_testpage.po.js');
+
+  tp.openDirectiveTest();
+
   var loadForm1 = 'load1';
   var loadForm2 = 'load2';
 

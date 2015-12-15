@@ -78,50 +78,76 @@
     <!-- lforms test controller -->
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestControllerH', ['$scope', function ($scope) {
-            $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+          .controller('lformsTestController', ['$scope', function ($scope) {
+            $scope.selectedForm = null;
+            $scope.testForms = [
+              {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
+              {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
+              {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
+              {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
+              {text: 'Full-Featured Demo', id: 'all-in-one'},
+              {text: 'Form Builder created test form', id: 'formC'},
+              {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
+              {text: 'Form With User Data', id: 'form-with-user-data'}
+            ];
 
-            $scope.useFormDataV = function() {
-              $scope.lfData2 = new LFormsData(angular.copy(FHTData));
-              $scope.lfOption2 = {
-                showQuestionCode: true,   // whether question code is displayed next to the question
-                showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-                hideHeader: false, // whether to hide the header section on top of the form
-                hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
-                showFormInfoQuestions: true // whether to show additional questions about the form
-              };
-            };
-
-            $scope.useFormDataH = function() {
-              var lfData2 = new LFormsData(angular.copy(horizontalFHTData));
-              var lfOption2 = {
-                showQuestionCode: true,   // whether question code is displayed next to the question
-                showCodingInstruction: true, // whether to show coding instruction inline. (false: inline; true: in popup)
-                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-                hideHeader: false, // whether to hide the header section on top of the form
-                hideCheckBoxes: false // whether to hide checkboxes in the header section on top of the form
-              };
-              //lfData2.setTemplateOptions(lfOption2);
-
-              $scope.lfOption2 = lfOption2;
+            $scope.useForm = function() {
+              var lfData2;
+              switch ($scope.selectedForm) {
+                case '54127-6N':
+                  //'USSG-FHT, (with mock-up items for skip logic demo)'
+                  lfData2 = new LFormsData(angular.copy(FHTData));
+                  break;
+                case '54127-6H':
+                  //'USSG-FHT, (with mock-up items for horizontal layout demo)'
+                  lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+                  break;
+                case '35088-4B':
+                  //'Glasgow Coma Score (with score rules)'
+                  lfData2 = new LFormsData(angular.copy(glasgow));
+                  break;
+                case '35088-4':
+                  //'Glasgow Coma Score (with score rules)--RI'
+                  lfData2 = new LFormsData(angular.copy(glasgowRI));
+                  WidgetUtil.preprocessRIData(lfData2.items);
+                  break;
+                case 'all-in-one':
+                  //'Full-Featured Demo'
+                  lfData2 = new LFormsData(angular.copy(allInOne));
+                  break;
+                case 'formC':
+                  //'Form Builder created test form'
+                  lfData2 = new LFormsData(angular.copy(formBuilder));
+                  break;
+                case '54580-6NEW':
+                  //'Minimum Data Set - version 3.0'
+                  lfData2 = new LFormsData(angular.copy(MDS3));
+                  break;
+                case 'form-with-user-data':
+                  //'Form With User Data'
+                  lfData2 = new LFormsData(angular.copy(formWithUserData));
+                  break;
+              }
               $scope.lfData2 = lfData2;
             };
-
-            // An example of how to get the user data
-            $scope.getData = function() {
-              // optional parameters are available to getFormData()
-              var data = $scope.lfData2.getFormData();
-              console.log(data);
-            }
           }]);
     </script>
 
-    <div id="horizontal-form" ng-controller="lformsTestControllerH">
-      <button id="load1" ng-click="useFormDataV()">Use a form with vertical layout</button>
-      <button id="load2" ng-click="useFormDataH()">Use a form with horizontal layout</button>
-      <button ng-click="getData()">Click to get form data</button>
-      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
+    <div id="lforms-form" ng-controller="lformsTestController">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Directive Test Page</div>
+        <div class="panel-body">
+          <p><small>Select a form from the list and click the button to display the form</small></p>
+            <select id="form-list" ng-model="selectedForm" class="form-control">
+              <option value="">--- Please Select ---</option>
+              <option ng-repeat="form in testForms" value="{{form.id}}">{{form.text}}</option>
+            </select>
+          <p></p>
+          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form Data</button>
+        </div>
+      </div>
+
+      <lforms lf-data="lfData2"></lforms>
     </div>
 
   </body>

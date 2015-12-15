@@ -1,9 +1,10 @@
-dp = require('./demopage.po');
+var tp = require('./lforms_testpage.po.js');
+var ff = tp.USSGFHTVertical;
 describe('get form data', function() {
 
   it('should get a form data with 3 optional parameters.', function() {
 
-    dp.openUSSGFHTVertical();
+    tp.openUSSGFHTVertical();
 
     // #1 all fields are empty
     browser.driver.executeAsyncScript(function() {
@@ -17,26 +18,26 @@ describe('get form data', function() {
       expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
       expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(8); // name
       // #2 above fields have values, except dob is still empty
-      dp.USSGFHTVertical.comment.sendKeys("Some comments");
-      dp.USSGFHTVertical.name.sendKeys("Not Empty");
+      ff.comment.sendKeys("Some comments");
+      ff.name.sendKeys("Not Empty");
 
-      dp.USSGFHTVertical.gender.click();
+      ff.gender.click();
       // pick the 1st item, centimeters
-      dp.USSGFHTVertical.gender.sendKeys(protractor.Key.ARROW_DOWN);
-      dp.USSGFHTVertical.gender.sendKeys(protractor.Key.TAB);
+      ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.gender.sendKeys(protractor.Key.TAB);
 
-      dp.USSGFHTVertical.race.click();
+      ff.race.click();
       // pick the first 2 items, centimeters
-      dp.USSGFHTVertical.race.sendKeys(protractor.Key.ARROW_DOWN);
-      dp.USSGFHTVertical.race.sendKeys(protractor.Key.TAB);
-      dp.USSGFHTVertical.race.click();
-      dp.USSGFHTVertical.race.sendKeys(protractor.Key.ARROW_DOWN);
-      dp.USSGFHTVertical.race.sendKeys(protractor.Key.TAB);
+      ff.race.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.race.sendKeys(protractor.Key.TAB);
+      ff.race.click();
+      ff.race.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.race.sendKeys(protractor.Key.TAB);
 
-      dp.USSGFHTVertical.height.sendKeys("70");
-      expect(dp.USSGFHTVertical.bmi.getAttribute('value')).toBe("");
-      dp.USSGFHTVertical.weight.sendKeys("170");
-      expect(dp.USSGFHTVertical.bmi.getAttribute('value')).toBe("24.39");
+      ff.height.sendKeys("70");
+      expect(ff.bmi.getAttribute('value')).toBe("");
+      ff.weight.sendKeys("170");
+      expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
@@ -95,7 +96,7 @@ describe('get form data', function() {
   });
 
   it('should be able to get data when LForms directive is used', function() {
-    browser.get('http://0.0.0.0:9001/test/directiveTest.html');
+    tp.openDirectiveTest();
 
     browser.waitForAngular();
     browser.driver.executeAsyncScript(function() {
