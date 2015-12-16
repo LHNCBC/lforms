@@ -69,11 +69,20 @@
     <script src="scripts/controllers/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <!-- end of lforms directive js files -->
+
     <!-- test data files -->
     <script src="data/sample-data.js"></script>
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
+    <!--<script src="data/cde-data.js"></script>-->
     <!-- end of test data files -->
+
+    <!-- lforms-converter files -->
+    <script src="../bower_components/oboe/dist/oboe-browser.js"></script>
+    <script src="../bower_components/traverse/traverse.js"></script>
+    <script src="../bower_components/lodash/lodash.js"></script>
+    <script src="../bower_components/lforms-converter/lforms-converter.js"></script>
+    <!-- end of lforms-converter files -->
 
     <!-- lforms test controller -->
     <script type="text/javascript">
@@ -88,7 +97,9 @@
               {text: 'Full-Featured Demo', id: 'all-in-one'},
               {text: 'Form Builder created test form', id: 'formC'},
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
-              {text: 'Form With User Data', id: 'form-with-user-data'}
+              {text: 'Form With User Data', id: 'form-with-user-data'},
+              {text: 'CDE sample form #1', id: 'cde1'}
+
             ];
 
             $scope.useForm = function() {
@@ -126,6 +137,24 @@
                 case 'form-with-user-data':
                   //'Form With User Data'
                   lfData2 = new LFormsData(angular.copy(formWithUserData));
+                  break;
+                case 'cde1':
+                  //'CDE Sample form'
+                  var converter = new LFormsConverter();
+                  //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
+                  converter.convert("/data/cde-data.json",
+                      function(data) {
+                        data.typeInCDE = data.type;
+                        data.type = "CDE";
+                        data.template = "form-view-c";
+                        $scope.lfData2 = new LFormsData(data);
+                        $scope.$apply();
+                      },
+                      function(err) {
+                        console.log(err);
+                      }
+                  );
+                  //lfData2 = new LFormsData(cdeData);
                   break;
               }
               $scope.lfData2 = lfData2;
