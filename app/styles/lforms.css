@@ -430,8 +430,3 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-item-data .ui-datepicker-trigger:hover {
   background-image: url("../images/calendar-hover.png");
 }
-
-/* cde form */
-.lf-form-body .empty-question.section-header {
-  display: none;
-}

@@ -1,20 +1,16 @@
 var tp = require('./lforms_testpage.po.js');
 describe('CDE form template', function() {
 
-  it('should hide empty section header', function() {
+  it('empty header should have an "empty-question" class', function() {
 
     tp.openBaseTestPage();
     tp.openFormByIndex(9);
 
+    var headerRow = element(by.css(".empty-question.section-header"));
+    expect(headerRow.isDisplayed()).toBe(true);
+
     var headerLabel = element(by.css("label[for='//1']"));
-    expect(headerLabel.isDisplayed()).toBe(false);
-
+    expect(headerLabel.getText()).toBe("");
   });
 
-  it('should have no OBR section', function() {
-
-    var whereDone = element(by.id('date_done'));
-    expect(whereDone.isPresent()).toBe(false);
-
-  });
 });
