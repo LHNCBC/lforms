@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "dependencies": {
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
