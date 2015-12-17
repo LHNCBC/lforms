@@ -410,12 +410,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-view.html',
     "<div ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
-    "    <div ng-switch-when=\"form-view-b\">\n" +
-    "        <div ng-include=\"'form-view-b.html'\"></div>\n" +
-    "    </div>\n" +
-    "    <div ng-switch-default=\"form-view-a\">\n" +
-    "        <div ng-include=\"'form-view-a.html'\"></div>\n" +
-    "    </div>\n" +
+    "  <div ng-switch-when=\"form-view-a\">\n" +
+    "    <div ng-include=\"'form-view-a.html'\"></div>\n" +
+    "  </div>\n" +
+    "  <div ng-switch-when=\"form-view-b\">\n" +
+    "    <div ng-include=\"'form-view-b.html'\"></div>\n" +
+    "  </div>\n" +
+    "  <div ng-switch-default=\"form-view-a\">\n" +
+    "    <div ng-include=\"'form-view-a.html'\"></div>\n" +
+    "  </div>\n" +
     "</div>\n"
   );
 

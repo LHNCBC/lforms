@@ -296,7 +296,9 @@ angular.module('lformsWidget')
         if (item.layout == 'horizontal') {
           eleClass += ' horizontal';
         }
-
+        if (!item.question || item.question.length === 0) {
+          eleClass += ' empty-question';
+        }
         return eleClass;
       };
 
@@ -604,5 +606,5 @@ angular.module('lformsWidget')
             currentElement.blur();
           }
         }
-      }
+      };
     }]);
