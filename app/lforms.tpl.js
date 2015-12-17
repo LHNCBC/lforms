@@ -35,8 +35,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <h3 class=\"lf-form-title\">\n" +
     "      <span>{{lfData.name}}</span>\n" +
     "      <span class=\"item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
-    "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
+    "        <a ng-if=\"::lfData._linkToDef\" href=\"{{ ::lfData._linkToDef }}\" target=\"_blank\">[{{ ::lfData.code }}]</a>\n" +
+    "        <span ng-if=\"::!lfData._linkToDef\">[{{ ::lfData.code }}]</span>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
@@ -104,8 +104,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
     "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
-    "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                              <a ng-if=\"::item._linkToDef\" href=\"{{ ::item._linkToDef }}\" target=\"_blank\">[{{ ::item.questionCode }}]</a>\n" +
+    "                              <span ng-if=\"::!item._linkToDef\">[{{ ::item.questionCode }}]</span>\n" +
     "                            </span>\n" +
     "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
@@ -226,8 +226,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <h3 class=\"lf-form-title\">\n" +
     "      <span>{{lfData.name}}</span>\n" +
     "      <span class=\"item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
-    "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
+    "        <a ng-if=\"::lfData._linkToDef\" href=\"{{ ::lfData._linkToDef }}\" target=\"_blank\">[{{ ::lfData.code }}]</a>\n" +
+    "        <span ng-if=\"::!lfData._linkToDef\">[{{ ::lfData.code }}]</span>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
@@ -295,8 +295,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <span ng-show=\"::item._questionRepeatable\" class=\"sn\">{{::getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{::item._elementId}}\">{{::item.question}}</label></span>\n" +
     "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
-    "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                              <a ng-if=\"::item._linkToDef\" href=\"{{ ::item._linkToDef }}\" target=\"_blank\">[{{ ::item.questionCode }}]</a>\n" +
+    "                              <span ng-if=\"::!item._linkToDef\">[{{ ::item.questionCode }}]</span>\n" +
     "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ ::getCodingInstructions(item) }}</span>\n" +
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"::hasCodingInstructions(item)\"\n" +

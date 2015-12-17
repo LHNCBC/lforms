@@ -5,8 +5,8 @@
     <h3 class="lf-form-title">
       <span>{{lfData.name}}</span>
       <span class="item-code" ng-if="lfData.templateOptions.showQuestionCode">
-        <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
-        <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
+        <a ng-if="::lfData._linkToDef" href="{{ ::lfData._linkToDef }}" target="_blank">[{{ ::lfData.code }}]</a>
+        <span ng-if="::!lfData._linkToDef">[{{ ::lfData.code }}]</span>
     </h3>
     <div class="lf-form-body">
       <table cellspacing="0" cellpadding="0" class="lf-form-table">
@@ -74,8 +74,8 @@
                             <span ng-show="::item._questionRepeatable" class="sn">{{::getRepeatingSN(item) }}</span>
                             <span><label for="{{::item._elementId}}">{{::item.question}}</label></span>
                             <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
-                              <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
-                              <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+                              <a ng-if="::item._linkToDef" href="{{ ::item._linkToDef }}" target="_blank">[{{ ::item.questionCode }}]</a>
+                              <span ng-if="::!item._linkToDef">[{{ ::item.questionCode }}]</span>
                             </span>
                             <span ng-show="lfData.templateOptions.showCodingInstruction"
                                   class="prompt">{{ ::getCodingInstructions(item) }}</span>
