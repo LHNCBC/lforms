@@ -144,19 +144,16 @@
                   //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
                   converter.convert("/data/cde-data.json",
                       function(data) {
-                        data.typeInCDE = data.type;
-                        data.type = "CDE";
                         $scope.lfData2 = new LFormsData(data);
-                        // hide checkboxes
-                        $scope.lfOption2 = {hideHeader: true};
-                        // Or:   $scope.lfData2.setTemplateOptions({hideHeader: true});
+                        // hide checkboxes (and show question codes for testing)
+                        $scope.lfOption2 = {hideHeader: true, showQuestionCode: true};
+                        // Or:   $scope.lfData2.setTemplateOptions({hideHeader: true, showQuestionCode: true});
                         $scope.$apply();
                       },
                       function(err) {
                         console.log(err);
                       }
                   );
-                  //lfData2 = new LFormsData(cdeData);
                   break;
               }
               $scope.lfData2 = lfData2;

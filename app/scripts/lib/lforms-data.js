@@ -438,6 +438,11 @@ var LFormsData = Class.extend({
     if (!this.type || this.type.length == 0) {
       this.type = "LOINC"
     }
+    // add a link to external site for item's definition
+    if (this.type === "LOINC") {
+      this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
+    }
+
     // template
     if (!this.template || this.template.length == 0) {
       this.template = "panel-view-a";
@@ -552,6 +557,12 @@ var LFormsData = Class.extend({
           }
         }
       }
+
+      // add a link to external site for item's definition
+      if (this.type === "LOINC") {
+        item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
+      }
+
 
       // process the sub items
       if (item.items && item.items.length > 0) {
