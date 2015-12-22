@@ -445,12 +445,12 @@ var LFormsData = Class.extend({
 
     // template
     if (!this.template || this.template.length == 0) {
-      this.template = "panel-view-a";
+      this.template = "form-view-a";
     }
     // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
-    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
-        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
+    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
+        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
 
   },
 
