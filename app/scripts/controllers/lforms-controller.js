@@ -171,6 +171,18 @@ angular.module('lformsWidget')
         }
       };
 
+      $scope.getNumberOfQuestions = function() {
+        var ret = 0;
+        var widgetData = $scope.lfData;
+        if (widgetData && widgetData.itemList) {
+          for (var i = 0, iLen = widgetData.itemList.length; i < iLen; i++) {
+            if (!widgetData.itemList[i].header)
+              ret++;
+          }
+        }
+        return ret;
+      };
+
       /**
        *  Returns the list options hash needed by the autocomplete-lhc
        *  directive.
