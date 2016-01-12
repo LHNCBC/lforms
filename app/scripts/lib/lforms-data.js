@@ -1,3 +1,4 @@
+//noinspection JSValidateJSDoc,JSValidateJSDoc
 /**
  * Form definition data processing
  */
@@ -33,7 +34,7 @@ var LFormsData = Class.extend({
     "max",  // for number only
     "min",  // for number only
     "email",  // for INPUT element only
-    "url",    // for INPUT element only
+    "url"    // for INPUT element only
   ],
 
   // supported keys in restriction, not used yet
@@ -72,7 +73,7 @@ var LFormsData = Class.extend({
     "URL",     // sub-type of "ST"
     "EMAIL",   // sub-type of "ST"
     "PHONE",   // sub-type of "ST"
-    "",        // for header, no input field
+    ""        // for header, no input field
   ],
 
   // All accessory attributes of an item
@@ -214,6 +215,8 @@ var LFormsData = Class.extend({
 
     this.Navigation.setupNavigationMap(this);
 
+    this._setupAutocompOptions();
+
   },
 
   /**
@@ -237,6 +240,8 @@ var LFormsData = Class.extend({
     this._adjustLastSiblingListForHorizontalLayout();
 
     this.Navigation.setupNavigationMap(this);
+
+    this._setupAutocompOptions();
   },
 
   /**
@@ -244,6 +249,12 @@ var LFormsData = Class.extend({
    * To be optimized for performance.
    */
   updateOnValueChange: function() {
+    // check formula
+    this.runFormula();
+
+    // check data control
+    this.runDataController();
+
     // check skip logic
     this._updateSkipLogicStatus(this.items, null);
 
@@ -696,7 +707,7 @@ var LFormsData = Class.extend({
       // otherwise include form definition data
       else {
         // process fields
-        for (field in item) {
+        for (var field in item) {
           // special handling for user input values
           if (field === "value" || field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
@@ -805,12 +816,7 @@ var LFormsData = Class.extend({
       if (prevCodePath !== '') {
         // it's a different item, and
         // previous item is a repeating item, set the flag as the last in the repeating set
-        if (prevCodePath !== item._codePath && items[i - 1]._questionRepeatable) {
-          items[i - 1]._lastRepeatingItem = true;
-        }
-        else {
-          items[i - 1]._lastRepeatingItem = false;
-        }
+        items[i - 1]._lastRepeatingItem = !!(prevCodePath !== item._codePath && items[i - 1]._questionRepeatable);
       }
       prevCodePath = item._codePath;
       // check sub levels
@@ -819,12 +825,7 @@ var LFormsData = Class.extend({
       }
     }
     // the last item in the array
-    if (items[iLen-1]._questionRepeatable) {
-      items[iLen-1]._lastRepeatingItem = true;
-    }
-    else {
-      items[iLen-1]._lastRepeatingItem = false;
-    }
+    items[iLen - 1]._lastRepeatingItem = !!items[iLen - 1]._questionRepeatable;
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
       this._updateLastRepeatingItemsStatus(items[iLen-1].items);
@@ -1231,16 +1232,315 @@ var LFormsData = Class.extend({
     return result;
   },
 
-  //// not used
-  //// it might be needed for performance optimization
-  //runFormulas_NEW: function() {
-  //  for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-  //    var item = this.itemList[i];
-  //    if (item.calculationMethod) {
-  //      item.value = this.getFormulaResult(item);
-  //    }
-  //  }
-  //},
+
+  /**
+   * Update data by running all formula
+   */
+  runFormula: function() {
+    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
+      if (item.calculationMethod && item.calculationMethod.name) {
+        item.value = this.getFormulaResult(item);
+      }
+    }
+  },
+
+
+  /**
+   * Update data by checking 'dataControl' functions
+   */
+  runDataController: function() {
+    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
+      if (item.dataControl && angular.isArray(item.dataControl)) {
+        this._checkDataController(item);
+        this._updateAutocompOptions(item);
+        this._updateUnitAutocompOptions(item);
+      }
+    }
+  },
+
+
+  /**
+   * Update the data on the item by running through the data control functions defined on this item.
+   * @param item an item in the form
+   * @private
+   */
+  _checkDataController: function(item) {
+
+    for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
+      var source = item.dataControl[i].source;
+      var onAttribute = item.dataControl[i].onAttribute;
+      // the default target attribute where the data is set is "value"
+      if (!onAttribute)
+        onAttribute = "value";
+
+      // has a source configuration
+      if (source) {
+        // "internal" uses "itemCode" and "data"
+        if (source.sourceType === "internal" && source.itemCode) {
+          // the default source data field is "value"
+          if (!source.data)
+            source.data = "value";
+          // the default source data type is "TEXT" (or "LIST"?)
+          if (!source.dataType)
+            source.dataType = "TEXT";
+          // get the source item object
+          var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+          if (sourceItem) {
+            // check dataType
+            if (source.dataType === "LIST" ) {
+              // data is in the format of {"code": ..., "text": ...}
+              if (source.data.code && source.data.text) {
+                var codeList = this._getDataFromNestedAttributes(source.data.code, sourceItem);
+                var textList = this._getDataFromNestedAttributes(source.data.text, sourceItem);
+                // the numbers of codes and texts should be same
+                if (codeList && textList && codeList.length > 0 && codeList.length === textList.length) {
+                  // make a new array
+                  var targetData = [];
+                  for (var m=0, mLen=codeList.length; m<mLen; m++ ) {
+                    targetData.push({"code": codeList[m], "text": textList[m]});
+                  }
+                  // set the data
+                  item[onAttribute] = targetData;
+                }
+                else {
+                  console.log("Extra LIST data in " + sourceItem.question + " is invalid.")
+                }
+              } // end of source.data.code && source.data.text
+            } // enf of "LIST"
+            else if (source.dataType === "TEXT") {
+              var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
+              // found the source data
+              if (sourceData) {
+                // set the data
+                item[onAttribute] = sourceData;
+              }
+            } // end of "TEXT
+          }
+        }
+//        // "external" uses "url" and optional "urlOptions" and "data"
+//        else if (source.sourceType === 'external' && source.url) {
+//            // TBD, returned populated url and query, use $http to get data, then update the "item" again.
+//            // the update item part could be separated to be a single function
+//          var queryObj = this._getQueryURL(item, source, onAttribute);
+//          asyncDataQuery.push(queryObj);
+//        }
+      } // end if source
+    } // end of the loop of the data control
+  },
+
+
+  /**
+   * *** working, not used at this moment. ***
+   * Create the complete URL with addition parameters and data from source item
+   * @param item the item where the data is to be set
+   * @param source the source options
+   * @param onAttribute the attibute on the item where the data is to be set
+   * @returns {{}}
+   * @private
+   */
+  _getQueryURL: function(item, source, onAttribute) {
+    var queryObj = {};
+    if (source.sourceType === 'external' && source.url) {
+      var url = source.url;
+      // it has urlOptions
+      if (source.urlOptions) {
+        var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+        if (sourceItem) {
+          for(var i= 0, iLen=source.urlOptions.length; i<iLen; i++) {
+            var options = source.urlOptions[i];
+            var paramData = this._getDataFromNestedAttributes(options.data, sourceItem);
+            url += '&' + options.parameter + '=' + paramData;
+          }
+        }
+      }
+      queryObj.url = url;
+      queryObj.onAttribute = onAttribute;
+      queryObj.targetItem = item;
+    }
+    return queryObj;
+  },
+
+
+  /**
+   * Get data from a source item object following the nested attribute path
+   * Examples:
+   * sourceItem: {value: [ {attr1: 'v1', attr2: 'v2'}, {attr1: 'va', attr2: 'vb'}] }
+   * strQuery:   value.[1].attr1 ===> 'va'
+   * sourceItem: [{value: [ {attr1: 'v1', attr2: 'v2'}, {attr1: 'va', attr2: 'vb'}] }, {}]
+   * strQuery:   [0].value.[0].attr1 ===> 'v1'
+   * @param attributes a query path, such as "attr.[index].subattr.subsubattr"
+   * @param sourceItem a source item object
+   * @returns {*}
+   * @private
+   */
+  _getDataFromNestedAttributes: function(strQuery, sourceItem) {
+
+    var levels = strQuery.trim().split('.'); // "." is allowed in the attribute names of javascript object. We just assume "." is not used in the question item's field name
+    var dataSource = sourceItem, iLen = levels.length;
+
+    for (var i = 0; i<iLen; i++) {
+      if (dataSource) {
+        var query = levels[i];
+        // query not empty
+        if (query) {
+          // if it points to an item in an array
+          if(query[0]=== "[" && query[query.length-1] ==="]") {
+            var index =  parseInt(query.substr(1, query.length -2));
+            if (Number.isInteger(index)) {
+              dataSource = dataSource[index];
+            }
+            // stop if the index found is not an integer
+            else {
+              break;
+            }
+          }
+          // if it points to an attribute
+          else {
+            dataSource = dataSource[query];
+          }
+        }
+        // stop if the query is empty
+        else {
+          break;
+        }
+      }
+      // stop if data is not found in the middle
+      else {
+        break;
+      }
+    }
+    // data is valid AND all the parts of the query path are checked
+    return (i === iLen && dataSource) ? dataSource : null;
+  },
+
+
+  /**
+   * Set up autocomplete options for each items
+   * @private
+   */
+  _setupAutocompOptions: function() {
+
+    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+      this._updateAutocompOptions(this.itemList[i]);
+      this._updateUnitAutocompOptions(this.itemList[i]);
+    }
+
+    for (var i=0, iLen=this.templateOptions.obrItems.length; i<iLen; i++) {
+      this._updateAutocompOptions(this.templateOptions.obrItems[i]);
+      this._updateUnitAutocompOptions(this.templateOptions.obrItems[i]);
+    }
+
+  },
+
+
+  /**
+   * Update an item's autocomplete options for the units field
+   * @param item an item on the form
+   * @private
+   */
+  _updateUnitAutocompOptions: function(item) {
+    if (item.units && item.dataType != "CNE" && item.dataType != "CWE") {
+      // clean up unit autocomp options
+      item._unitAutocompOptions = null;
+
+      var listItems = [], answers = item.units, options=null;
+      // Modify the label (question text) for each question.
+      var defaultValue;
+      for (var i= 0, iLen = answers.length; i<iLen; i++) {
+        // Make a copy of the original unit
+        var answerData = angular.copy(answers[i]);
+        listItems.push(
+            {text: answerData.name,
+              value: answerData.name, // value is needed for formula calculation
+              code: answerData.code,
+              _orig: answers[i]
+            });
+        if (answerData.default)
+          defaultValue = answerData.name;
+      }
+
+      options = {
+        listItems: listItems,
+        matchListValue: true
+      };
+      if (defaultValue !== undefined)
+        options.defaultValue = defaultValue;
+
+      item._unitAutocompOptions = options;
+    }
+  },
+
+
+  /**
+   * Update an item's autocomplete options
+   * @param item an item on the form
+   * @private
+   */
+  _updateAutocompOptions: function(item) {
+    // for list only
+    if (item.dataType === "CNE" || item.dataType === "CWE") {
+
+      var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
+      if (maxSelect !== '*' && typeof maxSelect === 'string') {
+        maxSelect = parseInt(maxSelect);
+      }
+
+      var options = {
+        matchListValue: item.dataType === "CNE",
+        maxSelect: maxSelect,
+      };
+
+      var url = item.externallyDefined;
+      if (url) {
+        options.url = url;
+        options.autocomp = true;
+        options.nonMatchSuggestions = false;
+        options.tableFormat = true;
+        options.valueCols = [0];
+      }
+      else {
+        var listItems = [], answers = [];
+
+        // 'answers' might be null even for CWE
+        if (item.answers) {
+          if (angular.isArray(item.answers)) {
+            answers = item.answers;
+          }
+          else if (item.answers !== "" && this.answerLists) {
+            answers = this.answerLists[item.answers];
+          }
+        }
+
+        // Just check the first answer to see if there's a label
+        // (Labels should be on all answers if one has a label.)
+        var hasLabel;
+        if (answers.length > 0 && answers[0].label &&
+            typeof answers[0].label === 'string' && answers[0].label.trim()) {
+          hasLabel = true;
+        }
+        options.addSeqNum = !hasLabel;
+
+        // Modify the display label (answer text) for each answer.
+        for(var i= 0, iLen = answers.length; i<iLen; i++) {
+          // Make a copy of the original answer
+          var answerData = angular.copy(answers[i]);
+          var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
+          answerData.text = label;
+          answerData._orig = answers[i];
+          listItems.push(answerData);
+        }
+
+        options.listItems = listItems;
+        // See if there is a default value defined for the question.
+        if (item.defaultAnswer) {
+          options.defaultValue = item.defaultAnswer;
+        }
+      }
+      item._autocompOptions = options;
+    } // end of list
+  },
 
 
   /**
@@ -1285,7 +1585,7 @@ var LFormsData = Class.extend({
       precision_: 2,
       'TOTALSCORE': function (sources) {
         var totalScore = 0;
-        for (var i = 0, ilen = sources.length; i < ilen; i++) {
+        for (var i = 0, iLen = sources.length; i < iLen; i++) {
           totalScore += sources[i];
         }
         return totalScore;
@@ -1418,7 +1718,7 @@ var LFormsData = Class.extend({
   /**
    * Search upwards along the tree structure to find the item with a matching questionCode
    * @param item the item to start with
-   * @param questionCodes the code of an item
+   * @param questionCode the code of an item
    * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
    * @returns {}
    * @private
@@ -1470,7 +1770,7 @@ var LFormsData = Class.extend({
   /**
    * Get a source item from the question code defined in a skip logic
    * @param item the target item where a skip logic is defined
-   * @param questionCodes the code of a source item
+   * @param questionCode the code of a source item
    * @param checkAncestorSibling, optional, to check ancestor's siblings also, default is true
    * @returns {Array}
    * @private
@@ -1690,7 +1990,7 @@ var LFormsData = Class.extend({
                 this._reverseNavigationMap[cellItem._elementId] = {x: posX, y: posY};
                 posX += 1; // have added a field in the row
               }
-              this._navigationMap.push(tableRowMap)
+              this._navigationMap.push(tableRowMap);
               posY += 1; // have added a row
             }
             // move i to the item right after the horizontal table

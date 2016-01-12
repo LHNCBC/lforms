@@ -61,17 +61,6 @@ angular.module('lformsWidget')
       };
 
       /**
-       * Run a formula that is defined on the item.
-       * @param item the 'target' item where the calculation result is set.
-       */
-      $scope.runFormula = function(item) {
-        if (item.calculationMethod && item.calculationMethod.name) {
-          var result = $scope.lfData.getFormulaResult(item);
-          item.value = result;
-        }
-      };
-
-      /**
        * Check if there's a unit list
        * @param item an item in the lforms form items array
        * @returns {string}
@@ -168,6 +157,7 @@ angular.module('lformsWidget')
         if (widgetData) {
           widgetData.updateOnValueChange();
           $scope.sendActionsToScreenReader();
+          console.log("in updateOnValueChange()");
         }
       };
 
@@ -182,115 +172,6 @@ angular.module('lformsWidget')
         }
         return ret;
       };
-
-      /**
-       *  Returns the list options hash needed by the autocomplete-lhc
-       *  directive.
-       * @param questionInfo the data structure for the question on the form
-       */
-      $scope.autocompLhcOpt = function(questionInfo) {
-        var maxSelect = questionInfo.answerCardinality ? questionInfo.answerCardinality.max : 1;
-        if (maxSelect !== '*' && typeof maxSelect === 'string') {
-          maxSelect = parseInt(maxSelect);
-        }
-
-        var ret = {
-          matchListValue: questionInfo.dataType === "CNE",
-          maxSelect: maxSelect,
-         };
-
-        var url = questionInfo.externallyDefined;
-        if (url) {
-          ret.url = url;
-          ret.autocomp = true;
-          ret.nonMatchSuggestions = false;
-          ret.tableFormat = true;
-          ret.valueCols = [0];
-        }
-        else {
-          var listItems = [], answers = [];
-
-          // 'answers' might be null even for CWE
-          if (questionInfo.answers) {
-            if (angular.isArray(questionInfo.answers)) {
-              answers = questionInfo.answers;
-            }
-            else if (questionInfo.answers !== "" && $scope.lfData.answerLists) {
-              answers = $scope.lfData.answerLists[questionInfo.answers];
-            }
-          }
-
-          // Just check the first answer to see if there's a label
-          // (Labels should be on all answers if one has a label.)
-          var hasLabel;
-          if (answers.length > 0 && answers[0].label &&
-              typeof answers[0].label === 'string' && answers[0].label.trim()) {
-            hasLabel = true;
-          }
-          ret.addSeqNum = !hasLabel;
-
-          // Modify the display label (answer text) for each answer.
-          var defaultValue;
-          for(var i= 0, iLen = answers.length; i<iLen; i++) {
-            // Make a copy of the original answer
-            var answerData = angular.copy(answers[i]);
-            var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
-            answerData.text = label;
-            answerData._orig = answers[i];
-            listItems.push(answerData);
-
-            // check the current selected value
-            if (questionInfo.value && questionInfo.value.text == label && questionInfo.value.code == answers[i].code) {
-              defaultValue = questionInfo.value.text;
-            }
-          }
-
-          ret.listItems = listItems;
-          if (defaultValue === undefined) {
-            // See if there is a default value defined for the question.
-            defaultValue = questionInfo.defaultAnswer;
-          }
-          if (defaultValue !== undefined && defaultValue !== null)
-            ret.defaultValue = defaultValue;
-        }
-
-        return ret;
-      };
-
-
-      /**
-       *  Returns the list options hash needed by the autocomplete-lhc
-       *  directive for the units field.
-       * @param questionInfo the data structure for the question on the form
-       */
-      $scope.unitsAutocompLhcOpt = function(questionInfo) {
-        var listItems = [], answers = questionInfo.units, ret ={};
-
-        // Modify the label (question text) for each question.
-        var defaultValue;
-        for (var i= 0, ilen = answers.length; i<ilen; i++) {
-          // Make a copy of the original unit
-          var answerData = angular.copy(answers[i]);
-          listItems.push(
-              {text: answerData.name,
-               value: answerData.name, // value is needed for formula calculation
-               code: answerData.code,
-               _orig: answers[i]
-          });
-          if (answerData.default)
-            defaultValue = answerData.name;
-        }
-
-        ret = {
-          listItems: listItems,
-          matchListValue: true
-        };
-        if (defaultValue !== undefined)
-          ret.defaultValue = defaultValue;
-
-        return ret;
-      };
-
 
       /**
        * Get the CSS class on each item row

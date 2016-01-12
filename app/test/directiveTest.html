@@ -108,6 +108,18 @@
               $scope.lfData2 = lfData2;
             };
 
+            $scope.useFormDataVWithNewOptions = function() {
+              $scope.lfOption2 = {
+                showQuestionCode: false,   // whether question code is displayed next to the question
+                showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
+                hideHeader: true, // whether to hide the header section on top of the form
+                hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
+                showFormInfoQuestions: true, // whether to show additional questions about the form
+                obrHeader: false
+              };
+            };
+
             // An example of how to get the user data
             $scope.getData = function() {
               // optional parameters are available to getFormData()
@@ -120,6 +132,8 @@
     <div id="horizontal-form" ng-controller="lformsTestControllerH">
       <button id="load1" ng-click="useFormDataV()">Use a form with vertical layout</button>
       <button id="load2" ng-click="useFormDataH()">Use a form with horizontal layout</button>
+      <button id="load3" ng-click="useFormDataVWithNewOptions()">Use the same form but with new options</button>
+
       <button ng-click="getData()">Click to get form data</button>
       <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
     </div>

@@ -743,6 +743,7 @@ var allInOne =
   "units": null,
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": null,
+  "templateOptions": {obrHeader: false},
   "items": [
     // different data type
     {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null,
@@ -914,6 +915,103 @@ var allInOne =
       ]
     },
 
+    {
+      "questionCode": "dataControlExamples",
+      "header": true,
+      "question": "'dataControl' examples",
+      "items": [
+        // a search item that returns extra data (a list) in 'STRENGTHS_AND_FORMS' attribute of the data model.
+        {
+          "questionCode":"itemWithExtraData",
+          "dataType":"CNE",
+          "header":false,
+          "question":"Drug (with extra data of strengths and forms)",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS",
+          //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
+        },
+        //an item that gets the extra LIST data whenever the source item has a data changes
+        {
+          "questionCode": "controlledItem_LIST",
+          "dataType": "CNE",
+          "header": false,
+          "question": "Strengths and Forms (from 'Drug')",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "dataType": "LIST", // "TEXT", "NUMBER" ?
+                "itemCode": "itemWithExtraData",
+                //"property": "value.STRENGTHS_AND_FORMS"
+                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
+                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+              },
+              "onAttribute": "answers"
+            }
+          ],
+        },
+        //an item that gets the extra TEXT data whenever the source item has a data changes
+        {
+          "questionCode": "controlledItem_TEXT",
+          "dataType": "ST",
+          "header": false,
+          "question": "The First Strength (from 'Drugs')",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "dataType": "TEXT",
+                "itemCode": "itemWithExtraData",
+                // "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
+                "data": "value.STRENGTHS_AND_FORMS.[0]"
+              },
+              "onAttribute": "value"
+            }
+          ],
+        },
+
+        ////an item that gets the external LIST data whenever the source item has a data changes
+        //{
+        //  "questionCode": "controlledItemTestURL_LIST",
+        //  "dataType": "CNE",
+        //  "header": false,
+        //  "question": "A Strength List (Through URL)",
+        //  "dataControl": [
+        //    {
+        //      "source": {
+        //        "sourceType": "external",
+        //        "dataType": "LIST",
+        //        "itemCode": "itemWithExtraData",
+        //        "url": "https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
+        //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
+        //        "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
+        //      },
+        //      "onAttribute": "answers"
+        //    }
+        //  ],
+        //},
+        ////an item that gets the external TEXT data whenever the source item has a data changes
+        //{
+        //  "questionCode": "controlledItemTestURL_TEXT",
+        //  "dataType": "ST",
+        //  "header": false,
+        //  "question": "The First Strength(Through URL)",
+        //  "dataControl": [
+        //    {
+        //      "source": {
+        //        "sourceType": "external",
+        //        "dataType": "TEXT",
+        //        "itemCode": "itemWithExtraData",
+        //        "url": "https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
+        //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
+        //        "data": "value.STRENGTHS_AND_FORMS.[0]"
+        //      },
+        //      "onAttribute": "value"
+        //    }
+        //  ],
+        //}
+      ]
+
+    },
 
 
 

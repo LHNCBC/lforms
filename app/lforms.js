@@ -13,7 +13,7 @@ angular.module('lformsWidget', [
   return {
     restrict: 'E',
     scope: {lfData: '=', lfOptions: '=?'},
-    link: function(scope, elment, attributes) {
+    link: function(scope, element, attributes) {
       scope.$watch("lfOptions", function (value){
         if (scope.lfData && value)
           scope.lfData.setTemplateOptions(value);
