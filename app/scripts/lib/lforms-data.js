@@ -1304,9 +1304,6 @@ var LFormsData = Class.extend({
                   // set the data
                   item[onAttribute] = targetData;
                 }
-                else {
-                  console.log("Extra LIST data in " + sourceItem.question + " is invalid.")
-                }
               } // end of source.data.code && source.data.text
             } // enf of "LIST"
             else if (source.dataType === "TEXT") {

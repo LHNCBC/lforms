@@ -157,7 +157,6 @@ angular.module('lformsWidget')
         if (widgetData) {
           widgetData.updateOnValueChange();
           $scope.sendActionsToScreenReader();
-          console.log("in updateOnValueChange()");
         }
       };
 

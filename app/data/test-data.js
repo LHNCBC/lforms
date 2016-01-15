@@ -743,7 +743,6 @@ var allInOne =
   "units": null,
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": null,
-  "templateOptions": {obrHeader: false},
   "items": [
     // different data type
     {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null,
