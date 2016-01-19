@@ -925,7 +925,7 @@ var allInOne =
           "dataType":"CNE",
           "header":false,
           "question":"Drug (with extra data of strengths and forms)",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1",
           //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
@@ -940,7 +940,6 @@ var allInOne =
                 "sourceType": "internal",
                 "dataType": "LIST", // "TEXT", "NUMBER" ?
                 "itemCode": "itemWithExtraData",
-                //"property": "value.STRENGTHS_AND_FORMS"
                 "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
                 // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
               },

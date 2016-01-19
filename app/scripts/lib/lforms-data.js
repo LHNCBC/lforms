@@ -1,4 +1,3 @@
-//noinspection JSValidateJSDoc,JSValidateJSDoc
 /**
  * Form definition data processing
  */
@@ -90,7 +89,7 @@ var LFormsData = Class.extend({
   // default template options
   _defaultTemplateOptions: {
     showQuestionCode: false,   // whether question code is displayed next to the question
-    showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
+    showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in a popup)
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
@@ -250,10 +249,10 @@ var LFormsData = Class.extend({
    */
   updateOnValueChange: function() {
     // check formula
-    this.runFormula();
+    this.processFormulas();
 
     // check data control
-    this.runDataController();
+    this.processDataControl();
 
     // check skip logic
     this._updateSkipLogicStatus(this.items, null);
@@ -1234,9 +1233,9 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Update data by running all formula
+   * Update data by running all formulas
    */
-  runFormula: function() {
+  processFormulas: function() {
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
       if (item.calculationMethod && item.calculationMethod.name) {
@@ -1249,11 +1248,11 @@ var LFormsData = Class.extend({
   /**
    * Update data by checking 'dataControl' functions
    */
-  runDataController: function() {
+  processDataControl: function() {
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
       if (item.dataControl && angular.isArray(item.dataControl)) {
-        this._checkDataController(item);
+        this._updateDataByDataControl(item);
         this._updateAutocompOptions(item);
         this._updateUnitAutocompOptions(item);
       }
@@ -1266,7 +1265,7 @@ var LFormsData = Class.extend({
    * @param item an item in the form
    * @private
    */
-  _checkDataController: function(item) {
+  _updateDataByDataControl: function(item) {
 
     for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
       var source = item.dataControl[i].source;

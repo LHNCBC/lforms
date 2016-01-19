@@ -19,7 +19,9 @@ describe('data control', function() {
     ff.dcTarget1.sendKeys(protractor.Key.TAB);
     expect(ff.dcTarget1.getAttribute('value')).toBe("1 mg Tab");
 
-    expect(ff.dcTarget2.getAttribute('value')).toBe(" 0.5 mg Tab");  // there are heading spaces
+    ff.dcTarget2.getAttribute('value').then(function(v) {
+      expect(v.trim()).toBe("0.5 mg Tab");
+    });
 
     // pick a different value on source field
     ff.dcSource.clear();
@@ -38,7 +40,9 @@ describe('data control', function() {
     ff.dcTarget1.sendKeys(protractor.Key.TAB);
     expect(ff.dcTarget1.getAttribute('value')).toBe("5 mg/ml Sol");
 
-    expect(ff.dcTarget2.getAttribute('value')).toBe("  5 mg/ml Injection"); // there are heading spaces
+    ff.dcTarget2.getAttribute('value').then(function(v) {
+      expect(v.trim()).toBe("5 mg/ml Injection");
+    });
 
   });
 });
