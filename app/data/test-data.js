@@ -938,7 +938,7 @@ var allInOne =
             {
               "source": {
                 "sourceType": "internal",
-                "dataType": "LIST", // "TEXT", "NUMBER" ?
+                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
                 "itemCode": "itemWithExtraData",
                 "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
                 // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
@@ -957,7 +957,7 @@ var allInOne =
             {
               "source": {
                 "sourceType": "internal",
-                "dataType": "TEXT",
+                "sourceDataType": "TEXT",
                 "itemCode": "itemWithExtraData",
                 // "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
                 "data": "value.STRENGTHS_AND_FORMS.[0]"
@@ -977,7 +977,7 @@ var allInOne =
         //    {
         //      "source": {
         //        "sourceType": "external",
-        //        "dataType": "LIST",
+        //        "sourceDataType": "LIST",
         //        "itemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
@@ -997,7 +997,7 @@ var allInOne =
         //    {
         //      "source": {
         //        "sourceType": "external",
-        //        "dataType": "TEXT",
+        //        "sourceDataType": "TEXT",
         //        "itemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],

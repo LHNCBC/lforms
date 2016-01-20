@@ -1282,13 +1282,13 @@ var LFormsData = Class.extend({
           if (!source.data)
             source.data = "value";
           // the default source data type is "TEXT" (or "LIST"?)
-          if (!source.dataType)
-            source.dataType = "TEXT";
+          if (!source.sourceDataType)
+            source.sourceDataType = "TEXT";
           // get the source item object
           var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
           if (sourceItem) {
-            // check dataType
-            if (source.dataType === "LIST" ) {
+            // check source data type
+            if (source.sourceDataType === "LIST" ) {
               // data is in the format of {"code": ..., "text": ...}
               if (source.data.code && source.data.text) {
                 var codeList = this._getDataFromNestedAttributes(source.data.code, sourceItem);
@@ -1304,8 +1304,8 @@ var LFormsData = Class.extend({
                   item[onAttribute] = targetData;
                 }
               } // end of source.data.code && source.data.text
-            } // enf of "LIST"
-            else if (source.dataType === "TEXT") {
+            } // end of "LIST"
+            else if (source.sourceDataType === "TEXT") {
               var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
               // found the source data
               if (sourceData) {
