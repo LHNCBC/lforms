@@ -1327,36 +1327,36 @@ var LFormsData = Class.extend({
   },
 
 
-  /**
-   * *** working, not used at this moment. ***
-   * Create the complete URL with addition parameters and data from source item
-   * @param item the item where the data is to be set
-   * @param source the source options
-   * @param onAttribute the attibute on the item where the data is to be set
-   * @returns {{}}
-   * @private
-   */
-  _getQueryURL: function(item, source, onAttribute) {
-    var queryObj = {};
-    if (source.sourceType === 'external' && source.url) {
-      var url = source.url;
-      // it has urlOptions
-      if (source.urlOptions) {
-        var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
-        if (sourceItem) {
-          for(var i= 0, iLen=source.urlOptions.length; i<iLen; i++) {
-            var options = source.urlOptions[i];
-            var paramData = this._getDataFromNestedAttributes(options.data, sourceItem);
-            url += '&' + options.parameter + '=' + paramData;
-          }
-        }
-      }
-      queryObj.url = url;
-      queryObj.onAttribute = onAttribute;
-      queryObj.targetItem = item;
-    }
-    return queryObj;
-  },
+  ///**
+  // * *** working, not used at this moment. ***  not reviewed.
+  // * Create the complete URL with addition parameters and data from source item
+  // * @param item the item where the data is to be set
+  // * @param source the source options
+  // * @param onAttribute the attribute on the item where the data is to be set
+  // * @returns {{}}
+  // * @private
+  // */
+  //_getQueryURL: function(item, source, onAttribute) {
+  //  var queryObj = {};
+  //  if (source.sourceType === 'external' && source.url) {
+  //    var url = source.url;
+  //    // it has urlOptions
+  //    if (source.urlOptions) {
+  //      var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+  //      if (sourceItem) {
+  //        for(var i= 0, iLen=source.urlOptions.length; i<iLen; i++) {
+  //          var options = source.urlOptions[i];
+  //          var paramData = this._getDataFromNestedAttributes(options.data, sourceItem);
+  //          url += '&' + options.parameter + '=' + paramData;
+  //        }
+  //      }
+  //    }
+  //    queryObj.url = url;
+  //    queryObj.onAttribute = onAttribute;
+  //    queryObj.targetItem = item;
+  //  }
+  //  return queryObj;
+  //},
 
 
   /**
