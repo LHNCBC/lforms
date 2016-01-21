@@ -1,11 +1,11 @@
 {
   "name": "lforms",
-  "version": "4.2.4",
+  "version": "4.3.0",
   "dependencies": {
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
     "angular-bootstrap": "^0.14.2",
-    "autocomplete-lhc": "^7.0.5",
+    "autocomplete-lhc": "^8.0.0",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0"
   },

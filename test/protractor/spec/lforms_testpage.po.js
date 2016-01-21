@@ -97,7 +97,13 @@ var TestPage = function() {
       rpSrc2: element(by.id('/rpSource2/1')),
       rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
       rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
-      rpAdd: element(by.id('add-/repeatingSection1/1'))
+      rpAdd: element(by.id('add-/repeatingSection1/1')),
+
+      dcSource: element(by.id('/dataControlExamples/itemWithExtraData/1/1')),
+      dcTarget1: element(by.id('/dataControlExamples/controlledItem_LIST/1/1')),
+      dcTarget2: element(by.id('/dataControlExamples/controlledItem_TEXT/1/1')),
+
+      searchResults: element(by.id('searchResults'))
     },
 
     FormWithUserData: {

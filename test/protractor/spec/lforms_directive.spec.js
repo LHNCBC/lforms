@@ -95,6 +95,7 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
 
   var loadForm1 = 'load1';
   var loadForm2 = 'load2';
+  var loadForm3 = 'load3';
 
   it('default value of the checkboxes should not be checked', function() {
     var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
@@ -130,5 +131,14 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
     expect(code.isDisplayed()).toBe(true);
   });
 
+  it('changing templateOptions alone should also change the form', function() {
+    element(by.id(loadForm3)).click();
+    browser.waitForAngular();
+    var checkboxes = element(by.css('div.checkbox > label > input[type="checkbox"]'));
+    // no checkboxes
+    expect(checkboxes.isPresent()).toBeFalsy();
+    // no obr header
+    expect(element(by.id('date_done')).isPresent()).toBe(false);
+  });
 });
 

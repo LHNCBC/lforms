@@ -99,7 +99,6 @@
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
               {text: 'Form With User Data', id: 'form-with-user-data'},
               {text: 'CDE sample form #1', id: 'cde1'}
-
             ];
 
             $scope.useForm = function() {
@@ -119,8 +118,9 @@
                   break;
                 case '35088-4':
                   //'Glasgow Coma Score (with score rules)--RI'
-                  lfData2 = new LFormsData(angular.copy(glasgowRI));
-                  WidgetUtil.preprocessRIData(lfData2.items);
+                  var formData = angular.copy(glasgowRI);
+                  WidgetUtil.preprocessRIData(formData.items);
+                  lfData2 = new LFormsData(formData);
                   break;
                 case 'all-in-one':
                   //'Full-Featured Demo'
