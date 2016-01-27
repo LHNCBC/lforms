@@ -129,6 +129,13 @@ module.exports = function (grunt) {
       }
     },
 
+
+    nsp: {
+      package: grunt.file.readJSON('./package.json'),
+      shrinkwrap: grunt.file.readJSON('./npm-shrinkwrap.json')
+    },
+
+
     protractor: {
       options: {
         configFile: "test/protractor/conf.js", // Default config file
@@ -413,6 +420,7 @@ module.exports = function (grunt) {
     'connect:test',
     //'karma'
     'wiredep',
+    'nsp',
     'protractor'
   ]);
 
