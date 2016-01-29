@@ -197,7 +197,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                                      title=\"Add another '{{ repeatingItem.question }}'\"\n" +
     "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
     "                                      ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
-    "                                      uib-popover=\"You have an unused '{{ repeatingItem.question }}', please use it before adding a new one.\"\n" +
+    "                                      uib-popover='Please enter info in the blank \"{{ repeatingItem.question }}\".'\n" +
     "                                      popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
     "                                      popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
     "                                Add another '{{repeatingItem.question}}'\n" +
@@ -396,7 +396,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                                    title=\"Add another '{{ repeatingItem.question }}'\"\n" +
     "                                    ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
     "                                    ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
-    "                                    uib-popover=\"You have an unused '{{ repeatingItem.question }}', please use it before adding a new one.\"\n" +
+    "                                    uib-popover='Please enter info in the blank \"{{ repeatingItem.question }}\".'\n" +
     "                                    popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
     "                                    popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
     "                              Add another '{{repeatingItem.question}}'\n" +

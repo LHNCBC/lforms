@@ -3,7 +3,7 @@ var ff = tp.USSGFHTVertical;
 
 describe('Unused repeating item/section control', function() {
 
-  var namePopover = element(by.css("div[content=\"You have an unused 'Name', please use it before adding a new one.\"]"));
+  var namePopover = element(by.css('div[content=\'Please enter info in the blank "Name".\']'));
 
   describe('on repeating items', function() {
 
@@ -31,7 +31,7 @@ describe('Unused repeating item/section control', function() {
   });
 
   describe('on repeating sections', function() {
-    var diseasesPopover = element(by.css("div[content=\"You have an unused 'Your diseases history', please use it before adding a new one.\"]"));
+    var diseasesPopover = element(by.css('div[content=\'Please enter info in the blank "Your diseases history".\']'));
 
     it('should not add a new one when all item in the section are empty', function () {
       ff.btnDiseasesHist.click();
@@ -70,8 +70,8 @@ describe('Unused repeating item/section control', function() {
   });
 
   describe('repeating section within a repeating section', function() {
-    var familyPopover = element(by.css("div[content=\"You have an unused 'Family member health information', please use it before adding a new one.\"]"));
-    var diseHistPopover = element(by.css("div[content=\"You have an unused 'This family member's history of disease', please use it before adding a new one.\"]"));
+    var familyPopover = element(by.css('div[content=\'Please enter info in the blank "Family member health information".\']'));
+    var diseHistPopover = element(by.css('div[content=\'Please enter info in the blank "This family member\\\'s history of disease".\']'));
     it("should not add new section if any previous one is empty", function() {
       ff.btnAnotherFamily.click();
       expect(familyPopover.isDisplayed()).toBe(true);

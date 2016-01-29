@@ -170,7 +170,7 @@
                                     title="Add another '{{ repeatingItem.question }}'"
                                     ng-click="addOneRepeatingItem(repeatingItem)"
                                     ng-blur="hideUnusedItemWarning(repeatingItem)"
-                                    uib-popover="You have an unused '{{ repeatingItem.question }}', please use it before adding a new one."
+                                    uib-popover='Please enter info in the blank "{{ repeatingItem.question }}".'
                                     popover-placement="top-left" popover-title="Warning"
                                     popover-is-open="repeatingItem._showUnusedItemWarning">
                               Add another '{{repeatingItem.question}}'
