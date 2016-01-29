@@ -191,12 +191,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
     "                            ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
     "                        <td>\n" +
-    "                          <div class=\"name-label\">\n" +
-    "                            <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
-    "                                    class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
-    "                                    ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
-    "                                    title=\"Add another '{{ repeatingItem.question }}'\">\n" +
-    "                              Add another '{{repeatingItem.question}}'</button>\n" +
+    "                          <div class=\"name-label has-popover-warning\">\n" +
+    "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
+    "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
+    "                                      title=\"Add another '{{ repeatingItem.question }}'\"\n" +
+    "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
+    "                                      ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
+    "                                      uib-popover=\"You have an unused '{{ repeatingItem.question }}', please use it before adding a new one.\"\n" +
+    "                                      popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "                                      popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
+    "                                Add another '{{repeatingItem.question}}'\n" +
+    "                              </button>\n" +
     "                          </div>\n" +
     "                        </td>\n" +
     "                      </tr>\n" +
@@ -385,12 +390,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <td class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"\n" +
     "                            ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
     "                        <td>\n" +
-    "                          <div class=\"name-label\">\n" +
+    "                          <div class=\"name-label has-popover-warning\">\n" +
     "                            <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
     "                                    class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
+    "                                    title=\"Add another '{{ repeatingItem.question }}'\"\n" +
     "                                    ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
-    "                                    title=\"Add another '{{ repeatingItem.question }}'\">\n" +
-    "                              Add another '{{repeatingItem.question}}'</button>\n" +
+    "                                    ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
+    "                                    uib-popover=\"You have an unused '{{ repeatingItem.question }}', please use it before adding a new one.\"\n" +
+    "                                    popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "                                    popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
+    "                              Add another '{{repeatingItem.question}}'\n" +
+    "                            </button>\n" +
     "                          </div>\n" +
     "                        </td>\n" +
     "                      </tr>\n" +

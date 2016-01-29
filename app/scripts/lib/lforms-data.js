@@ -93,6 +93,7 @@ var LFormsData = Class.extend({
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
+    allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     obxTableColumns: [
       {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
       {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -115,6 +116,7 @@ var LFormsData = Class.extend({
       tabOnInputFieldsOnly: false,
       hideHeader: false,
       hideCheckBoxes: false,
+      allowMultipleEmptyRepeatingItems: false,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -135,6 +137,7 @@ var LFormsData = Class.extend({
       tabOnInputFieldsOnly: false,
       hideHeader: false,
       hideCheckBoxes: false,
+      allowMultipleEmptyRepeatingItems: false,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -1002,7 +1005,7 @@ var LFormsData = Class.extend({
 
   /**
    * Add a repeating item or a repeating section and update form status
-   * @param item an item
+   * @param item a repeating item or a repeating group item
    * @returns the newly added item or a header item of the newly added section
    */
   addRepeatingItems: function(item) {
@@ -1032,6 +1035,71 @@ var LFormsData = Class.extend({
     this._actionLogs.push(readerMsg);
 
     return newItem;
+  },
+
+
+  /**
+   * Check if any of the repeating item or group has no user input values.
+   * @param item a repeating item or a repeating group item
+   * @returns {boolean}
+   */
+  isAnyRepeatingItemsEmpty: function(item) {
+    var anyEmpty = false;
+    var repeatingItems = this._getRepeatingItems(item);
+    for(var i=0, iLen=repeatingItems.length; i<iLen; i++) {
+      // reset the message flag
+      repeatingItems[i]._showUnusedItemWarning = false;
+      // check if there is no user input for this item/section
+      var empty = this._isRepeatingItemEmpty(repeatingItems[i]);
+      if (empty) anyEmpty = true;
+    }
+    if (anyEmpty) {
+      // set the flag to show the warning about unused repeating items
+      item._showUnusedItemWarning = true;
+    }
+    return anyEmpty;
+  },
+
+
+  /**
+   * Check if a repeating item has no user input value or
+   * all items within a repeating group item have no user input values
+   * @param item a repeating item or a repeating group item
+   * @returns {boolean}
+   */
+  _isRepeatingItemEmpty: function(item) {
+
+    var isEmpty = true;
+    //if it is not hidden
+    if (item._skipLogicStatus !== "target-hide") {
+      // multiple selection answer list (array is also an object)
+      if (angular.isArray(item.value) && item.value.length > 0) {
+        var notEmpty = false;
+        for(var i= 0, iLen=item.value.length; i<iLen; i++) {
+          if (item.value[i].text)
+          notEmpty = item.value[i].text !== undefined && item.value[i].text !== null && item.value[i].text !=="";
+          if (notEmpty) break;
+        }
+        isEmpty = !notEmpty;
+      }
+      // single selection answer list
+      else if (angular.isObject(item.value)) {
+        isEmpty = item.value.text === undefined || item.value.text === null || item.value.text ==="";
+      }
+      // simple type
+      else if (item.value !== undefined && item.value !== null && item.value !=="") {
+        isEmpty = false;
+      }
+    }
+    // check sub items
+    if (isEmpty && item.items) {
+      for (var i= 0, iLen = item.items.length; i<iLen; i++) {
+        isEmpty = this._isRepeatingItemEmpty(item.items[i]);
+        if (!isEmpty) break;
+      }
+    }
+
+    return isEmpty;
   },
 
 

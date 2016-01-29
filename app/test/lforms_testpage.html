@@ -98,15 +98,19 @@
               {text: 'Form Builder created test form', id: 'formC'},
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
               {text: 'Form With User Data', id: 'form-with-user-data'},
-              {text: 'CDE sample form #1', id: 'cde1'}
+              {text: 'CDE sample form #1', id: 'cde1'},
+//              {text: 'RxTerms Demo', id: 'X-001'}
             ];
 
             $scope.useForm = function() {
-              var lfData2;
+              var lfData2,
+                  lfOption2 = {"allowMultipleEmptyRepeatingItems": true};
+
               switch ($scope.selectedForm) {
                 case '54127-6N':
                   //'USSG-FHT, (with mock-up items for skip logic demo)'
                   lfData2 = new LFormsData(angular.copy(FHTData));
+                  lfOption2 = {"allowMultipleEmptyRepeatingItems": false};
                   break;
                 case '54127-6H':
                   //'USSG-FHT, (with mock-up items for horizontal layout demo)'
@@ -138,6 +142,10 @@
                   //'Form With User Data'
                   lfData2 = new LFormsData(angular.copy(formWithUserData));
                   break;
+                case 'X-001':
+                  //'RxTerms'
+                  lfData2 = new LFormsData(angular.copy(rxTerms));
+                  break;
                 case 'cde1':
                   //'CDE Sample form'
                   var converter = new LFormsConverter();
@@ -157,6 +165,7 @@
                   break;
               }
               $scope.lfData2 = lfData2;
+              $scope.lfOption2 = lfOption2;
             };
           }]);
     </script>

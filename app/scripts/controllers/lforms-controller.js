@@ -5,7 +5,10 @@ angular.module('lformsWidget')
     ['$scope', 'smoothScroll', 'LF_CONSTANTS',
       function ($scope, smoothScroll, LF_CONSTANTS) {
 
-      $scope.debug = false;
+      $scope.debug = true;
+
+      $scope.hasUnused = false;
+      $scope.repeatingSectionStatus = {};
 
       // Provide blank image to satisfy img tag. Bower packaging forces us to
       // avoid using image files from html templates, therefore using base64
@@ -264,42 +267,60 @@ angular.module('lformsWidget')
        */
       $scope.addOneRepeatingItem = function(item) {
         var widgetData = $scope.lfData;
-        var newItem = widgetData.addRepeatingItems(item);
+        var anyEmpty = false;
+        if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
+          anyEmpty = widgetData.isAnyRepeatingItemsEmpty(item);
+        }
+        if (!anyEmpty) {
+          var newItem = widgetData.addRepeatingItems(item);
 
-        $scope.sendActionsToScreenReader();
+          setTimeout(function() {
+            var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-        setTimeout(function() {
-          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-          var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
-          var btnDel = document.getElementById("del-" + newItem._elementId);
-          // vertical table, find the header item
-          if (headerItem) {
-            var anchorItem = headerItem;
-          }
-          // horizontal table, find the '-' button
-          else if (btnDel) {
-            var anchorItem = btnDel;
-          }
-
-          if (anchorItem) {
-            var anchorPosition = anchorItem.getBoundingClientRect();
-            // scroll down to show about 2 rows of the newly added section
-            // if the new header item is close enough to the bottom so that the first 2 questions are not visible
-            if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
-              smoothScroll(anchorItem, {
-                duration: 500,
-                easing: 'easeInQuad',
-                offset: viewportHeight - 105
-              });
+            var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
+            var btnDel = document.getElementById("del-" + newItem._elementId);
+            // vertical table, find the header item
+            if (headerItem) {
+              var anchorItem = headerItem;
             }
-            // move the focus to the '-' button of the newly added item/section
-            // a table from the '-' button moves the focus to the next input field
-            if (btnDel)
-              btnDel.focus();
-          }
-        }, 1);
+            // horizontal table, find the '-' button
+            else if (btnDel) {
+              var anchorItem = btnDel;
+            }
+
+            if (anchorItem) {
+              var anchorPosition = anchorItem.getBoundingClientRect();
+              // scroll down to show about 2 rows of the newly added section
+              // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+              if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+                smoothScroll(anchorItem, {
+                  duration: 500,
+                  easing: 'easeInQuad',
+                  offset: viewportHeight - 105
+                });
+              }
+              // move the focus to the '-' button of the newly added item/section
+              // a table from the '-' button moves the focus to the next input field
+              if (btnDel)
+                btnDel.focus();
+            }
+          }, 1);
+
+        }
       };
+
+
+      /**
+       * Unset the flag to hide the warning about unused repeating items
+       * @param item a repeating item
+       */
+      $scope.hideUnusedItemWarning = function(item) {
+        if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
+          item._showUnusedItemWarning = false;
+        }
+
+      };
+
 
       /**
        * Write action logs from the lforms to reader_log element on the page

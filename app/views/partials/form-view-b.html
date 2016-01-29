@@ -164,12 +164,17 @@
                         <td class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"
                             ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
                         <td>
-                          <div class="name-label">
+                          <div class="name-label has-popover-warning">
                             <button ng-repeat="repeatingItem in item._repeatingSectionList"
                                     class="float-button" id="add-{{repeatingItem._elementId}}"
+                                    title="Add another '{{ repeatingItem.question }}'"
                                     ng-click="addOneRepeatingItem(repeatingItem)"
-                                    title="Add another '{{ repeatingItem.question }}'">
-                              Add another '{{repeatingItem.question}}'</button>
+                                    ng-blur="hideUnusedItemWarning(repeatingItem)"
+                                    uib-popover="You have an unused '{{ repeatingItem.question }}', please use it before adding a new one."
+                                    popover-placement="top-left" popover-title="Warning"
+                                    popover-is-open="repeatingItem._showUnusedItemWarning">
+                              Add another '{{repeatingItem.question}}'
+                            </button>
                           </div>
                         </td>
                       </tr>
