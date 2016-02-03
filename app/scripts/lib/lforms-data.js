@@ -309,7 +309,6 @@ var LFormsData = Class.extend({
       if (item.items && item.items.length > 0) {
         this._updateSkipLogicStatus(item.items, isHidden);
       }
-
     }
   },
 
@@ -1043,7 +1042,7 @@ var LFormsData = Class.extend({
    * @param item a repeating item or a repeating group item
    * @returns {boolean}
    */
-  isAnyRepeatingItemsEmpty: function(item) {
+  areAnyRepeatingItemsEmpty: function(item) {
     var anyEmpty = false;
     var repeatingItems = this._getRepeatingItems(item);
     for(var i=0, iLen=repeatingItems.length; i<iLen; i++) {
@@ -1090,12 +1089,12 @@ var LFormsData = Class.extend({
       else if (item.value !== undefined && item.value !== null && item.value !=="") {
         isEmpty = false;
       }
-    }
-    // check sub items
-    if (isEmpty && item.items) {
-      for (var i= 0, iLen = item.items.length; i<iLen; i++) {
-        isEmpty = this._isRepeatingItemEmpty(item.items[i]);
-        if (!isEmpty) break;
+      // check sub items
+      if (isEmpty && item.items) {
+        for (var i= 0, iLen = item.items.length; i<iLen; i++) {
+          isEmpty = this._isRepeatingItemEmpty(item.items[i]);
+          if (!isEmpty) break;
+        }
       }
     }
 

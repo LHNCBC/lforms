@@ -5,7 +5,7 @@ angular.module('lformsWidget')
     ['$scope', 'smoothScroll', 'LF_CONSTANTS',
       function ($scope, smoothScroll, LF_CONSTANTS) {
 
-      $scope.debug = true;
+      $scope.debug = false;
 
       $scope.hasUnused = false;
       $scope.repeatingSectionStatus = {};
@@ -269,7 +269,7 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         var anyEmpty = false;
         if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
-          anyEmpty = widgetData.isAnyRepeatingItemsEmpty(item);
+          anyEmpty = widgetData.areAnyRepeatingItemsEmpty(item);
         }
         if (!anyEmpty) {
           var newItem = widgetData.addRepeatingItems(item);
@@ -318,7 +318,6 @@ angular.module('lformsWidget')
         if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
           item._showUnusedItemWarning = false;
         }
-
       };
 
 

@@ -9,11 +9,6 @@ angular.module('lformsWidget', [
 .config(function ($animateProvider) {
   $animateProvider.classNameFilter(/has-ng-animate/);
 })
-//.config(['$tooltipProvider', function($tooltipProvider){
-//  $tooltipProvider.setTriggers({
-//    'show': 'hide'
-//  });
-//}])
 .directive('lforms', function() {
   return {
     restrict: 'E',
