@@ -170,6 +170,7 @@ var LFormsData = Class.extend({
     this.templateOptions = data.templateOptions || {};
     this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
     this.answerLists = data.answerLists;
+    this.copyrightNotice = data.copyrightNotice;
 
     // when the skip logic rule says the form is done
     this._formDone = false;
@@ -670,8 +671,8 @@ var LFormsData = Class.extend({
     if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
       ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
     }
-
-    return ret;
+    // return a deep copy of the data
+    return angular.copy(ret);
   },
 
   /**
@@ -715,7 +716,7 @@ var LFormsData = Class.extend({
           }
           // ignore the internal lforms data and angular data
           else if (!field.match(/^[_\$]/)) {
-            itemData[field] = angular.copy(item[field]);
+            itemData[field] = item[field];
           }
         }
       }
@@ -748,21 +749,21 @@ var LFormsData = Class.extend({
         var answers = [];
         for (var j= 0, jLen=value.length; j<jLen; j++) {
           if (angular.isObject(value[j]) && value[j]._orig) {
-            answers.push(angular.copy(value[j]._orig));
+            answers.push(value[j]._orig);
           }
           else {
-            answers.push(angular.copy(value[j]));
+            answers.push(value[j]);
           }
         }
         retValue = answers;
       }
       // an object
       else if (angular.isObject(value) && value._orig) {
-        retValue = angular.copy(value._orig);
+        retValue = value._orig;
       }
       // not an object or an array
       else {
-        retValue = angular.copy(value);
+        retValue = value;
       }
     }
     return retValue;
@@ -1526,7 +1527,8 @@ var LFormsData = Class.extend({
 
       options = {
         listItems: listItems,
-        matchListValue: true
+        matchListValue: true,
+        autoFill: true
       };
       if (defaultValue !== undefined)
         options.defaultValue = defaultValue;
@@ -1599,6 +1601,9 @@ var LFormsData = Class.extend({
         // See if there is a default value defined for the question.
         if (item.defaultAnswer) {
           options.defaultValue = item.defaultAnswer;
+        }
+        else if (listItems.length === 1) {
+          options.defaultValue = listItems[0].text;
         }
       }
       item._autocompOptions = options;

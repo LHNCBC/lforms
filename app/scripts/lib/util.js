@@ -223,7 +223,7 @@ WidgetUtil = {
   getFormData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
 
     // find the scope that has the LForms data
-    var theScope, formData;
+    var theScopeData, formData;
     if (!element) element = jQuery("body");
 
     // class="lf-form"> is the element that contains rendered form.
@@ -231,14 +231,14 @@ WidgetUtil = {
 
     angular.forEach(lfForms, function(ele, index) {
       var lfForm = angular.element(ele);
-      if (lfForm.scope().lfData) {
-        theScope = lfForm.scope();
+      if (lfForm.scope() && lfForm.scope().lfData) {
+        theScopeData = lfForm.scope().lfData;
         return false; // break the loop
       }
     });
 
-    if (theScope) {
-      formData = theScope.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+    if (theScopeData) {
+      formData = theScopeData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
     }
 
     return formData;

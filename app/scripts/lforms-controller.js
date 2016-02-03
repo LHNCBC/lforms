@@ -70,7 +70,10 @@ angular.module('lformsWidget')
        */
       $scope.checkUnits = function(item) {
         var ret;
-        if (item.units && jQuery.isArray(item.units)) {
+        if (item.units && item.dataType != "CNE" &&
+            item.dataType != "CWE" &&
+            item.units &&
+            jQuery.isArray(item.units)) {
           ret = 'list'
         }
         else {
@@ -436,7 +439,10 @@ angular.module('lformsWidget')
        * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
       $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-        return $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+        var start = new Date();
+        var formData =  $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+        console.log("getFormData(): " + (new Date() - start) );
+        return formData;
       };
 
       // for debug only. to be removed.

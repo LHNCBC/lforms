@@ -38,9 +38,22 @@ exports.config = {
         });
     };
 
+    var setTestFlag = function() {
+      angular
+          .module('setTestFlag', [])
+          .run(function() {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.innerHTML = 'window._INTESTING_ = true;';
+            document.getElementsByTagName('head')[0].appendChild(script);
+          });
+    };
+
+
     // disable ng-animate during the testing
     browser.addMockModule('disableNgAnimate', disableNgAnimate);
     browser.addMockModule('disableCssAnimate', disableCssAnimate);
+    browser.addMockModule('setTestFlag', setTestFlag);
 
     // try to load the page first
     //browser.get('http://0.0.0.0:9001/');

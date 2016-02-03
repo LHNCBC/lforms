@@ -37,6 +37,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <span class=\"item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
+    "      </span>\n" +
+    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\"\n" +
+    "              class=\"copyright-button\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
@@ -112,6 +116,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"hasCodingInstructions(item)\"\n" +
     "                                    class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
     "                        </td>\n" +
     "                      </tr>\n" +
@@ -233,6 +240,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <span class=\"item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
+    "      </span>\n" +
+    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\"\n" +
+    "              class=\"copyright-button\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "    </h3>\n" +
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
@@ -307,6 +318,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"hasCodingInstructions(item)\"\n" +
     "                                    class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
     "                        </td>\n" +
     "                      </tr>\n" +

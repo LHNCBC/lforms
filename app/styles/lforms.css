@@ -108,7 +108,7 @@
 .lf-form-table .button-col {
   border-left: none;
 }
-.lf-form-table button {
+.lf-form button {
   border: 0 none;
   cursor: pointer;
   overflow: visible;
@@ -116,7 +116,7 @@
   position: relative;
   background-color: #458AC5;
 }
-.lf-form-table .float-button {
+.lf-form .float-button {
   min-width: 24px;
   -moz-border-radius: 6px;
   border-radius: 6px;
@@ -125,7 +125,8 @@
   padding: 2px;
   margin: 0 2px;
 }
-.lf-form-table .help-button {
+.lf-form .help-button,
+.lf-form .copyright-button {
   width: 18px;
   height: 18px;
   -moz-border-radius: 9px;
@@ -135,6 +136,13 @@
   padding: 0;
   margin-right: 2px;
   margin-left:2px;
+  vertical-align: middle;
+}
+.lf-form-title .copyright-button {
+  font-weight: normal;
+}
+.lf-form-title .popover {
+  color: #333333;
 }
 
 /* name field */
@@ -431,6 +439,7 @@ Override color of select boxes in calendar widget title bar.
   background-image: url("../images/calendar-hover.png");
 }
 
+/* popover dialog */
 .lf-form .name-label.has-popover-warning .popover {
   border-color: #eea236;
   padding: 0;
@@ -440,6 +449,7 @@ Override color of select boxes in calendar widget title bar.
   background-color: #f0ad4e;
   border-color: #eea236;
 }
-.lf-form .name-label.has-popover-warning .popover-content {
-
+.lf-form .popover {
+  max-width: 600px;
+  width: auto;
 }

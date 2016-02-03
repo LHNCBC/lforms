@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "dependencies": {
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
@@ -35,7 +35,8 @@
   "main": [
     "app/lforms.js",
     "app/scripts/lforms-constants.js",
-    "app/scripts/controllers/lforms-controller.js",
+    "app/scripts/lforms-service.js",
+    "app/scripts/lforms-controller.js",
     "app/scripts/directives/lf-date.js",
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",

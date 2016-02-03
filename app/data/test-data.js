@@ -742,10 +742,10 @@ var allInOne =
   "header": null,
   "units": null,
   "codingInstructions": "NIH/NLM/LHNCBC",
-  "copyrightNotice": null,
+  "copyrightNotice": "A Copyright notice of the form",
   "items": [
     // different data type
-    {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null,
+    {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null, "copyrightNotice": "A Copyright notice of the item",
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": null,
