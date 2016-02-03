@@ -80,26 +80,30 @@
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestControllerH', ['$scope', function ($scope) {
             $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
-
+            $scope.lfOption2 = {
+              allowMultipleEmptyRepeatingItems: true
+            };
             $scope.useFormDataV = function() {
               $scope.lfData2 = new LFormsData(angular.copy(FHTData));
               $scope.lfOption2 = {
-                showQuestionCode: true,   // whether question code is displayed next to the question
-                showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in popup)
-                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-                hideHeader: false, // whether to hide the header section on top of the form
-                hideCheckBoxes: false // whether to hide checkboxes in the header section on top of the form
+                showQuestionCode: true,
+                showCodingInstruction: false,
+                tabOnInputFieldsOnly: false,
+                hideHeader: false,
+                hideCheckBoxes: false,
+                allowMultipleEmptyRepeatingItems: true
               };
             };
 
             $scope.useFormDataH = function() {
               var lfData2 = new LFormsData(angular.copy(horizontalFHTData));
               var lfOption2 = {
-                showQuestionCode: true,   // whether question code is displayed next to the question
-                showCodingInstruction: true, // whether to show coding instruction inline. (false: inline; true: in popup)
-                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-                hideHeader: false, // whether to hide the header section on top of the form
-                hideCheckBoxes: false // whether to hide checkboxes in the header section on top of the form
+                showQuestionCode: true,
+                showCodingInstruction: true,
+                tabOnInputFieldsOnly: false,
+                hideHeader: false,
+                hideCheckBoxes: false,
+                allowMultipleEmptyRepeatingItems: true
               };
               //lfData2.setTemplateOptions(lfOption2);
 
@@ -109,12 +113,13 @@
 
             $scope.useFormDataVWithNewOptions = function() {
               $scope.lfOption2 = {
-                showQuestionCode: false,   // whether question code is displayed next to the question
-                showCodingInstruction: false, // whether to show coding instruction inline. (false: inline; true: in a popup)
-                tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-                hideHeader: true, // whether to hide the header section on top of the form
-                hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
-                obrHeader: false
+                showQuestionCode: false,
+                showCodingInstruction: false,
+                tabOnInputFieldsOnly: false,
+                hideHeader: true,
+                hideCheckBoxes: false,
+                obrHeader: false,
+                allowMultipleEmptyRepeatingItems: true
               };
             };
 

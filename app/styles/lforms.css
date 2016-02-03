@@ -430,3 +430,16 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-item-data .ui-datepicker-trigger:hover {
   background-image: url("../images/calendar-hover.png");
 }
+
+.lf-form .name-label.has-popover-warning .popover {
+  border-color: #eea236;
+  padding: 0;
+}
+.lf-form .name-label.has-popover-warning .popover-title {
+  color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+.lf-form .name-label.has-popover-warning .popover-content {
+
+}

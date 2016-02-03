@@ -74,6 +74,7 @@ describe('508', function() {
       tp.resetReaderLog();
       expect(tp.readerLogEntries.getText()).toEqual([]);
       // Add a question
+      tp.USSGFHTVertical.name.sendKeys("a name");
       addNameButton.click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added question']);
       // Remove the question

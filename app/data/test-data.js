@@ -1247,3 +1247,49 @@ var formWithUserData =
     }
 
   ]};
+
+var rxTerms = {
+  type: "LOINC",
+  code: "X-001",
+  name: "RxTerms Demo",
+  template: "form-view-b",
+  templateOptions: {
+    hideHeader: true,
+    obrHeader: false,
+    obxTableColumns: []
+  },
+  items: [
+    {
+      "questionCode": "X-002", "question": "RxTerms", "header": true, "layout":"horizontal", "questionCardinality": {"min": "1", "max": "*"},
+      "items": [
+        {
+          "questionCode":"itemWithExtraData",
+          "dataType":"CNE",
+          "header":false,
+          "question":"Drug Name",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1",
+          //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
+        },
+        //an item that gets the extra LIST data whenever the source item has a data changes
+        {
+          "questionCode": "controlledItem_LIST",
+          "dataType": "CNE",
+          "header": false,
+          "question": "Strength",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
+                "itemCode": "itemWithExtraData",
+                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
+                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+              },
+              "onAttribute": "answers"
+            }
+          ],
+        }
+      ]
+    }
+  ]
+};

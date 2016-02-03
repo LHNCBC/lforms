@@ -77,6 +77,23 @@ var TestPage = function() {
       height2: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
       weight2: element(by.id('/54114-4/54117-7/29463-7/1/1/1')),
       bmi2: element(by.id('/54114-4/54117-7/39156-5/1/1/1')),
+
+      name2: element(by.id('/54126-8/54125-0/1/2')),
+      name3: element(by.id('/54126-8/54125-0/1/3')),
+      btnName : element(by.id('add-/54126-8/54125-0/1/1')),
+      btnName2 : element(by.id('add-/54126-8/54125-0/1/2')),
+      btnName3 : element(by.id('add-/54126-8/54125-0/1/3')),
+
+      disease: element(by.id('/54126-8/54137-5/54140-9/1/1/1')),
+      ageAtDiag: element(by.id('/54126-8/54137-5/54130-0/1/1/1')),
+      btnDiseasesHist : element(by.id('add-/54126-8/54137-5/1/1')),
+      disease2: element(by.id('/54126-8/54137-5/54140-9/1/2/1')),
+      ageAtDiag2: element(by.id('/54126-8/54137-5/54130-0/1/2/1')),
+      btnDiseasesHist2: element(by.id('add-/54126-8/54137-5/1/2')),
+      mockSubItem2: element(by.id('/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1')),
+
+      btnAnotherFamily: element(by.id('add-/54114-4/1')),
+      btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1'))
     },
 
     FullFeaturedForm: {
@@ -238,7 +255,7 @@ var TestPage = function() {
      */
     openGlasgowForm: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(3)
+      this.openFormByIndex(3);
     },
 
     /**
@@ -246,7 +263,7 @@ var TestPage = function() {
      */
     openGlasgowRIForm: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(4)
+      this.openFormByIndex(4);
     },
 
     /**
@@ -262,7 +279,7 @@ var TestPage = function() {
      */
     openFormBuilder: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(6)
+      this.openFormByIndex(6);
     },
 
     /**
@@ -270,7 +287,7 @@ var TestPage = function() {
      */
     openMDS3: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(7)
+      this.openFormByIndex(7);
     },
 
     /**
@@ -278,7 +295,7 @@ var TestPage = function() {
      */
     openFormWithUserData: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(8)
+      this.openFormByIndex(8);
     },
   }
 };
