@@ -439,9 +439,7 @@ angular.module('lformsWidget')
        * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
       $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-        var start = new Date();
         var formData =  $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
-        console.log("getFormData(): " + (new Date() - start) );
         return formData;
       };
 
