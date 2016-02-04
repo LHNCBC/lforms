@@ -70,7 +70,7 @@ angular.module('lformsWidget')
        */
       $scope.checkUnits = function(item) {
         var ret;
-        if (item.units && item.dataType != "CNE" &&
+        if (item.dataType != "CNE" &&
             item.dataType != "CWE" &&
             item.units &&
             jQuery.isArray(item.units)) {
