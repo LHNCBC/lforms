@@ -1533,8 +1533,12 @@ var LFormsData = Class.extend({
         matchListValue: true,
         autoFill: true
       };
-      if (defaultValue !== undefined)
+      if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
+      }       
+      else if (listItems.length === 1) {
+        options.defaultValue = listItems[0].text;
+      }
 
       item._unitAutocompOptions = options;
     }
