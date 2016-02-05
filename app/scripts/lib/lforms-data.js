@@ -94,6 +94,7 @@ var LFormsData = Class.extend({
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
+    useAnimation: true, // whether to use animation on the form
     obxTableColumns: [
       {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
       {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -117,6 +118,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -138,6 +140,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},

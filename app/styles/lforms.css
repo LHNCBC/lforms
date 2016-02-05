@@ -125,8 +125,7 @@
   padding: 2px;
   margin: 0 2px;
 }
-.lf-form .help-button,
-.lf-form .copyright-button {
+.lf-form .help-button{
   width: 18px;
   height: 18px;
   -moz-border-radius: 9px;
@@ -138,8 +137,20 @@
   margin-left:2px;
   vertical-align: middle;
 }
+.lf-form .copyright-button {
+  color: #458AC5;
+  background-color: transparent;
+}
+.lf-form .copyright-button:hover {
+  color: #015DAD;
+  font-weight: bold;
+}
 .lf-form-title .copyright-button {
-  font-weight: normal;
+  color: white;
+}
+.lf-form-title .copyright-button:hover {
+  color: white;
+  font-weight: bold;
 }
 .lf-form-title .popover {
   color: #333333;
@@ -381,12 +392,12 @@
 /* end of tree line style setup */
 
 /* ng animate css for adding new repeating items and skip logic items*/
-.lf-form-body .data-row.has-ng-animate.ng-enter {
+.lf-form-body .data-row.has-ng-animate.question.ng-enter {
   -webkit-transition: 4s;
   transition: 4s;
   background-color: #AFEEEE;
 }
-.lf-form-body .data-row.has-ng-animate.ng-enter-active {
+.lf-form-body .data-row.has-ng-animate.question.ng-enter-active {
   background-color: inherit;
 }
 

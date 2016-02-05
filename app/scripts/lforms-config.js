@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('lformsWidget')
-    .service('lformsService', function($animate) {
-      // Public API here
+    .service('lformsConfig', function($animate) {
       return {
         'enableAnimate': function() {
           $animate.enabled(true);

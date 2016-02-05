@@ -35,7 +35,7 @@
   "main": [
     "app/lforms.js",
     "app/scripts/lforms-constants.js",
-    "app/scripts/lforms-service.js",
+    "app/scripts/lforms-config.js",
     "app/scripts/lforms-controller.js",
     "app/scripts/directives/lf-date.js",
     "app/scripts/lib/date.js",
