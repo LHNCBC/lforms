@@ -164,7 +164,7 @@ angular.module('lformsWidget')
        * Watch on form changes
        * Disable animation before a form is loaded, then re-enable animation the form is loaded
        */
-      $scope.$watch(function() {return $scope.lfData}, function() {
+      $scope.$watch("lfData", function() { // or watch on function() {return $scope.lfData;}
         // disable animation
         lformsConfig.disableAnimate();
         // re-enable animation after the form is loaded

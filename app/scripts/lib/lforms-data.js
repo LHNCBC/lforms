@@ -465,8 +465,8 @@ var LFormsData = Class.extend({
     }
     // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
-    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
-        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
+    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
+        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
 
   },
 
@@ -1535,7 +1535,7 @@ var LFormsData = Class.extend({
       };
       if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
-      }       
+      }
       else if (listItems.length === 1) {
         options.defaultValue = listItems[0].text;
       }
