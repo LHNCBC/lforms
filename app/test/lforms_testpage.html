@@ -66,7 +66,8 @@
     <script src="scripts/lib/util.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
     <script src="scripts/lforms-constants.js"></script>
-    <script src="scripts/controllers/lforms-controller.js"></script>
+    <script src="scripts/lforms-config.js"></script>
+    <script src="scripts/lforms-controller.js"></script>
     <script src="scripts/directives/lf-date.js"></script>
     <!-- end of lforms directive js files -->
 
@@ -86,8 +87,9 @@
 
     <!-- lforms test controller -->
     <script type="text/javascript">
+
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestController', ['$scope', function ($scope) {
+          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', function ($scope, $timeout, lformsConfig) {
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -102,15 +104,24 @@
 //              {text: 'RxTerms Demo', id: 'X-001'}
             ];
 
+
             $scope.useForm = function() {
+              var useAnimation = !window._INTESTING_;
+
               var lfData2,
-                  lfOption2 = {"allowMultipleEmptyRepeatingItems": true};
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: true,
+                    useAnimation: useAnimation
+                  };
 
               switch ($scope.selectedForm) {
                 case '54127-6N':
                   //'USSG-FHT, (with mock-up items for skip logic demo)'
                   lfData2 = new LFormsData(angular.copy(FHTData));
-                  lfOption2 = {"allowMultipleEmptyRepeatingItems": false};
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: false,
+                    useAnimation: useAnimation
+                  };
                   break;
                 case '54127-6H':
                   //'USSG-FHT, (with mock-up items for horizontal layout demo)'
@@ -154,7 +165,7 @@
                       function(data) {
                         $scope.lfData2 = new LFormsData(data);
                         // hide checkboxes (and show question codes for testing)
-                        $scope.lfOption2 = {hideHeader: true, showQuestionCode: true};
+                        $scope.lfOption2 = {hideHeader: true, showQuestionCode: true, useAnimation: useAnimation};
                         // Or:   $scope.lfData2.setTemplateOptions({hideHeader: true, showQuestionCode: true});
                         $scope.$apply();
                       },
@@ -164,6 +175,7 @@
                   );
                   break;
               }
+
               $scope.lfData2 = lfData2;
               $scope.lfOption2 = lfOption2;
             };

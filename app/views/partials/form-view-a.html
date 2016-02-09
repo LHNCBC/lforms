@@ -7,6 +7,10 @@
       <span class="item-code" ng-if="lfData.templateOptions.showQuestionCode">
         <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
         <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
+      </span>
+      <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}"
+              class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
+              popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
     </h3>
     <div class="lf-form-body">
       <table cellspacing="0" cellpadding="0" class="lf-form-table">
@@ -82,6 +86,9 @@
                             <button ng-show="!lfData.templateOptions.showCodingInstruction" ng-if="hasCodingInstructions(item)"
                                     class="help-button" uib-popover="{{item.codingInstructions}}"
                                     popover-trigger="focus" popover-placement="right"  popover-title="Instruction">?</button>
+                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}"
+                                    class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+                                    popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
                           </div>
                         </td>
                       </tr>

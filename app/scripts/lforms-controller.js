@@ -2,8 +2,8 @@
 
 angular.module('lformsWidget')
   .controller('LFormsCtrl',
-    ['$scope', 'smoothScroll', 'LF_CONSTANTS',
-      function ($scope, smoothScroll, LF_CONSTANTS) {
+    ['$scope', '$timeout', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+      function ($scope, $timeout, smoothScroll, LF_CONSTANTS, lformsConfig) {
 
       $scope.debug = false;
 
@@ -70,7 +70,10 @@ angular.module('lformsWidget')
        */
       $scope.checkUnits = function(item) {
         var ret;
-        if (item.units && jQuery.isArray(item.units)) {
+        if (item.dataType != "CNE" &&
+            item.dataType != "CWE" &&
+            item.units &&
+            jQuery.isArray(item.units)) {
           ret = 'list'
         }
         else {
@@ -137,6 +140,7 @@ angular.module('lformsWidget')
         return ret;
       };
 
+
       /**
        * Watch on the values of each item
        * When in a deep watch mode, angular makes a copy of the watched object.
@@ -154,6 +158,26 @@ angular.module('lformsWidget')
         },
         true
       );
+
+
+      /**
+       * Watch on form changes
+       * Disable animation before a form is loaded, then re-enable animation the form is loaded
+       */
+      $scope.$watch("lfData", function() { // or watch on function() {return $scope.lfData;}
+        // disable animation
+        lformsConfig.disableAnimate();
+        // re-enable animation after the form is loaded
+        if ($scope.lfData && $scope.lfData.templateOptions && $scope.lfData.templateOptions.useAnimation) {
+          $timeout(function () {
+            // the templateOptions might be changed again after the $timeout was set
+            if ($scope.lfData && $scope.lfData.templateOptions && $scope.lfData.templateOptions.useAnimation) {
+              lformsConfig.enableAnimate();
+            }
+          }, 1);
+        }
+      });
+
 
       $scope.updateOnValueChange = function() {
         var widgetData = $scope.lfData;
@@ -187,6 +211,9 @@ angular.module('lformsWidget')
         }
         if (item.header) {
           eleClass += ' section-header';
+        }
+        else {
+          eleClass += ' question';
         }
         if (item.layout == 'horizontal') {
           eleClass += ' horizontal';
@@ -436,7 +463,8 @@ angular.module('lformsWidget')
        * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
       $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-        return $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+        var formData =  $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+        return formData;
       };
 
       // for debug only. to be removed.

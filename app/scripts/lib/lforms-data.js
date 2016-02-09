@@ -94,6 +94,7 @@ var LFormsData = Class.extend({
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
+    useAnimation: true, // whether to use animation on the form
     obxTableColumns: [
       {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
       {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -117,6 +118,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -138,6 +140,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
         {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
@@ -170,6 +173,7 @@ var LFormsData = Class.extend({
     this.templateOptions = data.templateOptions || {};
     this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
     this.answerLists = data.answerLists;
+    this.copyrightNotice = data.copyrightNotice;
 
     // when the skip logic rule says the form is done
     this._formDone = false;
@@ -461,8 +465,8 @@ var LFormsData = Class.extend({
     }
     // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
-    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
-        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
+    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
+        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
 
   },
 
@@ -670,8 +674,8 @@ var LFormsData = Class.extend({
     if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
       ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
     }
-
-    return ret;
+    // return a deep copy of the data
+    return angular.copy(ret);
   },
 
   /**
@@ -715,7 +719,7 @@ var LFormsData = Class.extend({
           }
           // ignore the internal lforms data and angular data
           else if (!field.match(/^[_\$]/)) {
-            itemData[field] = angular.copy(item[field]);
+            itemData[field] = item[field];
           }
         }
       }
@@ -748,21 +752,21 @@ var LFormsData = Class.extend({
         var answers = [];
         for (var j= 0, jLen=value.length; j<jLen; j++) {
           if (angular.isObject(value[j]) && value[j]._orig) {
-            answers.push(angular.copy(value[j]._orig));
+            answers.push(value[j]._orig);
           }
           else {
-            answers.push(angular.copy(value[j]));
+            answers.push(value[j]);
           }
         }
         retValue = answers;
       }
       // an object
       else if (angular.isObject(value) && value._orig) {
-        retValue = angular.copy(value._orig);
+        retValue = value._orig;
       }
       // not an object or an array
       else {
-        retValue = angular.copy(value);
+        retValue = value;
       }
     }
     return retValue;
@@ -1526,10 +1530,15 @@ var LFormsData = Class.extend({
 
       options = {
         listItems: listItems,
-        matchListValue: true
+        matchListValue: true,
+        autoFill: true
       };
-      if (defaultValue !== undefined)
+      if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
+      }
+      else if (listItems.length === 1) {
+        options.defaultValue = listItems[0].text;
+      }
 
       item._unitAutocompOptions = options;
     }
@@ -1599,6 +1608,9 @@ var LFormsData = Class.extend({
         // See if there is a default value defined for the question.
         if (item.defaultAnswer) {
           options.defaultValue = item.defaultAnswer;
+        }
+        else if (listItems.length === 1) {
+          options.defaultValue = listItems[0].text;
         }
       }
       item._autocompOptions = options;
