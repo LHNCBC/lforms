@@ -415,6 +415,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'clean:server',
+    'ngtemplates',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
