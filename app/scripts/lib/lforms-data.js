@@ -212,6 +212,7 @@ var LFormsData = Class.extend({
 
     // create a reference list of all items in the tree
     this.itemList = [];
+    this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
@@ -222,6 +223,8 @@ var LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
 
     this._setupAutocompOptions();
+
+    this._setupSourceToTargetMap();
 
   },
 
@@ -238,6 +241,7 @@ var LFormsData = Class.extend({
     this._updateLastItemInRepeatingSection(this.items);
 
     this.itemList = [];
+    this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
@@ -248,6 +252,8 @@ var LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
 
     this._setupAutocompOptions();
+
+    this._setupSourceToTargetMap();
   },
 
   /**
@@ -271,6 +277,103 @@ var LFormsData = Class.extend({
     //this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
     this._adjustLastSiblingListForHorizontalLayout();
+
+  },
+
+
+  updateOnSourceItemValueChange: function(sourceItem) {
+    // check formula
+    if(sourceItem._formulaTargets) {
+      for (var i= 0, iLen=sourceItem._formulaTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._formulaTargets[i];
+        this.processItemFormula(targetItem);
+      }
+    }
+
+
+    // check data control
+    if(sourceItem._dataControlTargets) {
+      for (var i= 0, iLen=sourceItem._dataControlTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._dataControlTargets[i];
+        this.processItemDataControl(targetItem);
+      }
+    }
+
+
+    // check skip logic
+    if(sourceItem._skipLogicTargets) {
+      for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._skipLogicTargets[i];
+        this.updateItemSkipLogicStatus(targetItem, null);
+      }
+    }
+
+    // update tree line status
+    this._updateTreeNodes(this.items,this);
+    this._updateLastSiblingList(this.items, null);
+    // update repeating items status
+    //this._updateLastRepeatingItemsStatus(this.items);
+    this._updateLastItemInRepeatingSection(this.items);
+    this._adjustLastSiblingListForHorizontalLayout();
+  },
+
+  _updateOnTargetValueChange: function(targetItem) {
+    this.processItemFormula(targetItem);
+    this.processItemDataControl(targetItem);
+    this.updateItemSkipLogicStatus(targetItem, null);
+
+  },
+
+  _setupSourceToTargetMap: function() {
+    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
+      // formula
+      if (item.calculationMethod && item.calculationMethod.name) {
+        var sourceItems = this._getFormulaSourceItems(item, item.calculationMethod.value);
+        for(var j= 0, jLen=sourceItems.length; j<jLen; j++) {
+          if (angular.isArray(sourceItems[j]._formulaTargets)) {
+            sourceItems[j]._formulaTargets.push(item);
+          }
+          else {
+            sourceItems[j]._formulaTargets = [item];
+          }
+        }
+      }
+
+      // dataControl
+      if (item.dataControl && angular.isArray(item.dataControl)) {
+        for (var j= 0, jLen=item.dataControl.length; j<jLen; j++) {
+          var source = item.dataControl[j].source;
+
+          // has a source configuration
+          if (source && source.sourceType === "internal" && source.itemCode) {
+            // get the source item object
+            var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+            if (angular.isArray(sourceItem._dataControlTargets)) {
+              sourceItem._dataControlTargets.push(item);
+            }
+            else {
+              sourceItem._dataControlTargets = [item];
+            }
+          }
+        }
+      }
+
+      // skip logic
+      if (item.skipLogic) {
+        for (var j= 0, jLen=item.skipLogic.conditions.length; j<jLen; j++) {
+          var condition = item.skipLogic.conditions[j];
+          var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
+          if (angular.isArray(sourceItem._skipLogicTargets)) {
+            sourceItem._skipLogicTargets.push(item);
+          }
+          else {
+            sourceItem._skipLogicTargets = [item];
+          }
+        }
+      }
+    }
+
 
   },
 
@@ -313,6 +416,39 @@ var LFormsData = Class.extend({
       if (item.items && item.items.length > 0) {
         this._updateSkipLogicStatus(item.items, isHidden);
       }
+    }
+  },
+
+  updateItemSkipLogicStatus: function(item, hide) {
+    // if one item is hidden all of its decedents should be hidden.
+    // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
+    if (hide) {
+      this._setSkipLogicStatusValue(item, "target-hide");
+      var isHidden = true;
+    }
+    // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
+    else {
+      if (item.skipLogic) {
+        var takeAction = this._checkSkipLogic(item);
+
+        if (!item.skipLogic.action || item.skipLogic.action === "show") {
+          var newStatus = takeAction ? 'target-show' : "target-hide";
+          this._setSkipLogicStatusValue(item, newStatus);
+        }
+        else if (item.skipLogic.action === "hide") {
+          var newStatus = takeAction ? 'target-hide' : "target-show";
+          this._setSkipLogicStatusValue(item, newStatus);
+        }
+      }
+      // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
+      else if (item._skipLogicStatus === "target-hide") {
+        this._setSkipLogicStatusValue(item, "target-show");
+      }
+      var isHidden = item._skipLogicStatus === "target-hide";
+    }
+    // process the sub items
+    if (item.items && item.items.length > 0) {
+      this._updateSkipLogicStatus(item.items, isHidden);
     }
   },
 
@@ -365,6 +501,7 @@ var LFormsData = Class.extend({
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       this.itemList.push(item);
+      this.itemHash[item._elementId] = item;
       // process the sub items
       if (item.items && item.items.length > 0) {
         this._updateItemReferenceList(item.items);
@@ -1315,6 +1452,12 @@ var LFormsData = Class.extend({
     }
   },
 
+  processItemFormula: function(item) {
+    if (item.calculationMethod && item.calculationMethod.name) {
+      item.value = this.getFormulaResult(item);
+    }
+  },
+
 
   /**
    * Update data by checking 'dataControl' functions
@@ -1327,6 +1470,14 @@ var LFormsData = Class.extend({
         this._updateAutocompOptions(item);
         this._updateUnitAutocompOptions(item);
       }
+    }
+  },
+
+  processItemDataControl: function(item) {
+    if (item.dataControl && angular.isArray(item.dataControl)) {
+      this._updateDataByDataControl(item);
+      this._updateAutocompOptions(item);
+      this._updateUnitAutocompOptions(item);
     }
   },
 
@@ -1376,6 +1527,16 @@ var LFormsData = Class.extend({
                 }
               } // end of source.data.code && source.data.text
             } // end of "LIST"
+            else if (source.sourceDataType === "OBJECT" ) {
+              // data is in the format of {"code": ..., "text": ...}
+              if (source.data.code && source.data.text) {
+                var code = this._getDataFromNestedAttributes(source.data.code, sourceItem);
+                var text = this._getDataFromNestedAttributes(source.data.text, sourceItem);
+                var targetData = {"code": code, "text": text};
+                // set the data
+                item[onAttribute] = targetData;
+              } // end of source.data.code && source.data.text
+            } // end of "LIST"
             else if (source.sourceDataType === "TEXT") {
               var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
               // found the source data
@@ -1384,6 +1545,10 @@ var LFormsData = Class.extend({
                 item[onAttribute] = sourceData;
               }
             } // end of "TEXT
+          }
+
+          if (onAttribute === 'value' && (item.dataType === "CNE" || item.dataType === "CWE")) {
+            //this._updateAutocompOptions(item);
           }
         }
 //        // "external" uses "url" and optional "urlOptions" and "data"
@@ -1531,8 +1696,11 @@ var LFormsData = Class.extend({
       options = {
         listItems: listItems,
         matchListValue: true,
-        autoFill: true
-      };
+        autoFill: true,
+        //modelValue: item.unit // used for detecting changes in the model data so that autocompleter can update itself
+                              // not used by autocompleter
+
+    };
       if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
       }
@@ -1571,6 +1739,8 @@ var LFormsData = Class.extend({
         options.nonMatchSuggestions = false;
         options.tableFormat = true;
         options.valueCols = [0];
+        //options.modelValue = item.value; // used for detecting changes in the model data so that autocompleter can update itself
+                                         // not used by autocompleter
       }
       else {
         var listItems = [], answers = [];

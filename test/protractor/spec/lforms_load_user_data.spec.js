@@ -17,11 +17,13 @@ describe('load saved user data', function() {
 
     expect(ff.q8.getAttribute('value')).toBe('');
     expect(ff.q9.getAttribute('value')).toBe('');
-    expect(ff.multiAnswers.count()).toBe(4);
+    expect(ff.multiAnswers.count()).toBe(6);
     expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
     expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');
     expect(ff.multiAnswers.get(2).getText()).toBe('×Answer 2');
     expect(ff.multiAnswers.get(3).getText()).toBe('×User created answer');
+    expect(ff.multiAnswers.get(4).getText()).toBe('×Answer 2');
+    expect(ff.multiAnswers.get(5).getText()).toBe('×User created answer');
 
   });
 
@@ -124,12 +126,14 @@ describe('load saved user data', function() {
     // pick the 1st item, Answer 2
     ff.q8.sendKeys(protractor.Key.ARROW_DOWN);
     ff.q8.sendKeys(protractor.Key.TAB);
-    expect(ff.multiAnswers.count()).toBe(5);
+    expect(ff.multiAnswers.count()).toBe(7);
     expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
     expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');
     expect(ff.multiAnswers.get(2).getText()).toBe('×Answer 2');
     expect(ff.multiAnswers.get(3).getText()).toBe('×Answer 2');
     expect(ff.multiAnswers.get(4).getText()).toBe('×User created answer');
+    expect(ff.multiAnswers.get(5).getText()).toBe('×Answer 2');
+    expect(ff.multiAnswers.get(6).getText()).toBe('×User created answer');
   });
 
 

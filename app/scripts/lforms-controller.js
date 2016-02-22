@@ -142,22 +142,97 @@ angular.module('lformsWidget')
 
 
       /**
+       * Watch on value and unit changes
+       * also returns the element id with the changed data.
+       */
+        $scope.$watch(
+            function () {
+              var watchedSourceItems = null;
+              if ($scope.lfData && $scope.lfData.itemList) {
+                watchedSourceItems = [];
+                for (var i= 0, iLen=$scope.lfData.itemList.length; i<iLen; i++) {
+                  var item = $scope.lfData.itemList[i];
+                  if (item._formulaTargets || item._dataControlTargets || item._skipLogicTargets) {
+                    watchedSourceItems.push({value: item.value, unit: item.unit, id: item._elementId});
+                  }
+                }
+              }
+              return watchedSourceItems;
+            },
+            function(newValues, oldValues) {
+              var lastUpdated = [];
+              if (newValues) {
+                // no oldValues, initial loading
+                if (!oldValues) {
+                  for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+                    lastUpdated.push(newValues[i].id);
+                  }
+                }
+                // adding a new repeating item/section
+                else if (oldValues.length < newValues.length) {
+                  //// //or rules run at the add event
+                  //// find out which one is added, solution 1
+                  //for (var m= 0, mLen=newValues.length; m<mLen; m++) {
+                  //  var newVal = newValues[m];
+                  //  var isNew = true;
+                  //  for (var n= 0, nLen=oldValues.length; n<nLen; n++) {
+                  //    var oldVal = oldValues[n];
+                  //    if (newVal.id === oldVal.id) {
+                  //      isNew = false;
+                  //      break;
+                  //    }
+                  //  }
+                  //  if (isNew) {
+                  //    lastUpdated.push(newVal.id)
+                  //  }
+                  //}
+                  // find out which one is added, solution 2
+                  // it is always the last one in current design
+                  lastUpdated.push(newValues[newValues.length-1].id);
+                }
+                // removing a repeating item/section
+                else if (oldValues.length > newValues.length) {
+                  // rules run at the remove event
+                }
+                // data changes only
+                else {
+                  for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+                    if (!angular.equals(newValues[i], oldValues[i])) {
+                      lastUpdated.push(newValues[i].id);
+                    }
+                  }
+                }
+                // do something
+                for (var j = 0, jLen = lastUpdated.length; j < jLen; j++) {
+                  var item = $scope.lfData.itemHash[lastUpdated[j]];
+                  $scope.updateOnSourceItemValueChange(item);
+
+  //                    console.log(item.question + item._elementId);
+                }
+              }
+            },
+            true
+        );
+
+
+
+      /**
        * Watch on the values of each item
        * When in a deep watch mode, angular makes a copy of the watched object.
        * Only the input values need to be watch. Not the entire lfData,
        * which could be huge depends on the actual form data.
        * todo: performance optimization!!!
        */
-      $scope.$watch(
-        //get the values and watch on those values only
-        function () {
-          return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return item.value;}) : null;
-        },
-        function() {
-          $scope.updateOnValueChange();
-        },
-        true
-      );
+      //$scope.$watch(
+      //  //get the values and watch on those values only
+      //  function () {
+      //    return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return [item.value, item.unit];}) : null;
+      //  },
+      //  function() {
+      //    $scope.updateOnValueChange();
+      //  },
+      //  true
+      //);
 
 
       /**
@@ -179,13 +254,21 @@ angular.module('lformsWidget')
       });
 
 
-      $scope.updateOnValueChange = function() {
-        var widgetData = $scope.lfData;
-        if (widgetData) {
-          widgetData.updateOnValueChange();
-          $scope.sendActionsToScreenReader();
-        }
-      };
+      //$scope.updateOnValueChange = function() {
+      //  var widgetData = $scope.lfData;
+      //  if (widgetData) {
+      //    widgetData.updateOnValueChange();
+      //    $scope.sendActionsToScreenReader();
+      //  }
+      //};
+
+        $scope.updateOnSourceItemValueChange = function(item) {
+          var widgetData = $scope.lfData;
+          if (widgetData) {
+            widgetData.updateOnSourceItemValueChange(item);
+            $scope.sendActionsToScreenReader();
+          }
+        };
 
       $scope.getNumberOfQuestions = function() {
         var ret = 0;
@@ -300,6 +383,7 @@ angular.module('lformsWidget')
         }
         if (!anyEmpty) {
           var newItem = widgetData.addRepeatingItems(item);
+          $scope.sendActionsToScreenReader();
 
           setTimeout(function() {
             var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -373,8 +457,6 @@ angular.module('lformsWidget')
         var widgetData = $scope.lfData;
         var nextItem = widgetData.getNextRepeatingItem(item);
 
-        $scope.sendActionsToScreenReader();
-
         var btnId = '';
         // move the focus to the next '-' button if there's one displayed
         // ('-' buttons are shown only when there are two repeating items shown).
@@ -396,6 +478,8 @@ angular.module('lformsWidget')
 
         // remove the items
         $scope.lfData.removeRepeatingItems(item);
+
+        $scope.sendActionsToScreenReader();
 
         // set the focus
         setTimeout(function() {

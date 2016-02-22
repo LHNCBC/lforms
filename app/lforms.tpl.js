@@ -206,6 +206,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                                      ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
     "                                      uib-popover='Please enter info in the blank \"{{ repeatingItem.question }}\".'\n" +
     "                                      popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "                                      popover-trigger=\"none\"\n" +
     "                                      popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
     "                                Add another '{{repeatingItem.question}}'\n" +
     "                              </button>\n" +
@@ -412,6 +413,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                                    ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
     "                                    uib-popover='Please enter info in the blank \"{{ repeatingItem.question }}\".'\n" +
     "                                    popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "                                    popover-trigger=\"none\"\n" +
     "                                    popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
     "                              Add another '{{repeatingItem.question}}'\n" +
     "                            </button>\n" +
@@ -462,7 +464,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "          <table class=\"lf-form-table lf-form-horizontal-table\">\n" +
     "            <colgroup>\n" +
-    "              <col class=\"button-col\"\">\n" +
+    "              <col class=\"button-col\">\n" +
     "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\">\n" +
     "            </colgroup>\n" +
     "            <thead>\n" +
