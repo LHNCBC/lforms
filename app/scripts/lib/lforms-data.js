@@ -256,55 +256,31 @@ var LFormsData = Class.extend({
     this._setupSourceToTargetMap();
   },
 
+
   /**
-   * Functions to run when values in the model change
-   * To be optimized for performance.
+   * Check skip logic, formulas and data controls when the source item changes.
+   * @param item the controlling/source item
    */
-  updateOnValueChange: function() {
-    // check formula
-    this.processFormulas();
-
-    // check data control
-    this.processDataControl();
-
-    // check skip logic
-    this._updateSkipLogicStatus(this.items, null);
-
-    // update tree line status
-    this._updateTreeNodes(this.items,this);
-    this._updateLastSiblingList(this.items, null);
-    // update repeating items status
-    //this._updateLastRepeatingItemsStatus(this.items);
-    this._updateLastItemInRepeatingSection(this.items);
-    this._adjustLastSiblingListForHorizontalLayout();
-
-  },
-
-
-  updateOnSourceItemValueChange: function(sourceItem) {
+  updateOnSourceItemChange: function(sourceItem) {
     // check formula
     if(sourceItem._formulaTargets) {
       for (var i= 0, iLen=sourceItem._formulaTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._formulaTargets[i];
-        this.processItemFormula(targetItem);
+        this._processItemFormula(targetItem);
       }
     }
-
-
     // check data control
     if(sourceItem._dataControlTargets) {
       for (var i= 0, iLen=sourceItem._dataControlTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._dataControlTargets[i];
-        this.processItemDataControl(targetItem);
+        this._processItemDataControl(targetItem);
       }
     }
-
-
     // check skip logic
     if(sourceItem._skipLogicTargets) {
       for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
         var targetItem = sourceItem._skipLogicTargets[i];
-        this.updateItemSkipLogicStatus(targetItem, null);
+        this._updateItemSkipLogicStatus(targetItem, null);
       }
     }
 
@@ -317,13 +293,11 @@ var LFormsData = Class.extend({
     this._adjustLastSiblingListForHorizontalLayout();
   },
 
-  _updateOnTargetValueChange: function(targetItem) {
-    this.processItemFormula(targetItem);
-    this.processItemDataControl(targetItem);
-    this.updateItemSkipLogicStatus(targetItem, null);
 
-  },
-
+  /**
+   * Set up a mapping between controlling/source items and target items on the controlling/srouce item
+   * @private
+   */
   _setupSourceToTargetMap: function() {
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
@@ -339,7 +313,6 @@ var LFormsData = Class.extend({
           }
         }
       }
-
       // dataControl
       if (item.dataControl && angular.isArray(item.dataControl)) {
         for (var j= 0, jLen=item.dataControl.length; j<jLen; j++) {
@@ -358,7 +331,6 @@ var LFormsData = Class.extend({
           }
         }
       }
-
       // skip logic
       if (item.skipLogic) {
         for (var j= 0, jLen=item.skipLogic.conditions.length; j<jLen; j++) {
@@ -373,8 +345,6 @@ var LFormsData = Class.extend({
         }
       }
     }
-
-
   },
 
   /**
@@ -419,7 +389,12 @@ var LFormsData = Class.extend({
     }
   },
 
-  updateItemSkipLogicStatus: function(item, hide) {
+  /**
+   * Update data by running the skip logic on the target item
+   * @param item the target item where there is a skip logic
+   * @param hide if the parent item is already hidden
+   */
+  _updateItemSkipLogicStatus: function(item, hide) {
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (hide) {
@@ -1441,39 +1416,20 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Update data by running all formulas
+   * Update data by running the formula on the target item
+   * @param item the target item where there is a formula
    */
-  processFormulas: function() {
-    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
-      if (item.calculationMethod && item.calculationMethod.name) {
-        item.value = this.getFormulaResult(item);
-      }
-    }
-  },
-
-  processItemFormula: function(item) {
+  _processItemFormula: function(item) {
     if (item.calculationMethod && item.calculationMethod.name) {
       item.value = this.getFormulaResult(item);
     }
   },
 
-
   /**
-   * Update data by checking 'dataControl' functions
+   * Update data by running the data control on the target item
+   * @param item the target item where there is a data control
    */
-  processDataControl: function() {
-    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
-      if (item.dataControl && angular.isArray(item.dataControl)) {
-        this._updateDataByDataControl(item);
-        this._updateAutocompOptions(item);
-        this._updateUnitAutocompOptions(item);
-      }
-    }
-  },
-
-  processItemDataControl: function(item) {
+  _processItemDataControl: function(item) {
     if (item.dataControl && angular.isArray(item.dataControl)) {
       this._updateDataByDataControl(item);
       this._updateAutocompOptions(item);

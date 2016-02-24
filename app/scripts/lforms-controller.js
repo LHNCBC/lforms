@@ -142,97 +142,74 @@ angular.module('lformsWidget')
 
 
       /**
-       * Watch on value and unit changes
-       * also returns the element id with the changed data.
+       * Watch on value and unit changes of controlling/source items for skip logic
+       * formulas and data controls.
        */
-        $scope.$watch(
-            function () {
-              var watchedSourceItems = null;
-              if ($scope.lfData && $scope.lfData.itemList) {
-                watchedSourceItems = [];
-                for (var i= 0, iLen=$scope.lfData.itemList.length; i<iLen; i++) {
-                  var item = $scope.lfData.itemList[i];
-                  if (item._formulaTargets || item._dataControlTargets || item._skipLogicTargets) {
-                    watchedSourceItems.push({value: item.value, unit: item.unit, id: item._elementId});
-                  }
+      $scope.$watch(
+          function () {
+            var watchedSourceItems = null;
+            if ($scope.lfData && $scope.lfData.itemList) {
+              watchedSourceItems = [];
+              for (var i= 0, iLen=$scope.lfData.itemList.length; i<iLen; i++) {
+                var item = $scope.lfData.itemList[i];
+                if (item._formulaTargets || item._dataControlTargets || item._skipLogicTargets) {
+                  watchedSourceItems.push({value: item.value, unit: item.unit, id: item._elementId});
                 }
               }
-              return watchedSourceItems;
-            },
-            function(newValues, oldValues) {
-              var lastUpdated = [];
-              if (newValues) {
-                // no oldValues, initial loading
-                if (!oldValues) {
-                  for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+            }
+            return watchedSourceItems;
+          },
+          function(newValues, oldValues) {
+            var lastUpdated = [];
+            if (newValues) {
+              // no oldValues, initial loading
+              if (!oldValues) {
+                for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+                  lastUpdated.push(newValues[i].id);
+                }
+              }
+              // adding a new repeating item/section
+              else if (oldValues.length < newValues.length) {
+                //// find out which one is added, solution 1
+                //for (var m= 0, mLen=newValues.length; m<mLen; m++) {
+                //  var newVal = newValues[m];
+                //  var isNew = true;
+                //  for (var n= 0, nLen=oldValues.length; n<nLen; n++) {
+                //    var oldVal = oldValues[n];
+                //    if (newVal.id === oldVal.id) {
+                //      isNew = false;
+                //      break;
+                //    }
+                //  }
+                //  if (isNew) {
+                //    lastUpdated.push(newVal.id)
+                //  }
+                //}
+                // find out which one is added, solution 2
+                // it is always the last one in current design
+                lastUpdated.push(newValues[newValues.length-1].id);
+              }
+              // removing a repeating item/section
+              else if (oldValues.length > newValues.length) {
+                // rules run at the remove event, TBD
+              }
+              // data changes only
+              else {
+                for (var i = 0, iLen = newValues.length; i < iLen; i++) {
+                  if (!angular.equals(newValues[i], oldValues[i])) {
                     lastUpdated.push(newValues[i].id);
                   }
                 }
-                // adding a new repeating item/section
-                else if (oldValues.length < newValues.length) {
-                  //// //or rules run at the add event
-                  //// find out which one is added, solution 1
-                  //for (var m= 0, mLen=newValues.length; m<mLen; m++) {
-                  //  var newVal = newValues[m];
-                  //  var isNew = true;
-                  //  for (var n= 0, nLen=oldValues.length; n<nLen; n++) {
-                  //    var oldVal = oldValues[n];
-                  //    if (newVal.id === oldVal.id) {
-                  //      isNew = false;
-                  //      break;
-                  //    }
-                  //  }
-                  //  if (isNew) {
-                  //    lastUpdated.push(newVal.id)
-                  //  }
-                  //}
-                  // find out which one is added, solution 2
-                  // it is always the last one in current design
-                  lastUpdated.push(newValues[newValues.length-1].id);
-                }
-                // removing a repeating item/section
-                else if (oldValues.length > newValues.length) {
-                  // rules run at the remove event
-                }
-                // data changes only
-                else {
-                  for (var i = 0, iLen = newValues.length; i < iLen; i++) {
-                    if (!angular.equals(newValues[i], oldValues[i])) {
-                      lastUpdated.push(newValues[i].id);
-                    }
-                  }
-                }
-                // do something
-                for (var j = 0, jLen = lastUpdated.length; j < jLen; j++) {
-                  var item = $scope.lfData.itemHash[lastUpdated[j]];
-                  $scope.updateOnSourceItemValueChange(item);
-
-  //                    console.log(item.question + item._elementId);
-                }
               }
-            },
-            true
-        );
-
-
-
-      /**
-       * Watch on the values of each item
-       * When in a deep watch mode, angular makes a copy of the watched object.
-       * Only the input values need to be watch. Not the entire lfData,
-       * which could be huge depends on the actual form data.
-       * todo: performance optimization!!!
-       */
-      //$scope.$watch(
-      //  //get the values and watch on those values only
-      //  function () {
-      //    return $scope.lfData && $scope.lfData.itemList ? $scope.lfData.itemList.map(function(item) {return [item.value, item.unit];}) : null;
-      //  },
-      //  function() {
-      //    $scope.updateOnValueChange();
-      //  },
-      //  true
-      //);
+              // do something
+              for (var j = 0, jLen = lastUpdated.length; j < jLen; j++) {
+                var item = $scope.lfData.itemHash[lastUpdated[j]];
+                $scope.updateOnSourceItemChange(item);
+              }
+            }
+          },
+          true
+      );
 
 
       /**
@@ -254,21 +231,18 @@ angular.module('lformsWidget')
       });
 
 
-      //$scope.updateOnValueChange = function() {
-      //  var widgetData = $scope.lfData;
-      //  if (widgetData) {
-      //    widgetData.updateOnValueChange();
-      //    $scope.sendActionsToScreenReader();
-      //  }
-      //};
+      /**
+       * Check skip logic, formulas and data controls when the source item changes.
+       * @param item the controlling/source item
+       */
+      $scope.updateOnSourceItemChange = function(item) {
+        var widgetData = $scope.lfData;
+        if (widgetData) {
+          widgetData.updateOnSourceItemChange(item);
+          $scope.sendActionsToScreenReader();
+        }
+      };
 
-        $scope.updateOnSourceItemValueChange = function(item) {
-          var widgetData = $scope.lfData;
-          if (widgetData) {
-            widgetData.updateOnSourceItemValueChange(item);
-            $scope.sendActionsToScreenReader();
-          }
-        };
 
       $scope.getNumberOfQuestions = function() {
         var ret = 0;
@@ -281,6 +255,7 @@ angular.module('lformsWidget')
         }
         return ret;
       };
+
 
       /**
        * Get the CSS class on each item row
@@ -306,6 +281,7 @@ angular.module('lformsWidget')
         }
         return eleClass;
       };
+
 
       /**
        *  Get the CSS class for tree lines at the current level.
@@ -340,6 +316,7 @@ angular.module('lformsWidget')
         return ret;
       };
 
+
       /**
        *  Get the CSS class for the extra row that holds the field for "Please Specify" value
        *  The class name depends on the tree level class that this row id depending on.
@@ -370,6 +347,7 @@ angular.module('lformsWidget')
         }
         return ret;
       };
+
 
       /**
        * Add a repeating item or a repeating group
@@ -445,8 +423,8 @@ angular.module('lformsWidget')
           // clean up logs
           widgetData._actionLogs = [];
         }
-
       };
+
 
       /**
        * Remove one repeating item in a group
@@ -488,6 +466,7 @@ angular.module('lformsWidget')
         }, 1);
       };
 
+
       /**
        * Check if there's only one repeating item in a group
        * (so that the 'remove' button won't show on this item)
@@ -498,6 +477,7 @@ angular.module('lformsWidget')
         var recCount = $scope.lfData.getRepeatingItemCount(item);
         return recCount > 1 ? false : true;
       };
+
 
       /**
        * Check if the current horizontal table has one row only
@@ -510,7 +490,6 @@ angular.module('lformsWidget')
         if (tableInfo && tableInfo.tableRows && tableInfo.tableRows.length === 1) {
           ret = true;
         }
-
         return ret;
       };
 
@@ -538,6 +517,7 @@ angular.module('lformsWidget')
         return extra;
       };
 
+
       /**
        * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
        * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
@@ -551,11 +531,13 @@ angular.module('lformsWidget')
         return formData;
       };
 
+
       // for debug only. to be removed.
       $scope.onclick = function() {
         debugger
         var i = 1;
       };
+
 
       /**
        * Handle navigation keys using TAB/ SHIFT+TAB keys
@@ -593,8 +575,8 @@ angular.module('lformsWidget')
             currentElement.blur();
           }
         }
-
       };
+
 
       /**
        * Handle navigation keys using CTRL+arrow keys

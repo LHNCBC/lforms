@@ -1693,7 +1693,7 @@ var genetic = {
 
 var genetic2 = {
   "type": "LOINC",
-  "code": "X1000-1",
+  "code": "X2000-0",
   "name": "Genetic Testing Panel for Small Variants (table version)",
   "template": "form-view-b",
   "dataType": null,
