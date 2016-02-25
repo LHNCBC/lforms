@@ -347,47 +347,6 @@ var LFormsData = Class.extend({
     }
   },
 
-  /**
-   * Update each items skip logic status
-   * @param items sibling items on one level of the tree
-   * @param hide if the parent item is already hidden
-   * @private
-   */
-  _updateSkipLogicStatus: function(items, hide) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      // if one item is hidden all of its decedents should be hidden.
-      // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
-      if (hide) {
-        this._setSkipLogicStatusValue(item, "target-hide");
-        var isHidden = true;
-      }
-      // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
-      else {
-        if (item.skipLogic) {
-          var takeAction = this._checkSkipLogic(item);
-
-          if (!item.skipLogic.action || item.skipLogic.action === "show") {
-            var newStatus = takeAction ? 'target-show' : "target-hide";
-            this._setSkipLogicStatusValue(item, newStatus);
-          }
-          else if (item.skipLogic.action === "hide") {
-            var newStatus = takeAction ? 'target-hide' : "target-show";
-            this._setSkipLogicStatusValue(item, newStatus);
-          }
-        }
-        // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-        else if (item._skipLogicStatus === "target-hide") {
-          this._setSkipLogicStatusValue(item, "target-show");
-        }
-        var isHidden = item._skipLogicStatus === "target-hide";
-      }
-      // process the sub items
-      if (item.items && item.items.length > 0) {
-        this._updateSkipLogicStatus(item.items, isHidden);
-      }
-    }
-  },
 
   /**
    * Update data by running the skip logic on the target item
@@ -423,7 +382,10 @@ var LFormsData = Class.extend({
     }
     // process the sub items
     if (item.items && item.items.length > 0) {
-      this._updateSkipLogicStatus(item.items, isHidden);
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        var subItem = item.items[i];
+        this._updateItemSkipLogicStatus(subItem, isHidden);
+      }
     }
   },
 
@@ -1502,10 +1464,6 @@ var LFormsData = Class.extend({
               }
             } // end of "TEXT
           }
-
-          if (onAttribute === 'value' && (item.dataType === "CNE" || item.dataType === "CWE")) {
-            //this._updateAutocompOptions(item);
-          }
         }
 //        // "external" uses "url" and optional "urlOptions" and "data"
 //        else if (source.sourceType === 'external' && source.url) {
@@ -1652,11 +1610,8 @@ var LFormsData = Class.extend({
       options = {
         listItems: listItems,
         matchListValue: true,
-        autoFill: true,
-        //modelValue: item.unit // used for detecting changes in the model data so that autocompleter can update itself
-                              // not used by autocompleter
-
-    };
+        autoFill: true
+      };
       if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
       }
@@ -1695,8 +1650,6 @@ var LFormsData = Class.extend({
         options.nonMatchSuggestions = false;
         options.tableFormat = true;
         options.valueCols = [0];
-        //options.modelValue = item.value; // used for detecting changes in the model data so that autocompleter can update itself
-                                         // not used by autocompleter
       }
       else {
         var listItems = [], answers = [];
