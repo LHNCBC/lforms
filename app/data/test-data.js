@@ -1397,14 +1397,12 @@ var genetic = {
       "question": "Gene findings",
       "questionCardinality": {"max": "*", "min":"0"},
       "header": true,
-//      "layout": "horizontal",
       "items" : [
         {"questionCode": "XXXXX-5",
           "question": "Allele ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          //"externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes,AlternateAllele,ReferenceAllele",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic",
         },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
@@ -1544,6 +1542,18 @@ var genetic = {
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {text: "value.Cytogenetic", code: "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ],
+
         },
         {"questionCode": "X1004-0",
           "question": "Reference Allele",
@@ -1631,16 +1641,16 @@ var genetic = {
         {"questionCode": "X1002-0",
           "question": "Possible associated phenotypes",
           "dataType": "CWE",
-          "answerCardinality": {"max": "*", "min":"0"},
+          "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
           "dataControl": [
             {
               "source": {
                 "sourceType": "internal",
-                "sourceDataType": "OBJECT",
+                "sourceDataType": "TEXT",
                 "itemCode": "XXXXX-5",
                 //"data": "value.phenotypes"
-                "data": {"code": "value.code", "text": "value.phenotypes"}
+                "data": "value.phenotype"
               },
               "onAttribute": "value"
             }
@@ -1794,9 +1804,7 @@ var genetic2 = {
           "question": "Allele ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          //"externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange",
-        },
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic",        },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
           "dataType": "CNE",
@@ -1933,6 +1941,17 @@ var genetic2 = {
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {text: "value.Cytogenetic", code: "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ],
         },
         {"questionCode": "X1003-0",
           "question": "Significance",
@@ -1986,10 +2005,23 @@ var genetic2 = {
           }]
         },
         {"questionCode": "X1002-0",
-          "question": "Phenotypes",
+          "question": "Possible associated phenotypes",
           "dataType": "CWE",
-          "answerCardinality": {"max": "*", "min":"0"},
+          "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "TEXT",
+                "itemCode": "XXXXX-5",
+                //"data": "value.phenotypes"
+                "data": "value.phenotype"
+              },
+              "onAttribute": "value"
+            }
+          ],
+
         },
 
       ]

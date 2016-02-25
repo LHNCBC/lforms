@@ -295,7 +295,7 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Set up a mapping between controlling/source items and target items on the controlling/srouce item
+   * Set up a mapping between controlling/source items and target items on the controlling/source item
    * @private
    */
   _setupSourceToTargetMap: function() {
@@ -305,7 +305,7 @@ var LFormsData = Class.extend({
       if (item.calculationMethod && item.calculationMethod.name) {
         var sourceItems = this._getFormulaSourceItems(item, item.calculationMethod.value);
         for(var j= 0, jLen=sourceItems.length; j<jLen; j++) {
-          if (angular.isArray(sourceItems[j]._formulaTargets)) {
+          if (sourceItems[j]._formulaTargets) {
             sourceItems[j]._formulaTargets.push(item);
           }
           else {
@@ -322,7 +322,7 @@ var LFormsData = Class.extend({
           if (source && source.sourceType === "internal" && source.itemCode) {
             // get the source item object
             var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
-            if (angular.isArray(sourceItem._dataControlTargets)) {
+            if (sourceItem._dataControlTargets) {
               sourceItem._dataControlTargets.push(item);
             }
             else {
@@ -336,7 +336,7 @@ var LFormsData = Class.extend({
         for (var j= 0, jLen=item.skipLogic.conditions.length; j<jLen; j++) {
           var condition = item.skipLogic.conditions[j];
           var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
-          if (angular.isArray(sourceItem._skipLogicTargets)) {
+          if (sourceItem._skipLogicTargets) {
             sourceItem._skipLogicTargets.push(item);
           }
           else {
