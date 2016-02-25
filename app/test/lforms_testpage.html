@@ -102,6 +102,9 @@
               {text: 'Form With User Data', id: 'form-with-user-data'},
               {text: 'CDE sample form #1', id: 'cde1'},
 //              {text: 'RxTerms Demo', id: 'X-001'}
+//              {text: "Genetic Testing Panel for Small Variants", id: "X1000-0"},
+//              {text: "Genetic Testing Panel for Small Variants (table version)", id: "X2000-0"}
+
             ];
 
 
@@ -156,6 +159,12 @@
                 case 'X-001':
                   //'RxTerms'
                   lfData2 = new LFormsData(angular.copy(rxTerms));
+                  break;
+                case 'X1000-0':
+                  lfData2 = new LFormsData(angular.copy(genetic));
+                  break;
+                case 'X2000-0':
+                  lfData2 = new LFormsData(angular.copy(genetic2));
                   break;
                 case 'cde1':
                   //'CDE Sample form'

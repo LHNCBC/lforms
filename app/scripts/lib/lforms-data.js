@@ -212,6 +212,7 @@ var LFormsData = Class.extend({
 
     // create a reference list of all items in the tree
     this.itemList = [];
+    this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
@@ -222,6 +223,8 @@ var LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
 
     this._setupAutocompOptions();
+
+    this._setupSourceToTargetMap();
 
   },
 
@@ -238,6 +241,7 @@ var LFormsData = Class.extend({
     this._updateLastItemInRepeatingSection(this.items);
 
     this.itemList = [];
+    this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
@@ -248,21 +252,37 @@ var LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
 
     this._setupAutocompOptions();
+
+    this._setupSourceToTargetMap();
   },
 
+
   /**
-   * Functions to run when values in the model change
-   * To be optimized for performance.
+   * Check skip logic, formulas and data controls when the source item changes.
+   * @param item the controlling/source item
    */
-  updateOnValueChange: function() {
+  updateOnSourceItemChange: function(sourceItem) {
     // check formula
-    this.processFormulas();
-
+    if(sourceItem._formulaTargets) {
+      for (var i= 0, iLen=sourceItem._formulaTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._formulaTargets[i];
+        this._processItemFormula(targetItem);
+      }
+    }
     // check data control
-    this.processDataControl();
-
+    if(sourceItem._dataControlTargets) {
+      for (var i= 0, iLen=sourceItem._dataControlTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._dataControlTargets[i];
+        this._processItemDataControl(targetItem);
+      }
+    }
     // check skip logic
-    this._updateSkipLogicStatus(this.items, null);
+    if(sourceItem._skipLogicTargets) {
+      for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
+        var targetItem = sourceItem._skipLogicTargets[i];
+        this._updateItemSkipLogicStatus(targetItem, null);
+      }
+    }
 
     // update tree line status
     this._updateTreeNodes(this.items,this);
@@ -271,47 +291,100 @@ var LFormsData = Class.extend({
     //this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
     this._adjustLastSiblingListForHorizontalLayout();
-
   },
 
+
   /**
-   * Update each items skip logic status
-   * @param items sibling items on one level of the tree
-   * @param hide if the parent item is already hidden
+   * Set up a mapping between controlling/source items and target items on the controlling/source item
    * @private
    */
-  _updateSkipLogicStatus: function(items, hide) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      // if one item is hidden all of its decedents should be hidden.
-      // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
-      if (hide) {
-        this._setSkipLogicStatusValue(item, "target-hide");
-        var isHidden = true;
+  _setupSourceToTargetMap: function() {
+    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
+      // formula
+      if (item.calculationMethod && item.calculationMethod.name) {
+        var sourceItems = this._getFormulaSourceItems(item, item.calculationMethod.value);
+        for(var j= 0, jLen=sourceItems.length; j<jLen; j++) {
+          if (sourceItems[j]._formulaTargets) {
+            sourceItems[j]._formulaTargets.push(item);
+          }
+          else {
+            sourceItems[j]._formulaTargets = [item];
+          }
+        }
       }
-      // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
-      else {
-        if (item.skipLogic) {
-          var takeAction = this._checkSkipLogic(item);
+      // dataControl
+      if (item.dataControl && angular.isArray(item.dataControl)) {
+        for (var j= 0, jLen=item.dataControl.length; j<jLen; j++) {
+          var source = item.dataControl[j].source;
 
-          if (!item.skipLogic.action || item.skipLogic.action === "show") {
-            var newStatus = takeAction ? 'target-show' : "target-hide";
-            this._setSkipLogicStatusValue(item, newStatus);
-          }
-          else if (item.skipLogic.action === "hide") {
-            var newStatus = takeAction ? 'target-hide' : "target-show";
-            this._setSkipLogicStatusValue(item, newStatus);
+          // has a source configuration
+          if (source && source.sourceType === "internal" && source.itemCode) {
+            // get the source item object
+            var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+            if (sourceItem._dataControlTargets) {
+              sourceItem._dataControlTargets.push(item);
+            }
+            else {
+              sourceItem._dataControlTargets = [item];
+            }
           }
         }
-        // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-        else if (item._skipLogicStatus === "target-hide") {
-          this._setSkipLogicStatusValue(item, "target-show");
-        }
-        var isHidden = item._skipLogicStatus === "target-hide";
       }
-      // process the sub items
-      if (item.items && item.items.length > 0) {
-        this._updateSkipLogicStatus(item.items, isHidden);
+      // skip logic
+      if (item.skipLogic) {
+        for (var j= 0, jLen=item.skipLogic.conditions.length; j<jLen; j++) {
+          var condition = item.skipLogic.conditions[j];
+          var sourceItem = this._getSkipLogicSourceItem(item, condition.source);
+          if (sourceItem._skipLogicTargets) {
+            sourceItem._skipLogicTargets.push(item);
+          }
+          else {
+            sourceItem._skipLogicTargets = [item];
+          }
+        }
+      }
+    }
+  },
+
+
+  /**
+   * Update data by running the skip logic on the target item
+   * @param item the target item where there is a skip logic
+   * @param hide if the parent item is already hidden
+   */
+  _updateItemSkipLogicStatus: function(item, hide) {
+    // if one item is hidden all of its decedents should be hidden.
+    // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
+    if (hide) {
+      this._setSkipLogicStatusValue(item, "target-hide");
+      var isHidden = true;
+    }
+    // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
+    else {
+      if (item.skipLogic) {
+        var takeAction = this._checkSkipLogic(item);
+
+        if (!item.skipLogic.action || item.skipLogic.action === "show") {
+          var newStatus = takeAction ? 'target-show' : "target-hide";
+          this._setSkipLogicStatusValue(item, newStatus);
+        }
+        else if (item.skipLogic.action === "hide") {
+          var newStatus = takeAction ? 'target-hide' : "target-show";
+          this._setSkipLogicStatusValue(item, newStatus);
+        }
+      }
+      // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
+      else if (item._skipLogicStatus === "target-hide") {
+        this._setSkipLogicStatusValue(item, "target-show");
+      }
+      var isHidden = item._skipLogicStatus === "target-hide";
+    }
+    // process the sub items
+    if (item.items && item.items.length > 0) {
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        var subItem = item.items[i];
+        this._updateItemSkipLogicStatus(subItem, isHidden);
       }
     }
   },
@@ -365,6 +438,7 @@ var LFormsData = Class.extend({
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
       this.itemList.push(item);
+      this.itemHash[item._elementId] = item;
       // process the sub items
       if (item.items && item.items.length > 0) {
         this._updateItemReferenceList(item.items);
@@ -1304,29 +1378,24 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Update data by running all formulas
+   * Update data by running the formula on the target item
+   * @param item the target item where there is a formula
    */
-  processFormulas: function() {
-    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
-      if (item.calculationMethod && item.calculationMethod.name) {
-        item.value = this.getFormulaResult(item);
-      }
+  _processItemFormula: function(item) {
+    if (item.calculationMethod && item.calculationMethod.name) {
+      item.value = this.getFormulaResult(item);
     }
   },
 
-
   /**
-   * Update data by checking 'dataControl' functions
+   * Update data by running the data control on the target item
+   * @param item the target item where there is a data control
    */
-  processDataControl: function() {
-    for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
-      var item = this.itemList[i];
-      if (item.dataControl && angular.isArray(item.dataControl)) {
-        this._updateDataByDataControl(item);
-        this._updateAutocompOptions(item);
-        this._updateUnitAutocompOptions(item);
-      }
+  _processItemDataControl: function(item) {
+    if (item.dataControl && angular.isArray(item.dataControl)) {
+      this._updateDataByDataControl(item);
+      this._updateAutocompOptions(item);
+      this._updateUnitAutocompOptions(item);
     }
   },
 
@@ -1374,6 +1443,16 @@ var LFormsData = Class.extend({
                   // set the data
                   item[onAttribute] = targetData;
                 }
+              } // end of source.data.code && source.data.text
+            } // end of "LIST"
+            else if (source.sourceDataType === "OBJECT" ) {
+              // data is in the format of {"code": ..., "text": ...}
+              if (source.data.code && source.data.text) {
+                var code = this._getDataFromNestedAttributes(source.data.code, sourceItem);
+                var text = this._getDataFromNestedAttributes(source.data.text, sourceItem);
+                var targetData = {"code": code, "text": text};
+                // set the data
+                item[onAttribute] = targetData;
               } // end of source.data.code && source.data.text
             } // end of "LIST"
             else if (source.sourceDataType === "TEXT") {
