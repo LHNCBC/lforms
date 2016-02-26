@@ -124,6 +124,9 @@
                         <input ng-switch-when="DT" name="{{item.question}}" ng-required="item._answerRequired"
                                ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
                                ng-readonly="item._readOnly" id="{{item._elementId}}">
+                        <textarea ng-switch-when="TX" name="{{item.question}}" ng-required="item._answerRequired"
+                                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+                                  id="{{item._elementId}}" ng-keyup="autoExpand($event)" rows="1"></textarea>
                         <input ng-switch-default name="{{item.question}}" ng-required="item._answerRequired"
                                ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
                                id="{{item._elementId}}">

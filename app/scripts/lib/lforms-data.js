@@ -58,6 +58,7 @@ var LFormsData = Class.extend({
     "INT",
     "REAL",
     "ST",
+    "TX",      // long text
     "BIN",
     "DT",      // complex type (or sub-type of 'ST' ?)
     "DTM",     // complex type (or sub-type of 'ST' ?)

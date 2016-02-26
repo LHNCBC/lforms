@@ -155,6 +155,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
@@ -358,6 +361,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
@@ -528,9 +534,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                           lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-default name=\"{{cell.question}}\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
-    "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                    <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                              ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                              id=\"{{cell._elementId}}\"\n" +
+    "                              aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                              ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                    <input ng-switch-default name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                           ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                  </div>\n" +

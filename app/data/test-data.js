@@ -80,9 +80,9 @@ var FHTData = {
                 {"questionCode": "54140-9XA", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #A", "answers": null, "dataType": "", "units": "", "header": false},
                 {"questionCode": "54130-0XA", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #B", "answers": null, "dataType": "", "units": "", "header": false}
               ]
-            },
+            }
           ]
-        },
+        }
       ]
     },
     // level 1, continue
@@ -114,7 +114,7 @@ var FHTData = {
             {"questionCode": "54113-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                 "action": "show"}
-            },
+            }
           ]
         },
         // level 2, continue
@@ -129,7 +129,7 @@ var FHTData = {
             {"questionCode": "54115-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
             {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         }
       ]
@@ -441,7 +441,7 @@ var horizontalFHTData = {
             {"questionCode": "54140-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54130-0", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false}
           ]
-        },
+        }
       ]
     },
     // level 1, continue
@@ -473,7 +473,7 @@ var horizontalFHTData = {
             {"questionCode": "54113-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
               "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
                 "action": "show"}
-            },
+            }
           ]
         },
         // level 2, continue
@@ -488,10 +488,10 @@ var horizontalFHTData = {
             {"questionCode": "54115-1", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
             {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
-            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
+            {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         },
-        {"questionCode": "54119-3R", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54119-3R", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false}
       ]
     }
   ],
@@ -809,6 +809,10 @@ var allInOne =
     {"questionCode": "type18", "dataType": "PHONE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type PHONE", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type19", "dataType": "TX", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type TX", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+
 
     // multi-select CNE
     {"questionCode": "multiSelectCNE", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
@@ -847,14 +851,14 @@ var allInOne =
       "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
       "items": [
         {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
           "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
         {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
       ]
     },
 
@@ -904,7 +908,7 @@ var allInOne =
           "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
               "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
@@ -925,8 +929,7 @@ var allInOne =
           "dataType":"CNE",
           "header":false,
           "question":"Drug (with extra data of strengths and forms)",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1",
-          //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1"
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
         {
@@ -945,7 +948,7 @@ var allInOne =
               },
               "onAttribute": "answers"
             }
-          ],
+          ]
         },
         //an item that gets the extra TEXT data whenever the source item has a data changes
         {
@@ -964,8 +967,8 @@ var allInOne =
               },
               "onAttribute": "value"
             }
-          ],
-        },
+          ]
+        }
 
         ////an item that gets the external LIST data whenever the source item has a data changes
         //{
@@ -1009,7 +1012,7 @@ var allInOne =
         //}
       ]
 
-    },
+    }
 
 
 
@@ -1143,7 +1146,7 @@ var formWithUserData =
       "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
       "items": [
           // shown, with user value
         {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 201,
@@ -1152,7 +1155,7 @@ var formWithUserData =
           // shown, with user value
         {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 202,
           "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
       ]
     },
 
@@ -1191,7 +1194,7 @@ var formWithUserData =
               "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
               "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
           ]
-        },
+        }
       ]
     },
     {"questionCode": "rp-q2", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
@@ -1240,7 +1243,7 @@ var formWithUserData =
           "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null,
+          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
           "items": [
               // shown
             {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
@@ -1272,7 +1275,7 @@ var rxTerms = {
           "dataType":"CNE",
           "header":false,
           "question":"Drug Name",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1"
           //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
@@ -1292,7 +1295,7 @@ var rxTerms = {
               },
               "onAttribute": "answers"
             }
-          ],
+          ]
         }
       ]
     }
@@ -1333,7 +1336,7 @@ var genetic = {
       ]
     },
     {"questionCode": "53577-3",
-      "question": "Reason for study",
+      "question": "Reason for study"
     },
     {
       "questionCode":"51967-8",
@@ -1381,7 +1384,8 @@ var genetic = {
       "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol"
     },
     {"questionCode": "XXXXX-0",
-      "question": "Full narrative report "
+      "question": "Full narrative report",
+      "dataType": "TX"
     },
     {"questionCode": "51968-6",
       "question": "Genetic disease analysis overall interpretation",
@@ -1402,7 +1406,7 @@ var genetic = {
           "question": "Allele ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic"
         },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
@@ -1415,12 +1419,11 @@ var genetic = {
                 "sourceType": "internal",
                 "sourceDataType": "OBJECT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.GeneSymbol"
                 "data": {"code": "value.code", "text": "value.GeneSymbol"}
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {"questionCode": "XXXXX-1",
           "question": "Reference sequence ID",
@@ -1432,13 +1435,11 @@ var genetic = {
                 "sourceType": "internal",
                 "sourceDataType": "OBJECT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.RefSeqID"
                 "data": {"code": "value.code", "text": "value.RefSeqID"}
-
               },
               "onAttribute": "value"
             }
-          ],
+          ]
 
         },
         {"questionCode": "41103-3",
@@ -1452,12 +1453,11 @@ var genetic = {
                 "sourceType": "internal",
                 "sourceDataType": "OBJECT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.NucleotideChange"
                 "data": {"code": "value.code", "text": "value.NucleotideChange"}
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {"questionCode": "48005-3",
           "question": "Amino acid change",
@@ -1470,13 +1470,11 @@ var genetic = {
                 "sourceType": "internal",
                 "sourceDataType": "OBJECT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.AminoAcidChange"
                 "data": {"code": "value.code", "text": "value.AminoAcidChange"}
-
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {
           "questionCode":"53034-5",
@@ -1552,8 +1550,7 @@ var genetic = {
               },
               "onAttribute": "value"
             }
-          ],
-
+          ]
         },
         {"questionCode": "X1004-0",
           "question": "Reference Allele",
@@ -1567,8 +1564,7 @@ var genetic = {
               },
               "onAttribute": "value"
             }
-          ],
-
+          ]
         },
         {"questionCode": "X1005-0",
           "question": "Alternate Allele",
@@ -1582,8 +1578,7 @@ var genetic = {
               },
               "onAttribute": "value"
             }
-          ],
-
+          ]
         },
 
         {"questionCode": "X1003-0",
@@ -1592,46 +1587,46 @@ var genetic = {
           "answerCardinality": {"max": "1", "min":"0"},
           "answers": [{
             "code": "LA6668-3",
-            "text": "Pathogenic",
+            "text": "Pathogenic"
           }, {
             "code": "LA6669-1",
-            "text": "Presumed Pathogenic",
+            "text": "Presumed Pathogenic"
           }, {
             "code": "LA6670-9",
-            "text": "Novel Presumed Pathogenic",
+            "text": "Novel Presumed Pathogenic"
           }, {
             "code": "LA6671-7",
-            "text": "Novel Unknown Significance",
+            "text": "Novel Unknown Significance"
           }, {
             "code": "LA6672-5",
-            "text": "Novel Presumed Benign",
+            "text": "Novel Presumed Benign"
           }, {
             "code": "LA6673-3",
-            "text": "Novel",
+            "text": "Novel"
           }, {
             "code": "LA6674-1",
-            "text": "Presumed Benign",
+            "text": "Presumed Benign"
           }, {
             "code": "LA6675-8",
-            "text": "Benign",
+            "text": "Benign"
           }, {
             "code": "LA6676-6",
-            "text": "Resistant",
+            "text": "Resistant"
           }, {
             "code": "LA6677-4",
-            "text": "Responsive",
+            "text": "Responsive"
           }, {
             "code": "LA6678-2",
-            "text": "Novel Presumed Non-Responsive",
+            "text": "Novel Presumed Non-Responsive"
           }, {
             "code": "LA6679-0",
-            "text": "Novel Presumed Responsive",
+            "text": "Novel Presumed Responsive"
           }, {
             "code": "LA6680-8",
-            "text": "Unclassified",
+            "text": "Unclassified"
           }, {
             "code": "LA6681-6",
-            "text": "Polymorphism",
+            "text": "Polymorphism"
           }, {
             "code": "LA6682-4",
             "text": "Unknown Significance"
@@ -1654,8 +1649,7 @@ var genetic = {
               },
               "onAttribute": "value"
             }
-          ],
-
+          ]
         },
 
         {"questionCode": "XXXXX-4",
@@ -1680,8 +1674,7 @@ var genetic = {
           "question": "ClinVar Variant ID",
           "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C02"}}],
             "action": "show"}
-        },
-
+        }
       ]
     },
     {"questionCode": "36908-2",
@@ -1690,7 +1683,7 @@ var genetic = {
       "answerCardinality": {"max": "*", "min":"0"},
       "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
         "action": "show"},
-      "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange",
+      "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
     },
     {"questionCode": "XXXXX-11",
       "question": "Range(s) of DNA sequence examined",
@@ -1734,7 +1727,7 @@ var genetic2 = {
       ]
     },
     {"questionCode": "53577-3",
-      "question": "Reason for study",
+      "question": "Reason for study"
     },
     {
       "questionCode":"51967-8",
@@ -1782,7 +1775,8 @@ var genetic2 = {
       "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol"
     },
     {"questionCode": "XXXXX-0",
-      "question": "Full narrative report "
+      "question": "Full narrative report",
+      "dataType": "TX"
     },
     {"questionCode": "51968-6",
       "question": "Genetic disease analysis overall interpretation",
@@ -1804,7 +1798,8 @@ var genetic2 = {
           "question": "Allele ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic",        },
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic"
+        },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
           "dataType": "CNE",
@@ -1821,7 +1816,7 @@ var genetic2 = {
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {"questionCode": "XXXXX-1",
           "question": "RefSeq #",
@@ -1838,8 +1833,7 @@ var genetic2 = {
               },
               "onAttribute": "value"
             }
-          ],
-
+          ]
         },
         {"questionCode": "41103-3",
           "question": "DNA change",
@@ -1857,7 +1851,7 @@ var genetic2 = {
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {"questionCode": "48005-3",
           "question": "AA change",
@@ -1875,7 +1869,7 @@ var genetic2 = {
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {
           "questionCode":"53034-5",
@@ -1951,7 +1945,7 @@ var genetic2 = {
               },
               "onAttribute": "value"
             }
-          ],
+          ]
         },
         {"questionCode": "X1003-0",
           "question": "Significance",
@@ -1959,46 +1953,46 @@ var genetic2 = {
           "answerCardinality": {"max": "1", "min":"0"},
           "answers": [{
             "code": "LA6668-3",
-            "text": "Pathogenic",
+            "text": "Pathogenic"
           }, {
             "code": "LA6669-1",
-            "text": "Presumed Pathogenic",
+            "text": "Presumed Pathogenic"
           }, {
             "code": "LA6670-9",
-            "text": "Novel Presumed Pathogenic",
+            "text": "Novel Presumed Pathogenic"
           }, {
             "code": "LA6671-7",
-            "text": "Novel Unknown Significance",
+            "text": "Novel Unknown Significance"
           }, {
             "code": "LA6672-5",
-            "text": "Novel Presumed Benign",
+            "text": "Novel Presumed Benign"
           }, {
             "code": "LA6673-3",
-            "text": "Novel",
+            "text": "Novel"
           }, {
             "code": "LA6674-1",
-            "text": "Presumed Benign",
+            "text": "Presumed Benign"
           }, {
             "code": "LA6675-8",
-            "text": "Benign",
+            "text": "Benign"
           }, {
             "code": "LA6676-6",
-            "text": "Resistant",
+            "text": "Resistant"
           }, {
             "code": "LA6677-4",
-            "text": "Responsive",
+            "text": "Responsive"
           }, {
             "code": "LA6678-2",
-            "text": "Novel Presumed Non-Responsive",
+            "text": "Novel Presumed Non-Responsive"
           }, {
             "code": "LA6679-0",
-            "text": "Novel Presumed Responsive",
+            "text": "Novel Presumed Responsive"
           }, {
             "code": "LA6680-8",
-            "text": "Unclassified",
+            "text": "Unclassified"
           }, {
             "code": "LA6681-6",
-            "text": "Polymorphism",
+            "text": "Polymorphism"
           }, {
             "code": "LA6682-4",
             "text": "Unknown Significance"
@@ -2015,15 +2009,12 @@ var genetic2 = {
                 "sourceType": "internal",
                 "sourceDataType": "TEXT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.phenotypes"
                 "data": "value.phenotype"
               },
               "onAttribute": "value"
             }
-          ],
-
-        },
-
+          ]
+        }
       ]
     },
     {"questionCode": "36908-2",
@@ -2036,6 +2027,5 @@ var genetic2 = {
       "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
         "action": "show"}
     }
-
   ]
 };
