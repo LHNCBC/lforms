@@ -80,6 +80,7 @@
                             <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
                               <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
                               <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+                            </span>
                             <span ng-show="lfData.templateOptions.showCodingInstruction"
                                   class="prompt">{{ getCodingInstructions(item) }}</span>
                             <button ng-show="!lfData.templateOptions.showCodingInstruction" ng-if="hasCodingInstructions(item)"

@@ -317,6 +317,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
     "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                            </span>\n" +
     "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ getCodingInstructions(item) }}</span>\n" +
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"hasCodingInstructions(item)\"\n" +
@@ -471,7 +472,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <table class=\"lf-form-table lf-form-horizontal-table\">\n" +
     "            <colgroup>\n" +
     "              <col class=\"button-col\">\n" +
-    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\">\n" +
+    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\" ng-style=\"{{getHorizontalTableColumnStyle(col)}}\">\n" +
     "            </colgroup>\n" +
     "            <thead>\n" +
     "            <tr>\n" +

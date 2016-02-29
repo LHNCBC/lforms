@@ -91,6 +91,24 @@ angular.module('lformsWidget')
         return $scope.lfData.getSkipLogicClass(item);
       };
 
+
+      /**
+       * Get the CSS styles on a horizontal table column
+        * @param col a column in a horizontal table
+       * @returns {{}} CSS style object
+       */
+      $scope.getHorizontalTableColumnStyle = function(col) {
+        var ret = {};
+        if (col.displayControl && angular.isArray(col.displayControl.colCSS)) {
+          for (var i= 0, iLen= col.displayControl.colCSS.length; i<iLen; i++) {
+            var css = col.displayControl.colCSS[i];
+            ret[ css.name ] = css.value;
+          }
+        }
+        return ret;
+      };
+
+
       /**
        * Check an item's skip logic status to decide if the item should be shown
        * @param item an item

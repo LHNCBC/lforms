@@ -741,77 +741,78 @@ var allInOne =
   "dataType": null,
   "header": null,
   "units": null,
+  "template": "form-view-b",
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "items": [
     // different data type
     {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": null, "copyrightNotice": "A Copyright notice of the item",
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type3", "dataType": "REAL", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type REAL", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type6", "dataType": "DT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type7", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type8", "dataType": "TM", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type TM", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type9", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE", "answers": [
       {"code": "c1", "text": "Answer 1", "other": null},
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
       {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
       {"label": "2", "code": "c02", "text": "With a label 2", "score": 2, "other": null},
       {"label": "3", "code": "c03", "text": "With a label 3", "score": 3, "other": null}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type11", "dataType": "RTO", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type RTO", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type12", "dataType": "QTY", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type QTY", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type13", "dataType": "YEAR", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type YEAR", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type14", "dataType": "MONTH", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type MONTH", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type15", "dataType": "DAY", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DAY", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type16", "dataType": "URL", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type URL", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type17", "dataType": "EMAIL", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type EMAIL", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type18", "dataType": "PHONE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type PHONE", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type19", "dataType": "TX", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type TX", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
 
     // multi-select CNE
@@ -821,7 +822,7 @@ var allInOne =
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // multi-select CWE
     {"questionCode": "multiSelectCWE", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
@@ -829,90 +830,90 @@ var allInOne =
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
 
     // skip logic, controlling sibling items
     // skip logic, controlling sibling headers
     {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
       "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"value": 1}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"minInclusive": 2}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
       "items": [
         {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
       ]
     },
 
 
     // skip logic, with logic ALL
     {"questionCode": "slALLSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ALL)", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slALLSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ALL)", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slALLTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ALL)' == 1 AND Shown when 'Source #2 (ALL)' == 2 ", "answers": null,
       "skipLogic": {"conditions":[{"source": "slALLSource1", "trigger": {"value": 1}}, {"source": "slALLSource2", "trigger": {"value": 2}}],
         "action": "show", "logic": "ALL"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
     // skip logic, with logic ANY
     {"questionCode": "slANYSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ANY)", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slANYSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ANY)", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "slANYTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ANY)' == 1 OR Shown when 'Source #2 (ANY)' == 2 ", "answers": null,
       "skipLogic": {"conditions":[{"source": "slANYSource1", "trigger": {"value": 1}}, {"source": "slANYSource2", "trigger": {"value": 2}}],
         "action": "show", "logic": "ANY"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
     // skip logic, within a repeating section
     {"questionCode": "rpSource2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "2 to show T2",
       "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #2", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "repeatingSection1", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
       "items": [
         {"questionCode": "rpSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; <=5 to show header T3, and its subitem T4.",
           "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #1", "answers": null,
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "rpTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source (repeating) #1' == 1", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"value": 1}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "rpTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source (repeating) #2' == 2", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource2", "trigger": {"value": 2}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "rpTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
               "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         }
       ]
@@ -1012,7 +1013,39 @@ var allInOne =
         //}
       ]
 
-    }
+    },
+
+    // a horizontal table, repeatable
+    {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "*"},
+      "question": "A repeating horizontal table", "header": true, "layout": "horizontal",
+      "items":[
+        {"questionCode": "colA", "question": "A ST", "dataType": "ST",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"25%"},
+                    {"name": "min-width", "value":"10%"}]
+          }
+        },
+        {"questionCode": "colB", "question": "A TX", "dataType": "TX",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"25%"},
+                    {"name": "min-width", "value":"15%"}]
+          }
+        },
+        {"questionCode": "colC", "question": "A CNE", "dataType": "CNE",
+          "answers": [
+            {"code": "c1", "text": "Answer 1", "other": null},
+            {"code": "c2", "text": "Answer 2", "other": null},
+            {"code": "c3", "text": "Answer 3", "other": null},
+            {"code": "c4", "text": "Other:", "other": true}
+          ],
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"50%"}]
+          }
+        }
+
+      ]
+    },
+
 
 
 
@@ -1068,16 +1101,16 @@ var formWithUserData =
     // different data type
     {"questionCode": "q1", "header": false, "units": null, "codingInstructions": null, "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q3", "dataType": "ST", "header": false, "units": null, "codingInstructions": null, "value": "user input value",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "Wed Nov 17 2015 00:00:00 GMT-0500 (EST)",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, default answer
     {"questionCode": "q5", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, default value", "answers": [
@@ -1085,7 +1118,7 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, user selected value
     {"questionCode": "q6", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": {"code": "c1", "text": "Answer 1", "other": null},
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value", "answers": [
@@ -1093,7 +1126,7 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, user selected value overrides default answer
     {"questionCode": "q7", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": {"code": "c3", "text": "Answer 3", "other": null},
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value over default value", "answers": [
@@ -1101,7 +1134,7 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
 
     // multi-select CNE
     {"questionCode": "q8", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c1", "text": "Answer 1"},{"code": "c3", "text": "Answer 3"}],
@@ -1110,7 +1143,7 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // multi-select CWE
     {"questionCode": "q9", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
@@ -1118,44 +1151,44 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // multi-select CWE with a search autocomplter
     {"questionCode": "q10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE, a search field",
       "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
     // skip logic works
     {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "value": 2, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
       "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
       // hidden
     {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"value": 1}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
       // shown, with user value
     {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 200,
       "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"minInclusive": 2}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
       // shown
     {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
       "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
         "action": "show"},
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
       "items": [
           // shown, with user value
         {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 201,
           "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
           // shown, with user value
         {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 202,
           "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
-          "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
       ]
     },
 
@@ -1167,32 +1200,32 @@ var formWithUserData =
       "items": [
         {"questionCode": "rp-q3", "dataType": "INT", "header": false, "units": null, "value": 300,
           "questionCardinality": null, "answerCardinality": null, "question": "An item in a repeating section", "answers": null,
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
           "answerCardinality": null, "question": "A repeating section in a repeating section",
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 400,
               "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         },
         {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
           "answerCardinality": null, "question": "A repeating section in a repeating section",
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 401,
               "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         },
         {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
           "answerCardinality": null, "question": "A repeating section in a repeating section",
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 402,
               "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         }
       ]
@@ -1201,14 +1234,14 @@ var formWithUserData =
       "items": [
         {"questionCode": "rp-q3", "dataType": "INT", "header": false, "units": null, "value": 301,
           "questionCardinality": null, "answerCardinality": null, "question": "An item in a repeating section", "answers": null,
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
         {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
           "answerCardinality": null, "question": "A repeating section in a repeating section",
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
             {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 403,
               "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         }
       ]
@@ -1219,36 +1252,36 @@ var formWithUserData =
       // user value shown
     {"questionCode": "rpSource2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "2 to show T2", "value": 2,
       "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #2", "answers": null,
-      "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "repeatingSection1", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
       "items": [
           // user value shown
         {"questionCode": "rpSource1", "dataType": "INT", "header": false, "units": null, "value": 3, "codingInstructions": "1 to show T1; <=5 to show header T3, and its subitem T4.",
           "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #1", "answers": null,
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
           // hidden
         {"questionCode": "rpTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source (repeating) #1' == 1", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"value": 1}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
           // shown
         {"questionCode": "rpTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source (repeating) #2' == 2", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource2", "trigger": {"value": 2}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
           // shown
         {"questionCode": "rpTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
           "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
           "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
             "action": "show"},
-          "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
           "items": [
               // shown
             {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
               "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
-              "skipLogic": null, "editable": null, "defaultAnswer": null, "formatting": null, "calculationMethod": null, "items": null}
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
           ]
         }
       ]
@@ -1358,7 +1391,7 @@ var genetic = {
       "restrictions":null,
       "editable":null,
       "defaultAnswer":null,
-      "formatting":null,
+      "displayControl":null,
       "calculationMethod":null,
       "items":null
     },
@@ -1531,7 +1564,7 @@ var genetic = {
           "restrictions":null,
           "editable":null,
           "defaultAnswer":null,
-          "formatting":null,
+          "displayControl":null,
           "calculationMethod":null,
           "items":null
         },
@@ -1749,7 +1782,7 @@ var genetic2 = {
       "restrictions":null,
       "editable":null,
       "defaultAnswer":null,
-      "formatting":null,
+      "displayControl":null,
       "calculationMethod":null,
       "items":null
     },
@@ -1798,12 +1831,20 @@ var genetic2 = {
           "question": "Allele ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic"
         },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod",
           "dataControl": [
             {
@@ -1821,6 +1862,10 @@ var genetic2 = {
         {"questionCode": "XXXXX-1",
           "question": "RefSeq #",
           "dataType":"CNE",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
           "dataControl": [
             {
@@ -1839,6 +1884,10 @@ var genetic2 = {
           "question": "DNA change",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=NucleotideChange",
           "dataControl": [
             {
@@ -1857,6 +1906,10 @@ var genetic2 = {
           "question": "AA change",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AminoAcidChange",
           "dataControl": [
             {
@@ -1873,17 +1926,8 @@ var genetic2 = {
         },
         {
           "questionCode":"53034-5",
-          "localQuestionCode":null,
           "dataType":"CNE",
-          "header":false,
-          "units":null,
           "codingInstructions":"The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
-          "copyrightNotice":null,
-          "questionCardinality":null,
-          "answerCardinality":{
-            "min":"0",
-            "max":"1"
-          },
           "question":"Allelic state",
           "answers":[
             {
@@ -1922,19 +1966,19 @@ var genetic2 = {
               "other":null
             }
           ],
-          "skipLogic":null,
-          "restrictions":null,
-          "editable":null,
-          "defaultAnswer":null,
-          "formatting":null,
-          "calculationMethod":null,
-          "items":null
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          }
         },
         {"questionCode": "X1001-0",
           "question": "Location",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"10%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "dataControl": [
             {
               "source": {
@@ -1951,6 +1995,10 @@ var genetic2 = {
           "question": "Significance",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"15%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "answers": [{
             "code": "LA6668-3",
             "text": "Pathogenic"
@@ -2002,6 +2050,10 @@ var genetic2 = {
           "question": "Possible associated phenotypes",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"15%"},
+              {"name": "min-width", "value":"5%"}]
+          },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
           "dataControl": [
             {

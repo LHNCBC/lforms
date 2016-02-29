@@ -984,7 +984,7 @@ var LFormsData = Class.extend({
    *    headerItem._horizontalTableId : {
    *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
    *      tableEndIndex:   lastItemIndex,
-   *      columnHeaders:   [ { label: item.question, id: 'col' + item.elementId },
+   *      columnHeaders:   [ { label: item.question, id: 'col' + item._elementId, displayControl: item.displayControl },
    *                       ...],
    *      tableHeaders:    [headerItem1, headerItem2, ...]
    *      tableRows:       [{ header: headerItem1, cells : [rowItem11, rowItem12,...]},
@@ -1023,7 +1023,7 @@ var LFormsData = Class.extend({
 
           itemsInRow = item.items;
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-            columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId});
+            columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
             // indicate the item is in a horizontal table
             itemsInRow[j]._inHorizontalTable = true;
           }
