@@ -153,7 +153,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
     "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
@@ -356,7 +357,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
     "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
