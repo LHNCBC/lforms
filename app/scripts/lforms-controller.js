@@ -93,15 +93,32 @@ angular.module('lformsWidget')
 
 
       /**
-       * Get the CSS styles on a horizontal table column
-        * @param col a column in a horizontal table
+       * Get the CSS styles on a table column
+        * @param col a column in a HTML table
        * @returns {{}} CSS style object
        */
-      $scope.getHorizontalTableColumnStyle = function(col) {
+      $scope.getTableColumnStyle = function(col) {
         var ret = {};
         if (col.displayControl && angular.isArray(col.displayControl.colCSS)) {
           for (var i= 0, iLen= col.displayControl.colCSS.length; i<iLen; i++) {
             var css = col.displayControl.colCSS[i];
+            ret[ css.name ] = css.value;
+          }
+        }
+        return ret;
+      };
+
+
+      /**
+       * Get the CSS styles on an item itself
+       * @param item an item in a form
+       * @returns {{}} CSS style object
+       */
+      $scope.getItemStyle = function(item) {
+        var ret = {};
+        if (item.displayControl && angular.isArray(item.displayControl.css)) {
+          for (var i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
+            var css = item.displayControl.css[i];
             ret[ css.name ] = css.value;
           }
         }

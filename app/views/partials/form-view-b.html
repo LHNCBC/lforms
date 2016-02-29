@@ -15,9 +15,7 @@
     <div class="lf-form-body">
       <table cellspacing="0" cellpadding="0" class="lf-form-table">
         <colgroup ng-if="lfData.templateOptions.obrHeader">
-          <col ng-repeat="item in lfData.templateOptions.obrItems"
-               ng-style="{'width': '{{item.formatting.width}}',
-                          'min-width': '{{item.formatting['min-width']}}'}">
+          <col ng-repeat="item in lfData.templateOptions.obrItems" ng-style="{{getTableColumnStyle(item)}}">
         </colgroup>
         <thead ng-if="lfData.templateOptions.obrHeader">
         <tr>
@@ -56,9 +54,7 @@
             <div>
               <table cellspacing="0" cellpadding="0" class="lf-form-table">
                 <colgroup>
-                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                       ng-style="{'width': '{{obxCol.formatting.width}}',
-                                  'min-width': '{{obxCol.formatting['min-width']}}'}">
+                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns" ng-style="{{getTableColumnStyle(obxCol)}}">
                 </colgroup>
                 <thead>
                 <tr>

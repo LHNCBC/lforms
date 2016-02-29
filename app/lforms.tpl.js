@@ -45,9 +45,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
-    "               ng-style=\"{'width': '{{item.formatting.width}}',\n" +
-    "                          'min-width': '{{item.formatting['min-width']}}'}\">\n" +
+    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\" ng-style=\"{{getTableColumnStyle(item)}}\">\n" +
     "        </colgroup>\n" +
     "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
@@ -86,13 +84,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                       ng-style=\"{'width': '{{obxCol.formatting.width}}',\n" +
-    "                                  'min-width': '{{obxCol.formatting['min-width']}}'}\">\n" +
+    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\" ng-style=\"{{getTableColumnStyle(obxCol)}}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
-    "                  <th class=\"lf-form-table-header {{obxCol.formatting['class']}}\" ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
+    "                  <th class=\"lf-form-table-header\" ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +
@@ -252,9 +248,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
-    "               ng-style=\"{'width': '{{item.formatting.width}}',\n" +
-    "                          'min-width': '{{item.formatting['min-width']}}'}\">\n" +
+    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\" ng-style=\"{{getTableColumnStyle(item)}}\">\n" +
     "        </colgroup>\n" +
     "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
@@ -293,9 +287,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                       ng-style=\"{'width': '{{obxCol.formatting.width}}',\n" +
-    "                                  'min-width': '{{obxCol.formatting['min-width']}}'}\">\n" +
+    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\" ng-style=\"{{getTableColumnStyle(obxCol)}}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
@@ -472,7 +464,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <table class=\"lf-form-table lf-form-horizontal-table\">\n" +
     "            <colgroup>\n" +
     "              <col class=\"button-col\">\n" +
-    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\" ng-style=\"{{getHorizontalTableColumnStyle(col)}}\">\n" +
+    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\" ng-style=\"{{getTableColumnStyle(col)}}\">\n" +
     "            </colgroup>\n" +
     "            <thead>\n" +
     "            <tr>\n" +
