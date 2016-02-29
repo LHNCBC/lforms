@@ -1044,7 +1044,7 @@ var allInOne =
         }
 
       ]
-    },
+    }
 
 
 
@@ -1667,7 +1667,7 @@ var genetic = {
         },
 
         {"questionCode": "X1002-0",
-          "question": "Possible associated phenotypes",
+          "question": "Possible associated phenotype",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
@@ -1677,7 +1677,6 @@ var genetic = {
                 "sourceType": "internal",
                 "sourceDataType": "TEXT",
                 "itemCode": "XXXXX-5",
-                //"data": "value.phenotypes"
                 "data": "value.phenotype"
               },
               "onAttribute": "value"
@@ -1738,18 +1737,6 @@ var genetic2 = {
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": null,
   "items": [
-//    {"questionCode": "XXXXX-2",
-//      "question": "Choose mutation identifiers",
-//      "dataType": "CNE",
-//      "answerCardinality": {"max": "*", "min":"0"},
-//      "answers": [
-//        {"code": "C01", "text": "dbSNP  --NCBI"},
-////        {"code": "C02", "text": "ClinVar  --NCBI"},
-////        {"code": "C03", "text": "Allele  --NCBI"},
-//        {"code": "C04", "text": "CIGAR"},
-//        {"code": "C05", "text": "COSMIC"}
-//      ]
-//    },
     {"questionCode": "XXXXX-10",
       "question": "Choose region of interest specification",
       "dataType": "CNE",
@@ -2047,7 +2034,7 @@ var genetic2 = {
           }]
         },
         {"questionCode": "X1002-0",
-          "question": "Possible associated phenotypes",
+          "question": "Possible associated phenotype",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "displayControl": {
