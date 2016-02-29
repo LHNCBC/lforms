@@ -75,6 +75,25 @@
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
+.lf-form-table textarea {
+  border: 1px solid #ced5d9 ;
+  width: 100%;
+  height: 1em; /* initial height (for firefox)*/
+  min-height: 28px;
+  overflow: visible;
+  padding: 2px 2px 2px 4px;
+  font-size: 90%;
+  font-weight: 700;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  vertical-align: bottom; /* remove the extra padding at the bottom of the containing div. */
+  /*display:block; !* remove the extra padding at the bottom of the containing div. (solution #2) *!*/
+  resize: vertical; /* not allow user to change width */
+
+}
 .lf-form-table input:focus {
   background-color: #FFF8C6
 }

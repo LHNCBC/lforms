@@ -45,9 +45,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
-    "               ng-style=\"{'width': '{{item.formatting.width}}',\n" +
-    "                          'min-width': '{{item.formatting['min-width']}}'}\">\n" +
+    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\" ng-style=\"{{getTableColumnStyle(item)}}\">\n" +
     "        </colgroup>\n" +
     "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
@@ -86,13 +84,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                       ng-style=\"{'width': '{{obxCol.formatting.width}}',\n" +
-    "                                  'min-width': '{{obxCol.formatting['min-width']}}'}\">\n" +
+    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\" ng-style=\"{{getTableColumnStyle(obxCol)}}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
-    "                  <th class=\"lf-form-table-header {{obxCol.formatting['class']}}\" ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
+    "                  <th class=\"lf-form-table-header\" ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +
@@ -155,6 +151,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
@@ -249,9 +249,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-form-body\">\n" +
     "      <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "        <colgroup ng-if=\"lfData.templateOptions.obrHeader\">\n" +
-    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
-    "               ng-style=\"{'width': '{{item.formatting.width}}',\n" +
-    "                          'min-width': '{{item.formatting['min-width']}}'}\">\n" +
+    "          <col ng-repeat=\"item in lfData.templateOptions.obrItems\" ng-style=\"{{getTableColumnStyle(item)}}\">\n" +
     "        </colgroup>\n" +
     "        <thead ng-if=\"lfData.templateOptions.obrHeader\">\n" +
     "        <tr>\n" +
@@ -290,9 +288,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div>\n" +
     "              <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\">\n" +
     "                <colgroup>\n" +
-    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                       ng-style=\"{'width': '{{obxCol.formatting.width}}',\n" +
-    "                                  'min-width': '{{obxCol.formatting['min-width']}}'}\">\n" +
+    "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\" ng-style=\"{{getTableColumnStyle(obxCol)}}\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
@@ -314,6 +310,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
     "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                            </span>\n" +
     "                            <span ng-show=\"lfData.templateOptions.showCodingInstruction\"\n" +
     "                                  class=\"prompt\">{{ getCodingInstructions(item) }}</span>\n" +
     "                            <button ng-show=\"!lfData.templateOptions.showCodingInstruction\" ng-if=\"hasCodingInstructions(item)\"\n" +
@@ -358,6 +355,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                               id=\"{{item._elementId}}\">\n" +
@@ -465,7 +466,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <table class=\"lf-form-table lf-form-horizontal-table\">\n" +
     "            <colgroup>\n" +
     "              <col class=\"button-col\">\n" +
-    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\">\n" +
+    "              <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\" ng-style=\"{{getTableColumnStyle(col)}}\">\n" +
     "            </colgroup>\n" +
     "            <thead>\n" +
     "            <tr>\n" +
@@ -528,9 +529,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                           lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-default name=\"{{cell.question}}\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
-    "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                    <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                              ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                              id=\"{{cell._elementId}}\"\n" +
+    "                              aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                              ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                    <input ng-switch-default name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                           ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                  </div>\n" +

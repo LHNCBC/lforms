@@ -10,7 +10,7 @@
           <table class="lf-form-table lf-form-horizontal-table">
             <colgroup>
               <col class="button-col">
-              <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders">
+              <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders" ng-style="{{getTableColumnStyle(col)}}">
             </colgroup>
             <thead>
             <tr>
@@ -73,9 +73,13 @@
                            lf-date="dateOptions" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
-                    <input ng-switch-default name="{{cell.question}}"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
-                           placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
+                    <textarea ng-switch-when="TX" name="{{cell.question}}" ng-required="cell._answerRequired"
+                              ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
+                              id="{{cell._elementId}}"
+                              aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                              ng-keyup="autoExpand($event)" rows="1"></textarea>
+                    <input ng-switch-default name="{{cell.question}}" ng-required="cell._answerRequired"
+                           ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                   </div>
