@@ -2,6 +2,7 @@ angular.module('lformsWidget')
   .constant('lfDateConfig', {})
 
   .directive('lfDate', ['lfDateConfig', '$timeout', function (lfDateConfig, $timeout) {
+    'use strict';
     var options;
     options = {};
     angular.extend(options, lfDateConfig);
