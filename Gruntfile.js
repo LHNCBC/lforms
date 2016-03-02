@@ -401,7 +401,6 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= uncompressedDist %>',
           src: [
-            'views/{,*/}*.html',
             'images/{,*/}*'
           ]
         }, {
