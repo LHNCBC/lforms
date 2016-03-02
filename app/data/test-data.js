@@ -1272,7 +1272,7 @@ var rxTerms = {
           "dataType":"CNE",
           "header":false,
           "question":"Drug Name",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/rxterms?ef=STRENGTHS_AND_FORMS,RXCUIS",
           //https://lforms-service.nlm.nih.gov/rxterms?terms=arava&ef=STRENGTHS_AND_FORMS&autocomp=1
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
