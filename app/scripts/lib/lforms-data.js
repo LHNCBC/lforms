@@ -58,6 +58,7 @@ var LFormsData = Class.extend({
     "INT",
     "REAL",
     "ST",
+    "TX",      // long text
     "BIN",
     "DT",      // complex type (or sub-type of 'ST' ?)
     "DTM",     // complex type (or sub-type of 'ST' ?)
@@ -96,17 +97,44 @@ var LFormsData = Class.extend({
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     useAnimation: true, // whether to use animation on the form
     obxTableColumns: [
-      {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
-      {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
-      {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
-      {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+      {"name" : "Name", "displayControl":{
+        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "", "displayControl":{
+        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+      },
+      {"name" : "Value", "displayControl":{
+        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "Units", "displayControl":{
+        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+      }
     ],
     obrHeader: true,  // controls if the obr table needs to be displayed
     obrItems: [
-      {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
-      {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
-      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
-      {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+      {
+        "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
+        "displayControl": {
+          "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+        }
+      },
+      {
+        "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
+        "displayControl": {
+          "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
+        }
+      },
+      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
+        "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
+        "displayControl": {
+          "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+        }
+      },
+      {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
+        "displayControl": {
+          "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
+        }
+      }
     ]
   },
   // default options for each supported templates, could move it to a configuration file
@@ -120,17 +148,44 @@ var LFormsData = Class.extend({
       allowMultipleEmptyRepeatingItems: false,
       useAnimation: true,
       obxTableColumns: [
-        {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
-        {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
-        {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
-        {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+        {"name" : "Name", "displayControl":{
+          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "", "displayControl":{
+          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+        },
+        {"name" : "Value", "displayControl":{
+          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "Units", "displayControl":{
+          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+        }
       ],
       obrHeader: true,
       obrItems: [
-        {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
-        {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+        {
+          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {
+          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
+          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
+          }
+        }
       ]
     },
     "form-view-b": {
@@ -142,17 +197,44 @@ var LFormsData = Class.extend({
       allowMultipleEmptyRepeatingItems: false,
       useAnimation: true,
       obxTableColumns: [
-        {"name" : "Name", "formatting":{"width": "45%", "min-width": "4em"}},
-        {"name" : "", "formatting":{"width": "2.5em", "min-width": "2em", "class": "button-col"}},
-        {"name" : "Value", "formatting":{"width": "40%", "min-width": "4em"}},
-        {"name" : "Units", "formatting":{"width": "15%", "min-width": "4em"}}
+        {"name" : "Name", "displayControl":{
+          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "", "displayControl":{
+          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+        },
+        {"name" : "Value", "displayControl":{
+          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "Units", "displayControl":{
+          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+        }
       ],
       obrHeader: true,
       obrItems: [
-        {"question":"Date Done", "questionCode":"date_done", "dataType":"DT","answers":"", "formatting":{"width":"10em","min-width":"4em"}, "answerCardinality":{"min":"1", "max":"1"}, "_answerRequired": true},
-        {"question":"Time Done", "questionCode":"time_done", "dataType":"TM","answers":"", "formatting":{"width":"12em","min-width":"4em"}},
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE","answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}], "formatting":{"width":"30%","min-width":"4em"}},
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"", "formatting":{"width":"70%","min-width":"4em"} }
+        {
+          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {
+          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
+          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
+          }
+        }
       ]
     }
   },
@@ -983,7 +1065,7 @@ var LFormsData = Class.extend({
    *    headerItem._horizontalTableId : {
    *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
    *      tableEndIndex:   lastItemIndex,
-   *      columnHeaders:   [ { label: item.question, id: 'col' + item.elementId },
+   *      columnHeaders:   [ { label: item.question, id: 'col' + item._elementId, displayControl: item.displayControl },
    *                       ...],
    *      tableHeaders:    [headerItem1, headerItem2, ...]
    *      tableRows:       [{ header: headerItem1, cells : [rowItem11, rowItem12,...]},
@@ -1022,7 +1104,7 @@ var LFormsData = Class.extend({
 
           itemsInRow = item.items;
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-            columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId});
+            columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
             // indicate the item is in a horizontal table
             itemsInRow[j]._inHorizontalTable = true;
           }

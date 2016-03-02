@@ -91,6 +91,41 @@ angular.module('lformsWidget')
         return $scope.lfData.getSkipLogicClass(item);
       };
 
+
+      /**
+       * Get the CSS styles on a table column
+        * @param col a column in a HTML table
+       * @returns {{}} CSS style object
+       */
+      $scope.getTableColumnStyle = function(col) {
+        var ret = {};
+        if (col.displayControl && angular.isArray(col.displayControl.colCSS)) {
+          for (var i= 0, iLen= col.displayControl.colCSS.length; i<iLen; i++) {
+            var css = col.displayControl.colCSS[i];
+            ret[ css.name ] = css.value;
+          }
+        }
+        return ret;
+      };
+
+
+      /**
+       * Get the CSS styles on an item itself
+       * @param item an item in a form
+       * @returns {{}} CSS style object
+       */
+      $scope.getItemStyle = function(item) {
+        var ret = {};
+        if (item.displayControl && angular.isArray(item.displayControl.css)) {
+          for (var i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
+            var css = item.displayControl.css[i];
+            ret[ css.name ] = css.value;
+          }
+        }
+        return ret;
+      };
+
+
       /**
        * Check an item's skip logic status to decide if the item should be shown
        * @param item an item
@@ -241,6 +276,13 @@ angular.module('lformsWidget')
           widgetData.updateOnSourceItemChange(item);
           $scope.sendActionsToScreenReader();
         }
+      };
+
+
+      $scope.autoExpand = function(e) {
+        var element = typeof e === 'object' ? e.target : document.getElementById(e);
+        var scrollHeight = element.scrollHeight +2;
+        element.style.height =  scrollHeight + "px";
       };
 
 

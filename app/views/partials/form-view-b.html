@@ -15,9 +15,7 @@
     <div class="lf-form-body">
       <table cellspacing="0" cellpadding="0" class="lf-form-table">
         <colgroup ng-if="lfData.templateOptions.obrHeader">
-          <col ng-repeat="item in lfData.templateOptions.obrItems"
-               ng-style="{'width': '{{item.formatting.width}}',
-                          'min-width': '{{item.formatting['min-width']}}'}">
+          <col ng-repeat="item in lfData.templateOptions.obrItems" ng-style="{{getTableColumnStyle(item)}}">
         </colgroup>
         <thead ng-if="lfData.templateOptions.obrHeader">
         <tr>
@@ -56,9 +54,7 @@
             <div>
               <table cellspacing="0" cellpadding="0" class="lf-form-table">
                 <colgroup>
-                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                       ng-style="{'width': '{{obxCol.formatting.width}}',
-                                  'min-width': '{{obxCol.formatting['min-width']}}'}">
+                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns" ng-style="{{getTableColumnStyle(obxCol)}}">
                 </colgroup>
                 <thead>
                 <tr>
@@ -80,6 +76,7 @@
                             <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
                               <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
                               <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+                            </span>
                             <span ng-show="lfData.templateOptions.showCodingInstruction"
                                   class="prompt">{{ getCodingInstructions(item) }}</span>
                             <button ng-show="!lfData.templateOptions.showCodingInstruction" ng-if="hasCodingInstructions(item)"
@@ -124,6 +121,10 @@
                         <input ng-switch-when="DT" name="{{item.question}}" ng-required="item._answerRequired"
                                ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
                                ng-readonly="item._readOnly" id="{{item._elementId}}">
+                        <textarea ng-switch-when="TX" name="{{item.question}}" ng-required="item._answerRequired"
+                                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+                                  id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1">
+                        </textarea>
                         <input ng-switch-default name="{{item.question}}" ng-required="item._answerRequired"
                                ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
                                id="{{item._elementId}}">

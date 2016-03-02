@@ -92,9 +92,10 @@ Keys:
           data.  Each element in the array is a hash with the following keys:
           * text - the display string for the list item
           * code - (optional) a code that identifies the list item
-        * formatting - This controls things like the width of the column.  It is a
-          hash with the keys "width" and "min-width", the values of both of which
-          are the standard CSS values for those style settings.
+        * displayControl - This controls display styles of the column or the filed.  
+          It is a hash with the keys of "colCSS" for columns styles and "css" for field 
+          styles. The values are an array of hashes of valid CSS styles. Here is an example: 
+          `{"colCSS": [{"name":"width","value":"30%"},{"name":"min-width","value":"4em"}]}`
         * <a name="answerCardinality"></a>answerCardinality - For lists, this
           allows you to control whether list is multi-select or not.  It is a hash
           that takes two keys, "min" and "max".  If you "min" to "1", then the
@@ -159,7 +160,7 @@ Keys:
         * DT - a date field (with a calendar widget)
         * ST - a normal free-text string field
     * units - For numeric answer fields, this is an optional list for the units
-      for the quantity being entered.  Eash hash in this array can contain the
+      for the quantity being entered.  Each hash in this array can contain the
       following keys:
         * name - The display string for the unit
         * default - If true, this unit will be the default unit, which means it
