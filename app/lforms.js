@@ -1,6 +1,7 @@
-'use strict';
-
-angular.module('lformsWidget', [
+// Use IIFE so that strict mode is not at the file level
+(function() {
+  'use strict';
+  angular.module('lformsWidget', [
     'ngAnimate',
     'ui.bootstrap',
     'smoothScroll',
@@ -24,3 +25,4 @@ angular.module('lformsWidget', [
         templateUrl: 'form-view.html'
       };
     });
+})();
