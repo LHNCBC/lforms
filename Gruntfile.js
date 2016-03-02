@@ -54,16 +54,11 @@ module.exports = function (grunt) {
 
 
     cssmin: {
-      options: {
-        // Rewrite image URLs relative to ., so we can copy the images into
-        // place under dist using the same paths.
-        root: '.',
-        rebase: true
-      },
       dist: {
         files: [{
-          src: wiredep({includeSelf: true}).css,
-          dest: '<%= uncompressedDist %>/lforms.min.css'
+          src: wiredep({includeSelf: true}).css.concat(
+            'bower_components/bootstrap/dist/css/bootstrap.css'),
+          dest: '<%= uncompressedDist %>/styles/lforms.min.css'
         }]
       }
     },
@@ -407,14 +402,21 @@ module.exports = function (grunt) {
           dest: '<%= uncompressedDist %>',
           src: [
             'views/{,*/}*.html',
-            'images/{,*/}*',
-            'fonts/*'
+            'images/{,*/}*'
           ]
         }, {
           expand: true,
-          dest: '<%= uncompressedDist %>',
+          dest: '<%= uncompressedDist %>/styles',
+          cwd: 'bower_components/jquery-ui/themes/start',
           src: [
-            'bower_components/**/*png'
+            'images/*png'
+          ]
+        }, {
+          expand: true,
+          dest: '<%= uncompressedDist %>/styles',
+          cwd: 'bower_components/autocomplete-lhc/source',
+          src: [
+            '*png'
           ]
         }]
       },
@@ -484,6 +486,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'nsp',
+    'build',
     'test:e2e'
   ]);
 
@@ -501,18 +504,8 @@ module.exports = function (grunt) {
     'copy:dist',
     'cssmin',
     'uglify',
+    'compress',
     'shell:dist_dir_link'
-
-/*
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
-    'cssmin',
-    'uglify',
-    'filerev',
-    'htmlmin'
-*/
   ]);
 
   grunt.registerTask('default', [
@@ -526,6 +519,11 @@ module.exports = function (grunt) {
   grunt.registerTask('listDepJS', function() {
     console.log("\n\n" + wiredep(
       {includeSelf: true}).js.join("\n"));
+  });
+
+  grunt.registerTask('listDepCSS', function() {
+    console.log("\n\n" + wiredep(
+      {includeSelf: true}).css.join("\n"));
   });
 
 };
