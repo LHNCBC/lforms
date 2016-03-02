@@ -1,5 +1,5 @@
 function BuildTestPage() {
-  this.drugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
+  this.drugNameField = element(by.id('/dataControlExamples/itemWithExtraData/1/1'));
   this.searchResults = element(by.id('searchResults'));
 
   /**
