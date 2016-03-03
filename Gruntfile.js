@@ -15,9 +15,11 @@ module.exports = function (grunt) {
     copy: 'grunt-contrib-copy',
     cssmin: 'grunt-contrib-cssmin',
     nsp: 'grunt-nsp',
+    ngtemplates: 'grunt-angular-templates',
     protractor: 'grunt-protractor-runner',
     shell: 'grunt-shell',
     uglify: 'grunt-contrib-uglify'
+
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -30,8 +32,6 @@ module.exports = function (grunt) {
     app: require('./bower.json').appPath || 'app',
     dist: 'dist'
   };
-
-  grunt.loadNpmTasks('grunt-angular-templates');
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -500,6 +500,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'ngtemplates',
     'readBowerVersion',
     'copy:dist',
     'cssmin',
