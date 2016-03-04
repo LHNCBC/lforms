@@ -5,6 +5,7 @@ angular.module('lformsWidget', [
     'ui.bootstrap',
     'smoothScroll',
     'autocompleteLhcMod'
+    //'ngSanitize'
     ])
     .config(function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
