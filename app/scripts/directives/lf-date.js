@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('lformsWidget')
   .constant('lfDateConfig', {})
 

@@ -9,11 +9,23 @@
 
 module.exports = function (grunt) {
 
-  // Load grunt tasks automatically
-  require('load-grunt-tasks')(grunt);
+  // Load grunt tasks automatically, when needed
+  require('jit-grunt')(grunt, {
+    compress: 'grunt-contrib-compress',
+    copy: 'grunt-contrib-copy',
+    cssmin: 'grunt-contrib-cssmin',
+    nsp: 'grunt-nsp',
+    ngtemplates: 'grunt-angular-templates',
+    protractor: 'grunt-protractor-runner',
+    shell: 'grunt-shell',
+    uglify: 'grunt-contrib-uglify'
+
+  });
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
+
+  var wiredep = require('wiredep');
 
   // Configurable paths for the application
   var appConfig = {
@@ -21,13 +33,49 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
-  grunt.loadNpmTasks('grunt-angular-templates');
-
   // Define the configuration for all the tasks
   grunt.initConfig({
 
     // Project settings
     yeoman: appConfig,
+
+    compress: {
+      main: {
+        options: {
+          archive: '<%= uncompressedDist %>.zip'
+        },
+        files: [{
+          src: ['<%= versionedName %>/**'],
+          cwd: 'dist',
+          expand: true
+        }]
+      }
+    },
+
+
+    cssmin: {
+      dist: {
+        files: [{
+          src: wiredep({includeSelf: true}).css.concat(
+            'bower_components/bootstrap/dist/css/bootstrap.css'),
+          dest: '<%= uncompressedDist %>/styles/lforms.min.css'
+        }]
+      }
+    },
+
+
+    shell: {
+      dist_dir_link: {
+        // Make a softlink to the versioned dist directory, for the tests
+        command: 'ln -s <%= versionedName %> latest',
+        options: {
+          execOptions: {
+            cwd: 'dist'
+          }
+        }
+      }
+    },
+
 
     ngtemplates:  {
       lformsWidget:        {
@@ -219,6 +267,18 @@ module.exports = function (grunt) {
       }
     },
 
+    uglify: {
+      options: { compress: true },
+      options: { beautify: true, mangle: false },
+      dist: {
+        files: {
+          // This will include dependencies, including jQuery
+          '<%= uncompressedDist %>/lforms.min.js':
+            wiredep({includeSelf: true}).js,
+        }
+      }
+    },
+
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
@@ -340,24 +400,24 @@ module.exports = function (grunt) {
           expand: true,
           dot: true,
           cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
+          dest: '<%= uncompressedDist %>',
           src: [
-            '*.{ico,png,txt}',
-            '*.html',
-            'views/{,*/}*.html',
-            'images/{,*/}*.{webp}',
-            'fonts/*'
+            'images/{,*/}*'
           ]
         }, {
           expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
+          dest: '<%= uncompressedDist %>/styles',
+          cwd: 'bower_components/jquery-ui/themes/start',
+          src: [
+            'images/*png'
+          ]
         }, {
           expand: true,
-          cwd: 'bower_components/bootstrap/dist',
-          src: 'fonts/*',
-          dest: '<%= yeoman.dist %>'
+          dest: '<%= uncompressedDist %>/styles',
+          cwd: 'bower_components/autocomplete-lhc/source',
+          src: [
+            '*png'
+          ]
         }]
       },
       styles: {
@@ -414,38 +474,56 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
-  grunt.registerTask('test', [
+  grunt.registerTask('test:e2e', [
     'clean:server',
     'ngtemplates',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    //'karma'
     'wiredep',
-    'nsp',
     'protractor'
   ]);
 
+  grunt.registerTask('test', [
+    'nsp',
+    'build',
+    'test:e2e'
+  ]);
+
+  grunt.registerTask('readBowerVersion', function () {
+    var bowerVersion = grunt.file.readJSON('./bower.json').version;
+    var versionedName = 'lforms-'+bowerVersion;
+    grunt.config.set('versionedName', versionedName);
+    grunt.config.set('uncompressedDist', 'dist/'+versionedName);
+  });
+
+
   grunt.registerTask('build', [
     'clean:dist',
-    'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
+    'ngtemplates',
+    'readBowerVersion',
     'copy:dist',
-    'cdnify',
     'cssmin',
     'uglify',
-    'filerev',
-    'usemin',
-    'htmlmin'
+    'compress',
+    'shell:dist_dir_link'
   ]);
 
   grunt.registerTask('default', [
     //'newer:jshint',
-    'test',
-    'build'
+    'test'
   ]);
+
+
+  // This task is just for debugging the "uglify" configuration
+  grunt.registerTask('listDepJS', function() {
+    console.log("\n\n" + wiredep(
+      {includeSelf: true}).js.join("\n"));
+  });
+
+  grunt.registerTask('listDepCSS', function() {
+    console.log("\n\n" + wiredep(
+      {includeSelf: true}).css.join("\n"));
+  });
+
 };

@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Test for the compressed build of LForms</title>
+    <link rel="stylesheet" href="latestBuild/styles/lforms.min.css" />
+  </head>
+  <body ng-app="testApp">
+    <div ng-controller="testController">
+      <lforms lf-data="testForm"></lforms>
+    </div>
+    <script src="latestBuild/lforms.min.js"></script>
+    <script src="/data/test-data.js"></script>
+    <script>
+      angular.module('testApp', ['lformsWidget'])
+       .controller('testController', ['$scope', function ($scope) {
+          // allInOne is defined in test-data.js
+          $scope.testForm = new LFormsData(allInOne);
+      }]);
+    </script>
+  </body>
+</html>

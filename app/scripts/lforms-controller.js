@@ -1,9 +1,8 @@
-'use strict';
-
 angular.module('lformsWidget')
   .controller('LFormsCtrl',
     ['$scope', '$timeout', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
       function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
+      'use strict';
 
       $scope.debug = false;
 
