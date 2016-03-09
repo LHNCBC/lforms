@@ -1102,7 +1102,9 @@ var formWithUserData =
   "copyrightNotice": null,
   "items": [
     // different data type
-    {"questionCode": "q1", "header": false, "units": null, "codingInstructions": null, "value": "no data type",
+    {"questionCode": "q1", "header": false, "units": null,
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo.nlm.nih.gov'>LForms Demo</a>",
+      "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,

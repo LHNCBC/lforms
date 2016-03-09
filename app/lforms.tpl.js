@@ -111,9 +111,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
-    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
-    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
     "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
@@ -318,9 +320,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
-    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
-    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\">?</button>\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
     "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +

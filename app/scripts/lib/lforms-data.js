@@ -281,18 +281,15 @@ var LFormsData = Class.extend({
    */
   _initializeInternalData: function() {
 
-// set default values
-    this._setDefaultValues();
-
-    //TODO, process form data that includes user data
-
     //TODO, validate form data
 
+    // set default values
+    this._setDefaultValues();
+
+    // update internal status
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
-
     this._updateLastSiblingList(this.items, null);
-
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
@@ -303,22 +300,22 @@ var LFormsData = Class.extend({
 
     this._standardizeScoreRule(this.itemList);
 
+    // create horizontal table info
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
 
+    // create a navigation map
     this.Navigation.setupNavigationMap(this);
 
+    // create auto-completer options
     this._setupAutocompOptions();
 
+    // set up a mapping from controlling items to controlled items
+    // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
 
-    //this._checkFormControls();
-
-    // update internal status
-    //this._updateTreeNodes(this.items,this);
-    //this._updateLastSiblingList(this.items, null);
-    //this._updateLastRepeatingItemsStatus(this.items);
-    //this._updateLastItemInRepeatingSection(this.items);
+    // run the all form controls
+    this._checkFormControls();
 
   },
 
@@ -328,25 +325,35 @@ var LFormsData = Class.extend({
    */
   _resetInternalData: function() {
 
+    // update internal status
     this._updateTreeNodes(this.items,this);
     this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
+    // create a reference list of all items in the tree
     this.itemList = [];
     this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
 
+    // create horizontal table info
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
 
+    // create a navigation map
     this.Navigation.setupNavigationMap(this);
 
+    // create auto-completer options
     this._setupAutocompOptions();
 
+    // set up a mapping from controlling items to controlled items
+    // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
+
+    // run the all form controls
+    this._checkFormControls();
   },
 
 
@@ -391,9 +398,6 @@ var LFormsData = Class.extend({
    */
   _checkFormControls: function() {
 
-    // preset the skip logic status
-    //this._presetSkipLogicStatus(this);
-
     for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
 
@@ -409,8 +413,13 @@ var LFormsData = Class.extend({
       if (item.skipLogic) {
         this._updateItemSkipLogicStatus(item, null);
       }
-
     }
+
+    // update internal status
+    this._updateTreeNodes(this.items,this);
+    this._updateLastSiblingList(this.items, null);
+    this._updateLastItemInRepeatingSection(this.items);
+    this._adjustLastSiblingListForHorizontalLayout();
   },
 
   /**
@@ -1226,23 +1235,10 @@ var LFormsData = Class.extend({
       this._presetSkipLogicStatus(newItem, false);
     }
 
-    var readerMsg = 'Added ' + this.itemDescription(item);
-    this._actionLogs.push(readerMsg);
-
     this._resetInternalData();
 
-    // run formula
-    this._processItemFormula(newItem);
-    // run data control
-    this._processItemDataControl(newItem);
-    // run skip logic
-    this._updateItemSkipLogicStatus(newItem, null);
-
-    // update internal status
-    this._updateTreeNodes(this.items,this);
-    this._updateLastSiblingList(this.items, null);
-    this._updateLastItemInRepeatingSection(this.items);
-    this._adjustLastSiblingListForHorizontalLayout();
+    var readerMsg = 'Added ' + this.itemDescription(item);
+    this._actionLogs.push(readerMsg);
 
     return newItem;
   },
