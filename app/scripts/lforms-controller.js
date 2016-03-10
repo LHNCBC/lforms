@@ -143,22 +143,9 @@ angular.module('lformsWidget')
       $scope.getCodingInstructionsDisplayType = function(item) {
         var ret ='';
         if (item.codingInstructions && item.codingInstructions.length > 0) {
-          if ($scope.lfData.templateOptions.allowHTMLInInstructions) {
-            if ($scope.lfData.templateOptions.showCodingInstruction) {
-              ret = 'inline-html'
-            }
-            else {
-              ret = 'popover-html'
-            }
-          }
-          else {
-            if ($scope.lfData.templateOptions.showCodingInstruction) {
-              ret = 'inline-escaped'
-            }
-            else {
-              ret = 'popover-escaped'
-            }
-          }
+          var position = $scope.lfData.templateOptions.showCodingInstruction ? "inline" : "popover";
+          var format = $scope.lfData.templateOptions.allowHTMLInInstructions ? "html" : "escaped";
+          ret = position + "-" + format;
         }
         return ret;
       };
