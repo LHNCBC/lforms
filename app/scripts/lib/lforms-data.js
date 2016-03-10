@@ -95,6 +95,7 @@ var LFormsData = Class.extend({
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
+    allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
     obxTableColumns: [
       {"name" : "Name", "displayControl":{
@@ -146,6 +147,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      allowHTMLInInstructions: false,
       useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "displayControl":{
@@ -195,6 +197,7 @@ var LFormsData = Class.extend({
       hideHeader: false,
       hideCheckBoxes: false,
       allowMultipleEmptyRepeatingItems: false,
+      allowHTMLInInstructions: false,
       useAnimation: true,
       obxTableColumns: [
         {"name" : "Name", "displayControl":{
@@ -277,18 +280,16 @@ var LFormsData = Class.extend({
    * @private
    */
   _initializeInternalData: function() {
-    // set default values
-    this._setDefaultValues();
-
-    //TODO, process form data that includes user data
 
     //TODO, validate form data
 
+    // set default values
+    this._setDefaultValues();
+
+    // update internal status
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
-
     this._updateLastSiblingList(this.items, null);
-
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
@@ -299,14 +300,22 @@ var LFormsData = Class.extend({
 
     this._standardizeScoreRule(this.itemList);
 
+    // create horizontal table info
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
 
+    // create a navigation map
     this.Navigation.setupNavigationMap(this);
 
+    // create auto-completer options
     this._setupAutocompOptions();
 
+    // set up a mapping from controlling items to controlled items
+    // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
+
+    // run the all form controls
+    this._checkFormControls();
 
   },
 
@@ -316,32 +325,41 @@ var LFormsData = Class.extend({
    */
   _resetInternalData: function() {
 
+    // update internal status
     this._updateTreeNodes(this.items,this);
     this._updateLastSiblingList(this.items, null);
-
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
+    // create a reference list of all items in the tree
     this.itemList = [];
     this.itemHash = {};
     this._updateItemReferenceList(this.items);
 
     this._standardizeScoreRule(this.itemList);
 
+    // create horizontal table info
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
 
+    // create a navigation map
     this.Navigation.setupNavigationMap(this);
 
+    // create auto-completer options
     this._setupAutocompOptions();
 
+    // set up a mapping from controlling items to controlled items
+    // for skip logic, data controls and formulas
     this._setupSourceToTargetMap();
+
+    // run the all form controls
+    this._checkFormControls();
   },
 
 
   /**
    * Check skip logic, formulas and data controls when the source item changes.
-   * @param item the controlling/source item
+   * @param sourceItem the controlling/source item
    */
   updateOnSourceItemChange: function(sourceItem) {
     // check formula
@@ -366,15 +384,43 @@ var LFormsData = Class.extend({
       }
     }
 
-    // update tree line status
+    // update internal status
     this._updateTreeNodes(this.items,this);
     this._updateLastSiblingList(this.items, null);
-    // update repeating items status
-    //this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
     this._adjustLastSiblingListForHorizontalLayout();
   },
 
+
+  /**
+   * run all form controls when a form data is initially loaded.
+   * @private
+   */
+  _checkFormControls: function() {
+
+    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+      var item = this.itemList[i];
+
+      // run formula
+      if (item.calculationMethod) {
+        this._processItemFormula(item);
+      }
+      // run data control
+      if (item.dataControl) {
+        this._processItemDataControl(item);
+      }
+      // run skip logic
+      if (item.skipLogic) {
+        this._updateItemSkipLogicStatus(item, null);
+      }
+    }
+
+    // update internal status
+    this._updateTreeNodes(this.items,this);
+    this._updateLastSiblingList(this.items, null);
+    this._updateLastItemInRepeatingSection(this.items);
+    this._adjustLastSiblingListForHorizontalLayout();
+  },
 
   /**
    * Set up a mapping between controlling/source items and target items on the controlling/source item
@@ -1190,6 +1236,7 @@ var LFormsData = Class.extend({
     }
 
     this._resetInternalData();
+
     var readerMsg = 'Added ' + this.itemDescription(item);
     this._actionLogs.push(readerMsg);
 
@@ -1251,8 +1298,8 @@ var LFormsData = Class.extend({
       }
       // check sub items
       if (isEmpty && item.items) {
-        for (var i= 0, iLen = item.items.length; i<iLen; i++) {
-          isEmpty = this._isRepeatingItemEmpty(item.items[i]);
+        for (var j= 0, jLen = item.items.length; j<jLen; j++) {
+          isEmpty = this._isRepeatingItemEmpty(item.items[j]);
           if (!isEmpty) break;
         }
       }
@@ -1539,11 +1586,8 @@ var LFormsData = Class.extend({
             } // end of "LIST"
             else if (source.sourceDataType === "TEXT") {
               var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
-              // found the source data
-              if (sourceData) {
-                // set the data
-                item[onAttribute] = sourceData;
-              }
+              // set the data
+              item[onAttribute] = sourceData;
             } // end of "TEXT
           }
         }

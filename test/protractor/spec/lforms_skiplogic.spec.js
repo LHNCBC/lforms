@@ -20,6 +20,10 @@ describe('skip logic', function() {
 
   it('should hide a sibling and show two items in a sibling section', function() {
     ff.src.clear();
+    expect(ff.t1.isPresent()).toBeFalsy();
+    expect(ff.t2.isPresent()).toBeFalsy();
+    expect(ff.t4.isPresent()).toBeFalsy();
+    expect(ff.t5.isPresent()).toBeFalsy();
     ff.src.sendKeys('2');
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
@@ -29,6 +33,10 @@ describe('skip logic', function() {
 
   it('should show another sibling and hide two items in a sibling section', function() {
     ff.src.clear();
+    expect(ff.t1.isPresent()).toBeFalsy();
+    expect(ff.t2.isPresent()).toBeFalsy();
+    expect(ff.t4.isPresent()).toBeFalsy();
+    expect(ff.t5.isPresent()).toBeFalsy();
     ff.src.sendKeys('6');
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
@@ -67,14 +75,28 @@ describe('skip logic', function() {
   });
 
   it('should be able to be controlled by an ancestors sibling', function() {
-    //
+
+    expect(ff.rpTarget2a.isPresent()).toBe(false);
+    expect(ff.rpTarget2b.isPresent()).toBe(false);
     ff.rpSrc2.clear();
+    expect(ff.rpTarget2a.isPresent()).toBe(false);
+    expect(ff.rpTarget2b.isPresent()).toBe(false);
     ff.rpSrc2.sendKeys('1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     ff.rpSrc2.clear();
     ff.rpSrc2.sendKeys('2');
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
+
+    expect(ff.rpTarget1a.isPresent()).toBe(false);
+    expect(ff.rpTarget1ah1.isPresent()).toBe(false);
+    ff.rpSubSrc1.sendKeys('1');
+    expect(ff.rpTarget1a.isDisplayed()).toBe(true);
+    expect(ff.rpTarget1ah1.isDisplayed()).toBe(true);
+
+    // add a new section
     ff.rpAdd.click();
+    expect(ff.rpTarget1b.isPresent()).toBe(false);
+    expect(ff.rpTarget1bh1.isPresent()).toBe(false);
 
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);

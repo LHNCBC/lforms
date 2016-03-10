@@ -115,6 +115,11 @@ var TestPage = function() {
       rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
       rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
       rpAdd: element(by.id('add-/repeatingSection1/1')),
+      rpSubSrc1: element(by.id('/repeatingSection1/rpSource1/1/1')),
+      rpTarget1a: element(by.id('/repeatingSection1/rpTargetItem1/1/1')),
+      rpTarget1b: element(by.id('/repeatingSection1/rpTargetItem1/2/1')),
+      rpTarget1ah1: element(by.id('/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/1/1/1')),
+      rpTarget1bh1: element(by.id('/repeatingSection1/rpTargetHeader1/rpTargetSubItem1/2/1/1')),
 
       dcSource: element(by.id('/dataControlExamples/itemWithExtraData/1/1')),
       dcTarget1: element(by.id('/dataControlExamples/controlledItem_LIST/1/1')),
@@ -180,7 +185,7 @@ var TestPage = function() {
       rpSrc2: element(by.id('/rpSource2/1')),
       rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
       rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
-      rpAdd: element(by.id('add-/repeatingSection1/1')),
+      rpAdd: element(by.id('add-/repeatingSection1/1'))
     },
 
     /**
