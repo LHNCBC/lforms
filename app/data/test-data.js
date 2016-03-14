@@ -1018,9 +1018,30 @@ var allInOne =
 
     },
 
+    {"questionCode": "cardinalityControl",
+      "question": "this controls the initial number of rows in the horizontal table below",
+      "dataType": "CNE",
+      "answers": [
+        {"code": "c1", "text": "1 row, no repeating",    "questionCardinality": {"min": "1", "max": "1"}},
+        {"code": "c2", "text": "1 row, repeating",       "questionCardinality": {"min": "1", "max": "*"}},
+        {"code": "c3", "text": "2 rows, no repeating",  "questionCardinality": {"min": "2", "max": "2"}},
+        {"code": "c4", "text": "2 rows, repeating",      "questionCardinality": {"min": "2", "max": "*"}},
+        {"code": "c5", "text": "2 rows, repeating, 5 rows max",  "questionCardinality": {"min": "2", "max": "5"}}],
+    },
     // a horizontal table, repeatable
-    {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "*"},
+    {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "1"},
       "question": "A repeating horizontal table", "header": true, "layout": "horizontal",
+      "dataControl": [
+        {
+          "source": {
+            "sourceType": "internal",
+            "sourceDataType": "TEXT",
+            "itemCode": "cardinalityControl",
+            "data": "value.questionCardinality"
+          },
+          "onAttribute": "questionCardinality"
+        }
+      ],
       "items":[
         {"questionCode": "colA", "question": "A ST", "dataType": "ST",
           "displayControl": {

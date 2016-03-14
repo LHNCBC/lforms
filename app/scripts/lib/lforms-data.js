@@ -327,6 +327,7 @@ var LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
+    //this._setTreeNodes(this.items, this);
     this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
@@ -386,8 +387,11 @@ var LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
+    //this._setTreeNodes(this.items, this);
     this._updateLastSiblingList(this.items, null);
+    this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
+    this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
 
@@ -417,8 +421,11 @@ var LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
+    //this._setTreeNodes(this.items, this);
     this._updateLastSiblingList(this.items, null);
+    this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
+    this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
 
@@ -811,6 +818,7 @@ var LFormsData = Class.extend({
    */
   _removeUserData: function(item) {
     item.value = null;
+    item.unit = null;
     if (item.items && item.items.length > 0) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         this._removeUserData(item.items[i]);
@@ -839,6 +847,25 @@ var LFormsData = Class.extend({
 
       item._repeatingSectionList = null;
 
+
+      // set default values on the item
+      // questionCardinality
+      if (!item.questionCardinality) {
+        item.questionCardinality = {"min":"1", "max":"1"};
+      }
+      // answerCardinality
+      if (!item.answerCardinality) {
+        item.answerCardinality = {"min":"0", "max":"1"};
+      }
+
+      // set up flags for question and answer cardinality
+      item._questionRepeatable = item.questionCardinality.max &&
+          (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+      item._answerRequired = item.answerCardinality.min &&
+          (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
+      item._multipleAnswers = item.answerCardinality.max &&
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
@@ -852,6 +879,17 @@ var LFormsData = Class.extend({
           foundLastSibling = true;
         }
       }
+
+      // keep a copy of the repeatable items, only for the first of the same repeating items
+      // before the parentItem is added to avoid circular reference that make the angular.copy really slow
+      if (item._questionRepeatable && item._id === 1 && !this._repeatableItems[item._codePath]) {
+        delete item._parentItem;
+        var itemRepeatable = angular.copy(item);
+        // remove user data
+        this._removeUserData(itemRepeatable);
+        this._repeatableItems[item._codePath] = itemRepeatable;
+      }
+      item._parentItem = parentItem;
 
       // process the sub items
       if (item.items && item.items.length > 0) {
@@ -1168,6 +1206,7 @@ var LFormsData = Class.extend({
         }
         // if it's the following rows, update the tableRows and tableEndIndex
         else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
+          item._horizontalTableHeader = false;
           itemsInRow = item.items;
           for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
             // indicate the item is in a horizontal table
