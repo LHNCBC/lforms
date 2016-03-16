@@ -218,12 +218,14 @@ WidgetUtil = {
    * @param formDataVar The name of a global-scope variable containing the
    *  form's LForms definition.  The variable should be accessible as a property
    *  of the window object.
-   * @param formContainerID The ID of a DOM element to contain the form.  The
-   *  contents of this element will be replaced by the form.  This element
-   *  should be outside the scope of any existing AngularJS app on the page.
+   * @param formContainer The ID of a DOM element to contain the form, or the
+   *  element itself.  The contents of this element will be replaced by the form.
+   *  This element should be outside the scope of any existing AngularJS app on
+   *  the page.
    */
-  addFormToPage: function(formDataVar, formContainerID) {
-    var formContainer = $('#'+formContainerID);
+  addFormToPage: function(formDataVar, formContainer) {
+    var formContainer = typeof formContainer === 'string' ?
+      $('#'+formContainer) : $(formContainer);
     if (!this.pageFormID_)
       this.pageFormID_ = 0;
     var appName = 'LFormsApp' + ++this.pageFormID_;
