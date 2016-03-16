@@ -1,8 +1,7 @@
-
 angular.module('lformsWidget')
   .controller('LFormsCtrl',
-    ['$scope', '$timeout', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
-      function ($scope, $timeout, smoothScroll, LF_CONSTANTS, lformsConfig) {
+    ['$scope', '$timeout', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+      function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
       'use strict';
 
       $scope.debug = false;
@@ -135,28 +134,32 @@ angular.module('lformsWidget')
         return $scope.lfData.getSkipLogicClass(item) !== 'target-hide';
       };
 
+
       /**
-       * Check if the item has coding instructions
+       * Check the display type of the coding instructions
        * @param item an item in the lforms form items array
        * @returns {string}
        */
-      $scope.hasCodingInstructions = function(item) {
-        var ret;
+      $scope.getCodingInstructionsDisplayType = function(item) {
+        var ret ='';
         if (item.codingInstructions && item.codingInstructions.length > 0) {
-          ret = true;
+          var position = $scope.lfData.templateOptions.showCodingInstruction ? "inline" : "popover";
+          var format = $scope.lfData.templateOptions.allowHTMLInInstructions ? "html" : "escaped";
+          ret = position + "-" + format;
         }
         return ret;
       };
 
+
       /**
-       * Get formatted coding instructions
+       * Get coding instructions with assumed safe HTML content
        * @param item an item in the lforms form items array
        * @returns {string}
        */
-      $scope.getCodingInstructions = function(item) {
+      $scope.getTrustedCodingInstructions = function(item) {
         var ret = '';
         if (item.codingInstructions) {
-          ret = "(" + item.codingInstructions + ")"
+          ret = $sce.trustAsHtml(item.codingInstructions);
         }
         return ret;
       };
