@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>Test for the compressed build of LForms using addFormToPage</title>
+    <link rel="stylesheet" href="latestBuild/styles/lforms.min.css" />
+  </head>
+  <body>
+    <div id="formContainer2"></div>
+    <div id="formContainer"></div>
+    <script src="latestBuild/lforms.min.js"></script>
+    <script src="/data/test-data.js"></script>
+    <script>
+      WidgetUtil.addFormToPage('allInOne', 'formContainer');
+      WidgetUtil.addFormToPage('rxTerms', jQuery('#formContainer2')[0]);
+    </script>
+  </body>
+</html>
