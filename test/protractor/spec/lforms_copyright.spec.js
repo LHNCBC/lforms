@@ -71,4 +71,3 @@ describe('coding instructions help message', function() {
   });
 
 });
-

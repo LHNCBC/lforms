@@ -63,12 +63,15 @@
                 </tr>
                 </thead>
                 <tbody class="">
-                <tr class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="item.dataType!=='TITLE' && targetShown(item)"
-                    ng-repeat-start="item in lfData.itemList " ng-click="setActiveRow(item)">
+                <!-- data row -->
+                <tr ng-repeat-start="item in lfData.itemList" ng-if="item.dataType!=='TITLE' && targetShown(item)"
+                    class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
+                    ng-click="setActiveRow(item)">
                   <td class="name has-treeline">
                     <table class="t-treeline-field" >
                       <tr>
-                        <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
+                            class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label">
                             <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
@@ -145,19 +148,17 @@
                   <!--<td>{{item.range}}</td>-->
                 </tr>
                 <!-- title row -->
-                <tr ng-if="item.dataType==='TITLE' && targetShown(item)" class="title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-                  <td class="name has-treeline" colspan="5">
+                <tr ng-if="item.dataType==='TITLE' && targetShown(item)"
+                    class="title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+                  <td class="name has-treeline" colspan="6">
                     <table class="t-treeline-field" >
                       <tr>
-                        <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
+                            class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label">
                             <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
                             <span><label for="{{item._elementId}}">{{item.question}}</label></span>
-                            <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
-                              <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
-                              <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
-                            </span>
                             <span ng-switch on="getCodingInstructionsDisplayType(item)">
                               <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
                               <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
@@ -176,15 +177,15 @@
                       </tr>
                     </table>
                   </td>
-
                 </tr>
                 <!-- extra question -->
-                <tr ng-if="needExtra(item)" class="extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)" ng-click="setActiveRow(item)">
+                <tr ng-if="needExtra(item) && targetShown(item)" ng-click="setActiveRow(item)"
+                    class="extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
                   <td class="name has-treeline">
                     <table class="t-treeline-field" >
                       <tr>
-                        <td class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"
-                            ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
+                            class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label">
                             <span>&nbsp;</span>
@@ -199,13 +200,13 @@
                   </td>
                 </tr>
                 <!--a button row at the end of each repeating section-->
-                <tr ng-repeat-end ng-if="item._repeatingSectionList"
-                    class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}" ng-if="targetShown(item)">
+                <tr ng-repeat-end ng-if="item._repeatingSectionList && targetShown(item)"
+                    class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
                   <td colspan="6" class="name has-treeline" >
                     <table class="t-treeline-field" >
                       <tr>
-                        <td class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"
-                            ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
+                            class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label has-popover-warning">
                               <button ng-repeat="repeatingItem in item._repeatingSectionList"
