@@ -212,6 +212,39 @@ WidgetUtil = {
     }
   },
 
+
+  /**
+   *  Adds an LForms form to the page.
+   * @param formDataVar The name of a global-scope variable containing the
+   *  form's LForms definition.  The variable should be accessible as a property
+   *  of the window object.
+   * @param formContainer The ID of a DOM element to contain the form, or the
+   *  element itself.  The contents of this element will be replaced by the form.
+   *  This element should be outside the scope of any existing AngularJS app on
+   *  the page.
+   */
+  addFormToPage: function(formDataVar, formContainer) {
+    var formContainer = typeof formContainer === 'string' ?
+      $('#'+formContainer) : $(formContainer);
+    if (!this.pageFormID_)
+      this.pageFormID_ = 0;
+    var appName = 'LFormsApp' + ++this.pageFormID_;
+    var controller = 'LFormsAppController'+ this.pageFormID_;
+    formContainer.html(
+      '<div ng-controller="'+controller+'">'+
+        '<lforms lf-data="myFormData"></lforms>'+
+      '</div>'+
+      '<script>'+
+        'angular.module("'+appName+'", ["lformsWidget"])'+
+        '.controller("'+controller+'", ["$scope", function ($scope) {'+
+        '  $scope.myFormData = new LFormsData('+formDataVar+');'+
+        '}]);'+
+      '</'+'script>'
+    );
+    angular.bootstrap(formContainer, [appName]);
+  },
+
+
   /**
    * Get form data from the LForms rendered form
    * @param element the containing HTML element that includes the LForm's rendered form.
