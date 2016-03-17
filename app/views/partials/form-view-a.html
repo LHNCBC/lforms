@@ -63,7 +63,7 @@
                 </tr>
                 </thead>
                 <tbody class="">
-                <tr class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)"
+                <tr class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="item.dataType!=='TITLE' && targetShown(item)"
                     ng-repeat-start="item in lfData.itemList " ng-click="setActiveRow(item)">
                   <td class="name has-treeline">
                     <table class="t-treeline-field" >
@@ -104,7 +104,7 @@
                     <ng-form name="innerForm2">
                       <div class="lf-form-item-data tooltipContainer">
                         <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
-                        <span ng-switch-when="" id="{{item._elementId}}"> </span>
+                        <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
                         <input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}"
                                ng-required="item._answerRequired"
                                ng-model="item.value" autocomplete-lhc="item._autocompOptions"
@@ -143,6 +143,40 @@
                     <span ng-switch-when="none" > </span>
                   </td>
                   <!--<td>{{item.range}}</td>-->
+                </tr>
+                <!-- title row -->
+                <tr ng-if="item.dataType==='TITLE' && targetShown(item)" class="title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+                  <td class="name has-treeline" colspan="5">
+                    <table class="t-treeline-field" >
+                      <tr>
+                        <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+                        <td>
+                          <div class="name-label">
+                            <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
+                            <span><label for="{{item._elementId}}">{{item.question}}</label></span>
+                            <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+                              <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+                              <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+                            </span>
+                            <span ng-switch on="getCodingInstructionsDisplayType(item)">
+                              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+                              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
+                              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover-template.html'"
+                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                                      id="help-{{item._elementId}}">?</button>
+                              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
+                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                                      id="help-{{item._elementId}}">?</button>
+                            </span>
+                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}"
+                                    class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+                                    popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+
                 </tr>
                 <!-- extra question -->
                 <tr ng-if="needExtra(item)" class="extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-if="targetShown(item)" ng-click="setActiveRow(item)">

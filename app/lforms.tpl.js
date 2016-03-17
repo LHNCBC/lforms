@@ -93,7 +93,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                </tr>\n" +
     "                </thead>\n" +
     "                <tbody class=\"\">\n" +
-    "                <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"item.dataType!=='TITLE' && targetShown(item)\"\n" +
     "                    ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                  <td class=\"name has-treeline\">\n" +
     "                    <table class=\"t-treeline-field\" >\n" +
@@ -134,7 +134,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <ng-form name=\"innerForm2\">\n" +
     "                      <div class=\"lf-form-item-data tooltipContainer\">\n" +
     "                        <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                        <span ng-switch-when=\"\" id=\"{{item._elementId}}\"> </span>\n" +
+    "                        <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
     "                        <input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\"\n" +
     "                               ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
@@ -173,6 +173,40 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <span ng-switch-when=\"none\" > </span>\n" +
     "                  </td>\n" +
     "                  <!--<td>{{item.range}}</td>-->\n" +
+    "                </tr>\n" +
+    "                <!-- title row -->\n" +
+    "                <tr ng-if=\"item.dataType==='TITLE' && targetShown(item)\" class=\"title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "                  <td class=\"name has-treeline\" colspan=\"5\">\n" +
+    "                    <table class=\"t-treeline-field\" >\n" +
+    "                      <tr>\n" +
+    "                        <td class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\" ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                        <td>\n" +
+    "                          <div class=\"name-label\">\n" +
+    "                            <span ng-show=\"item._questionRepeatable\" class=\"sn\">{{getRepeatingSN(item) }}</span>\n" +
+    "                            <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch on=\"getCodingInstructionsDisplayType(item)\">\n" +
+    "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                            </span>\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
+    "                          </div>\n" +
+    "                        </td>\n" +
+    "                      </tr>\n" +
+    "                    </table>\n" +
+    "                  </td>\n" +
+    "\n" +
     "                </tr>\n" +
     "                <!-- extra question -->\n" +
     "                <tr ng-if=\"needExtra(item)\" class=\"extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\" ng-click=\"setActiveRow(item)\">\n" +
@@ -302,7 +336,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                </tr>\n" +
     "                </thead>\n" +
     "                <tbody class=\"\">\n" +
-    "                <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\"\n" +
+    "                <tr class=\"data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"item.dataType!=='TITLE' && targetShown(item)\"\n" +
     "                    ng-repeat-start=\"item in lfData.itemList \" ng-click=\"setActiveRow(item)\">\n" +
     "                  <td ng-if=\"!item._inHorizontalTable\" class=\"name has-treeline\">\n" +
     "                    <table class=\"t-treeline-field\" >\n" +
@@ -343,7 +377,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    <ng-form name=\"innerForm2\">\n" +
     "                      <div class=\"lf-form-item-data tooltipContainer\">\n" +
     "                        <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
-    "                        <span ng-switch-when=\"\" id=\"{{item._elementId}}\"> </span>\n" +
+    "                        <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
     "                        <input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\"\n" +
     "                               ng-required=\"item._answerRequired\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
@@ -386,6 +420,41 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      ng-include=\"'h-table.html'\"></td>\n" +
     "\n" +
     "                </tr>\n" +
+    "                <!-- title row -->\n" +
+    "                <tr ng-if=\"!item._inHorizontalTable && item.dataType==='TITLE' && targetShown(item)\" class=\"title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "                  <td class=\"name has-treeline\" colspan=\"5\">\n" +
+    "                    <table class=\"t-treeline-field\" >\n" +
+    "                      <tr>\n" +
+    "                        <td class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\" ng-repeat=\"lastStatus in item._lastSiblingList track by $index\"> &nbsp; </td>\n" +
+    "                        <td>\n" +
+    "                          <div class=\"name-label\">\n" +
+    "                            <span ng-show=\"item._questionRepeatable\" class=\"sn\">{{getRepeatingSN(item) }}</span>\n" +
+    "                            <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "                            <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "                              <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "                              <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "                            </span>\n" +
+    "                            <span ng-switch on=\"getCodingInstructionsDisplayType(item)\">\n" +
+    "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                            </span>\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
+    "                          </div>\n" +
+    "                        </td>\n" +
+    "                      </tr>\n" +
+    "                    </table>\n" +
+    "                  </td>\n" +
+    "\n" +
+    "                </tr>\n" +
+    "\n" +
     "                <!-- extra question -->\n" +
     "                <tr ng-if=\"!item._inHorizontalTable && needExtra(item)\"\n" +
     "                    class=\"extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-if=\"targetShown(item)\" ng-click=\"setActiveRow(item)\">\n" +

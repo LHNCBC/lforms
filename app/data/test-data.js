@@ -1018,8 +1018,17 @@ var allInOne =
 
     },
 
+
+    // a new dataType for a special header that has no children but divides questions into upper and lower sections
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": true
+    },
+
     {"questionCode": "cardinalityControl",
-      "question": "this controls the initial number of rows in the horizontal table below",
+      "question": "This controls the initial number of rows in the horizontal table below",
       "dataType": "CNE",
       "answers": [
         {"code": "c1", "text": "1 row, no repeating",    "questionCardinality": {"min": "1", "max": "1"}},
@@ -1271,6 +1280,13 @@ var formWithUserData =
           ]
         }
       ]
+    },
+    // a new dataType for a special header that has no children but divides questions into upper and lower sections
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": true
     },
 
 
