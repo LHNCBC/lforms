@@ -46,7 +46,7 @@ describe('data control', function() {
 
   });
 
-  it('data control could control questionCardinality of a horizontal table', function() {
+  it('can control questionCardinality of a horizontal table', function() {
     tp.openFullFeaturedForm();
 
     var src = element(by.id('/cardinalityControl/1'));
