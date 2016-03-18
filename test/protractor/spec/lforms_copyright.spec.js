@@ -41,6 +41,7 @@ describe('coding instructions help message', function() {
     expect(popover.getText()).toBe( "simple text instructions");
 
     helpButton2.click();
+    browser.sleep(500);
     expect(popover.isDisplayed()).toBe(true);
     expect(popverHTMLLink.isDisplayed()).toBe(true);
 
