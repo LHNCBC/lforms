@@ -674,9 +674,9 @@ var LFormsData = Class.extend({
     }
     // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
+    // not to use deep copy here, because of the unexpected deep copy result on arrays.
     this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
         jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
-
   },
 
   /**

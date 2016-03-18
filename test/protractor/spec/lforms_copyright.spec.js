@@ -30,6 +30,8 @@ describe('coding instructions help message', function() {
     var helpButton1 = element(by.id("help-/type0/1"));
     var helpButton2 = element(by.id("help-/type1/1"));
 
+    var field1 = element(by.id("/type0/1"));
+
     tp.openFullFeaturedForm();
 
     // popover
@@ -40,8 +42,12 @@ describe('coding instructions help message', function() {
     expect(popover.isDisplayed()).toBe(true);
     expect(popover.getText()).toBe( "simple text instructions");
 
+    field1.click();
+    browser.wait(function() {
+      return popover.isPresent().then(function(result){return !result});
+    }, 5000);
+
     helpButton2.click();
-    browser.sleep(500);
     expect(popover.isDisplayed()).toBe(true);
     expect(popverHTMLLink.isDisplayed()).toBe(true);
 
