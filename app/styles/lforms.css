@@ -483,3 +483,11 @@ Override color of select boxes in calendar widget title bar.
   max-width: 600px;
   width: auto;
 }
+
+/* title row */
+.lf-form .lf-form-table .title-row {
+  background-color: rgb(67,115,156);
+}
+.lf-form .lf-form-table .title-row .name-label {
+  color: white;
+}

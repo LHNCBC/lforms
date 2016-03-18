@@ -674,9 +674,9 @@ var LFormsData = Class.extend({
     }
     // templateOptions
     var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
-    this.templateOptions = tempOptions ? jQuery.extend(true, {}, tempOptions, this.templateOptions) :
-        jQuery.extend(true, {}, this._defaultTemplateOptions, this.templateOptions);
-
+    // not to use deep copy here, because of the unexpected deep copy result on arrays.
+    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
+        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
   },
 
   /**
@@ -707,12 +707,14 @@ var LFormsData = Class.extend({
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
       // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
       // An error will be thrown in this case and an empty value will be set instead.
-      if (!item.dataType || item.calculationMethod !== undefined &&
-          !jQuery.isEmptyObject(item.calculationMethod)) {
-        item.dataType = "ST";
-      }
       if (item.header) {
-        item.dataType = "";
+        if (item.dataType !== 'TITLE')
+          item.dataType = 'SECTION';
+      }
+      else {
+        if(!item.dataType || item.calculationMethod !== undefined &&
+            !jQuery.isEmptyObject(item.calculationMethod))
+          item.dataType = "ST";
       }
 
       // set default values on the item

@@ -1018,8 +1018,17 @@ var allInOne =
 
     },
 
+
+    // a new dataType for a special header that has no children but divides questions into upper and lower sections
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": true
+    },
+
     {"questionCode": "cardinalityControl",
-      "question": "this controls the initial number of rows in the horizontal table below",
+      "question": "This controls the initial number of rows in the horizontal table below",
       "dataType": "CNE",
       "answers": [
         {"code": "c1", "text": "1 row, no repeating",    "questionCardinality": {"min": "1", "max": "1"}},
@@ -1271,6 +1280,13 @@ var formWithUserData =
           ]
         }
       ]
+    },
+    // a new dataType for a special header that has no children but divides questions into upper and lower sections
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": true
     },
 
 
@@ -1866,7 +1882,7 @@ var genetic = {
 var genetic2 = {
   "type": "LOINC",
   "code": "X2000-0",
-  "name": "HL7 Genetic Test Panel for Simple Variants - 20160308 (table version)",
+  "name": "HL7 Genetic Test Panel for Variants - 20160308 (table version)",
   "template": "form-view-b",
   "dataType": null,
   "header": null,
@@ -1879,12 +1895,13 @@ var genetic2 = {
       "dataType": "CNE",
       "answerCardinality": {"max": "*", "min":"0"},
       "answers": [
-        {"code": "C01", "text": "Simple variations"},
-        {"code": "C02", "text": "Structural (copy number) variations"}
+        {"code": "C01", "text": "Simple variants"},
+        {"code": "C02", "text": "Complex variants"},
+        {"code": "C03", "text": "Structural (copy number) variants"}
       ]
     },
     {"questionCode": "XXXXX-2",
-      "question": "Choose mutation identifiers",
+      "question": "Choose other mutation identifiers",
       "dataType": "CNE",
       "codingInstructions": "Not part of the HL7 specification. Used only to show different choices of codes for representing variants",
       "answerCardinality": {"max": "*", "min":"0"},
@@ -1903,7 +1920,7 @@ var genetic2 = {
       "answerCardinality": {"max": "*", "min":"0"},
       "answers": [
         {"code": "C01", "text": "Specific targeted mutations"},
-        {"code": "C02", "text": "Sequence range of RefSeq"}
+        {"code": "C02", "text": "Sequence range(s) in the reference seq"}
       ]
     },
 
@@ -1953,7 +1970,20 @@ var genetic2 = {
       "question": "Gene(s) examined",
       "dataType": "CNE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol"
+      "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod"
+    },
+    {"questionCode": "36908-2",
+      "question": "Gene mutations tested for",
+      "dataType": "CWE",
+      "answerCardinality": {"max": "*", "min":"0"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
+        "action": "show"},
+      "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
+    },
+    {"questionCode": "XXXXX-11",
+      "question": "Range(s) of DNA sequence examined",
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
+        "action": "show"}
     },
     {"questionCode": "XXXXX-0",
       "question": "Full narrative report",
@@ -1969,29 +1999,90 @@ var genetic2 = {
         {"code": "LA9664-9", "text": "Failure"}
       ]
     },
-
-
     {
-      "questionCode": "XXXXX-99",
-      "question": "Simple variation header",
-      "questionCardinality": {"max": "1", "min": "1"},
+      "questionCode": "titleHeader1",
+      "question": "Simple Small Variants Section",
+      "dataType": "TITLE",
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+        "action": "show"},
+      "header": true
+    },
+
+    {"questionCode": "XXXXX-9",
+      "question": "Simple variants",
+      "questionCardinality": {"max": "*", "min":"0"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+        "action": "show"},
       "header": true,
-      "items": [
-        {"questionCode": "XXXXX-9",
-          "question": "Simple variation",
-          "questionCardinality": {"max": "*", "min":"0"},
-          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
-            "action": "show"},
+      "items" : [
+        {"questionCode": "XXXXX-5",
+          "question": "Variant ID",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID,Name"
+        },
+        {"questionCode": "XXXXX-13",
+          "question": "Variant name",
+          "dataType": "ST",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "TEXT",
+                "itemCode": "XXXXX-5",
+                "data": "value.Name"
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {
+          "questionCode": "XXXX1-1",
+          "question": "Allele(s)",
+          "questionCardinality": {
+            "max": "1",
+            "min": "1"
+          },
           "header": true,
-          "items" : [
-            {"questionCode": "XXXXX-5",
-              "question": "Variant ID",
+          "layout": "horizontal",
+          "items": [
+            {
+              "questionCode": "XXXXX-19",
+              "question": "Type",
               "dataType": "CNE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
+              "answerCardinality": {
+                "max": "1",
+                "min": "0"
+              },
+              "answers": [
+                {"code": "C01", "text": "del"},
+                {"code": "C02", "text": "dup"},
+                {"code": "C03", "text": "fusion"},
+                {"code": "C04", "text": "indel"},
+                {"code": "C05", "text": "inser"},
+                {"code": "C06", "text": "inver"},
+                {"code": "C07", "text": "NT exp"},
+                {"code": "C08", "text": "protein only"},
+                {"code": "C09", "text": "shrt rpt"},
+                {"code": "C10", "text": "SNP"},
+                {"code": "C11", "text": "structural"},
+                {"code": "C12", "text": "undet"}
+              ],
+              "displayControl": {
+                "colCSS": [
+                  {
+                    "name": "width",
+                    "value": "5em"
+                  },
+                  {
+                    "name": "min-width",
+                    "value": "2em"
+                  }
+                ]
+              }
             },
             {"questionCode": "48018-6",
-              "question": "Gene symbol",
+              "question": "Gene",
               "dataType": "CNE",
               "answerCardinality": {"max": "1", "min":"0"},
               "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod",
@@ -2005,351 +2096,699 @@ var genetic2 = {
                   },
                   "onAttribute": "value"
                 }
-              ]
+              ],
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"6em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
             {"questionCode": "48013-7",
-              "question": "Reference sequence ID",
-              "dataType":"CNE",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
-              "dataControl": [
-                {
-                  "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.RefSeqID"}
-                  },
-                  "onAttribute": "value"
-                }
-              ]
+              "question": "NM_RefSeq",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"9em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "41103-3",
+              "question": "DNA change",
+              "dataType": "ST",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"50%"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "48005-3",
+              "question": "AA change",
+              "dataType": "ST",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"50%"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "XXXXX-17",
+              "question": "NC/NG_RefSeq",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"9em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "69547-8",
+              "question": "Ref allele",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "X0029",
+              "question": "Allele loc",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
 
             },
+            {"questionCode": "69551-0",
+              "question": "Alt allele",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            }
+          ]
+        },
+        {"questionCode": "XXXXX-4",
+          "question": "dbSNP ID for mutations",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/snps",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
+            "action": "show"},
+          "dataControl": [
             {
-              "questionCode": "XXXX1-1",
-              "question": "Alleles",
-              "questionCardinality": {
-                "max": "*",
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {"text": "value.dbSNP", "code": "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {"questionCode": "XXXXX-7",
+          "question": "COSMIC ID for mutations",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
+            "action": "show"}
+        },
+        {"questionCode": "XXXXX-6",
+          "question": "CIGAR specification for mutations",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
+            "action": "show"}
+        },
+        {"questionCode": "X1001-0",
+          "question": "Cytogenetic location",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined": "https://lforms-service.nlm.nih.gov/alleles?df=Cytogenetic",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {
+          "questionCode":"53034-5",
+          "localQuestionCode":null,
+          "dataType":"CNE",
+          "header":false,
+          "units":null,
+          "codingInstructions":"The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
+          "copyrightNotice":null,
+          "questionCardinality":null,
+          "answerCardinality":{
+            "min":"0",
+            "max":"1"
+          },
+          "question":"Allelic state",
+          "answers":[
+            {
+              "label":null,
+              "code":"LA6703-8",
+              "text":"Heteroplasmic",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6704-6",
+              "text":"Homoplasmic",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6705-3",
+              "text":"Homozygous",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6706-1",
+              "text":"Heterozygous",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6707-9",
+              "text":"Hemizygous",
+              "score":null,
+              "other":null
+            }
+          ],
+          "skipLogic":null,
+          "restrictions":null,
+          "editable":null,
+          "defaultAnswer":null,
+          "displayControl":null,
+          "calculationMethod":null,
+          "items":null
+        },
+        {"questionCode": "53037-8",
+          "question": "Clinical significance",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "answers": [{
+            "code": "LA6668-3",
+            "text": "Pathogenic"
+          }, {
+            "code": "LA6669-1",
+            "text": "Presumed Pathogenic"
+          }, {
+            "code": "LA6670-9",
+            "text": "Novel Presumed Pathogenic"
+          }, {
+            "code": "LA6671-7",
+            "text": "Novel Unknown Significance"
+          }, {
+            "code": "LA6672-5",
+            "text": "Novel Presumed Benign"
+          }, {
+            "code": "LA6673-3",
+            "text": "Novel"
+          }, {
+            "code": "LA6674-1",
+            "text": "Presumed Benign"
+          }, {
+            "code": "LA6675-8",
+            "text": "Benign"
+          }, {
+            "code": "LA6676-6",
+            "text": "Resistant"
+          }, {
+            "code": "LA6677-4",
+            "text": "Responsive"
+          }, {
+            "code": "LA6678-2",
+            "text": "Novel Presumed Non-Responsive"
+          }, {
+            "code": "LA6679-0",
+            "text": "Novel Presumed Responsive"
+          }, {
+            "code": "LA6680-8",
+            "text": "Unclassified"
+          }, {
+            "code": "LA6681-6",
+            "text": "Polymorphism"
+          }, {
+            "code": "LA6682-4",
+            "text": "Unknown Significance"
+          }]
+        },
+        {"questionCode": "X1002-0",
+          "question": "Possible associated phenotype",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "TEXT",
+                "itemCode": "XXXXX-5",
+                "data": "value.phenotype"
+              },
+              "onAttribute": "value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionCode": "titleHeader2",
+      "question": "Complex Small Variants Section",
+      "dataType": "TITLE",
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+        "action": "show"},
+      "header": true
+    },
+
+    {"questionCode": "XXXXX-20",
+      "question": "Complex variants",
+      "questionCardinality": {"max": "*", "min":"0"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+        "action": "show"},
+      "header": true,
+      "items" : [
+        {"questionCode": "XXXXX-5",
+          "question": "Variant ID",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
+        },
+        {"questionCode": "XXXXX-14",
+          "question": "Variant type",
+          "dataType": "CNE",
+          "answers": [
+            {"code": "V1", "text": "Haplotype"},
+            {"code": "V2", "text": "Compound het"},
+            {"code": "V3", "text": "Other"}
+          ]
+        },
+        {"questionCode": "XXXXX-13",
+          "question": "Variant name",
+          "dataType": "ST"
+        },
+        {"questionCode": "XXXXX-15",
+          "question": "Assembly",
+          "dataType": "ST"
+        },
+        {
+          "questionCode": "XXXX1-1",
+          "question": "Allele(s)",
+          "questionCardinality": {
+            "max": "*",
+            "min": "1"
+          },
+          "header": true,
+          "layout": "horizontal",
+          "items": [
+            {
+              "questionCode": "XXXXX-18",
+              "question": "ID",
+              "dataType": "CWE",
+              "answerCardinality": {
+                "max": "1",
                 "min": "0"
               },
-              "header": true,
-              "layout": "horizontal",
-              "items": [
-                {"questionCode": "41103-3",
-                  "question": "DNA change - HGVS(c.)",
-                  "dataType": "ST"
-                },
-                {"questionCode": "48005-3",
-                  "question": "Amino acid change - HGVS(p.)",
-                  "dataType": "ST"
-                },
-                {"questionCode": "69547-8",
-                  "question": "Reference allele"
-                },
-                {"questionCode": "X0029",
-                  "question": "Allele location"
-                },
-                {"questionCode": "69551-0",
-                  "question": "Alternate allele"
-                }
-              ]
+              "externallyDefined": "https://lforms-service.nlm.nih.gov/alleles?df=AlleleID,GeneSymbol",
+              "displayControl": {
+                "colCSS": [
+                  {
+                    "name": "width",
+                    "value": "5em"
+                  },
+                  {
+                    "name": "min-width",
+                    "value": "2em"
+                  }
+                ]
+              }
             },
             {
-              "questionCode":"53034-5",
-              "localQuestionCode":null,
-              "dataType":"CNE",
-              "header":false,
-              "units":null,
-              "codingInstructions":"The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
-              "copyrightNotice":null,
-              "questionCardinality":null,
-              "answerCardinality":{
-                "min":"0",
-                "max":"1"
+              "questionCode": "XXXXX-19",
+              "question": "Type",
+              "dataType": "CNE",
+              "answerCardinality": {
+                "max": "1",
+                "min": "0"
               },
-              "question":"Allelic state",
-              "answers":[
+              "answers": [
+                {"code": "C01", "text": "del"},
+                {"code": "C02", "text": "dup"},
+                {"code": "C03", "text": "fusion"},
+                {"code": "C04", "text": "indel"},
+                {"code": "C05", "text": "inser"},
+                {"code": "C06", "text": "inver"},
+                {"code": "C07", "text": "NT exp"},
+                {"code": "C08", "text": "protein only"},
+                {"code": "C09", "text": "shrt rpt"},
+                {"code": "C10", "text": "SNP"},
+                {"code": "C11", "text": "structural"},
+                {"code": "C12", "text": "undet"}
+              ],
+              "displayControl": {
+                "colCSS": [
+                  {
+                    "name": "width",
+                    "value": "5em"
+                  },
+                  {
+                    "name": "min-width",
+                    "value": "2em"
+                  }
+                ]
+              }
+            },
+            {"questionCode": "48018-6",
+              "question": "Gene",
+              "dataType": "CNE",
+              "answerCardinality": {"max": "1", "min":"0"},
+              "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod",
+              "dataControl": [
                 {
-                  "label":null,
-                  "code":"LA6703-8",
-                  "text":"Heteroplasmic",
-                  "score":null,
-                  "other":null
-                },
-                {
-                  "label":null,
-                  "code":"LA6704-6",
-                  "text":"Homoplasmic",
-                  "score":null,
-                  "other":null
-                },
-                {
-                  "label":null,
-                  "code":"LA6705-3",
-                  "text":"Homozygous",
-                  "score":null,
-                  "other":null
-                },
-                {
-                  "label":null,
-                  "code":"LA6706-1",
-                  "text":"Heterozygous",
-                  "score":null,
-                  "other":null
-                },
-                {
-                  "label":null,
-                  "code":"LA6707-9",
-                  "text":"Hemizygous",
-                  "score":null,
-                  "other":null
+                  "source": {
+                    "sourceType": "internal",
+                    "sourceDataType": "OBJECT",
+                    "itemCode": "XXXXX-5",
+                    "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                  },
+                  "onAttribute": "value"
                 }
               ],
-              "skipLogic":null,
-              "restrictions":null,
-              "editable":null,
-              "defaultAnswer":null,
-              "displayControl":null,
-              "calculationMethod":null,
-              "items":null
-            },
-            {"questionCode": "X1001-0",
-              "question": "Cytogenetic location",
-              "dataType": "CWE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined": "https://lforms-service.nlm.nih.gov/alleles?df=Cytogenetic",
-              "dataControl": [
-                {
-                  "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"text": "value.Cytogenetic", "code": "value.code"}
-                  },
-                  "onAttribute": "value"
-                }
-              ]
-            },
-            {"questionCode": "53037-8",
-              "question": "Clinical significance",
-              "dataType": "CWE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "answers": [{
-                "code": "LA6668-3",
-                "text": "Pathogenic"
-              }, {
-                "code": "LA6669-1",
-                "text": "Presumed Pathogenic"
-              }, {
-                "code": "LA6670-9",
-                "text": "Novel Presumed Pathogenic"
-              }, {
-                "code": "LA6671-7",
-                "text": "Novel Unknown Significance"
-              }, {
-                "code": "LA6672-5",
-                "text": "Novel Presumed Benign"
-              }, {
-                "code": "LA6673-3",
-                "text": "Novel"
-              }, {
-                "code": "LA6674-1",
-                "text": "Presumed Benign"
-              }, {
-                "code": "LA6675-8",
-                "text": "Benign"
-              }, {
-                "code": "LA6676-6",
-                "text": "Resistant"
-              }, {
-                "code": "LA6677-4",
-                "text": "Responsive"
-              }, {
-                "code": "LA6678-2",
-                "text": "Novel Presumed Non-Responsive"
-              }, {
-                "code": "LA6679-0",
-                "text": "Novel Presumed Responsive"
-              }, {
-                "code": "LA6680-8",
-                "text": "Unclassified"
-              }, {
-                "code": "LA6681-6",
-                "text": "Polymorphism"
-              }, {
-                "code": "LA6682-4",
-                "text": "Unknown Significance"
-              }]
-            },
-            {"questionCode": "X1002-0",
-              "question": "Possible associated phenotype",
-              "dataType": "CWE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
-              "dataControl": [
-                {
-                  "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "TEXT",
-                    "itemCode": "XXXXX-5",
-                    "data": "value.phenotype"
-                  },
-                  "onAttribute": "value"
-                }
-              ]
-            },
-            {"questionCode": "XXXXX-4",
-              "question": "dbSNP ID for mutations",
-              "dataType": "CNE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/snps",
-              "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
-                "action": "show"},
-              "dataControl": [
-                {
-                  "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"text": "value.dbSNP", "code": "value.code"}
-                  },
-                  "onAttribute": "value"
-                }
-              ]
-            },
-            {"questionCode": "XXXXX-6",
-              "question": "CIGAR specification for mutations",
-              "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
-                "action": "show"}
-            },
-            {"questionCode": "XXXXX-7",
-              "question": "COSMIC ID for mutations",
-              "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
-                "action": "show"}
-            }
-          ]
-        },
-
-      ]
-    },
-
-
-    {
-      "questionCode": "XXXX2-99",
-      "question": "Structural (copy number) variation header",
-      "questionCardinality": {"max": "1", "min": "1"},
-      "header": true,
-      "items": [
-        {"questionCode": "XXXX2-9",
-          "question": "Structural (copy number) variation",
-          "questionCardinality": {"max": "*", "min":"0"},
-          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
-            "action": "show"},
-          "header": true,
-          "items" : [
-            {"questionCode": "48018-6",
-              "question": "Gene symbol",
-              "dataType": "CNE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod&ef=refseq_accession,location"
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"6em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
             {"questionCode": "48013-7",
-              "question": "Reference sequence ID",
-              "dataType":"CWE",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
-              "dataControl": [
-                {
-                  "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "48018-6",
-                    "data": {"code": "value.code", "text": "value.refseq_accession"}
-                  },
-                  "onAttribute": "value"
-                }
-              ]
+              "question": "NM_RefSeq",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"9em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
-            {"questionCode": "X12313",
-              "question": "Structural variant reported start-end",
+            {"questionCode": "41103-3",
+              "question": "DNA change",
               "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"1"}
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"50%"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
-            {"questionCode": "X12320",
-              "question": "Precision of boundaries",
-              "dataType": "CWE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "answers": [
-                {"code": "1","text": "Exact"},
-                {"code": "2","text": "Within 10^3 kb"},
-                {"code": "3","text": "Within 10^4 kb"},
-                {"code": "4","text": "Within 10^5 kb"},
-                {"code": "5","text": "Within 10^6 kb"},
-                {"code": "6","text": "Within 10^7 kb"}
-              ]
-            },
-            {"questionCode": "X12314",
-              "question": "Structural variant reported aCGH ratio",
+            {"questionCode": "48005-3",
+              "question": "AA change",
               "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"0"}
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"50%"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
-            {"questionCode": "48019-4",
-              "question": "DNA sequence variation type",
-              "dataType": "CWE",
-              "answerCardinality": {"max": "1", "min":"0"},
-              "answers": [
-                {"text":"Wild type"    	    ,"code":"LA9658-1"},
-                {"text":"Deletion"    	    	,"code":"LA6692-3"},
-                {"text":"Duplication"    	  ,"code":"LA6686-5"},
-                {"text":"Insertion"    	 	  ,"code":"LA6687-3"},
-                {"text":"Insertion/Deletion" ,"code":"LA6688-1"},
-                {"text":"Inversion"    	 	  ,"code":"LA6689-9"},
-                {"text":"Substitution"    	 	,"code":"LA6690-7"}
-              ]
+            {"questionCode": "XXXXX-17",
+              "question": "NC/NG_RefSeq",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"9em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
-            {"questionCode": "X12315",
-              "question": "Structural variant length",
-              "dataType": "INT",
-              "answerCardinality": {"max": "1", "min":"0"}
+            {"questionCode": "69547-8",
+              "question": "Ref allele",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             },
-            {"questionCode": "X12316",
-              "question": "Structural variant outer start-end",
-              "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"0"}
+            {"questionCode": "X0029",
+              "question": "Allele loc",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+
             },
-            {"questionCode": "X12317",
-              "question": "Structural variant inner start-end",
-              "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"0"}
-            },
-            {"questionCode": "X12318",
-              "question": "Structural variant HGVS",
-              "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"0"}
-            },
-            {"questionCode": "X12319",
-              "question": "Structural variant ISCN",
-              "dataType": "ST",
-              "answerCardinality": {"max": "1", "min":"0"}
+            {"questionCode": "69551-0",
+              "question": "Alt allele",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
             }
           ]
         },
+        {"questionCode": "XXXXX-4",
+          "question": "dbSNP ID for mutations",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/snps",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
+            "action": "show"},
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {"text": "value.dbSNP", "code": "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {"questionCode": "XXXXX-7",
+          "question": "COSMIC ID for mutations",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
+            "action": "show"}
+        },
+        {"questionCode": "XXXXX-6",
+          "question": "CIGAR specification for mutations",
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
+            "action": "show"}
+        },
+        {"questionCode": "X1001-0",
+          "question": "Cytogenetic location",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined": "https://lforms-service.nlm.nih.gov/alleles?df=Cytogenetic",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "XXXXX-5",
+                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {
+          "questionCode":"53034-5",
+          "localQuestionCode":null,
+          "dataType":"CNE",
+          "header":false,
+          "units":null,
+          "codingInstructions":"The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
+          "copyrightNotice":null,
+          "questionCardinality":null,
+          "answerCardinality":{
+            "min":"0",
+            "max":"1"
+          },
+          "question":"Allelic state",
+          "answers":[
+            {
+              "label":null,
+              "code":"LA6703-8",
+              "text":"Heteroplasmic",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6704-6",
+              "text":"Homoplasmic",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6705-3",
+              "text":"Homozygous",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6706-1",
+              "text":"Heterozygous",
+              "score":null,
+              "other":null
+            },
+            {
+              "label":null,
+              "code":"LA6707-9",
+              "text":"Hemizygous",
+              "score":null,
+              "other":null
+            }
+          ],
+          "skipLogic":null,
+          "restrictions":null,
+          "editable":null,
+          "defaultAnswer":null,
+          "displayControl":null,
+          "calculationMethod":null,
+          "items":null
+        },
+        {"questionCode": "53037-8",
+          "question": "Clinical significance",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "answers": [{
+            "code": "LA6668-3",
+            "text": "Pathogenic"
+          }, {
+            "code": "LA6669-1",
+            "text": "Presumed Pathogenic"
+          }, {
+            "code": "LA6670-9",
+            "text": "Novel Presumed Pathogenic"
+          }, {
+            "code": "LA6671-7",
+            "text": "Novel Unknown Significance"
+          }, {
+            "code": "LA6672-5",
+            "text": "Novel Presumed Benign"
+          }, {
+            "code": "LA6673-3",
+            "text": "Novel"
+          }, {
+            "code": "LA6674-1",
+            "text": "Presumed Benign"
+          }, {
+            "code": "LA6675-8",
+            "text": "Benign"
+          }, {
+            "code": "LA6676-6",
+            "text": "Resistant"
+          }, {
+            "code": "LA6677-4",
+            "text": "Responsive"
+          }, {
+            "code": "LA6678-2",
+            "text": "Novel Presumed Non-Responsive"
+          }, {
+            "code": "LA6679-0",
+            "text": "Novel Presumed Responsive"
+          }, {
+            "code": "LA6680-8",
+            "text": "Unclassified"
+          }, {
+            "code": "LA6681-6",
+            "text": "Polymorphism"
+          }, {
+            "code": "LA6682-4",
+            "text": "Unknown Significance"
+          }]
+        },
+        {"questionCode": "X1002-0",
+          "question": "Possible associated phenotype",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/disease_names",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "TEXT",
+                "itemCode": "XXXXX-5",
+                "data": "value.phenotype"
+              },
+              "onAttribute": "value"
+            }
+          ]
+        }
       ]
     },
 
-
-
-
-    {"questionCode": "36908-2",
-      "question": "Gene mutations tested for",
-      "dataType": "CWE",
-      "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
+    {
+      "questionCode": "titleHeader3",
+      "question": "Structural (Copy Number) Variants Section",
+      "dataType": "TITLE",
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C03"}}],
         "action": "show"},
-      "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
+      "header": true
     },
-    {"questionCode": "XXXXX-11",
-      "question": "Range(s) of DNA sequence examined",
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
-        "action": "show"}
+
+    {"questionCode": "XXXX2-9",
+      "question": "Structural (copy number) variants",
+      "questionCardinality": {"max": "*", "min":"0"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C03"}}],
+        "action": "show"},
+      "header": true,
+      "items" : [
+        {"questionCode": "48018-6",
+          "question": "Gene symbol",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod&ef=refseq_accession,location"
+        },
+        {"questionCode": "48013-7",
+          "question": "Reference sequence ID",
+          "dataType":"CWE",
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/genes?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "OBJECT",
+                "itemCode": "48018-6",
+                "data": {"code": "value.code", "text": "value.refseq_accession"}
+              },
+              "onAttribute": "value"
+            }
+          ]
+        },
+        {"questionCode": "X12313",
+          "question": "Structural variant reported start-end",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"1"}
+        },
+        {"questionCode": "X12320",
+          "question": "Precision of boundaries",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "answers": [
+            {"code": "1","text": "Exact"},
+            {"code": "2","text": "Within 10^3 kb"},
+            {"code": "3","text": "Within 10^4 kb"},
+            {"code": "4","text": "Within 10^5 kb"},
+            {"code": "5","text": "Within 10^6 kb"},
+            {"code": "6","text": "Within 10^7 kb"}
+          ]
+        },
+        {"questionCode": "X12314",
+          "question": "Structural variant reported aCGH ratio",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "48019-4",
+          "question": "DNA sequence variation type",
+          "dataType": "CWE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "answers": [
+            {"text":"Ref allele"    	    ,"code":"LA9658-1"},
+            {"text":"Deletion"    	    	,"code":"LA6692-3"},
+            {"text":"Duplication"    	  ,"code":"LA6686-5"},
+            {"text":"Insertion"    	 	  ,"code":"LA6687-3"},
+            {"text":"Insertion/Deletion" ,"code":"LA6688-1"},
+            {"text":"Inversion"    	 	  ,"code":"LA6689-9"},
+            {"text":"Substitution"    	 	,"code":"LA6690-7"}
+          ]
+        },
+        {"questionCode": "X12315",
+          "question": "Structural variant length",
+          "dataType": "INT",
+          "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "X12316",
+          "question": "Structural variant outer start-end",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "X12317",
+          "question": "Structural variant inner start-end",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "X12318",
+          "question": "Structural variant HGVS",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "X12319",
+          "question": "Structural variant ISCN",
+          "dataType": "ST",
+          "answerCardinality": {"max": "1", "min":"0"}
+        }
+      ]
     }
   ]
 };
