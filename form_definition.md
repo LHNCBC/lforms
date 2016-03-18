@@ -80,7 +80,7 @@ Keys:
       instructions inline or as popover messages (false: in popover; true: inline). 
       The default is false;
     * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
-      to stop on the input fields only (not buttons, or even units fields). 
+      to stop on the input fields only (neither buttons, nor units fields). 
       The default is false.
     * hideHeader - a boolean that controls whether to hide the header section 
       on top of the form. The default is false.
@@ -100,11 +100,10 @@ Keys:
         * name - the colomn header text
         * displayControl - This controls display styles of the column. It is a hash
           with the keys of "colCSS" for columns styles. The values are an array of 
-          hashes of valid CSS styles for "col". Here is an example: 
+          hashes of valid CSS styles for the "col" DOM element. Here is an example: 
           `{"colCSS": [{"name":"width","value":"30%"}]}`        
     * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
-      (This control is actually broken at the moment, but will be fixed soon.)
       The default is true.      
     * obrItems - an array defining fields above the form (see
       [obrHeader](#obrHeader)).  If you omit templateOptions, a default will be

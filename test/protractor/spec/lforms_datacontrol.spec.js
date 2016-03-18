@@ -41,12 +41,12 @@ describe('data control', function() {
     expect(ff.dcTarget1.getAttribute('value')).toBe("5 mg/ml Sol");
 
     ff.dcTarget2.getAttribute('value').then(function(v) {
-      expect(v.trim()).toBe("5 mg/ml Injection");
+      expect(v.trim()).toBe("5 mg/ml Injection 1 ml");
     });
 
   });
 
-  it('data control could control questionCardinality of a horizontal table', function() {
+  it('can control questionCardinality of a horizontal table', function() {
     tp.openFullFeaturedForm();
 
     var src = element(by.id('/cardinalityControl/1'));
