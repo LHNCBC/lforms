@@ -187,7 +187,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\"> &nbsp; </td>\n" +
     "                        <td>\n" +
     "                          <div class=\"name-label\">\n" +
-    "                            <span ng-show=\"item._questionRepeatable\" class=\"sn\">{{getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
     "                            <span ng-switch on=\"getCodingInstructionsDisplayType(item)\">\n" +
     "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
@@ -437,7 +436,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            class=\"t-treeline \" ng-class=\"getTreeLevelClass($index, item._lastSiblingList)\"> &nbsp; </td>\n" +
     "                        <td>\n" +
     "                          <div class=\"name-label\">\n" +
-    "                            <span ng-show=\"item._questionRepeatable\" class=\"sn\">{{getRepeatingSN(item) }}</span>\n" +
     "                            <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
     "                            <span ng-switch on=\"getCodingInstructionsDisplayType(item)\">\n" +
     "                              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +

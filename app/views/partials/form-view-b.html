@@ -163,7 +163,6 @@
                             class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label">
-                            <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
                             <span><label for="{{item._elementId}}">{{item.question}}</label></span>
                             <span ng-switch on="getCodingInstructionsDisplayType(item)">
                               <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
