@@ -194,7 +194,8 @@ WidgetUtil = {
       // header is true/false, not 'Y'/'N'
       if (item.header && (item.header =="Y" || item.header == true)) {
         item.header = true;
-        item.dataType = "SECTION";
+        if (item.dataType !== 'TITLE')
+          item.dataType = "SECTION";
       }
       else {
         item.header = false;
