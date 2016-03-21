@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Lforms by lhncbc</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/lhncbc/lforms">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/lhncbc/lforms/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/lhncbc/lforms/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Lforms</h1>
+          <p>A widget for rendering feature-rich forms defined in JSON definition files</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">lhncbc</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h2>
+<a id="what-is-lforms" class="anchor" href="#what-is-lforms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is LForms?</h2>
+
+<p><a href="https://lhncbc.nlm.nih.gov/project/lforms">LForms</a> is a light-weight,
+feature-rich, open-source widget that creates input forms for Web-based medical
+applications. It was developed by the Lister Hill National Center for Biomedical
+Communications (<a href="https://lhncbc.nlm.nih.gov">LHNCBC</a>), National Library of
+Medicine (<a href="https://www.nlm.nih.gov">NLM</a>),  part of the National Institutes of
+Health (<a href="https://www.nih.gov">NIH</a>), with the collaboration and support from the
+<a href="https://www.regenstrief.org/">Regenstrief Institute</a>, Inc. and the
+<a href="https://loinc.org/">LOINC</a> Committee.</p>
+
+<p>The LForms software is written entirely in JavaScript, using Google’s AngularJS
+framework, as well as some widgets developed in-house at NLM. A form is defined
+by listing the form questions (e.g. LOINC observations) and incorporating
+metadata for each, including: data type, cardinality, default value, units of
+measure (if numeric), answer lists (if multiple choice), relationship (in a
+hierarchy) to other questions, validation checks, skip logic and help messages.</p>
+
+<p>In LForms, questions can accept multiple answers, and groups of questions or
+single questions can repeat. LForms will generate total scores for any set of
+questions whose answers have scores (e.g., Glasgow coma score). <a href="#formdef">Form definitions</a> can be specified as JSON data structures or
+CSV files. We have used LForms to generate Web-based forms for many LOINC panels
+and for AHRQ Patient Safety Event Reports.  See the <a href="https://lforms-demo.nlm.nih.gov">demo
+site</a> for a working example.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>LForms installs using the <a href="http://bower.io">bower</a> package manager, i.e. <code>bower
+install lforms</code>.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="html" class="anchor" href="#html" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HTML</h3>
+
+<p>The HTML in your page will look something like:</p>
+
+<pre><code>&lt;body ng-app="myApp"&gt;
+  &lt;div ng-controller="myController"&gt;
+    &lt;lforms lf-data="myFormData"&gt;&lt;/lforms&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+
+<p>The directive is contained by a controller (in this example named
+"myController") which will have the responsibility of providing the
+form definition data as a JSON object (in this example named "myFormData").</p>
+
+<h3>
+<a id="javascript" class="anchor" href="#javascript" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JavaScript</h3>
+
+<p>In the JavaScript for the AngularJS app, include 'lformsWidget' as a module to
+be loaded. Then, in the JavaScript for the AngularJS controller, construct an
+LFormsData object with the JSON <a href="#formdef">form definition</a> and assign that
+object to the scope variable "lfData".  The form should initialize and display.
+For example:</p>
+
+<pre><code>angular.module('myApp', ['lformsWidget'])
+  .controller('myController', ['$scope', function ($scope) {
+    $scope.myFormData = new LFormsData(myFormDefinition);
+  }]);
+</code></pre>
+
+<h3>
+<a id="retrieving-user-entered-data" class="anchor" href="#retrieving-user-entered-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieving User-Entered Data</h3>
+
+<p>After the user fills out a form, the data they have entered and things like
+codes for coded answer lists will be stored in the data model.  To retrieve that
+data, LForms provides the following API on the LFormsData object:</p>
+
+<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
+</code></pre>
+
+<p>And if calling from outside the "myController", WidgetUtil provides a similar API:</p>
+
+<pre><code>WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+</code></pre>
+
+<p>With no arguments (i.e. $scope.myFormData.getFormData()), the data for the first LForm
+found on that page will be returned, and will include the form definition,
+along with entries for questions the user left blank and for questions that were
+hidden by skip-logic (which the user might not have seen).  This default return
+behavior can be changed by the parameters, but in all cases the returned data
+will follow the structure of the form, in that answers will be nested inside
+containing hashes representing their sections.</p>
+
+<p>The parameters are:</p>
+
+<ol>
+<li>formElement - an HTML element that includes the LForm's rendered form. If
+this is ommitted, the "body" tag will be used.  If there is more than one
+LForm within formElement, the first found will be used.</li>
+<li>noFormDefData (optional, default false) - If this is true, the form
+definition data will not be returned along with the data.</li>
+<li>noEmptyValue (optional, default false) - If this is true, items that have
+an empty value will be removed.</li>
+<li>noHiddenItem (optional, default false) - If this is true, items that are
+hidden by skip logic will be removed.</li>
+</ol>
+
+<p>As an example, here is the data from a partially filled-in vital signs panel,
+returned via <code>$scope.myFormData.getFormData(null, true, true, true)</code>:</p>
+
+<div class="highlight highlight-source-json"><pre>    {
+      <span class="pl-s"><span class="pl-pds">"</span>itemsData<span class="pl-pds">"</span></span>: [{
+        <span class="pl-s"><span class="pl-pds">"</span>questionCode<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>35094-2<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>items<span class="pl-pds">"</span></span>: [{
+          <span class="pl-s"><span class="pl-pds">"</span>questionCode<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>8480-6<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>100<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>unit<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>mm[Hg]<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>default<span class="pl-pds">"</span></span>: <span class="pl-c1">false</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>normalRange<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>absoluteRange<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>
+          }
+        }, {
+          <span class="pl-s"><span class="pl-pds">"</span>questionCode<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>8357-6<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>label<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>LA24014-5<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Oscillometry<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>other<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>
+          }
+        }]
+      }],
+      <span class="pl-s"><span class="pl-pds">"</span>templateData<span class="pl-pds">"</span></span>: [{
+        <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2015-11-09T05:00:00.000Z<span class="pl-pds">"</span></span>
+      }]
+    }</pre></div>
+
+<p>The first section in the returned data "itemsData" contains all of the data from
+the form itself.  LForms (optionally) adds a section to the top of the form that
+includes fields like "Date" and "Comment", and the data for these elements shows
+up in "templateData".  The form definition data was not included in the above
+example, but you can see the structure if you look closely at itemsData.  In
+this form, there was a section (question code "35094-2") which contained both of
+the two filled-in items as data.  That is why there is just one entry in the
+itemsData itself, and that item has two sub-items in "items" array.  One of the
+two items was numeric and had an associated unit field, while the other was a
+coded list field.</p>
+
+<h2>
+<a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
+
+<p>Form definitions are stored in a JSON structure.  To get a rough idea of what
+these are you can take a look at one of the
+<a href="app/data/sample-data.js">samples</a>, or for a detailed description see the
+<a href="form_definition.md">form definition documentation</a>.</p>
+
+<h2>
+<a id="licensing-and-copyright-notice" class="anchor" href="#licensing-and-copyright-notice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licensing and Copyright Notice</h2>
+
+<p>The LForms software employs the LOINC data model, including the LOINC table,
+LOINC codes, LOINC panels and forms file, which are copyrighted © 1995-2015,
+Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and
+Codes (LOINC) Committee, and are available at no cost under the license at
+<a href="http://loinc.org/terms-of-use">http://loinc.org/terms-of-use</a>. LOINC® is a registered United States trademark of
+Regenstrief Institute, Inc.</p>
+
+<p>Please cite as: <a href="http://lhncbc.nlm.nih.gov/project/lforms">http://lhncbc.nlm.nih.gov/project/lforms</a></p>
+
+<p>This software is distributed under the license set forth below, which is based
+on the BSD open-source license.</p>
+
+<p>No warranty or indemnification for damages resulting from claims brought by
+third parties whose proprietary rights may be infringed by your usage of this
+software are provided by any of the owners.</p>
+
+<h3>
+<a id="nih-license" class="anchor" href="#nih-license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NIH License</h3>
+
+<p>Owner Notice: The Owner of this software, LForms, is the National Institutes of
+Health/Department of Health and Human Services, Bethesda, MD, U.S.A. All rights
+reserved.</p>
+
+<p>The software includes elements owned by Joyent, Inc., TJ Holowaychuk, Google,
+Inc., Kit Cambridge, Kristopher Michael Kowal, jQuery Foundation, Twitter, Inc,
+The AngularUI Team, and Karsten Sperling, who have distributed them to NIH under
+the MIT open-source license.</p>
+
+<p>Redistribution and use in source and binary forms, with or without modification,
+are permitted for commercial and non-commercial purposes and products alike,
+provided that the following conditions are met:</p>
+
+<ul>
+<li>Redistributions of source code shall retain the above Owner Notice, this list
+of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form shall reproduce the above Owner Notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.</li>
+<li>Neither the names of the National Library of Medicine (NLM), the Lister Hill
+National Center for Biomedical Communications (LHNCBC), the National
+Institutes of Health (NIH), nor the names of any of the software contributors
+may be used to endorse or promote products derived from this software without
+specific prior written permission.</li>
+</ul>
+
+<p>THIS SOFTWARE IS PROVIDED BY THE OWNER AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+SHALL THE OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
