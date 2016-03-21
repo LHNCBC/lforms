@@ -1879,10 +1879,10 @@ var genetic = {
   ]
 };
 
-var genetic2 = {
+var genetic2 ={
   "type": "LOINC",
   "code": "X2000-0",
-  "name": "HL7 Genetic Test Panel for Variants - 20160308 (table version)",
+  "name": "HL7 Genetic Test Panel for Variants - 20160321 (table version)",
   "template": "form-view-b",
   "dataType": null,
   "header": null,
@@ -2019,7 +2019,7 @@ var genetic2 = {
           "question": "Variant ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID,Name"
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name"
         },
         {"questionCode": "XXXXX-13",
           "question": "Variant name",
@@ -2104,26 +2104,63 @@ var genetic2 = {
             },
             {"questionCode": "48013-7",
               "question": "NM_RefSeq",
+              "dataType": "CNE",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"9em"},
                   {"name": "min-width", "value":"2em"}]
-              }
+              },
+              "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=RefSeqID,GeneSymbol",
+              "dataControl": [
+                {
+                  "source": {
+                    "sourceType": "internal",
+                    "sourceDataType": "OBJECT",
+                    "itemCode": "XXXXX-5",
+                    "data": {"code": "value.code", "text": "value.RefSeqID"}
+                  },
+                  "onAttribute": "value"
+                }
+              ]
             },
             {"questionCode": "41103-3",
               "question": "DNA change",
-              "dataType": "ST",
+              "dataType": "CNE",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"50%"},
                   {"name": "min-width", "value":"2em"}]
-              }
+              },
+              "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=NucleotideChange,GeneSymbol",
+              "dataControl": [
+                {
+                  "source": {
+                    "sourceType": "internal",
+                    "sourceDataType": "OBJECT",
+                    "itemCode": "XXXXX-5",
+                    "data": {"code": "value.code", "text": "value.NucleotideChange"}
+                  },
+                  "onAttribute": "value"
+                }
+              ]
             },
             {"questionCode": "48005-3",
               "question": "AA change",
-              "dataType": "ST",
+              "dataType": "CNE",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"50%"},
                   {"name": "min-width", "value":"2em"}]
-              }
+              },
+              "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=AminoAcidChange,GeneSymbol",
+              "dataControl": [
+                {
+                  "source": {
+                    "sourceType": "internal",
+                    "sourceDataType": "OBJECT",
+                    "itemCode": "XXXXX-5",
+                    "data": {"code": "value.code", "text": "value.AminoAcidChange"}
+                  },
+                  "onAttribute": "value"
+                }
+              ]
             },
             {"questionCode": "XXXXX-17",
               "question": "NC/NG_RefSeq",
@@ -2140,7 +2177,7 @@ var genetic2 = {
               }
             },
             {"questionCode": "X0029",
-              "question": "Allele loc",
+              "question": "Genomic loc",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"5em"},
                   {"name": "min-width", "value":"2em"}]
@@ -2184,6 +2221,9 @@ var genetic2 = {
           "question": "CIGAR specification for mutations",
           "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
             "action": "show"}
+        },
+        {"questionCode": "XXXX2-13",
+          "question": "Allelic Frequency NFR"
         },
         {"questionCode": "X1001-0",
           "question": "Cytogenetic location",
@@ -2339,7 +2379,6 @@ var genetic2 = {
         "action": "show"},
       "header": true
     },
-
     {"questionCode": "XXXXX-20",
       "question": "Complex variants",
       "questionCardinality": {"max": "*", "min":"0"},
@@ -2351,24 +2390,31 @@ var genetic2 = {
           "question": "Variant ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
+          "externallyDefined":"https://lforms-service.nlm.nih.gov/alleles?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID,Name"
+        },
+        {"questionCode": "XXXXX-13",
+          "question": "Variant name",
+          "dataType": "ST",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType": "internal",
+                "sourceDataType": "TEXT",
+                "itemCode": "XXXXX-5",
+                "data": "value.Name"
+              },
+              "onAttribute": "value"
+            }
+          ]
         },
         {"questionCode": "XXXXX-14",
           "question": "Variant type",
           "dataType": "CNE",
           "answers": [
             {"code": "V1", "text": "Haplotype"},
-            {"code": "V2", "text": "Compound het"},
+            {"code": "V2", "text": "Compound Het"},
             {"code": "V3", "text": "Other"}
           ]
-        },
-        {"questionCode": "XXXXX-13",
-          "question": "Variant name",
-          "dataType": "ST"
-        },
-        {"questionCode": "XXXXX-15",
-          "question": "Assembly",
-          "dataType": "ST"
         },
         {
           "questionCode": "XXXX1-1",
@@ -2496,7 +2542,7 @@ var genetic2 = {
               }
             },
             {"questionCode": "X0029",
-              "question": "Allele loc",
+              "question": "Genomic loc",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"5em"},
                   {"name": "min-width", "value":"2em"}]
@@ -2505,6 +2551,13 @@ var genetic2 = {
             },
             {"questionCode": "69551-0",
               "question": "Alt allele",
+              "displayControl": {
+                "colCSS": [{"name": "width", "value":"5em"},
+                  {"name": "min-width", "value":"2em"}]
+              }
+            },
+            {"questionCode": "XXXX2-13",
+              "question": "Allelic Frequency NFR",
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"5em"},
                   {"name": "min-width", "value":"2em"}]
@@ -2687,7 +2740,6 @@ var genetic2 = {
         }
       ]
     },
-
     {
       "questionCode": "titleHeader3",
       "question": "Structural (Copy Number) Variants Section",
@@ -2696,7 +2748,6 @@ var genetic2 = {
         "action": "show"},
       "header": true
     },
-
     {"questionCode": "XXXX2-9",
       "question": "Structural (copy number) variants",
       "questionCardinality": {"max": "*", "min":"0"},
@@ -2704,6 +2755,10 @@ var genetic2 = {
         "action": "show"},
       "header": true,
       "items" : [
+        {"questionCode": "XXXX2-11",
+          "question": "Structural variant name",
+          "dataType": "ST"
+        },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
           "dataType": "CNE",
@@ -2787,6 +2842,10 @@ var genetic2 = {
           "question": "Structural variant ISCN",
           "dataType": "ST",
           "answerCardinality": {"max": "1", "min":"0"}
+        },
+        {"questionCode": "XXXX2-12",
+          "question": "Structural variant cytogenetic location",
+          "dataType": "ST"
         }
       ]
     }
