@@ -8,7 +8,7 @@
         <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
         <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
       </span>
-      <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}"
+      <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}" type="button"
               class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
               popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
     </h3>
@@ -85,12 +85,12 @@
                               <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
                               <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover-template.html'"
                                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      id="help-{{item._elementId}}">?</button>
+                                      type="button" id="help-{{item._elementId}}">?</button>
                               <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
                                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      id="help-{{item._elementId}}">?</button>
+                                      type="button" id="help-{{item._elementId}}">?</button>
                             </span>
-                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}"
+                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
                                     class="copyright-button" uib-popover="{{item.copyrightNotice}}"
                                     popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
                           </div>
@@ -99,7 +99,7 @@
                     </table>
                   </td>
                   <td class="button-col">
-                    <button ng-if="!hasOneRepeatingItem(item)" class="float-button"
+                    <button ng-if="!hasOneRepeatingItem(item)" class="float-button" type="button"
                             ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
                             title="Remove this '{{ item.question }}'">-</button>
                   </td>
@@ -169,12 +169,12 @@
                               <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
                               <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover-template.html'"
                                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      id="help-{{item._elementId}}">?</button>
+                                      type="button" id="help-{{item._elementId}}">?</button>
                               <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
                                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      id="help-{{item._elementId}}">?</button>
+                                      type="button" id="help-{{item._elementId}}">?</button>
                             </span>
-                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}"
+                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
                                     class="copyright-button" uib-popover="{{item.copyrightNotice}}"
                                     popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
                           </div>
@@ -215,7 +215,7 @@
                             class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
                         <td>
                           <div class="name-label has-popover-warning">
-                            <button ng-repeat="repeatingItem in item._repeatingSectionList"
+                            <button ng-repeat="repeatingItem in item._repeatingSectionList" type="button"
                                     class="float-button" id="add-{{repeatingItem._elementId}}"
                                     title="Add another '{{ repeatingItem.question }}'"
                                     ng-click="addOneRepeatingItem(repeatingItem)"
@@ -242,4 +242,4 @@
     </div>
   </div>
 </form>
-<button ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>
+<button type="button" ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>
