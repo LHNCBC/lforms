@@ -24,7 +24,7 @@
             </tr>
             </thead>
             <tbody id="" class="">
-            <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows"
+            <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index"
                 class="data-row has-ng-animate">
               <td class="button-col">
                 <button ng-if="!hasOneRepeatingItem(item)" type="button"
