@@ -302,6 +302,15 @@ var TestPage = function() {
       this.openBaseTestPage();
       this.openFormByIndex(8);
     },
+
+
+    /**
+     *  Opens the RxTerms form.
+     */
+    openRxTerms: function() {
+      this.openBaseTestPage();
+      this.openFormByIndex(10);
+    }
   }
 };
 
