@@ -27,7 +27,7 @@
             <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows"
                 class="data-row has-ng-animate">
               <td class="button-col">
-                <button ng-if="!hasOneRepeatingItem(item)"
+                <button ng-if="!hasOneRepeatingItem(item)" type="button"
                         id="del-{{row.header._elementId}}"
                         class="float-button" ng-click="removeOneRepeatingItem(row.header)"
                         title="Remove this row of '{{ row.header.question }}'">-</button>

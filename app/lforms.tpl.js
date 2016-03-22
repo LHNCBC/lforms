@@ -38,7 +38,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
     "      </span>\n" +
-    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\"\n" +
+    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" +
     "              class=\"copyright-button\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
     "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "    </h3>\n" +
@@ -115,12 +115,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
-    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
@@ -131,7 +131,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <td class=\"button-col\">\n" +
     "                    <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
     "                            ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
-    "                            title=\"Remove this '{{ item.question }}'\">-</button>\n" +
+    "                            type=\"button\" title=\"Remove this '{{ item.question }}'\">-</button>\n" +
     "                  </td>\n" +
     "                  <td ng-switch on=\"item.dataType\" class=\"hasTooltip\">\n" +
     "                    <ng-form name=\"innerForm2\">\n" +
@@ -193,12 +193,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
-    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
@@ -238,7 +238,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"> &nbsp; </td>\n" +
     "                        <td>\n" +
     "                          <div class=\"name-label has-popover-warning\">\n" +
-    "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
+    "                              <button ng-repeat=\"repeatingItem in item._repeatingSectionList\" type=\"button\"\n" +
     "                                      class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
     "                                      title=\"Add another '{{ repeatingItem.question }}'\"\n" +
     "                                      ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
@@ -265,8 +265,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "</form>\n" +
-    "<button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
-    "<button ng-if=\"debug\" ng-click=\"getFormData()\">Click to get form data</button>\n"
+    "<button type=\"button\" ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" +
+    "<button type=\"button\" ng-if=\"debug\" ng-click=\"getFormData()\">Click to get form data</button>\n"
   );
 
 
@@ -281,7 +281,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
     "      </span>\n" +
-    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\"\n" +
+    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" +
     "              class=\"copyright-button\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
     "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "    </h3>\n" +
@@ -358,12 +358,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
-    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
@@ -372,7 +372,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </table>\n" +
     "                  </td>\n" +
     "                  <td class=\"button-col\">\n" +
-    "                    <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
+    "                    <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\" type=\"button\"\n" +
     "                            ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
     "                            title=\"Remove this '{{ item.question }}'\">-</button>\n" +
     "                  </td>\n" +
@@ -442,12 +442,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "                              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover-template.html'\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                                      id=\"help-{{item._elementId}}\">?</button>\n" +
+    "                                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
     "                            </span>\n" +
-    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\"\n" +
+    "                            <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "                                    class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
     "                                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
     "                          </div>\n" +
@@ -488,7 +488,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                            class=\"t-treeline \" ng-class=\"getExtraRowTreeLevelClass($index, item._lastSiblingList)\"> &nbsp; </td>\n" +
     "                        <td>\n" +
     "                          <div class=\"name-label has-popover-warning\">\n" +
-    "                            <button ng-repeat=\"repeatingItem in item._repeatingSectionList\"\n" +
+    "                            <button ng-repeat=\"repeatingItem in item._repeatingSectionList\" type=\"button\"\n" +
     "                                    class=\"float-button\" id=\"add-{{repeatingItem._elementId}}\"\n" +
     "                                    title=\"Add another '{{ repeatingItem.question }}'\"\n" +
     "                                    ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
@@ -515,7 +515,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "</form>\n" +
-    "<button ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n"
+    "<button type=\"button\" ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n"
   );
 
 
@@ -564,7 +564,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows\"\n" +
     "                class=\"data-row has-ng-animate\">\n" +
     "              <td class=\"button-col\">\n" +
-    "                <button ng-if=\"!hasOneRepeatingItem(item)\"\n" +
+    "                <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" +
     "                        id=\"del-{{row.header._elementId}}\"\n" +
     "                        class=\"float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" +
     "                        title=\"Remove this row of '{{ row.header.question }}'\">-</button>\n" +
