@@ -4,7 +4,7 @@ describe('CDE form template', function() {
   it('empty header should have an "empty-question" class', function() {
 
     tp.openBaseTestPage();
-    tp.openFormByIndex(9);
+    tp.openFormByIndex(8);
 
     var headerRow = element(by.css(".empty-question.section-header"));
     expect(headerRow.isDisplayed()).toBe(true);
@@ -17,7 +17,7 @@ describe('CDE form template', function() {
   it('question code has no links if it is set to be shown', function() {
 
     tp.openBaseTestPage();
-    tp.openFormByIndex(9);
+    tp.openFormByIndex(8);
 
     var titleCode = element(by.css(".lf-form-title .item-code span"));
     expect(titleCode.getText()).toBe("[5603071e1c7581941db4dd50]");

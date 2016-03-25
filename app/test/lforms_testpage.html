@@ -95,7 +95,6 @@
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
               {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
               {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
-              {text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4'},
               {text: 'Full-Featured Demo', id: 'all-in-one'},
               {text: 'Form Builder created test form', id: 'formC'},
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
@@ -133,12 +132,6 @@
                 case '35088-4B':
                   //'Glasgow Coma Score (with score rules)'
                   lfData2 = new LFormsData(angular.copy(glasgow));
-                  break;
-                case '35088-4':
-                  //'Glasgow Coma Score (with score rules)--RI'
-                  var formData = angular.copy(glasgowRI);
-                  WidgetUtil.preprocessRIData(formData.items);
-                  lfData2 = new LFormsData(formData);
                   break;
                 case 'all-in-one':
                   //'Full-Featured Demo'

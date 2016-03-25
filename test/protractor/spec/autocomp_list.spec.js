@@ -24,7 +24,7 @@ describe('autocomp list', function() {
   it('should interoperate with score rules', function() {
     // The data model needs to be correctly updated
     // when the user enters a new value.
-    tp.openGlasgowRIForm();
+    tp.openGlasgowForm();
 
     browser.wait(function() {
       return ff.eyeField.isDisplayed();
@@ -56,7 +56,7 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
-    expect(ff.eyeField.getAttribute('value')).toBe("Eyes open spontaneously");
+    expect(ff.eyeField.getAttribute('value')).toBe("4. Eyes open spontaneously");
     expect(ff.scoreField.getAttribute('value')).toEqual('4');
   });
 
