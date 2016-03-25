@@ -390,7 +390,7 @@ fieldset {
 
 /*
  * 1. Corrects color not being inherited in IE6/7/8/9
- * 2. Corrects text not wrapping in FF3 
+ * 2. Corrects text not wrapping in FF3
  * 3. Corrects alignment displayed oddly in IE6/7
  */
 legend {
@@ -789,7 +789,7 @@ section {
 section #title {
   border: 0;
   outline: none;
-  margin: 0 0 50px 0;
+  margin: 0 0 25px 0;
   padding: 0 0 5px 0;
 }
 section #title h1 {
@@ -848,4 +848,12 @@ section #title .credits.right {
   nav {
     display: none;
   }
+}
+/* Fix internal links to account for the top header bar.
+ * Thanks to http://stackoverflow.com/a/28824157/360782 */
+:target:before {
+  content:"";
+  display:block;
+  height:60px; /* fixed header height*/
+  margin-top:-60px; /* negative fixed header height */
 }
