@@ -52,7 +52,7 @@ Health (<a href="https://www.nih.gov">NIH</a>), with the collaboration and suppo
 
 <p>The LForms software is written entirely in JavaScript, using Google’s AngularJS
 framework, as well as some widgets developed in-house at NLM. A form is defined
-by listing the form questions (e.g. LOINC observations) and incorporating
+by listing the form questions (e.g., LOINC observations) and incorporating
 metadata for each, including: data type, cardinality, default value, units of
 measure (if numeric), answer lists (if multiple choice), relationship (in a
 hierarchy) to other questions, validation checks, skip logic and help messages.</p>
@@ -70,7 +70,7 @@ site</a> for a working example.</p>
 <p>LForms can be used either as a prebuilt package or installed using the using the
 <a href="http://bower.io">bower</a> package manager (i.e. <code>bower
 install lforms</code>).  If you aren't using bower, the simplest way to start
-using it is by linking to the prebuilt version hosted on lforms-service.  The
+using LForms is by linking to the prebuilt version hosted on lforms-service.  The
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
@@ -80,18 +80,18 @@ URLs for the JavaScript and the CSS are:
 
 <p>You can also lock things to a particular release version (one of the tagged
 versions on the <a href="https://github.com/lhncbc/lforms">GitHub
-repository</a>) by replacing "latest" with a version, e.g.  "5.4.2".
+repository</a>) by replacing "latest" with a version, e.g.,  "5.4.2".
 </p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<p>Although LForms internally uses AngularJS and offeres a diretive for use by
+<p>Although LForms internally uses AngularJS and offers a diretive for use by
 AngularJS projects, you do not need to know anything about AngularJS to use
 it.</p>
 
 <h3>Rendering a Form (Without AngularJS)</h3>
-<p>In your HTML, create a an element to hold the form.  You will pass an
+<p>In your HTML, create a an element to hold the form.  You will pass a
 reference to this element or its ID to a utility function load the form.</p>
 
 <h4>HTML (without AngularJS)</h4>
@@ -130,8 +130,7 @@ which will render the form:
 <h3>Rendering a Form (AngularJS Method)</h3>
 
 <p>As in the non-Angular method, you will need to include the LForms CSS and
-JavaScript.  However, if you using AngularJS in your project, chances are you
-are also using bower and wiredep to load dependencies into your page.</p>
+JavaScript (possibly using bower and wiredep, if you are using those).</p>
 
 <h4>
 <a id="html" class="anchor" href="#html" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HTML</h3>
@@ -191,7 +190,7 @@ containing hashes representing their sections.</p>
 
 <ol>
 <li>formElement - an HTML element that includes the LForm's rendered form. If
-this is ommitted, the "body" tag will be used.  If there is more than one
+this is omitted, the "body" tag will be used.  If there is more than one
 LForm within formElement, the first found will be used.</li>
 <li>noFormDefData (optional, default false) - If this is true, the form
 definition data will not be returned along with the data.</li>
