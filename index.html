@@ -41,28 +41,32 @@
         <h2>
 <a id="what-is-lforms" class="anchor" href="#what-is-lforms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is LForms?</h2>
 
-<p><a href="https://lhncbc.nlm.nih.gov/project/lforms">LForms</a> is a light-weight,
-feature-rich, open-source widget that creates input forms for Web-based medical
-applications. It was developed by the Lister Hill National Center for Biomedical
+<p><a href="https://lhncbc.nlm.nih.gov/project/lforms">LForms</a> is a
+feature-rich, open-source widget that creates input forms based on definition
+files for Web-based applications. It was developed by the Lister Hill National
+Center for Biomedical
 Communications (<a href="https://lhncbc.nlm.nih.gov">LHNCBC</a>), National Library of
 Medicine (<a href="https://www.nlm.nih.gov">NLM</a>),  part of the National Institutes of
 Health (<a href="https://www.nih.gov">NIH</a>), with the collaboration and support from the
 <a href="https://www.regenstrief.org/">Regenstrief Institute</a>, Inc. and the
 <a href="https://loinc.org/">LOINC</a> Committee.</p>
 
-<p>The LForms software is written entirely in JavaScript, using Google’s AngularJS
-framework, as well as some widgets developed in-house at NLM. A form is defined
-by listing the form questions (e.g., LOINC observations) and incorporating
-metadata for each, including: data type, cardinality, default value, units of
-measure (if numeric), answer lists (if multiple choice), relationship (in a
-hierarchy) to other questions, validation checks, skip logic and help messages.</p>
-
-<p>In LForms, questions can accept multiple answers, and groups of questions or
-single questions can repeat. LForms will generate total scores for any set of
-questions whose answers have scores (e.g., Glasgow coma score). <a href="#formdef">Form definitions</a> can be specified as JSON data structures or
-CSV files. We have used LForms to generate Web-based forms for many LOINC panels
-and for AHRQ Patient Safety Event Reports.  See the <a href="https://lforms-demo.nlm.nih.gov">demo
-site</a> for a working example.</p>
+<h2>Features</h2>
+See the <a href="demos.html">demos</a> for a step-by-step introduction.
+Featuers include:
+<ul>
+  <li>Form definitions are defined in JSON, listing the questions</li>
+  <li>Sections containing questions</li>
+  <li>Repeating sections and questions (by specifying cardinality)</li>
+  <li>Hiding and showing questions via skip logic based on the user's answers to
+other questions</li>
+  <li>Scores for answers which update a total score field.</li>
+  <li>Coded answer lists which might require a matching input</li>
+  <li>Default values</li>
+  <li>Unit lists for numeric questions</li>
+  <li>Date fields</li>
+  <li>Help messages for questions</li>
+</ul>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
@@ -168,23 +172,23 @@ For example:</p>
 
 <p>After the user fills out a form, the data they have entered and things like
 codes for coded answer lists will be stored in the data model.  To retrieve that
-data, LForms provides the following API on the LFormsData object:</p>
-
-<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
-</code></pre>
-
-<p>And if calling from outside the "myController", WidgetUtil provides a similar API:</p>
+data, LForms provides the following utility method:</p>
 
 <pre><code>WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>With no arguments (i.e. $scope.myFormData.getFormData()), the data for the first LForm
+Or, from wihin an AngularJS app, there is also an API on the LFormsData object:</p>
+
+<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
+</code></pre>
+
+<p>With no arguments (i.e. WidgetUtil.getFormData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
 behavior can be changed by the parameters, but in all cases the returned data
 will follow the structure of the form, in that answers will be nested inside
-containing hashes representing their sections.</p>
+containing sections.</p>
 
 <p>The parameters are:</p>
 

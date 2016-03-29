@@ -46,10 +46,10 @@ href="https://lforms-demo.nlm.nih.gov">lforms-demo</a> website, or see the last
 demo, which lets you pull in LOINC forms.</p>
 
 <ol>
-  <li class="demo">
-    A form with just a single question.  The form definition (which you can see
-on the "JavaScript" tab of the demo) only defines the question
-    "Eye color".  By default, the form template includes some top level questions
+  <li class="demo"><span class="demoTitle">Single-question form:</span>
+    Click on the "JavaScript" tab to view this form's definition.  This form
+only defines the question "Eye color".  By default, the form template includes
+some top level questions
 seen here (Date Done, etc.)  Also, the form template includes some checkboxes.
 If you click on "Display Question Code" you will see the code for both the form
 and the question.  Both of these these parts are configurable and removable.
@@ -59,8 +59,9 @@ and the question.  Both of these these parts are configurable and removable.
   </li>
 
   <li class="demo">
-    This is the same form but configured to turn off both the checkboxes and the
-top-level questions.  (In the form definition, obrHeader is what controls the
+    <span class="demoTitle">Top-level questions removed:</span>  This is the same
+form but configured to turn off both the checkboxes and the top-level questions.
+(In the form definition, obrHeader is what controls the
 visibility of the top-level questions.)
     <div>
       <a class="showSource" _src="lforms/kga7h72f">[Show Demo]</a>
@@ -68,16 +69,18 @@ visibility of the top-level questions.)
   </li>
 
   <li class="demo">
-    If you do want the top-level questions, but want different ones, that can be
-controlled as well.  Here is an example with different fields.
+    <span class="demoTitle">Custom top-level questions:</span> If you do want the
+top-level questions, but want different ones, that can be controlled as well.
+Here is an example with different fields.
     <div>
       <a class="showSource" _src="lforms/0nLt814m">[Show Demo]</a>
     </div>
   </li>
 
   <li class="demo">
-    Questions can have coded answer lists.  The dataType for list questions
-should be set to either "CNE" ("coded with no exceptions", which limits input to list choices) or "CWE"
+    <span class="demoTitle">Coded answer lists:</span> Questions can have coded
+answer lists.  The dataType for list questions should be set to either "CNE"
+("coded with no exceptions", which limits input to list choices) or "CWE"
 ("coded with exceptions", which allows entry of off-list answers).
     <div>
       <a class="showSource" _src="lforms/v0uo9kam">[Show Demo]</a>
@@ -85,16 +88,17 @@ should be set to either "CNE" ("coded with no exceptions", which limits input to
   </li>
 
   <li class="demo">
-    Questions can also be date fields with a calendar input, or be numeric
-fields with units.
+    <span class="demoTitle">Date fields &amp;fields with units</span>: Questions
+can also be date fields with a calendar input, or be numeric fields with units.
     <div>
       <a class="showSource" _src="lforms/90so0gxg">[Show Demo]</a>
     </div>
   </li>
 
   <li class="demo">
-    When answer lists are too large to be included directly in the form
-definition, they can be specified via a URL which returns matches as the user
+    <span class="demoTitle">AJAX autocompletion fields:</span> When answer lists
+are too large to be included directly in the form definition, they can be
+specified via a URL which returns matches as the user
 types.  Several such data sources are available on <a
 href="https://lforms-service.nlm.nih.gov">lforms-service</a>.  (If you wish to
 construct your own, the web service receiving the URL will need to understand
@@ -112,17 +116,22 @@ constructor.)
 repeating sections, questions in tables, skip logic, and more!</li>
 
   <li class="demo">
-    The RxTerms demo form.  This simple form just has two fields, one which
-    provides a search autocompleter and one which obtains its list of strengths from
-    the data associated with the selected drug name.
+    <span class="demoTitle">One field controlling another field's list:</span>
+    This simple form has just has two fields, one which
+    provides a search autocompleter (using the RxTerms API from <a
+href="https://lforms-service.nlm.nih.gov">lforms-service</a>) and one which
+obtains its list of strengths from the data associated with the selected drug
+name.
     <div>
       <a class="showSource" _src="lforms/ccbr6nos">[Show Demo]</a>
     </div>
   </li>
 
   <li class="demo">
-    LOINC forms.  The autocompleting field at the top lets you select a
-    form which is then rendered below.
+    <span class="demoTitle">Ready-made form definitions from LOINC:</span> The
+autocompleting field at the top lets you select a LOINC medical form which is
+then rendered below.  These form definitions are
+hosted on <a href="https://lforms-service.nlm.nih.gov">lforms-service</a>.
     <div>
       <a class="showSource" _src="lforms/weaqqbg4">[Show Demo]</a>
     </div>

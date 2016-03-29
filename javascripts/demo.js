@@ -20,3 +20,6 @@ jQuery('.hideSource').click(function(e) {
   e.target.parentNode.style.display='none';
   e.target.parentNode.previousElementSibling.style.display = '';
 });
+// Show the first one
+jQuery('.showSource').first().click();
+

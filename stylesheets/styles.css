@@ -857,3 +857,9 @@ section #title .credits.right {
   height:60px; /* fixed header height*/
   margin-top:-60px; /* negative fixed header height */
 }
+
+.demoTitle {
+  font: 120%;
+  font-weight: bold;
+  color: #AECA64;
+}
