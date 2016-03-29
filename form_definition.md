@@ -119,7 +119,7 @@ Keys:
           data.  Each element in the array is a hash with the following keys:
           * text - the display string for the list item
           * code - (optional) a code that identifies the list item
-        * displayControl - This controls display styles of the column or the filed.  
+        * displayControl - This controls display styles of the column or the field.  
           It is a hash with the keys of "colCSS" for columns styles and "css" for field 
           styles. The values are an array of hashes of valid CSS styles. Here is an example: 
           `{"colCSS": [{"name":"width","value":"30%"},{"name":"min-width","value":"4em"}]}`

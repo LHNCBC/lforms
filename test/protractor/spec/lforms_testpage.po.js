@@ -4,16 +4,6 @@ var TestPage = function() {
   var directiveTestUrl = 'http://0.0.0.0:9001/test/directiveTest.html';
   var testPageUrl = 'http://0.0.0.0:9001/test/lforms_testpage.html';
 
-  var formsList = [
-    {varName: 'FHTData', text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
-    {varName: 'horizontalFHTData', text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
-    {varName: 'glasgow', text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
-    {varName: 'glasgowRI', text: 'Glasgow Coma Score (with score rules)--RI', id: '35088-4', source: 'RI'},
-    {varName: 'allInOne', text: 'Full-Featured Demo', id: 'all-in-one'},
-    {varName: 'formBuilder', text: 'Form Builder created test form', id: 'formC'},
-    {varName: 'MDS3', text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
-    {varName: 'formWithUserData', text: 'Form With User Data', id: 'form-with-user-data'}
-  ];
 
   /**
    *  Makes the screen reader log visible so that getText() will be
@@ -264,19 +254,11 @@ var TestPage = function() {
     },
 
     /**
-     *  Open the glasgow form from RI
-     */
-    openGlasgowRIForm: function() {
-      this.openBaseTestPage();
-      this.openFormByIndex(4);
-    },
-
-    /**
      *  Open the "full featured" form.
      */
     openFullFeaturedForm: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(5);
+      this.openFormByIndex(4);
     },
 
     /**
@@ -284,7 +266,7 @@ var TestPage = function() {
      */
     openFormBuilder: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(6);
+      this.openFormByIndex(5);
     },
 
     /**
@@ -292,7 +274,7 @@ var TestPage = function() {
      */
     openMDS3: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(7);
+      this.openFormByIndex(6);
     },
 
     /**
@@ -300,7 +282,7 @@ var TestPage = function() {
      */
     openFormWithUserData: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(8);
+      this.openFormByIndex(7);
     },
 
 
@@ -309,7 +291,7 @@ var TestPage = function() {
      */
     openRxTerms: function() {
       this.openBaseTestPage();
-      this.openFormByIndex(10);
+      this.openFormByIndex(9);
     }
   }
 };
