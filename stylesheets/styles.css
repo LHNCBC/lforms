@@ -863,3 +863,7 @@ section #title .credits.right {
   font-weight: bold;
   color: #AECA64;
 }
+
+li.demo {
+  margin-bottom: 0.75em;
+}

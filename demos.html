@@ -50,9 +50,10 @@ demo, which lets you pull in LOINC forms.</p>
     Click on the "JavaScript" tab to view this form's definition.  This form
 only defines the question "Eye color".  By default, the form template includes
 some top level questions
-seen here (Date Done, etc.)  Also, the form template includes some checkboxes.
-If you click on "Display Question Code" you will see the code for both the form
-and the question.  Both of these these parts are configurable and removable.
+seen here (Date Done, etc.)  Also, the form template includes some checkboxes
+above the form (to be discussed later).
+Both the checkboxes and the top-level questions can be removed, as shown in the
+next demo.
     <div>
       <a class="showSource" _src="lforms/rxmdh3jq">[Show Demo]</a>
     </div>
@@ -88,7 +89,7 @@ answer lists.  The dataType for list questions should be set to either "CNE"
   </li>
 
   <li class="demo">
-    <span class="demoTitle">Date fields &amp;fields with units</span>: Questions
+    <span class="demoTitle">Date fields &amp; fields with units</span>: Questions
 can also be date fields with a calendar input, or be numeric fields with units.
     <div>
       <a class="showSource" _src="lforms/90so0gxg">[Show Demo]</a>
@@ -113,7 +114,8 @@ constructor.)
   </li>
 
   <li>TBD -- More demos to come, showing multi-answer questions, sections,
-repeating sections, questions in tables, skip logic, and more!</li>
+repeating sections, questions in tables, skip logic, help text, keyboard
+navigation control, and more!</li>
 
   <li class="demo">
     <span class="demoTitle">One field controlling another field's list:</span>
@@ -129,8 +131,9 @@ name.
 
   <li class="demo">
     <span class="demoTitle">Ready-made form definitions from LOINC:</span> The
-autocompleting field at the top lets you select a LOINC medical form which is
-then rendered below.  These form definitions are
+autocompleting field at the top lets you select a <a href="http://loinc.org">LOINC</a>
+medical form which is then rendered below.  (Try typing "vit" to see a vitamin D
+panel.)  These form definitions are
 hosted on <a href="https://lforms-service.nlm.nih.gov">lforms-service</a>.
     <div>
       <a class="showSource" _src="lforms/weaqqbg4">[Show Demo]</a>
