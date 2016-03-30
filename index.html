@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Lforms by lhncbc</title>
+    <title>LForms: A Form-Rendering Wigdet</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -18,78 +18,141 @@
 
   </head>
   <body>
+    <div class="wrapper">
+
+
       <div id="header">
         <nav>
           <li class="fork"><a href="https://github.com/lhncbc/lforms">View On GitHub</a></li>
+          <li class="fork" style="padding-left: 2em"><a href="demos.html">Demos</a></li>
           <li class="downloads"><a href="https://github.com/lhncbc/lforms/zipball/master">ZIP</a></li>
           <li class="downloads"><a href="https://github.com/lhncbc/lforms/tarball/master">TAR</a></li>
           <li class="title">DOWNLOADS</li>
         </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+      </div><!-- end header -->
 
       <section>
         <div id="title">
-          <h1>Lforms</h1>
+          <h1>LForms</h1>
           <p>A widget for rendering feature-rich forms defined in JSON definition files</p>
           <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">lhncbc</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
-
         <h2>
 <a id="what-is-lforms" class="anchor" href="#what-is-lforms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is LForms?</h2>
 
-<p><a href="https://lhncbc.nlm.nih.gov/project/lforms">LForms</a> is a light-weight,
-feature-rich, open-source widget that creates input forms for Web-based medical
-applications. It was developed by the Lister Hill National Center for Biomedical
+<p><a href="https://lhncbc.nlm.nih.gov/project/lforms">LForms</a> is a
+feature-rich, open-source widget that creates input forms based on definition
+files for Web-based applications. It was developed by the Lister Hill National
+Center for Biomedical
 Communications (<a href="https://lhncbc.nlm.nih.gov">LHNCBC</a>), National Library of
 Medicine (<a href="https://www.nlm.nih.gov">NLM</a>),  part of the National Institutes of
 Health (<a href="https://www.nih.gov">NIH</a>), with the collaboration and support from the
 <a href="https://www.regenstrief.org/">Regenstrief Institute</a>, Inc. and the
 <a href="https://loinc.org/">LOINC</a> Committee.</p>
 
-<p>The LForms software is written entirely in JavaScript, using Google’s AngularJS
-framework, as well as some widgets developed in-house at NLM. A form is defined
-by listing the form questions (e.g. LOINC observations) and incorporating
-metadata for each, including: data type, cardinality, default value, units of
-measure (if numeric), answer lists (if multiple choice), relationship (in a
-hierarchy) to other questions, validation checks, skip logic and help messages.</p>
-
-<p>In LForms, questions can accept multiple answers, and groups of questions or
-single questions can repeat. LForms will generate total scores for any set of
-questions whose answers have scores (e.g., Glasgow coma score). <a href="#formdef">Form definitions</a> can be specified as JSON data structures or
-CSV files. We have used LForms to generate Web-based forms for many LOINC panels
-and for AHRQ Patient Safety Event Reports.  See the <a href="https://lforms-demo.nlm.nih.gov">demo
-site</a> for a working example.</p>
+<h2>Features</h2>
+See the <a href="demos.html">demos</a> for a step-by-step introduction.
+Featuers include:
+<ul>
+  <li>Form definitions are defined in JSON, listing the questions</li>
+  <li>Sections containing questions</li>
+  <li>Repeating sections and questions (by specifying cardinality)</li>
+  <li>Hiding and showing questions via skip logic based on the user's answers to
+other questions</li>
+  <li>Scores for answers which update a total score field.</li>
+  <li>Coded answer lists which might require a matching input</li>
+  <li>Default values</li>
+  <li>Unit lists for numeric questions</li>
+  <li>Date fields</li>
+  <li>Help messages for questions</li>
+</ul>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>LForms installs using the <a href="http://bower.io">bower</a> package manager, i.e. <code>bower
-install lforms</code>.</p>
+<p>LForms can be used either as a prebuilt package or installed using the using the
+<a href="http://bower.io">bower</a> package manager (i.e. <code>bower
+install lforms</code>).  If you aren't using bower, the simplest way to start
+using LForms is by linking to the prebuilt version hosted on lforms-service.  The
+URLs for the JavaScript and the CSS are:
+</p>
+<dl>
+  <dt>JavaScript</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/latest/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/latest/styles/lforms.min.css</dd>
+</dl>
+
+<p>You can also lock things to a particular release version (one of the tagged
+versions on the <a href="https://github.com/lhncbc/lforms">GitHub
+repository</a>) by replacing "latest" with a version, e.g.,  "5.4.2".
+</p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<h3>
+<p>Although LForms internally uses AngularJS and offers a diretive for use by
+AngularJS projects, you do not need to know anything about AngularJS to use
+it.</p>
+
+<h3>Rendering a Form (Without AngularJS)</h3>
+<p>In your HTML, create a an element to hold the form.  You will pass a
+reference to this element or its ID to a utility function load the form.</p>
+
+<h4>HTML (without AngularJS)</h4>
+<pre><code>&lt;div id="myFormContainer"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>Also include the LForms JavaScript and CSS files on the page.  In your page
+header:</p>
+
+<pre><code>
+&lt;link
+ href="https://lforms-service.nlm.nih.gov/lforms-versions/latest/styles/lforms.min.css"
+ media="screen" rel="stylesheet" /&gt;
+</code></pre>
+
+And with your other JavaScript:
+
+<pre><code>&lt;script
+ src="https://lforms-service.nlm.nih.gov/lforms-versions/latest/lforms.min.js"
+ &gt;&lt;/script&gt;
+</code></pre>
+
+<h4>JavaScript (without AngularJS)</h4>
+
+Your <a href="#formdef">form definition</a> should be loaded into a variable on
+the window object, e.g.:
+<pre><code>window.myFormDefinition = {...}
+</code></pre>
+
+Pass that variable name and the form container element to a utility function
+which will render the form:
+
+<pre><code>WidgetUtil.addFormToPage('myFormDefinition', 'myFormContainer');
+</code></pre>
+
+<h3>Rendering a Form (AngularJS Method)</h3>
+
+<p>As in the non-Angular method, you will need to include the LForms CSS and
+JavaScript (possibly using bower and wiredep, if you are using those).</p>
+
+<h4>
 <a id="html" class="anchor" href="#html" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HTML</h3>
 
 <p>The HTML in your page will look something like:</p>
 
 <pre><code>&lt;body ng-app="myApp"&gt;
   &lt;div ng-controller="myController"&gt;
-    &lt;lforms lf-data="myFormData"&gt;&lt;/lforms&gt;
+    &lt;lforms lf-data="myFormDefinition"&gt;&lt;/lforms&gt;
   &lt;/div&gt;
 &lt;/body&gt;
 </code></pre>
 
 <p>The directive is contained by a controller (in this example named
 "myController") which will have the responsibility of providing the
-form definition data as a JSON object (in this example named "myFormData").</p>
+form definition data as a JSON object (in this example named "myFormDefinition").</p>
 
-<h3>
+<h4>
 <a id="javascript" class="anchor" href="#javascript" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>JavaScript</h3>
 
 <p>In the JavaScript for the AngularJS app, include 'lformsWidget' as a module to
@@ -109,29 +172,29 @@ For example:</p>
 
 <p>After the user fills out a form, the data they have entered and things like
 codes for coded answer lists will be stored in the data model.  To retrieve that
-data, LForms provides the following API on the LFormsData object:</p>
-
-<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
-</code></pre>
-
-<p>And if calling from outside the "myController", WidgetUtil provides a similar API:</p>
+data, LForms provides the following utility method:</p>
 
 <pre><code>WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>With no arguments (i.e. $scope.myFormData.getFormData()), the data for the first LForm
+Or, from wihin an AngularJS app, there is also an API on the LFormsData object:</p>
+
+<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
+</code></pre>
+
+<p>With no arguments (i.e. WidgetUtil.getFormData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
 behavior can be changed by the parameters, but in all cases the returned data
 will follow the structure of the form, in that answers will be nested inside
-containing hashes representing their sections.</p>
+containing sections.</p>
 
 <p>The parameters are:</p>
 
 <ol>
 <li>formElement - an HTML element that includes the LForm's rendered form. If
-this is ommitted, the "body" tag will be used.  If there is more than one
+this is omitted, the "body" tag will be used.  If there is more than one
 LForm within formElement, the first found will be used.</li>
 <li>noFormDefData (optional, default false) - If this is true, the form
 definition data will not be returned along with the data.</li>
@@ -187,8 +250,8 @@ coded list field.</p>
 
 <p>Form definitions are stored in a JSON structure.  To get a rough idea of what
 these are you can take a look at one of the
-<a href="app/data/sample-data.js">samples</a>, or for a detailed description see the
-<a href="form_definition.md">form definition documentation</a>.</p>
+<a href="https://github.com/lhncbc/lforms/blob/master/app/data/sample-data.js">samples</a>, or for a detailed description see the
+<a href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">form definition documentation</a>.</p>
 
 <h2>
 <a id="licensing-and-copyright-notice" class="anchor" href="#licensing-and-copyright-notice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licensing and Copyright Notice</h2>
@@ -248,10 +311,16 @@ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.</p>
+
+    <hr>
+    <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">lhncbc</a></span>
+    <span class="credits right">Hosted on GitHub Pages &mdash; Based on theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
       </section>
 
     </div>
+
+
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+
   </body>
 </html>
