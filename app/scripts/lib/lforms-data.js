@@ -140,7 +140,7 @@ var LFormsData = Class.extend({
   },
   // default options for each supported templates, could move it to a configuration file
   _defaultOptionsForSupportedTemplates: {
-    "form-view-a": {
+    "table": {
       showQuestionCode: false,
       showCodingInstruction: false,
       tabOnInputFieldsOnly: false,
@@ -190,7 +190,57 @@ var LFormsData = Class.extend({
         }
       ]
     },
-    "form-view-b": {
+    "list": {
+      showQuestionCode: false,
+      showCodingInstruction: false,
+      tabOnInputFieldsOnly: false,
+      hideHeader: false,
+      hideCheckBoxes: false,
+      allowMultipleEmptyRepeatingItems: false,
+      allowHTMLInInstructions: false,
+      useAnimation: true,
+      obxTableColumns: [
+        {"name" : "Name", "displayControl":{
+          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "", "displayControl":{
+          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+        },
+        {"name" : "Value", "displayControl":{
+          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+        },
+        {"name" : "Units", "displayControl":{
+          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+        }
+      ],
+      obrHeader: true,
+      obrItems: [
+        {
+          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {
+          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
+          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+          }
+        },
+        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
+          }
+        }
+      ]
+    },
+    "matrix": {
       showQuestionCode: false,
       showCodingInstruction: false,
       tabOnInputFieldsOnly: false,
@@ -703,6 +753,14 @@ var LFormsData = Class.extend({
     for (var i=0; i<iLen; i++) {
       var item = items[i];
 
+      // rename layout for backward compatibility
+      if (!item.displayControl) {
+        item.displayControl = {};
+        if (!item.displayControl.questionLayout && item.layout) {
+          item.displayControl.questionLayout = item.layout;
+        }
+      }
+
       // set default dataType
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
       // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
@@ -1140,7 +1198,7 @@ var LFormsData = Class.extend({
   /**
    * Set up the internal data for handling the horizontal table
    * Note:
-   * 1) "layout" values 'horizontal' and 'vertical' are only set on items whose "header" is true
+   * 1) "questionLayout" values 'horizontal','vertical' and 'matrix' are only set on items whose "header" is true
    * 2) any items within a 'horizontal' table must be a leaf node. i.e. it cannot contain any sub items.
    * 3) all items within a 'horizontal' table has it's "_inHorizontalTable" set to true.
    * 4) _repeatableItems is reused for adding a repeating row in a horizontal table. but the header item will not be added.
@@ -1172,7 +1230,7 @@ var LFormsData = Class.extend({
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
       // header item and horizontal layout
-      if (item.header && item.layout == "horizontal" ) {
+      if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];

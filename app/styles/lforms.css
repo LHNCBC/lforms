@@ -63,7 +63,8 @@
 }
 
 /* input fields in tables */
-.lf-form-table input {
+.lf-form input[type="text"],
+.lf-form input[type="number"] {
   border: 1px solid #ced5d9 ;
   width: 100%;
   height: 28px;
@@ -75,7 +76,7 @@
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
-.lf-form-table textarea {
+.lf-form textarea {
   border: 1px solid #ced5d9 ;
   width: 100%;
   height: 1em; /* initial height (for firefox)*/
@@ -94,9 +95,10 @@
   resize: vertical; /* not allow user to change width */
 
 }
-.lf-form-table input:focus {
+.lf-form input:focus {
   background-color: #FFF8C6
 }
+
 
 /* rows in tables */
 .lf-form-table .lf-form-table-row {
@@ -176,11 +178,11 @@
 }
 
 /* name field */
-.lf-form-table .name-label span.prompt {
+.lf-form .name-label span.prompt {
   font-style: italic;
   font-size: 75%;
 }
-.lf-form-table .name-label span.sn {
+.lf-form .name-label span.sn {
   -moz-border-radius: 6px;
   border-radius: 6px;
   background-color: #458AC5;
@@ -491,3 +493,25 @@ Override color of select boxes in calendar widget title bar.
 .lf-form .lf-form-table .title-row .name-label {
   color: white;
 }
+
+
+
+/*** template-list.html ***/
+.lf-form.template-list .name-label {
+  background-color: #e8e8e8;
+}
+
+.lf-form.template-list .data-row {
+  border: 1px solid #ced5d9 ;
+  margin: 5px;
+}
+
+.lf-form.template-list .section {
+  margin: 10px;
+}
+
+/*.lf-form.template-list .name-label,*/
+/*.lf-form.template-list .button-col {*/
+  /*display: inline-block;*/
+/*}*/
+/***  end of template-list.html ***/

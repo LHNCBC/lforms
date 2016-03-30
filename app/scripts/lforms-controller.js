@@ -4,7 +4,7 @@ angular.module('lformsWidget')
       function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
       'use strict';
 
-      $scope.debug = false;
+      $scope.debug = true;
 
       $scope.hasUnused = false;
       $scope.repeatingSectionStatus = {};
@@ -318,7 +318,7 @@ angular.module('lformsWidget')
         else {
           eleClass += ' question';
         }
-        if (item.layout == 'horizontal') {
+        if (item.displayControl && item.displayControl.questionLayout === 'horizontal') {
           eleClass += ' horizontal';
         }
         if (!item.question || item.question.length === 0) {
@@ -540,18 +540,6 @@ angular.module('lformsWidget')
 
 
       /**
-       * Check if the current item is the last item within one or more
-       * repeating items (or groups) and return those containing repeating
-       * items (or groups)
-       * @param item an item in the lforms form items array
-       * @return {boolean}
-       */
-      $scope.isLastItemInRepeatingItems = function(index) {
-        return $scope.lfData.isLastItemInRepeatingItems(index);
-      };
-
-
-      /**
        * Check if the question needs an extra input
        * @param item an item in the lforms form items array
        * @returns {*}
@@ -581,6 +569,36 @@ angular.module('lformsWidget')
       $scope.onclick = function() {
         debugger
         var i = 1;
+      };
+
+
+
+      $scope.toggleCheckbox = function(item, answer) {
+        if (item.value && angular.isArray(item.value)) {
+          var index, selected = false;
+          for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+            if (angular.equals(item.value[i],answer)) {
+              selected = true;
+              index = i;
+              break;
+            }
+          }
+          // if answer is currently selected
+          if (selected) {
+            // remove the answer from the selected list
+            item.value.splice(index, 1);
+          }
+          // if answer is not currently selected
+          else {
+            // add the answer to the selected list
+            item.value.push(answer);
+          }
+        }
+        // the value is not accessed before
+        else {
+          // add the answer to the selected list
+          item.value = [answer];
+        }
       };
 
 
