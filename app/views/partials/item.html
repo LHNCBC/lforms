@@ -1,0 +1,104 @@
+<!--question-->
+<div class="name-label">
+  <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
+  <span><label for="{{item._elementId}}">{{item.question}}</label></span>
+    <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+      <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+      <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+    </span>
+    <span ng-switch on="getCodingInstructionsDisplayType(item)">
+      <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+      <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
+      <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
+              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+              type="button" id="help-{{item._elementId}}">?</button>
+      <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
+              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+              type="button" id="help-{{item._elementId}}">?</button>
+    </span>
+  <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
+          class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+          popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+  <!--buttons-->
+  <!--<div class="button-col">-->
+  <button ng-if="!hasOneRepeatingItem(item)" class="float-button"
+          ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
+          type="button" title="Remove this '{{ item.question }}'">-</button>
+  <!--</div>-->
+</div>
+<ng-form name="innerForm2" class="hasTooltip">
+  <div class="lf-form-item-data tooltipContainer" ng-switch on="item.dataType">
+    <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
+    <!--<span class="tooltipContent" lf-validation></span>-->
+    <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
+    <span ng-switch-when="TTILE" id="{{item._elementId}}"> </span>
+    <div ng-switch-when="CNE">
+      <!--<div ng-include="'cne-field.html'"></div>-->
+      <lf-cne item="item"></lf-cne>
+    </div>
+    <div ng-switch-when="CWE">
+      <!--<div ng-include="'cwe-field.html'"></div>-->
+      <lf-cwe item="item"></lf-cwe>
+    </div>
+    <input ng-switch-when="REAL" name="{{item.question}}" type="number"
+           ng-required="item._answerRequired"
+           ng-model="item.value" placeholder="{{item._toolTip}}"
+           ng-readonly="item._readOnly" id="{{item._elementId}}">
+    <input ng-switch-when="INT" name="{{item.question}}" type="number"
+           ng-required="item._answerRequired"
+           ng-model="item.value" placeholder="{{item._toolTip}}"
+           ng-readonly="item._readOnly" id="{{item._elementId}}">
+    <input ng-switch-when="DT" name="{{item.question}}" ng-required="item._answerRequired" type="text"
+           ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
+           ng-readonly="item._readOnly" id="{{item._elementId}}">
+      <textarea ng-switch-when="TX" name="{{item.question}}" ng-required="item._answerRequired"
+                ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+                id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1">
+      </textarea>
+    <input ng-switch-default name="{{item.question}}" ng-required="item._answerRequired" type="text"
+           ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+           id="{{item._elementId}}">
+  </div>
+</ng-form>
+<div ng-switch on="checkUnits(item)">
+  <input class="units" ng-switch-when="list" type="text"
+         ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
+         placeholder="Select one" aria-labelledby="th_Units">
+  <span ng-switch-when="none" > </span>
+</div>
+
+<div ng-if="needExtra(item) && targetShown(item)" ng-click="setActiveRow(item)"
+     class="extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+  <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly">
+</div>
+
+
+<div ng-if="item.items" class="section">
+
+  <!--<div ng-repeat="subItem in item.items" ng-if="targetShown(subItem)"-->
+       <!--class="data-row has-ng-animate {{getRowClass(subItem)}} {{getSkipLogicClass(subItem)}} {{getActiveRowClass(subItem)}}">-->
+    <!--<lf-item item-data="subItem"></lf-item>-->
+  <!--</div>-->
+  <div ng-repeat="item in item.items" ng-if="targetShown(item)"
+       class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+    <lf-item item="item"></lf-item>
+  </div>
+
+  <!--a button at the end of each repeating section-->
+  <div ng-if="item._lastRepeatingItem && targetShown(item)"
+       class="button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
+    <div class="name-label has-popover-warning">
+      <button type="button"
+              class="float-button" id="add-{{item._elementId}}"
+              title="Add another '{{ item.question }}'"
+              ng-click="addOneRepeatingItem(item)"
+              ng-blur="hideUnusedItemWarning(item)"
+              uib-popover='Please enter info in the blank "{{ item.question }}".'
+              popover-placement="top-left" popover-title="Warning"
+              popover-trigger="none"
+              popover-is-open="item._showUnusedItemWarning">
+        Add another '{{item.question}}'
+      </button>
+    </div>
+  </div>
+</div>

@@ -30,5 +30,5 @@
         controller: 'LFormsCtrl',
         templateUrl: 'form-view.html'
       };
-    });
+    })
 })();

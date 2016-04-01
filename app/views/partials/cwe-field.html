@@ -1,0 +1,31 @@
+<div ng-switch on="item.displayControl.answerLayout">
+  <!--list style-->
+  <div ng-switch-when="list">
+    <label ng-repeat="answer in item.answers">
+      <input type="checkbox" ng-if="item._multipleAnswers" ng-click="toggleCheckbox(item, answer)">
+      <input type="radio" ng-model="item.value" ng-value="answer" ng-if="!item._multipleAnswers">
+      {{answer.text}}
+    </label>
+    <!--extra field, multiple answers-->
+    <label ng-if="item._multipleAnswers">
+      <input type="checkbox" ng-click="toggleCheckbox(item, {'code':item.valueOther,'text':item.valueOther})">
+      OTHER:
+    </label>
+    <label ng-if="item._multipleAnswers"><input type="text" ng-model="item.valueOther"></label>
+    <!--extra field, single answer-->
+    <label ng-if="!item._multipleAnswers">
+      <input type="radio" ng-model="item.value" ng-value="{'code':item.valueOther,'text':item.valueOther}">
+      OTHER:
+    </label>
+    <!--extra field-->
+    <label ng-if="!item._multipleAnswers"><input type="text" ng-model="item.valueOther"></label>
+  </div>
+  <!--default is 'combo'-->
+  <div ng-switch-default>
+    <input name="{{item.question +'_'+ $id}}" type="text"
+           ng-required="item._answerRequired"
+           ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+           ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+           id="{{item._elementId}}">
+  </div>
+</div>

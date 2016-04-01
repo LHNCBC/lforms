@@ -752,7 +752,7 @@ var allInOne =
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo.nlm.nih.gov'>LForms Demo</a>",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<h1>a title<br/></h1><p>sowlejkrelrj</p><h2>a sub title</h2><p>sljfdslf</p><p><br/></p>",
+    {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type3", "dataType": "REAL", "header": false, "units": null, "codingInstructions": null,
@@ -2857,10 +2857,12 @@ var listLayout =
   "name": "List Layout",
   "template": "list",
   "layout": "list",
+  "question": "a form level attr",
   "items": [
     {
       "questionCode": "q001",
       "question": "String type",
+      "answerCardinality": {"min": "1", "max": "1"}
     },
     {
       "questionCode": "q1a",
@@ -2868,7 +2870,7 @@ var listLayout =
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
-      "answerCardinality": {"min": "0", "max": "1"},
+      "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {
         "answerLayout": "list"
       },

@@ -1,6 +1,71 @@
 angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('cne-field.html',
+    "<div ng-switch on=\"item.displayControl.answerLayout\">\n" +
+    "  <!--list style-->\n" +
+    "  <div ng-switch-when=\"list\">\n" +
+    "    <label ng-repeat=\"answer in item.answers\">\n" +
+    "      <input type=\"checkbox\" ng-if=\"item._multipleAnswers\" ng-click=\"toggleCheckbox(item, answer)\">\n" +
+    "      <input type=\"radio\" ng-model=\"item.value\" ng-value=\"answer\" ng-if=\"!item._multipleAnswers\">\n" +
+    "      {{answer.text}}\n" +
+    "    </label>\n" +
+    "  </div>\n" +
+    "  <!--combo style-->\n" +
+    "  <div ng-switch-when=\"combo\">\n" +
+    "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
+    "           ng-required=\"item._answerRequired\"\n" +
+    "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
+    "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           id=\"{{item._elementId}}\">\n" +
+    "  </div>\n" +
+    "  <!--default is 'combo'-->\n" +
+    "  <div ng-switch-default>\n" +
+    "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
+    "           ng-required=\"item._answerRequired\"\n" +
+    "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
+    "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           id=\"{{item._elementId}}\">\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('cwe-field.html',
+    "<div ng-switch on=\"item.displayControl.answerLayout\">\n" +
+    "  <!--list style-->\n" +
+    "  <div ng-switch-when=\"list\">\n" +
+    "    <label ng-repeat=\"answer in item.answers\">\n" +
+    "      <input type=\"checkbox\" ng-if=\"item._multipleAnswers\" ng-click=\"toggleCheckbox(item, answer)\">\n" +
+    "      <input type=\"radio\" ng-model=\"item.value\" ng-value=\"answer\" ng-if=\"!item._multipleAnswers\">\n" +
+    "      {{answer.text}}\n" +
+    "    </label>\n" +
+    "    <!--extra field, multiple answers-->\n" +
+    "    <label ng-if=\"item._multipleAnswers\">\n" +
+    "      <input type=\"checkbox\" ng-click=\"toggleCheckbox(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "      OTHER:\n" +
+    "    </label>\n" +
+    "    <label ng-if=\"item._multipleAnswers\"><input type=\"text\" ng-model=\"item.valueOther\"></label>\n" +
+    "    <!--extra field, single answer-->\n" +
+    "    <label ng-if=\"!item._multipleAnswers\">\n" +
+    "      <input type=\"radio\" ng-model=\"item.value\" ng-value=\"{'code':item.valueOther,'text':item.valueOther}\">\n" +
+    "      OTHER:\n" +
+    "    </label>\n" +
+    "    <!--extra field-->\n" +
+    "    <label ng-if=\"!item._multipleAnswers\"><input type=\"text\" ng-model=\"item.valueOther\"></label>\n" +
+    "  </div>\n" +
+    "  <!--default is 'combo'-->\n" +
+    "  <div ng-switch-default>\n" +
+    "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
+    "           ng-required=\"item._answerRequired\"\n" +
+    "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
+    "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           id=\"{{item._elementId}}\">\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('form-header.html',
     "<div class=\"stopped\" ng-show=\"isFormDone()\"><img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "<div class=\"row\" ng-if=\"!lfData.templateOptions.hideHeader\">\n" +
@@ -272,11 +337,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-view.html',
     "<div ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
-    "  <!--compatible to earlier versions-->\n" +
+    "  <!--for backward compatibility-->\n" +
     "  <div ng-switch-when=\"form-view-a\">\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +
-    "  <!--compatible to earlier versions-->\n" +
+    "  <!--for backward compatibility-->\n" +
     "  <div ng-switch-when=\"form-view-b\">\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +
@@ -402,12 +467,154 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   );
 
 
+  $templateCache.put('item.html',
+    "<!--question-->\n" +
+    "<div class=\"name-label\">\n" +
+    "  <span ng-show=\"item._questionRepeatable\" class=\"sn\">{{getRepeatingSN(item) }}</span>\n" +
+    "  <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "    </span>\n" +
+    "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\">\n" +
+    "      <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "      <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "      <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover.html'\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "              type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
+    "      <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "              type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
+    "    </span>\n" +
+    "  <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
+    "          class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "          popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
+    "  <!--buttons-->\n" +
+    "  <!--<div class=\"button-col\">-->\n" +
+    "  <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"float-button\"\n" +
+    "          ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
+    "          type=\"button\" title=\"Remove this '{{ item.question }}'\">-</button>\n" +
+    "  <!--</div>-->\n" +
+    "</div>\n" +
+    "<ng-form name=\"innerForm2\" class=\"hasTooltip\">\n" +
+    "  <div class=\"lf-form-item-data tooltipContainer\" ng-switch on=\"item.dataType\">\n" +
+    "    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
+    "    <!--<span class=\"tooltipContent\" lf-validation></span>-->\n" +
+    "    <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
+    "    <span ng-switch-when=\"TTILE\" id=\"{{item._elementId}}\"> </span>\n" +
+    "    <div ng-switch-when=\"CNE\">\n" +
+    "      <!--<div ng-include=\"'cne-field.html'\"></div>-->\n" +
+    "      <lf-cne item=\"item\"></lf-cne>\n" +
+    "    </div>\n" +
+    "    <div ng-switch-when=\"CWE\">\n" +
+    "      <!--<div ng-include=\"'cwe-field.html'\"></div>-->\n" +
+    "      <lf-cwe item=\"item\"></lf-cwe>\n" +
+    "    </div>\n" +
+    "    <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"number\"\n" +
+    "           ng-required=\"item._answerRequired\"\n" +
+    "           ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "    <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"number\"\n" +
+    "           ng-required=\"item._answerRequired\"\n" +
+    "           ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "    <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\" type=\"text\"\n" +
+    "           ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "      <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "                ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "      </textarea>\n" +
+    "    <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\" type=\"text\"\n" +
+    "           ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "           id=\"{{item._elementId}}\">\n" +
+    "  </div>\n" +
+    "</ng-form>\n" +
+    "<div ng-switch on=\"checkUnits(item)\">\n" +
+    "  <input class=\"units\" ng-switch-when=\"list\" type=\"text\"\n" +
+    "         ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
+    "         placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
+    "  <span ng-switch-when=\"none\" > </span>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div ng-if=\"needExtra(item) && targetShown(item)\" ng-click=\"setActiveRow(item)\"\n" +
+    "     class=\"extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "  <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\">\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "<div ng-if=\"item.items\" class=\"section\">\n" +
+    "\n" +
+    "  <!--<div ng-repeat=\"subItem in item.items\" ng-if=\"targetShown(subItem)\"-->\n" +
+    "       <!--class=\"data-row has-ng-animate {{getRowClass(subItem)}} {{getSkipLogicClass(subItem)}} {{getActiveRowClass(subItem)}}\">-->\n" +
+    "    <!--<lf-item item-data=\"subItem\"></lf-item>-->\n" +
+    "  <!--</div>-->\n" +
+    "  <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
+    "       class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "    <lf-item item=\"item\"></lf-item>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <!--a button at the end of each repeating section-->\n" +
+    "  <div ng-if=\"item._lastRepeatingItem && targetShown(item)\"\n" +
+    "       class=\"button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\">\n" +
+    "    <div class=\"name-label has-popover-warning\">\n" +
+    "      <button type=\"button\"\n" +
+    "              class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
+    "              title=\"Add another '{{ item.question }}'\"\n" +
+    "              ng-click=\"addOneRepeatingItem(item)\"\n" +
+    "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
+    "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "              popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "              popover-trigger=\"none\"\n" +
+    "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
+    "        Add another '{{item.question}}'\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('popover.html',
     "<div ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n"
   );
 
 
   $templateCache.put('template-list.html',
+    "<form class=\"lf-form template-list\" novalidate autocomplete=\"false\">\n" +
+    "  <div class=\"lf-form-view\" ng-if=\"lfData\">\n" +
+    "    <div class=\"lf-form-header\" ng-include=\"'form-header.html'\"></div>\n" +
+    "\n" +
+    "    <h3 class=\"lf-form-title\">\n" +
+    "      <span>{{lfData.name}}</span>\n" +
+    "      <span class=\"item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
+    "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
+    "      </span>\n" +
+    "      <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" +
+    "              class=\"copyright-button\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
+    "    </h3>\n" +
+    "\n" +
+    "    <div class=\"lf-form-body\">\n" +
+    "      <!-- data row -->\n" +
+    "      <div ng-if=\"lfData.items\" class=\"section\">\n" +
+    "        <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
+    "             class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "          <lf-item item=\"item\"></lf-item>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</form>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "<button type=\"button\" ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n"
+  );
+
+
+  $templateCache.put('template-list.ng-include.html',
     "<script type=\"text/ng-template\" id=\"cne-template\">\n" +
     "  <div ng-switch on=\"item.displayControl.answerLayout\">\n" +
     "    <div ng-switch-when=\"list\">\n" +
