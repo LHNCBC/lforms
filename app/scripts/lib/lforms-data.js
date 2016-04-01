@@ -766,10 +766,16 @@ var LFormsData = Class.extend({
           }
           break;
         case "CNE":
-          item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
+          if (item.externallyDefined)
+            item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
+          else
+            item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
           break;
         case "CWE":
-          item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+          if (item.externallyDefined)
+            item._toolTip = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+          else
+            item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
           break;
         case "":
           item._toolTip = "";
