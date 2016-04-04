@@ -496,6 +496,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          type=\"button\" title=\"Remove this '{{ item.question }}'\">-</button>\n" +
     "  <!--</div>-->\n" +
     "</div>\n" +
+    "<!--input field-->\n" +
     "<ng-form name=\"innerForm2\" class=\"hasTooltip\">\n" +
     "  <div class=\"lf-form-item-data tooltipContainer\" ng-switch on=\"item.dataType\">\n" +
     "    <span class=\"tooltipContent\" ng-include=\"'validation.html'\"></span>  <!-- validation error messages -->\n" +
@@ -530,46 +531,40 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "           id=\"{{item._elementId}}\">\n" +
     "  </div>\n" +
     "</ng-form>\n" +
+    "<!--unit-->\n" +
     "<div ng-switch on=\"checkUnits(item)\">\n" +
     "  <input class=\"units\" ng-switch-when=\"list\" type=\"text\"\n" +
     "         ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "         placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
     "  <span ng-switch-when=\"none\" > </span>\n" +
     "</div>\n" +
-    "\n" +
+    "<!--extra question-->\n" +
     "<div ng-if=\"needExtra(item) && targetShown(item)\" ng-click=\"setActiveRow(item)\"\n" +
     "     class=\"extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
     "  <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\">\n" +
     "</div>\n" +
-    "\n" +
-    "\n" +
+    "<!--sub sections-->\n" +
     "<div ng-if=\"item.items\" class=\"section\">\n" +
-    "\n" +
-    "  <!--<div ng-repeat=\"subItem in item.items\" ng-if=\"targetShown(subItem)\"-->\n" +
-    "       <!--class=\"data-row has-ng-animate {{getRowClass(subItem)}} {{getSkipLogicClass(subItem)}} {{getActiveRowClass(subItem)}}\">-->\n" +
-    "    <!--<lf-item item-data=\"subItem\"></lf-item>-->\n" +
-    "  <!--</div>-->\n" +
     "  <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
     "       class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
     "    <lf-item item=\"item\"></lf-item>\n" +
     "  </div>\n" +
-    "\n" +
-    "  <!--a button at the end of each repeating section-->\n" +
-    "  <div ng-if=\"item._lastRepeatingItem && targetShown(item)\"\n" +
-    "       class=\"button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\">\n" +
-    "    <div class=\"name-label has-popover-warning\">\n" +
-    "      <button type=\"button\"\n" +
-    "              class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "              title=\"Add another '{{ item.question }}'\"\n" +
-    "              ng-click=\"addOneRepeatingItem(item)\"\n" +
-    "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
-    "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
-    "              popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
-    "              popover-trigger=\"none\"\n" +
-    "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "        Add another '{{item.question}}'\n" +
-    "      </button>\n" +
-    "    </div>\n" +
+    "</div>\n" +
+    "<!--a button at the end of each repeating section-->\n" +
+    "<div ng-if=\"item._lastRepeatingItem && targetShown(item)\"\n" +
+    "     class=\"button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}\">\n" +
+    "  <div class=\"name-label has-popover-warning\">\n" +
+    "    <button type=\"button\"\n" +
+    "            class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
+    "            title=\"Add another '{{ item.question }}'\"\n" +
+    "            ng-click=\"addOneRepeatingItem(item)\"\n" +
+    "            ng-blur=\"hideUnusedItemWarning(item)\"\n" +
+    "            uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "            popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "            popover-trigger=\"none\"\n" +
+    "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
+    "      Add another '{{item.question}}'\n" +
+    "    </button>\n" +
     "  </div>\n" +
     "</div>\n"
   );
@@ -600,8 +595,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!-- data row -->\n" +
     "      <div ng-if=\"lfData.items\" class=\"section\">\n" +
     "        <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
-    "             class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
-    "          <lf-item item=\"item\"></lf-item>\n" +
+    "             class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\n" +
+    "             ng-switch on item.displayControl.questionLayout\">\n" +
+    "          <lf-item ng-switch-when=\"vertical\" item=\"item\"></lf-item>\n" +
+    "\n" +
     "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +

@@ -17,8 +17,10 @@
       <!-- data row -->
       <div ng-if="lfData.items" class="section">
         <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
-             class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-          <lf-item item="item"></lf-item>
+             class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}
+             ng-switch on item.displayControl.questionLayout">
+          <lf-item ng-switch-when="vertical" item="item"></lf-item>
+
         </div>
       </div>
     </div>

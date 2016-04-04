@@ -15,7 +15,7 @@ var FHTData = {
   // form name, required. the top-level LOINC item's name in a panel is listed here.
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
-  template: "table",
+  template: "list",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
   // template. the format/content is not ready for publish yet.
   templateOptions: {},
@@ -2856,7 +2856,6 @@ var listLayout =
   "code": "list-layout",
   "name": "List Layout",
   "template": "list",
-  "layout": "list",
   "question": "a form level attr",
   "items": [
     {

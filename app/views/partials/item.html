@@ -26,6 +26,7 @@
           type="button" title="Remove this '{{ item.question }}'">-</button>
   <!--</div>-->
 </div>
+<!--input field-->
 <ng-form name="innerForm2" class="hasTooltip">
   <div class="lf-form-item-data tooltipContainer" ng-switch on="item.dataType">
     <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
@@ -60,45 +61,39 @@
            id="{{item._elementId}}">
   </div>
 </ng-form>
+<!--unit-->
 <div ng-switch on="checkUnits(item)">
   <input class="units" ng-switch-when="list" type="text"
          ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
          placeholder="Select one" aria-labelledby="th_Units">
   <span ng-switch-when="none" > </span>
 </div>
-
+<!--extra question-->
 <div ng-if="needExtra(item) && targetShown(item)" ng-click="setActiveRow(item)"
      class="extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
   <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly">
 </div>
-
-
+<!--sub sections-->
 <div ng-if="item.items" class="section">
-
-  <!--<div ng-repeat="subItem in item.items" ng-if="targetShown(subItem)"-->
-       <!--class="data-row has-ng-animate {{getRowClass(subItem)}} {{getSkipLogicClass(subItem)}} {{getActiveRowClass(subItem)}}">-->
-    <!--<lf-item item-data="subItem"></lf-item>-->
-  <!--</div>-->
   <div ng-repeat="item in item.items" ng-if="targetShown(item)"
        class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
     <lf-item item="item"></lf-item>
   </div>
-
-  <!--a button at the end of each repeating section-->
-  <div ng-if="item._lastRepeatingItem && targetShown(item)"
-       class="button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
-    <div class="name-label has-popover-warning">
-      <button type="button"
-              class="float-button" id="add-{{item._elementId}}"
-              title="Add another '{{ item.question }}'"
-              ng-click="addOneRepeatingItem(item)"
-              ng-blur="hideUnusedItemWarning(item)"
-              uib-popover='Please enter info in the blank "{{ item.question }}".'
-              popover-placement="top-left" popover-title="Warning"
-              popover-trigger="none"
-              popover-is-open="item._showUnusedItemWarning">
-        Add another '{{item.question}}'
-      </button>
-    </div>
+</div>
+<!--a button at the end of each repeating section-->
+<div ng-if="item._lastRepeatingItem && targetShown(item)"
+     class="button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
+  <div class="name-label has-popover-warning">
+    <button type="button"
+            class="float-button" id="add-{{item._elementId}}"
+            title="Add another '{{ item.question }}'"
+            ng-click="addOneRepeatingItem(item)"
+            ng-blur="hideUnusedItemWarning(item)"
+            uib-popover='Please enter info in the blank "{{ item.question }}".'
+            popover-placement="top-left" popover-title="Warning"
+            popover-trigger="none"
+            popover-is-open="item._showUnusedItemWarning">
+      Add another '{{item.question}}'
+    </button>
   </div>
 </div>
