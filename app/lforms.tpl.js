@@ -588,10 +588,10 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "      <!--when the entire form is in horizontal or matrix layouts-->\n" +
     "      <div ng-switch on=\"lfData.templateOptions.displayControl.questionLayout\">\n" +
-    "        <div ng-switch-when=\"horizontal\">\n" +
+    "        <div ng-switch-when=\"horizontal\" class=\"top-section\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
     "        </div>\n" +
-    "        <div ng-switch-when=\"matrix\">\n" +
+    "        <div ng-switch-when=\"matrix\" class=\"top-section\">\n" +
     "          <lf-section-matrix></lf-section-matrix>\n" +
     "        </div>\n" +
     "        <div ng-switch-default>\n" +

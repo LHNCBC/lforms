@@ -18,10 +18,10 @@
 
       <!--when the entire form is in horizontal or matrix layouts-->
       <div ng-switch on="lfData.templateOptions.displayControl.questionLayout">
-        <div ng-switch-when="horizontal">
+        <div ng-switch-when="horizontal" class="top-section">
           <lf-section-horizontal></lf-section-horizontal>
         </div>
-        <div ng-switch-when="matrix">
+        <div ng-switch-when="matrix" class="top-section">
           <lf-section-matrix></lf-section-matrix>
         </div>
         <div ng-switch-default>

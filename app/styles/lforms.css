@@ -557,6 +557,9 @@ Override color of select boxes in calendar widget title bar.
 .lf-form.lf-template-list .lf-layout-matrix .lf-form--table-title {
   padding: 5px;
 }
+.lf-form.lf-template-list .top-section .lf-layout-matrix{
+  margin: 0 5px;
+}
 .lf-form.lf-template-list .lf-form-matrix-answer {
   padding-left: 5px;
   padding-right: 5px;
