@@ -13,7 +13,7 @@
     .directive('lforms', function() {
       return {
         restrict: 'E',
-        scope: {lfData: '=', lfOptions: '=?'},
+        scope: {lfData: '=', item: "=lfData", lfOptions: '=?'},
         link: function(scope, element, attributes) {
           // watch on data change
           scope.$watch("lfOptions", function (value){
@@ -24,6 +24,9 @@
           scope.$watch("lfOptions", function (value){
             if (scope.lfData && value)
               scope.lfData.setTemplateOptions(value);
+            // set a variable 'item' for 'lfData'
+            // 'item' is used by some internal recursive directives
+            scope.item = scope.lfData;
           });
         },
         transclude: true,

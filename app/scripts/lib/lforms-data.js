@@ -793,6 +793,11 @@ var LFormsData = Class.extend({
       item._multipleAnswers = item.answerCardinality.max &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
+      //// initial value for multiple selections
+      //if (item._multipleAnswers && !angular.isArray(item.value)) {
+      //  item.value = [];
+      //}
+
       // set up readonly flag
       item._readOnly = (item.editable && item.editable == "0") || (item.calculationMethod);
 
@@ -925,6 +930,11 @@ var LFormsData = Class.extend({
           (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
       item._multipleAnswers = item.answerCardinality.max &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+
+      //// initial value for multiple selections
+      //if (item._multipleAnswers && !angular.isArray(item.value)) {
+      //  item.value = [];
+      //}
 
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
@@ -1308,7 +1318,8 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Add a repeating item or a repeating section and update form status
+   * Add a repeating item or a repeating section after the specified item
+   * and update form status
    * @param item a repeating item or a repeating group item
    * @returns the newly added item or a header item of the newly added section
    */
@@ -1328,6 +1339,46 @@ var LFormsData = Class.extend({
         }
       }
       item._parentItem.items.splice(insertPosition + 1, 0, newItem);
+      newItem._parentItem = item._parentItem;
+
+      // preset the skip logic status to target-hide on the new items
+      this._presetSkipLogicStatus(newItem, false);
+    }
+
+    this._resetInternalData();
+
+    var readerMsg = 'Added ' + this.itemDescription(item);
+    this._actionLogs.push(readerMsg);
+
+    return newItem;
+  },
+
+
+  /**
+   * Add a repeating item or a repeating section at the end of the repeating group
+   * and update form status
+   * @param item a repeating item or a repeating group item
+   * @returns the newly added item or a header item of the newly added section
+   */
+  appendRepeatingItems: function(item) {
+
+    var maxRecId = this.getRepeatingItemMaxId(item);
+    var newItem = angular.copy(this._repeatableItems[item._codePath]);
+    newItem._id = maxRecId + 1;
+
+    if (item._parentItem && Array.isArray(item._parentItem.items)) {
+      var insertPosition = 0;
+      var inRepeating = false;
+      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+        if (item._parentItem.items[i]._codePath === item._codePath) {
+          inRepeating = true;
+        }
+        if (inRepeating && item._parentItem.items[i]._codePath !== item._codePath) {
+          insertPosition = i;
+          break;
+        }
+      }
+      item._parentItem.items.splice(insertPosition, 0, newItem);
       newItem._parentItem = item._parentItem;
 
       // preset the skip logic status to target-hide on the new items

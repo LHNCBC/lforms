@@ -497,21 +497,67 @@ Override color of select boxes in calendar widget title bar.
 
 
 /*** template-list.html ***/
-.lf-form.template-list .name-label {
+.lf-form.lf-template-list .name-label {
   background-color: #e8e8e8;
+  padding: 2px;
+  font-weight: 400;
+  line-height: 28px;
 }
 
-.lf-form.template-list .data-row {
-  border: 1px solid #ced5d9 ;
-  margin: 5px;
+.lf-form.lf-template-list .data-row {
+  border: 2px solid #ced5d9;
+  margin: 10px 5px;
+
+  /*border-radius: 4px;*/
 }
 
-.lf-form.template-list .section {
+.lf-form.lf-template-list .section {
   margin: 10px;
+  /*border-color: #458AC5;*/
+  /*border-width: 2px;*/
 }
 
-/*.lf-form.template-list .name-label,*/
-/*.lf-form.template-list .button-col {*/
-  /*display: inline-block;*/
-/*}*/
-/***  end of template-list.html ***/
+.lf-form.lf-template-list .lf-form-title,
+.lf-form.lf-template-list .lf-form-header {
+  margin: 0 5px;
+}
+
+.lf-form.lf-template-list .lf-form-item-data {
+  /*background-color: #e8e8e8;*/
+}
+
+.lf-form.lf-template-list .lf-field-answers {
+  padding: 2px;
+}
+
+.lf-form.lf-template-list .lf-list-answer {
+  padding: 2px 5px;
+}
+.lf-form.lf-template-list .lf-list-answer input[type="radio"],
+.lf-form.lf-template-list .lf-list-answer input[type="checkbox"] {
+  margin-right: 2px;
+}
+
+.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {
+  padding: 5px;
+}
+
+.lf-form.lf-template-list .lf-list-item,
+.lf-form.lf-template-list .lf-layout-horizontal,
+.lf-form.lf-template-list .lf-layout-matrix{
+  padding-bottom: 2px;
+}
+.lf-form . .lf-form-table-title {
+
+}
+.lf-form.lf-template-list .lf-form-horizontal-table {
+  margin-bottom: 5px;
+}
+/*** matrix layout ***/
+.lf-form.lf-template-list .lf-layout-matrix .lf-form--table-title {
+  padding: 5px;
+}
+.lf-form.lf-template-list .lf-form-matrix-answer {
+  padding-left: 5px;
+  padding-right: 5px;
+}

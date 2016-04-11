@@ -15,7 +15,7 @@ var FHTData = {
   // form name, required. the top-level LOINC item's name in a panel is listed here.
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
-  template: "list",
+  template: "table",
   // template configuration data. optional, if not provided, a default configuration will be used for the selected
   // template. the format/content is not ready for publish yet.
   templateOptions: {},
@@ -2850,13 +2850,12 @@ var genetic2 ={
 };
 
 
-var listLayout =
+var listTemplate =
 {
   "type": "LOINC",
-  "code": "list-layout",
-  "name": "List Layout",
+  "code": "list-template",
+  "name": "List Template",
   "template": "list",
-  "question": "a form level attr",
   "items": [
     {
       "questionCode": "q001",
@@ -2929,10 +2928,189 @@ var listLayout =
     },
     {
       "questionCode": "g1",
-      "question": "A group with Matrix layout",
+      "question": "A repeating group",
       "header": true,
       "questionCardinality": {"min": "1", "max":"*"},
-      "layout": "matrix",
+      "displayControl": {"questionLayout":"vertical"},
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #4",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1g2",
+          "question": "repeating section in a repeating section",
+          "header": true,
+          "questionCardinality": {"min": "1", "max":"*"},
+          "items": [
+            {
+              "questionCode": "g1g2q1",
+              "dataType": "CNE",
+              "question": "Question #A",
+              "answers": [
+                {"code": "c1", "text": "Answer 1"},
+                {"code": "c2", "text": "Answer 2"},
+                {"code": "c3", "text": "Answer 3"},
+                {"code": "c4", "text": "Answer 4"}]
+            },
+            {
+              "questionCode": "g1g2q2",
+              "dataType": "CNE",
+              "answerCardinality": {"min": "0", "max": "*"},
+              "question": "Question #B",
+              "answers": [
+                {"code": "c1", "text": "Answer 1"},
+                {"code": "c2", "text": "Answer 2"},
+                {"code": "c3", "text": "Answer 3"},
+                {"code": "c4", "text": "Answer 4"}]
+            }
+
+          ]
+        }
+      ]
+    },
+    {
+      "questionCode": "g2",
+      "question": "A repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"*"},
+      "displayControl": {"questionLayout":"horizontal"},
+      "items": [
+      {
+        "questionCode": "g1m1",
+        "dataType": "CNE",
+        "question": "Question #1",
+        "answerCardinality": {"min": "1", "max": "1"},
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m2",
+        "dataType": "CNE",
+        "question": "Question #2",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m3",
+        "dataType": "CNE",
+        "question": "Question #3",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m4",
+        "dataType": "CNE",
+        "answerCardinality": {"min": "0", "max": "*"},
+        "question": "Question #4",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      }]
+    },
+    {
+      "questionCode": "g3",
+      "question": "A non-repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"1"},
+      "displayControl": {"questionLayout":"horizontal"},
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #4",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        }]
+    },
+    {
+      "questionCode": "g4",
+      "question": "A group with matrix layout (non-repeating)",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"1"},
+      "displayControl": {"questionLayout":"matrix"},
       "items": [
         {
           "questionCode": "g1m1",
@@ -2977,39 +3155,7 @@ var listLayout =
             {"code": "c2", "text": "Answer 2"},
             {"code": "c3", "text": "Answer 3"},
             {"code": "c4", "text": "Answer 4"}]
-        },
-        {
-          "questionCode": "g1g2",
-          "question": "repeating section in a repeating section",
-          "header": true,
-          "questionCardinality": {"min": "1", "max":"*"},
-          "items": [
-            {
-              "questionCode": "g1g2q1",
-              "dataType": "CNE",
-              "answerCardinality": {"min": "0", "max": "*"},
-              "question": "Question #A",
-              "answers": [
-                {"code": "c1", "text": "Answer 1"},
-                {"code": "c2", "text": "Answer 2"},
-                {"code": "c3", "text": "Answer 3"},
-                {"code": "c4", "text": "Answer 4"}]
-            },
-            {
-              "questionCode": "g1g2q2",
-              "dataType": "CNE",
-              "answerCardinality": {"min": "0", "max": "*"},
-              "question": "Question #B",
-              "answers": [
-                {"code": "c1", "text": "Answer 1"},
-                {"code": "c2", "text": "Answer 2"},
-                {"code": "c3", "text": "Answer 3"},
-                {"code": "c4", "text": "Answer 4"}]
-            }
-
-          ]
-        }
-      ]
+        }]
     },
     {
       "questionCode": "q3",
@@ -3024,4 +3170,115 @@ var listLayout =
     }
 
   ]
+};
+
+var matrixLayout =
+{
+  "type": "LOINC",
+  "code": "matrix-layout",
+  "name": "A form with matrix layout, multiple selections",
+  "template": "list",
+  "templateOptions": {
+    "displayControl": {"questionLayout":"matrix"},
+  },
+  "items": [
+    {
+      "questionCode": "g1m1",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #1",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m2",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #2",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m3",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #3",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m4",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #4",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    }]
+};
+var matrixLayout2 =
+{
+  "type": "LOINC",
+  "code": "matrix-layout2",
+  "name": "Another form with matrix layout, single selection",
+  "template": "list",
+  "templateOptions": {
+    "displayControl": {"questionLayout":"matrix"},
+  },
+  "items": [
+    {
+      "questionCode": "g1m1",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #1",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m2",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #2",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m3",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #3",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m4",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #4",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    }]
 };

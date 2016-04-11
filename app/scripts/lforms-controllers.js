@@ -397,15 +397,16 @@ angular.module('lformsWidget')
       /**
        * Add a repeating item or a repeating group
        * @param item an item in the lforms form items array
+       * @param append an optional flag indicate if the new item is added to the end of the repeating group
        */
-      $scope.addOneRepeatingItem = function(item) {
+      $scope.addOneRepeatingItem = function(item, append) {
         var widgetData = $scope.lfData;
         var anyEmpty = false;
         if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
           anyEmpty = widgetData.areAnyRepeatingItemsEmpty(item);
         }
         if (!anyEmpty) {
-          var newItem = widgetData.addRepeatingItems(item);
+          var newItem = append ? widgetData.appendRepeatingItems(item) : widgetData.addRepeatingItems(item);
           $scope.sendActionsToScreenReader();
 
           setTimeout(function() {
@@ -445,6 +446,56 @@ angular.module('lformsWidget')
 
 
       /**
+       * Add a repeating item or a repeating group at the end of the repeating group
+       * @param item an item in the lforms form items array
+       */
+      $scope.appendOneRepeatingItem = function(item) {
+        var widgetData = $scope.lfData;
+        var anyEmpty = false;
+        if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
+          anyEmpty = widgetData.areAnyRepeatingItemsEmpty(item);
+        }
+        if (!anyEmpty) {
+          var newItem = widgetData.appendRepeatingItems(item);
+          $scope.sendActionsToScreenReader();
+
+          setTimeout(function() {
+            var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+            var headerItem = jQuery("label[for='" + newItem._elementId + "']")[0];
+            var btnDel = document.getElementById("del-" + newItem._elementId);
+            // vertical table, find the header item
+            if (headerItem) {
+              var anchorItem = headerItem;
+            }
+            // horizontal table, find the '-' button
+            else if (btnDel) {
+              var anchorItem = btnDel;
+            }
+
+            if (anchorItem) {
+              var anchorPosition = anchorItem.getBoundingClientRect();
+              // scroll down to show about 2 rows of the newly added section
+              // if the new header item is close enough to the bottom so that the first 2 questions are not visible
+              if (anchorPosition && anchorPosition.bottom > viewportHeight - 70) {
+                smoothScroll(anchorItem, {
+                  duration: 500,
+                  easing: 'easeInQuad',
+                  offset: viewportHeight - 105
+                });
+              }
+              // move the focus to the '-' button of the newly added item/section
+              // a table from the '-' button moves the focus to the next input field
+              if (btnDel)
+                btnDel.focus();
+            }
+          }, 1);
+
+        }
+      };
+
+
+        /**
        * Unset the flag to hide the warning about unused repeating items
        * @param item a repeating item
        */
@@ -572,8 +623,12 @@ angular.module('lformsWidget')
       };
 
 
-
-      $scope.toggleCheckbox = function(item, answer) {
+      /**
+       * Update the item.value based on the status of a list of checkboxes
+       * @param item a form item that has an answer list and support multiple selections
+       * @param answer an answer object in the answer list
+       */
+      $scope.updateCheckboxList = function(item, answer) {
         if (item.value && angular.isArray(item.value)) {
           var index, selected = false;
           for(var i= 0,iLen=item.value.length; i<iLen; i++) {
@@ -599,6 +654,61 @@ angular.module('lformsWidget')
           // add the answer to the selected list
           item.value = [answer];
         }
+        console.log(item.value);
+      };
+
+      /**
+       *
+       * Update the item.value based on selection of extra data input by users
+       * @param item a form item that has an answer list and support multiple selections
+       * @param checked the checked status of an other value checkbox
+       * @param otherValue the value object of the other value checkbox
+       */
+      $scope.updateCheckboxListForOther = function(item, checked, otherValue) {
+        // set the other value flag
+        otherValue._otherValue = true;
+
+        // add/update the other value
+        if (checked) {
+          // the list is not empty
+          if (item.value && angular.isArray(item.value)) {
+            var found = false;
+            for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+              if (item.value[i]._otherValue) {
+                item.value[i] = otherValue;
+                found = true;
+                break;
+              }
+            }
+            // if the other value is already in the list
+            if (!found) {
+              // add the other value to the list
+              item.value.push(otherValue);
+            }
+          }
+          // the list is empty
+          else {
+            // add the other value to the list
+            item.value = [otherValue];
+          }
+        }
+        // remove other value
+        else {
+          if (item.value && angular.isArray(item.value)) {
+            var index, found = false;
+            for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+              if (item.value[i]._otherValue) {
+                found = true;
+                index = i;
+                break;
+              }
+            }
+            if (found) {
+              item.value.splice(index, 1);
+            }
+          }
+        }
+        console.log(item.value);
       };
 
 

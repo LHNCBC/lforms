@@ -1,0 +1,52 @@
+<div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout">
+  <!--combo style-->
+  <div ng-switch-when="combo">
+    <input name="{{item.question +'_'+ $id}}" type="text"
+           ng-required="item._answerRequired"
+           ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+           ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+           id="{{item._elementId}}">
+  </div>
+
+  <!--list style-->
+  <div ng-switch-when="list">
+    <span ng-repeat="answer in item.answers" class="lf-list-answer">
+      <label ng-if="item._multipleAnswers">
+        <input type="checkbox" ng-click="updateCheckboxList(item, answer)">{{answer.text}}
+        <!--<input type="checkbox" checklist-model="item.value" checklist-value="answer"> {{answer.text}}-->
+      </label>
+      <label ng-if="!item._multipleAnswers">
+        <input type="radio" ng-model="item.value" ng-value="answer" >{{answer.text}}
+      </label>
+    </span>
+    <!--extra OTHER field-->
+    <span ng-if="item.dataType==='CWE'">
+      <!--for multiple answers-->
+      <span ng-if="item._multipleAnswers" class="lf-list-answer">
+        <label>
+          <input type="checkbox" ng-model="_otherValueChecked" ng-click="updateCheckboxListForOther(item, _otherValueChecked, {'code':item.valueOther,'text':item.valueOther})">OTHER:
+          <!--<input type="checkbox" checklist-model="item.value" checklist-value="{'code':item.valueOther,'text':item.valueOther}">OTHER:-->
+        </label>
+        <label><input type="text" ng-model="item.valueOther" ng-change="updateCheckboxListForOther(item, _otherValueChecked, {'code':item.valueOther,'text':item.valueOther})"></label>
+      </span>
+
+      <!--for single answer-->
+      <span ng-if="!item._multipleAnswers" class="lf-list-answer">
+        <label>
+          <input type="radio" ng-model="item.value" ng-value="{'code':item.valueOther,'text':item.valueOther}">
+          OTHER:
+        </label>
+        <label><input type="text" ng-model="item.valueOther"></label>
+      </span>
+    </span>
+  </div>
+
+  <!--default is 'combo'-->
+  <div ng-switch-default class="lf-combo-answer">
+    <input name="{{item.question +'_'+ $id}}" type="text"
+           ng-required="item._answerRequired"
+           ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+           ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+           id="{{item._elementId}}">
+  </div>
+</div>

@@ -1,7 +1,8 @@
-<form class="lf-form template-list" novalidate autocomplete="false">
+<form class="lf-form lf-template-list" novalidate autocomplete="false">
   <div class="lf-form-view" ng-if="lfData">
+    <!--header options-->
     <div class="lf-form-header" ng-include="'form-header.html'"></div>
-
+    <!--form title-->
     <h3 class="lf-form-title">
       <span>{{lfData.name}}</span>
       <span class="item-code" ng-if="lfData.templateOptions.showQuestionCode">
@@ -12,15 +13,42 @@
               class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
               popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
     </h3>
-
+    <!--form body-->
     <div class="lf-form-body">
-      <!-- data row -->
-      <div ng-if="lfData.items" class="section">
-        <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
-             class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}
-             ng-switch on item.displayControl.questionLayout">
-          <lf-item ng-switch-when="vertical" item="item"></lf-item>
 
+      <!--when the entire form is in horizontal or matrix layouts-->
+      <div ng-switch on="lfData.templateOptions.displayControl.questionLayout">
+        <div ng-switch-when="horizontal">
+          <lf-section-horizontal></lf-section-horizontal>
+        </div>
+        <div ng-switch-when="matrix">
+          <lf-section-matrix></lf-section-matrix>
+        </div>
+        <div ng-switch-default>
+          <!-- check each top level item's layout -->
+          <div ng-if="lfData.items">
+            <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
+                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}
+             ng-switch on item.displayControl.questionLayout">
+              <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
+                <div ng-switch-when="horizontal">
+                  <lf-section-horizontal></lf-section-horizontal>
+                </div>
+                <div ng-switch-when="matrix">
+                  <lf-section-matrix></lf-section-matrix>
+                </div>
+                <div ng-switch-when="vertical">
+                  <lf-list-item></lf-list-item>
+                </div>
+                <div ng-switch-default>
+                  <lf-list-item></lf-list-item>
+                </div>
+              </div>
+              <div ng-if="!item.header">
+                <lf-list-item></lf-list-item>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

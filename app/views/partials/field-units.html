@@ -1,0 +1,25 @@
+<div class="lf-field-units" ng-switch on="item.displayControl.unitLayout">
+  <!--combo style-->
+  <div ng-switch-when="combo">
+    <input class="units" type="text" ng-readonly="item._readOnly"
+           ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
+           placeholder="Select one" id="unit_{{item._elementId}}" aria-labelledby="th_Units">
+  </div>
+
+  <!--list style-->
+  <div ng-switch-when="list">
+    <span ng-repeat="unit in item.units">
+      <label>
+        <input type="radio" ng-model="item.unit" ng-value="unit" >{{unit.name}}
+      </label>
+    </span>
+  </div>
+
+  <!--default is 'combo'-->
+  <div ng-switch-default>
+    <input class="units" type="text" ng-readonly="item._readOnly"
+           ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
+           placeholder="Select one" id="unit_{{item._elementId}}" aria-labelledby="th_Units">
+  </div>
+</div>
+

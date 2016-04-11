@@ -102,7 +102,9 @@
               {text: 'Form With User Data', id: 'form-with-user-data'},
               {text: 'CDE sample form #1', id: 'cde1'},
               {text: 'RxTerms Demo', id: 'X-001'},
-              {text: 'List Layout', id: 'list-layout'},
+              {text: 'List Template', id: 'list-template'},
+              {text: 'Matrix Layout, single selection', id: 'matrix-layout2'},
+              {text: 'Matrix Layout, multiple selections', id: 'matrix-layout'},
               {text: "HL7 Genetic Test Panel for Simple Variants", id: "X1000-0"},
               {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"}
 
@@ -113,7 +115,10 @@
               $scope.lfOption2 = {
                 allowHTMLInInstructions: false
               };
-//              $scope.$apply();
+            };
+
+            $scope.changeTemplate = function(template) {
+              $scope.lfData2.template = template;
             };
 
             $scope.useForm = function() {
@@ -173,9 +178,17 @@
                   //'RxTerms'
                   lfData2 = new LFormsData(angular.copy(rxTerms));
                   break;
-                case 'list-layout':
-                  //'List layout'
-                  lfData2 = new LFormsData(angular.copy(listLayout));
+                case 'list-template':
+                  //'List template'
+                  lfData2 = new LFormsData(angular.copy(listTemplate));
+                  break;
+                case 'matrix-layout':
+                  //'matrix layout'
+                  lfData2 = new LFormsData(angular.copy(matrixLayout));
+                  break;
+                case 'matrix-layout2':
+                  //'matrix layout 2'
+                  lfData2 = new LFormsData(angular.copy(matrixLayout2));
                   break;
                 case 'X1000-0':
                   lfData2 = new LFormsData(angular.copy(genetic));
@@ -220,6 +233,9 @@
           <p></p>
           <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form Data</button>
           <button id="change-option" class="btn btn-primary" ng-click="changeOptions()">Change Options</button>
+          <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
+          <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
+
         </div>
       </div>
 

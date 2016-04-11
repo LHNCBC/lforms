@@ -41,27 +41,11 @@
           }
         };
       }])
-      // each item
-      .directive('lfItem', ["RecursionHelper", function (RecursionHelper) {
+      // each item, use inherited scope
+      .directive('lfListItem', ["RecursionHelper", function (RecursionHelper) {
         return {
           restrict: "E",
-          // use inherited scope for now
-          //scope: {
-          //  item: '=',
-          //  targetShown: '&',
-          //  getRowClass: '&',
-          //  getSkipLogicClass: '&',
-          //  getActiveRowClass: '&',
-          //  hasOneRepeatingItem: '&',
-          //  addOneRepeatingItem: '&',
-          //  removeOneRepeatingItem: '&',
-          //  hideUnusedItemWarning: '&',
-          //  setActiveRow: '&',
-          //  checkUnits: '&',
-          //  autoExpand: '&',
-          //  getTrustedCodingInstructions: '&'
-          //},
-          templateUrl: "item.html",
+          templateUrl: "list-item.html",
           compile: function (element) {
             // Use the compile function from the RecursionHelper,
             // And return the linking function(s) which it returns
@@ -147,26 +131,22 @@
         };
       }
       ])
-      // CWE field
-      .directive('lfCwe', function() {
+      // answers field, (CNE and CWE) (search field?), inherited scope
+      .directive('lfAnswers', function() {
         return {
           restrict: 'E',
-          scope: {
-            item: '=',
-            toggleCheckbox: '&'},
           transclude: true,
-          templateUrl: 'cwe-field.html'
+          templateUrl: 'field-answers.html'
         };
       })
-      // CNE field
-      .directive('lfCne', function() {
+      // units field, isolated scope?
+      .directive('lfUnits', function() {
         return {
           restrict: 'E',
           scope: {
-            item: '=',
-            toggleCheckbox: '&'},
+            item: '='},
           transclude: true,
-          templateUrl: 'cne-field.html'
+          templateUrl: 'field-units.html'
         };
       })
       // field validation, TBD
@@ -179,6 +159,23 @@
           transclude: false,
           templateUrl: 'validation.html'
         };
-      });
+      })
+      // horizontal layout, inherited scope
+      .directive('lfSectionHorizontal', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'layout-horizontal.html'
+        };
+      })
+      // matrix layout, inherited scope
+      .directive('lfSectionMatrix', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'layout-matrix.html'
+        };
+      })
+  ;
 
 })();

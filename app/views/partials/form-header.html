@@ -1,22 +1,23 @@
-<div class="stopped" ng-show="isFormDone()"><img ng-src="{{::blankGifDataUrl}}" class="stop-sign"><span>This form is complete.</span></div>
-<div class="row" ng-if="!lfData.templateOptions.hideHeader">
-  <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showQuestionCode">Display Question Code</label>
+<div class="lf-form-header">
+  <div class="stopped" ng-show="isFormDone()"><img ng-src="{{::blankGifDataUrl}}" class="stop-sign"><span>This form is complete.</span></div>
+  <div class="row" ng-if="!lfData.templateOptions.hideHeader">
+    <div class="col-md-3 col-xs-3">
+      <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+        <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showQuestionCode">Display Question Code</label>
+      </div>
+    </div>
+    <div class="col-md-3 col-xs-3">
+      <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+        <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showCodingInstruction">Show Help/Description</label>
+      </div>
+    </div>
+    <div class="col-md-3 col-xs-3">
+      <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
+        <label><input type="checkbox" value="" ng-model="lfData.templateOptions.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
+      </div>
+    </div>
+    <div class="col-md-3 col-xs-3 text-right">
+      <div class="text-info" >Total # of Questions: {{getNumberOfQuestions()}}</div>
     </div>
   </div>
-  <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showCodingInstruction">Show Help/Description</label>
-    </div>
-  </div>
-  <div class="col-md-3 col-xs-3">
-    <div ng-hide="lfData.templateOptions.hideCheckBoxes" class="checkbox">
-      <label><input type="checkbox" value="" ng-model="lfData.templateOptions.tabOnInputFieldsOnly">Keyboard Navigation On Input Fields</label>
-    </div>
-  </div>
-  <div class="col-md-3 col-xs-3 text-right">
-    <div class="text-info" >Total # of Questions: {{getNumberOfQuestions()}}</div>
-  </div>
-
 </div>
