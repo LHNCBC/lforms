@@ -13,6 +13,9 @@ describe('Copyright popover message', function() {
 
   it('should show a copyright popover message on an item', function () {
     element(by.id("copyright-/type0/1")).click();
+    browser.wait(function() {
+      return itemCopyright.isPresent();
+    }, 5000);
     expect(itemCopyright.isDisplayed()).toBe(true);
   });
 });
