@@ -2937,6 +2937,7 @@ var listTemplate =
           "questionCode": "g1m1",
           "dataType": "CNE",
           "question": "Question #1",
+          "answerCardinality": {"min": "1", "max": "1"},
           "answers": [
             {"code": "c1", "text": "Answer 1"},
             {"code": "c2", "text": "Answer 2"},
@@ -2984,6 +2985,7 @@ var listTemplate =
               "questionCode": "g1g2q1",
               "dataType": "CNE",
               "question": "Question #A",
+              "answerCardinality": {"min": "1", "max": "1"},
               "answers": [
                 {"code": "c1", "text": "Answer 1"},
                 {"code": "c2", "text": "Answer 2"},
@@ -3067,6 +3069,7 @@ var listTemplate =
           "questionCode": "g1m1",
           "dataType": "CNE",
           "question": "Question #1",
+          "answerCardinality": {"min": "1", "max": "1"},
           "answers": [
             {"code": "c1", "text": "Answer 1"},
             {"code": "c2", "text": "Answer 2"},
