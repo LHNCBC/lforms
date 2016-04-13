@@ -14,13 +14,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"list\">\n" +
-    "    <span ng-repeat=\"answer in item.answers\" class=\"lf-list-answer\">\n" +
+    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-list-answer\">\n" +
+    "      <!--for multiple answers-->\n" +
     "      <label ng-if=\"item._multipleAnswers\">\n" +
-    "        <input type=\"checkbox\" ng-click=\"updateCheckboxList(item, answer)\">{{answer.text}}\n" +
-    "        <!--<input type=\"checkbox\" checklist-model=\"item.value\" checklist-value=\"answer\"> {{answer.text}}-->\n" +
+    "        <input type=\"checkbox\" id=\"{{item._elementId + answer.code}}\" ng-click=\"updateCheckboxList(item, answer)\">{{answer.text}}\n" +
     "      </label>\n" +
+    "      <!--for single answer-->\n" +
     "      <label ng-if=\"!item._multipleAnswers\">\n" +
-    "        <input type=\"radio\" ng-model=\"item.value\" ng-value=\"answer\" >{{answer.text}}\n" +
+    "        <input type=\"radio\" id=\"{{item._elementId + answer.code}}\" ng-model=\"item.value\"\n" +
+    "               ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
+    "               ng-click=\"updateRadioList(item)\">{{answer.text}}\n" +
     "      </label>\n" +
     "    </span>\n" +
     "    <!--extra OTHER field-->\n" +
@@ -28,19 +31,29 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!--for multiple answers-->\n" +
     "      <span ng-if=\"item._multipleAnswers\" class=\"lf-list-answer\">\n" +
     "        <label>\n" +
-    "          <input type=\"checkbox\" ng-model=\"_otherValueChecked\" ng-click=\"updateCheckboxListForOther(item, _otherValueChecked, {'code':item.valueOther,'text':item.valueOther})\">OTHER:\n" +
-    "          <!--<input type=\"checkbox\" checklist-model=\"item.value\" checklist-value=\"{'code':item.valueOther,'text':item.valueOther}\">OTHER:-->\n" +
+    "          <input type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
+    "                 id=\"{{item._elementId + '_other'}}\"\n" +
+    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">OTHER:\n" +
     "        </label>\n" +
-    "        <label><input type=\"text\" ng-model=\"item.valueOther\" ng-change=\"updateCheckboxListForOther(item, _otherValueChecked, {'code':item.valueOther,'text':item.valueOther})\"></label>\n" +
+    "        <label>\n" +
+    "          <input type=\"text\" ng-model=\"item.valueOther\"\n" +
+    "                 id=\"{{item._elementId + '_otherValue'}}\"\n" +
+    "                 ng-change=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "        </label>\n" +
     "      </span>\n" +
     "\n" +
     "      <!--for single answer-->\n" +
     "      <span ng-if=\"!item._multipleAnswers\" class=\"lf-list-answer\">\n" +
     "        <label>\n" +
-    "          <input type=\"radio\" ng-model=\"item.value\" ng-value=\"{'code':item.valueOther,'text':item.valueOther}\">\n" +
+    "          <input type=\"radio\" id=\"{{item._elementId + '_other'}}\" ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
+    "                 name=\"{{item._elementId}}\"\n" +
+    "                 ng-click=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          OTHER:\n" +
     "        </label>\n" +
-    "        <label><input type=\"text\" ng-model=\"item.valueOther\"></label>\n" +
+    "        <label>\n" +
+    "          <input type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
+    "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "        </label>\n" +
     "      </span>\n" +
     "    </span>\n" +
     "  </div>\n" +
@@ -411,10 +424,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <td ng-repeat=\"answer in item.items[0].answers\">\n" +
     "          <span class=\"lf-form-matrix-answer\">\n" +
     "            <label ng-if=\"subItem._multipleAnswers\">\n" +
-    "              <input type=\"checkbox\" ng-click=\"updateCheckboxList(subItem, answer)\">\n" +
+    "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\" ng-click=\"updateCheckboxList(subItem, answer)\">\n" +
     "            </label>\n" +
     "            <label ng-if=\"!subItem._multipleAnswers\">\n" +
-    "              <input type=\"radio\" ng-model=\"subItem.value\" ng-value=\"answer\" >\n" +
+    "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" +
+    "                     name=\"{{subItem._elementId}}\" ng-click=\"updateRadioList(subItem)\">\n" +
     "            </label>\n" +
     "          </span>\n" +
     "        </td>\n" +
@@ -422,15 +436,32 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <!--for multiple answers-->\n" +
     "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" +
     "            <label>\n" +
-    "              <input type=\"checkbox\" ng-model=\"_otherValueChecked\" ng-click=\"updateCheckboxListForOther(subItem, _otherValueChecked, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" +
+    "                     id=\"{{subItem._elementId + '_other'}}\"\n" +
+    "                     ng-click=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
     "            </label>\n" +
-    "            <label><input type=\"text\" ng-model=\"subItem.valueOther\" ng-change=\"updateCheckboxListForOther(subItem, _otherValueChecked, {'code':subItem.valueOther,'text':subItem.valueOther})\"></label>          </span>\n" +
+    "            <label>\n" +
+    "              <input type=\"text\" ng-model=\"subItem.valueOther\"\n" +
+    "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" +
+    "                     ng-change=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "            </label>\n" +
+    "          </span>\n" +
     "          <!--for single answer-->\n" +
     "          <span ng-if=\"!subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" +
     "            <label>\n" +
-    "              <input type=\"radio\" ng-model=\"subItem.value\" ng-value=\"{'code':subItem.valueOther,'text':subItem.valueOther}\">\n" +
+    "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" +
+    "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" +
+    "                     ng-click=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
     "            </label>\n" +
-    "            <label><input type=\"text\" ng-model=\"item.valueOther\"></label>\n" +
+    "            <label>\n" +
+    "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subItem.valueOther\"\n" +
+    "                     ng-change=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "            </label>\n" +
+    "\n" +
+    "            <label>\n" +
+    "\n" +
+    "            </label>\n" +
+    "\n" +
     "          </span>\n" +
     "        </td>\n" +
     "      </tr>\n" +

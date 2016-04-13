@@ -292,6 +292,33 @@ var TestPage = function() {
     openRxTerms: function() {
       this.openBaseTestPage();
       this.openFormByIndex(9);
+    },
+
+
+    /**
+     *  Opens the List Template form
+     */
+    openListTemplate: function() {
+      this.openBaseTestPage();
+      this.openFormByIndex(10);
+    },
+
+
+    /**
+     *  Opens the Matrix form #1.
+     */
+    openMatrixLayout1: function() {
+      this.openBaseTestPage();
+      this.openFormByIndex(11);
+    },
+
+
+    /**
+     *  Opens the Matrix form #2.
+     */
+    openMatrixLayout2: function() {
+      this.openBaseTestPage();
+      this.openFormByIndex(12);
     }
   }
 };

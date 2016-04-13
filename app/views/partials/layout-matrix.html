@@ -43,10 +43,11 @@
         <td ng-repeat="answer in item.items[0].answers">
           <span class="lf-form-matrix-answer">
             <label ng-if="subItem._multipleAnswers">
-              <input type="checkbox" ng-click="updateCheckboxList(subItem, answer)">
+              <input type="checkbox" id="{{subItem._elementId + answer.code}}" ng-click="updateCheckboxList(subItem, answer)">
             </label>
             <label ng-if="!subItem._multipleAnswers">
-              <input type="radio" ng-model="subItem.value" ng-value="answer" >
+              <input type="radio" id="{{subItem._elementId + answer.code}}" ng-model="subItem.value" ng-value="answer"
+                     name="{{subItem._elementId}}" ng-click="updateRadioList(subItem)">
             </label>
           </span>
         </td>
@@ -54,15 +55,32 @@
           <!--for multiple answers-->
           <span ng-if="subItem._multipleAnswers" class="lf-form-matrix-answer">
             <label>
-              <input type="checkbox" ng-model="_otherValueChecked" ng-click="updateCheckboxListForOther(subItem, _otherValueChecked, {'code':subItem.valueOther,'text':subItem.valueOther})">
+              <input type="checkbox" ng-model="subItem._otherValueChecked"
+                     id="{{subItem._elementId + '_other'}}"
+                     ng-click="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
             </label>
-            <label><input type="text" ng-model="subItem.valueOther" ng-change="updateCheckboxListForOther(subItem, _otherValueChecked, {'code':subItem.valueOther,'text':subItem.valueOther})"></label>          </span>
+            <label>
+              <input type="text" ng-model="subItem.valueOther"
+                     id="{{subItem._elementId + '_otherValue'}}"
+                     ng-change="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+          </span>
           <!--for single answer-->
           <span ng-if="!subItem._multipleAnswers" class="lf-form-matrix-answer">
             <label>
-              <input type="radio" ng-model="subItem.value" ng-value="{'code':subItem.valueOther,'text':subItem.valueOther}">
+              <input type="radio" id="{{subItem._elementId + '_other'}}" ng-model="subItem._otherValueChecked"
+                     ng-value="true" name="{{subItem._elementId}}"
+                     ng-click="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
             </label>
-            <label><input type="text" ng-model="item.valueOther"></label>
+            <label>
+              <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subItem.valueOther"
+                     ng-change="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+
+            <label>
+
+            </label>
+
           </span>
         </td>
       </tr>

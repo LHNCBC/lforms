@@ -4,7 +4,7 @@ angular.module('lformsWidget')
       function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
       'use strict';
 
-      $scope.debug = true;
+      $scope.debug = false;
 
       $scope.hasUnused = false;
       $scope.repeatingSectionStatus = {};
@@ -654,22 +654,20 @@ angular.module('lformsWidget')
           // add the answer to the selected list
           item.value = [answer];
         }
-        console.log(item.value);
       };
 
       /**
        *
        * Update the item.value based on selection of extra data input by users
        * @param item a form item that has an answer list and support multiple selections
-       * @param checked the checked status of an other value checkbox
        * @param otherValue the value object of the other value checkbox
        */
-      $scope.updateCheckboxListForOther = function(item, checked, otherValue) {
+      $scope.updateCheckboxListForOther = function(item, otherValue) {
         // set the other value flag
         otherValue._otherValue = true;
 
         // add/update the other value
-        if (checked) {
+        if (item._otherValueChecked) {
           // the list is not empty
           if (item.value && angular.isArray(item.value)) {
             var found = false;
@@ -708,11 +706,35 @@ angular.module('lformsWidget')
             }
           }
         }
-        console.log(item.value);
       };
 
 
       /**
+       *
+       * Update the item.value based on selection of extra data input by users
+       * @param item a form item that has an answer list and support single selections
+       */
+      $scope.updateRadioList = function(item) {
+        item._otherValueChecked = false;
+      };
+
+
+        /**
+       *
+       * Update the item.value based on selection of extra data input by users
+       * @param item a form item that has an answer list and support single selections
+       * @param otherValue the value object of the other value radio button
+       */
+      $scope.updateRadioListForOther = function(item, otherValue) {
+
+        // add/update the other value
+        if (item._otherValueChecked) {
+          item.value = otherValue;
+        }
+      };
+
+
+        /**
        * Handle navigation keys using TAB/ SHIFT+TAB keys
        * @param event keypress event
        */

@@ -2858,13 +2858,13 @@ var listTemplate =
   "template": "list",
   "items": [
     {
-      "questionCode": "q001",
+      "questionCode": "q0",
       "question": "String type",
       "answerCardinality": {"min": "1", "max": "1"}
     },
     {
       "questionCode": "q1a",
-      "question": "Layout Type --CNE",
+      "question": "List layout --CNE",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -2880,7 +2880,7 @@ var listTemplate =
     },
     {
       "questionCode": "q1b",
-      "question": "Layout Type --CWE",
+      "question": "List layout --CWE",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
@@ -2896,7 +2896,7 @@ var listTemplate =
     },
     {
       "questionCode": "q1c",
-      "question": "Layout Type --CNE, Multiple",
+      "question": "List layout --CNE, Multiple",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -2912,7 +2912,7 @@ var listTemplate =
     },
     {
       "questionCode": "q1d",
-      "question": "Layout Type --CWE, Multiple",
+      "question": "List layout --CWE, Multiple",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
@@ -3227,6 +3227,7 @@ var matrixLayout =
         {"code": "c4", "text": "Answer 4"}]
     }]
 };
+
 var matrixLayout2 =
 {
   "type": "LOINC",
