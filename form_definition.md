@@ -246,7 +246,7 @@ Keys:
       * css - an array of valid CSS settings that could apply to an item. (limited supports).
       * colCSS - an array of valid CSS settings that could apply to its related column in a 
         horizontal table. It only works when its parent item/section has a 
-        {"questionLayout": "horizontal"} value in the "displayControl".
+        {"questionLayout": "horizontal"} value in its "displayControl".
       * questionLayout - the layout of the questions in the section. It works on items 
         that are sections, i.e. they contain sub items. Supported values are: 
         'vertical' (default), 'horizontal' and 'matrix'.

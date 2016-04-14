@@ -16,8 +16,8 @@ var FHTData = {
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
   template: "table",
-  // template configuration data. optional, if not provided, a default configuration will be used for the selected
-  // template. the format/content is not ready for publish yet.
+  // template configuration data. optional, if not provided, a default configuration will be used for the
+  // selected template
   templateOptions: {},
   // question items, required, level 1
   items: [
@@ -2850,7 +2850,7 @@ var genetic2 ={
 };
 
 
-var listTemplate =
+var listTemplateForm =
 {
   "type": "LOINC",
   "code": "list-template",
