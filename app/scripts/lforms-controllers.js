@@ -711,7 +711,7 @@ angular.module('lformsWidget')
 
       /**
        *
-       * Update the item.value based on selection of extra data input by users
+       * Update the item.value based on selection of an answer by users
        * @param item a form item that has an answer list and support single selections
        */
       $scope.updateRadioList = function(item) {
@@ -734,7 +734,7 @@ angular.module('lformsWidget')
       };
 
 
-        /**
+      /**
        * Handle navigation keys using TAB/ SHIFT+TAB keys
        * @param event keypress event
        */

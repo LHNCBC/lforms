@@ -3,15 +3,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('field-answers.html',
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout\">\n" +
-    "  <!--combo style-->\n" +
-    "  <div ng-switch-when=\"combo\">\n" +
-    "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
-    "           ng-required=\"item._answerRequired\"\n" +
-    "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "           id=\"{{item._elementId}}\">\n" +
-    "  </div>\n" +
-    "\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"list\">\n" +
     "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-list-answer\">\n" +
@@ -58,7 +49,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!--default is 'combo'-->\n" +
+    "  <!--combo style (default is 'combo')-->\n" +
     "  <div ng-switch-default class=\"lf-combo-answer\">\n" +
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-required=\"item._answerRequired\"\n" +
@@ -72,13 +63,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('field-units.html',
     "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" +
-    "  <!--combo style-->\n" +
-    "  <div ng-switch-when=\"combo\">\n" +
-    "    <input class=\"units\" type=\"text\" ng-readonly=\"item._readOnly\"\n" +
-    "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
-    "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" +
-    "  </div>\n" +
-    "\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"list\">\n" +
     "    <span ng-repeat=\"unit in item.units\">\n" +
@@ -88,7 +72,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!--default is 'combo'-->\n" +
+    "  <!--combo style (default is 'combo')-->\n" +
     "  <div ng-switch-default>\n" +
     "    <input class=\"units\" type=\"text\" ng-readonly=\"item._readOnly\"\n" +
     "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
@@ -142,6 +126,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-switch-when=\"list\">\n" +
     "    <div ng-include=\"'template-list.html'\"></div>\n" +
     "  </div>\n" +
+    "  <!-- default is 'table' -->\n" +
     "  <div ng-switch-default>\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +
@@ -457,11 +442,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subItem.valueOther\"\n" +
     "                     ng-change=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
     "            </label>\n" +
-    "\n" +
-    "            <label>\n" +
-    "\n" +
-    "            </label>\n" +
-    "\n" +
     "          </span>\n" +
     "        </td>\n" +
     "      </tr>\n" +
@@ -540,7 +520,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div ng-switch-when=\"list\">\n" +
     "      <lf-units item=\"item\"></lf-units>\n" +
     "    </div>\n" +
-    "    <span ng-switch-when=\"none\" > </span>\n" +
     "  </div>\n" +
     "  <!--extra question-->\n" +
     "  <div ng-if=\"needExtra(item) && targetShown(item)\" ng-click=\"setActiveRow(item)\"\n" +

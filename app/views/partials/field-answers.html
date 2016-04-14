@@ -1,13 +1,4 @@
 <div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout">
-  <!--combo style-->
-  <div ng-switch-when="combo">
-    <input name="{{item.question +'_'+ $id}}" type="text"
-           ng-required="item._answerRequired"
-           ng-model="item.value" autocomplete-lhc="item._autocompOptions"
-           ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-           id="{{item._elementId}}">
-  </div>
-
   <!--list style-->
   <div ng-switch-when="list">
     <span ng-repeat="answer in item.answers track by $index" class="lf-list-answer">
@@ -54,7 +45,7 @@
     </span>
   </div>
 
-  <!--default is 'combo'-->
+  <!--combo style (default is 'combo')-->
   <div ng-switch-default class="lf-combo-answer">
     <input name="{{item.question +'_'+ $id}}" type="text"
            ng-required="item._answerRequired"
