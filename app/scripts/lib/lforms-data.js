@@ -97,6 +97,7 @@ var LFormsData = Class.extend({
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
+    displayControl: {"questionLayout": "vertical"},
     obxTableColumns: [
       {"name" : "Name", "displayControl":{
         "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
@@ -140,156 +141,10 @@ var LFormsData = Class.extend({
   },
   // default options for each supported templates, could move it to a configuration file
   _defaultOptionsForSupportedTemplates: {
-    "table": {
-      showQuestionCode: false,
-      showCodingInstruction: false,
-      tabOnInputFieldsOnly: false,
-      hideHeader: false,
-      hideCheckBoxes: false,
-      allowMultipleEmptyRepeatingItems: false,
-      allowHTMLInInstructions: false,
-      useAnimation: true,
-      obxTableColumns: [
-        {"name" : "Name", "displayControl":{
-          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "", "displayControl":{
-          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-        },
-        {"name" : "Value", "displayControl":{
-          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "Units", "displayControl":{
-          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-        }
-      ],
-      obrHeader: true,
-      obrItems: [
-        {
-          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {
-          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
-          }
-        }
-      ]
-    },
-    "list": {
-      showQuestionCode: false,
-      showCodingInstruction: false,
-      tabOnInputFieldsOnly: false,
-      hideHeader: false,
-      hideCheckBoxes: false,
-      allowMultipleEmptyRepeatingItems: false,
-      allowHTMLInInstructions: false,
-      useAnimation: true,
-      obxTableColumns: [
-        {"name" : "Name", "displayControl":{
-          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "", "displayControl":{
-          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-        },
-        {"name" : "Value", "displayControl":{
-          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "Units", "displayControl":{
-          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-        }
-      ],
-      obrHeader: true,
-      obrItems: [
-        {
-          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {
-          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
-          }
-        }
-      ]
-    },
-    "matrix": {
-      showQuestionCode: false,
-      showCodingInstruction: false,
-      tabOnInputFieldsOnly: false,
-      hideHeader: false,
-      hideCheckBoxes: false,
-      allowMultipleEmptyRepeatingItems: false,
-      allowHTMLInInstructions: false,
-      useAnimation: true,
-      obxTableColumns: [
-        {"name" : "Name", "displayControl":{
-          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "", "displayControl":{
-          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-        },
-        {"name" : "Value", "displayControl":{
-          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "Units", "displayControl":{
-          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-        }
-      ],
-      obrHeader: true,
-      obrItems: [
-        {
-          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {
-          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
-          }
-        }
-      ]
-    }
+    // "table" specific options that overwrite the default options:
+    "table": {},
+    // "list" specific options that overwrite the default options:
+    "list": {}
   },
 
 
@@ -723,10 +578,10 @@ var LFormsData = Class.extend({
       this.template = "form-view-a";
     }
     // templateOptions
-    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
+    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template] ?
+        this._defaultOptionsForSupportedTemplates[this.template] : {};
     // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
-        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
+    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, tempOptions, this.templateOptions);
   },
 
   /**
