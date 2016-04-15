@@ -29,7 +29,7 @@ angular.module('lformsWidget')
         showMonthAfterYear: true,
         buttonText: ""
       };
-
+        
       /**
        * Set the active row in table
        * @param index index of an item in the lforms form items array
@@ -409,6 +409,9 @@ angular.module('lformsWidget')
           var newItem = append ? widgetData.appendRepeatingItems(item) : widgetData.addRepeatingItems(item);
           $scope.sendActionsToScreenReader();
 
+          // broadcast the event
+          $scope.$broadcast(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED, $scope.lfData.code, newItem._elementId);
+
           setTimeout(function() {
             var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
@@ -504,6 +507,9 @@ angular.module('lformsWidget')
         $scope.lfData.removeRepeatingItems(item);
 
         $scope.sendActionsToScreenReader();
+
+        // broadcast the event
+        $scope.$broadcast(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED, $scope.lfData.code, item._elementId);
 
         // set the focus
         setTimeout(function() {
