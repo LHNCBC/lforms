@@ -2864,7 +2864,7 @@ var listTemplateForm =
     },
     {
       "questionCode": "q1a",
-      "question": "List layout --CNE",
+      "question": "Answer list layout --CNE",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -2873,14 +2873,14 @@ var listTemplateForm =
         "answerLayout": "list"
       },
       "answers": [
-        {"code": "c1", "text": "Vertical Table/List (default)"},
-        {"code": "c2", "text": "Horizontal Table"},
-        {"code": "c3", "text": "Matrix"}
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
       ]
     },
     {
       "questionCode": "q1b",
-      "question": "List layout --CWE",
+      "question": "Answer list layout --CWE",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
@@ -2889,14 +2889,14 @@ var listTemplateForm =
         "answerLayout": "list"
       },
       "answers": [
-        {"code": "c1", "text": "Vertical Table/List (default)"},
-        {"code": "c2", "text": "Horizontal Table"},
-        {"code": "c3", "text": "Matrix"}
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
       ]
     },
     {
       "questionCode": "q1c",
-      "question": "List layout --CNE, Multiple",
+      "question": "Answer list layout --CNE, Multiple",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
@@ -2905,14 +2905,14 @@ var listTemplateForm =
         "answerLayout": "list"
       },
       "answers": [
-        {"code": "c1", "text": "Vertical Table/List (default)"},
-        {"code": "c2", "text": "Horizontal Table"},
-        {"code": "c3", "text": "Matrix"}
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
       ]
     },
     {
       "questionCode": "q1d",
-      "question": "List layout --CWE, Multiple",
+      "question": "Answer list layout --CWE, Multiple",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
@@ -2921,9 +2921,9 @@ var listTemplateForm =
         "answerLayout": "list"
       },
       "answers": [
-        {"code": "c1", "text": "Vertical Table/List (default)"},
-        {"code": "c2", "text": "Horizontal Table"},
-        {"code": "c3", "text": "Matrix"}
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
       ]
     },
     {
@@ -3166,9 +3166,9 @@ var listTemplateForm =
       "dataType": "CNE",
       "answerCardinality": {"min": "0", "max": "1"},
       "answers": [
-        {"code": "c1", "text": "Table (default)"},
-        {"code": "c2", "text": "List"},
-        {"code": "c3", "text": "Matrix"}
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
       ]
     }
 
