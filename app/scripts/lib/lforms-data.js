@@ -648,13 +648,22 @@ var LFormsData = Class.extend({
       item._multipleAnswers = item.answerCardinality.max &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-      //// initial value for multiple selections
-      //if (item._multipleAnswers && !angular.isArray(item.value)) {
-      //  item.value = [];
-      //}
-
       // set up readonly flag
       item._readOnly = (item.editable && item.editable == "0") || (item.calculationMethod);
+
+      // reset answers if it is an answer list id
+      if ((angular.isString(item.answers) || angular.isNumber(item.answers)) &&
+          this.answerLists && angular.isArray(this.answerLists[item.answers])) {
+        item.answers = this.answerLists[item.answers];
+      }
+
+      // normalize unit value if there is one
+      if (item.unit) {
+        if (!item.unit.text)
+          item.unit.text = item.unit.name;
+        if (!item.unit.value)
+          item.unit.value = item.unit.name;
+      }
 
       // id
       if (item._questionRepeatable && prevSibling && prevSibling.questionCode === item.questionCode) {
@@ -828,6 +837,32 @@ var LFormsData = Class.extend({
       }
     }
   },
+
+
+  /** Get the complete form definition data, including user data.
+   * @return {{}} form definition JSON object
+   */
+  getFormDefData: function() {
+
+    // get the form data
+    var formData = this.getFormData();
+
+    var defData = {
+      PATH_DELIMITER: this.PATH_DELIMITER,
+      code: this.code,
+      name: this.name,
+      type: this.type,
+      template: this.template,
+      copyrightNotice: this.copyrightNotice,
+      items: formData.itemsData,
+      templateOptions: angular.copy(this.templateOptions)
+    };
+    // reset obr fields
+    defData.templateOptions.obrItems = formData.templateData;
+
+    return defData;
+  },
+
 
   /**
    * Get the form data from the LForms widget. It might just include the "questionCode" and "value"

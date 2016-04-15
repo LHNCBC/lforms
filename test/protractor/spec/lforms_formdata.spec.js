@@ -110,4 +110,35 @@ describe('get form data', function() {
     });
   });
 
+
+  it('should be able to get the complete form definition data and reset the form with the retrieved data', function() {
+    tp.openUSSGFHTVertical();
+
+    var resetButton = element(by.id('reset-form-with-same-data'));
+    ff.comment.sendKeys("Some comments");
+    ff.name.sendKeys("Not Empty");
+
+    // pick the 1st item, centimeters
+    ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.gender.sendKeys(protractor.Key.TAB);
+
+    ff.height.sendKeys("70");
+    expect(ff.bmi.getAttribute('value')).toBe("");
+    ff.weight.sendKeys("170");
+    expect(ff.bmi.getAttribute('value')).toBe("24.39");
+
+    // reset the form
+    resetButton.click();
+
+    expect(ff.comment.getAttribute('value')).toBe("Some comments");
+    // changed in reset function to be 'after reset', was 'Not Empty'
+    expect(ff.name.getAttribute('value')).toBe("after reset");
+    expect(ff.gender.getAttribute('value')).toBe("Male");
+    expect(ff.height.getAttribute('value')).toBe("70");
+    expect(ff.weight.getAttribute('value')).toBe("170");
+    expect(ff.bmi.getAttribute('value')).toBe("24.39");
+
+  });
+
+
 });

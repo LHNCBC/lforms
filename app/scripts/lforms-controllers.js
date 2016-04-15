@@ -4,7 +4,7 @@ angular.module('lformsWidget')
       function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
       'use strict';
 
-      $scope.debug = false;
+      $scope.debug = true;
 
       $scope.hasUnused = false;
       $scope.repeatingSectionStatus = {};
@@ -566,7 +566,16 @@ angular.module('lformsWidget')
       };
 
 
-      // for debug only. to be removed.
+      /** Get the complete form definition data, including user data.
+       * @return {{}} form definition JSON object
+       */
+      $scope.getFormDefData = function() {
+        var formData =  $scope.lfData.getFormDefData();
+        return formData;
+      };
+
+
+        // for debug only. to be removed.
       $scope.onclick = function() {
         debugger
         var i = 1;

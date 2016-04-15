@@ -110,10 +110,16 @@
             ];
 
             $scope.changeOptions = function() {
-
               $scope.lfOption2 = {
                 allowHTMLInInstructions: false
               };
+            };
+
+            $scope.getFormDefDataAndResetForm = function() {
+              var formDefData = $scope.lfData2.getFormDefData();
+              // change a value
+              formDefData.items[0].items[0].value= 'after reset';
+              $scope.lfData2 = new LFormsData(formDefData);
             };
 
             $scope.changeTemplate = function(template) {
@@ -225,8 +231,9 @@
               <option ng-repeat="form in testForms" value="{{form.id}}">{{form.text}}</option>
             </select>
           <p></p>
-          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form Data</button>
+          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form</button>
           <button id="change-option" class="btn btn-primary" ng-click="changeOptions()">Change Options</button>
+          <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
 

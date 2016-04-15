@@ -246,9 +246,35 @@ WidgetUtil = {
     if (theScopeData) {
       formData = theScopeData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
     }
-
     return formData;
+  },
 
+
+  /**
+   * Get the complete form definition data,including user data, from the LForms rendered form
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @returns {{}} Form definition data object
+   */
+  getFormDefData: function(element) {
+
+    // find the scope that has the LForms data
+    var theScopeData, formDefData;
+    if (!element) element = jQuery("body");
+
+    // class="lf-form"> is the element that contains rendered form.
+    var lfForms = jQuery(element).find(".lf-form");
+    angular.forEach(lfForms, function(ele, index) {
+      var lfForm = angular.element(ele);
+      if (lfForm.scope() && lfForm.scope().lfData) {
+        theScopeData = lfForm.scope().lfData;
+        return false; // break the loop
+      }
+    });
+    if (theScopeData) {
+      formDefData = theScopeData.getFormDefData();
+    }
+    return formDefData;
   }
+
 };
 
