@@ -113,9 +113,66 @@ constructor.)
     </div>
   </li>
 
-  <li>TBD -- More demos to come, showing multi-answer questions, sections,
-repeating sections, questions in tables, skip logic, help text, keyboard
-navigation control, and more!</li>
+  <li class="demo">
+    <span class="demoTitle">Sections and repeats:</span> Questions can be grouped inside
+labeled sections and sections can have sub-sections.  A "cardinality" can be
+assigned to sections (or questions) to make them repeat.
+    <div>
+      <a class="showSource" _src="lforms/d3y6pc1r">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Tables of fields:</span> A sections's questions can
+be columns in table by requesting a "horizontal" layout.  In order for the
+horizontal layout to take effect, you need to use a template that supports it
+(which is why you'll see 'template: "form-view-b"' in the form definition on the
+JavaScript tab).  For tables, it is often desirable to specify a width for one
+or more columns.  This is supported by the "displayControl" property in the form
+definition.
+    <div>
+      <a class="showSource" _src="lforms/4m7o1L7k">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Help text:</span> Questions can have associated help
+text, which by default is shown when the user clicks on the help button next to
+the question.  When the checkboxes above the form are shown, they provide an
+option for the user to show all of the help inline instead of being hidden by
+the buttons.  This is also configurable via the "templateOptions" paramater, as
+shown in the demo after this one.  In this demo, which show the checkboxes, you
+can also see the "Keyboard Navigation On Input Fields" checkbox.  When checked,
+that checkbox limits the tab key so that it only stops on the "Value" fields (skipping
+most buttons and the "Units" fields).  By default the tab behaves as usual.
+    <div>
+      <a class="showSource" _src="lforms/6d5rhvn1">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Skip logic:</span> Questions can be conditionally
+shown depending on the value in other questions.  The condition can either be an
+exact value or a range (if the value is numeric).  The skip logic is defined on
+the target question, which is initially hidden until the triggering condition
+from the other ("source") field is met.
+    <div>
+      <a class="showSource" _src="lforms/3apezk07">[Show Demo]</a>
+    </div>
+  </li>
+
+  <li class="demo">
+    <span class="demoTitle">Multi-answer questions:</span> Questions can be
+allowed to have multiple answers.  There are two ways of doing this.  First, for
+questions with a list of answers, you can assign an answerCardinality maximum of
+'*' which will make the list be multi-select.  Second, for any type of question
+you can set the questionCardinality maximum to a value higher than '1' (or '*'),
+which will cause a button to appear which will allow the user to add more blanks
+for that question.
+    <div>
+      <a class="showSource" _src="lforms/sdted75w">[Show Demo]</a>
+    </div>
+  </li>
 
   <li class="demo">
     <span class="demoTitle">One field controlling another field's list:</span>
