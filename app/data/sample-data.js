@@ -4,7 +4,7 @@ var glasgow =
   "code": "35088-4B",
   "name": "Glasgow coma scale (with score rules)",
   "dataType": null,
-  "template":"form-view-a",
+  "template":"table",
   "header": true,
   "units": null,
   "codingInstructions": "The Glasgow Coma Scale is a neurological scale for assessing a person's level of consciousness, both for initial as well as continuing assessment. A patient is assessed against the criteria of the scale, and the resulting points give the Glasgow Coma Score (or GCS).",

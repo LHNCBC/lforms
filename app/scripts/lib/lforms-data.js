@@ -97,6 +97,7 @@ var LFormsData = Class.extend({
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
+    displayControl: {"questionLayout": "vertical"},
     obxTableColumns: [
       {"name" : "Name", "displayControl":{
         "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
@@ -140,106 +141,10 @@ var LFormsData = Class.extend({
   },
   // default options for each supported templates, could move it to a configuration file
   _defaultOptionsForSupportedTemplates: {
-    "form-view-a": {
-      showQuestionCode: false,
-      showCodingInstruction: false,
-      tabOnInputFieldsOnly: false,
-      hideHeader: false,
-      hideCheckBoxes: false,
-      allowMultipleEmptyRepeatingItems: false,
-      allowHTMLInInstructions: false,
-      useAnimation: true,
-      obxTableColumns: [
-        {"name" : "Name", "displayControl":{
-          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "", "displayControl":{
-          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-        },
-        {"name" : "Value", "displayControl":{
-          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "Units", "displayControl":{
-          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-        }
-      ],
-      obrHeader: true,
-      obrItems: [
-        {
-          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {
-          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
-          }
-        }
-      ]
-    },
-    "form-view-b": {
-      showQuestionCode: false,
-      showCodingInstruction: false,
-      tabOnInputFieldsOnly: false,
-      hideHeader: false,
-      hideCheckBoxes: false,
-      allowMultipleEmptyRepeatingItems: false,
-      allowHTMLInInstructions: false,
-      useAnimation: true,
-      obxTableColumns: [
-        {"name" : "Name", "displayControl":{
-          "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "", "displayControl":{
-          "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-        },
-        {"name" : "Value", "displayControl":{
-          "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-        },
-        {"name" : "Units", "displayControl":{
-          "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-        }
-      ],
-      obrHeader: true,
-      obrItems: [
-        {
-          "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {
-          "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-          "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-          }
-        },
-        {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-          "displayControl": {
-            "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
-          }
-        }
-      ]
-    }
+    // "table" specific options that overwrite the default options:
+    "table": {},
+    // "list" specific options that overwrite the default options:
+    "list": {}
   },
 
 
@@ -673,10 +578,10 @@ var LFormsData = Class.extend({
       this.template = "form-view-a";
     }
     // templateOptions
-    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template];
+    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template] ?
+        this._defaultOptionsForSupportedTemplates[this.template] : {};
     // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = tempOptions ? jQuery.extend({}, tempOptions, this.templateOptions) :
-        jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
+    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, tempOptions, this.templateOptions);
   },
 
   /**
@@ -702,6 +607,14 @@ var LFormsData = Class.extend({
     // for each item on this level
     for (var i=0; i<iLen; i++) {
       var item = items[i];
+
+      // rename layout for backward compatibility
+      if (!item.displayControl) {
+        item.displayControl = {};
+        if (!item.displayControl.questionLayout && item.layout) {
+          item.displayControl.questionLayout = item.layout;
+        }
+      }
 
       // set default dataType
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
@@ -1146,7 +1059,7 @@ var LFormsData = Class.extend({
   /**
    * Set up the internal data for handling the horizontal table
    * Note:
-   * 1) "layout" values 'horizontal' and 'vertical' are only set on items whose "header" is true
+   * 1) "questionLayout" values 'horizontal','vertical' and 'matrix' are only set on items whose "header" is true
    * 2) any items within a 'horizontal' table must be a leaf node. i.e. it cannot contain any sub items.
    * 3) all items within a 'horizontal' table has it's "_inHorizontalTable" set to true.
    * 4) _repeatableItems is reused for adding a repeating row in a horizontal table. but the header item will not be added.
@@ -1178,7 +1091,7 @@ var LFormsData = Class.extend({
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
       // header item and horizontal layout
-      if (item.header && item.layout == "horizontal" ) {
+      if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];
@@ -1256,7 +1169,8 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Add a repeating item or a repeating section and update form status
+   * Add a repeating item or a repeating section after the specified item
+   * and update form status
    * @param item a repeating item or a repeating group item
    * @returns the newly added item or a header item of the newly added section
    */
@@ -1276,6 +1190,46 @@ var LFormsData = Class.extend({
         }
       }
       item._parentItem.items.splice(insertPosition + 1, 0, newItem);
+      newItem._parentItem = item._parentItem;
+
+      // preset the skip logic status to target-hide on the new items
+      this._presetSkipLogicStatus(newItem, false);
+    }
+
+    this._resetInternalData();
+
+    var readerMsg = 'Added ' + this.itemDescription(item);
+    this._actionLogs.push(readerMsg);
+
+    return newItem;
+  },
+
+
+  /**
+   * Add a repeating item or a repeating section at the end of the repeating group
+   * and update form status
+   * @param item a repeating item or a repeating group item
+   * @returns the newly added item or a header item of the newly added section
+   */
+  appendRepeatingItems: function(item) {
+
+    var maxRecId = this.getRepeatingItemMaxId(item);
+    var newItem = angular.copy(this._repeatableItems[item._codePath]);
+    newItem._id = maxRecId + 1;
+
+    if (item._parentItem && Array.isArray(item._parentItem.items)) {
+      var insertPosition = 0;
+      var inRepeating = false;
+      for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
+        if (item._parentItem.items[i]._codePath === item._codePath) {
+          inRepeating = true;
+        }
+        if (inRepeating && item._parentItem.items[i]._codePath !== item._codePath) {
+          insertPosition = i;
+          break;
+        }
+      }
+      item._parentItem.items.splice(insertPosition, 0, newItem);
       newItem._parentItem = item._parentItem;
 
       // preset the skip logic status to target-hide on the new items

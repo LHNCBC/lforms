@@ -7,6 +7,9 @@ describe('Copyright popover message', function() {
 
   it('should show a copyright popover message on the form title', function () {
     tp.openFullFeaturedForm();
+    browser.wait(function() {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
     element(by.id("copyright-all-in-one")).click();
     expect(formCopyright.isDisplayed()).toBe(true);
   });

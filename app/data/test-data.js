@@ -15,9 +15,9 @@ var FHTData = {
   // form name, required. the top-level LOINC item's name in a panel is listed here.
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
-  template: "form-view-a",
-  // template configuration data. optional, if not provided, a default configuration will be used for the selected
-  // template. the format/content is not ready for publish yet.
+  template: "table",
+  // template configuration data. optional, if not provided, a default configuration will be used for the
+  // selected template
   templateOptions: {},
   // question items, required, level 1
   items: [
@@ -744,9 +744,6 @@ var allInOne =
   "template": "form-view-b",
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
-  "templateOptions" : {
-    allowHTMLInInstructions: true
-  },
   "items": [
     // different data type
     {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": "simple text instructions", "copyrightNotice": "A Copyright notice of the item",
@@ -2850,4 +2847,442 @@ var genetic2 ={
       ]
     }
   ]
+};
+
+
+var listTemplateForm =
+{
+  "type": "LOINC",
+  "code": "list-template",
+  "name": "List Template",
+  "template": "list",
+  "items": [
+    {
+      "questionCode": "q0",
+      "question": "String type",
+      "answerCardinality": {"min": "1", "max": "1"}
+    },
+    {
+      "questionCode": "q1a",
+      "question": "Answer list layout --CNE",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "1", "max": "1"},
+      "displayControl": {
+        "answerLayout": "list"
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
+      ]
+    },
+    {
+      "questionCode": "q1b",
+      "question": "Answer list layout --CWE",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": "list"
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
+      ]
+    },
+    {
+      "questionCode": "q1c",
+      "question": "Answer list layout --CNE, Multiple",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": "list"
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
+      ]
+    },
+    {
+      "questionCode": "q1d",
+      "question": "Answer list layout --CWE, Multiple",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": "list"
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer X"},
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
+      ]
+    },
+    {
+      "questionCode": "g1",
+      "question": "A repeating group",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"*"},
+      "displayControl": {"questionLayout":"vertical"},
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answerCardinality": {"min": "1", "max": "1"},
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #4",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1g2",
+          "question": "repeating section in a repeating section",
+          "header": true,
+          "questionCardinality": {"min": "1", "max":"*"},
+          "items": [
+            {
+              "questionCode": "g1g2q1",
+              "dataType": "CNE",
+              "question": "Question #A",
+              "answerCardinality": {"min": "1", "max": "1"},
+              "answers": [
+                {"code": "c1", "text": "Answer 1"},
+                {"code": "c2", "text": "Answer 2"},
+                {"code": "c3", "text": "Answer 3"},
+                {"code": "c4", "text": "Answer 4"}]
+            },
+            {
+              "questionCode": "g1g2q2",
+              "dataType": "CNE",
+              "answerCardinality": {"min": "0", "max": "*"},
+              "question": "Question #B",
+              "answers": [
+                {"code": "c1", "text": "Answer 1"},
+                {"code": "c2", "text": "Answer 2"},
+                {"code": "c3", "text": "Answer 3"},
+                {"code": "c4", "text": "Answer 4"}]
+            }
+
+          ]
+        }
+      ]
+    },
+    {
+      "questionCode": "g2",
+      "question": "A repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"*"},
+      "displayControl": {"questionLayout":"horizontal"},
+      "items": [
+      {
+        "questionCode": "g1m1",
+        "dataType": "CNE",
+        "question": "Question #1",
+        "answerCardinality": {"min": "1", "max": "1"},
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m2",
+        "dataType": "CNE",
+        "question": "Question #2",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m3",
+        "dataType": "CNE",
+        "question": "Question #3",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      },
+      {
+        "questionCode": "g1m4",
+        "dataType": "CNE",
+        "answerCardinality": {"min": "0", "max": "*"},
+        "question": "Question #4",
+        "answers": [
+          {"code": "c1", "text": "Answer 1"},
+          {"code": "c2", "text": "Answer 2"},
+          {"code": "c3", "text": "Answer 3"},
+          {"code": "c4", "text": "Answer 4"}]
+      }]
+    },
+    {
+      "questionCode": "g3",
+      "question": "A non-repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"1"},
+      "displayControl": {"questionLayout":"horizontal"},
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answerCardinality": {"min": "1", "max": "1"},
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #4",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        }]
+    },
+    {
+      "questionCode": "g4",
+      "question": "A group with matrix layout (non-repeating)",
+      "header": true,
+      "questionCardinality": {"min": "1", "max":"1"},
+      "displayControl": {"questionLayout":"matrix"},
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #1",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #2",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #3",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "0", "max": "*"},
+          "question": "Question #4",
+          "answers": [
+            {"code": "c1", "text": "Answer 1"},
+            {"code": "c2", "text": "Answer 2"},
+            {"code": "c3", "text": "Answer 3"},
+            {"code": "c4", "text": "Answer 4"}]
+        }]
+    },
+    {
+      "questionCode": "q3",
+      "question": "Question after a repeating section",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ]
+    }
+
+  ]
+};
+
+var matrixLayout =
+{
+  "type": "LOINC",
+  "code": "matrix-layout",
+  "name": "A form with matrix layout, multiple selections",
+  "template": "list",
+  "templateOptions": {
+    "displayControl": {"questionLayout":"matrix"},
+  },
+  "items": [
+    {
+      "questionCode": "g1m1",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #1",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m2",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #2",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m3",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #3",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    },
+    {
+      "questionCode": "g1m4",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "question": "Question #4",
+      "answers": [
+        {"code": "c1", "text": "Answer 1"},
+        {"code": "c2", "text": "Answer 2"},
+        {"code": "c3", "text": "Answer 3"},
+        {"code": "c4", "text": "Answer 4"}]
+    }]
+};
+
+var matrixLayout2 =
+{
+  "type": "LOINC",
+  "code": "matrix-layout2",
+  "name": "Another form with matrix layout, single selection",
+  "template": "list",
+  "templateOptions": {
+    "displayControl": {"questionLayout":"matrix"},
+  },
+  "items": [
+    {
+      "questionCode": "g1m1",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #1",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m2",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #2",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m3",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #3",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    },
+    {
+      "questionCode": "g1m4",
+      "dataType": "CNE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "question": "Question #4",
+      "answers": [
+        {"code": "c1", "text": "Answer a"},
+        {"code": "c2", "text": "Answer b"},
+        {"code": "c3", "text": "Answer c"},
+        {"code": "c4", "text": "Answer d"}]
+    }]
 };

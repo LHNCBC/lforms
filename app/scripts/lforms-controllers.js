@@ -318,7 +318,7 @@ angular.module('lformsWidget')
         else {
           eleClass += ' question';
         }
-        if (item.layout == 'horizontal') {
+        if (item.displayControl && item.displayControl.questionLayout === 'horizontal') {
           eleClass += ' horizontal';
         }
         if (!item.question || item.question.length === 0) {
@@ -397,15 +397,16 @@ angular.module('lformsWidget')
       /**
        * Add a repeating item or a repeating group
        * @param item an item in the lforms form items array
+       * @param append an optional flag indicate if the new item is added to the end of the repeating group
        */
-      $scope.addOneRepeatingItem = function(item) {
+      $scope.addOneRepeatingItem = function(item, append) {
         var widgetData = $scope.lfData;
         var anyEmpty = false;
         if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
           anyEmpty = widgetData.areAnyRepeatingItemsEmpty(item);
         }
         if (!anyEmpty) {
-          var newItem = widgetData.addRepeatingItems(item);
+          var newItem = append ? widgetData.appendRepeatingItems(item) : widgetData.addRepeatingItems(item);
           $scope.sendActionsToScreenReader();
 
           setTimeout(function() {
@@ -540,18 +541,6 @@ angular.module('lformsWidget')
 
 
       /**
-       * Check if the current item is the last item within one or more
-       * repeating items (or groups) and return those containing repeating
-       * items (or groups)
-       * @param item an item in the lforms form items array
-       * @return {boolean}
-       */
-      $scope.isLastItemInRepeatingItems = function(index) {
-        return $scope.lfData.isLastItemInRepeatingItems(index);
-      };
-
-
-      /**
        * Check if the question needs an extra input
        * @param item an item in the lforms form items array
        * @returns {*}
@@ -581,6 +570,119 @@ angular.module('lformsWidget')
       $scope.onclick = function() {
         debugger
         var i = 1;
+      };
+
+
+      /**
+       * Updates the value for an item whose answers are displayed as a list of checkboxes,
+       * one of which has just been selected or deselected
+       * @param item a form item that has an answer list and supports multiple selections
+       * @param answer an answer object in the answer list
+       */
+      $scope.updateCheckboxList = function(item, answer) {
+        if (item.value && angular.isArray(item.value)) {
+          var index, selected = false;
+          for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+            if (angular.equals(item.value[i],answer)) {
+              selected = true;
+              index = i;
+              break;
+            }
+          }
+          // if answer is currently selected
+          if (selected) {
+            // remove the answer from the selected list
+            item.value.splice(index, 1);
+          }
+          // if answer is not currently selected
+          else {
+            // add the answer to the selected list
+            item.value.push(answer);
+          }
+        }
+        // the value is not accessed before
+        else {
+          // add the answer to the selected list
+          item.value = [answer];
+        }
+      };
+
+      /**
+       * Updates the value for an item with the user typed data.
+       * The item's answers are displayed as a list of checkboxes, and users have an option to type their own answer.
+       * Update the item.value based on selection of extra data input by users
+       * @param item a form item that has an answer list and supports multiple selections and user typed data.
+       * @param otherValue the value object of the other value checkbox
+       */
+      $scope.updateCheckboxListForOther = function(item, otherValue) {
+        // set the other value flag
+        otherValue._otherValue = true;
+
+        // add/update the other value
+        if (item._otherValueChecked) {
+          // the list is not empty
+          if (item.value && angular.isArray(item.value)) {
+            var found = false;
+            for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+              if (item.value[i]._otherValue) {
+                item.value[i] = otherValue;
+                found = true;
+                break;
+              }
+            }
+            // if the other value is not already in the list
+            if (!found) {
+              // add the other value to the list
+              item.value.push(otherValue);
+            }
+          }
+          // the list is empty
+          else {
+            // add the other value to the list
+            item.value = [otherValue];
+          }
+        }
+        // remove other value
+        else {
+          if (item.value && angular.isArray(item.value)) {
+            var index, found = false;
+            for(var i= 0,iLen=item.value.length; i<iLen; i++) {
+              if (item.value[i]._otherValue) {
+                found = true;
+                index = i;
+                break;
+              }
+            }
+            if (found) {
+              item.value.splice(index, 1);
+            }
+          }
+        }
+      };
+
+
+      /**
+       *
+       * Update the item.value based on selection of an answer by users
+       * @param item a form item that has an answer list and support single selections
+       */
+      $scope.updateRadioList = function(item) {
+        item._otherValueChecked = false;
+      };
+
+
+        /**
+       *
+       * Update the item.value based on selection of extra data input by users
+       * @param item a form item that has an answer list and support single selections
+       * @param otherValue the value object of the other value radio button
+       */
+      $scope.updateRadioListForOther = function(item, otherValue) {
+
+        // add/update the other value
+        if (item._otherValueChecked) {
+          item.value = otherValue;
+        }
       };
 
 

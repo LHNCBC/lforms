@@ -1,0 +1,56 @@
+<div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout">
+  <!--list style-->
+  <div ng-switch-when="list">
+    <span ng-repeat="answer in item.answers track by $index" class="lf-list-answer">
+      <!--for multiple answers-->
+      <label ng-if="item._multipleAnswers">
+        <input type="checkbox" id="{{item._elementId + answer.code}}" ng-click="updateCheckboxList(item, answer)">{{answer.text}}
+      </label>
+      <!--for single answer-->
+      <label ng-if="!item._multipleAnswers">
+        <input type="radio" id="{{item._elementId + answer.code}}" ng-model="item.value"
+               ng-value="answer" name="{{item._elementId}}"
+               ng-click="updateRadioList(item)">{{answer.text}}
+      </label>
+    </span>
+    <!--extra OTHER field-->
+    <span ng-if="item.dataType==='CWE'">
+      <!--for multiple answers-->
+      <span ng-if="item._multipleAnswers" class="lf-list-answer">
+        <label>
+          <input type="checkbox" ng-model="item._otherValueChecked"
+                 id="{{item._elementId + '_other'}}"
+                 ng-click="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})">OTHER:
+        </label>
+        <label>
+          <input type="text" ng-model="item.valueOther"
+                 id="{{item._elementId + '_otherValue'}}"
+                 ng-change="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
+        </label>
+      </span>
+
+      <!--for single answer-->
+      <span ng-if="!item._multipleAnswers" class="lf-list-answer">
+        <label>
+          <input type="radio" id="{{item._elementId + '_other'}}" ng-model="item._otherValueChecked" ng-value="true"
+                 name="{{item._elementId}}"
+                 ng-click="updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
+          OTHER:
+        </label>
+        <label>
+          <input type="text" id="{{item._elementId + '_otherValue'}}" ng-model="item.valueOther"
+                 ng-change="updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
+        </label>
+      </span>
+    </span>
+  </div>
+
+  <!--combo style (default is 'combo')-->
+  <div ng-switch-default class="lf-combo-answer">
+    <input name="{{item.question +'_'+ $id}}" type="text"
+           ng-required="item._answerRequired"
+           ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+           ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+           id="{{item._elementId}}">
+  </div>
+</div>

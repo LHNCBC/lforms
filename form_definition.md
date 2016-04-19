@@ -9,6 +9,7 @@ about the meaning of each key:
     {
       "code": string,
       "name": string,
+      "template": string
       "templateOptions": {
         "obrHeader": boolean,
         "obrItems": [{
@@ -72,6 +73,8 @@ Keys:
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
 * **name** - (required) The name of the form (to be shown to the user)
+* **template** - (optional) a template name that is used for rendering the form. 
+  Currently 'table' (default) and 'list' are supported.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * showQuestionCode - a boolean that controls whether to show question codes. 
@@ -92,6 +95,10 @@ Keys:
       content in the codingInstructions field. The default is false.
     * useAnimation - a boolean that controls whether to use animation on the form. 
       The default is true.
+    * displayControl - an object that controls the display of the selected template.
+      Currently it only supports a 'questionLayout' attribute, which has supported
+      values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
+      `{"questionLayout": "matrix"}` 
     * obxTableColumns - an array defining table columns of the table in the form. 
       If you omit obxTableColumns, a default will be provided with four columns
       for: "Name", buttons, "Value" and "Unit".
@@ -234,4 +241,16 @@ Keys:
       working on formulas like computing a body-mass index based on weight and
       height, but that is still under development.  To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
-
+    * displayControl - an object that controls the display of the item or the section.
+      Supported the fields are: 
+      * css - an array of valid CSS settings that could apply to an item. (limited supports).
+      * colCSS - an array of valid CSS settings that could apply to its related column in a 
+        horizontal table. It only works when its parent item/section has a 
+        {"questionLayout": "horizontal"} value in its "displayControl".
+      * questionLayout - the layout of the questions in the section. It works on items 
+        that are sections, i.e. they contain sub items. Supported values are: 
+        'vertical' (default), 'horizontal' and 'matrix'.
+      * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
+        The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
+        the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
+        will be used to handle the list.
