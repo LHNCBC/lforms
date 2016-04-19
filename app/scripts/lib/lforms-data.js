@@ -801,11 +801,6 @@ var LFormsData = Class.extend({
       item._multipleAnswers = item.answerCardinality.max &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-      //// initial value for multiple selections
-      //if (item._multipleAnswers && !angular.isArray(item.value)) {
-      //  item.value = [];
-      //}
-
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
 

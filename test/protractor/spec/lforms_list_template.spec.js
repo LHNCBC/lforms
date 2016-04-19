@@ -32,12 +32,12 @@ describe('List template', function() {
     item1answer1.click();
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c1');
-      expect(value.text).toBe('Vertical Table/List (default)');
+      expect(value.text).toBe('Answer X');
     });
     item1answer3.click();
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c3');
-      expect(value.text).toBe('Matrix');
+      expect(value.text).toBe('Answer Z');
     });
 
     // second answer list
@@ -48,7 +48,7 @@ describe('List template', function() {
     item2answer1.click();
     item2answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c1');
-      expect(value.text).toBe('Vertical Table/List (default)');
+      expect(value.text).toBe('Answer X');
     });
     item2Other.click();
     item2answer1.evaluate("item.value").then(function (value) {
@@ -76,15 +76,15 @@ describe('List template', function() {
     item3answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(1);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
     });
     item3answer3.click();
     item3answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
       expect(value[1].code).toBe('c3');
-      expect(value[1].text).toBe('Matrix');
+      expect(value[1].text).toBe('Answer Z');
     });
 
     // fourth answer list
@@ -96,13 +96,13 @@ describe('List template', function() {
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(1);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
     });
     item4Other.click();
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
       expect(value[1].code).toBe(null);
       expect(value[1].text).toBe(null);
     });
@@ -111,7 +111,7 @@ describe('List template', function() {
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
       expect(value[1].code).toBe('other values');
       expect(value[1].text).toBe('other values');
     });
@@ -122,7 +122,7 @@ describe('List template', function() {
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
       expect(value[1].code).toBe('other values again');
       expect(value[1].text).toBe('other values again');
     });
@@ -130,7 +130,7 @@ describe('List template', function() {
     // other model values are not changes
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c3');
-      expect(value.text).toBe('Matrix');
+      expect(value.text).toBe('Answer Z');
     });
     item2answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('other values again');
@@ -139,9 +139,9 @@ describe('List template', function() {
     item3answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Vertical Table/List (default)');
+      expect(value[0].text).toBe('Answer X');
       expect(value[1].code).toBe('c3');
-      expect(value[1].text).toBe('Matrix');
+      expect(value[1].text).toBe('Answer Z');
     });
 
   });
