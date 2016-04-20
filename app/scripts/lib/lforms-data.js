@@ -837,10 +837,10 @@ var LFormsData = Class.extend({
   /** Get the complete form definition data, including user data.
    * @return {{}} form definition JSON object
    */
-  getFormDefData: function() {
+  getFormData: function() {
 
     // get the form data
-    var formData = this.getFormData();
+    var formData = this.getUserData();
 
     var defData = {
       PATH_DELIMITER: this.PATH_DELIMITER,
@@ -867,7 +867,7 @@ var LFormsData = Class.extend({
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getFormData: function(noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(noFormDefData, noEmptyValue, noHiddenItem) {
 
     var ret = {};
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);

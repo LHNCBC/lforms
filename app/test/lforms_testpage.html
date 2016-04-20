@@ -128,7 +128,7 @@
             };
 
             $scope.getFormDefDataAndResetForm = function() {
-              var formDefData = $scope.lfData2.getFormDefData();
+              var formDefData = $scope.lfData2.getFormData();
               // change a value
               formDefData.items[0].items[0].value= 'after reset';
               $scope.lfData2 = new LFormsData(formDefData);

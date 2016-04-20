@@ -226,9 +226,9 @@ WidgetUtil = {
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getFormData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData(noFormDefData, noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
   },
 
 
@@ -237,9 +237,9 @@ WidgetUtil = {
    * @param element the containing HTML element that includes the LForm's rendered form.
    * @returns {{}} Form definition data
    */
-  getFormDefData: function(element) {
+  getFormData: function(element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormDefData() : null;
+    return formObj ? formObj.getFormData() : null;
   },
 
 

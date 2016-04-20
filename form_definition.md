@@ -147,7 +147,8 @@ about the meaning of each key:
   with the following keys:
 
     * questionCode - (required) A code identifying the question or section.
-      This code needs to be unique among its sibling questions.
+      This code needs to be unique among its sibling questions. 
+      It should not contain '/'.
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
@@ -276,12 +277,12 @@ about the meaning of each key:
 
 ###Utility Functions:
  
-* **WidgetUtil.getFormDefData()** - a function to get the complete form definition data, along with the user input data 
+* **WidgetUtil.getFormData()** - a function to get the complete form definition data, along with the user input data 
   from the form. The returned data could be fed into a LForms widget directly to render the form. 
   It has the following parameters:
     * element - required. The containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.     
-* **WidgetUtil.getFormData()** - a function to get user input data from the form, with or without 
+* **WidgetUtil.getUserData()** - a function to get user input data from the form, with or without 
   form definition data. It has the following parameters:
     * element - required, the containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.

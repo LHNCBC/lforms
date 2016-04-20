@@ -578,8 +578,8 @@ angular.module('lformsWidget')
        * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
        * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
-      $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-        var formData =  $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+      $scope.getUserData = function(noFormDefData, noEmptyValue, noHiddenItem) {
+        var formData =  $scope.lfData.getUserData(noFormDefData, noEmptyValue, noHiddenItem);
         return formData;
       };
 
@@ -587,8 +587,8 @@ angular.module('lformsWidget')
       /** Get the complete form definition data, including user data.
        * @return {{}} form definition JSON object
        */
-      $scope.getFormDefData = function() {
-        var formData =  $scope.lfData.getFormDefData();
+      $scope.getFormData = function() {
+        var formData =  $scope.lfData.getFormData();
         return formData;
       };
 
