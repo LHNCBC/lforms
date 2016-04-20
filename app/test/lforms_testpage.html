@@ -89,7 +89,8 @@
     <script type="text/javascript">
 
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', function ($scope, $timeout, lformsConfig) {
+          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS',
+              function ($scope, $timeout, lformsConfig, LF_CONSTANTS) {
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -108,6 +109,17 @@
               {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"}
 
             ];
+
+            // indirect testing of the events emitted from within the LForms widget
+            $scope.$on(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED, function(event, eventAttr) {
+              window._emittedEvent = eventAttr;
+              console.log(eventAttr);
+            });
+
+            $scope.$on(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED, function(event, eventAttr) {
+              window._emittedEvent = eventAttr;
+              console.log(eventAttr);
+            });
 
             $scope.changeOptions = function() {
               $scope.lfOption2 = {

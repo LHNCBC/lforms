@@ -410,7 +410,13 @@ angular.module('lformsWidget')
           $scope.sendActionsToScreenReader();
 
           // broadcast the event
-          $scope.$broadcast(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED, $scope.lfData.code, newItem._elementId);
+          $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
+              {
+                "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
+                "formId": $scope.lfData.code,
+                "itemId": newItem._elementId,
+                "time": new Date()
+              });
 
           setTimeout(function() {
             var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -509,7 +515,13 @@ angular.module('lformsWidget')
         $scope.sendActionsToScreenReader();
 
         // broadcast the event
-        $scope.$broadcast(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED, $scope.lfData.code, item._elementId);
+        $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
+            {
+              "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
+              "formId": $scope.lfData.code,
+              "itemId": item._elementId,
+              "time": new Date()
+            });
 
         // set the focus
         setTimeout(function() {

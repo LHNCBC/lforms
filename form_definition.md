@@ -67,12 +67,14 @@ about the meaning of each key:
     }
 ```
 
-Keys:
+###Keys:
 
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
-* **name** - (required) The name of the form (to be shown to the user)
+* **name** - (required) The name of the form (to be shown to the user).
+* **type** - the form type, "LOINC" is the only one supported. More will be added.
+* **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form. 
   Currently 'table' (default) and 'list' are supported.
 * **templateOptions** - a hash of options for the template.  This can be
@@ -104,7 +106,7 @@ Keys:
       for: "Name", buttons, "Value" and "Unit".
     If you wish to specify your own definitions, each element in the array 
     should be a hash with the following keys:
-        * name - the colomn header text
+        * name - the column header text
         * displayControl - This controls display styles of the column. It is a hash
           with the keys of "colCSS" for columns styles. The values are an array of 
           hashes of valid CSS styles for the "col" DOM element. Here is an example: 
@@ -254,3 +256,38 @@ Keys:
         The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
         the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
         will be used to handle the list.
+
+
+###Emitted (angular) Events:
+
+* **LF_EVENT_REPEATING_ITEM_ADDED** - emitted when a repeatable item or section is added to the form by clicking
+  the "add" button. An event attr object is associated with the event, with the following fields: 
+    * event - the event name, 'LF_EVENT_REPEATING_ITEM_ADDED'
+    * formId - the code of the form
+    * itemId - the _elementId of the newly added item or section 
+    * time - the time stamp when the event happens
+* **LF_EVENT_REPEATING_ITEM_DELETED** - emitted when a repeatable item or section is deleted from the form by clicking
+ the "delete" button. The event attr object has the same set of the fields:
+    * event - the event name, 'LF_EVENT_REPEATING_ITEM_DELETED'
+    * formId - the code of the form
+    * itemId - the _elementId of the item or section that has just been deleted. 
+    * time - the time stamp when the event happens
+
+
+###Utility Functions:
+ 
+* **WidgetUtil.getFormDefData()** - a function to get the complete form definition data, along with the user input data 
+  from the form. The returned data could be fed into a LForms widget directly to render the form. 
+  It has the following parameters:
+    * element - required. The containing HTML element that includes the LForm's rendered form. It could be the DOM
+                element or its id.     
+* **WidgetUtil.getFormData()** - a function to get user input data from the form, with or without 
+  form definition data. It has the following parameters:
+    * element - required, the containing HTML element that includes the LForm's rendered form. It could be the DOM
+                element or its id.
+    * noFormDefData - optional, to include form definition data, the default is false.
+    * noEmptyValue - optional, to remove items that have an empty value, the default is false.
+    * noHiddenItem - optional, to remove items that are hidden by skip logic, the default is false.
+                
+                
+     

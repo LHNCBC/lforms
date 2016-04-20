@@ -16,6 +16,30 @@ describe('Unused repeating item/section control', function() {
       ff.name.sendKeys("a name");
       ff.btnName.click();
       expect(namePopover.isPresent()).toBe(false);
+      // an add event emitted
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var testData = window._emittedEvent;
+        callback(testData);
+      }).then(function (tData) {
+        expect(tData.event).toBe('LF_EVENT_REPEATING_ITEM_ADDED')
+        expect(tData.formId).toBe('54127-6N');
+        expect(tData.itemId).toBe('/54126-8/54125-0/1/2');
+      });
+      ff.btnDelName2.click();
+      // a delete event emitted
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var testData = window._emittedEvent;
+        callback(testData);
+      }).then(function (tData) {
+        expect(tData.event).toBe('LF_EVENT_REPEATING_ITEM_DELETED')
+        expect(tData.formId).toBe('54127-6N');
+        expect(tData.itemId).toBe('/54126-8/54125-0/1/2');
+      });
+
+      ff.btnName.click();
+
     });
     it('should not add a new one when there is an unused item and an used item', function () {
       ff.btnName2.click();
@@ -26,7 +50,6 @@ describe('Unused repeating item/section control', function() {
       ff.name.clear();
       ff.btnName2.click();
       expect(namePopover.isDisplayed()).toBe(true);
-
     });
   });
 
