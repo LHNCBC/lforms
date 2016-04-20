@@ -11,6 +11,7 @@ jQuery('.showSource').each(function(i, e) {
      </div>'
   );
 });
+
 function showSource(e) {
   e.target.style.display='none';
   e.target.nextElementSibling.style.display='block';
