@@ -52,8 +52,8 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (>=6.0)</li>
-        <li><a href="versions/5.5/index.html">5.5</a></li>
+        <li><a href="../../index.html">Current (>=6.0)</a></li>
+        <li>5.5 (this version)</li>
       </ul>
     </div>
 
@@ -211,15 +211,15 @@ For example:</p>
 codes for coded answer lists will be stored in the data model.  To retrieve that
 data, LForms provides the following utility method:</p>
 
-<pre><code>WidgetUtil.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+<pre><code>WidgetUtil.getFormData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
 Or, from wihin an AngularJS app, there is also an API on the LFormsData object:</p>
 
-<pre><code>$scope.myFormData.getUserData(noFormDefData, noEmptyValue, noHiddenItem)
+<pre><code>$scope.myFormData.getFormData(noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>With no arguments (i.e. WidgetUtil.getUserData()), the data for the first LForm
+<p>With no arguments (i.e. WidgetUtil.getFormData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
@@ -242,7 +242,7 @@ hidden by skip logic will be removed.</li>
 </ol>
 
 <p>As an example, here is the data from a partially filled-in vital signs panel,
-returned via <code>$scope.myFormData.getUserData(null, true, true, true)</code>:</p>
+returned via <code>$scope.myFormData.getFormData(null, true, true, true)</code>:</p>
 
 <div class="highlight highlight-source-json"><pre>    {
       <span class="pl-s"><span class="pl-pds">"</span>itemsData<span class="pl-pds">"</span></span>: [{
