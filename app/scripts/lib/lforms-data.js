@@ -834,7 +834,9 @@ var LFormsData = Class.extend({
   },
 
 
-  /** Get the complete form definition data, including user data.
+  /**
+   * Get the complete form definition data, including the user input data from the form.
+   * The returned data could be fed into a LForms widget directly to render the form.
    * @return {{}} form definition JSON object
    */
   getFormData: function() {
@@ -860,8 +862,7 @@ var LFormsData = Class.extend({
 
 
   /**
-   * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
-   * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
+   * Get user input data from the form, with or without form definition data.
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.

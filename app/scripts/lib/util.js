@@ -219,7 +219,7 @@ WidgetUtil = {
 
 
   /**
-   * Get form data from the LForms rendered form
+   * Get user input data from the form, with or without form definition data.
    * @param element the containing HTML element that includes the LForm's rendered form.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
@@ -233,8 +233,10 @@ WidgetUtil = {
 
 
   /**
-   * Get the complete form definition data,including user data, from the LForms rendered form
-   * @param element the containing HTML element that includes the LForm's rendered form.
+   * Get the complete form definition data, including the user input data from the form.
+   * The returned data could be fed into a LForms widget directly to render the form.
+   * @param element required, the containing HTML element that includes the LForm's rendered form.
+   *        It could be the DOM element or its id.
    * @returns {{}} Form definition data
    */
   getFormData: function(element) {
