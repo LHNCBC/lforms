@@ -219,36 +219,54 @@ WidgetUtil = {
 
 
   /**
-   * Get form data from the LForms rendered form
+   * Get user input data from the form, with or without form definition data.
    * @param element the containing HTML element that includes the LForm's rendered form.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getFormData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
+  },
 
+
+  /**
+   * Get the complete form definition data, including the user input data from the form.
+   * The returned data could be fed into a LForms widget directly to render the form.
+   * @param element required, the containing HTML element that includes the LForm's rendered form.
+   *        It could be the DOM element or its id.
+   * @returns {{}} Form definition data
+   */
+  getFormData: function(element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.getFormData() : null;
+  },
+
+
+  /**
+   * Find the form object in the scope based the form dom element
+   * @param element element the containing HTML element that includes the LForm's rendered form.
+   * @returns {*}
+   * @private
+   */
+  _getFormObjectInScope: function(element) {
     // find the scope that has the LForms data
-    var theScopeData, formData;
+    var formObj;
     if (!element) element = jQuery("body");
 
     // class="lf-form"> is the element that contains rendered form.
     var lfForms = jQuery(element).find(".lf-form");
-
     angular.forEach(lfForms, function(ele, index) {
       var lfForm = angular.element(ele);
       if (lfForm.scope() && lfForm.scope().lfData) {
-        theScopeData = lfForm.scope().lfData;
+        formObj = lfForm.scope().lfData;
         return false; // break the loop
       }
     });
 
-    if (theScopeData) {
-      formData = theScopeData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
-    }
-
-    return formData;
-
+    return formObj;
   }
 };
 

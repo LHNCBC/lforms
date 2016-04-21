@@ -29,7 +29,7 @@ angular.module('lformsWidget')
         showMonthAfterYear: true,
         buttonText: ""
       };
-
+        
       /**
        * Set the active row in table
        * @param index index of an item in the lforms form items array
@@ -409,6 +409,15 @@ angular.module('lformsWidget')
           var newItem = append ? widgetData.appendRepeatingItems(item) : widgetData.addRepeatingItems(item);
           $scope.sendActionsToScreenReader();
 
+          // broadcast the event
+          $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
+              {
+                "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED,
+                "formId": $scope.lfData.code,
+                "itemId": newItem._elementId,
+                "time": new Date()
+              });
+
           setTimeout(function() {
             var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
@@ -505,6 +514,15 @@ angular.module('lformsWidget')
 
         $scope.sendActionsToScreenReader();
 
+        // broadcast the event
+        $scope.$emit(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
+            {
+              "event": LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED,
+              "formId": $scope.lfData.code,
+              "itemId": item._elementId,
+              "time": new Date()
+            });
+
         // set the focus
         setTimeout(function() {
           var btn = document.getElementById(btnId);
@@ -553,20 +571,30 @@ angular.module('lformsWidget')
 
 
       /**
-       * Get the form data from the LForms widget. It might just include the "questionCode" and "value"
-       * (and "unit" and "valueOther" if there's one). The same tree structure is returned.
+       * Get user input data from the form, with or without form definition data.
        * @param noFormDefData optional, to not include form definition data, the default is false.
        * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
        * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
        * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
        */
-      $scope.getFormData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-        var formData =  $scope.lfData.getFormData(noFormDefData, noEmptyValue, noHiddenItem);
+      $scope.getUserData = function(noFormDefData, noEmptyValue, noHiddenItem) {
+        var formData =  $scope.lfData.getUserData(noFormDefData, noEmptyValue, noHiddenItem);
         return formData;
       };
 
 
-      // for debug only. to be removed.
+      /**
+       * Get the complete form definition data, including the user input data from the form.
+       * The returned data could be fed into a LForms widget directly to render the form.
+       * @return {{}} form definition JSON object
+       */
+      $scope.getFormData = function() {
+        var formData =  $scope.lfData.getFormData();
+        return formData;
+      };
+
+
+        // for debug only. to be removed.
       $scope.onclick = function() {
         debugger
         var i = 1;

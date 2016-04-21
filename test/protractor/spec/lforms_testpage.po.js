@@ -73,6 +73,7 @@ var TestPage = function() {
       btnName : element(by.id('add-/54126-8/54125-0/1/1')),
       btnName2 : element(by.id('add-/54126-8/54125-0/1/2')),
       btnName3 : element(by.id('add-/54126-8/54125-0/1/3')),
+      btnDelName2 : element(by.id('del-/54126-8/54125-0/1/2')),
 
       disease: element(by.id('/54126-8/54137-5/54140-9/1/1/1')),
       ageAtDiag: element(by.id('/54126-8/54137-5/54130-0/1/1/1')),

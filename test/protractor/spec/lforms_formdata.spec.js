@@ -9,7 +9,7 @@ describe('get form data', function() {
     // #1 all fields are empty
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getFormData();
+      var fData = WidgetUtil.getUserData();
       callback(fData);
     }).then(function(formData) {
       // console.log(formData);
@@ -41,7 +41,7 @@ describe('get form data', function() {
 
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
-        var fData = WidgetUtil.getFormData();
+        var fData = WidgetUtil.getUserData();
         callback(fData);
       }).then(function (formData) {
         expect(formData.templateData.length).toBe(4);
@@ -63,7 +63,7 @@ describe('get form data', function() {
         //#3 test parameters noFormDefData
         browser.driver.executeAsyncScript(function () {
           var callback = arguments[arguments.length - 1];
-          var fData = WidgetUtil.getFormData(null, true);
+          var fData = WidgetUtil.getUserData(null, true);
           callback(fData);
         }).then(function (formData) {
           expect(formData.itemsData.length).toBe(2);
@@ -74,7 +74,7 @@ describe('get form data', function() {
           //#4 test parameters noEmptyValue
           browser.driver.executeAsyncScript(function () {
             var callback = arguments[arguments.length - 1];
-            var fData = WidgetUtil.getFormData(null, false, true);
+            var fData = WidgetUtil.getUserData(null, false, true);
             callback(fData);
           }).then(function (formData) {
             expect(formData.itemsData.length).toBe(1);
@@ -83,7 +83,7 @@ describe('get form data', function() {
             //#5 test parameters noHiddenItem
             browser.driver.executeAsyncScript(function () {
               var callback = arguments[arguments.length - 1];
-              var fData = WidgetUtil.getFormData(null, false, false, true);
+              var fData = WidgetUtil.getUserData(null, false, false, true);
               callback(fData);
             }).then(function (formData) {
               expect(formData.itemsData.length).toBe(2);
@@ -101,7 +101,7 @@ describe('get form data', function() {
     browser.waitForAngular();
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getFormData();
+      var fData = WidgetUtil.getUserData();
       callback(fData);
     }).then(function(formData) {
       // console.log(formData);
@@ -109,5 +109,97 @@ describe('get form data', function() {
       expect(formData.itemsData[0].items.length).toBe(13);
     });
   });
+
+
+  it('should be able to get the complete form definition data and reset the form with the retrieved data', function() {
+    tp.openUSSGFHTVertical();
+
+    var resetButton = element(by.id('reset-form-with-same-data'));
+    ff.comment.sendKeys("Some comments");
+    ff.name.sendKeys("Not Empty");
+
+    // pick the 1st item, centimeters
+    ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.gender.sendKeys(protractor.Key.TAB);
+    expect(ff.gender.getAttribute('value')).toBe("Male");
+
+    ff.height.sendKeys("70");
+    expect(ff.bmi.getAttribute('value')).toBe("");
+    ff.weight.sendKeys("170");
+    expect(ff.bmi.getAttribute('value')).toBe("24.39");
+
+    // check the data directly
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = WidgetUtil.getFormData();
+      callback(fData);
+    }).then(function (formData) {
+      expect(formData.code).toBe("54127-6N");
+      expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
+      expect(formData.template).toBe("table");
+      expect(formData.type).toBe("LOINC");
+      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showQuestionCode).toBe(false);
+      expect(formData.items[0].question).toBe("Your health information");
+      expect(formData.items[0].questionCode).toBe("54126-8");
+      expect(formData.items[0].header).toBe(true);
+      expect(formData.items[0].items.length).toBe(13);
+      expect(formData.items[0].items[0].dataType).toBe("ST");
+      expect(formData.items[0].items[0].question).toBe("Name");
+      expect(formData.items[0].items[0].questionCode).toBe("54125-0");
+      expect(formData.items[0].items[0].value).toBe("Not Empty");
+      expect(formData.items[0].items[1].value.code).toBe("LA2-8");
+      expect(formData.items[0].items[1].value.text).toBe("Male");
+      expect(formData.items[0].items[6].value).toBe(70);
+      expect(formData.items[0].items[6].unit.name).toBe("inches");
+      expect(formData.items[0].items[8].value).toBe(170);
+      expect(formData.items[0].items[8].unit.name).toBe("lbs");
+      expect(formData.items[0].items[9].value).toBe("24.39");
+      expect(formData.items[1].items.length).toBe(9);
+    });
+
+    // reset the form
+    resetButton.click();
+
+    expect(ff.comment.getAttribute('value')).toBe("Some comments");
+    // changed in reset function to be 'after reset', was 'Not Empty'
+    expect(ff.name.getAttribute('value')).toBe("after reset");
+    expect(ff.gender.getAttribute('value')).toBe("Male");
+    expect(ff.height.getAttribute('value')).toBe("70");
+    expect(ff.weight.getAttribute('value')).toBe("170");
+    expect(ff.bmi.getAttribute('value')).toBe("24.39");
+
+    // check the data again, directly
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = WidgetUtil.getFormData();
+      callback(fData);
+    }).then(function (formData) {
+      expect(formData.code).toBe("54127-6N");
+      expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
+      expect(formData.template).toBe("table");
+      expect(formData.type).toBe("LOINC");
+      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showQuestionCode).toBe(false);
+      expect(formData.items[0].question).toBe("Your health information");
+      expect(formData.items[0].questionCode).toBe("54126-8");
+      expect(formData.items[0].header).toBe(true);
+      expect(formData.items[0].items.length).toBe(13);
+      expect(formData.items[0].items[0].dataType).toBe("ST");
+      expect(formData.items[0].items[0].question).toBe("Name");
+      expect(formData.items[0].items[0].questionCode).toBe("54125-0");
+      expect(formData.items[0].items[0].value).toBe("after reset");
+      expect(formData.items[0].items[1].value.code).toBe("LA2-8");
+      expect(formData.items[0].items[1].value.text).toBe("Male");
+      expect(formData.items[0].items[6].value).toBe(70);
+      expect(formData.items[0].items[6].unit.name).toBe("inches");
+      expect(formData.items[0].items[8].value).toBe(170);
+      expect(formData.items[0].items[8].unit.name).toBe("lbs");
+      expect(formData.items[0].items[9].value).toBe("24.39");
+      expect(formData.items[1].items.length).toBe(9);
+    });
+
+  });
+
 
 });
