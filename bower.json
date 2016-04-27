@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "dependencies": {
     "jquery-ui": "^1.10.1",
     "angular": "^1.4.7",
@@ -43,6 +43,7 @@
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/cross_browser.js",
     "app/scripts/lib/util.js",
+    "app/scripts/lib/hl7.js",
     "app/scripts/lib/lforms-data.js",
     "app/styles/lforms.css",
     "app/lforms.tpl.js"

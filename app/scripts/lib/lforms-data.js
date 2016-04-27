@@ -589,8 +589,8 @@ var LFormsData = Class.extend({
    * @param options new options
    */
   setTemplateOptions: function(options) {
-
-    this.templateOptions = jQuery.extend(true, {}, this.templateOptions, options);
+    // not to use deep copy here, because of the unexpected deep copy result on arrays.
+    this.templateOptions = jQuery.extend({}, this.templateOptions, options);
 
   },
 
