@@ -45,13 +45,14 @@ describe('horizontal table', function() {
     expect(element.all(by.css('.float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
-  it('should not lose focus when the options for an autocompleter change',
-      function() {
+  it('should not lose focus when the options for an autocompleter change', function() {
     tp.openRxTerms();
     var drugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
     drugNameField.click();
     drugNameField.sendKeys('ar');
-    browser.driver.wait(protractor.until.elementIsVisible(tp.Autocomp.searchResults));
+    browser.wait(function() {
+      return tp.Autocomp.searchResults.isDisplayed();
+    }, 10000);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
