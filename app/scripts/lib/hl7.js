@@ -1,7 +1,7 @@
 /**
  * A package to generate HL7 messgages from LForms form data
  */
-var HL7 = {
+var LFormsHL7 = {
 
   LOINC_CS:  'LN',
   obrFieldNum: 43,
@@ -159,24 +159,13 @@ var HL7 = {
         ret = "NM";
         break;
       case "TX":
-          ret = "TX";
-        break;
       case "DT":
-          ret = "DT";
-        break;
       case "DTM":
-          ret = "DTM";
-        break;
       case "TM":
-          ret = "TM";
-        break;
       case "CNE":
-          ret = "CNE";
-        break;
       case "CWE":
-          ret = "CWE";
+          ret = lformsDataType;
         break;
-
       case "BIN":
       case "RTO":
       case "QTY":
@@ -212,7 +201,7 @@ var HL7 = {
       obxIndex: 1
     }
     // form level info
-    var formObrArray = new Array(this.obrFieldNum); // undefined
+    var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
     formObrArray[1] = 1;
