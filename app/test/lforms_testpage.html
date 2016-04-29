@@ -139,7 +139,7 @@
               $scope.lfData2.template = template;
             };
 
-            $scope.getHL7Segments = function() {
+            $scope.showHL7Segments = function() {
               var hl7Seg = LFormsHL7.toHL7Segments($scope.lfData2);
               console.log(hl7Seg.replace(/\r/g,'\r\n'));
             };
@@ -254,7 +254,7 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
-          <button id="to-table" class="btn btn-primary" ng-click="getHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="to-table" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
 
         </div>
       </div>
