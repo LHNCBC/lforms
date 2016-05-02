@@ -240,14 +240,16 @@ var LFormsHL7 = {
     if (formData.items) {
       var obxIndex = 0;
       for (var j = 0, jLen = formData.items.length; j < jLen; j++) {
-        if (formData.items[j].header) {
-          formInfo.obxIndex = 0;
+        if (formData.items[j].dataType !== "TITLE") {
+          if (formData.items[j].header) {
+            formInfo.obxIndex = 0;
+          }
+          else {
+            obxIndex++;
+            formInfo.obxIndex = obxIndex;
+          }
+          hl7String += this.itemToField(formData.items[j], formInfo);
         }
-        else {
-          obxIndex++;
-          formInfo.obxIndex = obxIndex;
-        }
-        hl7String += this.itemToField(formData.items[j], formInfo);
       }
     }
     return hl7String;
@@ -262,108 +264,111 @@ var LFormsHL7 = {
    */
   itemToField: function(item, formInfo) {
     var hl7Seg = "";
-    var itemObrArray = new Array(this.obrFieldNum);
-    var itemObxArray = new Array(this.obxFieldNum);
 
-    // a sub panel
-    if (item.header) {
-      itemObrArray[0] = "OBR";
-      itemObrArray[1] = ++formInfo.obrIndex;
+    if (item.dataType !== "TITLE") {
+      var itemObrArray = new Array(this.obrFieldNum);
+      var itemObxArray = new Array(this.obxFieldNum);
 
-      itemObrArray[4] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
+      // a sub panel
+      if (item.header) {
+        itemObrArray[0] = "OBR";
+        itemObrArray[1] = ++formInfo.obrIndex;
 
-      // ignore ending empty fields
-      var foundValue = false;
-      for(var i=this.obrFieldNum-1; i>=0; i--) {
-        if (!foundValue && itemObrArray[i] === undefined) {
-          continue
-        }
-        else if (itemObrArray[i] !== undefined) {
-          hl7Seg = itemObrArray[i] + this.delimiters.field + hl7Seg;
-        }
-        else {
-          hl7Seg += this.delimiters.field;
-        }
-      }
-      hl7Seg += this.delimiters.segment;
+        itemObrArray[4] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
 
-      if(item.items) {
-        var obxIndex = 0;
-        for(var j=0, jLen=item.items.length; j<jLen; j++) {
-          if (item.items[j].header) {
-            formInfo.obxIndex = 0;
+        // ignore ending empty fields
+        var foundValue = false;
+        for(var i=this.obrFieldNum-1; i>=0; i--) {
+          if (!foundValue && itemObrArray[i] === undefined) {
+            continue
+          }
+          else if (itemObrArray[i] !== undefined) {
+            hl7Seg = itemObrArray[i] + this.delimiters.field + hl7Seg;
           }
           else {
-            obxIndex++;
-            formInfo.obxIndex = obxIndex;
+            hl7Seg += this.delimiters.field;
           }
+        }
+        hl7Seg += this.delimiters.segment;
 
-          hl7Seg += this.itemToField(item.items[j], formInfo);
+        if(item.items) {
+          var obxIndex = 0;
+          for(var j=0, jLen=item.items.length; j<jLen; j++) {
+            if (item.items[j].header) {
+              formInfo.obxIndex = 0;
+            }
+            else {
+              obxIndex++;
+              formInfo.obxIndex = obxIndex;
+            }
+
+            hl7Seg += this.itemToField(item.items[j], formInfo);
+          }
         }
       }
-    }
-    // a question, only when it has value
-    else {
-      itemObxArray[0] = "OBX";
-      itemObxArray[1] = formInfo.obxIndex;
-      itemObxArray[2] = this.getHL7V2DataType(item.dataType);
-      itemObxArray[3] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
-      // sub id
-      itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
+      // a question, only when it has value
+      else {
+        itemObxArray[0] = "OBX";
+        itemObxArray[1] = formInfo.obxIndex;
+        itemObxArray[2] = this.getHL7V2DataType(item.dataType);
+        itemObxArray[3] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
+        // sub id
+        itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
 
-      // value
-      if (item.value !== undefined && item.value !== null) {
-        // multiple answers
-        if (angular.isArray(item.value)) {
-          var obx5 = [];
-          for(var j= 0, jLen=item.value.length; j<jLen; j++) {
+        // value
+        if (item.value !== undefined && item.value !== null) {
+          // multiple answers
+          if (angular.isArray(item.value)) {
+            var obx5 = [];
+            for(var j= 0, jLen=item.value.length; j<jLen; j++) {
+              if (item.dataType === 'CNE' || item.dataType === 'CWE') {
+                obx5.push(item.value[j].code + this.delimiters.component + item.value[j].text + this.delimiters.component + this.LOINC_CS);
+              }
+            }
+            itemObxArray[5] = obx5.join(this.delimiters.repetition);
+          }
+          // single answer
+          else {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              obx5.push(item.value[j].code + this.delimiters.component + item.value[j].text + this.delimiters.component + this.LOINC_CS);
+              itemObxArray[5] = item.value.code + this.delimiters.component + item.value.text + this.delimiters.component + this.LOINC_CS;
+            }
+            else if (item.dataType === 'DT') {
+              itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
+            }
+            else {
+              itemObxArray[5] = item.value.toString();
             }
           }
-          itemObxArray[5] = obx5.join(this.delimiters.repetition);
         }
-        // single answer
-        else {
-          if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-            itemObxArray[5] = item.value.code + this.delimiters.component + item.value.text + this.delimiters.component + this.LOINC_CS;
+        // unit
+        if (item.unit)
+          itemObxArray[6] = item.unit.text + this.delimiters.component + item.unit.text + this.delimiters.component + this.LOINC_CS;
+
+        // ignore ending empty fields
+        foundValue = false;
+        for(var i=this.obxFieldNum-1; i>=0; i--) {
+          if (!foundValue && itemObxArray[i] === undefined) {
+            continue
           }
-          else if (item.dataType === 'DT') {
-            itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
+          else if (itemObxArray[i] !== undefined) {
+            hl7Seg = itemObxArray[i] + this.delimiters.field + hl7Seg;
           }
           else {
-            itemObxArray[5] = item.value.toString();
+            hl7Seg += this.delimiters.field;
           }
         }
+
+        //for(var i=0; i<this.obxFieldNum; i++) {
+        //  if (itemObxArray[i] !== undefined) {
+        //    hl7Seg += itemObxArray[i] + this.delimiters.field;
+        //  }
+        //  else {
+        //    hl7Seg += this.delimiters.field;
+        //  }
+        //}
+
+        hl7Seg += this.delimiters.segment;
       }
-      // unit
-      if (item.unit)
-        itemObxArray[6] = item.unit.text + this.delimiters.component + item.unit.text + this.delimiters.component + this.LOINC_CS;
-
-      // ignore ending empty fields
-      foundValue = false;
-      for(var i=this.obxFieldNum-1; i>=0; i--) {
-        if (!foundValue && itemObxArray[i] === undefined) {
-          continue
-        }
-        else if (itemObxArray[i] !== undefined) {
-          hl7Seg = itemObxArray[i] + this.delimiters.field + hl7Seg;
-        }
-        else {
-          hl7Seg += this.delimiters.field;
-        }
-      }
-
-      //for(var i=0; i<this.obxFieldNum; i++) {
-      //  if (itemObxArray[i] !== undefined) {
-      //    hl7Seg += itemObxArray[i] + this.delimiters.field;
-      //  }
-      //  else {
-      //    hl7Seg += this.delimiters.field;
-      //  }
-      //}
-
-      hl7Seg += this.delimiters.segment;
     }
     return hl7Seg;
   }
