@@ -955,7 +955,7 @@ var LFormsData = Class.extend({
    * @private
    */
   _getOriginalValue: function(value) {
-    var retValue = value;
+    var retValue;
     if (value) {
       // an array
       if (Array.isArray(value)) {
@@ -1629,15 +1629,20 @@ var LFormsData = Class.extend({
               if (source.data.code && source.data.text) {
                 var code = this._getDataFromNestedAttributes(source.data.code, sourceItem);
                 var text = this._getDataFromNestedAttributes(source.data.text, sourceItem);
-                var targetData = {"code": code, "text": text};
-                // set the data
-                item[onAttribute] = targetData;
+                if (text) {
+                  var targetData = {"code": code, "text": text};
+                  // set the data
+                  item[onAttribute] = targetData;
+                }
               } // end of source.data.code && source.data.text
             } // end of "LIST"
             else if (source.sourceDataType === "TEXT") {
               var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
               // set the data
-              item[onAttribute] = sourceData;
+              if (sourceData) {
+                item[onAttribute] = sourceData;
+              }
+
             } // end of "TEXT
           }
         }
