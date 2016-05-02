@@ -199,21 +199,36 @@ var LFormsHL7 = {
     var formInfo = {
       obrIndex: 1,
       obxIndex: 1
-    }
+    };
+
+    var formData = lfData.getFormData(true, true, true);
+
     // form level info
     var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
     formObrArray[1] = 1;
-    formObrArray[4] = lfData.code + this.delimiters.component + lfData.name + this.delimiters.component + this.LOINC_CS;
-    if (lfData.templateOptions.obrItems[0].value)
-      formObrArray[7] = lfData.templateOptions.obrItems[0].value.toString("yyyyMMddHHmmss");
-    if ( lfData.templateOptions.obrItems[2].value)
-      formObrArray[13] = lfData.templateOptions.obrItems[2].value.text;
+    formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
-    for(var i=0; i<this.obrFieldNum; i++) {
-      if (formObrArray[i] !== undefined) {
-        hl7String += formObrArray[i] + this.delimiters.field;
+    if (formData.templateOptions.obrItems.length > 0) {
+      for (var i= 0, iLen=formData.templateOptions.obrItems.length; i< iLen; i++) {
+        if (formData.templateOptions.obrItems[i].questionCode === "date_done") {
+          formObrArray[7] = formData.templateOptions.obrItems[i].value.toString("yyyyMMddHHmmss");
+        }
+        else if (formData.templateOptions.obrItems[i].questionCode === "where_done") {
+          formObrArray[13] = formData.templateOptions.obrItems[i].value.text;
+        }
+      }
+    }
+
+    // ignore ending empty fields
+    var foundValue = false;
+    for(var i=this.obrFieldNum-1; i>=0; i--) {
+      if (!foundValue && formObrArray[i] === undefined) {
+        continue
+      }
+      else if (formObrArray[i] !== undefined) {
+        hl7String = formObrArray[i] + this.delimiters.field + hl7String;
       }
       else {
         hl7String += this.delimiters.field;
@@ -222,17 +237,17 @@ var LFormsHL7 = {
     hl7String += this.delimiters.segment;
 
     // process the questions/sections
-    if (lfData.items) {
+    if (formData.items) {
       var obxIndex = 0;
-      for (var j = 0, jLen = lfData.items.length; j < jLen; j++) {
-        if (lfData.items[j].header) {
+      for (var j = 0, jLen = formData.items.length; j < jLen; j++) {
+        if (formData.items[j].header) {
           formInfo.obxIndex = 0;
         }
         else {
           obxIndex++;
           formInfo.obxIndex = obxIndex;
         }
-        hl7String += this.itemToField(lfData.items[j], formInfo);
+        hl7String += this.itemToField(formData.items[j], formInfo);
       }
     }
     return hl7String;
@@ -257,9 +272,14 @@ var LFormsHL7 = {
 
       itemObrArray[4] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
 
-      for(var i=0; i<this.obrFieldNum; i++) {
-        if (itemObrArray[i] !== undefined) {
-          hl7Seg += itemObrArray[i] + this.delimiters.field;
+      // ignore ending empty fields
+      var foundValue = false;
+      for(var i=this.obrFieldNum-1; i>=0; i--) {
+        if (!foundValue && itemObrArray[i] === undefined) {
+          continue
+        }
+        else if (itemObrArray[i] !== undefined) {
+          hl7Seg = itemObrArray[i] + this.delimiters.field + hl7Seg;
         }
         else {
           hl7Seg += this.delimiters.field;
@@ -282,7 +302,7 @@ var LFormsHL7 = {
         }
       }
     }
-    // a question
+    // a question, only when it has value
     else {
       itemObxArray[0] = "OBX";
       itemObxArray[1] = formInfo.obxIndex;
@@ -294,11 +314,11 @@ var LFormsHL7 = {
       // value
       if (item.value !== undefined && item.value !== null) {
         // multiple answers
-        if (item._multipleAnswers) {
+        if (angular.isArray(item.value)) {
           var obx5 = [];
           for(var j= 0, jLen=item.value.length; j<jLen; j++) {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              obx5.push(item.value[j].code + this.delimiters.component + item.value[j].text);
+              obx5.push(item.value[j].code + this.delimiters.component + item.value[j].text + this.delimiters.component + this.LOINC_CS);
             }
           }
           itemObxArray[5] = obx5.join(this.delimiters.repetition);
@@ -306,7 +326,7 @@ var LFormsHL7 = {
         // single answer
         else {
           if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-            itemObxArray[5] = item.value.code + this.delimiters.component + item.value.text;
+            itemObxArray[5] = item.value.code + this.delimiters.component + item.value.text + this.delimiters.component + this.LOINC_CS;
           }
           else if (item.dataType === 'DT') {
             itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
@@ -320,14 +340,29 @@ var LFormsHL7 = {
       if (item.unit)
         itemObxArray[6] = item.unit.text + this.delimiters.component + item.unit.text + this.delimiters.component + this.LOINC_CS;
 
-      for(var i=0; i<this.obxFieldNum; i++) {
-        if (itemObxArray[i] !== undefined) {
-          hl7Seg += itemObxArray[i] + this.delimiters.field;
+      // ignore ending empty fields
+      foundValue = false;
+      for(var i=this.obxFieldNum-1; i>=0; i--) {
+        if (!foundValue && itemObxArray[i] === undefined) {
+          continue
+        }
+        else if (itemObxArray[i] !== undefined) {
+          hl7Seg = itemObxArray[i] + this.delimiters.field + hl7Seg;
         }
         else {
           hl7Seg += this.delimiters.field;
         }
       }
+
+      //for(var i=0; i<this.obxFieldNum; i++) {
+      //  if (itemObxArray[i] !== undefined) {
+      //    hl7Seg += itemObxArray[i] + this.delimiters.field;
+      //  }
+      //  else {
+      //    hl7Seg += this.delimiters.field;
+      //  }
+      //}
+
       hl7Seg += this.delimiters.segment;
     }
     return hl7Seg;
