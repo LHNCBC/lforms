@@ -4,9 +4,9 @@ describe('horizontal table', function() {
   var tp = require('./lforms_testpage.po.js');
 
   describe('should have BLANK_GIF_DATAURL', function() {
-    tp.openDirectiveTest();
-
     it('in datepicker img tags', function() {
+      tp.openDirectiveTest();
+
       expect(element.all(by.css('img.ui-datepicker-trigger'))
         .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
     });
@@ -68,12 +68,12 @@ describe('horizontal table', function() {
 
   describe('autocomp list inside lforms directive', function() {
 
-    tp.openDirectiveTest();
-
     var listFieldID = '/54126-8/54132-6/1/1'; // "Were you born a twin?"
     var searchResults = $('#searchResults');
 
     it('should be visible after the user clicks in a field', function() {
+      tp.openDirectiveTest();
+
       var listField = element(by.id(listFieldID));
       browser.wait(function() {
         return listField.isDisplayed();
@@ -91,13 +91,13 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
 
   var tp = require('./lforms_testpage.po.js');
 
-  tp.openDirectiveTest();
-
   var loadForm1 = 'load1';
   var loadForm2 = 'load2';
   var loadForm3 = 'load3';
 
   it('default value of the checkboxes should not be checked', function() {
+    tp.openDirectiveTest();
+
     var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
     expect(checkboxes.get(0).isSelected()).toBe(false);
     expect(checkboxes.get(1).isSelected()).toBe(false);

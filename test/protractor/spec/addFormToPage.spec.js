@@ -33,13 +33,17 @@ describe('addFormToPage', function () {
      'container', function() {
     po.openPage();
     // Pre-condition -- Form USSG-FHT should not be in formContainer
-    var EC = protractor.ExpectedConditions;
-    browser.wait(EC.not(EC.textToBePresentInElement($('#formContainer'),
-      'USSG-FHT')), 1000);
+    browser.wait(function() {
+      return browser.driver.executeScript(
+        'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
+    }, 10000);
     // Now put form USSG-FHT on the page
     browser.driver.executeScript(
       'WidgetUtil.addFormToPage("FHTData", "formContainer")');
     // Confirm it is there
-    browser.wait(EC.textToBePresentInElement($('#formContainer'), 'USSG-FHT'), 1000);
+    browser.wait(function() {
+      return browser.driver.executeScript(
+        'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
+    }, 10000);
   });
 });

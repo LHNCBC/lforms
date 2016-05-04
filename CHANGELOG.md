@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [6.1.0]   2016-05-05
+### Fixed
+- Added a function to export user data in HL7 segments (in progress).
+
+## [6.0.1]   2016-05-04
+### Fixed
+- Updated Protractor to work with new version of Firefox, and updated some
+  tests to work with the new Protractor.
+
 ## [6.0.0]   2016-04-21
 ### New
 - A getFormData function to get complete form definition data, including

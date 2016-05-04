@@ -50,9 +50,7 @@ describe('horizontal table', function() {
     var drugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
     drugNameField.click();
     drugNameField.sendKeys('ar');
-    browser.wait(function() {
-      return tp.Autocomp.searchResults.isDisplayed();
-    }, 10000);
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
