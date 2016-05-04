@@ -183,38 +183,6 @@ RegExp.escape= function(s) {
  */
 WidgetUtil = {
 
-  /**
-   * Process some special cases in the current data files sent from RI.
-   * These processes might change depending on the future data.
-   * @param items
-   */
-  preprocessRIData: function(items) {
-
-    for(var i= 0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      // header is true/false, not 'Y'/'N'
-      if (item.header && (item.header =="Y" || item.header == true)) {
-        item.header = true;
-        if (item.dataType !== 'TITLE')
-          item.dataType = "SECTION";
-      }
-      else {
-        item.header = false;
-      }
-      // dataType should not be null for questions have answers
-      // dateType might be 'CE' in data files from RI that have answers
-      if (item.answers && item.answers.length > 0 &&
-          (!item.dataType || item.dataType !=='CNE' && item.dataType !== 'CWE')) {
-        item.dataType = 'CNE';
-      }
-
-      if (item.items && Array.isArray(item.items)) {
-        this.preprocessRIData(item.items);
-      }
-    }
-  },
-
-
  /**
    *  Adds an LForms form to the page.
    * @param formDataVar The name of a global-scope variable containing the
