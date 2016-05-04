@@ -8,7 +8,6 @@ function BuildTestPage() {
   this.openPage = function() {
     var conf = require('../conf').config;
     browser.get(conf.baseUrl + '/test/build_test.html');
-    browser.waitForAngular();
   };
 }
 
