@@ -1,7 +1,10 @@
 /**
  * A package to generate HL7 messgages from LForms form data
  */
-var LFormsHL7 = {
+if (typeof LForms === 'undefined')
+  LForms = {};
+
+LForms.HL7 = {
 
   LOINC_CS:  'LN',
   obrFieldNum: 43,

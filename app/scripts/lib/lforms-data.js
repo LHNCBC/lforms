@@ -951,7 +951,7 @@ var LFormsData = Class.extend({
 
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
-   * @param value
+   * @param value the data object of the selected answer
    * @private
    */
   _getOriginalValue: function(value) {

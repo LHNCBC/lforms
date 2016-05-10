@@ -140,7 +140,7 @@
             };
 
             $scope.showHL7Segments = function() {
-              var hl7Seg = LFormsHL7.toHL7Segments($scope.lfData2);
+              var hl7Seg = LForms.HL7.toHL7Segments($scope.lfData2);
               console.log(hl7Seg.replace(/\r/g,'\r\n'));
             };
 
