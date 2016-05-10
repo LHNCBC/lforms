@@ -1,6 +1,6 @@
 
 angular.module('lformsWidget')
-    .service('lformsConfig', function($animate) {
+    .service('lformsConfig', ['$animate', function($animate) {
       'use strict';
       return {
         'enableAnimate': function() {
@@ -10,4 +10,4 @@ angular.module('lformsWidget')
           $animate.enabled(false);
         }
       };
-    });
+    }]);

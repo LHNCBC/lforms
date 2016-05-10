@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [6.0.2]   2016-05-10
+### Fixed
+- Turned in "minification" of the distribution version of the JavaScript.
+
 ## [6.0.1]   2016-05-04
 ### Fixed
 - Updated Protractor to work with new version of Firefox, and updated some

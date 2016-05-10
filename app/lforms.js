@@ -7,9 +7,9 @@
     'smoothScroll',
     'autocompleteLhcMod'
     ])
-    .config(function ($animateProvider) {
+    .config(['$animateProvider', function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
-    })
+    }])
     .directive('lforms', function() {
       return {
         restrict: 'E',
