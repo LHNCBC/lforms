@@ -3,7 +3,7 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [6.1.0]   2016-05-13
-### New
+### Added
 - Added a function to export user data in HL7 segments (in progress).
 
 ## [6.0.2]   2016-05-10
@@ -16,7 +16,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   tests to work with the new Protractor.
 
 ## [6.0.0]   2016-04-21
-### New
+### Added
 - A getFormData function to get complete form definition data, including
   user input data.
 - Events are emitted when a repeating item or section is added or removed.
@@ -25,7 +25,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - The existing getFormData function is renamed to getUserData.
 
 ## [5.7.0]   2016-04-19
-### New
+### Added
 - A 'list' template.
 - A 'matrix' layout for section items, in addition to 'horizontal' and
   'vertical'.
