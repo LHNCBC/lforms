@@ -182,6 +182,7 @@ RegExp.escape= function(s) {
  * Utility tools and validations
  */
 WidgetUtil = {
+
  /**
    *  Adds an LForms form to the page.
    * @param formDataVar The name of a global-scope variable containing the
@@ -224,11 +225,12 @@ WidgetUtil = {
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) : null;
   },
 
 
@@ -237,11 +239,14 @@ WidgetUtil = {
    * The returned data could be fed into a LForms widget directly to render the form.
    * @param element required, the containing HTML element that includes the LForm's rendered form.
    *        It could be the DOM element or its id.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {{}} Form definition data
    */
-  getFormData: function(element) {
+  getFormData: function(element, noEmptyValue, noHiddenItem, keepIdPath) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData() : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem, keepIdPath) : null;
   },
 
 

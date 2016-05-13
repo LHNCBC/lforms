@@ -18,7 +18,7 @@ angular.module('lformsWidget')
       $scope.dateOptions = {
         changeYear: true,
         changeMonth: true,
-        yearRange: '1900:-0',
+        yearRange: '1800:-0',
         showOn: 'button',
         buttonImage: LF_CONSTANTS.BLANK_GIF_DATAURL,
         buttonImageOnly: true,

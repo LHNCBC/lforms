@@ -45,8 +45,7 @@ describe('horizontal table', function() {
     expect(element.all(by.css('.float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
-  it('should not lose focus when the options for an autocompleter change',
-      function() {
+  it('should not lose focus when the options for an autocompleter change', function() {
     tp.openRxTerms();
     var drugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
     drugNameField.click();

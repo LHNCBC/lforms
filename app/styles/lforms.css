@@ -237,7 +237,7 @@
   right: 4px;
   width: 16px;
   height: 16px;
-  z-index: 100;
+  z-index: 10;
 }
 .lf-form-item-data .ui-datepicker-trigger:hover {
   background-image: url("../images/calendar-hover.png");
@@ -465,7 +465,7 @@ Override color of select boxes in calendar widget title bar.
   right: 4px;
   width: 16px;
   height: 16px;
-  z-index: 100;
+  z-index: 10;
 }
 .lf-form-item-data .ui-datepicker-trigger:hover {
   background-image: url("../images/calendar-hover.png");

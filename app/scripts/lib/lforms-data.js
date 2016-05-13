@@ -589,8 +589,8 @@ var LFormsData = Class.extend({
    * @param options new options
    */
   setTemplateOptions: function(options) {
-
-    this.templateOptions = jQuery.extend(true, {}, this.templateOptions, options);
+    // not to use deep copy here, because of the unexpected deep copy result on arrays.
+    this.templateOptions = jQuery.extend({}, this.templateOptions, options);
 
   },
 
@@ -837,12 +837,15 @@ var LFormsData = Class.extend({
   /**
    * Get the complete form definition data, including the user input data from the form.
    * The returned data could be fed into a LForms widget directly to render the form.
+   * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
+   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param keepIdPath optional, to keep _idPath field on item
    * @return {{}} form definition JSON object
    */
-  getFormData: function() {
+  getFormData: function(noEmptyValue, noHiddenItem, keepIdPath) {
 
     // get the form data
-    var formData = this.getUserData();
+    var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath);
 
     var defData = {
       PATH_DELIMITER: this.PATH_DELIMITER,
@@ -866,15 +869,16 @@ var LFormsData = Class.extend({
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
 
     var ret = {};
-    ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem);
+    ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
     // template options could be optional. Include them, only if they are present
     if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
-      ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem);
+      ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
     }
     // return a deep copy of the data
     return angular.copy(ret);
@@ -886,10 +890,11 @@ var LFormsData = Class.extend({
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {Array} form data on one tree level
    * @private
    */
-  _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem) {
+  _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
     var itemsData = [];
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -923,12 +928,15 @@ var LFormsData = Class.extend({
           else if (!field.match(/^[_\$]/)) {
             itemData[field] = item[field];
           }
+          if (keepIdPath) {
+            itemData["_idPath"] = item["_idPath"];
+          }
         }
       }
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem);
+        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
       }
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and
@@ -943,11 +951,11 @@ var LFormsData = Class.extend({
 
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
-   * @param value
+   * @param value the data object of the selected answer
    * @private
    */
   _getOriginalValue: function(value) {
-    var retValue = value;
+    var retValue;
     if (value) {
       // an array
       if (Array.isArray(value)) {
@@ -1621,15 +1629,20 @@ var LFormsData = Class.extend({
               if (source.data.code && source.data.text) {
                 var code = this._getDataFromNestedAttributes(source.data.code, sourceItem);
                 var text = this._getDataFromNestedAttributes(source.data.text, sourceItem);
-                var targetData = {"code": code, "text": text};
-                // set the data
-                item[onAttribute] = targetData;
+                if (text) {
+                  var targetData = {"code": code, "text": text};
+                  // set the data
+                  item[onAttribute] = targetData;
+                }
               } // end of source.data.code && source.data.text
             } // end of "LIST"
             else if (source.sourceDataType === "TEXT") {
               var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
               // set the data
-              item[onAttribute] = sourceData;
+              if (sourceData) {
+                item[onAttribute] = sourceData;
+              }
+
             } // end of "TEXT
           }
         }

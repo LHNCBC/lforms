@@ -64,6 +64,7 @@
     <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/date.js"></script>
     <script src="scripts/lib/util.js"></script>
+    <script src="scripts/lib/hl7.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
     <script src="scripts/lforms-constants.js"></script>
     <script src="scripts/lforms-config.js"></script>
@@ -136,6 +137,11 @@
 
             $scope.changeTemplate = function(template) {
               $scope.lfData2.template = template;
+            };
+
+            $scope.showHL7Segments = function() {
+              var hl7Seg = LForms.HL7.toHL7Segments($scope.lfData2);
+              console.log(hl7Seg.replace(/\r/g,'\r\n'));
             };
 
             $scope.useForm = function() {
@@ -248,6 +254,7 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
+          <button id="to-table" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
 
         </div>
       </div>
