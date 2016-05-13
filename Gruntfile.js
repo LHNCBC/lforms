@@ -268,8 +268,7 @@ module.exports = function (grunt) {
     },
 
     uglify: {
-      options: { compress: true },
-      options: { beautify: true, mangle: false },
+      // options: { beautify: true, mangle: false }, // debugging only
       dist: {
         files: {
           // This will include dependencies, including jQuery
