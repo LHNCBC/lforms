@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [6.1.1]   2016-06-02
+### Fixed
+- Two CSS fixes for IE.
+
 ## [6.1.0]   2016-05-13
 ### Added
 - Added a function to export user data in HL7 segments (in progress).
