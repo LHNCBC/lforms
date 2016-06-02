@@ -55,6 +55,7 @@
     <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
+    <script src="../bower_components/angular-ui-validate/dist/validate.js"></script>
     <!-- endbower -->
 
     <!-- lforms directive js files -->
@@ -90,8 +91,9 @@
     <script type="text/javascript">
 
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS',
-              function ($scope, $timeout, lformsConfig, LF_CONSTANTS) {
+          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q',
+              function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q) {
+            $scope.showValidation = false;
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -121,6 +123,36 @@
               window._emittedEvent = eventAttr;
               console.log(eventAttr);
             });
+
+            $scope.toggleValidationSection = function() {
+              $scope.showValidation = !$scope.showValidation;
+            };
+            $scope.localValidateFunc = function(value) {
+              return value.length === 2 ? true : false;
+            };
+            $scope.notBlackListed = function(value) {
+              var blacklist = ['bad@domain.com', 'verybad@domain.com'];
+              return blacklist.indexOf(value) === -1;
+            };
+            $scope.doesNotExist = function(value) {
+              var db = ['john.doe@mail.com', 'jane.doe@mail.com'];
+              // Simulates an asyncronous trip to the server.
+              return $q(function(resolve, reject) {
+                $timeout(function() {
+                  if (db.indexOf(value) < 0) {
+                    resolve();
+                  } else {
+                    reject();
+                  }
+                }, 500);
+              });
+            };
+                $scope.item1 = {
+                  "questionCode": "qc1",
+                  "question": "Item 1",
+                  "dataType": "INT",
+                  "restrictions": {"maxLength": 6, "minLength": 3}
+                }
 
             $scope.changeOptions = function() {
               $scope.lfOption2 = {
@@ -254,13 +286,184 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
-          <button id="to-table" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="validation-demo" class="btn btn-primary" ng-click="toggleValidationSection()">Show/Hide Validation Demo Section</button>
 
         </div>
       </div>
 
       <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
+      <div ng-include="'validation-demo.html'" ng-if="showValidation"></div>
     </div>
+
+    <script type="text/ng-template" id="validation-demo.html">
+      <h2>ng-validate</h2>
+      <br>
+      <form name="form">
+        <h3>e-mail</h3>
+        <input class="form-control" name="email" placeholder="try john.doe@mail.com or bad@domain.com" type="email" required ng-model="email" ng-model-options="{ debounce: 100 }"
+               ui-validate="{blacklist: 'notBlackListed($value)'}"
+               ui-validate-async="{alreadyExists: 'doesNotExist($modelValue)'}">
+        <span ng-show='form.email.$error.blacklist'>This e-mail is black-listed!</span>
+        <span ng-show='form.email.$error.alreadyExists'>This e-mail is already taken!</span>
+        <span ng-show='form.email.$pending'>Verifying e-mail on server...</span>
+        <br>is form valid: {{form.$valid}}
+        <br>
+        <br>email errors: {{form.email.$error | json}}
+        <br>email pending: {{form.email.$pending | json}}
+        <h3>password</h3>
+        <input class="form-control" name="password" type="text" required ng-model="password" placeholder="password">
+        <input class="form-control" name="confirm_password" type="text" required ng-model="confirm_password" ui-validate=" '$value==password' "
+               ui-validate-watch=" 'password' " placeholder="confirm password">
+        <span ng-show='form.confirm_password.$error.validator'>Passwords do not match!</span>
+        <br>is form valid: {{form.$valid}}
+        <br>
+        <br>password errors: {{form.confirm_password.$error| json}}
+      </form>
+
+      <div>
+        <form name="testFormA" novalidate>
+          <label>ng-validate function</label>
+          <input name="val1" ng-model="val1" ui-validate="{customError : 'localValidateFunc($value)' }">
+          <pre>
+            $error : <br>
+            {{ testFormA.val1.$error }}
+          </pre>
+
+          <div lf-validate="item1"> </div>
+          <label>lf-data-type INT</label>
+          <input name="item1" type="text" ng-model="item1.value">
+          <pre>
+            $error : <br>
+            {{ testFormA.item1.$error }}
+          </pre>
+
+        </form>
+      </div>
+
+      <h2>Angular builtin validators</h2>
+      <br>
+      <div>
+        <form name="testForm" novalidate>
+          <label>required</label>
+          <input name="req1" ng-model="req1" required>
+          <pre>
+            $error : <br>
+            {{ testForm.req1.$error }}
+          </pre>
+
+          <label>number without max or min</label>
+          <input name="num1" type="number" ng-model="number1">
+          <pre>
+            $error : <br>
+            {{ testForm.num1.$error }}
+          </pre>
+
+          <label>number with max=5 and min=2</label>
+          <input name="num2" type="number" ng-model="number2" max="5" min="2">
+          <pre>
+            $error : <br>
+            {{ testForm.num2.$error }}
+          </pre>
+
+          <label>url</label>
+          <input name="url1" type="url" ng-model="url1">
+          <pre>
+            $error : <br>
+            {{ testForm.url1.$error }}
+          </pre>
+
+          <label>email</label>
+          <input name="email1" type="email" ng-model="email1">
+          <pre>
+            $error : <br>
+            {{ testForm.email1.$error }}
+          </pre>
+
+          <label>text with maxlength=5 and minlength=2 (use ng-maxlength and ng-minlength)</label>
+          <input name="str1" type="text" ng-model="str1" ng-maxlength="5" ng-minlength="2">
+          <pre>
+            $error : <br>
+            {{ testForm.str1.$error }}
+          </pre>
+
+          <label>pattern (use ng-pattern), letter only /^[a-zA-Z]+$/</label>
+          <input name="pat1" ng-model="pat1" ng-pattern="/^[a-zA-Z]+$/">
+          <pre>
+            $error : <br>
+            {{ testForm.pat1.$error }}
+          </pre>
+
+          <label>Pull it all together: text required. maxlength, minlength, pattern /^[a-zA-Z]+$/</label>
+          <input name="all1" type="text" ng-model="all1" ng-pattern="/^[a-zA-Z]+$/" required ng-maxlength="5" ng-minlength="2">
+          <pre>
+            $error : <br>
+            {{ testForm.all1.$error }}
+          </pre>
+
+          <label>Pull it all together: number required. max, min, pattern /^[0-9]+$/</label>
+          <input name="all2" type="number" ng-model="all2" ng-pattern="/^[0-9]+$/" required max="5" min="2">
+          <pre>
+            $error : <br>
+            {{ testForm.all2.$error }}
+          </pre>
+
+          <p></p>
+          <label>Local validators</label>
+          <p></p>
+
+          <label>Smart Float</label>
+          <input name="sm1" type="text" ng-model="sm1" smart-float>
+          <pre>
+            $error : <br>
+            {{ testForm.sm1.$error }}
+          </pre>
+
+          <label>lf-data-type INT</label>
+          <input name="lftype1" type="text" ng-model="lftype1" lf-data-type="INT" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype1.$error }}
+          </pre>
+
+          <label>lf-data-type REAL</label>
+          <input name="lftype2" type="text" ng-model="lftype2" lf-data-type="REAL" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype2.$error }}
+          </pre>
+
+          <label>lf-data-type EMAIL</label>
+          <input name="lftype3" type="text" ng-model="lftype3" lf-data-type="EMAIL" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype3.$error }}
+          </pre>
+
+          <label>lf-data-type PHONE</label>
+          <input name="lftype4" type="text" ng-model="lftype4" lf-data-type="PHONE" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype4.$error }}
+          </pre>
+
+          <label>lf-data-type TM</label>
+          <input name="lftype5" type="text" ng-model="lftype5" lf-data-type="TM" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype5.$error }}
+          </pre>
+
+          <label>lf-data-type DT</label>
+          <input name="lftype6" type="text" ng-model="lftype6" lf-data-type="DT" check-data-type>
+          <pre>
+            $error : <br>
+            {{ testForm.lftype6.$error }}
+          </pre>
+
+        </form>
+      </div>
+    </script>
 
   </body>
 </html>

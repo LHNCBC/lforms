@@ -890,6 +890,30 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   );
 
 
+  $templateCache.put('validation-errors.html',
+    "<!--<div ng-repeat=\"error in errors\">-->\n" +
+    "  <!--<div class=\"error-msg\">\"{{itemData.question}}\" {{error}}</div>-->\n" +
+    "<!--</div>-->\n" +
+    "\n" +
+    "<!--<div>-->\n" +
+    "<!--<ng-transclude></ng-transclude>-->\n" +
+    "<!--<div-->\n" +
+    "<!--uib-popover='Please enter info in the blank \"{{ itemData.question }}\".'-->\n" +
+    "<!--popover-placement=\"top-left\" popover-title=\"Warning\"-->\n" +
+    "<!--popover-trigger=\"none\"-->\n" +
+    "<!--popover-is-open=\"invalid\">Error</div>-->\n" +
+    "<!--</div>-->\n" +
+    "\n" +
+    "<div>\n" +
+    "  <div ng-transclude></div>\n" +
+    "  <div>some text</div>\n" +
+    "  <!--<div ng-repeat=\"error in errors\">-->\n" +
+    "    <!--<div class=\"error-msg\">\"{{itemData.question}}\" {{error}}</div>-->\n" +
+    "  <!--</div>-->\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('validation.html',
     "<div class=\"errorMsg errorRequired\">\"{{ item.question }}\" requires a value.</div>\n" +
     "<div class=\"errorMsg errorPattern\">\"{{ item.question }}\" requires a text pattern.</div>\n" +

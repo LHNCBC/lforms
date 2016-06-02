@@ -8,7 +8,8 @@
     "angular-bootstrap": "^1.1.0",
     "autocomplete-lhc": "^8.0.0",
     "bootstrap": "^3.3.5",
-    "ngSmoothScroll": "^2.0.0"
+    "ngSmoothScroll": "^2.0.0",
+    "angular-ui-validate": "^1.2.2"
   },
   "overrides": {
     "jquery-ui": {

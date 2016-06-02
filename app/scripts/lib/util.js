@@ -1,7 +1,30 @@
 /**
  * Misc functions used by widget
  */
-function checkDataType(dataType, value) {
+function checkDataType(dataType, value, errors) {
+  var errorMessages = {
+    "BL":"requires a boolean value",
+    "INT":"requires a integer value",
+    "REAL":"requires a decimal value",
+    "ST":"requires a string value",
+    "TX":"requires a text value",
+    "BIN":"requires a binary value",
+    "DT":"requires a date value",
+    "DTM":"requires a date and time value",
+    "TM":"requires a time value",
+    "CNE":"requires a value from the answer list",
+    "CWE":"requires a value from the answer list or a user supplied value",
+    "RTO":"requires a ratio value",
+    "QTY":"requires a quality value",
+    "YEAR":"requires a year value",
+    "MONTH":"requires a month value",
+    "DAY":"requires a day value",
+    "URL":"requires a url",
+    "EMAIL":"requires a email",
+    "PHONE":"requires a phone"
+  };
+
+
   var ret = false;
   switch(dataType) {
     case "BL":
@@ -45,6 +68,11 @@ function checkDataType(dataType, value) {
 
     default :
   }
+
+  if (angular.isArray(errors) && !ret) {
+    errors.push(errorMessages[dataType]);
+  }
+
   return ret;
 }
 
@@ -54,23 +82,26 @@ function checkDataType(dataType, value) {
  * @param value
  * @returns {boolean}
  */
-function checkRestrictions(restrictions, value) {
-  // supported restriction keywords:
-  // minExclusive
-  // minInclusive
-  // maxExclusive
-  // maxInclusive
-  // totalDigits     // up to
-  // fractionDigits  // up to
-  // length
-  // maxLength
-  // minLength
-  // enumeration     // probably not needed
-  // whiteSpace      // probably not needed
-  // pattern
+function checkRestrictions(restrictions, value, errors) {
+  var errorMessages ={
+    "minExclusive":"requires a value greater than or equal to",
+    "minInclusive":"requires a value greater than",
+    "maxExclusive":"requires a value less than or equal to",
+    "maxInclusive":"requires a value less than",
+    "totalDigits":"requires ",
+    "fractionDigits":"requires",
+    "length":"requires",
+    "maxLength":"requires",
+    "minLength":"requires",
+    "enumeration":"requires",
+    "whiteSpace":"requires",
+    "pattern":"requires"
+  };
+
+
   var ret = false;
 
-  var errorMsg = {};
+
   for (var key in restrictions) {
     switch(key) {
       case "minExclusive":
@@ -80,7 +111,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Entered number > " + keyValue;
+          errors.push("requires a value greater than " + keyValue);
         }
         break;
       case "minInclusive":
@@ -90,7 +121,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Entered number >= " + keyValue;
+          errors.push("requires a value greater than or equal to " + keyValue);
         }
         break;
       case "maxExclusive":
@@ -100,7 +131,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Entered number < " + keyValue;
+          errors.push("requires a value less than " + keyValue);
         }
         break;
       case "maxInclusive":
@@ -110,7 +141,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Entered number <= " + keyValue;
+          errors.push("requires a value less than or equal to " + keyValue);
         }
         break;
       case "totalDigits":
@@ -128,7 +159,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Length = " + keyValue;
+          errors.push("requires a total length of " + keyValue);
         }
         break;
       case "maxLength":
@@ -138,7 +169,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Length <= " + keyValue;
+          errors.push("requires a total length less than or equal to " + keyValue);
         }
         break;
       case "minLength":
@@ -148,7 +179,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Length >= " + keyValue;
+          errors.push("requires a total length greater than or equal to " + keyValue);
         }
         break;
       case "pattern":
@@ -162,7 +193,7 @@ function checkRestrictions(restrictions, value) {
         }
         else {
           ret = false;
-          errorMsg[key] = "Pattern matches " + keyValue;
+          errors.push("requires to match a RegEx pattern of " + keyValue);
         }
         break;
       default:
