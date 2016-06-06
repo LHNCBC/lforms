@@ -30,8 +30,7 @@
   <!--input field-->
   <ng-form name="innerForm2" class="hasTooltip">
     <div class="lf-form-item-data tooltipContainer" ng-switch on="item.dataType">
-      <span class="tooltipContent" ng-include="'validation.html'"></span>  <!-- validation error messages -->
-      <!--<span class="tooltipContent" lf-validation></span>-->
+      <span class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></span>
       <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
       <span ng-switch-when="TTILE" id="{{item._elementId}}"> </span>
       <div ng-switch-when="CNE">

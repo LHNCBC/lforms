@@ -4,7 +4,7 @@ angular.module('lformsWidget')
         function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = false;
+        $scope.debug = true;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
@@ -252,7 +252,8 @@ angular.module('lformsWidget')
 
         /**
          * Watch on form changes
-         * Disable animation before a form is loaded, then re-enable animation the form is loaded
+         * Disable animation and validations before a form is loaded,
+         * then re-enable animation and validations when the form is loaded
          */
         $scope.$watch("lfData", function() { // or watch on function() {return $scope.lfData;}
           // disable animation

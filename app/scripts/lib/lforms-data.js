@@ -36,46 +36,6 @@ var LFormsData = Class.extend({
     "url"    // for INPUT element only
   ],
 
-  // supported keys in restriction, not used yet
-  _restrictionKeys : [
-    "minExclusive",
-    "minInclusive",
-    "maxExclusive",
-    "maxInclusive",
-    "totalDigits",
-    "fractionDigits",
-    "length",
-    "minLength",
-    "maxLength",
-    "enumeration",
-    "whiteSpace",
-    "pattern"
-  ],
-
-  // supported data type
-  _dataTypes : [
-    "BL",
-    "INT",
-    "REAL",
-    "ST",
-    "TX",      // long text
-    "BIN",
-    "DT",      // complex type (or sub-type of 'ST' ?)
-    "DTM",     // complex type (or sub-type of 'ST' ?)
-    "TM",      // complex type (or sub-type of 'ST' ?)
-    "CNE",     // complex type
-    "CWE",     // complex type
-    "RTO",     // complex type
-    "QTY",     // complex type
-    "YEAR",    // sub-type of "ST"
-    "MONTH",   // sub-type of "ST"
-    "DAY",     // sub-type of "ST"
-    "URL",     // sub-type of "ST"
-    "EMAIL",   // sub-type of "ST"
-    "PHONE",   // sub-type of "ST"
-    ""        // for header, no input field
-  ],
-
   // All accessory attributes of an item
   // (move all other properties into this _opt eventually.)
   _opt: {},
@@ -298,6 +258,25 @@ var LFormsData = Class.extend({
     this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
+  },
+
+
+  /**
+   * Validate user input value
+   * Note: Not currently used since validations are handled in an Angular directive.
+   * This might be used in the future.
+   * @param item the question item
+   * @private
+   */
+  _checkValidations: function(item) {
+    if (item._hasValidation) {
+      var errors = [];
+      var errorRequired = LForms.Validations.checkRequired(item._answerRequired, item.value, errors);
+      var errorDataType = LForms.Validations.checkDataType(item.dataType, item.value, errors);
+      var errorRestrictions = LForms.Validations.checkRestrictions(item.restrictions, item.value, errors);
+      item._validationErrors = errors;
+
+    }
   },
 
 
@@ -716,6 +695,13 @@ var LFormsData = Class.extend({
             item._toolTip = "Type a value";
           }
         }
+      }
+
+      // set up validation flag
+      if (item._answerRequired ||
+          item.restrictions ||
+          (item.dataType !== "ST" && item.dataType !== "TX" && item.dataType !== "CWE" && item.dataType !== "CNE")) {
+        item._hasValidation = true;
       }
 
       // add a link to external site for item's definition

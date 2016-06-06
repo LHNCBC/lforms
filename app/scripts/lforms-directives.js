@@ -1,7 +1,5 @@
 (function() {
   'use strict';
-  var INTEGER_REGEXP = /^\-?\d+$/;
-  var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
   angular.module('lformsWidget')
       .factory('RecursionHelper', ['$compile', function($compile){
         return {
@@ -151,17 +149,6 @@
           templateUrl: 'field-units.html'
         };
       })
-      // field validation, TBD
-      .directive('lfValidation', function() {
-        return {
-          restrict: 'E',
-          scope: {
-            item: '='
-            },
-          transclude: false,
-          templateUrl: 'validation.html'
-        };
-      })
       // horizontal layout, inherited scope
       .directive('lfSectionHorizontal', function() {
         return {
@@ -178,182 +165,6 @@
           templateUrl: 'layout-matrix.html'
         };
       })
-      .directive('ensureUnique', ['$http', function($http) {
-        return {
-          require: 'ngModel',
-          link: function(scope, ele, attrs, c) {
-            scope.$watch(attrs.ngModel, function() {
-              $http({
-                method: 'POST',
-                url: '/api/check/' + attrs.ensureUnique,
-                data: {'field': attrs.ensureUnique}
-              }).success(function(data, status, headers, cfg) {
-                c.$setValidity('unique', data.isUnique);
-              }).error(function(data, status, headers, cfg) {
-                c.$setValidity('unique', false);
-              });
-            });
-          }
-        }
-      }])
-      .directive('integer', function() {
-        return {
-          require: 'ngModel',
-          link: function(scope, elm, attrs, ctrl) {
-            ctrl.$parsers.unshift(function(viewValue) {
-              if (INTEGER_REGEXP.test(viewValue)) {
-                // it is valid
-                ctrl.$setValidity('integer', true);
-                return viewValue;
-              } else {
-                // it is invalid, return undefined (no model update)
-                ctrl.$setValidity('integer', false);
-                return undefined;
-              }
-            });
-          }
-        };
-      })
-      .directive('smartFloat', function() {
-        return {
-          require: 'ngModel',
-          link: function(scope, elm, attrs, ctrl) {
-            ctrl.$parsers.unshift(function(viewValue) {
-              if (FLOAT_REGEXP.test(viewValue)) {
-                ctrl.$setValidity('float', true);
-                return parseFloat(viewValue.replace(',', '.'));
-              } else {
-                ctrl.$setValidity('float', false);
-                return undefined;
-              }
-            });
-          }
-        };
-      })
-      .directive('contenteditable', function() {
-        return {
-          require: 'ngModel',
-          link: function(scope, elm, attrs, ctrl) {
-            // view -> model
-            elm.on('blur', function() {
-              scope.$apply(function() {
-                ctrl.$setViewValue(elm.html());
-              });
-            });
-
-            // model -> view
-            ctrl.$render = function() {
-              elm.html(ctrl.$viewValue);
-            };
-
-            // load init value from DOM
-            ctrl.$setViewValue(elm.html());
-          }
-        };
-      })
-      // more standard process
-      .directive('blacklist', function (){
-        return {
-          require: 'ngModel',
-          link: function(scope, elem, attr, ngModel) {
-            var blacklist = attr.blacklist.split(',');
-
-            function validate(value) {
-              var valid = blacklist.indexOf(value) === -1;
-              ngModel.$setValidity('blacklist', valid);
-              return valid ? value : undefined;
-            }
-
-            //For DOM -> model validation
-            ngModel.$parsers.unshift(function(value) {
-              var valid = blacklist.indexOf(value) === -1;
-              ngModel.$setValidity('blacklist', valid);
-              return valid ? value : undefined;
-            });
-
-            //For model -> DOM validation
-            ngModel.$formatters.unshift(function(value) {
-              ngModel.$setValidity('blacklist', blacklist.indexOf(value) === -1);
-              return value;
-            });
-          }
-        };
-      })
-      // check data-type
-      .directive('checkDataType', function (){
-        return {
-          require: 'ngModel',
-          link: function(scope, elem, attr, ngModel) {
-            var dataType = attr.lfDataType;
-            //console.log(attr)
-
-            function validate(value) {
-              var valid = checkDataType(dataType, value);
-              ngModel.$setValidity('data-type', valid);
-              return valid ? value : undefined;
-            }
-
-            //For DOM -> model validation
-            ngModel.$parsers.unshift(function(value) {
-              var valid = checkDataType(dataType, value);
-              ngModel.$setValidity('data-type', valid);
-              return valid ? value : undefined;
-            });
-
-            //For model -> DOM validation
-            ngModel.$formatters.unshift(function(value) {
-              var valid = checkDataType(dataType, value);
-              ngModel.$setValidity('data-type', valid);
-              return value;
-            });
-          }
-        };
-      })
-
-      .directive('regexValidate', function() {
-        return {
-          // restrict to an attribute type.
-          restrict: 'A',
-
-          // element must have ng-model attribute.
-          require: 'ngModel',
-
-          // scope = the parent scope
-          // elem = the element the directive is on
-          // attr = a dictionary of attributes on the element
-          // ctrl = the controller for ngModel.
-          link: function(scope, elem, attr, ctrl) {
-
-            //get the regex flags from the regex-validate-flags="" attribute (optional)
-            var flags = attr.regexValidateFlags || '';
-
-            // create the regex obj.
-            var regex = new RegExp(attr.regexValidate, flags);
-
-            // add a parser that will process each time the value is
-            // parsed into the model when the user updates it.
-            ctrl.$parsers.unshift(function(value) {
-              // test and set the validity after update.
-              var valid = regex.test(value);
-              ctrl.$setValidity('regexValidate', valid);
-
-              // if it's valid, return the value to the model,
-              // otherwise return undefined.
-              return valid ? value : undefined;
-            });
-
-            // add a formatter that will process each time the value
-            // is updated on the DOM element.
-            ctrl.$formatters.unshift(function(value) {
-              // validate.
-              ctrl.$setValidity('regexValidate', regex.test(value));
-
-              // return the value or nothing will be written to the DOM.
-              return value;
-            });
-          }
-        };
-      })
       .directive('lfValidate', function () {
         return {
           require: 'ngModel',
@@ -361,42 +172,47 @@
           scope: {
             itemData: '=lfValidate'
           },
-          transclude: true,
-          templateUrl: 'vali      dation-errors.html',
-        //  template:
-        //    <ng-transclude></ng-transclude>
-        //    <div
-        //uib-popover='Please enter info in the blank "{{ itemData.question }}".'
-        //popover-placement="top-left" popover-title="Warning"
-        //popover-trigger="none"
-        //popover-is-open="invalid">Error</div>
+          //transclude: true,
+          //templateUrl: 'validation-errors.html',
+          template: '<div ng-repeat="error in itemData._validationErrors">' +
+              '<div class="validation-error">"{{itemData.question}}" {{error}}</div>' +
+              '</div>',
 
           link: function(scope, elem, attr, ctrl) {
-
-            scope.errors = [];
-            var dataType = scope.itemData.dataType;
-            var restrictions = scope.itemData.restrictions;
-
             //For DOM -> model validation
             ctrl.$parsers.unshift(function(value) {
-              scope.errors = [];
-              var valid1 = checkDataType(dataType, value, scope.errors);
-              ctrl.$setValidity('data-type', valid1);
-              var valid2 = checkRestrictions(restrictions, value, scope.errors);
-              ctrl.$setValidity('restrictions', valid2);
-              scope.invalid = valid1 && valid2;
-              return valid1 && valid2 ? value : undefined;
+              if (value !==undefined && value !==null) {
+                scope.itemData._validationErrors = [];
+                var valid1 = LForms.Validations.checkDataType(scope.itemData.dataType,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-datatype', valid1);
+                var valid2 = LForms.Validations.checkRestrictions(scope.itemData.restrictions,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-restrictions', valid2);
+                var valid3 = LForms.Validations.checkRequired(scope.itemData._answerRequired,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-required', valid3);
+                return valid1 && valid2 && valid3? value : undefined;
+              }
             });
 
             //For model -> DOM validation
+            // In the current use, lf-validate is applied to a separate non-input element, the validation always
+            // happens when the model data changes, i.e. in this function.
             ctrl.$formatters.unshift(function(value) {
-              scope.errors = [];
-              var valid1 = checkDataType(dataType, value, scope.errors);
-              ctrl.$setValidity('data-type', valid1);
-              var valid2 = checkRestrictions(restrictions, value, scope.errors);
-              ctrl.$setValidity('restrictions', valid2);
-              scope.invalid = valid1 && valid2;
-              return value;
+              if (value !==undefined && value !==null) {
+                scope.itemData._validationErrors = [];
+                var valid1 = LForms.Validations.checkDataType(scope.itemData.dataType,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-datatype', valid1);
+                var valid2 = LForms.Validations.checkRestrictions(scope.itemData.restrictions,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-restrictions', valid2);
+                var valid3 = LForms.Validations.checkRequired(scope.itemData._answerRequired,
+                    value, scope.itemData._validationErrors);
+                ctrl.$setValidity('lf-required', valid3);
+                return value;
+              }
             });
           }
         };
