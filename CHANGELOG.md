@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [6.1.3]   2016-06-13
+### Fixed
+- Another CSS fix for IE.  This is a fix for the placeholder text for textareas,
+  and should have been fixed as a part of the 6.1.1 changes, but was missed.
+
 ## [6.1.2]   2016-06-09
 ### Fixed
 - Updated the autocomplete-lhc dependency (to 9.0.1) to get some fixes.
