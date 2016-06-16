@@ -27,7 +27,7 @@ WidgetUtil = {
       '<script>'+
         'angular.module("'+appName+'", ["lformsWidget"])'+
         '.controller("'+controller+'", ["$scope", function ($scope) {'+
-        '  $scope.myFormData = new LFormsData('+formDataVar+');'+
+        '  $scope.myFormData = new LForms.LFormsData('+formDataVar+');'+
         '}]);'+
       '</'+'script>'
     );

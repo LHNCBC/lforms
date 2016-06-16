@@ -1,7 +1,10 @@
 /**
- * Form definition data processing
+ * LForms class for form definition data
  */
-var LFormsData = Class.extend({
+if (typeof LForms === 'undefined')
+  LForms = {};
+
+var LFormsData = LForms.LFormsData = Class.extend({
   // form type. for now the only type is "LOINC"
   type: null,
   // form's code
@@ -636,7 +639,7 @@ var LFormsData = Class.extend({
         item.answers = this.answerLists[item.answers];
       }
 
-      // normalize unit value if there is one
+      // normalize unit value if there is one, needed by calculationMethod
       if (item.unit) {
         if (!item.unit.text)
           item.unit.text = item.unit.name;
@@ -689,6 +692,9 @@ var LFormsData = Class.extend({
         case "INT":
         case "REAL":
           item._toolTip = "Type a number";
+          // internally all numeric values are of string type
+          if (typeof item.value === "number")
+            item.value = item.value + "";
           break;
         default: {
           if (!item.calculationMethod) {
@@ -897,7 +903,7 @@ var LFormsData = Class.extend({
         itemData.questionCode = item.questionCode;
         // not a header
         if (!item.header) {
-          if (item.value) itemData.value = this._getOriginalValue(item.value);
+          if (item.value) itemData.value = this._getOriginalValue(item.value, item.dataType);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
           if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
         }
@@ -907,7 +913,10 @@ var LFormsData = Class.extend({
         // process fields
         for (var field in item) {
           // special handling for user input values
-          if (field === "value" || field === "unit") {
+          if (field === "value") {
+            itemData[field] = this._getOriginalValue(item[field], item.dataType);
+          }
+          else if (field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
           }
           // ignore the internal lforms data and angular data
@@ -938,9 +947,10 @@ var LFormsData = Class.extend({
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
    * @param value the data object of the selected answer
+   * @param dataType optional, the data type of the value
    * @private
    */
-  _getOriginalValue: function(value) {
+  _getOriginalValue: function(value, dataType) {
     var retValue;
     if (value) {
       // an array
@@ -960,7 +970,20 @@ var LFormsData = Class.extend({
       else if (angular.isObject(value) && value._orig) {
         retValue = value._orig;
       }
-      // not an object or an array
+      // not an object or an array, and has a data type
+      else if (dataType) {
+        switch (dataType) {
+          case "INT":
+            retValue = parseInt(value);
+            break;
+          case "REAL":
+            retValue = parseFloat(value);
+            break;
+          default:
+            retValue = value;
+        }
+      }
+      // default
       else {
         retValue = value;
       }
@@ -1505,10 +1528,10 @@ var LFormsData = Class.extend({
       var item = sourceItems[i];
       if (item.value) {
         if (item.unit && item.unit.value) {
-          valueInStandardUnit = this.Units.getValueInStandardUnit(item.value, item.unit.value);
+          valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.value);
         }
         else {
-          valueInStandardUnit = item.value;
+          valueInStandardUnit = parseFloat(item.value);
         }
       }
       values.push(valueInStandardUnit);
@@ -1768,7 +1791,7 @@ var LFormsData = Class.extend({
             {text: answerData.name,
               value: answerData.name, // value is needed for formula calculation
               code: answerData.code,
-              _orig: answers[i]
+              _orig: angular.copy(answers[i])
             });
         if (answerData.default)
           defaultValue = answerData.name;
@@ -1807,7 +1830,7 @@ var LFormsData = Class.extend({
 
       var options = {
         matchListValue: item.dataType === "CNE",
-        maxSelect: maxSelect,
+        maxSelect: maxSelect
       };
 
       var url = item.externallyDefined;
@@ -1846,7 +1869,7 @@ var LFormsData = Class.extend({
           var answerData = angular.copy(answers[i]);
           var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
           answerData.text = label;
-          answerData._orig = answers[i];
+          answerData._orig = angular.copy(answers[i]);
           listItems.push(answerData);
         }
 
@@ -1907,7 +1930,7 @@ var LFormsData = Class.extend({
       'TOTALSCORE': function (sources) {
         var totalScore = 0;
         for (var i = 0, iLen = sources.length; i < iLen; i++) {
-          totalScore += sources[i];
+          totalScore += parseInt(sources[i]);
         }
         return totalScore;
       },
@@ -1915,7 +1938,7 @@ var LFormsData = Class.extend({
       // BMI = weight (lb) / [height (in)] * 2 x 703
       'BMI': function (sources) {
         var ret = '';
-        var weightInKg = sources[0], heightInCm = sources[1];
+        var weightInKg = parseFloat(sources[0]), heightInCm = parseFloat(sources[1]);
         if (weightInKg && weightInKg != '' && heightInCm && heightInCm != '' && heightInCm != '0') {
           ret = weightInKg / Math.pow((heightInCm / 100), 2);
           ret = ret.toFixed(this.precision_);
@@ -1927,8 +1950,8 @@ var LFormsData = Class.extend({
       // BSA (m2) = SQR RT ( [Height(cm) x Weight(kg) ] / 3600 )
       'BSA': function (sources) {
         var ret = '';
-        var weightInKg = sources[0], heightInCm = sources[1];
-        if (weightInKg && weightInKg != '' && heightInCm && heightInKg != '') {
+        var weightInKg = parseFloat(sources[0]), heightInCm = parseFloat(sources[1]);
+        if (weightInKg && weightInKg != '' && heightInCm && heightInCm != '') {
           ret = Math.sqrt(heightInCm * weightInKg / 3600);
           ret = ret.toFixed(this.precision_);
         }

@@ -266,17 +266,15 @@
   border: 2px solid #FF0000;
 }
 
-/* messages for invalid fields */
+/* validations messages for invalid fields */
 .lf-form .hasTooltip {
   overflow: visible;
 }
 .lf-form .tooltipContent {
   display: none;
 }
-.lf-form .tooltipContent div.errorMsg{
-  display: none;
-}
-.lf-form .ng-invalid > .tooltipContainer:hover .tooltipContent {
+.lf-form .ng-invalid > .tooltipContainer:hover .tooltipContent,
+.lf-form .active-row .ng-invalid > .tooltipContainer .tooltipContent {
   border-radius: 5px;
   bottom: 35px;
   color: #8a6d3b;
@@ -288,7 +286,8 @@
   width: 260px;
   display: inline;
 }
-.lf-form .ng-invalid > .tooltipContainer:hover:before{
+.lf-form .ng-invalid > .tooltipContainer:hover:before,
+.lf-form .active-row .ng-invalid > .tooltipContainer:before {
   border: solid;
   border-color: #fcf8e3 transparent;
   border-width: 10px 10px 0 10px;
@@ -298,36 +297,17 @@
   position: absolute;
   z-index: 99;
 }
-.lf-form .ng-invalid-required div.errorMsg.errorRequired {
-  display: block;
+.lf-form .ng-invalid input[type="number"],
+.lf-form .ng-invalid input[type="text"],
+.lf-form .ng-invalid textarea {
+  border-color: red;
 }
-.lf-form .ng-invalid-number div.errorMsg.errorNumber {
-  display: block;
+.lf-form .ng-invalid input[type="number"]:focus,
+.lf-form .ng-invalid input[type="text"]:focus,
+.lf-form .ng-invalid textarea:focus {
+  background-color: #f8da74;
 }
-.lf-form .ng-invalid-required div.errorMsg.errorRequired {
-  display: block;
-}
-.lf-form .ng-invalid-max div.errorMsg.errorMax {
-  display: block;
-}
-.lf-form .ng-invalid-min div.errorMsg.errorMin {
-  display: block;
-}
-.lf-form .ng-invalid-url div.errorMsg.errorURL {
-  display: block;
-}
-.lf-form .ng-invalid-maxlength div.errorMsg.errorMaxlength {
-  display: block;
-}
-.lf-form .ng-invalid-minlength div.errorMsg.errorMinlength {
-  display: block;
-}
-.lf-form .ng-invalid-email div.errorMsg.errorEmail {
-  display: block;
-}
-.lf-form .ng-invalid-parse div.errorMsg.errorInvalidParse {
-  display: block;
-}
+/* end of validation messages */
 
 /* horizontal table */
 /* title */

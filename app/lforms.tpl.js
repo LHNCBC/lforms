@@ -52,7 +52,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <!--combo style (default is 'combo')-->\n" +
     "  <div ng-switch-default class=\"lf-combo-answer\">\n" +
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
-    "           ng-required=\"item._answerRequired\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
     "           id=\"{{item._elementId}}\">\n" +
@@ -175,41 +174,41 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  ng-switch on=\"cell.dataType\">\n" +
     "                <ng-form name=\"innerForm2\">\n" +
     "                  <div class=\"lf-form-item-data tooltipContainer\">\n" +
-    "                    <span class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></span>\n" +
+    "                    <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" +
     "                    <span ng-switch-when=\"\" > </span>\n" +
     "                    <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                           ng-model=\"cell.value\"\n" +
     "                           autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                           ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                           ng-model=\"cell.value\"\n" +
     "                           autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                           ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                    <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" +
+    "                           ng-model=\"cell.value\"\n" +
     "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                    <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" +
+    "                           ng-model=\"cell.value\"\n" +
     "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" +
-    "                           ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                           ng-model=\"cell.value\"\n" +
     "                           lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                    <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                    <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
     "                              ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                              id=\"{{cell._elementId}}\"\n" +
     "                              aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                              ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
-    "                    <input ng-switch-default name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\" type=\"text\"\n" +
+    "                    <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
     "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
@@ -267,41 +266,41 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                ng-switch on=\"cell.dataType\">\n" +
     "              <ng-form name=\"innerForm2\">\n" +
     "                <div class=\"lf-form-item-data tooltipContainer\">\n" +
-    "                  <span class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></span>\n" +
+    "                  <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" +
     "                  <span ng-switch-when=\"\" > </span>\n" +
     "                  <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
-    "                         ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                         ng-model=\"cell.value\"\n" +
     "                         autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                         ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                  <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
-    "                         ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                         ng-model=\"cell.value\"\n" +
     "                         autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                         ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                  <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                         ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                  <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" +
+    "                         ng-model=\"cell.value\"\n" +
     "                         placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                  <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"number\"\n" +
-    "                         ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                  <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" +
+    "                         ng-model=\"cell.value\"\n" +
     "                         placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" +
-    "                         ng-required=\"cell._answerRequired\" ng-model=\"cell.value\"\n" +
+    "                         ng-model=\"cell.value\"\n" +
     "                         lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
-    "                  <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\"\n" +
+    "                  <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
     "                            ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                            id=\"{{cell._elementId}}\"\n" +
     "                            aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                            ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
-    "                  <input ng-switch-default name=\"{{cell.question}}\" ng-required=\"cell._answerRequired\" type=\"text\"\n" +
+    "                  <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
     "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
@@ -457,7 +456,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <!--input field-->\n" +
     "  <ng-form name=\"innerForm2\" class=\"hasTooltip\">\n" +
     "    <div class=\"lf-form-item-data tooltipContainer\" ng-switch on=\"item.dataType\">\n" +
-    "      <span class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></span>\n" +
+    "      <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" +
     "      <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
     "      <span ng-switch-when=\"TTILE\" id=\"{{item._elementId}}\"> </span>\n" +
     "      <div ng-switch-when=\"CNE\">\n" +
@@ -466,24 +465,27 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-switch-when=\"CWE\">\n" +
     "        <lf-answers item=\"item\"></lf-answers>\n" +
     "      </div>\n" +
-    "      <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"number\"\n" +
-    "             ng-required=\"item._answerRequired\"\n" +
+    "      <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
-    "      <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"number\"\n" +
-    "             ng-required=\"item._answerRequired\"\n" +
+    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
+    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "      <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
-    "      <input ng-switch-when=\"DT\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\" type=\"text\"\n" +
+    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
+    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "      <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
-    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
-    "      <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\" ng-required=\"item._answerRequired\"\n" +
+    "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
+    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "      <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
     "                ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
+    "                ng-focus=\"setActiveRow(item)\">\n" +
     "      </textarea>\n" +
-    "      <input ng-switch-default name=\"{{item.question}}\" ng-required=\"item._answerRequired\" type=\"text\"\n" +
+    "      <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "             id=\"{{item._elementId}}\">\n" +
+    "             id=\"{{item._elementId}}\"\n" +
+    "             ng-focus=\"setActiveRow(item)\">\n" +
     "    </div>\n" +
     "  </ng-form>\n" +
     "  <!--unit-->\n" +
@@ -495,13 +497,14 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <!--extra question-->\n" +
     "  <div ng-if=\"needExtra(item) && targetShown(item)\" ng-click=\"setActiveRow(item)\"\n" +
     "       class=\"extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
-    "    <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\">\n" +
+    "    <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\"\n" +
+    "           ng-focus=\"setActiveRow(item)\">\n" +
     "  </div>\n" +
     "  <!--sub sections, check each item's layout -->\n" +
     "  <div ng-if=\"item.items\" class=\"section\">\n" +
     "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
-    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\n" +
-    "             ng-switch on item.displayControl.questionLayout\">\n" +
+    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\"\n" +
+    "         ng-click=\"setActiveRow(item)\">\n" +
     "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "        <div ng-switch-when=\"horizontal\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
@@ -579,8 +582,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <!-- check each top level item's layout -->\n" +
     "          <div ng-if=\"lfData.items\">\n" +
     "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
-    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\n" +
-    "             ng-switch on item.displayControl.questionLayout\">\n" +
+    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\"\n" +
+    "                 ng-click=\"setActiveRow(item)\">\n" +
     "              <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "                <div ng-switch-when=\"horizontal\">\n" +
     "                  <lf-section-horizontal></lf-section-horizontal>\n" +
@@ -645,7 +648,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              ng-switch on=\"item.dataType\">\n" +
     "            <ng-form name=\"innerForm\">\n" +
     "              <div class=\"lf-form-item-data tooltipContainer\">\n" +
-    "                <span class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\"></span>\n" +
+    "                <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\"></div>\n" +
     "                <input ng-switch-when=\"CWE\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                       placeholder=\"Select or type a value\"\n" +
     "                       ng-model=\"item.value\"\n" +
@@ -719,32 +722,33 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  <td ng-switch on=\"item.dataType\" class=\"hasTooltip\">\n" +
     "                    <ng-form name=\"innerForm2\">\n" +
     "                      <div class=\"lf-form-item-data tooltipContainer\">\n" +
-    "                        <span class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></span>\n" +
+    "                        <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" +
     "                        <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
     "                        <input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "                               ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               id=\"{{item._elementId}}\">\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
     "                        <input ng-switch-when=\"CWE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "                               ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               id=\"{{item._elementId}}\">\n" +
-    "                        <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"number\"\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                        <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
-    "                        <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"number\"\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                        <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\">\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
     "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
     "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\">\n" +
+    "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
+    "                                  ng-focus=\"setActiveRow(item)\">\n" +
     "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                               id=\"{{item._elementId}}\">\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
     "                      </div>\n" +
     "                    </ng-form>\n" +
     "                  </td>\n" +
@@ -811,7 +815,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                  </td>\n" +
     "                  <td class=\"button-col\"></td>\n" +
     "                  <td colspan=\"5\" class=\"extra-field\">\n" +
-    "                    <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\" type=\"text\">\n" +
+    "                    <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" +
     "                  </td>\n" +
     "                </tr>\n" +
     "                <!--a button row at the end of each repeating section-->\n" +

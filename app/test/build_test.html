@@ -13,7 +13,7 @@
       angular.module('testApp', ['lformsWidget'])
        .controller('testController', ['$scope', function ($scope) {
           // allInOne is defined in test-data.js
-          $scope.testForm = new LFormsData(allInOne);
+          $scope.testForm = new LForms.LFormsData(allInOne);
       }]);
     </script>
   </body>

@@ -55,7 +55,6 @@
     <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
-    <script src="../bower_components/angular-ui-validate/dist/validate.js"></script>
     <!-- endbower -->
 
     <!-- for this test file only -->
@@ -132,17 +131,17 @@
             otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
-          $scope.lfData1 = new LFormsData(angular.copy(FHTData));
-          $scope.lfData2 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData1 = new LForms.LFormsData(angular.copy(FHTData));
+          $scope.lfData2 = new LForms.LFormsData(angular.copy(FHTData));
           $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
-          $scope.lfData3 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData3 = new LForms.LFormsData(angular.copy(FHTData));
           $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]).
         controller('lformsTestControllerH', ['$scope', function ($scope) {
-          $scope.lfData1 = new LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData1 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
           $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
-          $scope.lfData3 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData3 = new LForms.LFormsData(angular.copy(horizontalFHTData));
           $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]);
     </script>

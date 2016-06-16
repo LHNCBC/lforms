@@ -5,8 +5,7 @@
     'ngAnimate',
     'ui.bootstrap',
     'smoothScroll',
-    'autocompleteLhcMod',
-    'ui.validate'
+    'autocompleteLhcMod'
     ])
     .config(['$animateProvider', function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);

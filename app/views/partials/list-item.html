@@ -30,7 +30,7 @@
   <!--input field-->
   <ng-form name="innerForm2" class="hasTooltip">
     <div class="lf-form-item-data tooltipContainer" ng-switch on="item.dataType">
-      <span class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></span>
+      <div class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></div>
       <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
       <span ng-switch-when="TTILE" id="{{item._elementId}}"> </span>
       <div ng-switch-when="CNE">
@@ -39,24 +39,27 @@
       <div ng-switch-when="CWE">
         <lf-answers item="item"></lf-answers>
       </div>
-      <input ng-switch-when="REAL" name="{{item.question}}" type="number"
-             ng-required="item._answerRequired"
+      <input ng-switch-when="REAL" name="{{item.question}}" type="text"
              ng-model="item.value" placeholder="{{item._toolTip}}"
-             ng-readonly="item._readOnly" id="{{item._elementId}}">
-      <input ng-switch-when="INT" name="{{item.question}}" type="number"
-             ng-required="item._answerRequired"
+             ng-readonly="item._readOnly" id="{{item._elementId}}"
+             ng-focus="setActiveRow(item)">
+      <input ng-switch-when="INT" name="{{item.question}}" type="text"
              ng-model="item.value" placeholder="{{item._toolTip}}"
-             ng-readonly="item._readOnly" id="{{item._elementId}}">
-      <input ng-switch-when="DT" name="{{item.question}}" ng-required="item._answerRequired" type="text"
+             ng-readonly="item._readOnly" id="{{item._elementId}}"
+             ng-focus="setActiveRow(item)">
+      <input ng-switch-when="DT" name="{{item.question}}" type="text"
              ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
-             ng-readonly="item._readOnly" id="{{item._elementId}}">
-      <textarea ng-switch-when="TX" name="{{item.question}}" ng-required="item._answerRequired"
+             ng-readonly="item._readOnly" id="{{item._elementId}}"
+             ng-focus="setActiveRow(item)">
+      <textarea ng-switch-when="TX" name="{{item.question}}"
                 ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
-                id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1">
+                id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
+                ng-focus="setActiveRow(item)">
       </textarea>
-      <input ng-switch-default name="{{item.question}}" ng-required="item._answerRequired" type="text"
+      <input ng-switch-default name="{{item.question}}" type="text"
              ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
-             id="{{item._elementId}}">
+             id="{{item._elementId}}"
+             ng-focus="setActiveRow(item)">
     </div>
   </ng-form>
   <!--unit-->
@@ -68,13 +71,14 @@
   <!--extra question-->
   <div ng-if="needExtra(item) && targetShown(item)" ng-click="setActiveRow(item)"
        class="extra-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-    <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly">
+    <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly"
+           ng-focus="setActiveRow(item)">
   </div>
   <!--sub sections, check each item's layout -->
   <div ng-if="item.items" class="section">
     <div ng-repeat="item in item.items" ng-if="targetShown(item)"
-         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}
-             ng-switch on item.displayControl.questionLayout">
+         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
+         ng-click="setActiveRow(item)">
       <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
         <div ng-switch-when="horizontal">
           <lf-section-horizontal></lf-section-horizontal>

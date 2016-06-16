@@ -1116,7 +1116,63 @@ var allInOne =
 
   ]};
 
+var validationTestForm = {
+  "type": "LOINC",
+  "code": "validationTest",
+  "name": "Validation Test",
+  "items": [
+    {"questionCode": "BL", "dataType": "BL", "restrictions":{},"answerCardinality": null, "question": "BL"}, // not implemented
+    {"questionCode": "INT", "dataType": "INT", "restrictions":{},"answerCardinality": null, "question": "INT"},
+    {"questionCode": "REAL", "dataType": "REAL", "restrictions":{},"answerCardinality": null, "question": "REAL"},
+    {"questionCode": "PHONE", "dataType": "PHONE", "restrictions":{},"answerCardinality": null, "question": "PHONE"},
+    {"questionCode": "EMAIL", "dataType": "EMAIL", "restrictions":{},"answerCardinality": null, "question": "EMAIL"},
+    {"questionCode": "URL", "dataType": "URL", "restrictions":{},"answerCardinality": null, "question": "URL"},
+    {"questionCode": "TM", "dataType": "TM", "restrictions":{},"answerCardinality": null, "question": "TM"}, // not implemented
+    {"questionCode": "YEAR", "dataType": "YEAR", "restrictions":{},"answerCardinality": null, "question": "YEAR"},
+    {"questionCode": "MONTH", "dataType": "MONTH", "restrictions":{},"answerCardinality": null, "question": "MONTH"},
+    {"questionCode": "DAY", "dataType": "DAY", "restrictions":{},"answerCardinality": null, "question": "DAY"},
+    {"questionCode": "ST", "dataType": "ST", "restrictions":null,"answerCardinality": null, "question": "ST with no restrictions"},
 
+    {"questionCode": "INT1", "dataType": "INT", "restrictions":{"minInclusive": 5},"answerCardinality": null, "question": "INT with minInclusive restrictions"},
+    {"questionCode": "INT2", "dataType": "INT", "restrictions":{"minExclusive": 5},"answerCardinality": null, "question": "INT with minExclusive restrictions"},
+    {"questionCode": "INT3", "dataType": "INT", "restrictions":{"maxInclusive": 10},"answerCardinality": null, "question": "INT with maxInclusive restrictions"},
+    {"questionCode": "INT4", "dataType": "INT", "restrictions":{"maxExclusive": 10},"answerCardinality": null, "question": "INT with maxExclusive restrictions"},
+
+    {"questionCode": "REAL1", "dataType": "REAL", "restrictions":{"minInclusive": 5},"answerCardinality": null, "question": "REAL with minInclusive restrictions"},
+    {"questionCode": "REAL2", "dataType": "REAL", "restrictions":{"minExclusive": 5},"answerCardinality": null, "question": "REAL with minExclusive restrictions"},
+    {"questionCode": "REAL3", "dataType": "REAL", "restrictions":{"maxInclusive": 10},"answerCardinality": null, "question": "REAL with maxInclusive restrictions"},
+    {"questionCode": "REAL4", "dataType": "REAL", "restrictions":{"maxExclusive": 10},"answerCardinality": null, "question": "REAL with maxExclusive restrictions"},
+
+    {"questionCode": "ST1", "dataType": "ST", "restrictions":{"length": 5},"answerCardinality": null, "question": "ST with length restrictions"},
+    {"questionCode": "ST2", "dataType": "ST", "restrictions":{"minLength": 5},"answerCardinality": null, "question": "ST with minLength restrictions"},
+    {"questionCode": "ST3", "dataType": "ST", "restrictions":{"maxLength": 10},"answerCardinality": null, "question": "ST with maxLength restrictions"},
+
+    {"questionCode": "INTA", "dataType": "INT", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "INT with minInclusive, maxExclusive"},
+    {"questionCode": "REALA", "dataType": "REAL", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "REAL with minInclusive, maxExclusive"},
+    {"questionCode": "STA", "dataType": "ST", "restrictions":{"maxLength": 10, "minLength": 5, "pattern": "/^[a-z]+$/"},"answerCardinality": null, "question": "ST with maxLength, minLength, pattern"},
+
+    {"questionCode": "DT", "dataType": "DT", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "DT"},
+    {"questionCode": "ST0", "dataType": "ST", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "ST required"},
+    {"questionCode": "CNE1", "dataType": "CNE", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "CNE single required", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"}]},
+    {"questionCode": "CNE2", "dataType": "CNE", "restrictions":{},"answerCardinality":{"max":"*", "min":"1"}, "question": "CNE multiple required","answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"}]},
+    {"questionCode": "CWE1", "dataType": "CWE", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "CWE single required","answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"}]},
+    {"questionCode": "CWE2", "dataType": "CWE", "restrictions":{},"answerCardinality":{"max":"*", "min":"1"}, "question": "CWE multiple required","answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"}]}
+
+
+  ]
+};
 // a user saved form data with multiple instances of repeating items
 var formWithUserData =
 { "type": "LOINC",

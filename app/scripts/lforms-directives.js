@@ -173,7 +173,6 @@
             itemData: '=lfValidate'
           },
           //transclude: true,
-          //templateUrl: 'validation-errors.html',
           template: '<div ng-repeat="error in itemData._validationErrors">' +
               '<div class="validation-error">"{{itemData.question}}" {{error}}</div>' +
               '</div>',

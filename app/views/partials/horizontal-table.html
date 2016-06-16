@@ -38,41 +38,41 @@
                   ng-switch on="cell.dataType">
                 <ng-form name="innerForm2">
                   <div class="lf-form-item-data tooltipContainer">
-                    <span class="tooltipContent" lf-validate="cell" ng-model="cell.value" ng-if="cell._hasValidation"></span>
+                    <div class="tooltipContent" lf-validate="cell" ng-model="cell.value" ng-if="cell._hasValidation"></div>
                     <span ng-switch-when="" > </span>
                     <input ng-switch-when="CNE" name="{{cell.question + '_' + $id}}" type="text"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
+                           ng-model="cell.value"
                            autocomplete-lhc="cell._autocompOptions"
                            ng-readonly="cell._readOnly" placeholder="{{cell._toolTip}}"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="CWE" name="{{cell.question + '_' + $id}}" type="text"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
+                           ng-model="cell.value"
                            autocomplete-lhc="cell._autocompOptions"
                            ng-readonly="cell._readOnly" placeholder="{{cell._toolTip}}"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
-                    <input ng-switch-when="REAL" name="{{cell.question}}" type="number"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
+                    <input ng-switch-when="REAL" name="{{cell.question}}" type="text"
+                           ng-model="cell.value"
                            placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
-                    <input ng-switch-when="INT" name="{{cell.question}}" type="number"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
+                    <input ng-switch-when="INT" name="{{cell.question}}" type="text"
+                           ng-model="cell.value"
                            placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
                     <input ng-switch-when="DT" name="{{cell.question}}" type="text"
-                           ng-required="cell._answerRequired" ng-model="cell.value"
+                           ng-model="cell.value"
                            lf-date="dateOptions" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
-                    <textarea ng-switch-when="TX" name="{{cell.question}}" ng-required="cell._answerRequired"
+                    <textarea ng-switch-when="TX" name="{{cell.question}}"
                               ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                               id="{{cell._elementId}}"
                               aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
                               ng-keyup="autoExpand($event)" rows="1"></textarea>
-                    <input ng-switch-default name="{{cell.question}}" ng-required="cell._answerRequired" type="text"
+                    <input ng-switch-default name="{{cell.question}}" type="text"
                            ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
                            aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">

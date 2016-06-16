@@ -48,7 +48,6 @@
   <!--combo style (default is 'combo')-->
   <div ng-switch-default class="lf-combo-answer">
     <input name="{{item.question +'_'+ $id}}" type="text"
-           ng-required="item._answerRequired"
            ng-model="item.value" autocomplete-lhc="item._autocompOptions"
            ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
            id="{{item._elementId}}">
