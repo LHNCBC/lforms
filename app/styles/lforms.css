@@ -216,7 +216,16 @@
 
 /* html5 tooltip style */
 .lf-form input:-moz-placeholder,
-.lf-form input:-ms-input-placeholder {
+.lf-form textarea:-moz-placeholder {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+  opacity: 1;
+}
+/* Repeat for IE 11, which won't read this definition if it is combined above
+   with -moz-placeholder */
+.lf-form input:-ms-input-placeholder,
+.lf-form textarea:-ms-input-placeholder {
   font-size: 14px;
   font-weight: 400;
   color: #999999;
@@ -428,7 +437,7 @@ Fix for LF-29.
 Override color of select boxes in calendar widget title bar.
 */
 .ui-datepicker-title select {
-  color: initial;
+  color: black; /* Note: "initial" is not supported by IE */
 }
 
 /* date picker */

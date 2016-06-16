@@ -2,13 +2,30 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [6.2.0]   2016-06-16
+### Added
+- User data validations based on dataType and restrictions
+
+## [6.1.3]   2016-06-13
+### Fixed
+- Another CSS fix for IE.  This is a fix for the placeholder text for textareas,
+  and should have been fixed as a part of the 6.1.1 changes, but was missed.
+
+## [6.1.2]   2016-06-09
+### Fixed
+- Updated the autocomplete-lhc dependency (to 9.0.1) to get some fixes.
+
+## [6.1.1]   2016-06-02
+### Fixed
+- Two CSS fixes for IE.
+
 ## [6.1.0]   2016-05-13
 ### Added
 - Added a function to export user data in HL7 segments (in progress).
 
 ## [6.0.2]   2016-05-10
 ### Fixed
-- Turned in "minification" of the distribution version of the JavaScript.
+- Turned on "minification" of the distribution version of the JavaScript.
 
 ## [6.0.1]   2016-05-04
 ### Fixed
