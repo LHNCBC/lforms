@@ -246,14 +246,14 @@ about the meaning of each key:
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
-      * css - an array of valid CSS settings that could apply to an item. (limited supports).
-      * colCSS - an array of valid CSS settings that could apply to its related column in a 
+        * css - an array of valid CSS settings that could apply to an item. (limited supports).
+        * colCSS - an array of valid CSS settings that could apply to its related column in a 
         horizontal table. It only works when its parent item/section has a 
         {"questionLayout": "horizontal"} value in its "displayControl".
-      * questionLayout - the layout of the questions in the section. It works on items 
+        * questionLayout - the layout of the questions in the section. It works on items 
         that are sections, i.e. they contain sub items. Supported values are: 
         'vertical' (default), 'horizontal' and 'matrix'.
-      * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
+        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
         The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
         the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
         will be used to handle the list.

@@ -640,11 +640,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
 
       // normalize unit value if there is one, needed by calculationMethod
-      if (item.unit) {
-        if (!item.unit.text)
-          item.unit.text = item.unit.name;
-        if (!item.unit.value)
-          item.unit.value = item.unit.name;
+      if (item.unit && !item.unit.text) {
+        item.unit.text = item.unit.name;
       }
 
       // id
@@ -1527,8 +1524,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       var valueInStandardUnit = '';
       var item = sourceItems[i];
       if (item.value) {
-        if (item.unit && item.unit.value) {
-          valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.value);
+        if (item.unit && item.unit.name) {
+          valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.name);
         }
         else {
           valueInStandardUnit = parseFloat(item.value);
@@ -1781,23 +1778,22 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // clean up unit autocomp options
       item._unitAutocompOptions = null;
 
-      var listItems = [], answers = item.units, options=null;
+      var listItems = [], answers = item.units;
       // Modify the label (question text) for each question.
       var defaultValue;
       for (var i= 0, iLen = answers.length; i<iLen; i++) {
         // Make a copy of the original unit
         var answerData = angular.copy(answers[i]);
         listItems.push(
-            {text: answerData.name,
-              value: answerData.name, // value is needed for formula calculation
-              code: answerData.code,
-              _orig: angular.copy(answers[i])
+            {name: answerData.name,
+             text: answerData.name,
+             _orig: angular.copy(answers[i])
             });
         if (answerData.default)
           defaultValue = answerData.name;
       }
 
-      options = {
+      var options = {
         listItems: listItems,
         matchListValue: true,
         autoFill: true

@@ -76,8 +76,10 @@ LForms.Validations = {
    */
   checkRequired: function(required, value, errors) {
     var ret = true;
-    if (required && (value === undefined || value === null || value === '' ||
-        (angular.isObject(value) && value.text ==="")) ) {
+    if (required &&
+        (value === undefined || value === null || value === '' ||
+        (angular.isObject(value) && value.text ==="") ||
+        (angular.isArray(value) && value.length ===0))) {
       ret = false;
       errors.push("requires a value");
     }

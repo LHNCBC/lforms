@@ -345,28 +345,12 @@ LForms.HL7 = {
         }
         // unit
         if (item.unit) {
-          var unitName, unitCode;
-          // unit name
-          if (item.unit.text !== undefined) {
-            unitName = item.unit.text;
-          }
-          else if (item.unit.value !== undefined) {
-            unitName = item.unit.value;
-          }
-          else if (item.unit.name !== undefined) {
+          var unitName ="";
+          if (item.unit.name !== undefined) {
             unitName = item.unit.name;
           }
-          // unit code, might not needed
-          if (item.unit.code !== undefined) {
-            unitCode = item.unit.code;
-          }
-          else if (item.unit.name !== undefined) {
-            unitCode = item.unit.name;
-          }
-          itemObxArray[6] = unitName + this.delimiters.component + unitCode + this.delimiters.component + this.LOINC_CS;
+          itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
         }
-
-
 
         // ignore ending empty fields
         foundValue = false;
