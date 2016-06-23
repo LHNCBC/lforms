@@ -54,7 +54,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "           id=\"{{item._elementId}}\">\n" +
+    "           id=\"{{item._elementId}}\"\n" +
+    "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" +
     "  </div>\n" +
     "</div>\n"
   );
@@ -181,37 +182,44 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                           autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                           ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                    <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\"\n" +
     "                           autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                           ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                    <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\"\n" +
     "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                    <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\"\n" +
     "                           placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                    <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\"\n" +
     "                           lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                    <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
     "                              ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                              id=\"{{cell._elementId}}\"\n" +
     "                              aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
-    "                              ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                              ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" +
+    "                              ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" +
     "                    <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" +
     "                           ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                           id=\"{{cell._elementId}}\"\n" +
-    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                           aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                           ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  </div>\n" +
     "                </ng-form>\n" +
     "              </td>\n" +
@@ -273,37 +281,44 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                         autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                         ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\"\n" +
     "                         autocomplete-lhc=\"cell._autocompOptions\"\n" +
     "                         ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\"\n" +
     "                         placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\"\n" +
     "                         placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\"\n" +
     "                         lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                  <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
     "                            ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                            id=\"{{cell._elementId}}\"\n" +
     "                            aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
-    "                            ng-keyup=\"autoExpand($event)\" rows=\"1\"></textarea>\n" +
+    "                            ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" +
+    "                            ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" +
     "                  <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" +
     "                         ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
     "                         id=\"{{cell._elementId}}\"\n" +
-    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\">\n" +
+    "                         aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                         ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "                </div>\n" +
     "              </ng-form>\n" +
     "            </td>\n" +
@@ -468,24 +483,29 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
     "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
-    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "             ng-focus=\"setActiveRow(item)\"\n" +
+    "             ng-blur=\"activeRowOnBlur(item)\">\n" +
     "      <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
     "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
-    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "             ng-focus=\"setActiveRow(item)\"\n" +
+    "             ng-blur=\"activeRowOnBlur(item)\">\n" +
     "      <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "             ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\"\n" +
-    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "             ng-focus=\"setActiveRow(item)\"\n" +
+    "             ng-blur=\"activeRowOnBlur(item)\">\n" +
     "      <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
     "                ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
-    "                ng-focus=\"setActiveRow(item)\">\n" +
+    "                ng-focus=\"setActiveRow(item)\"\n" +
+    "                ng-blur=\"activeRowOnBlur(item)\">\n" +
     "      </textarea>\n" +
     "      <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "             ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "             id=\"{{item._elementId}}\"\n" +
-    "             ng-focus=\"setActiveRow(item)\">\n" +
+    "             ng-focus=\"setActiveRow(item)\"\n" +
+    "             ng-blur=\"activeRowOnBlur(item)\">\n" +
     "    </div>\n" +
     "  </ng-form>\n" +
     "  <!--unit-->\n" +
@@ -653,14 +673,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                       placeholder=\"Select or type a value\"\n" +
     "                       ng-model=\"item.value\"\n" +
     "                       autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "                       id=\"{{item.questionCode}}\">\n" +
+    "                       id=\"{{item.questionCode}}\"\n" +
+    "                       ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                       ng-model=\"item.value\" lf-date=\"dateOptions\"\n" +
     "                       placeholder=\"MM/DD/YYYY\"\n" +
-    "                       id=\"{{item.questionCode}}\">\n" +
+    "                       id=\"{{item.questionCode}}\"\n" +
+    "                       ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "                       ng-model=\"item.value\" placeholder=\"Type a value\"\n" +
-    "                       id=\"{{item.questionCode}}\">\n" +
+    "                       id=\"{{item.questionCode}}\"\n" +
+    "                       ng-blur=\"activeRowOnBlur(item)\">\n" +
     "              </div>\n" +
     "            </ng-form>\n" +
     "          </td>\n" +
@@ -727,28 +750,35 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                        <input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "                               ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        <input ng-switch-when=\"CWE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "                               ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
     "                                  ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
     "                                  id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
-    "                                  ng-focus=\"setActiveRow(item)\">\n" +
+    "                                  ng-focus=\"setActiveRow(item)\"\n" +
+    "                                  ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                        </textarea>\n" +
     "                        <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "                               ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
-    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\">\n" +
+    "                               id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                               ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                      </div>\n" +
     "                    </ng-form>\n" +
     "                  </td>\n" +

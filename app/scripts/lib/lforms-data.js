@@ -2283,7 +2283,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @returns {string}
    */
   getActiveRowClass: function(item) {
-    return this._activeItem && this._activeItem._elementId === item._elementId ? "active-row" : "";
+    var ret = "";
+    if (this._activeItem && this._activeItem._elementId === item._elementId ) {
+      ret = "active-row";
+    }
+    return ret;
   },
 
 

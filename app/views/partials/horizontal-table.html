@@ -45,37 +45,44 @@
                            autocomplete-lhc="cell._autocompOptions"
                            ng-readonly="cell._readOnly" placeholder="{{cell._toolTip}}"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                     <input ng-switch-when="CWE" name="{{cell.question + '_' + $id}}" type="text"
                            ng-model="cell.value"
                            autocomplete-lhc="cell._autocompOptions"
                            ng-readonly="cell._readOnly" placeholder="{{cell._toolTip}}"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                     <input ng-switch-when="REAL" name="{{cell.question}}" type="text"
                            ng-model="cell.value"
                            placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                     <input ng-switch-when="INT" name="{{cell.question}}" type="text"
                            ng-model="cell.value"
                            placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                     <input ng-switch-when="DT" name="{{cell.question}}" type="text"
                            ng-model="cell.value"
                            lf-date="dateOptions" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                     <textarea ng-switch-when="TX" name="{{cell.question}}"
                               ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                               id="{{cell._elementId}}"
                               aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
-                              ng-keyup="autoExpand($event)" rows="1"></textarea>
+                              ng-keyup="autoExpand($event)" rows="1"
+                              ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)"></textarea>
                     <input ng-switch-default name="{{cell.question}}" type="text"
                            ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-readonly="cell._readOnly"
                            id="{{cell._elementId}}"
-                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}">
+                           aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                           ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
                   </div>
                 </ng-form>
               </td>

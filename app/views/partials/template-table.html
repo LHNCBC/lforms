@@ -35,14 +35,17 @@
                        placeholder="Select or type a value"
                        ng-model="item.value"
                        autocomplete-lhc="item._autocompOptions"
-                       id="{{item.questionCode}}">
+                       id="{{item.questionCode}}"
+                       ng-blur="activeRowOnBlur(item)">
                 <input ng-switch-when="DT" name="{{item.question}}" type="text"
                        ng-model="item.value" lf-date="dateOptions"
                        placeholder="MM/DD/YYYY"
-                       id="{{item.questionCode}}">
+                       id="{{item.questionCode}}"
+                       ng-blur="activeRowOnBlur(item)">
                 <input ng-switch-default name="{{item.question}}" type="text"
                        ng-model="item.value" placeholder="Type a value"
-                       id="{{item.questionCode}}">
+                       id="{{item.questionCode}}"
+                       ng-blur="activeRowOnBlur(item)">
               </div>
             </ng-form>
           </td>
@@ -109,28 +112,35 @@
                         <input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}" type="text"
                                ng-model="item.value" autocomplete-lhc="item._autocompOptions"
                                ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                         <input ng-switch-when="CWE" name="{{item.question +'_'+ $id}}" type="text"
                                ng-model="item.value" autocomplete-lhc="item._autocompOptions"
                                ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                         <input ng-switch-when="REAL" name="{{item.question}}" type="text"
                                ng-model="item.value" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                         <input ng-switch-when="INT" name="{{item.question}}" type="text"
                                ng-model="item.value" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                         <input ng-switch-when="DT" name="{{item.question}}" type="text"
                                ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                         <textarea ng-switch-when="TX" name="{{item.question}}"
                                   ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
                                   id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
-                                  ng-focus="setActiveRow(item)">
+                                  ng-focus="setActiveRow(item)"
+                                  ng-blur="activeRowOnBlur(item)">
                         </textarea>
                         <input ng-switch-default name="{{item.question}}" type="text"
                                ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)">
+                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                               ng-blur="activeRowOnBlur(item)">
                       </div>
                     </ng-form>
                   </td>

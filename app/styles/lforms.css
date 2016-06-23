@@ -282,8 +282,9 @@
 .lf-form .tooltipContent {
   display: none;
 }
-.lf-form .ng-invalid > .tooltipContainer:hover .tooltipContent,
-.lf-form .active-row .ng-invalid > .tooltipContainer .tooltipContent {
+.lf-form .visited-before .ng-invalid > .tooltipContainer:hover .tooltipContent,
+.lf-form .active-row.visited-before .ng-invalid > .tooltipContainer .tooltipContent,
+.lf-form .show-validation .ng-invalid > .tooltipContainer .tooltipContent {
   border-radius: 5px;
   bottom: 35px;
   color: #8a6d3b;
@@ -295,8 +296,9 @@
   width: 260px;
   display: inline;
 }
-.lf-form .ng-invalid > .tooltipContainer:hover:before,
-.lf-form .active-row .ng-invalid > .tooltipContainer:before {
+.lf-form .visited-before .ng-invalid > .tooltipContainer:hover:before,
+.lf-form .active-row.visited-before .ng-invalid > .tooltipContainer:before,
+.lf-form .show-validation .ng-invalid > .tooltipContainer:before {
   border: solid;
   border-color: #fcf8e3 transparent;
   border-width: 10px 10px 0 10px;
@@ -306,14 +308,20 @@
   position: absolute;
   z-index: 99;
 }
-.lf-form .ng-invalid input[type="number"],
-.lf-form .ng-invalid input[type="text"],
-.lf-form .ng-invalid textarea {
+.lf-form .visited-before .ng-invalid input[type="number"],
+.lf-form .visited-before .ng-invalid input[type="text"],
+.lf-form .visited-before .ng-invalid textarea,
+.lf-form .show-validation .ng-invalid input[type="number"],
+.lf-form .show-validation .ng-invalid input[type="text"],
+.lf-form .show-validation .ng-invalid textarea {
   border-color: red;
 }
-.lf-form .ng-invalid input[type="number"]:focus,
-.lf-form .ng-invalid input[type="text"]:focus,
-.lf-form .ng-invalid textarea:focus {
+.lf-form .visited-before .ng-invalid input[type="number"]:focus,
+.lf-form .visited-before .ng-invalid input[type="text"]:focus,
+.lf-form .visited-before .ng-invalid textarea:focus,
+.lf-form .show-validation .ng-invalid input[type="number"]:focus,
+.lf-form .show-validation .ng-invalid input[type="text"]:focus,
+.lf-form .show-validation .ng-invalid textarea:focus {
   background-color: #f8da74;
 }
 /* end of validation messages */

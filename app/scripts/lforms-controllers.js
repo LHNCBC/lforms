@@ -1,7 +1,7 @@
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
-      ['$scope', '$timeout', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
-        function ($scope, $timeout, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
+      ['$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+        function ($scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
         $scope.debug = true;
@@ -36,6 +36,36 @@ angular.module('lformsWidget')
          */
         $scope.setActiveRow = function(item) {
           $scope.lfData.setActiveRow(item);
+        };
+
+
+        /**
+         * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
+          * @param item the item which onBlur event happens on its input field
+         */
+        $scope.activeRowOnBlur = function(item) {
+          if (this._activeItem) {
+            this._activeItem._visitedBefore = true;
+          }
+          // show validation messages immediately if it is the first onBlur
+          if (!item._visitedBefore) {
+            item._showValidation = true;
+          }
+
+          // use $interval instead of $timeout so that protractor will not wait on $timeout
+          //$timeout(function() {
+          //  // not to show validation messages after 2 seconds
+          //  item._showValidation = false;
+          //  item._visitedBefore = true;
+          //}, 2000);
+
+          var intervalCanceller = $interval(function() {
+            // not to show validation messages after 2 seconds
+            item._showValidation = false;
+            item._visitedBefore = true;
+            $interval.cancel(intervalCanceller);
+          }, 2000);
+
         };
 
         /**
@@ -325,6 +355,13 @@ angular.module('lformsWidget')
           if (!item.question || item.question.length === 0) {
             eleClass += ' empty-question';
           }
+          if (item._visitedBefore) {
+            eleClass += ' visited-before';
+          }
+          if (item._showValidation) {
+            eleClass += ' show-validation';
+          }
+
           return eleClass;
         };
 
