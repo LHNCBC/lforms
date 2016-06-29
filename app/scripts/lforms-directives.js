@@ -178,20 +178,34 @@
               '</div>',
 
           link: function(scope, elem, attr, ctrl) {
+
+            /**
+             * Validate model data on an item
+             * @param item an item in the form
+             * @param value the user input data
+             * @param ctrl the directive control
+             */
+            var validate = function(item, value, ctrl) {
+              item._validationErrors = [];
+              var valid1 = LForms.Validations.checkDataType(item.dataType,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-datatype', valid1);
+              var valid2 = LForms.Validations.checkRestrictions(item.restrictions,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-restrictions', valid2);
+              var valid3 = LForms.Validations.checkRequired(item._answerRequired,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-required', valid3);
+
+              return valid1 && valid2 && valid3
+            };
+
             //For DOM -> model validation
             ctrl.$parsers.unshift(function(value) {
               if (value !==undefined && value !==null) {
                 scope.itemData._validationErrors = [];
-                var valid1 = LForms.Validations.checkDataType(scope.itemData.dataType,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-datatype', valid1);
-                var valid2 = LForms.Validations.checkRestrictions(scope.itemData.restrictions,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-restrictions', valid2);
-                var valid3 = LForms.Validations.checkRequired(scope.itemData._answerRequired,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-required', valid3);
-                return valid1 && valid2 && valid3? value : undefined;
+                var valid = validate(scope.itemData, value, ctrl);
+                return valid? value : undefined;
               }
             });
 
@@ -201,15 +215,7 @@
             ctrl.$formatters.unshift(function(value) {
               if (value !==undefined && value !==null) {
                 scope.itemData._validationErrors = [];
-                var valid1 = LForms.Validations.checkDataType(scope.itemData.dataType,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-datatype', valid1);
-                var valid2 = LForms.Validations.checkRestrictions(scope.itemData.restrictions,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-restrictions', valid2);
-                var valid3 = LForms.Validations.checkRequired(scope.itemData._answerRequired,
-                    value, scope.itemData._validationErrors);
-                ctrl.$setValidity('lf-required', valid3);
+                validate(scope.itemData, value, ctrl);
                 return value;
               }
             });

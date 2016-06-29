@@ -21,7 +21,7 @@ LForms.Validations = {
     "pattern"
   ],
 
-  // supported data type
+  // supported data types
   _dataTypes : [
     "BL",
     "INT",
@@ -46,32 +46,32 @@ LForms.Validations = {
   ],
 
   _errorMessages: {
-    "BL": "requires a boolean value",
-    "INT": "requires a integer value",
+    "BL": "requires a boolean (true/false) value",     // Currently not supported by LForms
+    "INT": "requires an integer value",
     "REAL": "requires a decimal value",
     "ST": "requires a string value",
     "TX": "requires a text value",
-    "BIN": "requires a binary value",
+    "BIN": "requires a binary value",     // Currently not supported by LForms
     "DT": "requires a date value",
-    "DTM": "requires a date and time value",
-    "TM": "requires a time value",
+    "DTM": "requires a date and time value",  // Currently not supported by LForms
+    "TM": "requires a time value",            // Currently not supported by LForms
     "CNE": "requires a value from the answer list",
     "CWE": "requires a value from the answer list or a user supplied value",
-    "RTO": "requires a ratio value",
-    "QTY": "requires a quality value",
+    "RTO": "requires a ratio value",          // Currently not supported by LForms
+    "QTY": "requires a quantity value",       // Currently not supported by LForms
     "YEAR": "requires a year value",
     "MONTH": "requires a month value",
     "DAY": "requires a day value",
     "URL": "requires a URL",
-    "EMAIL": "requires a email address",
+    "EMAIL": "requires an email address",
     "PHONE": "requires a phone number"
   },
 
   /**
-   * Check if value is required for the item
+   * Returns false if the item requires a value but does not have one, and true otherwise
    * @param required a flag that indicates if the value is required
    * @param value the user input value
-   * @param errors the error messages passed back
+   * @param errors the error messages array that returns
    * @returns {boolean}
    */
   checkRequired: function(required, value, errors) {
@@ -91,7 +91,7 @@ LForms.Validations = {
    * Check if value is of the specified data type
    * @param dataType the specified data type
    * @param value the user input value
-   * @param errors the error messages passed back
+   * @param errors the error messages array that returns
    * @returns {boolean}
    */
   checkDataType: function(dataType, value, errors) {
@@ -105,39 +105,39 @@ LForms.Validations = {
           }
           break;
         case "INT":
-          var regex = /^\s*(\d+)\s*$/
+          var regex = /^\s*(\d+)\s*$/;
           valid = regex.test(value);
           break;
         case "REAL":
-          var regex = /^\-?\d+(\.\d*)?$/
+          var regex = /^\-?\d+(\.\d*)?$/;
           valid = regex.test(value);
           break;
         case "PHONE":
-          var regex = /(((^\s*(\d\d){0,1}\s*(-?|\.)\s*(\(?\d\d\d\)?\s*(-?|\.?)){0,1}\s*\d\d\d\s*(-?|\.?)\s*\d{4}\b)|(^\s*\+\(?(\d{1,4}\)?(-?|\.?))(\s*\(?\d{2,}\)?\s*(-?|\.?)\s*\d{2,}\s*(-?|\.?)(\s*\d*\s*(-|\.?)){0,3})))(\s*(x|ext|X)\s*\d+){0,1}$)/
+          var regex = /(((^\s*(\d\d){0,1}\s*(-?|\.)\s*(\(?\d\d\d\)?\s*(-?|\.?)){0,1}\s*\d\d\d\s*(-?|\.?)\s*\d{4}\b)|(^\s*\+\(?(\d{1,4}\)?(-?|\.?))(\s*\(?\d{2,}\)?\s*(-?|\.?)\s*\d{2,}\s*(-?|\.?)(\s*\d*\s*(-|\.?)){0,3})))(\s*(x|ext|X)\s*\d+){0,1}$)/;
           valid = regex.test(value);
           break;
         case "EMAIL":
-          var regex = /^\s*((\w+)(\.\w+)*)@((\w+)(\.\w+)+)$/
+          var regex = /^\s*((\w+)(\.\w+)*)@((\w+)(\.\w+)+)$/;
           valid = regex.test(value);
           break;
         case "URL":
-          var regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+          var regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
           valid = regex.test(value);
           break;
         case "TM":  // time
-          var regex = /^\s*(((\d|[0-1]\d|2[0-4]):([0-5]\d))|(\d|0\d|1[0-2]):([0-5]\d)\s*([aApP][mM]))\s*$/
+          var regex = /^\s*(((\d|[0-1]\d|2[0-4]):([0-5]\d))|(\d|0\d|1[0-2]):([0-5]\d)\s*([aApP][mM]))\s*$/;
           valid = regex.test(value);
           break;
         case "YEAR":
-          var regex = /^\d{1,4}$/
+          var regex = /^\d{1,4}$/;
           valid = regex.test(value);
           break;
         case "MONTH":
-          var regex = /^[01]?\d$/
+          var regex =/^(0[1-9]|1[012])$/;
           valid = regex.test(value);
           break;
         case "DAY":
-          var regex = /^(0?[1-9]|[12]\d|3[01])$/
+          var regex = /^(0?[1-9]|[12]\d|3[01])$/;
           valid = regex.test(value);
           break;
         case "DT":  // date, handled by date directive
@@ -163,6 +163,7 @@ LForms.Validations = {
    * Check the value against a list of the restrictions
    * @param restrictions a hash of the restrictions and their values
    * @param value the user input value
+   * @param errors the error messages array that returns
    * @returns {boolean}
    */
   checkRestrictions: function(restrictions, value, errors) {

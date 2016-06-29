@@ -4,7 +4,7 @@ angular.module('lformsWidget')
         function ($scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = true;
+        $scope.debug = false;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
@@ -41,7 +41,7 @@ angular.module('lformsWidget')
 
         /**
          * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
-          * @param item the item which onBlur event happens on its input field
+         * @param item the item which onBlur event happens on its input field
          */
         $scope.activeRowOnBlur = function(item) {
           if (this._activeItem) {
@@ -53,12 +53,6 @@ angular.module('lformsWidget')
           }
 
           // use $interval instead of $timeout so that protractor will not wait on $timeout
-          //$timeout(function() {
-          //  // not to show validation messages after 2 seconds
-          //  item._showValidation = false;
-          //  item._visitedBefore = true;
-          //}, 2000);
-
           var intervalCanceller = $interval(function() {
             // not to show validation messages after 2 seconds
             item._showValidation = false;

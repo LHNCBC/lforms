@@ -32,14 +32,14 @@ describe('Validations:', function() {
 
 
   var errorBL = element(by.cssContainingText("div.validation-error", '"BL" requires a boolean value')),
-      errorINT = element(by.cssContainingText("div.validation-error", '"INT" requires a integer value')),
+      errorINT = element(by.cssContainingText("div.validation-error", '"INT" requires an integer value')),
       errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" requires a decimal value')),
       errorTM = element(by.cssContainingText("div.validation-error", '"TM" requires a time value')),
       errorYEAR = element(by.cssContainingText("div.validation-error", '"YEAR" requires a year value')),
       errorMONTH = element(by.cssContainingText("div.validation-error", '"MONTH" requires a month value')),
       errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" requires a day value')),
       errorURL = element(by.cssContainingText("div.validation-error", '"URL" requires a URL')),
-      errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" requires a email address')),
+      errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" requires an email address')),
       errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" requires a phone number'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "requires a value greater than ")),
@@ -70,7 +70,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorINT.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
+      // wait for 2 seconds and the message should disappear after 2 seconds
       browser.sleep(2000);
       expect(errorINT.isDisplayed()).toBe(false);
       // get back focus again and message should be shown
@@ -100,7 +100,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorREAL.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
+      // wait for 2 seconds and the message should disappear after 2 seconds
       browser.sleep(2000);
       expect(errorREAL.isDisplayed()).toBe(false);
       // get back focus and message should be shown

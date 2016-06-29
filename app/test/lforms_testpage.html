@@ -93,7 +93,6 @@
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q',
               function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q) {
-            $scope.showValidation = false;
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
