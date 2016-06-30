@@ -31,25 +31,25 @@ describe('Validations:', function() {
       cwe2 = element(by.id("/CWE2/1"));
 
 
-  var errorBL = element(by.cssContainingText("div.validation-error", '"BL" requires a boolean value')),
-      errorINT = element(by.cssContainingText("div.validation-error", '"INT" requires an integer value')),
-      errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" requires a decimal value')),
-      errorTM = element(by.cssContainingText("div.validation-error", '"TM" requires a time value')),
-      errorYEAR = element(by.cssContainingText("div.validation-error", '"YEAR" requires a year value')),
-      errorMONTH = element(by.cssContainingText("div.validation-error", '"MONTH" requires a month value')),
-      errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" requires a day value')),
-      errorURL = element(by.cssContainingText("div.validation-error", '"URL" requires a URL')),
-      errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" requires an email address')),
-      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" requires a phone number'));
+  var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
+      errorINT = element(by.cssContainingText("div.validation-error", '"INT" must be an integer number')),
+      errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" must be a decimal number')),
+      errorTM = element(by.cssContainingText("div.validation-error", '"TM" must be a time value')),
+      errorYEAR = element(by.cssContainingText("div.validation-error", '"YEAR" must be a numeric value of year')),
+      errorMONTH = element(by.cssContainingText("div.validation-error", '"MONTH" must be a numeric value of month')),
+      errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" must be a numeric value of day')),
+      errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
+      errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
+      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number'));
 
-  var errorMinExclusive = element(by.cssContainingText("div.validation-error", "requires a value greater than ")),
-      errorMinInclusive = element(by.cssContainingText("div.validation-error", "requires a value greater than or equal to ")),
-      errorMaxExclusive = element(by.cssContainingText("div.validation-error", "requires a value less than ")),
-      errorMaxInclusive = element(by.cssContainingText("div.validation-error", "requires a value less than or equal to ")),
-      errorLength = element(by.cssContainingText("div.validation-error", "requires a total length of ")),
-      errorMaxLength = element(by.cssContainingText("div.validation-error", "requires a total length less than or equal to ")),
-      errorMinLength = element(by.cssContainingText("div.validation-error", "requires a total length greater than or equal to ")),
-      errorPattern = element(by.cssContainingText("div.validation-error", "requires to match a RegExp pattern of ")),
+  var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
+      errorMinInclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than or equal to ")),
+      errorMaxExclusive = element(by.cssContainingText("div.validation-error", "must be a value less than ")),
+      errorMaxInclusive = element(by.cssContainingText("div.validation-error", "must be a value less than or equal to ")),
+      errorLength = element(by.cssContainingText("div.validation-error", "must have a total length of ")),
+      errorMaxLength = element(by.cssContainingText("div.validation-error", "must have a total length less than or equal to ")),
+      errorMinLength = element(by.cssContainingText("div.validation-error", "must have a total length greater than or equal to ")),
+      errorPattern = element(by.cssContainingText("div.validation-error", "must match a RegExp pattern of ")),
       errorRequire = element(by.cssContainingText("div.validation-error", "requires a value"));
 
 
