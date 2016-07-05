@@ -9,6 +9,8 @@ angular.module('lformsWidget')
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
 
+        $scope.validationInitialShowTime = LF_CONSTANTS.VALIDATION_MESSAGE_INITIAL_SHOW_TIME;
+
         // Provide blank image to satisfy img tag. Bower packaging forces us to
         // avoid using image files from html templates, therefore using base64
         // encoding for a 1x1 blank gif file.
@@ -40,6 +42,15 @@ angular.module('lformsWidget')
 
 
         /**
+         * Set the time that a validation message shows for the first time.
+         * @param ms time in ms
+         */
+        $scope.setValidationInitialShowTime = function(ms) {
+          $scope.validationInitialShowTime = ms;
+        };
+
+
+        /**
          * Set up a timer to make validation messages disappear in 2 seconds when the input field loses focus
          * @param item the item which onBlur event happens on its input field
          */
@@ -58,7 +69,7 @@ angular.module('lformsWidget')
             item._showValidation = false;
             item._visitedBefore = true;
             $interval.cancel(intervalCanceller);
-          }, 2000);
+          }, $scope.validationInitialShowTime);
 
         };
 

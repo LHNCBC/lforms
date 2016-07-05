@@ -133,7 +133,7 @@ LForms.Validations = {
           valid = regex.test(value);
           break;
         case "MONTH":
-          var regex =/^(0[1-9]|1[012])$/;
+          var regex =/^(0?[1-9]|1[012])$/;
           valid = regex.test(value);
           break;
         case "DAY":

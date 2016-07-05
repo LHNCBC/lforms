@@ -185,7 +185,7 @@
              * @param value the user input data
              * @param ctrl the directive control
              */
-            var validate = function(item, value, ctrl) {
+            function validate(item, value, ctrl) {
               item._validationErrors = [];
               var valid1 = LForms.Validations.checkDataType(item.dataType,
                   value, item._validationErrors);

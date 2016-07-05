@@ -61,6 +61,12 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // no initial validations
       expect(errorINT.isPresent()).toBe(false);
       // no error messages on first visit
@@ -71,7 +77,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorINT.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorINT.isDisplayed()).toBe(false);
       // get back focus again and message should be shown
       int.click();
@@ -101,7 +107,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorREAL.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorREAL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real.click();
@@ -129,7 +135,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorPHONE.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorPHONE.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       phone.click();
@@ -157,7 +163,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorEMAIL.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorEMAIL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       email.click();
@@ -186,7 +192,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorURL.isDisplayed()).toBe(true);
       // wait for 3 seconds and the message should disappear after 2 seconds
-      browser.sleep(3000);
+      browser.sleep(2000);
       expect(errorURL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       url.click();
@@ -214,6 +220,12 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
       // no error messages on first visit
@@ -224,7 +236,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int1.click();
@@ -250,7 +262,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int2.click();
@@ -276,7 +288,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int3.click();
@@ -302,7 +314,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int4.click();
@@ -323,6 +335,13 @@ describe('Validations:', function() {
       browser.wait(function () {
         return int.isPresent();
       }, 5000);
+
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
       // no error messages on first visit
@@ -333,7 +352,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real1.click();
@@ -359,7 +378,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real2.click();
@@ -385,7 +404,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real3.click();
@@ -411,7 +430,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real4.click();
@@ -438,7 +457,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st1.click();
@@ -465,7 +484,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st2.click();
@@ -491,7 +510,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st3.click();
@@ -523,7 +542,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st0.click();
@@ -553,7 +572,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       dt.click();
@@ -584,7 +603,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cne1.click();
@@ -616,7 +635,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cwe1.click();
@@ -656,7 +675,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
@@ -701,7 +720,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
@@ -751,7 +770,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
@@ -803,6 +822,12 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // switch to list template
       element(by.id("to-list")).click();
       browser.wait(function () {
@@ -819,7 +844,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorINT.isDisplayed()).toBe(true);
       // wait for 3 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorINT.isDisplayed()).toBe(false);
       // get back focus again and message should be shown
       int.click();
@@ -849,7 +874,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorREAL.isDisplayed()).toBe(true);
       // wait for 3 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorREAL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real.click();
@@ -877,7 +902,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorPHONE.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorPHONE.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       phone.click();
@@ -905,7 +930,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorEMAIL.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorEMAIL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       email.click();
@@ -934,7 +959,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorURL.isDisplayed()).toBe(true);
       // wait for 3 seconds and the message should disappear after 2 seconds
-      browser.sleep(3000);
+      browser.sleep(2000);
       expect(errorURL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       url.click();
@@ -968,6 +993,12 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
       // no error messages on first visit
@@ -978,7 +1009,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int1.click();
@@ -1004,7 +1035,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int2.click();
@@ -1030,7 +1061,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int3.click();
@@ -1056,7 +1087,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       int4.click();
@@ -1084,6 +1115,12 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
+      browser.executeScript(function () {
+        var lfForms = jQuery("body").find(".lf-form");
+        var lfForm = angular.element(lfForms[0]);
+        lfForm.scope().setValidationInitialShowTime(200);
+      });
+
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
       // no error messages on first visit
@@ -1094,7 +1131,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real1.click();
@@ -1120,7 +1157,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real2.click();
@@ -1146,7 +1183,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real3.click();
@@ -1172,7 +1209,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       real4.click();
@@ -1199,7 +1236,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st1.click();
@@ -1226,7 +1263,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st2.click();
@@ -1252,7 +1289,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMaxLength.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st3.click();
@@ -1284,7 +1321,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st0.click();
@@ -1314,7 +1351,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       dt.click();
@@ -1345,7 +1382,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cne1.click();
@@ -1377,7 +1414,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cwe1.click();
@@ -1417,7 +1454,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
@@ -1462,7 +1499,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
@@ -1512,7 +1549,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // wait for 2 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      browser.sleep(200);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
