@@ -1,5 +1,13 @@
 var tp = require('./lforms_testpage.po.js');
 
+function shortenValidationMsgShowTime() {
+  browser.executeScript(function () {
+    var lfForms = jQuery("body").find(".lf-form");
+    var lfForm = angular.element(lfForms[0]);
+    lfForm.scope().setValidationInitialShowTime(200);
+  });
+}
+
 describe('Validations:', function() {
 
   var bl = element(by.id("/BL/1")),
@@ -61,11 +69,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // no initial validations
       expect(errorINT.isPresent()).toBe(false);
@@ -220,11 +224,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -336,11 +336,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -822,11 +818,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // switch to list template
       element(by.id("to-list")).click();
@@ -993,11 +985,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -1115,11 +1103,7 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      browser.executeScript(function () {
-        var lfForms = jQuery("body").find(".lf-form");
-        var lfForm = angular.element(lfForms[0]);
-        lfForm.scope().setValidationInitialShowTime(200);
-      });
+      shortenValidationMsgShowTime();
 
       // no initial validations
       expect(errorMinInclusive.isPresent()).toBe(false);
