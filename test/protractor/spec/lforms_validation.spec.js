@@ -76,7 +76,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorINT.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorINT.isDisplayed()).toBe(false);
       // get back focus again and message should be shown
@@ -106,7 +106,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorREAL.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorREAL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -134,7 +134,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorPHONE.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorPHONE.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -162,7 +162,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorEMAIL.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorEMAIL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -191,8 +191,8 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorURL.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
-      browser.sleep(2000);
+      // wait for 200 ms and the message should disappear after 200 ms
+      browser.sleep(200);
       expect(errorURL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       url.click();
@@ -235,7 +235,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -261,7 +261,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -287,7 +287,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -313,7 +313,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -351,7 +351,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -377,7 +377,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -403,7 +403,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -429,7 +429,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -456,7 +456,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -483,7 +483,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -509,7 +509,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -541,7 +541,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -571,7 +571,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -602,7 +602,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -634,7 +634,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -674,7 +674,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
@@ -719,7 +719,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
@@ -769,7 +769,7 @@ describe('Validations:', function() {
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
@@ -843,7 +843,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorINT.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorINT.isDisplayed()).toBe(false);
       // get back focus again and message should be shown
@@ -873,7 +873,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorREAL.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorREAL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -901,7 +901,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorPHONE.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorPHONE.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -929,7 +929,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorEMAIL.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorEMAIL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -958,7 +958,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorURL.isDisplayed()).toBe(true);
-      // wait for 3 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(2000);
       expect(errorURL.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1008,7 +1008,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1034,7 +1034,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1060,7 +1060,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1086,7 +1086,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1130,7 +1130,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1156,7 +1156,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1182,7 +1182,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxInclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1208,7 +1208,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1235,7 +1235,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1262,7 +1262,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMinLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1288,7 +1288,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorMaxLength.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1320,7 +1320,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1350,7 +1350,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1381,7 +1381,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1413,7 +1413,7 @@ describe('Validations:', function() {
       // show message when the focus is gone
       bl.click();
       expect(errorRequire.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
@@ -1453,7 +1453,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
@@ -1498,7 +1498,7 @@ describe('Validations:', function() {
       bl.click();
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
@@ -1548,7 +1548,7 @@ describe('Validations:', function() {
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
-      // wait for 2 seconds and the message should disappear after 2 seconds
+      // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
