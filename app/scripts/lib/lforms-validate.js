@@ -46,25 +46,25 @@ LForms.Validations = {
   ],
 
   _errorMessages: {
-    "BL": "must be a boolean (true/false)",     // Currently not supported by LForms
-    "INT": "must be an integer number",
-    "REAL": "must be a decimal number",
-    "ST": "must be a string value",      // Currently not used.
-    "TX": "must be a text value",        // Currently not used.
-    "BIN": "must be a binary value",     // Currently not supported by LForms
-    "DT": "must be a date value",
-    "DTM": "must be a date and time value",  // Currently not supported by LForms
-    "TM": "must be a time value",            // Currently not supported by LForms
-    "CNE": "must be a value from the answer list",  // Currently not used, it is handled by the autocomp-lhc directive
-    "CWE": "must be a value from the answer list or a user supplied value", // Currently not used, it is handled by the autocomp-lhc directive
-    "RTO": "must be a ratio value",          // Currently not supported by LForms
-    "QTY": "must be a quantity value",       // Currently not supported by LForms
-    "YEAR": "must be a numeric value of year",
-    "MONTH": "must be a numeric value of month",
-    "DAY": "must be a numeric value of day",
-    "URL": "must be a valid URL",
-    "EMAIL": "must be a valid email address",
-    "PHONE": "must be a valid phone number"
+    "BL": "must be a boolean (true/false).",     // Currently not supported by LForms
+    "INT": "must be an integer number.",
+    "REAL": "must be a decimal number.",
+    "ST": "must be a string value.",      // Currently not used.
+    "TX": "must be a text value.",        // Currently not used.
+    "BIN": "must be a binary value.",     // Currently not supported by LForms
+    "DT": "must be a date value.",
+    "DTM": "must be a date and time value.",  // Currently not supported by LForms
+    "TM": "must be a time value.",            // Currently not supported by LForms
+    "CNE": "must be a value from the answer list.",  // Currently not used, it is handled by the autocomp-lhc directive
+    "CWE": "must be a value from the answer list or a user supplied value.", // Currently not used, it is handled by the autocomp-lhc directive
+    "RTO": "must be a ratio value.",          // Currently not supported by LForms
+    "QTY": "must be a quantity value.",       // Currently not supported by LForms
+    "YEAR": "must be a numeric value of year.",
+    "MONTH": "must be a numeric value of month.",
+    "DAY": "must be a numeric value of day.",
+    "URL": "must be a valid URL.",
+    "EMAIL": "must be a valid email address.",
+    "PHONE": "must be a valid phone number."
   },
 
   /**
@@ -180,7 +180,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must be a value greater than " + keyValue);
+              errors.push("must be a value greater than " + keyValue + ".");
             }
             break;
           case "minInclusive":
@@ -190,7 +190,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must be a value greater than or equal to " + keyValue);
+              errors.push("must be a value greater than or equal to " + keyValue+ ".");
             }
             break;
           case "maxExclusive":
@@ -200,7 +200,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must be a value less than " + keyValue);
+              errors.push("must be a value less than " + keyValue+ ".");
             }
             break;
           case "maxInclusive":
@@ -210,7 +210,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must be a value less than or equal to " + keyValue);
+              errors.push("must be a value less than or equal to " + keyValue+ ".");
             }
             break;
           case "totalDigits":
@@ -226,7 +226,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must have a total length of " + keyValue);
+              errors.push("must have a total length of " + keyValue+ ".");
             }
             break;
           case "maxLength":
@@ -236,7 +236,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must have a total length less than or equal to " + keyValue);
+              errors.push("must have a total length less than or equal to " + keyValue+ ".");
             }
             break;
           case "minLength":
@@ -246,7 +246,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must have a total length greater than or equal to " + keyValue);
+              errors.push("must have a total length greater than or equal to " + keyValue+ ".");
             }
             break;
           case "pattern":
@@ -260,7 +260,7 @@ LForms.Validations = {
             }
             else {
               valid = false;
-              errors.push("must match a RegExp pattern of " + keyValue);
+              errors.push("must match a RegExp pattern of " + keyValue+ ".");
             }
             break;
           default:

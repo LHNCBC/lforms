@@ -338,7 +338,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              ng-click=\"addOneRepeatingItem(item, true)\"\n" +
     "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
     "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
-    "              popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
     "        Add another '{{item.question}}'\n" +
@@ -555,7 +555,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              ng-click=\"addOneRepeatingItem(item)\"\n" +
     "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
     "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
-    "              popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
     "        Add another '{{item.question}}'\n" +
@@ -864,7 +864,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                                    ng-click=\"addOneRepeatingItem(repeatingItem)\"\n" +
     "                                    ng-blur=\"hideUnusedItemWarning(repeatingItem)\"\n" +
     "                                    uib-popover='Please enter info in the blank \"{{ repeatingItem.question }}\".'\n" +
-    "                                    popover-placement=\"top-left\" popover-title=\"Warning\"\n" +
+    "                                    popover-placement=\"top-left\"\n" +
     "                                    popover-trigger=\"none\"\n" +
     "                                    popover-is-open=\"repeatingItem._showUnusedItemWarning\">\n" +
     "                              Add another '{{repeatingItem.question}}'\n" +

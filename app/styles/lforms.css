@@ -285,26 +285,29 @@
 .lf-form .visited-before .ng-invalid > .tooltipContainer:hover .tooltipContent,
 .lf-form .active-row.visited-before .ng-invalid > .tooltipContainer .tooltipContent,
 .lf-form .show-validation .ng-invalid > .tooltipContainer .tooltipContent {
-  border-radius: 5px;
+  border-radius: 6px;
   bottom: 35px;
-  color: #8a6d3b;
   background-color: #fcf8e3;
   left: 5px;
-  padding: 5px 15px;
+  padding: 9px 14px;
   position: absolute;
   z-index: 98;
-  width: 260px;
-  display: inline;
+  max-width: 600px;
+  width: auto;
+  display: block;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+  border: 1px solid #eea236;
+
 }
 .lf-form .visited-before .ng-invalid > .tooltipContainer:hover:before,
 .lf-form .active-row.visited-before .ng-invalid > .tooltipContainer:before,
 .lf-form .show-validation .ng-invalid > .tooltipContainer:before {
   border: solid;
   border-color: #fcf8e3 transparent;
-  border-width: 10px 10px 0 10px;
+  border-width: 11px 11px 0 11px;
   bottom: 25px;
   content: "";
-  left: 25px;
+  left: 15px;
   position: absolute;
   z-index: 99;
 }
@@ -316,13 +319,9 @@
 .lf-form .show-validation .ng-invalid textarea {
   border-color: red;
 }
-.lf-form .visited-before .ng-invalid input[type="number"]:focus,
-.lf-form .visited-before .ng-invalid input[type="text"]:focus,
-.lf-form .visited-before .ng-invalid textarea:focus,
-.lf-form .show-validation .ng-invalid input[type="number"]:focus,
-.lf-form .show-validation .ng-invalid input[type="text"]:focus,
-.lf-form .show-validation .ng-invalid textarea:focus {
-  background-color: #f8da74;
+.validation-error:before {
+  content: '\2022';
+  padding-right: 1rem;
 }
 /* end of validation messages */
 
@@ -471,12 +470,12 @@ Override color of select boxes in calendar widget title bar.
 /* popover dialog */
 .lf-form .name-label.has-popover-warning .popover {
   border-color: #eea236;
+  border-width: 1px;
   padding: 0;
+  background-color: #fcf8e3;
 }
-.lf-form .name-label.has-popover-warning .popover-title {
-  color: #fff;
-  background-color: #f0ad4e;
-  border-color: #eea236;
+.lf-form .name-label.has-popover-warning .popover .arrow:after {
+  border-top-color: #fcf8e3;
 }
 .lf-form .popover {
   max-width: 600px;
