@@ -52,8 +52,7 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (7.x)</li>
-        <li><a href="versions/6.x/index.html">6.x</a></li>
+        <li>Current (>=6.0)</li>
         <li><a href="versions/5.5/index.html">5.5</a></li>
       </ul>
     </div>
@@ -116,11 +115,11 @@ using LForms is by linking to the prebuilt version hosted on lforms-service.  Th
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
-  <dt>JavaScript</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/lforms.min.js</dd>
-  <dt>CSS</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/styles/lforms.min.css</dd>
+  <dt>JavaScript</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/styles/lforms.min.css</dd>
 </dl>
 
-<p>(Note that the URLs contain a release version number, 7.0.0, for which you
+<p>(Note that the URLs contain a release version number, 6.0.2, for which you
 can substitute any of the other prebuilt versions available at
 https://lforms-service.nlm.nih.gov/lforms-versions).</p>
 
@@ -144,14 +143,14 @@ header:</p>
 
 <pre><code>
 &lt;link
- href="https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/styles/lforms.min.css"
+ href="https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/styles/lforms.min.css"
  media="screen" rel="stylesheet" /&gt;
 </code></pre>
 
 And with your other JavaScript:
 
 <pre><code>&lt;script
- src="https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/lforms.min.js"
+ src="https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/lforms.min.js"
  &gt;&lt;/script&gt;
 </code></pre>
 
@@ -200,7 +199,7 @@ For example:</p>
 
 <pre><code>angular.module('myApp', ['lformsWidget'])
   .controller('myController', ['$scope', function ($scope) {
-    $scope.myFormData = new LForms.LFormsData(myFormDefinition);
+    $scope.myFormData = new LFormsData(myFormDefinition);
   }]);
 </code></pre>
 
