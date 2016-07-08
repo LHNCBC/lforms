@@ -8,6 +8,66 @@ function shortenValidationMsgShowTime() {
   });
 }
 
+function waitForDisplayed(errorMsg) {
+  browser.wait(function() {
+    return errorMsg.isDisplayed();
+  }, 5000);
+}
+
+function waitForNotDisplayed(errorMsg) {
+  browser.wait(function() {
+    return errorMsg.isDisplayed().then(function(result){return !result});
+  }, 5000);
+}
+
+function waitForNotPresent(errorMsg) {
+  browser.wait(function() {
+    return errorMsg.isPresent().then(function(result){return !result});
+  }, 5000);
+}
+
+function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
+  // no initial validations
+  expect(eleMessage.isPresent()).toBe(false);
+  // no error messages on first visit
+  eleInput.sendKeys(value1);
+  waitForNotDisplayed(eleMessage);
+  expect(eleMessage.isPresent()).toBe(true);
+  expect(eleMessage.isDisplayed()).toBe(false);
+  // show message when the focus is gone
+  eleAway.click();
+  waitForDisplayed(eleMessage);
+  //expect(eleMessage.isDisplayed()).toBe(true);
+  // wait for 200 ms and the message should disappear after 200 ms
+  browser.sleep(200);
+  //browser.driver.wait(protractor.util.elementIsNotVisible(errorINT));
+  waitForNotDisplayed(eleMessage);
+  expect(eleMessage.isDisplayed()).toBe(false);
+  // get back focus again and message should be shown
+  eleInput.click();
+  waitForDisplayed(eleMessage);
+  expect(eleMessage.isDisplayed()).toBe(true);
+  // no message on the 2nd time when the focus is lost
+  eleAway.click();
+  waitForNotDisplayed(eleMessage);
+  expect(eleMessage.isDisplayed()).toBe(false);
+  // get back focus the 3rd time and message should be shown
+  eleInput.click();
+  waitForDisplayed(eleMessage);
+  expect(eleMessage.isDisplayed()).toBe(true);
+  // valid value no messages
+  eleInput.clear();
+  eleInput.sendKeys(value2);
+  waitForNotPresent(eleMessage);
+  expect(eleMessage.isPresent()).toBe(false);
+  // still no message when the focus is gone
+  eleAway.click();
+  waitForNotPresent(eleMessage);
+  expect(eleMessage.isPresent()).toBe(false);
+
+
+}
+
 describe('Validations:', function() {
 
   var bl = element(by.id("/BL/1")),
@@ -57,11 +117,11 @@ describe('Validations:', function() {
       errorLength = element(by.cssContainingText("div.validation-error", "must have a total length of ")),
       errorMaxLength = element(by.cssContainingText("div.validation-error", "must have a total length less than or equal to ")),
       errorMinLength = element(by.cssContainingText("div.validation-error", "must have a total length greater than or equal to ")),
-      errorPattern = element(by.cssContainingText("div.validation-error", "must match a RegExp pattern of ")),
+      errorPattern = element(by.cssContainingText("div.validation-error", "must match a RegExp pattern of")),
       errorRequire = element(by.cssContainingText("div.validation-error", "requires a value"));
 
 
-  describe('data type validations', function () {
+  describe('data type validations (table)', function () {
 
     it('should validate INT type', function () {
       tp.openValidationTest();
@@ -70,153 +130,27 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-
-      // no initial validations
-      expect(errorINT.isPresent()).toBe(false);
-      // no error messages on first visit
-      int.sendKeys("1234.56");
-      expect(errorINT.isPresent()).toBe(true);
-      expect(errorINT.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorINT.isDisplayed()).toBe(false);
-      // get back focus again and message should be shown
-      int.click();
-      browser.waitForAngular();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorINT.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      int.click();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // valid value no messages
-      int.clear();
-      int.sendKeys("123");
-      expect(errorINT.isPresent()).toBe(false);
-
+      testOneType(int, bl, errorINT, "1234.56", "123");
     });
 
     it('should validate REAL type', function () {
-      // no initial validations
-      expect(errorREAL.isPresent()).toBe(false);
-      // no error messages on first visit
-      real.sendKeys("not a number");
-      expect(errorREAL.isPresent()).toBe(true);
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      real.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // valid value no messages
-      real.clear();
-      real.sendKeys("123.45");
-      expect(errorREAL.isPresent()).toBe(false);
+      testOneType(real, bl, errorREAL, "not a number", "123.45");
     });
 
     it('should validate PHONE type', function () {
-      // no initial validations
-      expect(errorPHONE.isPresent()).toBe(false);
-      // no error messages on first visit
-      phone.sendKeys("not a phone number");
-      expect(errorPHONE.isPresent()).toBe(true);
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      phone.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      phone.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // valid value no messages
-      phone.clear();
-      phone.sendKeys("3011235555");
-      expect(errorPHONE.isPresent()).toBe(false);
+      testOneType(phone, bl, errorPHONE, "not a phone number", "3011235555");
     });
 
     it('should validate EMAIL type', function () {
-      // no initial validations
-      expect(errorEMAIL.isPresent()).toBe(false);
-      // no error messages on first visit
-      email.sendKeys("somebody@com");
-      expect(errorEMAIL.isPresent()).toBe(true);
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      email.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      email.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // valid value no messages
-      email.clear();
-      email.sendKeys("somebody@some.com");
-      expect(errorEMAIL.isPresent()).toBe(false);
-
+      testOneType(email, bl, errorEMAIL, "somebody@com", "somebody@some.com");
     });
 
     it('should validate URL type', function () {
-      // no initial validations
-      expect(errorURL.isPresent()).toBe(false);
-      // no error messages on first visit
-      url.sendKeys("http:/somecompany.com");
-      expect(errorURL.isPresent()).toBe(true);
-      expect(errorURL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorURL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      url.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorURL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      url.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // valid value no messages
-      url.clear();
-      url.sendKeys("somcecompany.com");
-      expect(errorURL.isPresent()).toBe(false);
-
+      testOneType(url, bl, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
-
   });
 
-  describe('restrictions validations', function () {
+  describe('restrictions validations (table)', function () {
 
     it('should validate minInclusive on INT', function () {
       tp.openValidationTest();
@@ -225,110 +159,20 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-
-      // no initial validations
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int1.sendKeys("2");
-      expect(errorMinInclusive.isPresent()).toBe(true);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int1.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int1.clear();
-      int1.sendKeys("5");
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isPresent()).toBe(false);
-
+      testOneType(int1, bl, errorMinInclusive, "2", "5");
     });
 
     it('should validate minExclusive on INT', function () {
-      // no initial validations
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int2.sendKeys("5");
-      expect(errorMinExclusive.isPresent()).toBe(true);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int2.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int2.clear();
-      int2.sendKeys("6");
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isPresent()).toBe(false);
-
+      testOneType(int2, bl, errorMinExclusive, "5", "6");
     });
 
     it('should validate maxInclusive on INT', function () {
-      // no initial validations
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int3.sendKeys("12");
-      expect(errorMaxInclusive.isPresent()).toBe(true);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int3.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int3.clear();
-      int3.sendKeys("10");
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-
+      testOneType(int3, bl, errorMaxInclusive, "12", "10");
     });
 
     it('should validate maxExclusive on INT', function () {
-      // no initial validations
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int4.sendKeys("12");
-      expect(errorMaxExclusive.isPresent()).toBe(true);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int4.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int4.clear();
-      int4.sendKeys("9");
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-
+      testOneType(int4, bl, errorMaxExclusive, "12", "9");
     });
-
 
     it('should validate minInclusive on REAL', function () {
       tp.openValidationTest();
@@ -337,319 +181,193 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-
-      // no initial validations
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real1.sendKeys("4.9");
-      expect(errorMinInclusive.isPresent()).toBe(true);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real1.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real1.clear();
-      real1.sendKeys("5.0");
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isPresent()).toBe(false);
-
+      testOneType(real1, bl, errorMinInclusive, "4.9", "5.0");
     });
 
     it('should validate minExclusive on REAL', function () {
-      // no initial validations
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real2.sendKeys("5.0");
-      expect(errorMinExclusive.isPresent()).toBe(true);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real2.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real2.clear();
-      real2.sendKeys("5.01");
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isPresent()).toBe(false);
-
+      testOneType(real2, bl, errorMinExclusive, "5.0", "5.01");
     });
 
     it('should validate maxInclusive on REAL', function () {
-      // no initial validations
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real3.sendKeys("10.01");
-      expect(errorMaxInclusive.isPresent()).toBe(true);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real3.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real3.clear();
-      real3.sendKeys("10");
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-
+      testOneType(real3, bl, errorMaxInclusive, "10.01", "10");
     });
 
     it('should validate maxExclusive on REAL', function () {
-      // no initial validations
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real4.sendKeys("12");
-      expect(errorMaxExclusive.isPresent()).toBe(true);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real4.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real4.clear();
-      real4.sendKeys("9");
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-
+      testOneType(real4, bl, errorMaxExclusive, "12", "9");
     });
-
 
     it('should validate length', function () {
-      // no initial validations
-      expect(errorLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st1.sendKeys("abcd");
-      expect(errorLength.isPresent()).toBe(true);
-      expect(errorLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st1.click();
-      expect(errorLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st1.clear();
-      st1.sendKeys("abcde");
-      expect(errorLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorLength.isPresent()).toBe(false);
-
+      testOneType(st1, bl, errorLength, "abcd", "abcde");
     });
 
-
     it('should validate minLength', function () {
-      // no initial validations
-      expect(errorMinLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st2.sendKeys("abcd");
-      expect(errorMinLength.isPresent()).toBe(true);
-      expect(errorMinLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st2.click();
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st2.clear();
-      st2.sendKeys("abcde");
-      expect(errorMinLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinLength.isPresent()).toBe(false);
-
+      testOneType(st2, bl, errorMinLength, "abcd", "abcde");
     });
 
     it('should validate maxLength', function () {
-      // no initial validations
-      expect(errorMaxLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st3.sendKeys("12345678901");
-      expect(errorMaxLength.isPresent()).toBe(true);
-      expect(errorMaxLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st3.click();
-      expect(errorMaxLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st3.clear();
-      st3.sendKeys("1234567890");
-      expect(errorMaxLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxLength.isPresent()).toBe(false);
-
+      testOneType(st3, bl, errorMaxLength, "12345678901", "1234567890");
     });
-
 
     it('should validate "required" on ST', function () {
 
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       st0.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       st0.sendKeys("abc");
       st0.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st0.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       st0.clear();
       st0.sendKeys("abcde");
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
     it('should validate "required" on DT', function () {
 
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       dt.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       dt.sendKeys("t");
       dt.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       dt.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       dt.clear();
       dt.sendKeys("t");
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
 
     it('should validate "required" on CNE (single)', function () {
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cne1.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
       cne1.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cne1.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       cne1.clear();
       cne1.click();
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
     it('should validate "required" on CWE (single)', function () {
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cwe1.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
       cwe1.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cwe1.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       cwe1.clear();
       cwe1.click();
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
-
       // valid user input no message
       cwe1.clear();
       cwe1.sendKeys("user input");
       cwe1.sendKeys(protractor.Key.TAB);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
@@ -659,90 +377,130 @@ describe('Validations:', function() {
     it('should validate multiple restrictions on INT', function () {
 
       // no initial validations
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
       inta.sendKeys("1");
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      expect(errorMaxExclusive.isPresent()).toBe(false);
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
+      //expect(errorMinInclusive.isDisplayed()).toBe(true);
+      //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       inta.click();
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
       inta.clear();
       inta.sendKeys("10");
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       inta.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
       inta.clear();
       inta.sendKeys("9");
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
     });
 
     it('should validate multiple restrictions on REAL', function () {
       // no initial validations
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
       reala.sendKeys("1.0");
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      expect(errorMaxExclusive.isPresent()).toBe(false);
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
+      //expect(errorMinInclusive.isDisplayed()).toBe(true);
+      //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       reala.click();
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
       reala.clear();
       reala.sendKeys("10.0");
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       reala.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
       reala.clear();
       reala.sendKeys("9.999");
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
 
@@ -750,11 +508,17 @@ describe('Validations:', function() {
 
     it('should validate multiple restrictions on ST', function () {
       // no initial validations
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // no error messages on first visit
       sta.sendKeys("123");
+      waitForNotPresent(errorMaxLength);
+      waitForNotDisplayed(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(true);
       expect(errorPattern.isPresent()).toBe(true);
@@ -762,43 +526,67 @@ describe('Validations:', function() {
       expect(errorPattern.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMaxLength.isPresent()).toBe(false);
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      expect(errorPattern.isDisplayed()).toBe(true);
+      waitForNotPresent(errorMaxLength);
+      waitForDisplayed(errorMinLength);
+      waitForDisplayed(errorPattern);
+      //expect(errorMaxLength.isPresent()).toBe(false);
+      //expect(errorMinLength.isDisplayed()).toBe(true);
+      //expect(errorPattern.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotPresent(errorMaxLength);
+      waitForNotDisplayed(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
+      waitForNotPresent(errorMaxLength);
+      waitForDisplayed(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // try again, message shown since it is not the first visit
       sta.clear();
       sta.sendKeys("abcde678901");
+      waitForDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
+      waitForDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // valid value no messages
       sta.clear();
       sta.sendKeys("abcde");
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
@@ -806,11 +594,11 @@ describe('Validations:', function() {
     });
 
   });
+
 
   //// for the list template, every validation tests should work too.
   //// the following tests are copies of tests above, except that the test form is displayed in the list template
-
-  describe('data type validations', function () {
+  describe('data type validations (list)', function () {
 
     it('should validate INT type', function () {
       tp.openValidationTest();
@@ -818,160 +606,34 @@ describe('Validations:', function() {
         return int.isPresent();
       }, 5000);
 
-      shortenValidationMsgShowTime();
-
       // switch to list template
       element(by.id("to-list")).click();
       browser.wait(function () {
         return int.isPresent();
       }, 5000);
 
-      // no initial validations
-      expect(errorINT.isPresent()).toBe(false);
-      // no error messages on first visit
-      int.sendKeys("1234.56");
-      expect(errorINT.isPresent()).toBe(true);
-      expect(errorINT.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorINT.isDisplayed()).toBe(false);
-      // get back focus again and message should be shown
-      int.click();
-      browser.waitForAngular();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorINT.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      int.click();
-      expect(errorINT.isDisplayed()).toBe(true);
-      // valid value no messages
-      int.clear();
-      int.sendKeys("123");
-      expect(errorINT.isPresent()).toBe(false);
-
+      shortenValidationMsgShowTime();
+      testOneType(int, bl, errorINT, "1234.56", "123");
     });
 
     it('should validate REAL type', function () {
-      // no initial validations
-      expect(errorREAL.isPresent()).toBe(false);
-      // no error messages on first visit
-      real.sendKeys("not a number");
-      expect(errorREAL.isPresent()).toBe(true);
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorREAL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      real.click();
-      expect(errorREAL.isDisplayed()).toBe(true);
-      // valid value no messages
-      real.clear();
-      real.sendKeys("123.45");
-      expect(errorREAL.isPresent()).toBe(false);
+      testOneType(real, bl, errorREAL, "not a number", "123.45");
     });
 
     it('should validate PHONE type', function () {
-      // no initial validations
-      expect(errorPHONE.isPresent()).toBe(false);
-      // no error messages on first visit
-      phone.sendKeys("not a phone number");
-      expect(errorPHONE.isPresent()).toBe(true);
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      phone.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorPHONE.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      phone.click();
-      expect(errorPHONE.isDisplayed()).toBe(true);
-      // valid value no messages
-      phone.clear();
-      phone.sendKeys("3011235555");
-      expect(errorPHONE.isPresent()).toBe(false);
+      testOneType(phone, bl, errorPHONE, "not a phone number", "3011235555");
     });
 
     it('should validate EMAIL type', function () {
-      // no initial validations
-      expect(errorEMAIL.isPresent()).toBe(false);
-      // no error messages on first visit
-      email.sendKeys("somebody@com");
-      expect(errorEMAIL.isPresent()).toBe(true);
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      email.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorEMAIL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      email.click();
-      expect(errorEMAIL.isDisplayed()).toBe(true);
-      // valid value no messages
-      email.clear();
-      email.sendKeys("somebody@some.com");
-      expect(errorEMAIL.isPresent()).toBe(false);
-
+      testOneType(email, bl, errorEMAIL, "somebody@com", "somebody@some.com");
     });
 
     it('should validate URL type', function () {
-      // no initial validations
-      expect(errorURL.isPresent()).toBe(false);
-      // no error messages on first visit
-      url.sendKeys("http:/somecompany.com");
-      expect(errorURL.isPresent()).toBe(true);
-      expect(errorURL.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(2000);
-      expect(errorURL.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      url.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // no message on the 2nd time when the focus is lost
-      bl.click();
-      expect(errorURL.isDisplayed()).toBe(false);
-      // get back focus the 3rd time and message should be shown
-      url.click();
-      expect(errorURL.isDisplayed()).toBe(true);
-      // valid value no messages
-      url.clear();
-      url.sendKeys("somcecompany.com");
-      expect(errorURL.isPresent()).toBe(false);
-
+      testOneType(url, bl, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
-
   });
 
-  describe('restrictions validations', function () {
+  describe('restrictions validations (list)', function () {
 
     it('should validate minInclusive on INT', function () {
       tp.openValidationTest();
@@ -986,110 +648,20 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-
-      // no initial validations
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int1.sendKeys("2");
-      expect(errorMinInclusive.isPresent()).toBe(true);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int1.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int1.clear();
-      int1.sendKeys("5");
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isPresent()).toBe(false);
-
+      testOneType(int1, bl, errorMinInclusive, "2", "5");
     });
 
     it('should validate minExclusive on INT', function () {
-      // no initial validations
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int2.sendKeys("5");
-      expect(errorMinExclusive.isPresent()).toBe(true);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int2.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int2.clear();
-      int2.sendKeys("6");
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isPresent()).toBe(false);
-
+      testOneType(int2, bl, errorMinExclusive, "5", "6");
     });
 
     it('should validate maxInclusive on INT', function () {
-      // no initial validations
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int3.sendKeys("12");
-      expect(errorMaxInclusive.isPresent()).toBe(true);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int3.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int3.clear();
-      int3.sendKeys("10");
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-
+      testOneType(int3, bl, errorMaxInclusive, "12", "10");
     });
 
     it('should validate maxExclusive on INT', function () {
-      // no initial validations
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      int4.sendKeys("12");
-      expect(errorMaxExclusive.isPresent()).toBe(true);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      int4.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      int4.clear();
-      int4.sendKeys("9");
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-
+      testOneType(int4, bl, errorMaxExclusive, "12", "9");
     });
-
 
     it('should validate minInclusive on REAL', function () {
       tp.openValidationTest();
@@ -1104,319 +676,193 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-
-      // no initial validations
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real1.sendKeys("4.9");
-      expect(errorMinInclusive.isPresent()).toBe(true);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real1.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real1.clear();
-      real1.sendKeys("5.0");
-      expect(errorMinInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinInclusive.isPresent()).toBe(false);
-
+      testOneType(real1, bl, errorMinInclusive, "4.9", "5.0");
     });
 
     it('should validate minExclusive on REAL', function () {
-      // no initial validations
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real2.sendKeys("5.0");
-      expect(errorMinExclusive.isPresent()).toBe(true);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real2.click();
-      expect(errorMinExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real2.clear();
-      real2.sendKeys("5.01");
-      expect(errorMinExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinExclusive.isPresent()).toBe(false);
-
+      testOneType(real2, bl, errorMinExclusive, "5.0", "5.01");
     });
 
     it('should validate maxInclusive on REAL', function () {
-      // no initial validations
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real3.sendKeys("10.01");
-      expect(errorMaxInclusive.isPresent()).toBe(true);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxInclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real3.click();
-      expect(errorMaxInclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real3.clear();
-      real3.sendKeys("10");
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxInclusive.isPresent()).toBe(false);
-
+      testOneType(real3, bl, errorMaxInclusive, "10.01", "10");
     });
 
     it('should validate maxExclusive on REAL', function () {
-      // no initial validations
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // no error messages on first visit
-      real4.sendKeys("12");
-      expect(errorMaxExclusive.isPresent()).toBe(true);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxExclusive.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      real4.click();
-      expect(errorMaxExclusive.isDisplayed()).toBe(true);
-      // valid value no messages
-      real4.clear();
-      real4.sendKeys("9");
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxExclusive.isPresent()).toBe(false);
-
+      testOneType(real4, bl, errorMaxExclusive, "12", "9");
     });
-
 
     it('should validate length', function () {
-      // no initial validations
-      expect(errorLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st1.sendKeys("abcd");
-      expect(errorLength.isPresent()).toBe(true);
-      expect(errorLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st1.click();
-      expect(errorLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st1.clear();
-      st1.sendKeys("abcde");
-      expect(errorLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorLength.isPresent()).toBe(false);
-
+      testOneType(st1, bl, errorLength, "abcd", "abcde");
     });
 
-
     it('should validate minLength', function () {
-      // no initial validations
-      expect(errorMinLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st2.sendKeys("abcd");
-      expect(errorMinLength.isPresent()).toBe(true);
-      expect(errorMinLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMinLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st2.click();
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st2.clear();
-      st2.sendKeys("abcde");
-      expect(errorMinLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMinLength.isPresent()).toBe(false);
-
+      testOneType(st2, bl, errorMinLength, "abcd", "abcde");
     });
 
     it('should validate maxLength', function () {
-      // no initial validations
-      expect(errorMaxLength.isPresent()).toBe(false);
-      // no error messages on first visit
-      st3.sendKeys("12345678901");
-      expect(errorMaxLength.isPresent()).toBe(true);
-      expect(errorMaxLength.isDisplayed()).toBe(false);
-      // show message when the focus is gone
-      bl.click();
-      expect(errorMaxLength.isDisplayed()).toBe(true);
-      // wait for 200 ms and the message should disappear after 200 ms
-      browser.sleep(200);
-      expect(errorMaxLength.isDisplayed()).toBe(false);
-      // get back focus and message should be shown
-      st3.click();
-      expect(errorMaxLength.isDisplayed()).toBe(true);
-      // valid value no messages
-      st3.clear();
-      st3.sendKeys("1234567890");
-      expect(errorMaxLength.isPresent()).toBe(false);
-      // still no message when the focus is gone
-      bl.click();
-      expect(errorMaxLength.isPresent()).toBe(false);
-
+      testOneType(st3, bl, errorMaxLength, "12345678901", "1234567890");
     });
-
 
     it('should validate "required" on ST', function () {
 
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       st0.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       st0.sendKeys("abc");
       st0.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       st0.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       st0.clear();
       st0.sendKeys("abcde");
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
     it('should validate "required" on DT', function () {
 
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       dt.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       dt.sendKeys("t");
       dt.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       dt.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       dt.clear();
       dt.sendKeys("t");
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
 
     it('should validate "required" on CNE (single)', function () {
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cne1.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
       cne1.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cne1.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       cne1.clear();
       cne1.click();
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
 
     it('should validate "required" on CWE (single)', function () {
       // no initial validations
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first time getting focus
       cwe1.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
       cwe1.clear();
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorRequire.isDisplayed()).toBe(true);
+      waitForDisplayed(errorRequire);
+      //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       cwe1.click();
+      waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
       cwe1.clear();
       cwe1.click();
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
-
       // valid user input no message
       cwe1.clear();
       cwe1.sendKeys("user input");
       cwe1.sendKeys(protractor.Key.TAB);
+      waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
     });
@@ -1426,90 +872,130 @@ describe('Validations:', function() {
     it('should validate multiple restrictions on INT', function () {
 
       // no initial validations
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
       inta.sendKeys("1");
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      expect(errorMaxExclusive.isPresent()).toBe(false);
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
+      //expect(errorMinInclusive.isDisplayed()).toBe(true);
+      //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       inta.click();
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
       inta.clear();
       inta.sendKeys("10");
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       inta.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
       inta.clear();
       inta.sendKeys("9");
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
     });
 
     it('should validate multiple restrictions on REAL', function () {
       // no initial validations
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // no error messages on first visit
       reala.sendKeys("1.0");
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(true);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMinInclusive.isDisplayed()).toBe(true);
-      expect(errorMaxExclusive.isPresent()).toBe(false);
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
+      //expect(errorMinInclusive.isDisplayed()).toBe(true);
+      //expect(errorMaxExclusive.isPresent()).toBe(false);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // get back focus and message should be shown
       reala.click();
+      waitForDisplayed(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
       reala.clear();
       reala.sendKeys("10.0");
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       reala.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
       reala.clear();
       reala.sendKeys("9.999");
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMinInclusive);
+      waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
 
@@ -1517,11 +1003,17 @@ describe('Validations:', function() {
 
     it('should validate multiple restrictions on ST', function () {
       // no initial validations
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // no error messages on first visit
       sta.sendKeys("123");
+      waitForNotPresent(errorMaxLength);
+      waitForNotDisplayed(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(true);
       expect(errorPattern.isPresent()).toBe(true);
@@ -1529,43 +1021,67 @@ describe('Validations:', function() {
       expect(errorPattern.isDisplayed()).toBe(false);
       // show message when the focus is gone
       bl.click();
-      expect(errorMaxLength.isPresent()).toBe(false);
-      expect(errorMinLength.isDisplayed()).toBe(true);
-      expect(errorPattern.isDisplayed()).toBe(true);
+      waitForNotPresent(errorMaxLength);
+      waitForDisplayed(errorMinLength);
+      waitForDisplayed(errorPattern);
+      //expect(errorMaxLength.isPresent()).toBe(false);
+      //expect(errorMinLength.isDisplayed()).toBe(true);
+      //expect(errorPattern.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
       browser.sleep(200);
+      waitForNotPresent(errorMaxLength);
+      waitForNotDisplayed(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
+      waitForNotPresent(errorMaxLength);
+      waitForDisplayed(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // try again, message shown since it is not the first visit
       sta.clear();
       sta.sendKeys("abcde678901");
+      waitForDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
       bl.click();
+      waitForNotDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // get back focus and message should be shown
       sta.click();
+      waitForDisplayed(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForDisplayed(errorPattern);
       expect(errorMaxLength.isDisplayed()).toBe(true);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // valid value no messages
       sta.clear();
       sta.sendKeys("abcde");
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // still no message when the focus is gone
       bl.click();
+      waitForNotPresent(errorMaxLength);
+      waitForNotPresent(errorMinLength);
+      waitForNotPresent(errorPattern);
       expect(errorMaxLength.isPresent()).toBe(false);
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
@@ -1573,5 +1089,6 @@ describe('Validations:', function() {
     });
 
   });
+
 
 });
