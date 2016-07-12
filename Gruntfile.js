@@ -23,7 +23,7 @@ module.exports = function (grunt) {
   });
 
   // Time how long tasks take. Can help when optimizing build times
-  require('time-grunt')(grunt);
+  //require('time-grunt')(grunt);
 
   var wiredep = require('wiredep');
 
@@ -191,7 +191,7 @@ module.exports = function (grunt) {
         // without errors" even when there are errors.
         //keepAlive: true // If false, the grunt process stops when the test fails.
       },
-      chrome: {
+      all: {
         options: {
           args: {
             browser: 'firefox'
@@ -205,7 +205,7 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
+    //    reporter: require('jshint-stylish')
       },
       all: {
         src: [

@@ -7,9 +7,6 @@
 # of it.
 
 # Use the globally installed node and its modules
-#set LFORMS_NODE=node-v0.10.40_lforms.v1
-#set LFORMS_NODE=node-v4.2.1_lforms.v1
-#set LFORMS_NODE=node-v4.4.3-linux-x64
 set LFORMS_NODE=node-v4.4.4-linux-x64
 
 # Sets PROJECT_DIR if it is not defined.
@@ -21,7 +18,7 @@ if (! $?PROJECT_DIR) then
 endif
 
 # Set path
-set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc $PROJECT_DIR/node_modules/.bin `/depot/packages/${LFORMS_NODE}/bin/npm bin` )
+set path = (/depot/packages/${LFORMS_NODE}/bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc `/depot/packages/${LFORMS_NODE}/bin/npm bin` )
 
 # Set node in development mode
 unsetenv NODE_ENV
@@ -48,7 +45,6 @@ if ($?prompt) then
   unset autologout
 endif
 
-# Set LD_LIBRARY_PATH, which is needed for the protrator tests while we are
-# using Chrome instead of Firefox, which are doing because of this issue:
-#   https://github.com/angular/protractor/issues/3200
+# Set LD_LIBRARY_PATH, which is needed for the protractor tests while we are
+# using Chrome instead of Firefox....
 setenv LD_LIBRARY_PATH /opt/google/chrome/lib
