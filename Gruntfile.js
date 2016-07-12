@@ -191,8 +191,15 @@ module.exports = function (grunt) {
         // without errors" even when there are errors.
         //keepAlive: true // If false, the grunt process stops when the test fails.
       },
-      all: {}   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+      chrome: {
+        options: {
+          args: {
+            browser: 'firefox'
+          }
+        }
+      }
     },
+
 
     // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {

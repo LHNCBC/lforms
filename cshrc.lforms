@@ -9,7 +9,8 @@
 # Use the globally installed node and its modules
 #set LFORMS_NODE=node-v0.10.40_lforms.v1
 #set LFORMS_NODE=node-v4.2.1_lforms.v1
-set LFORMS_NODE=node-v4.4.3-linux-x64
+#set LFORMS_NODE=node-v4.4.3-linux-x64
+set LFORMS_NODE=node-v4.4.4-linux-x64
 
 # Sets PROJECT_DIR if it is not defined.
 if (! $?PROJECT_DIR) then
@@ -27,6 +28,7 @@ unsetenv NODE_ENV
 
 # Set editor for git
 setenv EDITOR /usr/bin/vim
+
 
 # We setup a couple things only if in an interactive shell
 if ($?prompt) then
@@ -46,3 +48,7 @@ if ($?prompt) then
   unset autologout
 endif
 
+# Set LD_LIBRARY_PATH, which is needed for the protrator tests while we are
+# using Chrome instead of Firefox, which are doing because of this issue:
+#   https://github.com/angular/protractor/issues/3200
+setenv LD_LIBRARY_PATH /opt/google/chrome/lib

@@ -25,7 +25,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="lf-form-table-row" ng-if="lfData.templateOptions.obrHeader">
+        <tr class="lf-form-table-row" ng-if="lfData.templateOptions.obrHeader" ng-click="setActiveRow(null)">
           <td class="rowEditText hasTooltip" ng-repeat="item in lfData.templateOptions.obrItems"
               ng-switch on="item.dataType">
             <ng-form name="innerForm">

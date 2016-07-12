@@ -663,7 +663,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        </tr>\n" +
     "        </thead>\n" +
     "        <tbody>\n" +
-    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOptions.obrHeader\">\n" +
+    "        <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOptions.obrHeader\" ng-click=\"setActiveRow(null)\">\n" +
     "          <td class=\"rowEditText hasTooltip\" ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
     "              ng-switch on=\"item.dataType\">\n" +
     "            <ng-form name=\"innerForm\">\n" +

@@ -3,10 +3,10 @@ exports.config = {
   port: port,
   baseUrl: 'http://localhost:' + (process.env.PORT || port),
 
-  // directConnect: true,
-  // Capabilities to be passed to the webdriver instance.
+  //directConnect: true,
+  //Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'firefox'
+    'browserName': 'firebox'
   },
   specs: 'spec/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],

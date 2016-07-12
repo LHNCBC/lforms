@@ -39,7 +39,7 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   waitForDisplayed(eleMessage);
   //expect(eleMessage.isDisplayed()).toBe(true);
   // wait for 200 ms and the message should disappear after 200 ms
-  browser.sleep(200);
+  //browser.sleep(200);
   //browser.driver.wait(protractor.util.elementIsNotVisible(errorINT));
   waitForNotDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(false);
@@ -98,6 +98,32 @@ describe('Validations:', function() {
       cwe1 = element(by.id("/CWE1/1")),
       cwe2 = element(by.id("/CWE2/1"));
 
+  var lblbl = element(by.css("label[for='/BL/1'")),
+      lblint = element(by.css("label[for='/INT/1'")),
+      lblreal = element(by.css("label[for='/REAL/1'")),
+      lblphone = element(by.css("label[for='/PHONE/1'")),
+      lblemail = element(by.css("label[for='/EMAIL/1'")),
+      lblurl = element(by.css("label[for='/URL/1'")),
+      lblint1 = element(by.css("label[for='/INT1/1'")),
+      lblint2 = element(by.css("label[for='/INT2/1'")),
+      lblint3 = element(by.css("label[for='/INT3/1'")),
+      lblint4 = element(by.css("label[for='/INT4/1'")),
+      lblreal1 = element(by.css("label[for='/REAL1/1'")),
+      lblreal2 = element(by.css("label[for='/REAL2/1'")),
+      lblreal3 = element(by.css("label[for='/REAL3/1'")),
+      lblreal4 = element(by.css("label[for='/REAL4/1'")),
+      lblst1 = element(by.css("label[for='/ST1/1'")),
+      lblst2 = element(by.css("label[for='/ST2/1'")),
+      lblst3 = element(by.css("label[for='/ST3/1'")),
+      lblinta = element(by.css("label[for='/INTA/1'")),
+      lblreala = element(by.css("label[for='/REALA/1'")),
+      lblsta = element(by.css("label[for='/STA/1'")),
+      lblst0 = element(by.css("label[for='/ST0/1'")),
+      lbldt = element(by.css("label[for='/DT/1'")),
+      lblcne1 = element(by.css("label[for='/CNE1/1'")),
+      lblcne2 = element(by.css("label[for='/CNE2/1'")),
+      lblcwe1 = element(by.css("label[for='/CWE1/1'")),
+      lblcwe2 = element(by.css("label[for='/CWE2/1'"));
 
   var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
       errorINT = element(by.cssContainingText("div.validation-error", '"INT" must be an integer number')),
@@ -130,23 +156,24 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(int, bl, errorINT, "1234.56", "123");
+
+      testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
 
     it('should validate REAL type', function () {
-      testOneType(real, bl, errorREAL, "not a number", "123.45");
+      testOneType(real, lblint, errorREAL, "not a number", "123.45");
     });
 
     it('should validate PHONE type', function () {
-      testOneType(phone, bl, errorPHONE, "not a phone number", "3011235555");
+      testOneType(phone, lblreal, errorPHONE, "not a phone number", "3011235555");
     });
 
     it('should validate EMAIL type', function () {
-      testOneType(email, bl, errorEMAIL, "somebody@com", "somebody@some.com");
+      testOneType(email, lblphone, errorEMAIL, "somebody@com", "somebody@some.com");
     });
 
     it('should validate URL type', function () {
-      testOneType(url, bl, errorURL, "http:/somecompany.com", "somcecompany.com");
+      testOneType(url, lblemail, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
   });
 
@@ -159,19 +186,19 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(int1, bl, errorMinInclusive, "2", "5");
+      testOneType(int1, lblurl, errorMinInclusive, "2", "5");
     });
 
     it('should validate minExclusive on INT', function () {
-      testOneType(int2, bl, errorMinExclusive, "5", "6");
+      testOneType(int2, lblint1, errorMinExclusive, "5", "6");
     });
 
     it('should validate maxInclusive on INT', function () {
-      testOneType(int3, bl, errorMaxInclusive, "12", "10");
+      testOneType(int3, lblint2, errorMaxInclusive, "12", "10");
     });
 
     it('should validate maxExclusive on INT', function () {
-      testOneType(int4, bl, errorMaxExclusive, "12", "9");
+      testOneType(int4, lblint3, errorMaxExclusive, "12", "9");
     });
 
     it('should validate minInclusive on REAL', function () {
@@ -181,31 +208,31 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(real1, bl, errorMinInclusive, "4.9", "5.0");
+      testOneType(real1, lblint4, errorMinInclusive, "4.9", "5.0");
     });
 
     it('should validate minExclusive on REAL', function () {
-      testOneType(real2, bl, errorMinExclusive, "5.0", "5.01");
+      testOneType(real2, lblreal1, errorMinExclusive, "5.0", "5.01");
     });
 
     it('should validate maxInclusive on REAL', function () {
-      testOneType(real3, bl, errorMaxInclusive, "10.01", "10");
+      testOneType(real3, lblreal2, errorMaxInclusive, "10.01", "10");
     });
 
     it('should validate maxExclusive on REAL', function () {
-      testOneType(real4, bl, errorMaxExclusive, "12", "9");
+      testOneType(real4, lblreal3, errorMaxExclusive, "12", "9");
     });
 
     it('should validate length', function () {
-      testOneType(st1, bl, errorLength, "abcd", "abcde");
+      testOneType(st1, lblreal4, errorLength, "abcd", "abcde");
     });
 
     it('should validate minLength', function () {
-      testOneType(st2, bl, errorMinLength, "abcd", "abcde");
+      testOneType(st2, lblst1, errorMinLength, "abcd", "abcde");
     });
 
     it('should validate maxLength', function () {
-      testOneType(st3, bl, errorMaxLength, "12345678901", "1234567890");
+      testOneType(st3, lblst2, errorMaxLength, "12345678901", "1234567890");
     });
 
     it('should validate "required" on ST', function () {
@@ -224,7 +251,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblst3.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -241,7 +268,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblst3.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
@@ -262,7 +289,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblst0.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -279,7 +306,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblst0.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
@@ -301,7 +328,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lbldt.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -320,7 +347,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lbldt.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
@@ -341,7 +368,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblcne1.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -360,7 +387,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblcne1.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // valid user input no message
@@ -389,7 +416,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblcwe1.click();
       waitForDisplayed(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
@@ -414,7 +441,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblcwe1.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -433,7 +460,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblcwe1.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -454,7 +481,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblinta.click();
       waitForDisplayed(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
@@ -479,7 +506,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblinta.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -498,7 +525,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblinta.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -525,7 +552,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblreala.click();
       waitForNotPresent(errorMaxLength);
       waitForDisplayed(errorMinLength);
       waitForDisplayed(errorPattern);
@@ -558,7 +585,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblreala.click();
       waitForNotDisplayed(errorMaxLength);
       waitForNotPresent(errorMinLength);
       waitForNotDisplayed(errorPattern);
@@ -583,7 +610,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblreala.click();
       waitForNotPresent(errorMaxLength);
       waitForNotPresent(errorMinLength);
       waitForNotPresent(errorPattern);
@@ -594,7 +621,6 @@ describe('Validations:', function() {
     });
 
   });
-
 
   //// for the list template, every validation tests should work too.
   //// the following tests are copies of tests above, except that the test form is displayed in the list template
@@ -613,23 +639,24 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(int, bl, errorINT, "1234.56", "123");
+
+      testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
 
     it('should validate REAL type', function () {
-      testOneType(real, bl, errorREAL, "not a number", "123.45");
+      testOneType(real, lblint, errorREAL, "not a number", "123.45");
     });
 
     it('should validate PHONE type', function () {
-      testOneType(phone, bl, errorPHONE, "not a phone number", "3011235555");
+      testOneType(phone, lblreal, errorPHONE, "not a phone number", "3011235555");
     });
 
     it('should validate EMAIL type', function () {
-      testOneType(email, bl, errorEMAIL, "somebody@com", "somebody@some.com");
+      testOneType(email, lblphone, errorEMAIL, "somebody@com", "somebody@some.com");
     });
 
     it('should validate URL type', function () {
-      testOneType(url, bl, errorURL, "http:/somecompany.com", "somcecompany.com");
+      testOneType(url, lblemail, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
   });
 
@@ -648,19 +675,19 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(int1, bl, errorMinInclusive, "2", "5");
+      testOneType(int1, lblurl, errorMinInclusive, "2", "5");
     });
 
     it('should validate minExclusive on INT', function () {
-      testOneType(int2, bl, errorMinExclusive, "5", "6");
+      testOneType(int2, lblint1, errorMinExclusive, "5", "6");
     });
 
     it('should validate maxInclusive on INT', function () {
-      testOneType(int3, bl, errorMaxInclusive, "12", "10");
+      testOneType(int3, lblint2, errorMaxInclusive, "12", "10");
     });
 
     it('should validate maxExclusive on INT', function () {
-      testOneType(int4, bl, errorMaxExclusive, "12", "9");
+      testOneType(int4, lblint3, errorMaxExclusive, "12", "9");
     });
 
     it('should validate minInclusive on REAL', function () {
@@ -676,31 +703,31 @@ describe('Validations:', function() {
       }, 5000);
 
       shortenValidationMsgShowTime();
-      testOneType(real1, bl, errorMinInclusive, "4.9", "5.0");
+      testOneType(real1, lblint4, errorMinInclusive, "4.9", "5.0");
     });
 
     it('should validate minExclusive on REAL', function () {
-      testOneType(real2, bl, errorMinExclusive, "5.0", "5.01");
+      testOneType(real2, lblreal1, errorMinExclusive, "5.0", "5.01");
     });
 
     it('should validate maxInclusive on REAL', function () {
-      testOneType(real3, bl, errorMaxInclusive, "10.01", "10");
+      testOneType(real3, lblreal2, errorMaxInclusive, "10.01", "10");
     });
 
     it('should validate maxExclusive on REAL', function () {
-      testOneType(real4, bl, errorMaxExclusive, "12", "9");
+      testOneType(real4, lblreal3, errorMaxExclusive, "12", "9");
     });
 
     it('should validate length', function () {
-      testOneType(st1, bl, errorLength, "abcd", "abcde");
+      testOneType(st1, lblreal4, errorLength, "abcd", "abcde");
     });
 
     it('should validate minLength', function () {
-      testOneType(st2, bl, errorMinLength, "abcd", "abcde");
+      testOneType(st2, lblst1, errorMinLength, "abcd", "abcde");
     });
 
     it('should validate maxLength', function () {
-      testOneType(st3, bl, errorMaxLength, "12345678901", "1234567890");
+      testOneType(st3, lblst2, errorMaxLength, "12345678901", "1234567890");
     });
 
     it('should validate "required" on ST', function () {
@@ -719,7 +746,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblst3.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -736,7 +763,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblst3.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
@@ -757,7 +784,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblst0.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -774,7 +801,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblst0.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
 
@@ -796,7 +823,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lbldt.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -815,7 +842,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lbldt.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
     });
@@ -836,7 +863,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblcne1.click();
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -855,7 +882,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblcne1.click();
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // valid user input no message
@@ -884,7 +911,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblcwe1.click();
       waitForDisplayed(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
@@ -909,7 +936,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblcwe1.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -928,7 +955,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblcwe1.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -949,7 +976,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblinta.click();
       waitForDisplayed(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       //expect(errorMinInclusive.isDisplayed()).toBe(true);
@@ -974,7 +1001,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblinta.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotDisplayed(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -993,7 +1020,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblinta.click();
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
       expect(errorMinInclusive.isPresent()).toBe(false);
@@ -1020,7 +1047,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isDisplayed()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      bl.click();
+      lblreala.click();
       waitForNotPresent(errorMaxLength);
       waitForDisplayed(errorMinLength);
       waitForDisplayed(errorPattern);
@@ -1053,7 +1080,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // not to show message when the focus is gone, since it is not the first visit
-      bl.click();
+      lblreala.click();
       waitForNotDisplayed(errorMaxLength);
       waitForNotPresent(errorMinLength);
       waitForNotDisplayed(errorPattern);
@@ -1078,7 +1105,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isPresent()).toBe(false);
       // still no message when the focus is gone
-      bl.click();
+      lblreala.click();
       waitForNotPresent(errorMaxLength);
       waitForNotPresent(errorMinLength);
       waitForNotPresent(errorPattern);

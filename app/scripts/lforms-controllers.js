@@ -55,22 +55,23 @@ angular.module('lformsWidget')
          * @param item the item which onBlur event happens on its input field
          */
         $scope.activeRowOnBlur = function(item) {
-          if (this._activeItem) {
-            this._activeItem._visitedBefore = true;
-          }
-          // show validation messages immediately if it is the first onBlur
+
+          // the first visit to the field (and leaving the field), show validation messages for a certain time
           if (!item._visitedBefore) {
             item._showValidation = true;
+
+            // use $interval instead of $timeout so that protractor will not wait on $timeout
+            var intervalCanceller = $interval(function() {
+              // not to show validation messages after 2 seconds
+              item._showValidation = false;
+              item._visitedBefore = true;
+              $interval.cancel(intervalCanceller);
+            }, $scope.validationInitialShowTime);
           }
-
-          // use $interval instead of $timeout so that protractor will not wait on $timeout
-          var intervalCanceller = $interval(function() {
-            // not to show validation messages after 2 seconds
+          // the following visits (and leaving the field), not to show validation messages
+          else {
             item._showValidation = false;
-            item._visitedBefore = true;
-            $interval.cancel(intervalCanceller);
-          }, $scope.validationInitialShowTime);
-
+          }
         };
 
         /**
