@@ -4,7 +4,7 @@ function shortenValidationMsgShowTime() {
   browser.executeScript(function () {
     var lfForms = jQuery("body").find(".lf-form");
     var lfForm = angular.element(lfForms[0]);
-    lfForm.scope().setValidationInitialShowTime(200);
+    lfForm.scope().setValidationInitialShowTime(500);
   });
 }
 
@@ -40,7 +40,6 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   //expect(eleMessage.isDisplayed()).toBe(true);
   // wait for 200 ms and the message should disappear after 200 ms
   //browser.sleep(200);
-  //browser.driver.wait(protractor.util.elementIsNotVisible(errorINT));
   waitForNotDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(false);
   // get back focus again and message should be shown
