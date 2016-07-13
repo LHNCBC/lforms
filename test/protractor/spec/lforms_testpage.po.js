@@ -320,7 +320,17 @@ var TestPage = function() {
     openMatrixLayout2: function() {
       this.openBaseTestPage();
       this.openFormByIndex(12);
+    },
+
+
+    /**
+     *  Opens the Validation Test form.
+     */
+    openValidationTest: function() {
+      this.openBaseTestPage();
+      this.openFormByIndex(13);
     }
+
   }
 };
 

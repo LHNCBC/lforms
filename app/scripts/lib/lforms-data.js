@@ -1,7 +1,10 @@
 /**
- * Form definition data processing
+ * LForms class for form definition data
  */
-var LFormsData = Class.extend({
+if (typeof LForms === 'undefined')
+  LForms = {};
+
+var LFormsData = LForms.LFormsData = Class.extend({
   // form type. for now the only type is "LOINC"
   type: null,
   // form's code
@@ -34,46 +37,6 @@ var LFormsData = Class.extend({
     "min",  // for number only
     "email",  // for INPUT element only
     "url"    // for INPUT element only
-  ],
-
-  // supported keys in restriction, not used yet
-  _restrictionKeys : [
-    "minExclusive",
-    "minInclusive",
-    "maxExclusive",
-    "maxInclusive",
-    "totalDigits",
-    "fractionDigits",
-    "length",
-    "minLength",
-    "maxLength",
-    "enumeration",
-    "whiteSpace",
-    "pattern"
-  ],
-
-  // supported data type
-  _dataTypes : [
-    "BL",
-    "INT",
-    "REAL",
-    "ST",
-    "TX",      // long text
-    "BIN",
-    "DT",      // complex type (or sub-type of 'ST' ?)
-    "DTM",     // complex type (or sub-type of 'ST' ?)
-    "TM",      // complex type (or sub-type of 'ST' ?)
-    "CNE",     // complex type
-    "CWE",     // complex type
-    "RTO",     // complex type
-    "QTY",     // complex type
-    "YEAR",    // sub-type of "ST"
-    "MONTH",   // sub-type of "ST"
-    "DAY",     // sub-type of "ST"
-    "URL",     // sub-type of "ST"
-    "EMAIL",   // sub-type of "ST"
-    "PHONE",   // sub-type of "ST"
-    ""        // for header, no input field
   ],
 
   // All accessory attributes of an item
@@ -298,6 +261,25 @@ var LFormsData = Class.extend({
     this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
+  },
+
+
+  /**
+   * Validate user input value
+   * Note: Not currently used since validations are handled in an Angular directive.
+   * This might be used in the future.
+   * @param item the question item
+   * @private
+   */
+  _checkValidations: function(item) {
+    if (item._hasValidation) {
+      var errors = [];
+      var errorRequired = LForms.Validations.checkRequired(item._answerRequired, item.value, errors);
+      var errorDataType = LForms.Validations.checkDataType(item.dataType, item.value, errors);
+      var errorRestrictions = LForms.Validations.checkRestrictions(item.restrictions, item.value, errors);
+      item._validationErrors = errors;
+
+    }
   },
 
 
@@ -657,12 +639,9 @@ var LFormsData = Class.extend({
         item.answers = this.answerLists[item.answers];
       }
 
-      // normalize unit value if there is one
-      if (item.unit) {
-        if (!item.unit.text)
-          item.unit.text = item.unit.name;
-        if (!item.unit.value)
-          item.unit.value = item.unit.name;
+      // normalize unit value if there is one, needed by calculationMethod
+      if (item.unit && !item.unit.text) {
+        item.unit.text = item.unit.name;
       }
 
       // id
@@ -710,12 +689,22 @@ var LFormsData = Class.extend({
         case "INT":
         case "REAL":
           item._toolTip = "Type a number";
+          // internally all numeric values are of string type
+          if (typeof item.value === "number")
+            item.value = item.value + "";
           break;
         default: {
           if (!item.calculationMethod) {
             item._toolTip = "Type a value";
           }
         }
+      }
+
+      // set up validation flag
+      if (item._answerRequired ||
+          item.restrictions ||
+          (item.dataType !== "ST" && item.dataType !== "TX" && item.dataType !== "CWE" && item.dataType !== "CNE")) {
+        item._hasValidation = true;
       }
 
       // add a link to external site for item's definition
@@ -911,7 +900,7 @@ var LFormsData = Class.extend({
         itemData.questionCode = item.questionCode;
         // not a header
         if (!item.header) {
-          if (item.value) itemData.value = this._getOriginalValue(item.value);
+          if (item.value) itemData.value = this._getOriginalValue(item.value, item.dataType);
           if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
           if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
         }
@@ -921,7 +910,10 @@ var LFormsData = Class.extend({
         // process fields
         for (var field in item) {
           // special handling for user input values
-          if (field === "value" || field === "unit") {
+          if (field === "value") {
+            itemData[field] = this._getOriginalValue(item[field], item.dataType);
+          }
+          else if (field === "unit") {
             itemData[field] = this._getOriginalValue(item[field]);
           }
           // ignore the internal lforms data and angular data
@@ -952,9 +944,10 @@ var LFormsData = Class.extend({
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
    * @param value the data object of the selected answer
+   * @param dataType optional, the data type of the value
    * @private
    */
-  _getOriginalValue: function(value) {
+  _getOriginalValue: function(value, dataType) {
     var retValue;
     if (value) {
       // an array
@@ -974,7 +967,20 @@ var LFormsData = Class.extend({
       else if (angular.isObject(value) && value._orig) {
         retValue = value._orig;
       }
-      // not an object or an array
+      // not an object or an array, and has a data type
+      else if (dataType) {
+        switch (dataType) {
+          case "INT":
+            retValue = parseInt(value);
+            break;
+          case "REAL":
+            retValue = parseFloat(value);
+            break;
+          default:
+            retValue = value;
+        }
+      }
+      // default
       else {
         retValue = value;
       }
@@ -1518,11 +1524,11 @@ var LFormsData = Class.extend({
       var valueInStandardUnit = '';
       var item = sourceItems[i];
       if (item.value) {
-        if (item.unit && item.unit.value) {
-          valueInStandardUnit = this.Units.getValueInStandardUnit(item.value, item.unit.value);
+        if (item.unit && item.unit.name) {
+          valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.name);
         }
         else {
-          valueInStandardUnit = item.value;
+          valueInStandardUnit = parseFloat(item.value);
         }
       }
       values.push(valueInStandardUnit);
@@ -1772,23 +1778,22 @@ var LFormsData = Class.extend({
       // clean up unit autocomp options
       item._unitAutocompOptions = null;
 
-      var listItems = [], answers = item.units, options=null;
+      var listItems = [], answers = item.units;
       // Modify the label (question text) for each question.
       var defaultValue;
       for (var i= 0, iLen = answers.length; i<iLen; i++) {
         // Make a copy of the original unit
         var answerData = angular.copy(answers[i]);
         listItems.push(
-            {text: answerData.name,
-              value: answerData.name, // value is needed for formula calculation
-              code: answerData.code,
-              _orig: answers[i]
+            {name: answerData.name,
+             text: answerData.name,
+             _orig: angular.copy(answers[i])
             });
         if (answerData.default)
           defaultValue = answerData.name;
       }
 
-      options = {
+      var options = {
         listItems: listItems,
         matchListValue: true,
         autoFill: true
@@ -1821,7 +1826,7 @@ var LFormsData = Class.extend({
 
       var options = {
         matchListValue: item.dataType === "CNE",
-        maxSelect: maxSelect,
+        maxSelect: maxSelect
       };
 
       var url = item.externallyDefined;
@@ -1860,7 +1865,7 @@ var LFormsData = Class.extend({
           var answerData = angular.copy(answers[i]);
           var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
           answerData.text = label;
-          answerData._orig = answers[i];
+          answerData._orig = angular.copy(answers[i]);
           listItems.push(answerData);
         }
 
@@ -1921,7 +1926,7 @@ var LFormsData = Class.extend({
       'TOTALSCORE': function (sources) {
         var totalScore = 0;
         for (var i = 0, iLen = sources.length; i < iLen; i++) {
-          totalScore += sources[i];
+          totalScore += parseInt(sources[i]);
         }
         return totalScore;
       },
@@ -1929,7 +1934,7 @@ var LFormsData = Class.extend({
       // BMI = weight (lb) / [height (in)] * 2 x 703
       'BMI': function (sources) {
         var ret = '';
-        var weightInKg = sources[0], heightInCm = sources[1];
+        var weightInKg = parseFloat(sources[0]), heightInCm = parseFloat(sources[1]);
         if (weightInKg && weightInKg != '' && heightInCm && heightInCm != '' && heightInCm != '0') {
           ret = weightInKg / Math.pow((heightInCm / 100), 2);
           ret = ret.toFixed(this.precision_);
@@ -1941,8 +1946,8 @@ var LFormsData = Class.extend({
       // BSA (m2) = SQR RT ( [Height(cm) x Weight(kg) ] / 3600 )
       'BSA': function (sources) {
         var ret = '';
-        var weightInKg = sources[0], heightInCm = sources[1];
-        if (weightInKg && weightInKg != '' && heightInCm && heightInKg != '') {
+        var weightInKg = parseFloat(sources[0]), heightInCm = parseFloat(sources[1]);
+        if (weightInKg && weightInKg != '' && heightInCm && heightInCm != '') {
           ret = Math.sqrt(heightInCm * weightInKg / 3600);
           ret = ret.toFixed(this.precision_);
         }
@@ -2278,7 +2283,11 @@ var LFormsData = Class.extend({
    * @returns {string}
    */
   getActiveRowClass: function(item) {
-    return this._activeItem && this._activeItem._elementId === item._elementId ? "active-row" : "";
+    var ret = "";
+    if (this._activeItem && this._activeItem._elementId === item._elementId ) {
+      ret = "active-row";
+    }
+    return ret;
   },
 
 

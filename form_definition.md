@@ -246,14 +246,14 @@ about the meaning of each key:
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
-      * css - an array of valid CSS settings that could apply to an item. (limited supports).
-      * colCSS - an array of valid CSS settings that could apply to its related column in a 
+        * css - an array of valid CSS settings that could apply to an item. (limited supports).
+        * colCSS - an array of valid CSS settings that could apply to its related column in a 
         horizontal table. It only works when its parent item/section has a 
         {"questionLayout": "horizontal"} value in its "displayControl".
-      * questionLayout - the layout of the questions in the section. It works on items 
+        * questionLayout - the layout of the questions in the section. It works on items 
         that are sections, i.e. they contain sub items. Supported values are: 
         'vertical' (default), 'horizontal' and 'matrix'.
-      * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
+        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
         The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
         the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
         will be used to handle the list.
@@ -277,12 +277,12 @@ about the meaning of each key:
 
 ###Utility Functions:
  
-* **WidgetUtil.getFormData()** - a function to get the complete form definition data, including the user input data 
+* **LForms.Util.getFormData()** - a function to get the complete form definition data, including the user input data 
   from the form. The returned data could be fed into a LForms widget directly to render the form. 
   It has the following parameters:
     * element - required. The containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.     
-* **WidgetUtil.getUserData()** - a function to get user input data from the form, with or without 
+* **LForms.Util.getUserData()** - a function to get user input data from the form, with or without 
   form definition data. It has the following parameters:
     * element - required, the containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.

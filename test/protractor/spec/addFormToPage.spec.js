@@ -39,7 +39,7 @@ describe('addFormToPage', function () {
     }, 10000);
     // Now put form USSG-FHT on the page
     browser.driver.executeScript(
-      'WidgetUtil.addFormToPage("FHTData", "formContainer")');
+      'LForms.Util.addFormToPage("FHTData", "formContainer")');
     // Confirm it is there
     browser.wait(function() {
       return browser.driver.executeScript(

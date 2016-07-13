@@ -149,17 +149,6 @@
           templateUrl: 'field-units.html'
         };
       })
-      // field validation, TBD
-      .directive('lfValidation', function() {
-        return {
-          restrict: 'E',
-          scope: {
-            item: '='
-            },
-          transclude: false,
-          templateUrl: 'validation.html'
-        };
-      })
       // horizontal layout, inherited scope
       .directive('lfSectionHorizontal', function() {
         return {
@@ -174,6 +163,63 @@
           restrict: 'E',
           transclude: true,
           templateUrl: 'layout-matrix.html'
+        };
+      })
+      .directive('lfValidate', function () {
+        return {
+          require: 'ngModel',
+          restrict: 'A',
+          scope: {
+            itemData: '=lfValidate'
+          },
+          //transclude: true,
+          template: '<div ng-repeat="error in itemData._validationErrors">' +
+              '<div class="validation-error">"{{itemData.question}}" {{error}}</div>' +
+              '</div>',
+
+          link: function(scope, elem, attr, ctrl) {
+
+            /**
+             * Validate model data on an item
+             * @param item an item in the form
+             * @param value the user input data
+             * @param ctrl the directive control
+             */
+            function validate(item, value, ctrl) {
+              item._validationErrors = [];
+              var valid1 = LForms.Validations.checkDataType(item.dataType,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-datatype', valid1);
+              var valid2 = LForms.Validations.checkRestrictions(item.restrictions,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-restrictions', valid2);
+              var valid3 = LForms.Validations.checkRequired(item._answerRequired,
+                  value, item._validationErrors);
+              ctrl.$setValidity('lf-required', valid3);
+
+              return valid1 && valid2 && valid3
+            };
+
+            //For DOM -> model validation
+            ctrl.$parsers.unshift(function(value) {
+              if (value !==undefined && value !==null) {
+                scope.itemData._validationErrors = [];
+                var valid = validate(scope.itemData, value, ctrl);
+                return valid? value : undefined;
+              }
+            });
+
+            //For model -> DOM validation
+            // In the current use, lf-validate is applied to a separate non-input element, the validation always
+            // happens when the model data changes, i.e. in this function.
+            ctrl.$formatters.unshift(function(value) {
+              if (value !==undefined && value !==null) {
+                scope.itemData._validationErrors = [];
+                validate(scope.itemData, value, ctrl);
+                return value;
+              }
+            });
+          }
         };
       })
   ;

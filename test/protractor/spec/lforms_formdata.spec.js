@@ -9,7 +9,7 @@ describe('get form data', function() {
     // #1 all fields are empty
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getUserData();
+      var fData = LForms.Util.getUserData();
       callback(fData);
     }).then(function(formData) {
       // console.log(formData);
@@ -41,7 +41,7 @@ describe('get form data', function() {
 
       browser.driver.executeAsyncScript(function () {
         var callback = arguments[arguments.length - 1];
-        var fData = WidgetUtil.getUserData();
+        var fData = LForms.Util.getUserData();
         callback(fData);
       }).then(function (formData) {
         expect(formData.templateData.length).toBe(4);
@@ -63,7 +63,7 @@ describe('get form data', function() {
         //#3 test parameters noFormDefData
         browser.driver.executeAsyncScript(function () {
           var callback = arguments[arguments.length - 1];
-          var fData = WidgetUtil.getUserData(null, true);
+          var fData = LForms.Util.getUserData(null, true);
           callback(fData);
         }).then(function (formData) {
           expect(formData.itemsData.length).toBe(2);
@@ -74,7 +74,7 @@ describe('get form data', function() {
           //#4 test parameters noEmptyValue
           browser.driver.executeAsyncScript(function () {
             var callback = arguments[arguments.length - 1];
-            var fData = WidgetUtil.getUserData(null, false, true);
+            var fData = LForms.Util.getUserData(null, false, true);
             callback(fData);
           }).then(function (formData) {
             expect(formData.itemsData.length).toBe(1);
@@ -83,7 +83,7 @@ describe('get form data', function() {
             //#5 test parameters noHiddenItem
             browser.driver.executeAsyncScript(function () {
               var callback = arguments[arguments.length - 1];
-              var fData = WidgetUtil.getUserData(null, false, false, true);
+              var fData = LForms.Util.getUserData(null, false, false, true);
               callback(fData);
             }).then(function (formData) {
               expect(formData.itemsData.length).toBe(2);
@@ -101,7 +101,7 @@ describe('get form data', function() {
     browser.waitForAngular();
     browser.driver.executeAsyncScript(function() {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getUserData();
+      var fData = LForms.Util.getUserData();
       callback(fData);
     }).then(function(formData) {
       // console.log(formData);
@@ -131,7 +131,7 @@ describe('get form data', function() {
     // check the data directly
     browser.driver.executeAsyncScript(function () {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getFormData();
+      var fData = LForms.Util.getFormData();
       callback(fData);
     }).then(function (formData) {
       expect(formData.code).toBe("54127-6N");
@@ -172,7 +172,7 @@ describe('get form data', function() {
     // check the data again, directly
     browser.driver.executeAsyncScript(function () {
       var callback = arguments[arguments.length - 1];
-      var fData = WidgetUtil.getFormData();
+      var fData = LForms.Util.getFormData();
       callback(fData);
     }).then(function (formData) {
       expect(formData.code).toBe("54127-6N");

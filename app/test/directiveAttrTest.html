@@ -66,7 +66,9 @@
     <script src="scripts/lib/js-class.js"></script>
     <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/date.js"></script>
-    <script src="scripts/lib/util.js"></script>
+    <script src="scripts/lib/lforms-util.js"></script>
+    <script src="scripts/lib/lforms-hl7.js"></script>
+    <script src="scripts/lib/lforms-validate.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
     <script src="scripts/lforms-constants.js"></script>
     <script src="scripts/lforms-config.js"></script>
@@ -129,17 +131,17 @@
             otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
-          $scope.lfData1 = new LFormsData(angular.copy(FHTData));
-          $scope.lfData2 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData1 = new LForms.LFormsData(angular.copy(FHTData));
+          $scope.lfData2 = new LForms.LFormsData(angular.copy(FHTData));
           $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
-          $scope.lfData3 = new LFormsData(angular.copy(FHTData));
+          $scope.lfData3 = new LForms.LFormsData(angular.copy(FHTData));
           $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]).
         controller('lformsTestControllerH', ['$scope', function ($scope) {
-          $scope.lfData1 = new LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData1 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
           $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
-          $scope.lfData3 = new LFormsData(angular.copy(horizontalFHTData));
+          $scope.lfData3 = new LForms.LFormsData(angular.copy(horizontalFHTData));
           $scope.lfData3.setTemplateOptions({"hideHeader": true});
         }]);
     </script>

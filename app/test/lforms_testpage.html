@@ -63,8 +63,9 @@
     <script src="scripts/lib/js-class.js"></script>
     <script src="scripts/lib/cross_browser.js"></script>
     <script src="scripts/lib/date.js"></script>
-    <script src="scripts/lib/util.js"></script>
-    <script src="scripts/lib/hl7.js"></script>
+    <script src="scripts/lib/lforms-util.js"></script>
+    <script src="scripts/lib/lforms-hl7.js"></script>
+    <script src="scripts/lib/lforms-validate.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
     <script src="scripts/lforms-constants.js"></script>
     <script src="scripts/lforms-config.js"></script>
@@ -90,8 +91,8 @@
     <script type="text/javascript">
 
       angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS',
-              function ($scope, $timeout, lformsConfig, LF_CONSTANTS) {
+          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q',
+              function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q) {
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -106,6 +107,7 @@
               {text: 'List Template', id: 'list-template'},
               {text: 'Matrix Layout, single selection', id: 'matrix-layout2'},
               {text: 'Matrix Layout, multiple selections', id: 'matrix-layout'},
+              {text: "Validation Test", id: "validationTest"},
               {text: "HL7 Genetic Test Panel for Simple Variants", id: "X1000-0"},
               {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"}
 
@@ -132,7 +134,7 @@
               var formDefData = $scope.lfData2.getFormData();
               // change a value
               formDefData.items[0].items[0].value= 'after reset';
-              $scope.lfData2 = new LFormsData(formDefData);
+              $scope.lfData2 = new LForms.LFormsData(formDefData);
             };
 
             $scope.changeTemplate = function(template) {
@@ -156,7 +158,7 @@
               switch ($scope.selectedForm) {
                 case '54127-6N':
                   //'USSG-FHT, (with mock-up items for skip logic demo)'
-                  lfData2 = new LFormsData(angular.copy(FHTData));
+                  lfData2 = new LForms.LFormsData(angular.copy(FHTData));
                   lfOption2 = {
                     allowMultipleEmptyRepeatingItems: false,
                     useAnimation: useAnimation
@@ -164,11 +166,15 @@
                   break;
                 case '54127-6H':
                   //'USSG-FHT, (with mock-up items for horizontal layout demo)'
-                  lfData2 = new LFormsData(angular.copy(horizontalFHTData));
+                  lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
                   break;
                 case '35088-4B':
                   //'Glasgow Coma Score (with score rules)'
-                  lfData2 = new LFormsData(angular.copy(glasgow));
+                  lfData2 = new LForms.LFormsData(angular.copy(glasgow));
+                  break;
+                case 'validationTest':
+                  //validation test
+                  lfData2 = new LForms.LFormsData(angular.copy(validationTestForm));
                   break;
                 case 'all-in-one':
                   //'Full-Featured Demo'
@@ -178,41 +184,41 @@
                     allowMultipleEmptyRepeatingItems: true
                   };
 
-                  lfData2 = new LFormsData(angular.copy(allInOne));
+                  lfData2 = new LForms.LFormsData(angular.copy(allInOne));
                   break;
                 case 'formC':
                   //'Form Builder created test form'
-                  lfData2 = new LFormsData(angular.copy(formBuilder));
+                  lfData2 = new LForms.LFormsData(angular.copy(formBuilder));
                   break;
                 case '54580-6NEW':
                   //'Minimum Data Set - version 3.0'
-                  lfData2 = new LFormsData(angular.copy(MDS3));
+                  lfData2 = new LForms.LFormsData(angular.copy(MDS3));
                   break;
                 case 'form-with-user-data':
                   //'Form With User Data'
-                  lfData2 = new LFormsData(angular.copy(formWithUserData));
+                  lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
                   break;
                 case 'X-001':
                   //'RxTerms'
-                  lfData2 = new LFormsData(angular.copy(rxTerms));
+                  lfData2 = new LForms.LFormsData(angular.copy(rxTerms));
                   break;
                 case 'list-template':
                   //'List template'
-                  lfData2 = new LFormsData(angular.copy(listTemplateForm));
+                  lfData2 = new LForms.LFormsData(angular.copy(listTemplateForm));
                   break;
                 case 'matrix-layout':
                   //'matrix layout'
-                  lfData2 = new LFormsData(angular.copy(matrixLayout));
+                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout));
                   break;
                 case 'matrix-layout2':
                   //'matrix layout 2'
-                  lfData2 = new LFormsData(angular.copy(matrixLayout2));
+                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout2));
                   break;
                 case 'X1000-0':
-                  lfData2 = new LFormsData(angular.copy(genetic));
+                  lfData2 = new LForms.LFormsData(angular.copy(genetic));
                   break;
                 case 'X2000-0':
-                  lfData2 = new LFormsData(angular.copy(genetic2));
+                  lfData2 = new LForms.LFormsData(angular.copy(genetic2));
                   break;
                 case 'cde1':
                   //'CDE Sample form'
@@ -220,7 +226,7 @@
                   //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
                   converter.convert("/data/cde-data.json",
                       function(data) {
-                        $scope.lfData2 = new LFormsData(data);
+                        $scope.lfData2 = new LForms.LFormsData(data);
                         // hide checkboxes (and show question codes for testing)
                         $scope.lfOption2 = {hideHeader: true, showQuestionCode: true, useAnimation: useAnimation};
                         // Or:   $scope.lfData2.setTemplateOptions({hideHeader: true, showQuestionCode: true});
@@ -254,8 +260,7 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
-          <button id="to-table" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
-
+          <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
         </div>
       </div>
 

@@ -344,8 +344,13 @@ LForms.HL7 = {
           }
         }
         // unit
-        if (item.unit)
-          itemObxArray[6] = item.unit.text + this.delimiters.component + item.unit.text + this.delimiters.component + this.LOINC_CS;
+        if (item.unit) {
+          var unitName ="";
+          if (item.unit.name !== undefined) {
+            unitName = item.unit.name;
+          }
+          itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
+        }
 
         // ignore ending empty fields
         foundValue = false;
