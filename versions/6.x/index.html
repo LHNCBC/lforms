@@ -52,9 +52,9 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (7.x)</li>
-        <li><a href="versions/6.x/index.html">6.x</a></li>
-        <li><a href="versions/5.5/index.html">5.5</a></li>
+        <li><a href="../../index.html">Current (7.x)</a></li>
+        <li>6.x (this version)</li>
+        <li><a href="../../versions/5.5/index.html">5.x</a></li>
       </ul>
     </div>
 
@@ -116,11 +116,11 @@ using LForms is by linking to the prebuilt version hosted on lforms-service.  Th
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
-  <dt>JavaScript</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/lforms.min.js</dd>
-  <dt>CSS</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/styles/lforms.min.css</dd>
+  <dt>JavaScript</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/styles/lforms.min.css</dd>
 </dl>
 
-<p>(Note that the URLs contain a release version number, 7.0.0, for which you
+<p>(Note that the URLs contain a release version number, 6.0.2, for which you
 can substitute any of the other prebuilt versions available at
 https://lforms-service.nlm.nih.gov/lforms-versions).</p>
 
@@ -144,14 +144,14 @@ header:</p>
 
 <pre><code>
 &lt;link
- href="https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/styles/lforms.min.css"
+ href="https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/styles/lforms.min.css"
  media="screen" rel="stylesheet" /&gt;
 </code></pre>
 
 And with your other JavaScript:
 
 <pre><code>&lt;script
- src="https://lforms-service.nlm.nih.gov/lforms-versions/7.0.0/lforms.min.js"
+ src="https://lforms-service.nlm.nih.gov/lforms-versions/6.0.2/lforms.min.js"
  &gt;&lt;/script&gt;
 </code></pre>
 
@@ -165,7 +165,7 @@ the window object, e.g.:
 Pass that variable name and the form container element to a utility function
 which will render the form:
 
-<pre><code>LForms.Util.addFormToPage('myFormDefinition', 'myFormContainer');
+<pre><code>WidgetUtil.addFormToPage('myFormDefinition', 'myFormContainer');
 </code></pre>
 
 <h3>Rendering a Form (AngularJS Method)</h3>
@@ -200,7 +200,7 @@ For example:</p>
 
 <pre><code>angular.module('myApp', ['lformsWidget'])
   .controller('myController', ['$scope', function ($scope) {
-    $scope.myFormData = new LForms.LFormsData(myFormDefinition);
+    $scope.myFormData = new LFormsData(myFormDefinition);
   }]);
 </code></pre>
 
@@ -211,7 +211,7 @@ For example:</p>
 codes for coded answer lists will be stored in the data model.  To retrieve that
 data, LForms provides the following utility method:</p>
 
-<pre><code>LForms.Util.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+<pre><code>WidgetUtil.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
 Or, from wihin an AngularJS app, there is also an API on the LFormsData object:</p>
@@ -219,7 +219,7 @@ Or, from wihin an AngularJS app, there is also an API on the LFormsData object:<
 <pre><code>$scope.myFormData.getUserData(noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>With no arguments (i.e. LForms.Util.getUserData()), the data for the first LForm
+<p>With no arguments (i.e. WidgetUtil.getUserData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
