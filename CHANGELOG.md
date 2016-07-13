@@ -2,9 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [6.2.0]   2016-06-16
+## [7.0.0]   2016-07-13
 ### Added
 - User data validations based on dataType and restrictions
+
+### Changed
+- Use a single namespace, LForms, for all LForms functions and objects. 
 
 ## [6.1.3]   2016-06-13
 ### Fixed

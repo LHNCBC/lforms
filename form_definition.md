@@ -277,12 +277,12 @@ about the meaning of each key:
 
 ###Utility Functions:
  
-* **WidgetUtil.getFormData()** - a function to get the complete form definition data, including the user input data 
+* **LForms.Util.getFormData()** - a function to get the complete form definition data, including the user input data 
   from the form. The returned data could be fed into a LForms widget directly to render the form. 
   It has the following parameters:
     * element - required. The containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.     
-* **WidgetUtil.getUserData()** - a function to get user input data from the form, with or without 
+* **LForms.Util.getUserData()** - a function to get user input data from the form, with or without 
   form definition data. It has the following parameters:
     * element - required, the containing HTML element that includes the LForm's rendered form. It could be the DOM
                 element or its id.

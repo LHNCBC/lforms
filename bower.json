@@ -42,7 +42,7 @@
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/cross_browser.js",
-    "app/scripts/lib/util.js",
+    "app/scripts/lib/lforms-util.js",
     "app/scripts/lib/lforms-hl7.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",

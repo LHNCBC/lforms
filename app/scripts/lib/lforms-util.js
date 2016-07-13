@@ -1,7 +1,10 @@
 /**
- * Utility tools
+ * LForms Utility tools
  */
-WidgetUtil = {
+if (typeof LForms === 'undefined')
+  LForms = {};
+
+LForms.Util = {
 
  /**
    *  Adds an LForms form to the page.
