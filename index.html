@@ -165,7 +165,7 @@ the window object, e.g.:
 Pass that variable name and the form container element to a utility function
 which will render the form:
 
-<pre><code>WidgetUtil.addFormToPage('myFormDefinition', 'myFormContainer');
+<pre><code>LForms.Util.addFormToPage('myFormDefinition', 'myFormContainer');
 </code></pre>
 
 <h3>Rendering a Form (AngularJS Method)</h3>
@@ -211,7 +211,7 @@ For example:</p>
 codes for coded answer lists will be stored in the data model.  To retrieve that
 data, LForms provides the following utility method:</p>
 
-<pre><code>WidgetUtil.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
+<pre><code>LForms.Util.getUserData(formElement, noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
 Or, from wihin an AngularJS app, there is also an API on the LFormsData object:</p>
@@ -219,7 +219,7 @@ Or, from wihin an AngularJS app, there is also an API on the LFormsData object:<
 <pre><code>$scope.myFormData.getUserData(noFormDefData, noEmptyValue, noHiddenItem)
 </code></pre>
 
-<p>With no arguments (i.e. WidgetUtil.getUserData()), the data for the first LForm
+<p>With no arguments (i.e. LForms.Util.getUserData()), the data for the first LForm
 found on that page will be returned, and will include the form definition,
 along with entries for questions the user left blank and for questions that were
 hidden by skip-logic (which the user might not have seen).  This default return
