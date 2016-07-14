@@ -180,7 +180,12 @@ angular.module('lformsWidget')
           var ret ='';
           if (item.codingInstructions && item.codingInstructions.length > 0) {
             var position = $scope.lfData.templateOptions.showCodingInstruction ? "inline" : "popover";
-            var format = $scope.lfData.templateOptions.allowHTMLInInstructions ? "html" : "escaped";
+            if ($scope.lfData.templateOptions.allowHTMLInInstructions && item.codingInstructionsFormat === "html") {
+              var format = "html";
+            }
+            else {
+              format = "escaped";
+            }
             ret = position + "-" + format;
           }
           return ret;

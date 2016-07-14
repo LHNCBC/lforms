@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.1.0]   2016-07-14
+### Added
+- Added an optional codingInstructionsFormat field on item level to specify 
+  the format of coding instructions for each individual item.
+
 ## [7.0.0]   2016-07-13
 ### Added
 - User data validations based on dataType and restrictions
