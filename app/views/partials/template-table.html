@@ -20,8 +20,8 @@
         <thead ng-if="lfData.templateOptions.obrHeader">
         <tr>
           <th class="lf-form-table-header"
-              ng-repeat="item in lfData.templateOptions.obrItems"><label
-            for="{{item.questionCode}}">{{item.question}}</label></th>
+              ng-repeat="item in lfData.templateOptions.obrItems">
+            <label for="{{item.questionCode}}">{{item.question}}</label></th>
         </tr>
         </thead>
         <tbody>
@@ -51,15 +51,19 @@
           </td>
         </tr>
         <tr class="lf-form-table-row lf-form-body">
-          <td colspan="5">
+          <td colspan="{{lfData.templateOptions.obrItems.length}}">
             <div>
               <table cellspacing="0" cellpadding="0" class="lf-form-table">
                 <colgroup>
-                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns" ng-style="{{getTableColumnStyle(obxCol)}}">
+                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
+                       ng-style="{{getTableColumnStyle(obxCol)}}"
+                       ng-if="!isUnitsColAndHidden(obxCol)">
                 </colgroup>
                 <thead>
                 <tr>
-                  <th class="lf-form-table-header" ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
+                  <th class="lf-form-table-header"
+                      ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
+                      ng-if="!isUnitsColAndHidden(obxCol)"
                       id="th_{{obxCol.name}}">{{obxCol.name}}</th>
                 </tr>
                 </thead>
@@ -144,7 +148,8 @@
                       </div>
                     </ng-form>
                   </td>
-                  <td ng-switch on="checkUnits(item)">
+                  <!--units-->
+                  <td ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.table.hideUnitsColumn">
                     <input class="units" ng-switch-when="list" type="text"
                            ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
                            placeholder="Select one" aria-labelledby="th_Units">
@@ -155,13 +160,13 @@
                 <!-- horizontal table -->
                 <tr ng-if="item._horizontalTableHeader && item.dataType!=='TITLE' && targetShown(item)"
                     class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-                  <td class="horizontal has-treeline" colspan="5"
+                  <td class="horizontal has-treeline" colspan="{{getVisibleObxColNumber()}}"
                       ng-include="'horizontal-table.html'"></td>
                 </tr>
                 <!-- title row -->
                 <tr ng-if="!item._inHorizontalTable && item.dataType==='TITLE' && targetShown(item)"
                     class="title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-                  <td class="name has-treeline" colspan="6">
+                  <td class="name has-treeline" colspan="{{getVisibleObxColNumber()}}">
                     <table class="t-treeline-field" >
                       <tr>
                         <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
@@ -206,14 +211,14 @@
                     </table>
                   </td>
                   <td class="button-col"></td>
-                  <td colspan="5" class="extra-field">
+                  <td colspan="{{getVisibleObxColNumber()-2}}" class="extra-field">
                     <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
                   </td>
                 </tr>
                 <!--a button row at the end of each repeating section-->
                 <tr ng-repeat-end ng-if="item._repeatingSectionList && targetShown(item)"
                     class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
-                  <td colspan="6" class="name has-treeline" >
+                  <td colspan="{{getVisibleObxColNumber()}}" class="name has-treeline" >
                     <table class="t-treeline-field" >
                       <tr>
                         <td ng-repeat="lastStatus in item._lastSiblingList track by $index"

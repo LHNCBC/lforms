@@ -145,6 +145,38 @@ angular.module('lformsWidget')
 
 
         /**
+         * Check if it is a Units column and it should be hidden
+         * @param col a column in the form's data table
+         * @returns {boolean}
+         */
+        $scope.isUnitsColAndHidden = function(col) {
+          var ret = false;
+          if (col.name === "Units" &&
+              $scope.lfData.templateOptions.table &&
+              $scope.lfData.templateOptions.table.hideUnitsColumn) {
+            ret = true;
+          }
+          return ret;
+        };
+
+
+        /**
+         * Get the number of visible columns of the form's data table
+         * (Units columns could be hidden)
+         * @returns {Number}
+         */
+        $scope.getVisibleObxColNumber = function() {
+          var colNumber = $scope.lfData.templateOptions.obxTableColumns.length;
+          if ($scope.lfData.templateOptions.table &&
+              $scope.lfData.templateOptions.table.hideUnitsColumn) {
+            colNumber = colNumber -1;
+          }
+
+          return colNumber;
+        };
+
+
+        /**
          * Get the CSS styles on an item itself
          * @param item an item in a form
          * @returns {{}} CSS style object

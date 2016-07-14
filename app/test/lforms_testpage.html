@@ -124,10 +124,17 @@
               console.log(eventAttr);
             });
 
-            $scope.changeOptions = function() {
+            $scope.toggleCodingInstructionFormat = function() {
               $scope.lfOption2 = {
-                allowHTMLInInstructions: false
+                allowHTMLInInstructions: !$scope.lfOption2.allowHTMLInInstructions
               };
+            };
+
+            $scope.toggleUnitsCol = function() {
+              if ($scope.lfOption2.table && $scope.lfOption2.table.hideUnitsColumn )
+                $scope.lfOption2.table = {hideUnitsColumn: false};
+              else
+                $scope.lfOption2.table = {hideUnitsColumn: true};
             };
 
             $scope.getFormDefDataAndResetForm = function() {
@@ -256,7 +263,8 @@
             </select>
           <p></p>
           <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form</button>
-          <button id="change-option" class="btn btn-primary" ng-click="changeOptions()">Change Options</button>
+          <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
+          <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
