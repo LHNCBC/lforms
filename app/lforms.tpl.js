@@ -687,13 +687,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                <colgroup>\n" +
     "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
     "                       ng-style=\"{{getTableColumnStyle(obxCol)}}\"\n" +
-    "                       ng-if=\"!isUnitsColAndHidden(obxCol)\">\n" +
+    "                       ng-if=\"!obxCol.hidden\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
     "                  <th class=\"lf-form-table-header\"\n" +
     "                      ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                      ng-if=\"!isUnitsColAndHidden(obxCol)\"\n" +
+    "                      ng-if=\"!obxCol.hidden\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +
@@ -779,7 +779,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </ng-form>\n" +
     "                  </td>\n" +
     "                  <!--units-->\n" +
-    "                  <td ng-switch on=\"checkUnits(item)\" ng-if=\"!lfData.templateOptions.table.hideUnitsColumn\">\n" +
+    "                  <td ng-switch on=\"checkUnits(item)\" ng-if=\"!isUnitsColHidden()\">\n" +
     "                    <input class=\"units\" ng-switch-when=\"list\" type=\"text\"\n" +
     "                           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "                           placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +

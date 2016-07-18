@@ -57,13 +57,13 @@
                 <colgroup>
                   <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
                        ng-style="{{getTableColumnStyle(obxCol)}}"
-                       ng-if="!isUnitsColAndHidden(obxCol)">
+                       ng-if="!obxCol.hidden">
                 </colgroup>
                 <thead>
                 <tr>
                   <th class="lf-form-table-header"
                       ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                      ng-if="!isUnitsColAndHidden(obxCol)"
+                      ng-if="!obxCol.hidden"
                       id="th_{{obxCol.name}}">{{obxCol.name}}</th>
                 </tr>
                 </thead>
@@ -149,7 +149,7 @@
                     </ng-form>
                   </td>
                   <!--units-->
-                  <td ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.table.hideUnitsColumn">
+                  <td ng-switch on="checkUnits(item)" ng-if="!isUnitsColHidden()">
                     <input class="units" ng-switch-when="list" type="text"
                            ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
                            placeholder="Select one" aria-labelledby="th_Units">

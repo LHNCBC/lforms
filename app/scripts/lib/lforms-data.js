@@ -103,9 +103,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     ],
 
     // template-specific settings
-    table: {
-      hideUnitsColumn: false, // whether to hide the units column;
-    },
+    table: {},
     list: {}
   },
   // default options for each supported templates, could move it to a configuration file

@@ -131,10 +131,7 @@
             };
 
             $scope.toggleUnitsCol = function() {
-              if ($scope.lfOption2.table && $scope.lfOption2.table.hideUnitsColumn )
-                $scope.lfOption2.table = {hideUnitsColumn: false};
-              else
-                $scope.lfOption2.table = {hideUnitsColumn: true};
+              $scope.lfData2.templateOptions.obxTableColumns[3].hidden = !$scope.lfData2.templateOptions.obxTableColumns[3].hidden;
             };
 
             $scope.getFormDefDataAndResetForm = function() {
