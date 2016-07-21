@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.1.0]   2016-07-21
+### Added
+- The code system of an answer list can now be specified in "answerCodeSystem"
+  on individual items in a form definition.
+
 ## [7.0.0]   2016-07-13
 ### Added
 - User data validations based on dataType and restrictions
