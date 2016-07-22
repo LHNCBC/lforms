@@ -11,15 +11,9 @@ module.exports = function (grunt) {
 
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
-    compress: 'grunt-contrib-compress',
-    copy: 'grunt-contrib-copy',
-    cssmin: 'grunt-contrib-cssmin',
-    nsp: 'grunt-nsp',
+    mochaTest: 'grunt-mocha-test',
     ngtemplates: 'grunt-angular-templates',
-    protractor: 'grunt-protractor-runner',
-    shell: 'grunt-shell',
-    uglify: 'grunt-contrib-uglify'
-
+    protractor: 'grunt-protractor-runner'
   });
 
   // Time how long tasks take. Can help when optimizing build times
@@ -455,7 +449,16 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+
+    mochaTest: {
+      options: {
+        reporter: 'spec'
+      },
+      src: ['test/mocha/*.spec.js']
     }
+
   });
 
 

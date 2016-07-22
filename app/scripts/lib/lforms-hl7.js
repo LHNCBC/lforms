@@ -260,13 +260,14 @@ LForms.HL7 = {
 
 
   /**
-   * Convert an item to a LH7 field
+   * Convert an item to a HL7 field
    * @param item an item in LForms form data
    * @param formInfo index info of the form
    * @returns {string}
    */
   itemToField: function(item, formInfo) {
     var hl7Seg = "";
+    var questionCS = this.LOINC_CS;
 
     if (item.dataType !== "TITLE") {
       var itemObrArray = new Array(this.obrFieldNum);
@@ -277,7 +278,8 @@ LForms.HL7 = {
         itemObrArray[0] = "OBR";
         itemObrArray[1] = ++formInfo.obrIndex;
 
-        itemObrArray[4] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
+        itemObrArray[4] = item.questionCode + this.delimiters.component +
+           item.question + this.delimiters.component + questionCS;
 
         // ignore ending empty fields
         var foundValue = false;
@@ -314,18 +316,21 @@ LForms.HL7 = {
         itemObxArray[0] = "OBX";
         itemObxArray[1] = formInfo.obxIndex;
         itemObxArray[2] = this.getHL7V2DataType(item.dataType);
-        itemObxArray[3] = item.questionCode + this.delimiters.component + item.question + this.delimiters.component + this.LOINC_CS;
+        itemObxArray[3] = item.questionCode + this.delimiters.component +
+          item.question + this.delimiters.component + questionCS;
         // sub id
         itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
 
         // value
         if (item.value !== undefined && item.value !== null) {
+          var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
           // multiple answers
-          if (angular.isArray(item.value)) {
+          if (Array.isArray(item.value)) {
             var obx5 = [];
             for(var j= 0, jLen=item.value.length; j<jLen; j++) {
               if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                obx5.push(item.value[j].code + this.delimiters.component + item.value[j].text + this.delimiters.component + this.LOINC_CS);
+                obx5.push(item.value[j].code + this.delimiters.component +
+                  item.value[j].text + this.delimiters.component + answerCS);
               }
             }
             itemObxArray[5] = obx5.join(this.delimiters.repetition);
@@ -333,7 +338,8 @@ LForms.HL7 = {
           // single answer
           else {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = item.value.code + this.delimiters.component + item.value.text + this.delimiters.component + this.LOINC_CS;
+              itemObxArray[5] = item.value.code + this.delimiters.component +
+                item.value.text + this.delimiters.component + answerCS;
             }
             else if (item.dataType === 'DT') {
               itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
@@ -381,3 +387,6 @@ LForms.HL7 = {
     return hl7Seg;
   }
 };
+
+if (typeof module !== 'undefined')
+  module.exports = LForms.HL7;
