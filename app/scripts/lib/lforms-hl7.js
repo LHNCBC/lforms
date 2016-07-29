@@ -81,7 +81,7 @@ LForms.HL7 = {
     field: "|",
     component: "^",
     subcomponent: "&",
-    repetition: "~",
+    repetition: "~ ",
     escape: "\\"
   },
 
@@ -260,6 +260,28 @@ LForms.HL7 = {
 
 
   /**
+   *  Constructs an OBX5 for a list item (CNE/CWE)
+   * @param itemVal a value for a list item
+   * @param dataType the data type of the item (CNE or CWE)
+   * @param answerCS the answer code system
+   * @return the OBX5 field string
+   */
+  makeOBX5: function(itemVal, dataType, answerCS) {
+    var rtn;
+    var code = itemVal.code;
+    if (dataType === 'CWE' && !code && code !== 0) {
+      // For non-coded values, the text goes in OBX 5.9
+      rtn = this.delimiters.component.repeat(8) + itemVal.text;
+    }
+    else {
+      rtn = code + this.delimiters.component +
+        itemVal.text + this.delimiters.component + answerCS;
+    }
+    return rtn;
+  },
+
+
+  /**
    * Convert an item to a HL7 field
    * @param item an item in LForms form data
    * @param formInfo index info of the form
@@ -328,18 +350,15 @@ LForms.HL7 = {
           if (Array.isArray(item.value)) {
             var obx5 = [];
             for(var j= 0, jLen=item.value.length; j<jLen; j++) {
-              if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                obx5.push(item.value[j].code + this.delimiters.component +
-                  item.value[j].text + this.delimiters.component + answerCS);
-              }
+              if (item.dataType === 'CNE' || item.dataType === 'CWE')
+                obx5.push(this.makeOBX5(item.value[j], item.dataType, answerCS));
             }
             itemObxArray[5] = obx5.join(this.delimiters.repetition);
           }
           // single answer
           else {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = item.value.code + this.delimiters.component +
-                item.value.text + this.delimiters.component + answerCS;
+              itemObxArray[5] = this.makeOBX5(item.value, item.dataType, answerCS);
             }
             else if (item.dataType === 'DT') {
               itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");

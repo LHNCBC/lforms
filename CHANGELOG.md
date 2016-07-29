@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.1.1]   2016-07-29
+### Changed
+- Uncoded CWE values rendered as HL7 are now placed into OBX5.9.
+- Adjusted formatting of HL7 output to allow the message lines to wrap after a
+  repeat. 
+
 ## [7.1.0]   2016-07-21
 ### Added
 - The code system of an answer list can now be specified in "answerCodeSystem"
