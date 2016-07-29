@@ -248,6 +248,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
+        includeSelf: true,
         src: ['<%= yeoman.app %>/index.html',
               '<%= yeoman.app %>/test/lforms_testpage.html',
               '<%= yeoman.app %>/test/directiveTest.html',
