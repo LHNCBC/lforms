@@ -483,6 +483,10 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
+  grunt.registerTask('test:server', [
+    'mochaTest'
+  ]);
+
   grunt.registerTask('test:e2e', [
     'clean:server',
     'ngtemplates',
@@ -495,6 +499,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'nsp',
+    'mochaTest',
     'build',
     'test:e2e'
   ]);
