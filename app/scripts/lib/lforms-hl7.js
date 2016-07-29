@@ -81,7 +81,7 @@ LForms.HL7 = {
     field: "|",
     component: "^",
     subcomponent: "&",
-    repetition: "~",
+    repetition: "~ ",
     escape: "\\"
   },
 
