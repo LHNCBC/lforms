@@ -39,6 +39,7 @@ about the meaning of each key:
           "other": string,
           "score": number
         }],
+        "answerCodeSystem": "string",
         "externallyDefined": string,
         "dataType": string,
         "units": [{
@@ -177,6 +178,8 @@ about the meaning of each key:
           which get summed into a total field.  See TOTALSCORE under <a
           href="#calculationMethod">calculationMethod</a> below for how to
           specify which field holds the total.
+    * answerCodeSystem - The code system for the answer list (specified either in
+      "answers" or in "externallyDefined").
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.
