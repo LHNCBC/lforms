@@ -687,13 +687,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                <colgroup>\n" +
     "                  <col ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
     "                       ng-style=\"{{getTableColumnStyle(obxCol)}}\"\n" +
-    "                       ng-if=\"!obxCol.hidden\">\n" +
+    "                       ng-if=\"!isUnitsColHidden(obxCol)\">\n" +
     "                </colgroup>\n" +
     "                <thead>\n" +
     "                <tr>\n" +
     "                  <th class=\"lf-form-table-header\"\n" +
     "                      ng-repeat=\"obxCol in lfData.templateOptions.obxTableColumns\"\n" +
-    "                      ng-if=\"!obxCol.hidden\"\n" +
+    "                      ng-if=\"!isUnitsColHidden(obxCol)\"\n" +
     "                      id=\"th_{{obxCol.name}}\">{{obxCol.name}}</th>\n" +
     "                </tr>\n" +
     "                </thead>\n" +

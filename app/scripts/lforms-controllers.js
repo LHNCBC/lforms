@@ -146,14 +146,18 @@ angular.module('lformsWidget')
 
         /**
          * Check if it is a Units column and it should be hidden
-         * @param col a column in the form's data table
+         * @param col optional, a column in the form's data table
          * @returns {boolean}
          */
-        $scope.isUnitsColHidden = function() {
+        $scope.isUnitsColHidden = function(col) {
           var ret = false;
-          var col = $scope.lfData.templateOptions.obxTableColumns[3];
-          if (col.name === "Units" && col.hidden) {
-            ret = true;
+          if ($scope.lfData.templateOptions.hideUnitsColumn) {
+            if (!col) {
+              col = $scope.lfData.templateOptions.obxTableColumns[3];
+            }
+            if (col.name === "Units") {
+              ret = true;
+            }
           }
           return ret;
         };
@@ -165,11 +169,9 @@ angular.module('lformsWidget')
          * @returns {Number}
          */
         $scope.getVisibleObxColNumber = function() {
-          var count = 0;
-          for (var i= 0, iLen=$scope.lfData.templateOptions.obxTableColumns.length; i<iLen; i++) {
-            if (!$scope.lfData.templateOptions.obxTableColumns[i].hidden)
-               count++;
-          }
+          var count = $scope.lfData.templateOptions.obxTableColumns.length;
+          if ($scope.lfData.templateOptions.hideUnitsColumn)
+              count--;
           return count;
         };
 

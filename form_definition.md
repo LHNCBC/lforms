@@ -91,6 +91,8 @@ about the meaning of each key:
       on top of the form. The default is false.
     * hideCheckBoxes - a boolean that controls whether to hide checkboxes in 
       the header section on top of the form. The default is false.
+    * hideUnitsColumn - a boolean that controls whether to all the Units column to
+      be hidden from the data table. The default is false.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML 
@@ -113,7 +115,6 @@ about the meaning of each key:
           with the keys of "colCSS" for columns styles. The values are an array of 
           hashes of valid CSS styles for the "col" DOM element. Here is an example: 
           `{"colCSS": [{"name":"width","value":"30%"}]}`        
-        * hidden - This indicates the column is hidden.  
     * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      

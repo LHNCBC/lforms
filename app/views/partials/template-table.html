@@ -57,13 +57,13 @@
                 <colgroup>
                   <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
                        ng-style="{{getTableColumnStyle(obxCol)}}"
-                       ng-if="!obxCol.hidden">
+                       ng-if="!isUnitsColHidden(obxCol)">
                 </colgroup>
                 <thead>
                 <tr>
                   <th class="lf-form-table-header"
                       ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                      ng-if="!obxCol.hidden"
+                      ng-if="!isUnitsColHidden(obxCol)"
                       id="th_{{obxCol.name}}">{{obxCol.name}}</th>
                 </tr>
                 </thead>
