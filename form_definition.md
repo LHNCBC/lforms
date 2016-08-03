@@ -95,7 +95,9 @@ about the meaning of each key:
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML 
-      content in the codingInstructions field. The default is false.
+      content in the codingInstructions field. The default is false. If it is false,
+      the **codingInstructionsFormat** field on item level is ignored, and no HTML
+      formatted coding instructions will be displayed.
     * useAnimation - a boolean that controls whether to use animation on the form. 
       The default is true.
     * displayControl - an object that controls the display of the selected template.
@@ -240,6 +242,11 @@ about the meaning of each key:
       present, a help button will appear next to the question, or if the "Show
       Help/Description" checkbox is used, the text will appear next to the
       question (so it should be brief).
+    * codingInstructionsFormat - (optional) the text format of the codingInstructions, 
+      either 'html' or 'text'. If not specified, the default is 'text'. 
+      If **allowHTMLInInstructions** in **templateOptions** is set to be false, 
+      then codingInstructionsFormat is ignored and treated as if it is set to 'text'. 
+      No HTML formatted coding instructions will be displayed.
     * <a name="calculationMethod"></a>calculationMethod - For fields whose value
       is calculated from other fields, the means of calculation is specified
       here.  At present we only support a formula for summing the <a

@@ -70,14 +70,14 @@ var TestPage = function() {
 
       name2: element(by.id('/54126-8/54125-0/1/2')),
       name3: element(by.id('/54126-8/54125-0/1/3')),
-      btnName : element(by.id('add-/54126-8/54125-0/1/1')),
-      btnName2 : element(by.id('add-/54126-8/54125-0/1/2')),
-      btnName3 : element(by.id('add-/54126-8/54125-0/1/3')),
-      btnDelName2 : element(by.id('del-/54126-8/54125-0/1/2')),
+      btnName: element(by.id('add-/54126-8/54125-0/1/1')),
+      btnName2: element(by.id('add-/54126-8/54125-0/1/2')),
+      btnName3: element(by.id('add-/54126-8/54125-0/1/3')),
+      btnDelName2: element(by.id('del-/54126-8/54125-0/1/2')),
 
       disease: element(by.id('/54126-8/54137-5/54140-9/1/1/1')),
       ageAtDiag: element(by.id('/54126-8/54137-5/54130-0/1/1/1')),
-      btnDiseasesHist : element(by.id('add-/54126-8/54137-5/1/1')),
+      btnDiseasesHist: element(by.id('add-/54126-8/54137-5/1/1')),
       disease2: element(by.id('/54126-8/54137-5/54140-9/1/2/1')),
       ageAtDiag2: element(by.id('/54126-8/54137-5/54130-0/1/2/1')),
       btnDiseasesHist2: element(by.id('add-/54126-8/54137-5/1/2')),
@@ -193,7 +193,7 @@ var TestPage = function() {
      * Display a form on the test page
      * @param formIndex the form's index in the forms list
      */
-    openFormByIndex: function(formIndex) {
+    openFormByIndex: function (formIndex) {
       // make a selection on the 'select' dropdown list
       var select = element(by.id('form-list'));
       selectDropdownbyNum(select, formIndex);
@@ -208,7 +208,7 @@ var TestPage = function() {
     /**
      * Open the base directive test page
      */
-    openBaseTestPage: function() {
+    openBaseTestPage: function () {
       browser.get(testPageUrl);
       browser.waitForAngular();
     },
@@ -249,7 +249,7 @@ var TestPage = function() {
     /**
      *  Open the glasgow form
      */
-    openGlasgowForm: function() {
+    openGlasgowForm: function () {
       this.openBaseTestPage();
       this.openFormByIndex(3);
     },
@@ -257,7 +257,7 @@ var TestPage = function() {
     /**
      *  Open the "full featured" form.
      */
-    openFullFeaturedForm: function() {
+    openFullFeaturedForm: function () {
       this.openBaseTestPage();
       this.openFormByIndex(4);
     },
@@ -265,7 +265,7 @@ var TestPage = function() {
     /**
      *  Open the form-builder form
      */
-    openFormBuilder: function() {
+    openFormBuilder: function () {
       this.openBaseTestPage();
       this.openFormByIndex(5);
     },
@@ -273,7 +273,7 @@ var TestPage = function() {
     /**
      *  Open the MDS3 form
      */
-    openMDS3: function() {
+    openMDS3: function () {
       this.openBaseTestPage();
       this.openFormByIndex(6);
     },
@@ -281,7 +281,7 @@ var TestPage = function() {
     /**
      *  Open the form with user data
      */
-    openFormWithUserData: function() {
+    openFormWithUserData: function () {
       this.openBaseTestPage();
       this.openFormByIndex(7);
     },
@@ -290,7 +290,7 @@ var TestPage = function() {
     /**
      *  Opens the RxTerms form.
      */
-    openRxTerms: function() {
+    openRxTerms: function () {
       this.openBaseTestPage();
       this.openFormByIndex(9);
     },
@@ -299,7 +299,7 @@ var TestPage = function() {
     /**
      *  Opens the List Template form
      */
-    openListTemplate: function() {
+    openListTemplate: function () {
       this.openBaseTestPage();
       this.openFormByIndex(10);
     },
@@ -308,7 +308,7 @@ var TestPage = function() {
     /**
      *  Opens the Matrix form #1.
      */
-    openMatrixLayout1: function() {
+    openMatrixLayout1: function () {
       this.openBaseTestPage();
       this.openFormByIndex(11);
     },
@@ -317,7 +317,7 @@ var TestPage = function() {
     /**
      *  Opens the Matrix form #2.
      */
-    openMatrixLayout2: function() {
+    openMatrixLayout2: function () {
       this.openBaseTestPage();
       this.openFormByIndex(12);
     },
@@ -326,11 +326,10 @@ var TestPage = function() {
     /**
      *  Opens the Validation Test form.
      */
-    openValidationTest: function() {
+    openValidationTest: function () {
       this.openBaseTestPage();
       this.openFormByIndex(13);
     }
-
   }
 };
 

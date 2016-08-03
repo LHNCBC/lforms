@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.2.0]   2016-08-01
+### Added
+- Added an optional codingInstructionsFormat field on item level to specify 
+  the format of coding instructions for each individual item.
+
+### Fixed
+- Added a missing polyfill.js file that should have been in 7.1.1.
+
 ## [7.1.1]   2016-07-29
 ### Changed
 - Uncoded CWE values rendered as HL7 are now placed into OBX5.9.
