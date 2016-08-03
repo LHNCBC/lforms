@@ -57,7 +57,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
-    hideUnitsColumn: false, // whether to hide the unit column/field
+    hideUnits: false, // whether to hide the unit column/field
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
@@ -75,7 +75,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       {"name" : "Units", "displayControl":{
         "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
       }
-    ],
+    ],  // only the values of "name" and "displayControl" can be changed
     obrHeader: true,  // controls if the obr table needs to be displayed
     obrItems: [
       {

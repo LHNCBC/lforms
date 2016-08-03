@@ -501,7 +501,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </ng-form>\n" +
     "  <!--unit-->\n" +
-    "  <div ng-switch on=\"checkUnits(item)\">\n" +
+    "  <div ng-switch on=\"checkUnits(item)\" ng-if=\"!lfData.templateOptions.hideUnits\">\n" +
     "    <div ng-switch-when=\"list\">\n" +
     "      <lf-units item=\"item\"></lf-units>\n" +
     "    </div>\n" +
@@ -779,7 +779,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    </ng-form>\n" +
     "                  </td>\n" +
     "                  <!--units-->\n" +
-    "                  <td ng-switch on=\"checkUnits(item)\" ng-if=\"!isUnitsColHidden()\">\n" +
+    "                  <td ng-switch on=\"checkUnits(item)\" ng-if=\"!lfData.templateOptions.hideUnits\">\n" +
     "                    <input class=\"units\" ng-switch-when=\"list\" type=\"text\"\n" +
     "                           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "                           placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +

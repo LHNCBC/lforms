@@ -149,7 +149,7 @@
                     </ng-form>
                   </td>
                   <!--units-->
-                  <td ng-switch on="checkUnits(item)" ng-if="!isUnitsColHidden()">
+                  <td ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits">
                     <input class="units" ng-switch-when="list" type="text"
                            ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
                            placeholder="Select one" aria-labelledby="th_Units">

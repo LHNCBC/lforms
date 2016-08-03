@@ -92,7 +92,7 @@ about the meaning of each key:
       on top of the form. The default is false.
     * hideCheckBoxes - a boolean that controls whether to hide checkboxes in 
       the header section on top of the form. The default is false.
-    * hideUnitsColumn - a boolean that controls whether to all the Units column to
+    * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
