@@ -65,4 +65,34 @@ describe('autocomp list', function() {
     expect(tp.FullFeaturedForm.cneField.getAttribute('value')).toEqual('Answer 2');
   });
 
+
+  it('should set column headers when specified', function() {
+    tp.openHL7GeneticPanel();
+    // Open the "simple variation" section
+    var kindField = tp.HL7GeneticPanel.kindOfMutations;
+    browser.wait(function() {
+      return kindField.isDisplayed();
+    }, 10000);
+    kindField.click();
+    kindField.sendKeys(protractor.Key.ARROW_DOWN);
+    kindField.sendKeys(protractor.Key.TAB);
+
+    // Bring up the variant ID search results list
+    var varIDField = tp.HL7GeneticPanel.variantID;
+    browser.wait(function() {
+      return varIDField.isDisplayed();
+    }, 10000);
+    varIDField.click();
+    varIDField.sendKeys('ar');
+
+    // Confirm that the header row appears over the search results
+    var searchRes = tp.Autocomp.searchResults;
+    expect(searchRes.isPresent()).toBe(true);
+    var EC = protractor.ExpectedConditions;
+    browser.wait(function() {
+      return searchRes.isDisplayed();
+    }, 10000);
+    browser.wait(EC.textToBePresentInElement(searchRes, 'Variant ID'), 5000);
+  });
+
 });
