@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [TBD]   Date TBD 
+## [7.3.0]   2016-08-04 
 ### Added
 - A listColHeaders option for specifying column headers to appear over the lists
   for search fields (lists specified with "externallyDefined").
