@@ -106,16 +106,6 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
-    * obxTableColumns - an array defining table columns of the table in the form. 
-      If you omit obxTableColumns, a default will be provided with four columns
-      for: "Name", buttons, "Value" and "Unit".
-    If you wish to specify your own definitions, each element in the array 
-    should be a hash with the following keys:
-        * name - the column header text
-        * displayControl - This controls display styles of the column. It is a hash
-          with the keys of "colCSS" for columns styles. The values are an array of 
-          hashes of valid CSS styles for the "col" DOM element. Here is an example: 
-          `{"colCSS": [{"name":"width","value":"30%"}]}`        
     * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      
@@ -143,6 +133,17 @@ about the meaning of each key:
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
+    * obxTableColumns - For the "table" template only. An array defining table columns of 
+      the table in the form. If you omit obxTableColumns, a default will be provided with 
+      four columns for: "Name", buttons, "Value" and "Units".  
+      If you wish to specify your own definitions, a complete array of these exact four columns 
+      should be provided. You cannot add a new column or remove a existing one or change the order.
+      Each element in the array should be a hash with the following keys:
+        * name - the column header text
+        * displayControl - This controls display styles of the column. It is a hash
+          with the keys of "colCSS" for columns styles. The values are an array of 
+          hashes of valid CSS styles for the "col" DOM element. Here is an example: 
+          `{"colCSS": [{"name":"width","value":"30%"}]}`          
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own

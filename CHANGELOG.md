@@ -2,9 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [7.3.0]   2016-08-02
+## [7.3.0]   2016-08-04
 ### Added
-- Added an option to hide the Units column defined in templateOptions.obxTableColumns. 
+- Added an option to hide the Units column/field.
 
 ## [7.2.0]   2016-08-01
 ### Added

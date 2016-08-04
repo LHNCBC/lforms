@@ -146,13 +146,13 @@ angular.module('lformsWidget')
 
         /**
          * Check if it is a Units column and it should be hidden
-         * @param col a column in the form's data table
+         * @param col index of a table column in the form's data table
          * @returns {boolean}
          */
-        $scope.isUnitsColHidden = function(col) {
+        $scope.isUnitsColHidden = function(index) {
           var ret = false;
           if ($scope.lfData.templateOptions.hideUnits) {
-            if (col.name === "Units") {
+            if (index === $scope.lfData._unitsColumnIndex) {
               ret = true;
             }
           }

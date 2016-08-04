@@ -62,20 +62,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
     displayControl: {"questionLayout": "vertical"},
-    obxTableColumns: [
-      {"name" : "Name", "displayControl":{
-        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "", "displayControl":{
-        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-      },
-      {"name" : "Value", "displayControl":{
-        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "Units", "displayControl":{
-        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-      }
-    ],  // only the values of "name" and "displayControl" can be changed
     obrHeader: true,  // controls if the obr table needs to be displayed
     obrItems: [
       {
@@ -103,18 +89,25 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     ],
 
-    // template-specific settings
-    table: {},
-    list: {}
-  },
-  // default options for each supported templates, could move it to a configuration file
-  _defaultOptionsForSupportedTemplates: {
-    // "table" specific options that overwrite the default options:
-    "table": {},
-    // "list" specific options that overwrite the default options:
-    "list": {}
+    // for the "table" template only. Each column has its purpose in the template. But each column's "name"
+    // and "displayControl" values can be changed.
+    obxTableColumns: [
+      {"name" : "Name", "displayControl":{
+        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "", "displayControl":{
+        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+      },
+      {"name" : "Value", "displayControl":{
+        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "Units", "displayControl":{
+        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+      }
+    ]
   },
 
+  _unitsColumnIndex: 3, // index of the Units column, which could be set to hidden or shown
 
   /**
    * Constructor
@@ -575,10 +568,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
 
     // templateOptions
-    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template] ?
-        this._defaultOptionsForSupportedTemplates[this.template] : {};
     // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, tempOptions, this.templateOptions);
+    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
   },
 
 
