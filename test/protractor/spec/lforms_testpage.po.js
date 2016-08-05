@@ -119,6 +119,11 @@ var TestPage = function() {
       searchResults: element(by.id('searchResults'))
     },
 
+    HL7GeneticPanel: {
+      kindOfMutations: element(by.id("/XXXXX-12/1")),
+      variantID: element(by.id("/XXXXX-9/XXXXX-5/1/1"))
+    },
+
     FormWithUserData: {
       q1: element(by.id('/q1/1')),
       q2: element(by.id('/q2/1')),
@@ -329,6 +334,15 @@ var TestPage = function() {
     openValidationTest: function () {
       this.openBaseTestPage();
       this.openFormByIndex(13);
+    },
+
+
+    /**
+     *  Opens the HL7 Genetic Test Panel.
+     */
+    openHL7GeneticPanel: function () {
+      this.openBaseTestPage();
+      this.openFormByIndex(14);
     }
   }
 };

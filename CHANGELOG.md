@@ -2,14 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [7.3.0]   2016-08-04
+## [7.4.0]   2016-08-05
 ### Added
 - Added an option to hide the Units column/field.
+
+## [7.3.0]   2016-08-04 
+### Added
+- A listColHeaders option for specifying column headers to appear over the lists
+  for search fields (lists specified with "externallyDefined").
 
 ## [7.2.0]   2016-08-01
 ### Added
 - Added an optional codingInstructionsFormat field on item level to specify 
   the format of coding instructions for each individual item.
+
+### Fixed
+- Added a missing polyfill.js file that should have been in 7.1.1.
 
 ## [7.1.1]   2016-07-29
 ### Changed

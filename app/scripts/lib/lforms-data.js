@@ -1857,6 +1857,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
         options.nonMatchSuggestions = false;
         options.tableFormat = true;
         options.valueCols = [0];
+        options.colHeaders = item.displayControl.listColHeaders;
       }
       else {
         var listItems = [], answers = [];

@@ -60,6 +60,10 @@ about the meaning of each key:
           }],
           "action": string
         },
+        displayControl: {
+          "colCSS": [{"name":"width","value":"30%"}, ...],
+          "listColHeaders": ["Column 1 Title", "Column 2", ...]
+        }
         "codingInstructions": string,
         "calculationMethod": {
           "name": string
@@ -68,7 +72,7 @@ about the meaning of each key:
     }
 ```
 
-###Keys:
+### Keys:
 
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
@@ -259,20 +263,26 @@ about the meaning of each key:
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
+        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
+          The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
+          the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
+          will be used to handle the list.
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a 
-        horizontal table. It only works when its parent item/section has a 
-        {"questionLayout": "horizontal"} value in its "displayControl".
+          horizontal table. It only works when its parent item/section has a 
+          {"questionLayout": "horizontal"} value in its "displayControl".
+        * listColHeaders - For questions that are search lists (specified with a
+          URL in "externallyDefined" and dataType "CNE" or "CWE") this specifies
+          the column headers that will appear over the rows of choices.
+          This is useful when each list item displays multiple fields.  If
+          nothing is specified for this attribute, column headers will not be
+          shown.
         * questionLayout - the layout of the questions in the section. It works on items 
-        that are sections, i.e. they contain sub items. Supported values are: 
-        'vertical' (default), 'horizontal' and 'matrix'.
-        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
-        The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
-        the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
-        will be used to handle the list.
+          that are sections, i.e. they contain sub items. Supported values are: 
+          'vertical' (default), 'horizontal' and 'matrix'.
 
 
-###Emitted (angular) Events:
+### Emitted (angular) Events:
 
 * **LF_EVENT_REPEATING_ITEM_ADDED** - emitted when a repeatable item or section is added to the form by clicking
   the "add" button. An event attr object is associated with the event, with the following fields: 
@@ -288,7 +298,7 @@ about the meaning of each key:
     * time - the time stamp when the event happens
 
 
-###Utility Functions:
+### Utility Functions:
  
 * **LForms.Util.getFormData()** - a function to get the complete form definition data, including the user input data 
   from the form. The returned data could be fed into a LForms widget directly to render the form. 
