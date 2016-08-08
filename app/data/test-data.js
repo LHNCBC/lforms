@@ -1134,6 +1134,7 @@ var validationTestForm = {
     {"questionCode": "YEAR", "dataType": "YEAR", "restrictions":{},"answerCardinality": null, "question": "YEAR"},
     {"questionCode": "MONTH", "dataType": "MONTH", "restrictions":{},"answerCardinality": null, "question": "MONTH"},
     {"questionCode": "DAY", "dataType": "DAY", "restrictions":{},"answerCardinality": null, "question": "DAY"},
+    {"questionCode": "NR", "dataType": "NR", "restrictions":{},"answerCardinality": null, "question": "NR"},
     {"questionCode": "ST", "dataType": "ST", "restrictions":null,"answerCardinality": null, "question": "ST with no restrictions"},
 
     {"questionCode": "INT1", "dataType": "INT", "restrictions":{"minInclusive": 5},"answerCardinality": null, "question": "INT with minInclusive restrictions"},
