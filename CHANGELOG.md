@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.3.1]   2016-08-08 
+### Fixed
+- Prevented HTML tags in listColHeaders from rendering, to reduce the risk
+  of XSS attacks.
+
 ## [7.3.0]   2016-08-04 
 ### Added
 - A listColHeaders option for specifying column headers to appear over the lists

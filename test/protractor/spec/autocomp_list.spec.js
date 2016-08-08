@@ -92,7 +92,8 @@ describe('autocomp list', function() {
     browser.wait(function() {
       return searchRes.isDisplayed();
     }, 10000);
-    browser.wait(EC.textToBePresentInElement(searchRes, 'Variant ID'), 5000);
+    // This test also checks the exscaping of HTML tags
+    expect($('#searchResults th:first-child').getText()).toBe('Variant ID <a>');
   });
 
 });

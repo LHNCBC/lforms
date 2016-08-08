@@ -1837,6 +1837,12 @@ var LFormsData = LForms.LFormsData = Class.extend({
         options.tableFormat = true;
         options.valueCols = [0];
         options.colHeaders = item.displayControl.listColHeaders;
+        if (options.colHeaders) {
+          var h = options.colHeaders;
+          // Escape HTML tags to prevent them from rendering
+          for (var i=0, len=h.length; i<len; ++i)
+            h[i] = h[i].replace(/</g, '&lt;');
+        }
       }
       else {
         var listItems = [], answers = [];

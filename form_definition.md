@@ -270,10 +270,11 @@ about the meaning of each key:
           {"questionLayout": "horizontal"} value in its "displayControl".
         * listColHeaders - For questions that are search lists (specified with a
           URL in "externallyDefined" and dataType "CNE" or "CWE") this specifies
-          the column headers that will appear over the rows of choices.
+          the column headers (as an array) that will appear over the rows of choices.
           This is useful when each list item displays multiple fields.  If
           nothing is specified for this attribute, column headers will not be
-          shown.
+          shown. Headers can contain "&nbsp;" for non-breaking spaces between
+          words, but cannot contain HTML tags. 
         * questionLayout - the layout of the questions in the section. It works on items 
           that are sections, i.e. they contain sub items. Supported values are: 
           'vertical' (default), 'horizontal' and 'matrix'.
