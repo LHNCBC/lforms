@@ -580,10 +580,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
-   * Merge two arrays of objects
-   * Note: Used in setTemplateOptions only.
-   * @param array1
-   * @param array2
+   * Merge two arrays of objects.
+   * Any object or field value that is null are skipped.
+   * Note: Used in setTemplateOptions only. Not supposed to be used by other functions.
+   * @param array1 the array where data are merged to
+   * @param array2 the array where data are merged from.
    * @private
    */
   _mergeTwoArrays: function(array1, array2) {
@@ -595,7 +596,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
           // if the value is not null or undefined
           if (array2[i][fields[j]] !== null || array2[i][fields[j]] !==undefined) {
             // update the value on the field in array 1.
-            // no copy here on the value, since the array2 is already a new copy
+            // no duplicated angular.copy here on the value if array2 contains copies of the objects already
             array1[i][fields[j]] = array2[i][fields[j]];
           }
         }
