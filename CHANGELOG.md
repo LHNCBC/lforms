@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.4.1]   2016-08-08 
+### Fixed
+- Prevented HTML tags in listColHeaders from rendering, to reduce the risk
+  of XSS attacks.
+
 ## [7.4.0]   2016-08-05
 ### Added
 - Added an option to hide the Units column/field.
