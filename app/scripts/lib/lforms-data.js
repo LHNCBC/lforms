@@ -569,18 +569,69 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     // templateOptions
     // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, this.templateOptions);
+
+
+    // make a copy of the existing options of the form data
+    var currentOptions = angular.copy(this.templateOptions);
+    var defaultOptions = angular.copy(this._defaultTemplateOptions);
+
+    this.setTemplateOptions(currentOptions, defaultOptions);
+  },
+
+
+  /**
+   * Merge two arrays of objects
+   * Note: Used in setTemplateOptions only.
+   * @param array1
+   * @param array2
+   * @private
+   */
+  _mergeTwoArrays: function(array1, array2) {
+    for (var i= 0, iLen = array2.length; i<iLen; i++) {
+      // if the element is not null or undefined
+      if (array2[i]) {
+        var fields = Object.keys(array2[i]);
+        for (var j= 0, jLen=fields.length; j<jLen; j++) {
+          // if the value is not null or undefined
+          if (array2[i][fields[j]] !== null || array2[i][fields[j]] !==undefined) {
+            // update the value on the field in array 1.
+            // no copy here on the value, since the array2 is already a new copy
+            array1[i][fields[j]] = array2[i][fields[j]];
+          }
+        }
+      }
+    }
   },
 
 
   /**
    * Set template options
-   * @param options new options
+   * @param newOptions new options to be merged with existing options
+   * @param existingOptions existing options in the form data
    */
-  setTemplateOptions: function(options) {
-    // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = jQuery.extend({}, this.templateOptions, options);
+  setTemplateOptions: function(newOptions, existingOptions) {
+    if (newOptions) {
+      if (!existingOptions)
+          existingOptions = angular.copy(this.templateOptions);
 
+      // get the fields that contains array
+      var obxTableColumns = newOptions.obxTableColumns;
+      delete newOptions.obxTableColumns;
+      // merge the options
+      this.templateOptions = jQuery.extend({}, existingOptions, newOptions);
+      // process obxTableColumns
+      if (obxTableColumns) {
+        this._mergeTwoArrays(this.templateOptions.obxTableColumns, obxTableColumns);
+      }
+
+      // if there is a new obrItems array, set up autocomplete options
+      if (newOptions.obrItems) {
+        for (var i=0, iLen=this.templateOptions.obrItems.length; i<iLen; i++) {
+          this._updateAutocompOptions(this.templateOptions.obrItems[i]);
+          this._updateUnitAutocompOptions(this.templateOptions.obrItems[i]);
+        }
+      }
+    }
   },
 
 

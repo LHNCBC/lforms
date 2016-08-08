@@ -131,6 +131,40 @@
               };
             };
 
+            $scope.changeObxObr = function() {
+
+              $scope.lfOption2 = {
+                obxTableColumns: [
+                  null,
+                  null,
+                  {"name":"Values"},
+                  {
+                    "name": "Units",
+                    "displayControl": {
+                      "colCSS": [{"name": "width", "value": "15%"}, {
+                        "name": "min-width",
+                        "value": "4em"
+                      }]
+                    }
+                  }
+                ],
+                obrItems: [
+                  {
+                    "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
+                    "displayControl": {
+                      "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+                    }
+                  },
+                  {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
+                    "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
+                    "displayControl": {
+                      "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+                    }
+                  }
+                ]
+              }
+            };
+
             $scope.toggleUnitsCol = function() {
               $scope.lfData2.templateOptions.hideUnits = !$scope.lfData2.templateOptions.hideUnits;
             };
@@ -267,6 +301,7 @@
           <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
           <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
         </div>
       </div>
 

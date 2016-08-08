@@ -116,7 +116,8 @@ about the meaning of each key:
     * obrItems - an array defining fields above the form (see
       [obrHeader](#obrHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where
-      Done", and "Comment".  If you wish to specify your own definitions, each
+      Done", and "Comment". If you wish to specify your own definitions, 
+      a complete array should be provided where each
       element in the array should be a hash with the following keys:
         * question - the field label
         * dataType - the kind of field.  This can be DT for a date field with a
@@ -140,14 +141,16 @@ about the meaning of each key:
     * obxTableColumns - For the "table" template only. An array defining table columns of 
       the table in the form. If you omit obxTableColumns, a default will be provided with 
       four columns for: "Name", buttons, "Value" and "Units".  
-      If you wish to specify your own definitions, a complete array of these exact four columns 
-      should be provided. You cannot add a new column or remove a existing one or change the order.
-      Each element in the array should be a hash with the following keys:
+      If you wish to specify your own definitions, an array of these exact four columns 
+      should be provided. You cannot add a new column or remove a existing one or change the order. 
+      A null value could be in place where the column does not need a change over the default values.
+      Each element in the array should be a hash with the following keys 
+      (A null value could be in place where the key's value is the default value.):
         * name - the column header text
         * displayControl - This controls display styles of the column. It is a hash
           with the keys of "colCSS" for columns styles. The values are an array of 
           hashes of valid CSS styles for the "col" DOM element. Here is an example: 
-          `{"colCSS": [{"name":"width","value":"30%"}]}`          
+          `{"colCSS": [{"name":"width","value":"30%"}]}`                  
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
