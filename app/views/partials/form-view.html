@@ -1,12 +1,4 @@
 <div class="lf-form-view" ng-controller="LFormsCtrl" ng-switch on="lfData.template">
-  <!--for backward compatibility-->
-  <div ng-switch-when="form-view-a">
-    <div ng-include="'template-table.html'"></div>
-  </div>
-  <!--for backward compatibility-->
-  <div ng-switch-when="form-view-b">
-    <div ng-include="'template-table.html'"></div>
-  </div>
   <div ng-switch-when="table">
     <div ng-include="'template-table.html'"></div>
   </div>

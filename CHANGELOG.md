@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.4.0]   2016-08-05
+### Added
+- Added an option to hide the Units column/field.
+
 ## [7.3.0]   2016-08-04 
 ### Added
 - A listColHeaders option for specifying column headers to appear over the lists

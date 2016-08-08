@@ -57,24 +57,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
     hideHeader: false, // whether to hide the header section on top of the form
     hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
+    hideUnits: false, // whether to hide the unit column/field
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
     displayControl: {"questionLayout": "vertical"},
-    obxTableColumns: [
-      {"name" : "Name", "displayControl":{
-        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "", "displayControl":{
-        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-      },
-      {"name" : "Value", "displayControl":{
-        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "Units", "displayControl":{
-        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-      }
-    ],
     obrHeader: true,  // controls if the obr table needs to be displayed
     obrItems: [
       {
@@ -100,18 +87,29 @@ var LFormsData = LForms.LFormsData = Class.extend({
           "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
         }
       }
+    ],
+
+    // for the "table" template only. Each column has its purpose in the template. But each column's "name"
+    // and "displayControl" values can be changed.
+    obxTableColumns: [
+      {"name" : "Name", "displayControl":{
+        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "", "displayControl":{
+        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
+      },
+      {"name" : "Value", "displayControl":{
+        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
+      },
+      {"name" : "Units", "displayControl":{
+        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
+      }
     ]
   },
-  // default options for each supported templates, could move it to a configuration file
-  _defaultOptionsForSupportedTemplates: {
-    // "table" specific options that overwrite the default options:
-    "table": {},
-    // "list" specific options that overwrite the default options:
-    "list": {}
-  },
 
+  _unitsColumnIndex: 3, // index of the Units column, which could be set to hidden or shown
 
-/**
+  /**
    * Constructor
    * @param data the lforms form definition data
    */
@@ -186,6 +184,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     this._checkFormControls();
 
   },
+
 
   /**
    * Reset internal structural data when repeatable items/groups are added or removed.
@@ -316,6 +315,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     this._adjustLastSiblingListForHorizontalLayout();
   },
 
+
   /**
    * Set up a mapping between controlling/source items and target items on the controlling/source item
    * @private
@@ -411,6 +411,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
   },
 
+
   /**
    * Preset skip logic status for newly added repeating items
    * @param item an item
@@ -431,6 +432,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
   },
 
+
   /**
    * Set the skip logic status value on an item and create a screen reader log
    * @param item an item
@@ -450,6 +452,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
   },
 
+
   /**
    * Create a list of reference to the items in the tree
    * @param items sibling items on one level of the tree
@@ -467,6 +470,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     }
   },
+
 
   /**
    * Update the list that contains the last sibling status of the parent item on each level starting from root
@@ -496,6 +500,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     }
   },
+
 
   /**
    * Convert the score rule definition to the standard formula definition
@@ -535,6 +540,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   },
 
+
   /**
    * Set default values if the data is missing.
    * @private
@@ -556,25 +562,79 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
 
     // template
-    if (!this.template || this.template.length == 0) {
-      this.template = "form-view-a";
+    if (!this.template || this.template.length == 0 ||
+        this.template === "table-view-a" || this.template === "table-view-b") {
+      this.template = "table";
     }
+
     // templateOptions
-    var tempOptions = this._defaultOptionsForSupportedTemplates[this.template] ?
-        this._defaultOptionsForSupportedTemplates[this.template] : {};
     // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = jQuery.extend({}, this._defaultTemplateOptions, tempOptions, this.templateOptions);
+
+
+    // make a copy of the existing options of the form data
+    var currentOptions = angular.copy(this.templateOptions);
+    var defaultOptions = angular.copy(this._defaultTemplateOptions);
+
+    this.setTemplateOptions(currentOptions, defaultOptions);
   },
+
+
+  /**
+   * Merge two arrays of objects.
+   * Any object or field value that is null are skipped.
+   * Note: Used in setTemplateOptions only. Not supposed to be used by other functions.
+   * @param array1 the array where data are merged to
+   * @param array2 the array where data are merged from.
+   * @private
+   */
+  _mergeTwoArrays: function(array1, array2) {
+    for (var i= 0, iLen = array2.length; i<iLen; i++) {
+      // if the element is not null or undefined
+      if (array2[i]) {
+        var fields = Object.keys(array2[i]);
+        for (var j= 0, jLen=fields.length; j<jLen; j++) {
+          // if the value is not null or undefined
+          if (array2[i][fields[j]] !== null || array2[i][fields[j]] !==undefined) {
+            // update the value on the field in array 1.
+            // no duplicated angular.copy here on the value if array2 contains copies of the objects already
+            array1[i][fields[j]] = array2[i][fields[j]];
+          }
+        }
+      }
+    }
+  },
+
 
   /**
    * Set template options
-   * @param options new options
+   * @param newOptions new options to be merged with existing options
+   * @param existingOptions existing options in the form data
    */
-  setTemplateOptions: function(options) {
-    // not to use deep copy here, because of the unexpected deep copy result on arrays.
-    this.templateOptions = jQuery.extend({}, this.templateOptions, options);
+  setTemplateOptions: function(newOptions, existingOptions) {
+    if (newOptions) {
+      if (!existingOptions)
+          existingOptions = angular.copy(this.templateOptions);
 
+      // get the fields that contains array
+      var obxTableColumns = newOptions.obxTableColumns;
+      delete newOptions.obxTableColumns;
+      // merge the options
+      this.templateOptions = jQuery.extend({}, existingOptions, newOptions);
+      // process obxTableColumns
+      if (obxTableColumns) {
+        this._mergeTwoArrays(this.templateOptions.obxTableColumns, obxTableColumns);
+      }
+
+      // if there is a new obrItems array, set up autocomplete options
+      if (newOptions.obrItems) {
+        for (var i=0, iLen=this.templateOptions.obrItems.length; i<iLen; i++) {
+          this._updateAutocompOptions(this.templateOptions.obrItems[i]);
+          this._updateUnitAutocompOptions(this.templateOptions.obrItems[i]);
+        }
+      }
+    }
   },
+
 
   /**
    * Set up the internal data for each item in the tree
@@ -735,6 +795,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
   },
 
+
   /**
    * Remove user data on an item or on all items in a section
    * @param item an item
@@ -749,6 +810,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     }
   },
+
 
   /**
    * Update the internal data for each item in the tree when items are added or removed or the values change
@@ -873,6 +935,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return angular.copy(ret);
   },
 
+
   /**
    * Process each item on each level of the tree structure
    * @param items the items array
@@ -941,6 +1004,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return itemsData;
   },
 
+
   /**
    * Special handling for user input values, to get the original answer or unit object if there is one
    * @param value the data object of the selected answer
@@ -988,6 +1052,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return retValue;
   },
 
+
   /**
    * Get the max _id of the repeating item on the same level
    * @param item an item
@@ -1006,6 +1071,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return maxId;
   },
 
+
   /**
    * Get the count of the repeating item on the same level
    * @param item an item
@@ -1022,6 +1088,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return count;
   },
+
 
   /**
    * Update the last repeating item status on each item
@@ -1084,6 +1151,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   },
 
+
   /**
    * Get the last item that will be displayed in a repeating section
    * @param item an item
@@ -1110,6 +1178,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return retItem;
   },
+
 
   /**
    * Set up the internal data for handling the horizontal table
@@ -1490,6 +1559,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return scores;
   },
 
+
   /**
    * Get a source item from the question code defined in a score rule
    * @param item the target item where a formula is defined
@@ -1508,6 +1578,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return sourceItems;
   },
+
 
   /**
    * Convert an item's value in its selected unit to the value in standard unit used for calculation
@@ -1535,6 +1606,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return values;
   },
+
 
   /**
    * Run the formula on the item and get the result
@@ -1571,6 +1643,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       item.value = this.getFormulaResult(item);
     }
   },
+
 
   /**
    * Update data by running the data control on the target item
@@ -1917,6 +1990,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
   },
 
+
   /**
    * Formula modules
    * Embedded in lforms-data.js. To be separated as a independent file.
@@ -1957,6 +2031,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     }
   },
+
 
   /**
    * Check if a number is within a range.
@@ -2014,6 +2089,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   },
 
+
   /**
    * Shallowly compares two JavaScript objects to see if their keys and values are equal.
    * @param obj1
@@ -2055,6 +2131,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return ret;
   },
+
 
   /**
    * Search upwards along the tree structure to find the item with a matching questionCode
@@ -2108,6 +2185,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return sourceItem;
   },
 
+
   /**
    * Get a source item from the question code defined in a skip logic
    * @param item the target item where a skip logic is defined
@@ -2119,6 +2197,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _getSkipLogicSourceItem: function(item, questionCode, checkAncestorSibling) {
     return this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
   },
+
 
   /**
    * Check if a source item's value meet a skip logic condition/trigger
@@ -2191,6 +2270,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return action;
   },
 
+
   /**
    * Check if all the conditions/triggers are met for a skip logic
    * @param item a target item where a skip logic is defined
@@ -2226,6 +2306,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return takeAction;
   },
 
+
   /**
    * Get the css class on the skip logic target field
    * @param item
@@ -2235,6 +2316,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       return item._skipLogicStatus;
   },
 
+
   /**
    * Check if the form is decided by skip logic as finished.
    * @returns {boolean|*}
@@ -2242,6 +2324,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   isFormDone: function() {
     return this._formDone;
   },
+
 
   /**
    * Check if the question needs an extra input
@@ -2270,6 +2353,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   },
 
+
   /**
    * Set the active row in table
    * @param item an item
@@ -2277,6 +2361,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   setActiveRow: function(item) {
     this._activeItem = item;
   },
+
 
   /**
    * Get the css class for the active row
@@ -2346,6 +2431,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
     },
 
+
     /**
      * Find a field's position in navigationMap from its element id
      * @param id the ID of the currently focused DOM element
@@ -2354,6 +2440,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     getCurrentPosition: function(id) {
       return id ? this._reverseNavigationMap[id] : null;
     },
+
 
     /**
      * Find the next field to get focus
@@ -2448,7 +2535,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
       return nextId;
     }
   }
-
 
 });
 
