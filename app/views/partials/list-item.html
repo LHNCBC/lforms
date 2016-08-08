@@ -68,7 +68,7 @@
     </div>
   </ng-form>
   <!--unit-->
-  <div ng-switch on="checkUnits(item)">
+  <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits">
     <div ng-switch-when="list">
       <lf-units item="item"></lf-units>
     </div>
