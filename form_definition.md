@@ -209,8 +209,17 @@ about the meaning of each key:
           not on the list.
         * REAL - a number which might not be an integer
         * INT - an integer
-        * DT - a date field (with a calendar widget)
-        * ST - a normal free-text string field
+        * DT - a date (displayed with a calendar widget)
+        * ST - a normal free-text string
+        * TX - a string for a long free-text
+        * YEAR - a string in the format of one to four digits that represents a year
+        * MONTH - a string in the format of one or two digits that represents a month
+        * DAY - a string in the format of one or two digits that represents a day
+        * URL - a string in a valid URL format
+        * EMAIL - a string in a valid email format
+        * PHONE - a string in a valid phone number format
+        * NR - a numeric range, in the format of two values separated by "^". 
+               Having one number on either side of "^" is allowed.
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
       following keys:
