@@ -1555,7 +1555,7 @@ var genetic = {
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "displayControl": {
-            "listColHeaders": ["Variant ID", "RefSeq ID", "Gene",
+            "listColHeaders": ["Variant&nbsp;ID <a>", "RefSeq ID", "Gene",
               "Nucleotide Change", "Amino Acid Change"]
           },
           "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
