@@ -137,7 +137,7 @@ describe('Validations:', function() {
       errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
       errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
       errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number'));
-      errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two (or one) numeric values separated by \'^\''));
+      errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
       errorMinInclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than or equal to ")),

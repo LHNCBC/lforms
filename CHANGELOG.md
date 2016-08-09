@@ -1,9 +1,10 @@
 # Change log
 
 This project follows [Semantic Versioning](http://semver.org/).
+
 ## [7.5.0]   2016-08-09
 ### Added
-- Added support for a new data type, NR
+- Added support for a new data type, NR (numeric range).
 
 ## [7.4.1]   2016-08-08 
 ### Fixed
