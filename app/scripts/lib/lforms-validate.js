@@ -60,7 +60,7 @@ LForms.Validations = {
     "CWE": "must be a value from the answer list or a user supplied value.", // Currently not used, it is handled by the autocomp-lhc directive
     "RTO": "must be a ratio value.",          // Currently not supported by LForms
     "QTY": "must be a quantity value.",       // Currently not supported by LForms
-    "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^",
+    "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
     "DAY": "must be a numeric value of day.",
