@@ -161,6 +161,7 @@ LForms.HL7 = {
       case "REAL":
         ret = "NM";
         break;
+      case "NR":
       case "TX":
       case "DT":
       case "DTM":

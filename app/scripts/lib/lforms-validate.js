@@ -36,13 +36,14 @@ LForms.Validations = {
     "CWE",     // complex type
     "RTO",     // complex type
     "QTY",     // complex type
+    "NR",      // complex type
     "YEAR",    // sub-type of "ST"
     "MONTH",   // sub-type of "ST"
     "DAY",     // sub-type of "ST"
     "URL",     // sub-type of "ST"
     "EMAIL",   // sub-type of "ST"
     "PHONE",   // sub-type of "ST"
-    ""        // for header, no input field
+    ""         // for header, no input field
   ],
 
   _errorMessages: {
@@ -59,6 +60,7 @@ LForms.Validations = {
     "CWE": "must be a value from the answer list or a user supplied value.", // Currently not used, it is handled by the autocomp-lhc directive
     "RTO": "must be a ratio value.",          // Currently not supported by LForms
     "QTY": "must be a quantity value.",       // Currently not supported by LForms
+    "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
     "DAY": "must be a numeric value of day.",
@@ -138,6 +140,10 @@ LForms.Validations = {
           break;
         case "DAY":
           var regex = /^(0?[1-9]|[12]\d|3[01])$/;
+          valid = regex.test(value);
+          break;
+        case "NR":
+          var regex = /^(\-?\d+(\.\d*)?)?\s*\^\s*(\-?\d+(\.\d*)?)?$/;
           valid = regex.test(value);
           break;
         case "DT":  // date, handled by date directive

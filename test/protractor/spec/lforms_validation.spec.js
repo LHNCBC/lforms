@@ -75,6 +75,7 @@ describe('Validations:', function() {
       phone = element(by.id("/PHONE/1")),
       email = element(by.id("/EMAIL/1")),
       url = element(by.id("/URL/1")),
+      nr = element(by.id("/NR/1")),
       int1 = element(by.id("/INT1/1")),
       int2 = element(by.id("/INT2/1")),
       int3 = element(by.id("/INT3/1")),
@@ -103,6 +104,7 @@ describe('Validations:', function() {
       lblphone = element(by.css("label[for='/PHONE/1'")),
       lblemail = element(by.css("label[for='/EMAIL/1'")),
       lblurl = element(by.css("label[for='/URL/1'")),
+      lblnr = element(by.css("label[for='/NR1/1'")),
       lblint1 = element(by.css("label[for='/INT1/1'")),
       lblint2 = element(by.css("label[for='/INT2/1'")),
       lblint3 = element(by.css("label[for='/INT3/1'")),
@@ -124,6 +126,7 @@ describe('Validations:', function() {
       lblcwe1 = element(by.css("label[for='/CWE1/1'")),
       lblcwe2 = element(by.css("label[for='/CWE2/1'"));
 
+
   var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
       errorINT = element(by.cssContainingText("div.validation-error", '"INT" must be an integer number')),
       errorREAL = element(by.cssContainingText("div.validation-error", '"REAL" must be a decimal number')),
@@ -134,6 +137,7 @@ describe('Validations:', function() {
       errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
       errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
       errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number'));
+      errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
       errorMinInclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than or equal to ")),
@@ -174,6 +178,11 @@ describe('Validations:', function() {
     it('should validate URL type', function () {
       testOneType(url, lblemail, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
+
+    it('should validate NR type', function () {
+      testOneType(nr, lblurl, errorNR, "-123 567", "-123^ 567");
+    });
+
   });
 
   describe('restrictions validations (table)', function () {
@@ -657,6 +666,11 @@ describe('Validations:', function() {
     it('should validate URL type', function () {
       testOneType(url, lblemail, errorURL, "http:/somecompany.com", "somcecompany.com");
     });
+
+    it('should validate NR type', function () {
+      testOneType(nr, lblurl, errorNR, "-123 567", "-123^ 567");
+    });
+
   });
 
   describe('restrictions validations (list)', function () {
