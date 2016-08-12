@@ -77,14 +77,15 @@ describe('Links on question codes', function() {
     var titleCode = element(by.css(".lf-form-title .item-code span"));
     var titleCodeLink = element(by.css(".lf-form-title .item-code a"));
     expect(titleCode.getText()).toBe("[all-in-one]");
+    // form's code should not have a link
     expect(titleCodeLink.isPresent()).toBe(false);
 
     var itemCodeLink0 = element.all(by.css(".name-label .item-code a")).get(0);
+    // the first question's code should have a link
     expect(itemCodeLink0.getText()).toBe("[type0]");
     var itemCode1 = element.all(by.css(".name-label .item-code span")).get(0);
+    // the second question's code should not have a link
     expect(itemCode1.getText()).toBe("[type1]");
-
-
   });
 
 });
