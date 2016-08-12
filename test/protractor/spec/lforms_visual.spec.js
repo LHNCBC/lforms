@@ -62,3 +62,29 @@ describe('Change Obx table columns ', function() {
   });
 
 });
+
+describe('Links on question codes', function() {
+
+  it('should show a link on LOINC typed question code and no links for non-LOINC typed question codes.', function () {
+    tp.openFullFeaturedForm();
+    browser.wait(function() {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
+
+    var codeCheckbox = tp.checkboxesFinder.get(0);
+    codeCheckbox.click();
+
+    var titleCode = element(by.css(".lf-form-title .item-code span"));
+    var titleCodeLink = element(by.css(".lf-form-title .item-code a"));
+    expect(titleCode.getText()).toBe("[all-in-one]");
+    expect(titleCodeLink.isPresent()).toBe(false);
+
+    var itemCodeLink0 = element.all(by.css(".name-label .item-code a")).get(0);
+    expect(itemCodeLink0.getText()).toBe("[type0]");
+    var itemCode1 = element.all(by.css(".name-label .item-code span")).get(0);
+    expect(itemCode1.getText()).toBe("[type1]");
+
+
+  });
+
+});
