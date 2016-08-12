@@ -81,7 +81,7 @@ LForms.HL7 = {
     field: "|",
     component: "^",
     subcomponent: "&",
-    repetition: "~ ",
+    repetition: "~",
     escape: "\\"
   },
 
@@ -252,7 +252,7 @@ LForms.HL7 = {
             obxIndex++;
             formInfo.obxIndex = obxIndex;
           }
-          hl7String += this.itemToField(formData.items[j], formInfo);
+          hl7String += this._itemToField(formData.items[j], formInfo);
         }
       }
     }
@@ -261,13 +261,24 @@ LForms.HL7 = {
 
 
   /**
-   *  Constructs an OBX5 for a list item (CNE/CWE)
+   * Calculate OBX4 values of each item in the form
+   * @param formData form data that also includes user data
+   * @private
+   */
+  _makeOBX4: function(formData) {
+
+
+  },
+
+
+  /**
+   * Constructs an OBX5 for a list item (CNE/CWE)
    * @param itemVal a value for a list item
    * @param dataType the data type of the item (CNE or CWE)
    * @param answerCS the answer code system
    * @return the OBX5 field string
    */
-  makeOBX5: function(itemVal, dataType, answerCS) {
+  _makeOBX5: function(itemVal, dataType, answerCS) {
     var rtn;
     var code = itemVal.code;
     if (dataType === 'CWE' && !code && code !== 0) {
@@ -288,7 +299,7 @@ LForms.HL7 = {
    * @param formInfo index info of the form
    * @returns {string}
    */
-  itemToField: function(item, formInfo) {
+  _itemToField: function(item, formInfo) {
     var hl7Seg = "";
     var questionCS = this.LOINC_CS;
 
@@ -330,7 +341,7 @@ LForms.HL7 = {
               formInfo.obxIndex = obxIndex;
             }
 
-            hl7Seg += this.itemToField(item.items[j], formInfo);
+            hl7Seg += this._itemToField(item.items[j], formInfo);
           }
         }
       }
@@ -352,14 +363,14 @@ LForms.HL7 = {
             var obx5 = [];
             for(var j= 0, jLen=item.value.length; j<jLen; j++) {
               if (item.dataType === 'CNE' || item.dataType === 'CWE')
-                obx5.push(this.makeOBX5(item.value[j], item.dataType, answerCS));
+                obx5.push(this._makeOBX5(item.value[j], item.dataType, answerCS));
             }
             itemObxArray[5] = obx5.join(this.delimiters.repetition);
           }
           // single answer
           else {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = this.makeOBX5(item.value, item.dataType, answerCS);
+              itemObxArray[5] = this._makeOBX5(item.value, item.dataType, answerCS);
             }
             else if (item.dataType === 'DT') {
               itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
