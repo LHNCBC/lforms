@@ -742,6 +742,7 @@ var allInOne =
   "header": null,
   "units": null,
   "template": "form-view-b",
+  "codeSystem": "OTHER",
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "items": [
@@ -750,7 +751,7 @@ var allInOne =
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
-      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null, "questionCodeSystem": "NON_LOINC",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
       "codingInstructionsFormat": "text",

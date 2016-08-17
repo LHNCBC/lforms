@@ -77,6 +77,8 @@ about the meaning of each key:
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
+* **codeSystem** - (optional) the code system for the code of the form. The default value
+  is "LOINC" when the form's **type** is "LOINC".
 * **name** - (required) The name of the form (to be shown to the user).
 * **type** - the form type, "LOINC" is the only one supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
@@ -162,6 +164,8 @@ about the meaning of each key:
     * questionCode - (required) A code identifying the question or section.
       This code needs to be unique among its sibling questions. 
       It should not contain '/'.
+    * questionCodeSystem - (optional) the code system for the question code. The default value
+      is "LOINC" when the form's **type** is "LOINC".
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
