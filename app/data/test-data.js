@@ -951,19 +951,6 @@ var allInOne =
               "onAttribute":"answers"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-          //      "itemCode": "itemWithExtraData",
-          //      "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-          //      // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
-          //    },
-          //    "onAttribute": "answers"
-          //  }
-          //]
         },
         //an item that gets the extra TEXT data whenever the source item has a data changes
         {
@@ -982,19 +969,6 @@ var allInOne =
               "onAttribute":"value"
             }
           ]
-
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "itemWithExtraData",
-          //      // "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-          //      "data": "value.STRENGTHS_AND_FORMS.[0]"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         }
 
         ////an item that gets the external LIST data whenever the source item has a data changes
@@ -1006,13 +980,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "LIST",
-        //        "itemCode": "itemWithExtraData",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
         //      },
+        //      "construction": "ARRAY"
+        //      "dataFormat": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}
         //      "onAttribute": "answers"
         //    }
         //  ],
@@ -1026,13 +1000,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "TEXT",
-        //        "itemCode": "itemWithExtraData",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": "value.STRENGTHS_AND_FORMS.[0]"
         //      },
+        //      "construction": "ARRAY"
+        //      "dataFormat": "value.STRENGTHS_AND_FORMS[0]"
         //      "onAttribute": "value"
         //    }
         //  ],
@@ -1074,18 +1048,6 @@ var allInOne =
           "onAttribute":"questionCardinality"
         }
       ],
-      //
-      //"dataControl": [
-      //  {
-      //    "source": {
-      //      "sourceType": "internal",
-      //      "sourceDataType": "TEXT",
-      //      "itemCode": "cardinalityControl",
-      //      "data": "value.questionCardinality"
-      //    },
-      //    "onAttribute": "questionCardinality"
-      //  }
-      //],
       "items":[
         {"questionCode": "colA", "question": "A ST", "dataType": "ST",
           "displayControl": {
@@ -1110,11 +1072,8 @@ var allInOne =
             "colCSS": [{"name": "width", "value":"50%"}]
           }
         }
-
       ]
     }
-
-
 
 
     // skip logic, controlling child items and headers (one level below)
@@ -1465,19 +1424,6 @@ var rxTerms = {
               "onAttribute":"answers"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-          //      "itemCode": "itemWithExtraData",
-          //      "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-          //      // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
-          //    },
-          //    "onAttribute": "answers"
-          //  }
-          //]
         }
       ]
     }
@@ -1624,17 +1570,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"code": "value.code", "text": "value.GeneSymbol"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "48013-7",
           "question": "Reference sequence ID",
@@ -1651,18 +1586,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"code": "value.code", "text": "value.RefSeqID"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
-
         },
         {"questionCode": "41103-3",
           "question": "DNA change - HGVS(c.)",
@@ -1678,17 +1601,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.NucleotideChange"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "48005-3",
           "question": "Amino acid change - HGVS(p.)",
@@ -1704,17 +1616,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.AminoAcidChange"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "69547-8",
           "question": "Reference allele",
@@ -1729,17 +1630,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.ReferenceAllele"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "X0029",
           "question": "Allele location"
@@ -1759,17 +1649,6 @@ var genetic = {
               }
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.AlternateAllele"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {
           "questionCode":"53034-5",
@@ -1846,18 +1725,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.Cytogenetic", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "53037-8",
           "question": "Clinical significance",
@@ -1926,18 +1793,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.phenotype"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "XXXXX-4",
           "question": "dbSNP ID for mutations",
@@ -1957,17 +1812,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.dbSNP", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
@@ -2011,18 +1855,6 @@ var genetic = {
               "onAttribute":"value"
             }
           ]
-
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "48018-6",
-          //      "data": {"code": "value.code", "text": "value.refseq_accession"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "X12313",
           "question": "Structural variant reported start-end",
@@ -2263,18 +2095,6 @@ var genetic2 ={
                 "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.Name"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {
           "questionCode": "XXXX1-1",
@@ -2337,18 +2157,6 @@ var genetic2 ={
                   "onAttribute":"value"
                 }
               ],
-
-              //"dataControl": [
-              //  {
-              //    "source": {
-              //      "sourceType": "internal",
-              //      "sourceDataType": "OBJECT",
-              //      "itemCode": "XXXXX-5",
-              //      "data": {"code": "value.code", "text": "value.GeneSymbol"}
-              //    },
-              //    "onAttribute": "value"
-              //  }
-              //],
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"6em"},
                   {"name": "min-width", "value":"2em"}]
@@ -2373,17 +2181,6 @@ var genetic2 ={
                   "onAttribute":"value"
                 }
               ]
-              //"dataControl": [
-              //  {
-              //    "source": {
-              //      "sourceType": "internal",
-              //      "sourceDataType": "OBJECT",
-              //      "itemCode": "XXXXX-5",
-              //      "data": {"code": "value.code", "text": "value.RefSeqID"}
-              //    },
-              //    "onAttribute": "value"
-              //  }
-              //]
             },
             {"questionCode": "41103-3",
               "question": "DNA change",
@@ -2404,17 +2201,6 @@ var genetic2 ={
                   "onAttribute":"value"
                 }
               ]
-              //"dataControl": [
-              //  {
-              //    "source": {
-              //      "sourceType": "internal",
-              //      "sourceDataType": "OBJECT",
-              //      "itemCode": "XXXXX-5",
-              //      "data": {"code": "value.code", "text": "value.NucleotideChange"}
-              //    },
-              //    "onAttribute": "value"
-              //  }
-              //]
             },
             {"questionCode": "48005-3",
               "question": "AA change",
@@ -2435,17 +2221,6 @@ var genetic2 ={
                   "onAttribute":"value"
                 }
               ]
-              //"dataControl": [
-              //  {
-              //    "source": {
-              //      "sourceType": "internal",
-              //      "sourceDataType": "OBJECT",
-              //      "itemCode": "XXXXX-5",
-              //      "data": {"code": "value.code", "text": "value.AminoAcidChange"}
-              //    },
-              //    "onAttribute": "value"
-              //  }
-              //]
             },
             {"questionCode": "XXXXX-17",
               "question": "NC/NG_RefSeq",
@@ -2496,18 +2271,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.dbSNP", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
@@ -2538,18 +2301,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.Cytogenetic", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {
           "questionCode":"53034-5",
@@ -2677,18 +2428,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.phenotype"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         }
       ]
     },
@@ -2727,18 +2466,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.Name"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "XXXXX-14",
           "question": "Variant type",
@@ -2832,17 +2559,6 @@ var genetic2 ={
                   "onAttribute":"value"
                 }
               ],
-              //"dataControl": [
-              //  {
-              //    "source": {
-              //      "sourceType": "internal",
-              //      "sourceDataType": "OBJECT",
-              //      "itemCode": "XXXXX-5",
-              //      "data": {"code": "value.code", "text": "value.GeneSymbol"}
-              //    },
-              //    "onAttribute": "value"
-              //  }
-              //],
               "displayControl": {
                 "colCSS": [{"name": "width", "value":"6em"},
                   {"name": "min-width", "value":"2em"}]
@@ -2927,18 +2643,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.dbSNP", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
@@ -2966,18 +2670,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": {"text": "value.Cytogenetic", "code": "value.code"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {
           "questionCode":"53034-5",
@@ -3105,18 +2797,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "TEXT",
-          //      "itemCode": "XXXXX-5",
-          //      "data": "value.phenotype"
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         }
       ]
     },
@@ -3160,18 +2840,6 @@ var genetic2 ={
               "onAttribute":"value"
             }
           ]
-          //
-          //"dataControl": [
-          //  {
-          //    "source": {
-          //      "sourceType": "internal",
-          //      "sourceDataType": "OBJECT",
-          //      "itemCode": "48018-6",
-          //      "data": {"code": "value.code", "text": "value.refseq_accession"}
-          //    },
-          //    "onAttribute": "value"
-          //  }
-          //]
         },
         {"questionCode": "X12313",
           "question": "Structural variant reported start-end",
