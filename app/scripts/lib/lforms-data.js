@@ -153,6 +153,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     this.code = data.code;
     this.name = data.name;
     this.type = data.type;
+    this.codeSystem = data.codeSystem;
     this.hasUserData = data.hasUserData;
     this.template = data.template;
     this.templateOptions = data.templateOptions || {};
@@ -591,8 +592,14 @@ var LFormsData = LForms.LFormsData = Class.extend({
     if (!this.type || this.type.length == 0) {
       this.type = "LOINC"
     }
+
+    // question coding system
+    if (this.type === "LOINC" && !this.codeSystem) {
+      this.codeSystem = "LOINC";
+    }
+
     // add a link to external site for item's definition
-    if (this.type === "LOINC") {
+    if (this.codeSystem === "LOINC") {
       this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
     }
 
@@ -805,8 +812,13 @@ var LFormsData = LForms.LFormsData = Class.extend({
         item._hasValidation = true;
       }
 
+      // question coding system
+      if (this.type ==="LOINC" && !item.questionCodeSystem) {
+        item.questionCodeSystem = "LOINC";
+      }
+
       // add a link to external site for item's definition
-      if (this.type === "LOINC") {
+      if (item.questionCodeSystem === "LOINC") {
         item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
       }
 
@@ -939,6 +951,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     var defData = {
       PATH_DELIMITER: this.PATH_DELIMITER,
       code: this.code,
+      codeSystem: this.codeSystem,
       name: this.name,
       type: this.type,
       template: this.template,

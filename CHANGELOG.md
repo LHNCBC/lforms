@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [7.6.0]   2016-08-12
+### Added
+- Added support for setting the code systems for the form and for questions.
+
 ## [7.5.0]   2016-08-09
 ### Added
 - Added support for a new data type, NR (numeric range).
