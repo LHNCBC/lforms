@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [8.0.0]   2016-08-19
+### Changed
+- Updated the design and docs of the data control function.
+
 ## [7.6.0]   2016-08-12
 ### Added
 - Added support for setting the code systems for the form and for questions.
