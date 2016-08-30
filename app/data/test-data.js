@@ -1006,7 +1006,7 @@ var allInOne =
         //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
         //      },
-        //      "construction": "ARRAY"
+        //      "construction": "SIMPLE"
         //      "dataFormat": "value.STRENGTHS_AND_FORMS[0]"
         //      "onAttribute": "value"
         //    }

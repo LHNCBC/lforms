@@ -1709,6 +1709,13 @@ var LFormsData = LForms.LFormsData = Class.extend({
   },
 
 
+  /**
+   * Create a data object based on the value in dataFormat
+   * @param dataFormat a string specifies how and where to get the data
+   * @param sourceItem the source item, which is the data source
+   * @returns {{}}
+   * @private
+   */
   _constructObjectByDataFormat: function(dataFormat, sourceItem) {
     var targetData = {};
     if (angular.isObject(dataFormat)) {
@@ -1720,23 +1727,40 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return targetData;
   },
 
+
+  /**
+   * Create a data array based on the value in dataFormat
+   * @param dataFormat a string specifies how and where to get the data
+   * @param sourceItem the source item, which is the data source
+   * @returns {{}}
+   * @private
+   */
   _constructArrayByDataFormat: function(dataFormat, sourceItem) {
 
     var targetData = [], abort = false;
     if (angular.isObject(dataFormat)) {
       var keys = Object.keys(dataFormat);
       var listByKeys = {}, iLen=keys.length;
+      var listLength = -1;
       for (var i= 0; i<iLen; i++) {
         listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
-        // if any data returned is not an array with the same length, stop the processing
+        // abort if any data returned is not an array
         if (!listByKeys[keys[i]] || !Array.isArray(listByKeys[keys[i]])) {
+          abort = true;
+          break;
+        }
+        else if (listLength === -1) {
+          listLength = listByKeys[keys[i]].length;
+        }
+        // abort if any returned array has a different length
+        else if (listLength !== listByKeys[keys[i]].length) {
           abort = true;
           break;
         }
       }
 
       if(!abort) {
-        // just check the first array's length, assuming all returned data arrays have the same length;
+        // just use the first array's length, assuming all returned data arrays have the same length;
         var listLength = listByKeys[keys[0]].length;
         for (var j=0; j<listLength; j++) {
           var elementData = {};
@@ -1749,6 +1773,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     }
     return targetData;
   },
+
 
   /**
    * Update the data on the item by running through the data control functions defined on this item.
@@ -1848,15 +1873,17 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * strQuery:   value[1].attr1 ===> 'va'
    * sourceItem: [{value: [ {attr1: 'v1', attr2: 'v2'}, {attr1: 'va', attr2: 'vb'}] }, {}]
    * strQuery:   [0].value[0].attr1 ===> 'v1'
-   * @param attributes a query path, such as "attr[index].subattr.subsubattr"
-   * where attr is an array, subattr and subsubattr are objects.
-   * @param sourceItem a source item object
+   * @param strQuery a query path, such as "attr[index].subattr.subsubattr"
+   *        where attr is an array, subattr and subsubattr are objects.
+   * @param sourceItem a source item object.
+   *        Note: While "." is allowed in the attribute names of javascript object,
+   *        here we assume "." is not used in the names of the item's attributes.
    * @returns {*}
    * @private
    */
   _getDataFromNestedAttributes: function(strQuery, sourceItem) {
 
-    var levels = strQuery.trim().split('.'); // "." is allowed in the attribute names of javascript object. We just assume "." is not used in the question item's field name
+    var levels = strQuery.trim().split('.');
     var dataSource = sourceItem, iLen = levels.length;
 
     for (var i = 0; i<iLen; i++) {
