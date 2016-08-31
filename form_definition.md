@@ -214,6 +214,7 @@ about the meaning of each key:
         * REAL - a number which might not be an integer
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
+        * TM - a string in the time format
         * ST - a normal free-text string
         * TX - a string for a long free-text
         * YEAR - a string in the format of one to four digits that represents a year
@@ -224,6 +225,10 @@ about the meaning of each key:
         * PHONE - a string in a valid phone number format
         * NR - a numeric range, in the format of two values separated by "^". 
                Having one number on either side of "^" is allowed.
+        * SECTION - a special type for sections, who contains sub items in the 
+                    <a href="#items">items</a> field       
+        * TITLE - a special type for separators that displays some texts.               
+               
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
       following keys:

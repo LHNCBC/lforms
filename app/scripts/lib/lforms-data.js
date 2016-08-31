@@ -27,19 +27,14 @@ var LFormsData = LForms.LFormsData = Class.extend({
       BSA: "BSA"
     },
     DATA_TYPE: {
-      BL:     "BL",    // not supported yet
       INT:    "INT",
       REAL:   "REAL",
       ST:     "ST",
       TX:     "TX",
-      BIN:    "BIN",   // not supported yet
       DT:     "DT",
-      DTM:    "DTM",   // not supported yet
-      TM:     "TM",    // not supported yet
+      TM:     "TM",
       CNE:    "CNE",
       CWE:    "CWE",
-      RTO:    "RTO",   // not supported yet
-      QTY:    "QTY",   // not supported yet
       NR:     "NR",
       YEAR:   "YEAR",
       MONTH:  "MONTH",
@@ -49,6 +44,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
       PHONE:  "PHONE",
       SECTION:"SECTION",
       TITLE:  "TITLE"
+      // BL:     "BL",    // not fully supported yet
+      // BIN:    "BIN",   // not supported yet
+      // DTM:    "DTM",   // not supported yet
+      // RTO:    "RTO",   // not supported yet
+      // QTY:    "QTY",   // not supported yet
     }
   },
 
@@ -1732,7 +1732,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * Create a data array based on the value in dataFormat
    * @param dataFormat a string specifies how and where to get the data
    * @param sourceItem the source item, which is the data source
-   * @returns {{}}
+   * @returns {Array}
    * @private
    */
   _constructArrayByDataFormat: function(dataFormat, sourceItem) {
@@ -1743,25 +1743,23 @@ var LFormsData = LForms.LFormsData = Class.extend({
       var listByKeys = {}, iLen=keys.length;
       var listLength = -1;
       for (var i= 0; i<iLen; i++) {
-        listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
+        var list = listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
         // abort if any data returned is not an array
-        if (!listByKeys[keys[i]] || !Array.isArray(listByKeys[keys[i]])) {
+        if (!Array.isArray(list)) {
           abort = true;
           break;
         }
         else if (listLength === -1) {
-          listLength = listByKeys[keys[i]].length;
+          listLength = list.length;
         }
         // abort if any returned array has a different length
-        else if (listLength !== listByKeys[keys[i]].length) {
+        else if (listLength !== list.length) {
           abort = true;
           break;
         }
       }
 
       if(!abort) {
-        // just use the first array's length, assuming all returned data arrays have the same length;
-        var listLength = listByKeys[keys[0]].length;
         for (var j=0; j<listLength; j++) {
           var elementData = {};
           for (var i= 0; i<iLen; i++) {
