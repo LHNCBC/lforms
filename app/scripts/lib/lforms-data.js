@@ -67,24 +67,24 @@ var LFormsData = LForms.LFormsData = Class.extend({
       {
         "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
         "displayControl": {
-          "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
+          "colCSS": [{"name": "width", "value": "20%"}, {"name": "min-width", "value": "2em"}]
         }
       },
       {
         "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
         "displayControl": {
-          "colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]
+          "colCSS": [{"name": "width", "value": "20%"}, {"name": "min-width", "value": "2em"}]
         }
       },
       {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
         "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
         "displayControl": {
-          "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
+          "colCSS": [{"name": "width", "value": "25%"}, {"name": "min-width", "value": "2em"}]
         }
       },
       {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
         "displayControl": {
-          "colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]
+          "colCSS": [{"name": "width", "value": "35%"}, {"name": "min-width", "value": "2em"}]
         }
       }
     ],
@@ -570,7 +570,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     // template
     if (!this.template || this.template.length == 0 ||
-        this.template === "table-view-a" || this.template === "table-view-b") {
+        this.template === "form-view-a" || this.template === "form-view-b") {
       this.template = "table";
     }
 

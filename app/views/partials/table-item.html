@@ -1,0 +1,165 @@
+<div class="lf-table-item">
+  <!-- question -->
+  <div class="lf-form-table-row row" ng-if="item.dataType !== 'TITLE'">
+    <div class="data-cell name has-treeline col-sm-6">
+      <table class="t-treeline-field">
+        <tr>
+          <td ng-if="!isSmallWindow()" class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"
+              ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
+          <td class="name-label">
+            <!--<div >-->
+              <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
+              <span><label for="{{item._elementId}}">{{item.question}}</label></span>
+              <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+                              <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+                              <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+                            </span>
+              <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">
+                              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+                              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
+                              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
+                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                                      type="button" id="help-{{item._elementId}}">?</button>
+                              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
+                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                                      type="button" id="help-{{item._elementId}}">?</button>
+                            </span>
+              <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
+                      class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+                      popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+            <!--</div>-->
+          </td>
+          <td class="button-col">
+            <button ng-if="!hasOneRepeatingItem(item)" class="float-button" type="button"
+                    ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
+                    title="Remove this '{{ item.question }}'">-</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <!-- input field -->
+    <div ng-switch on="item.dataType" class="data-cell values hasTooltip {{getInputColClass(item)}}">
+      <ng-form name="innerForm2">
+        <div class="lf-form-item-data tooltipContainer">
+          <div class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></div>
+          <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
+          <input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}" type="text"
+                 ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+                 ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+          <input ng-switch-when="CWE" name="{{item.question +'_'+ $id}}" type="text"
+                 ng-model="item.value" autocomplete-lhc="item._autocompOptions"
+                 ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
+                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+          <input ng-switch-when="REAL" name="{{item.question}}" type="text"
+                 ng-model="item.value" placeholder="{{item._toolTip}}"
+                 ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+          <input ng-switch-when="INT" name="{{item.question}}" type="text"
+                 ng-model="item.value" placeholder="{{item._toolTip}}"
+                 ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+          <input ng-switch-when="DT" name="{{item.question}}" type="text"
+                 ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
+                 ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+          <textarea ng-switch-when="TX" name="{{item.question}}"
+                    ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+                    id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
+                    ng-focus="setActiveRow(item)"
+                    ng-blur="activeRowOnBlur(item)">
+                        </textarea>
+          <input ng-switch-default name="{{item.question}}" type="text"
+                 ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
+                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
+                 ng-blur="activeRowOnBlur(item)">
+        </div>
+      </ng-form>
+    </div>
+    <!--units-->
+    <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits" class="data-cell units {{getUnitColClass(item)}}">
+      <input class="units" ng-switch-when="list" type="text"
+             ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
+             placeholder="Select one" aria-labelledby="th_Units">
+      <span ng-switch-when="none" > </span>
+    </div>
+  </div>
+
+  <!-- title row -->
+  <div ng-if="item.dataType==='TITLE'" class="title-row lf-form-table-row">
+    <div class="data-cell name has-treeline">
+      <table class="t-treeline-field" >
+        <tr>
+          <td ng-if="!isSmallWindow()" ng-repeat="lastStatus in item._lastSiblingList track by $index"
+              class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
+          <td>
+            <div class="name-label">
+              <span><label for="{{item._elementId}}">{{item.question}}</label></span>
+              <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions"></span>
+              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
+              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
+                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                      type="button" id="help-{{item._elementId}}">?</button>
+              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
+                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                      type="button" id="help-{{item._elementId}}">?</button>
+              <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
+                      class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+                      popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <!-- extra question -->
+  <div ng-if="needExtra(item)" class="extra-row lf-form-table-row row">
+    <div class="data-cell name has-treeline col-sm-6">
+      <table class="t-treeline-field" >
+        <tr>
+          <td ng-if="!isSmallWindow()" ng-repeat="lastStatus in item._lastSiblingList track by $index"
+              class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
+          <td>
+            <div class="name-label">
+              <span>&nbsp;</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="data-cell extra-field {{getInputColClass(item)}}">
+      <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
+    </div>
+  </div>
+
+
+  <!--sub sections, check each item's layout -->
+  <div ng-if="item.items" class="section">
+    <div ng-repeat="item in item.items" ng-if="targetShown(item)"
+         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
+         ng-click="setActiveRow(item)">
+      <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
+        <div ng-switch-when="horizontal">
+          <lf-section-horizontal></lf-section-horizontal>
+        </div>
+
+        <div ng-switch-when="matrix">
+          <lf-section-matrix></lf-section-matrix>
+        </div>
+        <div ng-switch-when="vertical">
+          <lf-table-item></lf-table-item>
+        </div>
+        <div ng-switch-default>
+          <lf-table-item></lf-table-item>
+        </div>
+      </div>
+      <div ng-if="!item.header">
+        <lf-table-item></lf-table-item>
+      </div>
+    </div>
+  </div>
+  <lf-repeating-button></lf-repeating-button>
+</div>

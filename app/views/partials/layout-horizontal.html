@@ -1,7 +1,7 @@
 <div class="lf-layout-horizontal" ng-if="lfData._horizontalTableInfo[item._horizontalTableId]">
   <table class="t-treeline-field">
     <tr>
-      <td ng-repeat="lastStatus in item._lastSiblingList track by $index" ng-if="lfData.template ==='table'"
+      <td ng-repeat="lastStatus in item._lastSiblingList track by $index" ng-if="lfData.template ==='table' && !isSmallWindow()"
           class="t-treeline "
           ng-class="getTreeLevelClass($index, item._lastSiblingList)" > &nbsp; </td>
       <td>
@@ -11,13 +11,13 @@
 
         <table class="lf-form-table lf-form-horizontal-table">
           <colgroup>
-            <col class="button-col" ng-if="item._questionRepeatable">
+            <col class="button-col" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
             <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders"
                  ng-style="{{getTableColumnStyle(col)}}">
           </colgroup>
           <thead>
           <tr>
-            <th class="lf-form-table-header" ng-if="item._questionRepeatable"></th>
+            <th class="lf-form-table-header" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1"></th>
             <th ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders"
                 class="lf-form-table-header"
                 id="{{col.id}}">{{col.label}}</th>
@@ -26,7 +26,7 @@
           <tbody id="" class="">
           <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index"
               class="data-row has-ng-animate">
-            <td class="button-col" ng-if="item._questionRepeatable">
+            <td class="button-col" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
               <button ng-if="!hasOneRepeatingItem(item)" type="button"
                       id="del-{{row.header._elementId}}"
                       class="float-button" ng-click="removeOneRepeatingItem(row.header)"
@@ -92,21 +92,5 @@
       </td>
     </tr>
   </table>
-  <!--a button at the end of each repeating section-->
-  <div ng-if="item._questionRepeatable && targetShown(item)"
-       class="button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
-    <div class="has-popover-warning">
-      <button type="button"
-              class="float-button" id="add-{{item._elementId}}"
-              title="Add another '{{ item.question }}'"
-              ng-click="addOneRepeatingItem(item, true)"
-              ng-blur="hideUnusedItemWarning(item)"
-              uib-popover='Please enter info in the blank "{{ item.question }}".'
-              popover-placement="top-left"
-              popover-trigger="none"
-              popover-is-open="item._showUnusedItemWarning">
-        Add another '{{item.question}}'
-      </button>
-    </div>
-  </div>
 </div>
+<lf-repeating-button></lf-repeating-button>

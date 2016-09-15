@@ -41,11 +41,23 @@
           }
         };
       }])
-      // each item, use inherited scope
+      // each item in list template, use inherited scope
       .directive('lfListItem', ["RecursionHelper", function (RecursionHelper) {
         return {
           restrict: "E",
           templateUrl: "list-item.html",
+          compile: function (element) {
+            // Use the compile function from the RecursionHelper,
+            // And return the linking function(s) which it returns
+            return RecursionHelper.compile(element);
+          }
+        }
+      }])
+      // each item in table template, use inherited scope
+      .directive('lfTableItem', ["RecursionHelper", function (RecursionHelper) {
+        return {
+          restrict: "E",
+          templateUrl: "table-item.html",
           compile: function (element) {
             // Use the compile function from the RecursionHelper,
             // And return the linking function(s) which it returns
@@ -163,6 +175,27 @@
           restrict: 'E',
           transclude: true,
           templateUrl: 'layout-matrix.html'
+        };
+      })
+      .directive('lfRepeatingButton', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'repeating-button.html'
+        };
+      })
+      .directive('lfFormControls', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-controls.html'
+        };
+      })
+      .directive('lfFormHeader', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-header.html'
         };
       })
       .directive('lfValidate', function () {

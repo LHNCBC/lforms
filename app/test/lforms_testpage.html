@@ -110,7 +110,8 @@
               {text: 'Matrix Layout, multiple selections', id: 'matrix-layout'},
               {text: "Validation Test", id: "validationTest"},
               {text: "HL7 Genetic Test Panel for Simple Variants", id: "X1000-0"},
-              {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"}
+              {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"},
+              {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"}
 
             ];
 
@@ -258,6 +259,9 @@
                   break;
                 case 'X2000-0':
                   lfData2 = new LForms.LFormsData(angular.copy(genetic2));
+                  break;
+                case '76806-9':
+                  lfData2 = new LForms.LFormsData(angular.copy(promis));
                   break;
                 case 'cde1':
                   //'CDE Sample form'

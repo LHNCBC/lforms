@@ -102,8 +102,14 @@
 
 /* rows in tables */
 .lf-form-table .lf-form-table-row {
-  border: 1px solid #ced5d9 ;
+  border:  solid #ced5d9 ;
+  border-width: 1px 0 0 0;
 }
+.lf-form-table .lf-form-table-row.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .lf-form-table .lf-form-table-row.section-header {
   background: #E8E8E8;
 }
@@ -113,7 +119,8 @@
 .lf-form-table td {
   border-color: #CED5D9;
   border-style: solid;
-  border-width: 1px 0 0 1px;
+  /*border-width: 1px 0 0 1px;*/
+  border-width: 0;
   padding: 2px;
 }
 .lf-form-table th:last-of-type,
@@ -124,10 +131,29 @@
   padding: 0;
 }
 
+.lf-form-table .data-cell {
+  border-color: #CED5D9;
+  border-style: solid;
+  /*border-width: 1px 0 0 0;*/
+  border-width: 0;
+  padding: 0 2px 0 2px;
+
+}
+.lf-form-table .data-cell.values {
+  /*border-width: 1px 1px 0 1px;*/
+  border-width: 0;
+}
+.lf-form-table .data-cell.values,
+.lf-form-table .data-cell.units{
+  padding: 2px;
+}
+
+
 /* buttons in tables */
 .lf-form-table-header .button-col,
 .lf-form-table .button-col {
   border-left: none;
+  width: 24px;
 }
 .lf-form button {
   border: 0 none;
@@ -400,6 +426,7 @@
   padding-bottom: 2px;
   overflow: hidden;
   border: none;
+  /*width: 90%*/
 }
 .lf-form .t-treeline {
   width: 26px;
@@ -543,23 +570,62 @@ Override color of select boxes in calendar widget title bar.
 .lf-form . .lf-form-table-title {
 
 }
-.lf-form.lf-template-list .lf-form-horizontal-table {
+.lf-form .lf-form-horizontal-table {
   margin-bottom: 5px;
 }
-.lf-form.lf-template-list .float-button {
+.lf-form .float-button {
   margin-bottom: 2px;
 }
 /*** end of template-list.html ***/
 
 /*** matrix layout ***/
-.lf-form.lf-template-list .lf-layout-matrix .lf-form--table-title {
+.lf-form .lf-layout-matrix .lf-form--table-title {
   padding: 5px;
 }
-.lf-form.lf-template-list .top-section .lf-layout-matrix{
+.lf-form .top-section .lf-layout-matrix{
   margin: 0 5px;
 }
-.lf-form.lf-template-list .lf-form-matrix-answer {
+.lf-form .lf-form-matrix-table .name {
+  width: 30%;
+  background-color: #e8e8e8;
+}
+.lf-form .lf-form-matrix-answer {
   padding-left: 5px;
   padding-right: 5px;
 }
+.lf-form .lf-form-matrix-cell,
+.lf-form .lf-form-matrix-cell-other {
+  text-align: center;
+}
+.lf-form .lf-form-matrix-table th,
+.lf-form .lf-form-matrix-table td {
+  padding: 0;
+}
 /*** end of matrix layout ***/
+
+
+/*** button row ***/
+.lf-form .lf-form-table-row.button-row {
+  /*padding-left: 26px;*/
+  background: none;
+}
+
+.lf-form.lf-template-table .lf-layout-horizontal,
+.lf-form.lf-template-table .lf-layout-matrix {
+    padding-left: 2px;
+
+}
+
+.lf-form {
+  line-height: 26px;
+}
+.lf-form .button-row {
+  line-height: 20px;
+}
+
+.lf-table-item {
+  display: table;
+}
+.lf-table-item .data-cell {
+  display: table-cell;
+}

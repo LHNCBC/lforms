@@ -1,7 +1,6 @@
-<form class="lf-form lf-template-list" novalidate autocomplete="false">
-  <div class="lf-form-view" ng-if="lfData">
-    <!--header options-->
-    <div class="lf-form-header" ng-include="'form-header.html'"></div>
+<form ng-if="lfData" class="lf-form lf-template-list" novalidate autocomplete="false">
+    <!--form options-->
+    <lf-form-controls></lf-form-controls>
     <!--form title-->
     <h3 class="lf-form-title">
       <span>{{lfData.name}}</span>
@@ -13,17 +12,22 @@
               class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
               popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
     </h3>
+    <!--form header-->
+    <lf-form-header></lf-form-header>
     <!--form body-->
     <div class="lf-form-body">
 
-      <!--when the entire form is in horizontal or matrix layouts-->
+      <!--check form level questionLayout for matrix and horizontal layouts-->
       <div ng-switch on="lfData.templateOptions.displayControl.questionLayout">
+        <!--horizontal-->
         <div ng-switch-when="horizontal" class="top-section">
           <lf-section-horizontal></lf-section-horizontal>
         </div>
+        <!--matrix-->
         <div ng-switch-when="matrix" class="top-section">
           <lf-section-matrix></lf-section-matrix>
         </div>
+        <!--vertical-->
         <div ng-switch-default>
           <!-- check each top level item's layout -->
           <div ng-if="lfData.items">
@@ -52,9 +56,4 @@
         </div>
       </div>
     </div>
-  </div>
 </form>
-
-
-
-<button type="button" ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>

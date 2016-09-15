@@ -1,7 +1,7 @@
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
-      ['$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
-        function ($scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
+      ['$window','$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+        function ($window,$scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
         $scope.debug = false;
@@ -30,6 +30,34 @@ angular.module('lformsWidget')
           selectOtherMonths: true,
           showMonthAfterYear: true,
           buttonText: ""
+        };
+
+
+        // check the window width when it changes width
+        angular.element($window).bind('resize', function () {
+          var width = $window.innerWidth;
+          var type;
+          // extra small screen
+          if (width < 768)
+            type = "xs";
+          // small screen
+          else if (width < 992)
+            type = "sm";
+          // medium screen
+          else if (width < 1200)
+            type = "md";
+          // large screen
+          else
+            type = "lg";
+
+          $scope.$apply(function() {$scope._screenType = type});
+
+          console.log($scope._screenType)
+        });
+
+
+        $scope.isSmallWindow = function() {
+          return $scope._screenType === "xs"
         };
 
         /**
@@ -155,6 +183,30 @@ angular.module('lformsWidget')
             if (index === $scope.lfData._unitsColumnIndex) {
               ret = true;
             }
+          }
+          return ret;
+        };
+
+
+        $scope.getUnitColClass = function(item) {
+
+          var ret = '';
+          if (!item) {
+            ret = $scope.lfData.templateOptions.hideUnits ? '' : 'col-sm-3';
+          }
+          else if (item.units && !$scope.lfData.templateOptions.hideUnits) {
+            ret = "col-sm-3";
+          }
+          return ret;
+        };
+
+        $scope.getInputColClass = function(item) {
+          var ret = 'col-sm-6';
+          if (!item) {
+            ret = $scope.lfData.templateOptions.hideUnits ? 'col-sm-6' : 'col-sm-3';
+          }
+          else if (item.units && !$scope.lfData.templateOptions.hideUnits) {
+            ret = "col-sm-3";
           }
           return ret;
         };
