@@ -56,8 +56,8 @@ LForms.Validations = {
     "DT": "must be a date value.",        // not used, handled by lf-date directive
     "DTM": "must be a date and time value.",  // not supported
     "TM": "must be a time value.",
-    "CNE": "must be a value from the answer list.",  // not used, handled by the autocomp-lhc directive
-    "CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomp-lhc directive
+    "CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
+    "CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",          // not supported
     "QTY": "must be a quantity value.",       // not supported
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",

@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [8.0.0]   2016-08-19
+## [8.0.0]   2016-09-21
 ### Changed
 - Updated the design and docs of the data control function.
 

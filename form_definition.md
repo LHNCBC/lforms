@@ -225,9 +225,9 @@ about the meaning of each key:
         * PHONE - a string in a valid phone number format
         * NR - a numeric range, in the format of two values separated by "^". 
                Having one number on either side of "^" is allowed.
-        * SECTION - a special type for sections, who contains sub items in the 
+        * SECTION - a special type for sections, which contain sub items in the 
                     <a href="#items">items</a> field       
-        * TITLE - a special type for separators that displays some texts.               
+        * TITLE - a special type for separators that displays some text.               
                
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
@@ -303,7 +303,7 @@ about the meaning of each key:
           that are sections, i.e. they contain sub items. Supported values are: 
           'vertical' (default), 'horizontal' and 'matrix'.
     * dataControl - an array of objects that control the current question's attributes when the controlling
-      source question's value changes. Supported the fields are:
+      source question's value changes. Supported fields are:
         * source - an object identifying the controlling source question. It has the following fields:
             * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The 
               default value is "INTERNAL".
