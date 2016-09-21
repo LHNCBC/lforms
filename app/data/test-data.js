@@ -944,13 +944,12 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-                "itemCode": "itemWithExtraData",
-                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "answers"
+              "construction":"ARRAY",
+              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
+              "onAttribute":"answers"
             }
           ]
         },
@@ -963,13 +962,12 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "itemWithExtraData",
-                // "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                "data": "value.STRENGTHS_AND_FORMS.[0]"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.STRENGTHS_AND_FORMS[0]",
+              "onAttribute":"value"
             }
           ]
         }
@@ -983,13 +981,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "LIST",
-        //        "itemCode": "itemWithExtraData",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
         //      },
+        //      "construction": "ARRAY"
+        //      "dataFormat": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}
         //      "onAttribute": "answers"
         //    }
         //  ],
@@ -1003,13 +1001,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "TEXT",
-        //        "itemCode": "itemWithExtraData",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
         //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": "value.STRENGTHS_AND_FORMS.[0]"
         //      },
+        //      "construction": "SIMPLE"
+        //      "dataFormat": "value.STRENGTHS_AND_FORMS[0]"
         //      "onAttribute": "value"
         //    }
         //  ],
@@ -1043,12 +1041,12 @@ var allInOne =
       "dataControl": [
         {
           "source": {
-            "sourceType": "internal",
-            "sourceDataType": "TEXT",
-            "itemCode": "cardinalityControl",
-            "data": "value.questionCardinality"
+            "sourceType":"INTERNAL",
+            "sourceItemCode":"cardinalityControl"
           },
-          "onAttribute": "questionCardinality"
+          "construction":"SIMPLE",
+          "dataFormat": "value.questionCardinality",
+          "onAttribute":"questionCardinality"
         }
       ],
       "items":[
@@ -1075,11 +1073,8 @@ var allInOne =
             "colCSS": [{"name": "width", "value":"50%"}]
           }
         }
-
       ]
     }
-
-
 
 
     // skip logic, controlling child items and headers (one level below)
@@ -1422,13 +1417,12 @@ var rxTerms = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-                "itemCode": "itemWithExtraData",
-                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "answers"
+              "construction":"ARRAY",
+              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
+              "onAttribute":"answers"
             }
           ]
         }
@@ -1569,12 +1563,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.GeneSymbol"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -1585,15 +1579,14 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"code": "value.code", "text": "value.RefSeqID"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.RefSeqID"},
+              "onAttribute":"value"
             }
           ]
-
         },
         {"questionCode": "41103-3",
           "question": "DNA change - HGVS(c.)",
@@ -1601,12 +1594,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.NucleotideChange"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.NucleotideChange",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1616,12 +1609,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.AminoAcidChange"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.AminoAcidChange",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1630,12 +1623,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.ReferenceAllele"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.ReferenceAllele",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1647,12 +1640,14 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.AlternateAllele"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "target": {
+                "construction":"SIMPLE",
+                "dataFormat": "value.AlternateAllele",
+                "onAttribute":"value"
+              }
             }
           ]
         },
@@ -1723,12 +1718,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -1791,12 +1786,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat":"value.phenotype",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1810,12 +1805,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"text": "value.dbSNP", "code": "value.code"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -1853,12 +1848,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "48018-6",
-                "data": {"code": "value.code", "text": "value.refseq_accession"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"48018-6"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"text": "value.refseq_accession", "code": "value.code"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2093,12 +2088,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.Name"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+                "construction":"SIMPLE",
+                "dataFormat": "value.Name",
+                "onAttribute":"value"
             }
           ]
         },
@@ -2155,12 +2150,12 @@ var genetic2 ={
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "onAttribute":"value"
                 }
               ],
               "displayControl": {
@@ -2179,12 +2174,12 @@ var genetic2 ={
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.RefSeqID"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.RefSeqID"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2199,12 +2194,12 @@ var genetic2 ={
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.NucleotideChange"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.NucleotideChange"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2219,12 +2214,12 @@ var genetic2 ={
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.AminoAcidChange"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.AminoAcidChange"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2269,12 +2264,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.dbSNP"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2299,12 +2294,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2426,12 +2421,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.phenotype",
+              "onAttribute":"value"
             }
           ]
         }
@@ -2464,12 +2459,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.Name"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.Name",
+              "onAttribute":"value"
             }
           ]
         },
@@ -2557,12 +2552,12 @@ var genetic2 ={
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "onAttribute":"value"
                 }
               ],
               "displayControl": {
@@ -2641,12 +2636,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.dbSNP"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2668,12 +2663,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2795,12 +2790,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.phenotype",
+              "onAttribute":"value"
             }
           ]
         }
@@ -2838,12 +2833,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "48018-6",
-                "data": {"code": "value.code", "text": "value.refseq_accession"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"48018-6"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.refseq_accession"},
+              "onAttribute":"value"
             }
           ]
         },

@@ -23,19 +23,19 @@ LForms.Validations = {
 
   // supported data types
   _dataTypes : [
-    "BL",
+    "BL",      // not fully supported yet
     "INT",
     "REAL",
     "ST",
     "TX",      // long text
-    "BIN",
-    "DT",      // complex type (or sub-type of 'ST' ?)
-    "DTM",     // complex type (or sub-type of 'ST' ?)
-    "TM",      // complex type (or sub-type of 'ST' ?)
+    "BIN",     // not supported yet
+    "DT",      // complex type
+    "DTM",     // complex type, not supported yet
+    "TM",      // complex type
     "CNE",     // complex type
     "CWE",     // complex type
-    "RTO",     // complex type
-    "QTY",     // complex type
+    "RTO",     // complex type, not supported yet
+    "QTY",     // complex type, not supported yet
     "NR",      // complex type
     "YEAR",    // sub-type of "ST"
     "MONTH",   // sub-type of "ST"
@@ -47,19 +47,19 @@ LForms.Validations = {
   ],
 
   _errorMessages: {
-    "BL": "must be a boolean (true/false).",     // Currently not supported by LForms
+    "BL": "must be a boolean (true/false).",     // not fully supported
     "INT": "must be an integer number.",
     "REAL": "must be a decimal number.",
-    "ST": "must be a string value.",      // Currently not used.
-    "TX": "must be a text value.",        // Currently not used.
-    "BIN": "must be a binary value.",     // Currently not supported by LForms
-    "DT": "must be a date value.",
-    "DTM": "must be a date and time value.",  // Currently not supported by LForms
-    "TM": "must be a time value.",            // Currently not supported by LForms
-    "CNE": "must be a value from the answer list.",  // Currently not used, it is handled by the autocomp-lhc directive
-    "CWE": "must be a value from the answer list or a user supplied value.", // Currently not used, it is handled by the autocomp-lhc directive
-    "RTO": "must be a ratio value.",          // Currently not supported by LForms
-    "QTY": "must be a quantity value.",       // Currently not supported by LForms
+    "ST": "must be a string value.",      // not needed
+    "TX": "must be a text value.",        // not needed
+    "BIN": "must be a binary value.",     // not supported
+    "DT": "must be a date value.",        // not used, handled by lf-date directive
+    "DTM": "must be a date and time value.",  // not supported
+    "TM": "must be a time value.",
+    "CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
+    "CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
+    "RTO": "must be a ratio value.",          // not supported
+    "QTY": "must be a quantity value.",       // not supported
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",

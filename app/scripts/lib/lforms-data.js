@@ -5,6 +5,53 @@ if (typeof LForms === 'undefined')
   LForms = {};
 
 var LFormsData = LForms.LFormsData = Class.extend({
+
+  // constants
+  _CONSTANTS: {
+    DATA_CONTROL: {
+      CONSTRUCTION_ARRAY: "ARRAY",
+      CONSTRUCTION_OBJECT: "OBJECT",
+      CONSTRUCTION_SIMPLE: "SIMPLE",
+      SOURCE_INTERNAL: "INTERNAL",
+      EXTERNAL: "EXTERNAL" // not supported yet
+    },
+    SKIP_LOGIC: {
+      ACTION_SHOW: "show",
+      ACTION_HIDE: "hide", // not supported yet
+      STATUS_SHOW: "target-show",
+      STATUS_HIDE: "target-hide"
+    },
+    CALCULATION_METHOD: {
+      TOTALSCORE: "TOTALSCORE",
+      BMI: "BMI",
+      BSA: "BSA"
+    },
+    DATA_TYPE: {
+      INT:    "INT",
+      REAL:   "REAL",
+      ST:     "ST",
+      TX:     "TX",
+      DT:     "DT",
+      TM:     "TM",
+      CNE:    "CNE",
+      CWE:    "CWE",
+      NR:     "NR",
+      YEAR:   "YEAR",
+      MONTH:  "MONTH",
+      DAY:    "DAY",
+      URL:    "URL",
+      EMAIL:  "EMAIL",
+      PHONE:  "PHONE",
+      SECTION:"SECTION",
+      TITLE:  "TITLE"
+      // BL:     "BL",    // not fully supported yet
+      // BIN:    "BIN",   // not supported yet
+      // DTM:    "DTM",   // not supported yet
+      // RTO:    "RTO",   // not supported yet
+      // QTY:    "QTY",   // not supported yet
+    }
+  },
+
   // form type. for now the only type is "LOINC"
   type: null,
   // form's code
@@ -25,19 +72,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   // repeatable question items derived from items
   _repeatableItems : {},
-
-  // angular built-in validation tokens, not used yet
-  _validationTokens: [
-    "ng-maxlength",
-    "ng-minlength",
-    "pattern",
-    "required",
-    "number", // for INPUT element only
-    "max",  // for number only
-    "min",  // for number only
-    "email",  // for INPUT element only
-    "url"    // for INPUT element only
-  ],
 
   // All accessory attributes of an item
   // (move all other properties into this _opt eventually.)
@@ -342,9 +376,10 @@ var LFormsData = LForms.LFormsData = Class.extend({
           var source = item.dataControl[j].source;
 
           // has a source configuration
-          if (source && source.sourceType === "internal" && source.itemCode) {
+          if (source && (!source.sourceType || source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL) &&
+              source.sourceItemCode) {
             // get the source item object
-            var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+            var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
             if (sourceItem._dataControlTargets) {
               sourceItem._dataControlTargets.push(item);
             }
@@ -380,7 +415,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // if one item is hidden all of its decedents should be hidden.
     // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
     if (hide) {
-      this._setSkipLogicStatusValue(item, "target-hide");
+      this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE);
       var isHidden = true;
     }
     // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
@@ -388,20 +423,20 @@ var LFormsData = LForms.LFormsData = Class.extend({
       if (item.skipLogic) {
         var takeAction = this._checkSkipLogic(item);
 
-        if (!item.skipLogic.action || item.skipLogic.action === "show") {
-          var newStatus = takeAction ? 'target-show' : "target-hide";
+        if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_SHOW) {
+          var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW : this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
           this._setSkipLogicStatusValue(item, newStatus);
         }
-        else if (item.skipLogic.action === "hide") {
-          var newStatus = takeAction ? 'target-hide' : "target-show";
+        else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_HIDE) {
+          var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE : this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW;
           this._setSkipLogicStatusValue(item, newStatus);
         }
       }
       // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-      else if (item._skipLogicStatus === "target-hide") {
-        this._setSkipLogicStatusValue(item, "target-show");
+      else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW);
       }
-      var isHidden = item._skipLogicStatus === "target-hide";
+      var isHidden = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
     }
     // process the sub items
     if (item.items && item.items.length > 0) {
@@ -422,7 +457,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _presetSkipLogicStatus: function(item, hide) {
     // if it has skip logic or one of its ancestors has skip logic
     if (item.skipLogic || hide) {
-      this._setSkipLogicStatusValue(item, "target-hide", true);
+      this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE, true);
       var isHidden = true;
       // process the sub items
       if (item.items) {
@@ -444,7 +479,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _setSkipLogicStatusValue: function(item, newStatus, noLog) {
     if (item._skipLogicStatus !== newStatus) {
       if (item._skipLogicStatus) {
-        var msg = newStatus === "target-hide" ? 'Hiding ' + item.question : 'Showing ' + item.question;
+        var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item.question : 'Showing ' + item.question;
         if (!noLog)
           this._actionLogs.push(msg);
       }
@@ -513,10 +548,10 @@ var LFormsData = LForms.LFormsData = Class.extend({
       var totalScoreItem = itemList[i];
 
       if (totalScoreItem.calculationMethod &&
-        (totalScoreItem.calculationMethod.name === "TOTALSCORE" ||
-        totalScoreItem.calculationMethod === "TOTALSCORE") ) {
+        (totalScoreItem.calculationMethod.name === this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE ||
+        totalScoreItem.calculationMethod === this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE) ) {
         // TBD, if the parameters values are already supplied,
-        totalScoreItem.calculationMethod = {"name": "TOTALSCORE", "value": []};
+        totalScoreItem.calculationMethod = {"name": this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE, "value": []};
 
         for (var j = 0, jLen = itemList.length; j < jLen; j++) {
           var item = itemList[j];
@@ -670,13 +705,13 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
       // An error will be thrown in this case and an empty value will be set instead.
       if (item.header) {
-        if (item.dataType !== 'TITLE')
-          item.dataType = 'SECTION';
+        if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE)
+          item.dataType = this._CONSTANTS.DATA_TYPE.SECTION;
       }
       else {
         if(!item.dataType || item.calculationMethod !== undefined &&
             !jQuery.isEmptyObject(item.calculationMethod))
-          item.dataType = "ST";
+          item.dataType = this._CONSTANTS.DATA_TYPE.ST;
       }
 
       // set default values on the item
@@ -731,20 +766,20 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       // set up tooltip and process user data if there's any user data.
       switch (item.dataType) {
-        case "DT":
+        case this._CONSTANTS.DATA_TYPE.DT:
           item._toolTip = "MM/DD/YYYY";
           // process user data
           if (item.value) {
             item.value = new Date(item.value);
           }
           break;
-        case "CNE":
+        case this._CONSTANTS.DATA_TYPE.CNE:
           if (item.externallyDefined)
             item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
           else
             item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
           break;
-        case "CWE":
+        case this._CONSTANTS.DATA_TYPE.CWE:
           if (item.externallyDefined)
             item._toolTip = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
           else
@@ -753,8 +788,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
         case "":
           item._toolTip = "";
           break;
-        case "INT":
-        case "REAL":
+        case this._CONSTANTS.DATA_TYPE.INT:
+        case this._CONSTANTS.DATA_TYPE.REAL:
           item._toolTip = "Type a number";
           // internally all numeric values are of string type
           if (typeof item.value === "number")
@@ -770,7 +805,10 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // set up validation flag
       if (item._answerRequired ||
           item.restrictions ||
-          (item.dataType !== "ST" && item.dataType !== "TX" && item.dataType !== "CWE" && item.dataType !== "CNE")) {
+          (item.dataType !== this._CONSTANTS.DATA_TYPE.ST &&
+           item.dataType !== this._CONSTANTS.DATA_TYPE.TX &&
+           item.dataType !== this._CONSTANTS.DATA_TYPE.CWE &&
+           item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
         item._hasValidation = true;
       }
 
@@ -869,7 +907,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       // consider if the last sibling is hidden by skip logic
       if (!foundLastSibling) {
-        if (item._skipLogicStatus === "target-hide" ) {
+        if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ) {
           item._lastSibling = false;
         }
         else {
@@ -967,7 +1005,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       // skip the item if the value is empty and the flag is set to ignore the items with empty value
       // or if the item is hidden and the flag is set to ignore hidden items
-      if (noHiddenItem && item._skipLogicStatus === "target-hide" ||
+      if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
           noEmptyValue && !item.value && !item.header) {
         continue;
       }
@@ -1047,10 +1085,10 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // not an object or an array, and has a data type
       else if (dataType) {
         switch (dataType) {
-          case "INT":
+          case this._CONSTANTS.DATA_TYPE.INT:
             retValue = parseInt(value);
             break;
-          case "REAL":
+          case this._CONSTANTS.DATA_TYPE.REAL:
             retValue = parseFloat(value);
             break;
           default:
@@ -1147,7 +1185,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       var item = items[i];
 
       // if it is the last repeating item, and it is not hidden by skip logic
-      if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
+      if (item._lastRepeatingItem && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ) {
         var lastItem = this._getLastSubItem(item);
         if (lastItem._repeatingSectionList) {
           lastItem._repeatingSectionList.unshift(item);
@@ -1157,7 +1195,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
         }
       }
       // process the sub items if it's not hidden
-      if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
+      if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE && item.items && item.items.length > 0) {
         this._updateLastItemInRepeatingSection(item.items);
       }
     }
@@ -1179,7 +1217,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // found the last item that is not hidden
       do {
         lastItem = item.items[--i];
-        if (lastItem._skipLogicStatus !== "target-hide") {
+        if (lastItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
           found = true;
         }
       }
@@ -1415,7 +1453,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     var isEmpty = true;
     //if it is not hidden
-    if (item._skipLogicStatus !== "target-hide") {
+    if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
       // multiple selection answer list (array is also an object)
       if (angular.isArray(item.value) && item.value.length > 0) {
         var notEmpty = false;
@@ -1632,7 +1670,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     if (item.calculationMethod) {
       var formula = item.calculationMethod;
       // run score rule (there should be one score rule only in a form)
-      if (formula.name === 'TOTALSCORE') {
+      if (formula.name === this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE) {
         parameterValues = this._getScores(item, formula);
       }
       // run non-score rules
@@ -1672,6 +1710,70 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
+   * Create a data object based on the value in dataFormat
+   * @param dataFormat a string specifies how and where to get the data
+   * @param sourceItem the source item, which is the data source
+   * @returns {{}}
+   * @private
+   */
+  _constructObjectByDataFormat: function(dataFormat, sourceItem) {
+    var targetData = {};
+    if (angular.isObject(dataFormat)) {
+      var keys = Object.keys(dataFormat);
+      for (var i= 0, iLen=keys.length; i<iLen; i++) {
+        targetData[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
+      }
+    }
+    return targetData;
+  },
+
+
+  /**
+   * Create a data array based on the value in dataFormat
+   * @param dataFormat a string specifies how and where to get the data
+   * @param sourceItem the source item, which is the data source
+   * @returns {Array}
+   * @private
+   */
+  _constructArrayByDataFormat: function(dataFormat, sourceItem) {
+
+    var targetData = [], abort = false;
+    if (angular.isObject(dataFormat)) {
+      var keys = Object.keys(dataFormat);
+      var listByKeys = {}, iLen=keys.length;
+      var listLength = -1;
+      for (var i= 0; i<iLen; i++) {
+        var list = listByKeys[keys[i]] = this._getDataFromNestedAttributes(dataFormat[keys[i]], sourceItem);
+        // abort if any data returned is not an array
+        if (!Array.isArray(list)) {
+          abort = true;
+          break;
+        }
+        else if (listLength === -1) {
+          listLength = list.length;
+        }
+        // abort if any returned array has a different length
+        else if (listLength !== list.length) {
+          abort = true;
+          break;
+        }
+      }
+
+      if(!abort) {
+        for (var j=0; j<listLength; j++) {
+          var elementData = {};
+          for (var i= 0; i<iLen; i++) {
+            elementData[keys[i]] = listByKeys[keys[i]][j];
+          }
+          targetData.push(elementData);
+        }
+      }
+    }
+    return targetData;
+  },
+
+
+  /**
    * Update the data on the item by running through the data control functions defined on this item.
    * @param item an item in the form
    * @private
@@ -1679,72 +1781,52 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _updateDataByDataControl: function(item) {
 
     for (var i= 0, iLen=item.dataControl.length; i<iLen; i++) {
-      var source = item.dataControl[i].source;
-      var onAttribute = item.dataControl[i].onAttribute;
+      var source = item.dataControl[i].source,
+          onAttribute = item.dataControl[i].onAttribute,
+          constructionType = item.dataControl[i].construction,
+          dataFormat = item.dataControl[i].dataFormat;
+
       // the default target attribute where the data is set is "value"
       if (!onAttribute)
         onAttribute = "value";
+      // the default construction type is "SIMPLE"
+      if (!constructionType)
+        constructionType = this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_SIMPLE;
+      // the default source data field is "value"
+      if (!dataFormat)
+        dataFormat = "value";
 
       // has a source configuration
       if (source) {
-        // "internal" uses "itemCode" and "data"
-        if (source.sourceType === "internal" && source.itemCode) {
-          // the default source data field is "value"
-          if (!source.data)
-            source.data = "value";
-          // the default source data type is "TEXT" (or "LIST"?)
-          if (!source.sourceDataType)
-            source.sourceDataType = "TEXT";
+        var sourceType = source.sourceType;
+        // the default source type is "INTERNAL", which uses "sourceItemCode" to locate the source item
+        if (!sourceType)
+          sourceType = this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL;
+        // "INTERNAL"
+        if (source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL &&
+            source.sourceItemCode) {
           // get the source item object
-          var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.itemCode);
+          var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
           if (sourceItem) {
-            // check source data type
-            if (source.sourceDataType === "LIST" ) {
-              // data is in the format of {"code": ..., "text": ...}
-              if (source.data.code && source.data.text) {
-                var codeList = this._getDataFromNestedAttributes(source.data.code, sourceItem);
-                var textList = this._getDataFromNestedAttributes(source.data.text, sourceItem);
-                // the numbers of codes and texts should be same
-                if (codeList && textList && codeList.length > 0 && codeList.length === textList.length) {
-                  // make a new array
-                  var targetData = [];
-                  for (var m=0, mLen=codeList.length; m<mLen; m++ ) {
-                    targetData.push({"code": codeList[m], "text": textList[m]});
-                  }
-                  // set the data
-                  item[onAttribute] = targetData;
-                }
-              } // end of source.data.code && source.data.text
-            } // end of "LIST"
-            else if (source.sourceDataType === "OBJECT" ) {
-              // data is in the format of {"code": ..., "text": ...}
-              if (source.data.code && source.data.text) {
-                var code = this._getDataFromNestedAttributes(source.data.code, sourceItem);
-                var text = this._getDataFromNestedAttributes(source.data.text, sourceItem);
-                if (text) {
-                  var targetData = {"code": code, "text": text};
-                  // set the data
-                  item[onAttribute] = targetData;
-                }
-              } // end of source.data.code && source.data.text
-            } // end of "LIST"
-            else if (source.sourceDataType === "TEXT") {
-              var sourceData = this._getDataFromNestedAttributes(source.data, sourceItem);
+            // check how to create the new data on target
+            if (constructionType === this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_ARRAY ) {
+              var newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
               // set the data
-              if (sourceData) {
-                item[onAttribute] = sourceData;
-              }
-
-            } // end of "TEXT
+              item[onAttribute] = angular.copy(newData);
+            }
+            else if (constructionType === this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_OBJECT ) {
+              var newData = this._constructObjectByDataFormat(dataFormat, sourceItem);
+              // set the data
+              item[onAttribute] = angular.copy(newData);
+            }
+            else if (constructionType === this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_SIMPLE) {
+              // direct access to the data in source item
+              var newData = this._getDataFromNestedAttributes(dataFormat, sourceItem);
+              item[onAttribute] = angular.copy(newData);
+            }
           }
         }
-//        // "external" uses "url" and optional "urlOptions" and "data"
-//        else if (source.sourceType === 'external' && source.url) {
-//            // TBD, returned populated url and query, use $http to get data, then update the "item" again.
-//            // the update item part could be separated to be a single function
-//          var queryObj = this._getQueryURL(item, source, onAttribute);
-//          asyncDataQuery.push(queryObj);
-//        }
+        // "EXTERNAL" uses "url" and optional "urlOptions" (an array), TBD
       } // end if source
     } // end of the loop of the data control
   },
@@ -1786,17 +1868,20 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * Get data from a source item object following the nested attribute path
    * Examples:
    * sourceItem: {value: [ {attr1: 'v1', attr2: 'v2'}, {attr1: 'va', attr2: 'vb'}] }
-   * strQuery:   value.[1].attr1 ===> 'va'
+   * strQuery:   value[1].attr1 ===> 'va'
    * sourceItem: [{value: [ {attr1: 'v1', attr2: 'v2'}, {attr1: 'va', attr2: 'vb'}] }, {}]
-   * strQuery:   [0].value.[0].attr1 ===> 'v1'
-   * @param attributes a query path, such as "attr.[index].subattr.subsubattr"
-   * @param sourceItem a source item object
+   * strQuery:   [0].value[0].attr1 ===> 'v1'
+   * @param strQuery a query path, such as "attr[index].subattr.subsubattr"
+   *        where attr is an array, subattr and subsubattr are objects.
+   * @param sourceItem a source item object.
+   *        Note: While "." is allowed in the attribute names of javascript object,
+   *        here we assume "." is not used in the names of the item's attributes.
    * @returns {*}
    * @private
    */
   _getDataFromNestedAttributes: function(strQuery, sourceItem) {
 
-    var levels = strQuery.trim().split('.'); // "." is allowed in the attribute names of javascript object. We just assume "." is not used in the question item's field name
+    var levels = strQuery.trim().split('.');
     var dataSource = sourceItem, iLen = levels.length;
 
     for (var i = 0; i<iLen; i++) {
@@ -1804,9 +1889,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
         var query = levels[i];
         // query not empty
         if (query) {
-          // if it points to an item in an array
-          if(query[0]=== "[" && query[query.length-1] ==="]") {
-            var index =  parseInt(query.substr(1, query.length -2));
+          // if it points to an item in an array, such as answers[1]
+          var elementInArray = query.match(/^(.+)\[(\d+)\]$/);
+          if(elementInArray) {
+            var dataSource = dataSource[elementInArray[1]];
+            var index =  parseInt(elementInArray[2]);
             if (Number.isInteger(index)) {
               dataSource = dataSource[index];
             }
@@ -1860,7 +1947,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @private
    */
   _updateUnitAutocompOptions: function(item) {
-    if (item.units && item.dataType != "CNE" && item.dataType != "CWE") {
+    if (item.units && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
+        item.dataType !== this._CONSTANTS.DATA_TYPE.CWE) {
       // clean up unit autocomp options
       item._unitAutocompOptions = null;
 
@@ -1903,7 +1991,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
    */
   _updateAutocompOptions: function(item) {
     // for list only
-    if (item.dataType === "CNE" || item.dataType === "CWE") {
+    if (item.dataType === this._CONSTANTS.DATA_TYPE.CNE ||
+        item.dataType === this._CONSTANTS.DATA_TYPE.CWE) {
 
       var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {
@@ -1911,7 +2000,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
 
       var options = {
-        matchListValue: item.dataType === "CNE",
+        matchListValue: item.dataType === this._CONSTANTS.DATA_TYPE.CNE,
         maxSelect: maxSelect
       };
 
@@ -2017,6 +2106,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   Formulas: {
     calculations_: {
       precision_: 2,
+      // a sum of score values
       'TOTALSCORE': function (sources) {
         var totalScore = 0;
         for (var i = 0, iLen = sources.length; i < iLen; i++) {
@@ -2233,8 +2323,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       switch (item.dataType) {
         // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
         // the key is one of the keys in the answers.
-        case "CNE":
-        case "CWE":
+        case this._CONSTANTS.DATA_TYPE.CNE:
+        case this._CONSTANTS.DATA_TYPE.CWE:
           var field = Object.keys(trigger)[0] ; // trigger should have only one key
           // if the field accepts multiple values from the answer list
           if (Array.isArray(currentValue)) {
@@ -2255,8 +2345,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
           break;
         // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
         // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
-        case "INT":
-        case "REAL":
+        case this._CONSTANTS.DATA_TYPE.INT:
+        case this._CONSTANTS.DATA_TYPE.REAL:
           var numCurrentValue = parseFloat(currentValue);
           // the skip logic rule has a "value" key
           if (trigger.hasOwnProperty("value")) {
@@ -2274,10 +2364,10 @@ var LFormsData = LForms.LFormsData = Class.extend({
           break;
         // string: {"value": "AAA"}   ( TBD: {"pattern": "/^Loinc/"} )
         // the only key is "value", for now
-        case "ST":
+        case this._CONSTANTS.DATA_TYPE.ST:
         // boolean: {"value": true}, {"value": false}
         // the only key is "value"
-        case "BL":
+        case this._CONSTANTS.DATA_TYPE.BL:
           if (trigger.hasOwnProperty("value") &&
             trigger["value"] === currentValue ) {
             action = true;

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [8.0.0]   2016-09-21
+### Changed
+- Updated the design and docs of the data control function.
+
 ## [7.6.1]   2016-09-21 
 ### Fixed
 - Renamed the CSS class 'empty-question' to 'lf-empty-question' to avoid
