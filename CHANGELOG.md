@@ -6,6 +6,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Updated the design and docs of the data control function.
 
+## [7.6.1]   2016-09-21 
+### Fixed
+- Renamed the CSS class 'empty-question' to 'lf-empty-question' to avoid
+  possible confusion.
+
 ## [7.6.0]   2016-08-12
 ### Added
 - Added support for setting the code systems for the form and for questions.
