@@ -1,12 +1,12 @@
 var tp = require('./lforms_testpage.po.js');
 describe('CDE form template', function() {
 
-  it('empty header should have an "empty-question" class', function() {
+  it('empty header should have a "lf-empty-question" class', function() {
 
     tp.openBaseTestPage();
     tp.openFormByIndex(8);
 
-    var headerRow = element(by.css(".empty-question.section-header"));
+    var headerRow = element(by.css(".lf-empty-question.section-header"));
     expect(headerRow.isDisplayed()).toBe(true);
 
     var headerLabel = element(by.css("label[for='//1']"));
