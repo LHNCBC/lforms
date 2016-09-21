@@ -5,7 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [7.6.1]   2016-09-21 
 ### Fixed
 - Rename a CSS class 'empty-question' to 'lf-empty-question' to avoid
-  possible confusions.
+  possible confusion.
 
 ## [7.6.0]   2016-08-12
 ### Added
