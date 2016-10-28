@@ -60,7 +60,7 @@ LForms.Util = {
   /**
    * Get the complete form definition data, including the user input data from the form.
    * The returned data could be fed into a LForms widget directly to render the form.
-   * @param element required, the containing HTML element that includes the LForm's rendered form.
+   * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
@@ -73,6 +73,32 @@ LForms.Util = {
   },
 
 
+  /**
+   * Get HL7 OBR and OBX segment data from the form.
+   * * Empty or hidden questions are not included.
+   * @param element optional, the containing HTML element that includes the LForm's rendered form.
+   *        It could be the DOM element or its id
+   * @returns {null}
+   */
+  getFormHL7Data: function(element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? LForms.HL7.toHL7Segments(formObj) : null;
+  },
+
+
+  /**
+   * Get FHIR DiagnosticReport data from the form.
+   * Empty or hidden questions are not included.
+   * @param element optional, the containing HTML element that includes the LForm's rendered form.
+   *        It could be the DOM element or its id
+   * @returns {null}
+   */
+  getFormFHIRData: function(element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? LForms.FHIR.createRDiagnosticReport(formObj) : null;
+  },
+
+  
   /**
    * Find the form object in the scope based the form dom element
    * @param element element the containing HTML element that includes the LForm's rendered form.

@@ -1091,6 +1091,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
           case this._CONSTANTS.DATA_TYPE.REAL:
             retValue = parseFloat(value);
             break;
+          case this._CONSTANTS.DATA_TYPE.DT:
+            var offset = value.getUTCOffset();
+            offset = offset.slice(0,-2) + ":" + offset.slice(-2);
+            retValue = value.toString("yyyy-MM-ddTHH:mm:ss") + offset;
+            break;
           default:
             retValue = value;
         }
