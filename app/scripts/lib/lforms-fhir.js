@@ -1,7 +1,7 @@
 /**
  * A package to handle FHIR data for LForms.
- * It can only generate FHIR DiagnosticReport resource from a LForms data,
- * and can only merge the FHIR DiagnosticReport data it generates back to a LForms form.
+ * It can only generate FHIR DiagnosticReport resource from an LForms data,
+ * and can only merge the FHIR DiagnosticReport data it generates back to an LForms form.
 */
 if (typeof LForms === 'undefined')
   LForms = {};
@@ -9,29 +9,24 @@ if (typeof LForms === 'undefined')
 LForms.FHIR = {
 
   /**
-   * Functions for creating a DiagnosticReport instance from a LFormsData object
+   * Functions for creating a DiagnosticReport instance from an LFormsData object
    */
 
   /** Get date in a standard string format
    * @param dateObj, a date object
-   * @returns {string}
+   * @returns a formatted date string
    * @private
    */
   _getFormattedDate : function (dateObj) {
-    var formattedDate = '';    //"2013-01-27T11:45:33+11:00",
-    if (dateObj) {
-      var offset = dateObj.getUTCOffset();
-      offset = offset.slice(0,-2) + ":" + offset.slice(-2);
-      formattedDate = dateObj.toString("yyyy-MM-ddTHH:mm:ss") + offset;
-    }
-    return formattedDate;
+    //"2013-01-27T11:45:33+11:00",
+    return dateObj ? LForms.Util.dateToString(dateObj) : "";
   },
 
 
   /**
    * Get a patient's display name
-   * @param patient
-   * @returns {string}
+   * @param patient a Patient instance
+   * @returns a formatted patient name
    * @private
    */
   _getPatientName : function(patient) {
@@ -46,10 +41,10 @@ LForms.FHIR = {
 
 
   /**
-   * Get the additional data in LForms' obrItems
+   * Get the additional data in a form's obrItems
    * Note: For DiagnosticReport only the effectiveDateTime is needed
-   * @param formData, a LFormsData object
-   * @returns {{}}
+   * @param formData an LFormsData object
+   * @returns the extra data captured in the "OBR" fields of an LForms form
    * @private
    */
   _getExtensionData : function(formData) {
@@ -58,7 +53,7 @@ LForms.FHIR = {
       for(var i=0, iLen= formData.templateOptions.obrItems.length; i<iLen; i++) {
         var obrItem = formData.templateOptions.obrItems[i];
         if (obrItem.questionCode === 'date_done' && obrItem.value) {
-          extension["lforms_dateDone"] = this._getFormattedDate(obrItem.value);
+          extension["lforms_dateDone"] = obrItem.value;
         }
 
         if (obrItem.questionCode === 'where_done' && obrItem.value) {
@@ -81,10 +76,10 @@ LForms.FHIR = {
 
   /**
    * Generate a unique ID for a given Observation code
-   * @param itemCode, code of the item
-   * @param min, the minimum value of a range for a random number
-   * @param max, the maximum value of a range for a random number
-   * @returns {string}
+   * @param itemCode code of the item
+   * @param min the minimum value of a range for a random number
+   * @param max the maximum value of a range for a random number
+   * @returns a unique id
    * @private
    */
   _getUniqueId : function(itemCode, min, max) {
@@ -101,9 +96,9 @@ LForms.FHIR = {
   /**
    * A recursive function that generates the DiagnosticReport content by
    * going through the LForms form data structure
-   * @param item, an LForms item
-   * @param contained, the "contained" field in a DiagnosticReport where all the Observation instances are kept.
-   * @returns {{result: Array, resultObj: Array}}
+   * @param item an LForms item
+   * @param contained the "contained" field in a DiagnosticReport where all the Observation instances are kept.
+   * @returns the content part of a Diagnostic Report instance
    * @private
    */
   _createDiagnosticReportContent : function (item, contained) {
@@ -142,9 +137,9 @@ LForms.FHIR = {
 
 
   /**
-   * Create an Observation instance from a LForms item object
-   * @param item, a LForms item object
-   * @returns {{resourceType: string, id: *, status: string, code: {coding: *[], text: *}}}
+   * Create an Observation instance from an LForms item object
+   * @param item an LForms item object
+   * @returns an observation instance
    * @private
    */
   _createObservation : function(item) {
@@ -173,7 +168,7 @@ LForms.FHIR = {
         break;
       case "DT":
         valueX.key = "valueDateTime";
-        valueX.val = item.value.toString("s");
+        valueX.val = item.value;
         break;
       case "CNE":
       case "CWE":
@@ -235,10 +230,10 @@ LForms.FHIR = {
 
 
   /**
-   * Generate FHIR DiagnotisReport data from LForms form data
-   * @param formData, a LFormsData object
-   * @param patient, optional, patient data
-   * @returns {*}
+   * Generate FHIR DiagnotisReport data from an LForms form data
+   * @param formData an LFormsData object
+   * @param patient optional, patient data
+   * @returns a Diagnostic Report instance
    */
   createRDiagnosticReport : function(formData, patient) {
     var dr = null, contained =[];
@@ -250,17 +245,17 @@ LForms.FHIR = {
 
       dr = {
         "resourceType": "DiagnosticReport",
-        "id":  this._getUniqueId(formData.code),
+        "id":  this._getUniqueId(formAndUserData.code),
         "status": "final",
         "code": {
           "coding": [
             {
               "system": "http://loinc.org",
-              "code": formData.code,
-              "display": formData.name
+              "code": formAndUserData.code,
+              "display": formAndUserData.name
             }
           ],
-          "text": formData.name
+          "text": formAndUserData.name
         },
         "result": drContent.result,
         "contained": contained
@@ -274,7 +269,7 @@ LForms.FHIR = {
         }
       }
       // obr data
-      var extension = this._getExtensionData(formData);
+      var extension = this._getExtensionData(formAndUserData);
       if (extension["lforms_dateDone"]) {
         dr["effectiveDateTime"] = extension["lforms_dateDone"];
       }
@@ -286,14 +281,14 @@ LForms.FHIR = {
 
 
   /**
-   * Functions for merging a DiagnosticReport instance into a LFormsData object
+   * Functions for merging a DiagnosticReport instance into an LFormsData object
    */
 
   /**
    * Find an observation from the "contained" list by an observation id
-   * @param refId, an observation instance's id
-   * @param contained, the "contained" field in a DiagnosticReport instance
-   * @returns {*}
+   * @param refId an observation instance's id
+   * @param contained the "contained" field in a DiagnosticReport instance
+   * @returns an observation instance
    * @private
    */
   _findObxById : function(refId, contained) {
@@ -313,9 +308,8 @@ LForms.FHIR = {
 
   /**
    * Merge an Observation instance into an item object
-   *
-   * @param obx
-   * @param item
+   * @param obx an observation instance
+   * @param item an item in an LForms object
    * @private
    */
   _setupItemValueAndUnit : function(obx, item) {
@@ -334,7 +328,7 @@ LForms.FHIR = {
           item.unit = {name: obx.valueQuantity.code};
           break;
         case "DT":
-          item.value = (Date.parse(obx.valueDateTime)).toString();
+          item.value = obx.valueDateTime;
           break;
         case "CNE":
         case "CWE":
@@ -369,13 +363,15 @@ LForms.FHIR = {
     }
   },
 
+
   /**
    * Find the number of the repeating items that have the same code
    * in the "contained" field of a DiagnosticReport instance
-   * @param refIdList, a list Observation instance IDs to be checked
-   * @param code, an item code
-   * @param contained, a list of Observation instances (in the "contained")
-   * @returns {{total: number, refIds: Array}}
+   * @param refIdList a list Observation instance IDs to be checked
+   * @param code an item code
+   * @param contained a list of Observation instances (in the "contained")
+   * @returns a structural info object for a repeating item
+   * of the repeating items
    * @private
    */
   _findTotalRepeatingNum : function(refIdList, code, contained) {
@@ -399,9 +395,9 @@ LForms.FHIR = {
 
   /**
    * Generate a DiagnosticReport data structure by going though each level of sub panels
-   * @param parentObxInfo, the parent Observation structure info
-   * @param parentRefId, the parent Observation instance ID
-   * @param diagnosticReport, the DiagnosticReport instance
+   * @param parentObxInfo the parent Observation structure info
+   * @param parentRefId the parent Observation instance ID
+   * @param diagnosticReport the DiagnosticReport instance
    * @private
    */
   _checkRepeatingItems : function(parentObxInfo, parentRefId, diagnosticReport) {
@@ -431,7 +427,7 @@ LForms.FHIR = {
       var refId = obxIdList[i];
       var obx = this._findObxById(refId, diagnosticReport.contained);
       var itemCode =  obx.code.coding[0].code;
-      // first obx that has the same item code
+      // first obx that has the same item code, either repeating or non-repeating
       if (!repeatingItemInfo[itemCode]) {
         var repeatingInfo = this._findTotalRepeatingNum(obxIdList, itemCode, diagnosticReport.contained);
         repeatingItemInfo[itemCode] = {
@@ -439,10 +435,10 @@ LForms.FHIR = {
           refIds: repeatingInfo.refIds
         };
       }
+      // create structure info for the obx
       var repeatingRefIds = repeatingItemInfo[itemCode].refIds;
       for (var j=0, jLen=repeatingRefIds.length; j<jLen; j++) {
         if (refId === repeatingRefIds[j]) {
-
           var obxInfo = {
             code: itemCode,
             refId: refId,
@@ -461,8 +457,8 @@ LForms.FHIR = {
 
   /**
    * Get structure information of a DiagnosticReport instance
-   * @param diagnosticReport
-   * @returns {{obxInfoList: Array}}
+   * @param diagnosticReport a DiagnosticReport instance
+   * @returns a Diagnostic Report data structure object
    * @private
    */
   _getReportStructure : function(diagnosticReport) {
@@ -479,10 +475,10 @@ LForms.FHIR = {
 
   /**
    * Find a matching repeating item
-   * @param parentItem, a parent item
-   * @param itemCode, code of a repeating (or non-repeating) item
-   * @param index, index of the item in the sub item array of the parent item
-   * @returns {*}
+   * @param parentItem a parent item
+   * @param itemCode code of a repeating (or non-repeating) item
+   * @param index index of the item in the sub item array of the parent item
+   * @returns a matching item
    * @private
    */
   _findTheMatchingItemByCodeAndIndex : function(parentItem, itemCode, index) {
@@ -507,9 +503,9 @@ LForms.FHIR = {
 
   /**
    * Add repeating items
-   * @param parentItem, a parent item
-   * @param itemCode, code of a repeating item
-   * @param total, total number of the repeating itme with the same code
+   * @param parentItem a parent item
+   * @param itemCode code of a repeating item
+   * @param total total number of the repeating itme with the same code
    * @private
    */
   _addRepeatingItems : function(parentItem, itemCode, total) {
@@ -536,9 +532,9 @@ LForms.FHIR = {
 
   /**
    * Merge Observation instances into items on the same level
-   * @param parentObxInfo, structural information of a parent item
-   * @param parentItem, a parent item
-   * @param diagnosticReport, a DiagnosticReport instance
+   * @param parentObxInfo structural information of a parent item
+   * @param parentItem a parent item
+   * @param diagnosticReport a DiagnosticReport instance
    * @private
    */
   _processObxAndItem : function(parentObxInfo, parentItem, diagnosticReport) {
@@ -566,10 +562,10 @@ LForms.FHIR = {
 
 
   /**
-   * Merge a DiagnosticReport instance into a LFormsData object
-   * @param formData, a LFormsData object
-   * @param diagnosticReport, a DiagnosticReport instance
-   * @returns {*}
+   * Merge a DiagnosticReport instance into an LFormsData object
+   * @param formData an LFormsData object
+   * @param diagnosticReport a DiagnosticReport instance
+   * @returns an updated LFormsData object
    */
   mergeDiagnosticReportToForm : function(formData, diagnosticReport) {
 

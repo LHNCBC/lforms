@@ -61,7 +61,7 @@ LForms.Util = {
    * Get the complete form definition data, including the user input data from the form.
    * The returned data could be fed into a LForms widget directly to render the form.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could be the DOM element or its id.
+   *        It could either be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
    * @param keepIdPath optional, to keep _idPath field on item
@@ -75,9 +75,9 @@ LForms.Util = {
 
   /**
    * Get HL7 OBR and OBX segment data from the form.
-   * * Empty or hidden questions are not included.
+   * Empty or hidden questions are not included.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could be the DOM element or its id
+   *        It could either be the DOM element or its id
    * @returns {null}
    */
   getFormHL7Data: function(element) {
@@ -90,7 +90,7 @@ LForms.Util = {
    * Get FHIR DiagnosticReport data from the form.
    * Empty or hidden questions are not included.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could be the DOM element or its id
+   *        It could either be the DOM element or its id
    * @returns {null}
    */
   getFormFHIRData: function(element) {
@@ -121,6 +121,30 @@ LForms.Util = {
     });
 
     return formObj;
+  },
+
+
+  /**
+   * Get a formatted date string from a date object
+   * for example: "2016-10-31T14:42:12-04:00"
+   * @param objDate a date object
+   * @returns a formatted date string
+   */
+  dateToString: function(objDate) {
+    var offset = objDate.getUTCOffset();
+    offset = offset.slice(0,-2) + ":" + offset.slice(-2);
+    return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
+  },
+
+
+  /**
+   * Parse a formatted date string and create a date object
+   * @param strDate a formatted date string
+   * @returns a date object
+   */
+  stringToDate: function(strDate) {
+    return new Date(strDate);
   }
+
 };
 
