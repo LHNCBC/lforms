@@ -14,7 +14,7 @@ LForms.FHIR = {
 
   /** Get date in a standard string format
    * @param dateObj, a date object
-   * @returns a formatted date string
+   * @returns {string} a formatted date string
    * @private
    */
   _getFormattedDate : function (dateObj) {
@@ -26,7 +26,7 @@ LForms.FHIR = {
   /**
    * Get a patient's display name
    * @param patient a Patient instance
-   * @returns a formatted patient name
+   * @returns {string} a formatted patient name
    * @private
    */
   _getPatientName : function(patient) {
@@ -44,7 +44,7 @@ LForms.FHIR = {
    * Get the additional data in a form's obrItems
    * Note: For DiagnosticReport only the effectiveDateTime is needed
    * @param formData an LFormsData object
-   * @returns the extra data captured in the "OBR" fields of an LForms form
+   * @returns {{}} the extra data captured in the "OBR" fields of an LForms form
    * @private
    */
   _getExtensionData : function(formData) {
@@ -75,21 +75,13 @@ LForms.FHIR = {
 
 
   /**
-   * Generate a unique ID for a given Observation code
+   * Generate an almost unique ID for a given Observation code
    * @param itemCode code of the item
-   * @param min the minimum value of a range for a random number
-   * @param max the maximum value of a range for a random number
-   * @returns a unique id
+   * @returns {string} a unique id
    * @private
    */
-  _getUniqueId : function(itemCode, min, max) {
-    if (min === undefined) {
-      min = 1;
-    }
-    if (max === undefined) {
-      max = 1000000;
-    }
-    return itemCode + "-" + Math.floor((Math.random() * (max - min + 1)) + min);
+  _getUniqueId : function(itemCode) {
+    return itemCode + "-" + Math.random().toString(36).substr(2);
   },
 
 
@@ -98,7 +90,7 @@ LForms.FHIR = {
    * going through the LForms form data structure
    * @param item an LForms item
    * @param contained the "contained" field in a DiagnosticReport where all the Observation instances are kept.
-   * @returns the content part of a Diagnostic Report instance
+   * @returns {{result: Array, resultObj: Array}} the content part of a Diagnostic Report instance
    * @private
    */
   _createDiagnosticReportContent : function (item, contained) {
@@ -139,7 +131,7 @@ LForms.FHIR = {
   /**
    * Create an Observation instance from an LForms item object
    * @param item an LForms item object
-   * @returns an observation instance
+   * @returns {{}} an observation instance
    * @private
    */
   _createObservation : function(item) {
@@ -173,8 +165,8 @@ LForms.FHIR = {
       case "CNE":
       case "CWE":
         valueX.key = "valueCodeableConcept";
-        if (item.answerCardinality.max &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+        var max = item.answerCardinality.max;
+        if (max && (max === "*" || parseInt(max) > 1)) {
           var coding = [];
           for (var j=0,jLen=item.value.length; j<jLen; j++) {
             coding.push({
@@ -233,7 +225,7 @@ LForms.FHIR = {
    * Generate FHIR DiagnotisReport data from an LForms form data
    * @param formData an LFormsData object
    * @param patient optional, patient data
-   * @returns a Diagnostic Report instance
+   * @returns {{}} a Diagnostic Report instance
    */
   createRDiagnosticReport : function(formData, patient) {
     var dr = null, contained =[];
@@ -288,7 +280,7 @@ LForms.FHIR = {
    * Find an observation from the "contained" list by an observation id
    * @param refId an observation instance's id
    * @param contained the "contained" field in a DiagnosticReport instance
-   * @returns an observation instance
+   * @returns {{}} an observation instance
    * @private
    */
   _findObxById : function(refId, contained) {
@@ -458,7 +450,7 @@ LForms.FHIR = {
   /**
    * Get structure information of a DiagnosticReport instance
    * @param diagnosticReport a DiagnosticReport instance
-   * @returns a Diagnostic Report data structure object
+   * @returns {{}} a Diagnostic Report data structure object
    * @private
    */
   _getReportStructure : function(diagnosticReport) {
@@ -478,7 +470,7 @@ LForms.FHIR = {
    * @param parentItem a parent item
    * @param itemCode code of a repeating (or non-repeating) item
    * @param index index of the item in the sub item array of the parent item
-   * @returns a matching item
+   * @returns {{}} a matching item
    * @private
    */
   _findTheMatchingItemByCodeAndIndex : function(parentItem, itemCode, index) {
@@ -565,7 +557,7 @@ LForms.FHIR = {
    * Merge a DiagnosticReport instance into an LFormsData object
    * @param formData an LFormsData object
    * @param diagnosticReport a DiagnosticReport instance
-   * @returns an updated LFormsData object
+   * @returns {{}} an updated LFormsData object
    */
   mergeDiagnosticReportToForm : function(formData, diagnosticReport) {
 
