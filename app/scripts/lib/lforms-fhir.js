@@ -386,10 +386,10 @@ LForms.FHIR = {
 
 
   /**
-   * Generate a DiagnosticReport data structure by going though each level of sub panels
-   * @param parentObxInfo the parent Observation structure info
-   * @param parentRefId the parent Observation instance ID
-   * @param diagnosticReport the DiagnosticReport instance
+   * Get structural info of a DiagnosticReport by going though each level of observations
+   * @param parentObxInfo the structural info of a parent Observation
+   * @param parentRefId the instance ID of a parent Observation
+   * @param diagnosticReport a DiagnosticReport instance
    * @private
    */
   _checkRepeatingItems : function(parentObxInfo, parentRefId, diagnosticReport) {
