@@ -770,7 +770,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
           item._toolTip = "MM/DD/YYYY";
           // process user data
           if (item.value) {
-            item.value = new Date(item.value);
+            item.value = LForms.Util.stringToDate(item.value);
           }
           break;
         case this._CONSTANTS.DATA_TYPE.CNE:
@@ -1090,6 +1090,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
             break;
           case this._CONSTANTS.DATA_TYPE.REAL:
             retValue = parseFloat(value);
+            break;
+          case this._CONSTANTS.DATA_TYPE.DT:
+            retValue = LForms.Util.dateToString(value);
             break;
           default:
             retValue = value;

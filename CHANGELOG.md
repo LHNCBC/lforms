@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [8.1.0]   2016-10-28
+### Added
+- Added preliminary support for generating FHIR DiagnosticReport data and merging
+  it back into a form.
+  
 ## [8.0.0]   2016-09-21
 ### Changed
 - Updated the design and docs of the data control function.

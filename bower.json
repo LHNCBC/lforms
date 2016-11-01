@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
@@ -45,6 +45,7 @@
     "app/scripts/lib/lforms-util.js",
     "app/scripts/lib/polyfill.js",
     "app/scripts/lib/lforms-hl7.js",
+    "app/scripts/lib/lforms-fhir.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
     "app/styles/lforms.css",
