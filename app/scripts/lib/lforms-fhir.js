@@ -227,7 +227,7 @@ LForms.FHIR = {
    * @param patient optional, patient data
    * @returns {{}} a Diagnostic Report instance
    */
-  createRDiagnosticReport : function(formData, patient) {
+  createDiagnosticReport : function(formData, patient) {
     var dr = null, contained =[];
     if (formData) {
 

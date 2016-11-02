@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [8.1.1]   2016-11-02
+### Changed
+- Changed a FHIR data processing function's name .
+
 ## [8.1.0]   2016-10-28
 ### Added
 - Added preliminary support for generating FHIR DiagnosticReport data and merging

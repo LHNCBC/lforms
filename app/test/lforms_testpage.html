@@ -190,7 +190,7 @@
 
             $scope.showFHIRResource = function () {
               if ($scope.lfData2) {
-                var dr = LForms.FHIR.createRDiagnosticReport($scope.lfData2);
+                var dr = LForms.FHIR.createDiagnosticReport($scope.lfData2);
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
