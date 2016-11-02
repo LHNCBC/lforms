@@ -222,7 +222,7 @@ LForms.FHIR = {
 
 
   /**
-   * Generate FHIR DiagnotisReport data from an LForms form data
+   * Generate FHIR DiagnosticReport data from an LForms form data
    * @param formData an LFormsData object
    * @param patient optional, patient data
    * @returns {{}} a Diagnostic Report instance
