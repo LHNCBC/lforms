@@ -95,7 +95,7 @@ LForms.Util = {
    */
   getFormFHIRData: function(element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? LForms.FHIR.createRDiagnosticReport(formObj) : null;
+    return formObj ? LForms.FHIR.createDiagnosticReport(formObj) : null;
   },
 
   
