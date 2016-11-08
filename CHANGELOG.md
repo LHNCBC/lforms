@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [8.1.2]   2016-11-08
+### Fixed
+- Fixed a bug in getting form data without questions that have empty values.
+
 ## [8.1.1]   2016-11-02
 ### Changed
 - Changed a FHIR data processing function's name.

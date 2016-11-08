@@ -1047,8 +1047,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and
       // it has an empty value or it has an empty array as value
-      //// (noEmptyValue && itemData.items && itemData.items.length === 0 && (!item.value || item.value.length === 0) )
-      if (!noEmptyValue || (!itemData.items || itemData.items.length !== 0) || item.value && item.value.length !==0) {
+      //// (noEmptyValue && (!itemData.items || itemData.items.length === 0) && (!item.value || item.value.length === 0) )
+      if (!noEmptyValue || (itemData.items && itemData.items.length !== 0) || (item.value && item.value.length !==0)) {
         itemsData.push(itemData);
       }
     }

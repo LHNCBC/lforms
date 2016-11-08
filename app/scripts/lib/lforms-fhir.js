@@ -305,7 +305,7 @@ LForms.FHIR = {
    * @private
    */
   _setupItemValueAndUnit : function(obx, item) {
-    if (obx.code.coding[0].code === item.questionCode) {
+    if (item && obx.code.coding[0].code === item.questionCode) {
       var dataType = item.dataType;
       // any one has a unit must be a numerical type, let use REAL for now.
       // dataType conversion should be handled when panel data are added to lforms-service.
