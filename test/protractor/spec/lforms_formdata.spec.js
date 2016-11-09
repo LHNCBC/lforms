@@ -201,5 +201,19 @@ describe('get form data', function() {
 
   });
 
+  it('should not get any data with empty values when the noEmptyValue parameter is used', function() {
+    tp.openFullFeaturedForm();
 
+    // only one field has data
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData(null, true, true, true);
+      callback(fData);
+    }).then(function (formData) {
+      // console.log(formData);
+      expect(formData.items.length).toBe(1);
+      expect(formData.items[0].question).toBe("With data type CNE");
+      expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
+    });
+  });
 });
