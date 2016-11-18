@@ -195,8 +195,9 @@ about the meaning of each key:
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.
-      The [lforms-service](https://lforms-service.nlm.nih.gov/) website provides
-      a number of ready-to-use web APIs that can plugged in here to provide
+      The [Clinical Table Search
+      Service](https://clin-table-search.lhc.nlm.nih.gov/) website provides a number
+      of ready-to-use web APIs that can plugged in here to provide
       searchable lists of drugs, medical conditions, disease names, and more.
       If you wish to set up your own web API on a website, then you just need to
       understand what query parameters to handle on the webserver, and what the

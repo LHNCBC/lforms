@@ -3,6 +3,17 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [9.0.0]   2016-11-17
+### Changed
+- Updated the autocomplete-lhc package to version 10, in which URLs for search
+  autcompleters now take a "maxList" parameter (in place of, but with opposite
+  meaning to, the "autocomp" parameter).  Forms with URLs for search lists might
+  need to be updated, or more likely the servers handling the URLs will need to
+  be changed to handle the new parameter, which is the reason for the major
+  version increment on this package.  The [Clinical Table Search
+  Service](https://clin-table-search.lhc.nlm.nih.gov) supports the new
+  autocomplete-lhc version with the addition of newer API URLs (v3 and higher).
+
 ## [8.1.2]   2016-11-08
 ### Fixed
 - Fixed a bug in getting form data without questions that have empty values.
