@@ -2,6 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [9.0.1]   2016-11-22
+### Changed
+- Changed the default style of TITLE row to be same as section headers. 
 
 ## [9.0.0]   2016-11-17
 ### Changed

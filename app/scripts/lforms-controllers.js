@@ -379,7 +379,7 @@ angular.module('lformsWidget')
          * @returns {string}
          */
         $scope.getRowClass = function(item) {
-          var eleClass = '';
+          var eleClass = 'level' + item._displayLevel;
           if (item._answerRequired) {
             eleClass += ' answer-required';
           }
