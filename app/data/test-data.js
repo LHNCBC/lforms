@@ -1643,11 +1643,9 @@ var genetic = {
                 "sourceType":"INTERNAL",
                 "sourceItemCode":"XXXXX-5"
               },
-              "target": {
-                "construction":"SIMPLE",
-                "dataFormat": "value.AlternateAllele",
-                "onAttribute":"value"
-              }
+              "construction":"SIMPLE",
+              "dataFormat": "value.AlternateAllele",
+              "onAttribute":"value"
             }
           ]
         },
