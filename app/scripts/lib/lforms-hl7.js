@@ -302,7 +302,7 @@ LForms.HL7 = {
    * @private
    */
   _precessOBX4AtOneLevel: function(parentOBX4, items) {
-    var sectionSN = 1;
+    var sectionSN = 0;
     var repeatingLetter = 'a';
     var prevItem = null;
     // go through questions/sections from top to bottom
@@ -317,6 +317,7 @@ LForms.HL7 = {
           // get the repeating instance letter
           if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
             repeatingLetter = 'a';
+            sectionSN += 1;
           }
           else {
             repeatingLetter = this._getNextLetter(repeatingLetter);
@@ -326,10 +327,10 @@ LForms.HL7 = {
         }
         // if it does not repeat
         else {
-          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN: sectionSN;
-          this._precessOBX4AtOneLevel(item._obx4, item.items);
           repeatingLetter = 'a';
           sectionSN += 1;
+          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN: sectionSN;
+          this._precessOBX4AtOneLevel(item._obx4, item.items);
         }
       }
       // if it's a question
