@@ -8,11 +8,11 @@ describe('HL7 library', function() {
       formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'value': {'text': 'United States', 'code': 'USA'}, 'dataType': 'CWE',
-        '_idPath': '/1'};
-      var out = hl7.itemToField(itemData, formInfo);
+        '_obx4': ''};
+      var out = hl7._itemToField(itemData, formInfo);
       assert.equal(out.trim(),
-        'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-        '^LN|1|'+itemData.value.code+'^'+itemData.value.text+'^LN|');
+        'OBX||CWE|'+itemData.questionCode+'^'+itemData.question+
+        '^LN||'+itemData.value.code+'^'+itemData.value.text+'^LN|');
     });
 
 
@@ -21,11 +21,11 @@ describe('HL7 library', function() {
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'AA',
         'value': {'text': 'United States', 'code': 'USA'}, 'dataType': 'CWE',
-        '_idPath': '/1'};
-      var out = hl7.itemToField(itemData, formInfo);
+        '_obx4': ''};
+      var out = hl7._itemToField(itemData, formInfo);
       assert.equal(out.trim(),
-        'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-        '^LN|1|'+itemData.value.code+'^'+itemData.value.text+'^AA|');
+        'OBX||CWE|'+itemData.questionCode+'^'+itemData.question+
+        '^LN||'+itemData.value.code+'^'+itemData.value.text+'^AA|');
     });
 
 
@@ -34,20 +34,20 @@ describe('HL7 library', function() {
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'AA',
         'value': {'text': 'United States'}, 'dataType': 'CWE',
-        '_idPath': '/1'};
-      var out = hl7.itemToField(itemData, formInfo);
+        '_obx4': ''};
+      var out = hl7._itemToField(itemData, formInfo);
       assert.equal(out.trim(),
-        'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-        '^LN|1|^^^^^^^^'+itemData.value.text+'|');
+        'OBX||CWE|'+itemData.questionCode+'^'+itemData.question+
+        '^LN||^^^^^^^^'+itemData.value.text+'|');
       // Try a multi-answer field
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'AA',
         'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA'}],
-         'dataType': 'CWE', '_idPath': '/1'};
-      var out = hl7.itemToField(itemData, formInfo);
+         'dataType': 'CWE', '_obx4': ''};
+      var out = hl7._itemToField(itemData, formInfo);
       assert.equal(out.trim(),
-        'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-        '^LN|1|^^^^^^^^Canada~ USA^United States^AA|');
+        'OBX||CWE|'+itemData.questionCode+'^'+itemData.question+
+        '^LN||^^^^^^^^Canada~USA^United States^AA|');
     });
   });
 

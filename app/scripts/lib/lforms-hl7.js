@@ -207,11 +207,13 @@ LForms.HL7 = {
 
     var formData = lfData.getFormData(true, true, true);
 
+    this._generateOBX4(formData);
+
     // form level info
     var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
-    formObrArray[1] = 1;
+    formObrArray[1] = ""; //1;
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
     if (formData.templateOptions.obrItems.length > 0) {
@@ -261,13 +263,98 @@ LForms.HL7 = {
 
 
   /**
+   * Get the next letter (letters) for the next repeating instance
+   * @param currentLetter the letter for the current repeating instance
+   */
+  _getNextLetter: function(currentLetter) {
+    var nextLetter = 'a';
+    if (currentLetter && currentLetter.match(/[a-z]+/)) {
+      var lastChar = currentLetter.slice(currentLetter.length -1);
+      if (lastChar === 'z') {
+        var nextChar = 'aa';
+      }
+      else {
+        var nextChar = String.fromCharCode(lastChar.charCodeAt(lastChar)+1);
+      }
+      nextLetter = currentLetter.slice(0, currentLetter.length-1) + nextChar;
+    }
+    return nextLetter;
+  },
+
+
+  /**
    * Calculate OBX4 values of each item in the form
    * @param formData form data that also includes user data
    * @private
    */
-  _makeOBX4: function(formData) {
+  _generateOBX4: function(formData) {
+
+    if (formData && formData.items) {
+      this._precessOBX4AtOneLevel("", formData.items)
+    }
+  },
 
 
+  /**
+   * Calculate OBX4 values for questions/sections at one level
+   * @param parentOBX4 the containing section item's obx4 value
+   * @param items, the list of items at the level
+   * @private
+   */
+  _precessOBX4AtOneLevel: function(parentOBX4, items) {
+    var sectionSN = 1;
+    var repeatingLetter = 'a';
+    var prevItem = null;
+    // go through questions/sections from top to bottom
+    for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+      // if it's a section
+      if (item.dataType === "SECTION") {
+
+        // if it repeats
+        var max = item.questionCardinality.max;
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          // get the repeating instance letter
+          if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+            repeatingLetter = 'a';
+          }
+          else {
+            repeatingLetter = this._getNextLetter(repeatingLetter);
+          }
+          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN + repeatingLetter : sectionSN + repeatingLetter;
+          this._precessOBX4AtOneLevel(item._obx4, item.items);
+        }
+        // if it does not repeat
+        else {
+          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN: sectionSN;
+          this._precessOBX4AtOneLevel(item._obx4, item.items);
+          repeatingLetter = 'a';
+          sectionSN += 1;
+        }
+      }
+      // if it's a question
+      else{
+        // if it repeats
+        var max = item.questionCardinality.max;
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          // get the repeating instance letter
+          if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+            repeatingLetter = 'a';
+          }
+          else {
+            repeatingLetter = this._getNextLetter(repeatingLetter);
+          }
+          item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
+        }
+        // if it does not repeat
+        else {
+          item._obx4 = parentOBX4 ? parentOBX4 : "";
+          repeatingLetter = 'a';
+        }
+
+      }
+      prevItem = item;
+    }
   },
 
 
@@ -278,7 +365,7 @@ LForms.HL7 = {
    * @param answerCS the answer code system
    * @return the OBX5 field string
    */
-  _makeOBX5: function(itemVal, dataType, answerCS) {
+  _generateOBX5: function(itemVal, dataType, answerCS) {
     var rtn;
     var code = itemVal.code;
     if (dataType === 'CWE' && !code && code !== 0) {
@@ -309,6 +396,7 @@ LForms.HL7 = {
 
       // a sub panel
       if (item.header) {
+        var obrSeg = "";
         itemObrArray[0] = "OBR";
         itemObrArray[1] = ++formInfo.obrIndex;
 
@@ -322,13 +410,16 @@ LForms.HL7 = {
             continue
           }
           else if (itemObrArray[i] !== undefined) {
-            hl7Seg = itemObrArray[i] + this.delimiters.field + hl7Seg;
+            obrSeg = itemObrArray[i] + this.delimiters.field + obrSeg;
           }
           else {
-            hl7Seg += this.delimiters.field;
+            obrSeg += this.delimiters.field;
           }
         }
-        hl7Seg += this.delimiters.segment;
+        obrSeg += this.delimiters.segment;
+
+        //// Note: not to add obr segments for now.
+        //hl7Seg += obrSeg;
 
         if(item.items) {
           var obxIndex = 0;
@@ -347,30 +438,32 @@ LForms.HL7 = {
       }
       // a question, only when it has value
       else {
-        itemObxArray[0] = "OBX";
-        itemObxArray[1] = formInfo.obxIndex;
-        itemObxArray[2] = this.getHL7V2DataType(item.dataType);
-        itemObxArray[3] = item.questionCode + this.delimiters.component +
-          item.question + this.delimiters.component + questionCS;
-        // sub id
-        itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
 
         // value
-        if (item.value !== undefined && item.value !== null) {
+        if (item.value !== undefined && item.value !== null && item.value.text !== '' && item.value.length !== 0) {
+          itemObxArray[0] = "OBX";
+          itemObxArray[1] = "";   //formInfo.obxIndex; /// Note: not to use OBX1
+          itemObxArray[2] = this.getHL7V2DataType(item.dataType);
+          itemObxArray[3] = item.questionCode + this.delimiters.component +
+              item.question + this.delimiters.component + questionCS;
+          // sub id
+          //itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
+          itemObxArray[4] = item._obx4;
+
           var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
           // multiple answers
           if (Array.isArray(item.value)) {
             var obx5 = [];
             for(var j= 0, jLen=item.value.length; j<jLen; j++) {
               if (item.dataType === 'CNE' || item.dataType === 'CWE')
-                obx5.push(this._makeOBX5(item.value[j], item.dataType, answerCS));
+                obx5.push(this._generateOBX5(item.value[j], item.dataType, answerCS));
             }
             itemObxArray[5] = obx5.join(this.delimiters.repetition);
           }
           // single answer
           else {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = this._makeOBX5(item.value, item.dataType, answerCS);
+              itemObxArray[5] = this._generateOBX5(item.value, item.dataType, answerCS);
             }
             else if (item.dataType === 'DT') {
               itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
@@ -379,15 +472,16 @@ LForms.HL7 = {
               itemObxArray[5] = item.value.toString();
             }
           }
-        }
-        // unit
-        if (item.unit) {
-          var unitName ="";
-          if (item.unit.name !== undefined) {
-            unitName = item.unit.name;
+          // unit
+          if (item.unit) {
+            var unitName ="";
+            if (item.unit.name !== undefined) {
+              unitName = item.unit.name;
+            }
+            itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
           }
-          itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
-        }
+
+        } // if value is not empty
 
         // ignore ending empty fields
         foundValue = false;
@@ -402,15 +496,6 @@ LForms.HL7 = {
             hl7Seg += this.delimiters.field;
           }
         }
-
-        //for(var i=0; i<this.obxFieldNum; i++) {
-        //  if (itemObxArray[i] !== undefined) {
-        //    hl7Seg += itemObxArray[i] + this.delimiters.field;
-        //  }
-        //  else {
-        //    hl7Seg += this.delimiters.field;
-        //  }
-        //}
 
         hl7Seg += this.delimiters.segment;
       }

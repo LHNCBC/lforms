@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [9.1.0]   2016-11-29
+### Changed
+- Changed OBX4 value calculation method in HL7 messages. 
+
 ## [9.0.1]   2016-11-22
 ### Changed
 - Changed the default style of TITLE row to be same as section headers. 
