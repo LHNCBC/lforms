@@ -742,6 +742,7 @@ var allInOne =
   "header": null,
   "units": null,
   "template": "form-view-b",
+  "codeSystem": "OTHER",
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "items": [
@@ -750,7 +751,7 @@ var allInOne =
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
-      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null, "questionCodeSystem": "NON_LOINC",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
       "codingInstructionsFormat": "text",
@@ -932,7 +933,7 @@ var allInOne =
           "dataType":"CNE",
           "header":false,
           "question":"Drug (with extra data of strengths and forms)",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1"
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
         {
@@ -943,13 +944,12 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-                "itemCode": "itemWithExtraData",
-                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "answers"
+              "construction":"ARRAY",
+              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
+              "onAttribute":"answers"
             }
           ]
         },
@@ -962,13 +962,12 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "itemWithExtraData",
-                // "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                "data": "value.STRENGTHS_AND_FORMS.[0]"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.STRENGTHS_AND_FORMS[0]",
+              "onAttribute":"value"
             }
           ]
         }
@@ -982,13 +981,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "LIST",
-        //        "itemCode": "itemWithExtraData",
-        //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
+        //        "url": "https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
         //      },
+        //      "construction": "ARRAY"
+        //      "dataFormat": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}
         //      "onAttribute": "answers"
         //    }
         //  ],
@@ -1002,13 +1001,13 @@ var allInOne =
         //  "dataControl": [
         //    {
         //      "source": {
-        //        "sourceType": "external",
-        //        "sourceDataType": "TEXT",
-        //        "itemCode": "itemWithExtraData",
-        //        "url": "https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
+        //        "sourceType": "EXTERNAL",
+        //        "sourceItemCode": "itemWithExtraData",
+        //        "url": "https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS&authenticity_token=&autocomp=1",
         //        "urlOptions": [{"parameter": "terms", "data": "value.text"}],
-        //        "data": "value.STRENGTHS_AND_FORMS.[0]"
         //      },
+        //      "construction": "SIMPLE"
+        //      "dataFormat": "value.STRENGTHS_AND_FORMS[0]"
         //      "onAttribute": "value"
         //    }
         //  ],
@@ -1042,12 +1041,12 @@ var allInOne =
       "dataControl": [
         {
           "source": {
-            "sourceType": "internal",
-            "sourceDataType": "TEXT",
-            "itemCode": "cardinalityControl",
-            "data": "value.questionCardinality"
+            "sourceType":"INTERNAL",
+            "sourceItemCode":"cardinalityControl"
           },
-          "onAttribute": "questionCardinality"
+          "construction":"SIMPLE",
+          "dataFormat": "value.questionCardinality",
+          "onAttribute":"questionCardinality"
         }
       ],
       "items":[
@@ -1074,11 +1073,8 @@ var allInOne =
             "colCSS": [{"name": "width", "value":"50%"}]
           }
         }
-
       ]
     }
-
-
 
 
     // skip logic, controlling child items and headers (one level below)
@@ -1249,7 +1245,7 @@ var formWithUserData =
     // multi-select CWE with a search autocomplter
     {"questionCode": "q10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE, a search field",
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
 
     // skip logic works
@@ -1410,7 +1406,7 @@ var rxTerms = {
           "dataType":"CNE",
           "header":false,
           "question":"Drug Name",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/rxterms/v1/search?ef=STRENGTHS_AND_FORMS,RXCUIS",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS",
         },
         //an item that gets the extra LIST data whenever the source item has a data changes
         {
@@ -1421,13 +1417,12 @@ var rxTerms = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "LIST", // "TEXT", "NUMBER" ?
-                "itemCode": "itemWithExtraData",
-                "data": {"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}  // for "LIST"
-                // "data": "value.STRENGTHS_AND_FORMS" // for other dataType
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
               },
-              "onAttribute": "answers"
+              "construction":"ARRAY",
+              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
+              "onAttribute":"answers"
             }
           ]
         }
@@ -1498,7 +1493,7 @@ var genetic = {
         "max":"*"
       },
       "question":"Genetic disease assessed",
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v1/search",
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/disease_names/v3/search",
       "answers":null,
       "skipLogic":null,
       "restrictions":null,
@@ -1527,7 +1522,7 @@ var genetic = {
       "question": "Gene(s) examined",
       "dataType": "CNE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol"
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol"
     },
     {"questionCode": "XXXXX-0",
       "question": "Full narrative report",
@@ -1558,41 +1553,40 @@ var genetic = {
             "listColHeaders": ["Variant&nbsp;ID <a>", "RefSeq ID", "Gene",
               "Nucleotide Change", "Amino Acid Change"]
           },
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID"
         },
         {"questionCode": "48018-6",
           "question": "Gene symbol",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.GeneSymbol"},
+              "onAttribute":"value"
             }
           ]
         },
         {"questionCode": "48013-7",
           "question": "Reference sequence ID",
           "dataType":"CNE",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"code": "value.code", "text": "value.RefSeqID"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.RefSeqID"},
+              "onAttribute":"value"
             }
           ]
-
         },
         {"questionCode": "41103-3",
           "question": "DNA change - HGVS(c.)",
@@ -1600,12 +1594,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.NucleotideChange"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.NucleotideChange",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1615,12 +1609,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.AminoAcidChange"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.AminoAcidChange",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1629,12 +1623,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.ReferenceAllele"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.ReferenceAllele",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1646,12 +1640,12 @@ var genetic = {
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.AlternateAllele"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.AlternateAllele",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1718,16 +1712,16 @@ var genetic = {
           "question": "Cytogenetic location",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=Cytogenetic",
+          "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=Cytogenetic",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat":{"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -1786,16 +1780,16 @@ var genetic = {
           "question": "Possible associated phenotype",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/disease_names/v3/search",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat":"value.phenotype",
+              "onAttribute":"value"
             }
           ]
         },
@@ -1803,18 +1797,18 @@ var genetic = {
           "question": "dbSNP ID for mutations",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/snps/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
           "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
             "action": "show"},
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"text": "value.dbSNP", "code": "value.code"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -1843,21 +1837,21 @@ var genetic = {
           "question": "Gene symbol",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod&ef=refseq_accession,location"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod&ef=refseq_accession,location"
         },
         {"questionCode": "48013-7",
           "question": "Reference sequence ID",
           "dataType":"CWE",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "48018-6",
-                "data": {"code": "value.code", "text": "value.refseq_accession"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"48018-6"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"text": "value.refseq_accession", "code": "value.code"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2006,7 +2000,7 @@ var genetic2 ={
         "max":"*"
       },
       "question":"Genetic disease assessed",
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v1/search",
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/disease_names/v3/search",
       "answers":null,
       "skipLogic":null,
       "restrictions":null,
@@ -2035,7 +2029,7 @@ var genetic2 ={
       "question": "Gene(s) examined",
       "dataType": "CNE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod"
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod"
     },
     {"questionCode": "36908-2",
       "question": "Gene mutations tested for",
@@ -2084,7 +2078,7 @@ var genetic2 ={
           "question": "Variant ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name"
         },
         {"questionCode": "XXXXX-13",
           "question": "Variant name",
@@ -2092,12 +2086,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.Name"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+                "construction":"SIMPLE",
+                "dataFormat": "value.Name",
+                "onAttribute":"value"
             }
           ]
         },
@@ -2150,16 +2144,16 @@ var genetic2 ={
               "question": "Gene",
               "dataType": "CNE",
               "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod",
+              "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod",
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "onAttribute":"value"
                 }
               ],
               "displayControl": {
@@ -2174,16 +2168,16 @@ var genetic2 ={
                 "colCSS": [{"name": "width", "value":"9em"},
                   {"name": "min-width", "value":"2em"}]
               },
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=RefSeqID,GeneSymbol",
+              "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=RefSeqID,GeneSymbol",
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.RefSeqID"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.RefSeqID"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2194,16 +2188,16 @@ var genetic2 ={
                 "colCSS": [{"name": "width", "value":"50%"},
                   {"name": "min-width", "value":"2em"}]
               },
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=NucleotideChange,GeneSymbol",
+              "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=NucleotideChange,GeneSymbol",
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.NucleotideChange"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.NucleotideChange"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2214,16 +2208,16 @@ var genetic2 ={
                 "colCSS": [{"name": "width", "value":"50%"},
                   {"name": "min-width", "value":"2em"}]
               },
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=AminoAcidChange,GeneSymbol",
+              "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AminoAcidChange,GeneSymbol",
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.AminoAcidChange"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.AminoAcidChange"},
+                  "onAttribute":"value"
                 }
               ]
             },
@@ -2262,18 +2256,18 @@ var genetic2 ={
           "question": "dbSNP ID for mutations",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/snps/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
           "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
             "action": "show"},
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.dbSNP"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2294,16 +2288,16 @@ var genetic2 ={
           "question": "Cytogenetic location",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=Cytogenetic",
+          "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=Cytogenetic",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2421,16 +2415,16 @@ var genetic2 ={
           "question": "Possible associated phenotype",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/disease_names/v3/search",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.phenotype",
+              "onAttribute":"value"
             }
           ]
         }
@@ -2455,7 +2449,7 @@ var genetic2 ={
           "question": "Variant ID",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID,Name"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,VariantID,Name"
         },
         {"questionCode": "XXXXX-13",
           "question": "Variant name",
@@ -2463,12 +2457,12 @@ var genetic2 ={
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.Name"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.Name",
+              "onAttribute":"value"
             }
           ]
         },
@@ -2499,7 +2493,7 @@ var genetic2 ={
                 "max": "1",
                 "min": "0"
               },
-              "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=AlleleID,GeneSymbol",
+              "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,GeneSymbol",
               "displayControl": {
                 "colCSS": [
                   {
@@ -2552,16 +2546,16 @@ var genetic2 ={
               "question": "Gene",
               "dataType": "CNE",
               "answerCardinality": {"max": "1", "min":"0"},
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod",
+              "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod",
               "dataControl": [
                 {
                   "source": {
-                    "sourceType": "internal",
-                    "sourceDataType": "OBJECT",
-                    "itemCode": "XXXXX-5",
-                    "data": {"code": "value.code", "text": "value.GeneSymbol"}
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"XXXXX-5"
                   },
-                  "onAttribute": "value"
+                  "construction":"OBJECT",
+                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "onAttribute":"value"
                 }
               ],
               "displayControl": {
@@ -2634,18 +2628,18 @@ var genetic2 ={
           "question": "dbSNP ID for mutations",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/snps/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
           "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
             "action": "show"},
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.dbSNP", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.dbSNP"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2663,16 +2657,16 @@ var genetic2 ={
           "question": "Cytogenetic location",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v1/search?df=Cytogenetic",
+          "externallyDefined": "https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=Cytogenetic",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "XXXXX-5",
-                "data": {"text": "value.Cytogenetic", "code": "value.code"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.Cytogenetic"},
+              "onAttribute":"value"
             }
           ]
         },
@@ -2790,16 +2784,16 @@ var genetic2 ={
           "question": "Possible associated phenotype",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v1/search",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/disease_names/v3/search",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "TEXT",
-                "itemCode": "XXXXX-5",
-                "data": "value.phenotype"
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"XXXXX-5"
               },
-              "onAttribute": "value"
+              "construction":"SIMPLE",
+              "dataFormat": "value.phenotype",
+              "onAttribute":"value"
             }
           ]
         }
@@ -2828,21 +2822,21 @@ var genetic2 ={
           "question": "Gene symbol",
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod&ef=refseq_accession,location"
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod&ef=refseq_accession,location"
         },
         {"questionCode": "48013-7",
           "question": "Reference sequence ID",
           "dataType":"CWE",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=refseq_accession,name_mod&sf=symbol,refseq_accession",
           "dataControl": [
             {
               "source": {
-                "sourceType": "internal",
-                "sourceDataType": "OBJECT",
-                "itemCode": "48018-6",
-                "data": {"code": "value.code", "text": "value.refseq_accession"}
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"48018-6"
               },
-              "onAttribute": "value"
+              "construction":"OBJECT",
+              "dataFormat": {"code": "value.code", "text": "value.refseq_accession"},
+              "onAttribute":"value"
             }
           ]
         },

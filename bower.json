@@ -1,12 +1,12 @@
 {
   "name": "lforms",
-  "version": "7.5.0",
+  "version": "9.0.1",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
     "angular-bootstrap": "^1.1.0",
-    "autocomplete-lhc": "^9.1.1",
+    "autocomplete-lhc": "^10.0.0",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0"
   },
@@ -45,6 +45,7 @@
     "app/scripts/lib/lforms-util.js",
     "app/scripts/lib/polyfill.js",
     "app/scripts/lib/lforms-hl7.js",
+    "app/scripts/lib/lforms-fhir.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
     "app/styles/lforms.css",

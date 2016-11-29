@@ -379,7 +379,7 @@ angular.module('lformsWidget')
          * @returns {string}
          */
         $scope.getRowClass = function(item) {
-          var eleClass = '';
+          var eleClass = 'level' + item._displayLevel;
           if (item._answerRequired) {
             eleClass += ' answer-required';
           }
@@ -393,7 +393,7 @@ angular.module('lformsWidget')
             eleClass += ' horizontal';
           }
           if (!item.question || item.question.length === 0) {
-            eleClass += ' empty-question';
+            eleClass += ' lf-empty-question';
           }
           if (item._visitedBefore) {
             eleClass += ' visited-before';

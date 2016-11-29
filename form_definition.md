@@ -77,6 +77,8 @@ about the meaning of each key:
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
+* **codeSystem** - (optional) the code system for the code of the form. The default value
+  is "LOINC" when the form's **type** is "LOINC".
 * **name** - (required) The name of the form (to be shown to the user).
 * **type** - the form type, "LOINC" is the only one supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
@@ -162,6 +164,8 @@ about the meaning of each key:
     * questionCode - (required) A code identifying the question or section.
       This code needs to be unique among its sibling questions. 
       It should not contain '/'.
+    * questionCodeSystem - (optional) the code system for the question code. The default value
+      is "LOINC" when the form's **type** is "LOINC".
     * questionCardinality - This controls whether the there is a button for
       adding another of this question/section.  It is a hash with "min" and
       "max" keys, and by default both of those are "1" (i.e., not repeatable).
@@ -191,8 +195,9 @@ about the meaning of each key:
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.
-      The [lforms-service](https://lforms-service.nlm.nih.gov/) website provides
-      a number of ready-to-use web APIs that can plugged in here to provide
+      The [Clinical Table Search
+      Service](https://clin-table-search.lhc.nlm.nih.gov/) website provides a number
+      of ready-to-use web APIs that can plugged in here to provide
       searchable lists of drugs, medical conditions, disease names, and more.
       If you wish to set up your own web API on a website, then you just need to
       understand what query parameters to handle on the webserver, and what the
@@ -210,6 +215,7 @@ about the meaning of each key:
         * REAL - a number which might not be an integer
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
+        * TM - a string in the time format
         * ST - a normal free-text string
         * TX - a string for a long free-text
         * YEAR - a string in the format of one to four digits that represents a year
@@ -220,6 +226,10 @@ about the meaning of each key:
         * PHONE - a string in a valid phone number format
         * NR - a numeric range, in the format of two values separated by "^". 
                Having one number on either side of "^" is allowed.
+        * SECTION - a special type for sections, which contain sub items in the 
+                    <a href="#items">items</a> field       
+        * TITLE - a special type for separators that displays some text.               
+               
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
       following keys:
@@ -227,16 +237,18 @@ about the meaning of each key:
         * default - If true, this unit will be the default unit, which means it
           will show up in the field when the question is shown and the user does
           not have to pick it.  If false, this key can be omitted.
+    * editable - (optional) If "0" the input field is readonly, any other value 
+      makes the input field editable.
     * header - If true, then this is not a question but a section, which can
       contain its own <a href="#items">items</a> array of questions and sections.
     * skipLogic - Controls the hiding/showing of this question or section based
       on data entered in other parts of the form. The value is a hash with the
       following keys:
-        * conditions - An array of the conditions to be met.  Each condition is a
+        * conditions - An array of the conditions to be met. Each condition is a
           hash with the following keys:
-            * source - The code of another question.  The source must be either
+            * source - The code of another question. The source must be either
               a sibling of this question (in the tree), or or one of the
-              questions in in the containing sections.
+              questions in the containing sections.
             * trigger - A hash defining a condition about the value for the
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
@@ -293,7 +305,46 @@ about the meaning of each key:
         * questionLayout - the layout of the questions in the section. It works on items 
           that are sections, i.e. they contain sub items. Supported values are: 
           'vertical' (default), 'horizontal' and 'matrix'.
-
+    * dataControl - an array of objects that control the current question's attributes when the controlling
+      source question's value changes. Supported fields are:
+        * source - an object identifying the controlling source question. It has the following fields:
+            * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The 
+              default value is "INTERNAL".
+            * sourceItemCode - the questionCode of the source question in the form. The source question 
+              must be either a sibling of this question (in the tree), or or one of the questions 
+              in the containing sections.
+        * onAttribute - optional, the attribute on this question, whose value will be updated by the newly 
+          constructed value. The default value is "value".
+        * dataFormat - the format of the newly constructed value. It is a hash, such as 
+          `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, when the **construction**
+           is set to be "ARRAY" or "OBJECT". It is a string, such as `"value.STRENGTHS_AND_FORMS[0]"`, 
+           when the **construction** is "SIMPLE". See **construction** for details on how these formats are used.
+        * construction - the method to construct a new value based on the source question's value. 
+          It supports three types:
+            * SIMPLE - the new value is a direct copy of what is on the controlling source question. 
+              The **dataFormat**'s value must be string. 
+              For example, if it's value is `"value.STRENGTHS_AND_FORMS[0]"`, 
+              the new value could be `"325-2.25-0.19 mg Tab"`.
+            * OBJECT - the new value is a hash object. The **dataFormat**'s value must be a hash object.
+              For each key/value pair in the **dataFormat** hash object, the key is a key in the new hash object, 
+              and the value is from the controlling source question's value or its attributes.
+              For example, if the **dataFormat** is `{"code": "value.code", "text": "value.GeneSymbol"}`, 
+              the new object could be created as `{"code": "NM_004315.5", "text": "ASAH1"}`, where "NM_004315.5"
+              and "ASAH1" are values retrieved from the controlling source question for "value.code" and 
+              "value.GeneSymbol", respectively.
+            * ARRAY - the new value is an array. The **dataFormat**'s value must be a hash object.
+              Each element object in the array is constructed according to that hash object. 
+              It is similar to the processing for "OBJECT", except that for each key/value pair in the 
+              **dataFormat** hash object, the value contains an array. 
+              If there are more than one pairs, the arrays retrieved should have the same length. 
+              Elements in the new array are constructed with the corresponding elements in these retrieved arrays.  
+              For example, if the **dataFormat** is `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, 
+              the "value.RXCUIS" and the "value.STRENGTHS_AND_FORMS" of the controlling source question should 
+              both contains an array and these two arrays should have the same length.
+              A sample constructed array could be               
+              `[{"code": "724614", "text": "325-2.25-0.19 mg Tab"},{"code": "637540", "text": "325-4.5-0.38 mg Tab"},{"code": "848768", "text": "325-4.84 mg Tab"}]`
+              where "value.RXCUIS" is `["724614", "637540", "848768"]` and "value.STRENGTHS_AND_FORMS" is
+              `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
 ### Emitted (angular) Events:
 

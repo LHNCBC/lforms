@@ -483,12 +483,12 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* title row */
-.lf-form .lf-form-table .title-row {
-  background-color: rgb(67,115,156);
-}
-.lf-form .lf-form-table .title-row .name-label {
-  color: white;
-}
+/*.lf-form .lf-form-table .title-row {*/
+  /*background-color: rgb(67,115,156);*/
+/*}*/
+/*.lf-form .lf-form-table .title-row .name-label {*/
+  /*color: white;*/
+/*}*/
 
 
 /*** template-list.html ***/

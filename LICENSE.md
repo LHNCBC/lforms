@@ -35,7 +35,6 @@ of conditions and the following disclaimer.
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 * Neither the names of the National Library of Medicine (NLM), the Lister Hill
-
 National Center for Biomedical Communications (LHNCBC), the National
 Institutes of Health (NIH), nor the names of any of the software contributors
 may be used to endorse or promote products derived from this software without
