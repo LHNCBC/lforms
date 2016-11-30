@@ -144,7 +144,41 @@ LForms.Util = {
    */
   stringToDate: function(strDate) {
     return new Date(strDate);
-  }
+  },
+
+
+  /**
+   * Check if an item's value is empty, where the data has no meaningful use.
+   * @param value the value to be tested
+   * @returns {boolean}
+   * @private
+   */
+  hasEmptyValue: function(value) {
+    var empty = true;
+    if (typeof value !== 'undefined') {
+      // object
+      if (angular.isObject(value)) {
+        var keys = Object.keys(value);
+        for(var i=0, iLen=keys.length; i<iLen; i++) {
+          var val = value[keys[i]];
+          if (val !== null && val !== "" ) {
+            empty = false;
+            break;
+          }
+        }
+      }
+      // array
+      else if (angular.isArray(value)) {
+        if (value.length > 0) {
+          empty = false;
+        }
+      }
+      // other
+      else if (value !== null && value !== "") {
+        empty = false;
+      }
+    }
+    return empty;
+  },
 
 };
-

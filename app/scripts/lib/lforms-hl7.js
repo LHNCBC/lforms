@@ -205,7 +205,8 @@ LForms.HL7 = {
       obxIndex: 1
     };
 
-    var formData = lfData.getFormData(true, true, true);
+    // get form data with questions that have no values
+    var formData = lfData.getFormData(false, true, true);
 
     this._generateOBX4(formData);
 
@@ -218,10 +219,12 @@ LForms.HL7 = {
 
     if (formData.templateOptions.obrItems.length > 0) {
       for (var i= 0, iLen=formData.templateOptions.obrItems.length; i< iLen; i++) {
-        if (formData.templateOptions.obrItems[i].questionCode === "date_done") {
-          formObrArray[7] = formData.templateOptions.obrItems[i].value.toString("yyyyMMddHHmmss");
+        if (formData.templateOptions.obrItems[i].questionCode === "date_done" &&
+            formData.templateOptions.obrItems[i].value) {
+            formObrArray[7] = formData.templateOptions.obrItems[i].value.toString("yyyyMMddHHmmss");
         }
-        else if (formData.templateOptions.obrItems[i].questionCode === "where_done") {
+        else if (formData.templateOptions.obrItems[i].questionCode === "where_done" &&
+            formData.templateOptions.obrItems[i].value) {
           formObrArray[13] = formData.templateOptions.obrItems[i].value.text;
         }
       }
@@ -231,7 +234,7 @@ LForms.HL7 = {
     var foundValue = false;
     for(var i=this.obrFieldNum-1; i>=0; i--) {
       if (!foundValue && formObrArray[i] === undefined) {
-        continue
+        continue;
       }
       else if (formObrArray[i] !== undefined) {
         hl7String = formObrArray[i] + this.delimiters.field + hl7String;
@@ -314,18 +317,27 @@ LForms.HL7 = {
         // if it repeats
         var max = item.questionCardinality.max;
         if (max && (max === "*" || parseInt(max) > 1)) {
-          // get the repeating instance letter
-          if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
-            repeatingLetter = 'a';
-            sectionSN += 1;
+          // skip if all questions within it has no values
+          if (!this._hasEmptySection(item)) {
+            // get the repeating instance letter
+            if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+              repeatingLetter = 'a';
+              sectionSN += 1;
+            }
+            else {
+              repeatingLetter = this._getNextLetter(repeatingLetter);
+            }
+            item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN + repeatingLetter : sectionSN + repeatingLetter;
+            this._precessOBX4AtOneLevel(item._obx4, item.items);
           }
+          // skip if it is an empty section, not to set prevItem
           else {
-            repeatingLetter = this._getNextLetter(repeatingLetter);
+            continue;
           }
-          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN + repeatingLetter : sectionSN + repeatingLetter;
-          this._precessOBX4AtOneLevel(item._obx4, item.items);
         }
         // if it does not repeat
+        // Note: not to skip even if all questions within is has no values,
+        // because the SN still increases in this case.
         else {
           repeatingLetter = 'a';
           sectionSN += 1;
@@ -338,14 +350,21 @@ LForms.HL7 = {
         // if it repeats
         var max = item.questionCardinality.max;
         if (max && (max === "*" || parseInt(max) > 1)) {
-          // get the repeating instance letter
-          if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
-            repeatingLetter = 'a';
+          // if it has value
+          if (!LForms.Util.hasEmptyValue(item.value)) {
+            // get the repeating instance letter
+            if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+              repeatingLetter = 'a';
+            }
+            else {
+              repeatingLetter = this._getNextLetter(repeatingLetter);
+            }
+            item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
           }
+          // skip if it has no values, not to set prevItem
           else {
-            repeatingLetter = this._getNextLetter(repeatingLetter);
+            continue;
           }
-          item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
         }
         // if it does not repeat
         else {
@@ -408,7 +427,7 @@ LForms.HL7 = {
         var foundValue = false;
         for(var i=this.obrFieldNum-1; i>=0; i--) {
           if (!foundValue && itemObrArray[i] === undefined) {
-            continue
+            continue;
           }
           else if (itemObrArray[i] !== undefined) {
             obrSeg = itemObrArray[i] + this.delimiters.field + obrSeg;
@@ -438,57 +457,51 @@ LForms.HL7 = {
         }
       }
       // a question, only when it has value
-      else {
+      else if (!LForms.Util.hasEmptyValue(item.value)) {
+        itemObxArray[0] = "OBX";
+        itemObxArray[1] = "";   //formInfo.obxIndex; /// Note: not to use OBX1
+        itemObxArray[2] = this.getHL7V2DataType(item.dataType);
+        itemObxArray[3] = item.questionCode + this.delimiters.component +
+            item.question + this.delimiters.component + questionCS;
+        // sub id
+        //itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
+        itemObxArray[4] = item._obx4;
 
-        // value
-        if (item.value !== undefined && item.value !== null && item.value.text !== '' && item.value.length !== 0) {
-          itemObxArray[0] = "OBX";
-          itemObxArray[1] = "";   //formInfo.obxIndex; /// Note: not to use OBX1
-          itemObxArray[2] = this.getHL7V2DataType(item.dataType);
-          itemObxArray[3] = item.questionCode + this.delimiters.component +
-              item.question + this.delimiters.component + questionCS;
-          // sub id
-          //itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
-          itemObxArray[4] = item._obx4;
-
-          var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
-          // multiple answers
-          if (Array.isArray(item.value)) {
-            var obx5 = [];
-            for(var j= 0, jLen=item.value.length; j<jLen; j++) {
-              if (item.dataType === 'CNE' || item.dataType === 'CWE')
-                obx5.push(this._generateOBX5(item.value[j], item.dataType, answerCS));
-            }
-            itemObxArray[5] = obx5.join(this.delimiters.repetition);
+        var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
+        // multiple answers
+        if (Array.isArray(item.value)) {
+          var obx5 = [];
+          for(var j= 0, jLen=item.value.length; j<jLen; j++) {
+            if (item.dataType === 'CNE' || item.dataType === 'CWE')
+              obx5.push(this._generateOBX5(item.value[j], item.dataType, answerCS));
           }
-          // single answer
+          itemObxArray[5] = obx5.join(this.delimiters.repetition);
+        }
+        // single answer
+        else {
+          if (item.dataType === 'CNE' || item.dataType === 'CWE') {
+            itemObxArray[5] = this._generateOBX5(item.value, item.dataType, answerCS);
+          }
+          else if (item.dataType === 'DT') {
+            itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
+          }
           else {
-            if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = this._generateOBX5(item.value, item.dataType, answerCS);
-            }
-            else if (item.dataType === 'DT') {
-              itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
-            }
-            else {
-              itemObxArray[5] = item.value.toString();
-            }
+            itemObxArray[5] = item.value.toString();
           }
-          // unit
-          if (item.unit) {
-            var unitName ="";
-            if (item.unit.name !== undefined) {
-              unitName = item.unit.name;
-            }
-            itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
+        }
+        // unit
+        if (item.unit) {
+          var unitName ="";
+          if (item.unit.name !== undefined) {
+            unitName = item.unit.name;
           }
-
-        } // if value is not empty
-
+          itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
+        }
         // ignore ending empty fields
         foundValue = false;
         for(var i=this.obxFieldNum-1; i>=0; i--) {
           if (!foundValue && itemObxArray[i] === undefined) {
-            continue
+            continue;
           }
           else if (itemObxArray[i] !== undefined) {
             hl7Seg = itemObxArray[i] + this.delimiters.field + hl7Seg;
@@ -499,10 +512,46 @@ LForms.HL7 = {
         }
 
         hl7Seg += this.delimiters.segment;
-      }
+      } // if value is not empty
     }
     return hl7Seg;
+  },
+
+
+  /**
+   * Check if all questions within a section have no values
+   * @param section a section item
+   * @private
+   */
+  _hasEmptySection: function(sectionItem) {
+    var empty = true;
+    if (sectionItem.items) {
+      for(var i=0, iLen=sectionItem.items.length; i<iLen; i++) {
+        var item = sectionItem.items[i];
+        // sub section
+        if (item.dataType === "SECTION") {
+          // has been checked already
+          if (item._emptySection === true || item._emptySection === false) {
+            empty = item._emptySection;
+          }
+          else {
+            empty = item._emptySection = this._hasEmptySection(item);
+          }
+        }
+        // questions
+        else {
+          empty = LForms.Util.hasEmptyValue(item.value);
+        }
+        // return if there is a non-empty value
+        if (!empty)
+          break;
+      } // end of for loop
+    }
+    // set the flag
+    sectionItem._emptySection = empty;
+    return empty;
   }
+
 };
 
 if (typeof module !== 'undefined')

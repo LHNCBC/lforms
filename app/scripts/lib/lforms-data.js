@@ -1047,47 +1047,12 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and
       // it has an empty value or it has an empty array as value
-      //// (noEmptyValue && (!itemData.items || itemData.items.length === 0) && this._hasEmptyValue(item.value))
-      if (!noEmptyValue || (itemData.items && itemData.items.length !== 0) || !this._hasEmptyValue(item.value)) {
+      //// (noEmptyValue && (!itemData.items || itemData.items.length === 0) && LForms.Util.hasEmptyValue(item.value))
+      if (!noEmptyValue || (itemData.items && itemData.items.length !== 0) || !LForms.Util.hasEmptyValue(item.value)) {
         itemsData.push(itemData);
       }
     }
     return itemsData;
-  },
-
-
-  /**
-   * Check if an item's value is empty, where the data has no meaningful use.
-   * @param value
-   * @returns {boolean}
-   * @private
-   */
-  _hasEmptyValue: function(value) {
-    var empty = true;
-    if (typeof value !== 'undefined') {
-      // object
-      if (angular.isObject(value)) {
-        var keys = Object.keys(value);
-        for(var i=0, iLen=keys.length; i<iLen; i++) {
-          var val = value[keys[i]];
-          if (val !== null && val !== "" ) {
-            empty = false;
-            break;
-          }
-        }
-      }
-      // array
-      else if (angular.isArray(value)) {
-        if (value.length > 0) {
-          empty = false;
-        }
-      }
-      // other
-      else if (value !== null && value !== "") {
-        empty = false;
-      }
-    }
-    return empty;
   },
 
 
