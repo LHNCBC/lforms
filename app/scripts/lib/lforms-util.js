@@ -153,7 +153,7 @@ LForms.Util = {
    * @returns {boolean}
    * @private
    */
-  hasEmptyValue: function(value) {
+  isItemValueEmpty: function(value) {
     var empty = true;
     if (typeof value !== 'undefined') {
       // object
@@ -179,6 +179,6 @@ LForms.Util = {
       }
     }
     return empty;
-  },
+  }
 
 };

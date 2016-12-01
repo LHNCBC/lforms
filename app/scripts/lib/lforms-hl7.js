@@ -214,7 +214,7 @@ LForms.HL7 = {
     var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
-    formObrArray[1] = ""; //1;
+    formObrArray[1] = ""; //Note: might change to 1;
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
     if (formData.templateOptions.obrItems.length > 0) {
@@ -317,8 +317,8 @@ LForms.HL7 = {
         // if it repeats
         var max = item.questionCardinality.max;
         if (max && (max === "*" || parseInt(max) > 1)) {
-          // skip if all questions within it has no values
-          if (!this._hasEmptySection(item)) {
+          // skip if all questions within it have no values
+          if (!this._isSectionEmpty(item)) {
             // get the repeating instance letter
             if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
               repeatingLetter = 'a';
@@ -351,7 +351,7 @@ LForms.HL7 = {
         var max = item.questionCardinality.max;
         if (max && (max === "*" || parseInt(max) > 1)) {
           // if it has value
-          if (!LForms.Util.hasEmptyValue(item.value)) {
+          if (!LForms.Util.isItemValueEmpty(item.value)) {
             // get the repeating instance letter
             if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
               repeatingLetter = 'a';
@@ -457,7 +457,7 @@ LForms.HL7 = {
         }
       }
       // a question, only when it has value
-      else if (!LForms.Util.hasEmptyValue(item.value)) {
+      else if (!LForms.Util.isItemValueEmpty(item.value)) {
         itemObxArray[0] = "OBX";
         itemObxArray[1] = "";   //formInfo.obxIndex; /// Note: not to use OBX1
         itemObxArray[2] = this.getHL7V2DataType(item.dataType);
@@ -523,10 +523,10 @@ LForms.HL7 = {
    * @param section a section item
    * @private
    */
-  _hasEmptySection: function(sectionItem) {
+  _isSectionEmpty: function(sectionItem) {
     var empty = true;
     if (sectionItem.items) {
-      for(var i=0, iLen=sectionItem.items.length; i<iLen; i++) {
+      for(var i=0, iLen=sectionItem.items.length; i<iLen && empty; i++) {
         var item = sectionItem.items[i];
         // sub section
         if (item.dataType === "SECTION") {
@@ -535,16 +535,13 @@ LForms.HL7 = {
             empty = item._emptySection;
           }
           else {
-            empty = item._emptySection = this._hasEmptySection(item);
+            empty = this._isSectionEmpty(item);
           }
         }
         // questions
         else {
-          empty = LForms.Util.hasEmptyValue(item.value);
+          empty = LForms.Util.isItemValueEmpty(item.value);
         }
-        // return if there is a non-empty value
-        if (!empty)
-          break;
       } // end of for loop
     }
     // set the flag
