@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [9.0.2]   2016-12-05
+### Changed
+- Updated a test form, and added a test to make sure a problem with the
+  autocompletion stays fixed.
+
 ## [9.0.1]   2016-11-22
 ### Changed
 - Changed the default style of TITLE row to be same as section headers. 

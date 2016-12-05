@@ -1398,36 +1398,56 @@ var rxTerms = {
     obxTableColumns: []
   },
   items: [
-    {
-      "questionCode": "X-002", "question": "RxTerms", "header": true, "layout":"horizontal", "questionCardinality": {"min": "1", "max": "*"},
-      "items": [
-        {
-          "questionCode":"itemWithExtraData",
-          "dataType":"CNE",
-          "header":false,
-          "question":"Drug Name",
-          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS",
-        },
-        //an item that gets the extra LIST data whenever the source item has a data changes
-        {
-          "questionCode": "controlledItem_LIST",
-          "dataType": "CNE",
-          "header": false,
-          "question": "Strength",
-          "dataControl": [
-            {
-              "source": {
-                "sourceType":"INTERNAL",
-                "sourceItemCode":"itemWithExtraData"
+          {
+            "questionCode": "X-002", "question": "Prescription entry", "header":
+true,
+            "layout":"horizontal", "questionCardinality": {"min": "1", "max":
+"*"},
+            "items": [
+              {
+                "questionCode": "nameAndRoute",
+                "dataType":"CNE",
+                "header":false,
+                "question":"Drug Name",
+                "externallyDefined":
+                  "https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS",
               },
-              "construction":"ARRAY",
-              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
-              "onAttribute":"answers"
-            }
-          ]
-        }
-      ]
-    }
+              {
+                "questionCode": "strengthAndForm",
+                "dataType": "CNE",
+                "header": false,
+                "question": "Strength",
+                "dataControl": [
+                  {
+                    "source": {
+                      "sourceType": "INTERNAL",
+                      "sourceItemCode": "nameAndRoute"
+                    },
+                    "construction": "ARRAY",
+                    "dataFormat": {"code": "value.RXCUIS",
+                      "text": "value.STRENGTHS_AND_FORMS"},
+                    "onAttribute": "answers"
+                  }
+                ]
+              },
+              {
+                "questionCode": "RxCUI",
+                "dataType": "",
+                "question": "RxCUI",
+                "dataControl": [
+                  {
+                    "source": {
+                      "sourceType": "INTERNAL",
+                      "sourceItemCode": "strengthAndForm"
+                    },
+                    "construction": "SIMPLE",
+                    "dataFormat": "value.code",
+                    "onAttribute": "value"
+                  }
+                ]
+              }
+            ]
+          }
   ]
 };
 

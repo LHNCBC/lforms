@@ -33,6 +33,7 @@
     "grunt-usemin": "^3.0.0",
     "grunt-wiredep": "^2.0.0",
     "jasmine-core": "^2.3.4",
+    "jasmine-spec-reporter": "^2.7.0",
     "jit-grunt": "^0.10.0",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.13.14",
