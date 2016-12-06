@@ -179,6 +179,32 @@ LForms.Util = {
       }
     }
     return empty;
+  },
+
+
+  /**
+   * Get the letter (or letters) indicator for the next repeating instance
+   * The letters returned are in the pattern of:
+   * 'a','b',...,'z','aa','ab',...,'az','ba','bb',...
+   * for index that is:
+   *  1,  2, ..., 26, 27,  28, ..., 52,  53,  54, ...
+   * @param index the index for the current repeating instance, starting with 1
+   */
+  getNextLetter: function(index) {
+    var letters = "abcdefghijklmnopqrstuvqxyz";
+    var positions = [];
+    var wkIndex = index;
+    while (wkIndex > 0) {
+      var letterIndex = wkIndex % 26;
+      letterIndex = letterIndex === 0 ? 25 : letterIndex - 1;
+      positions.push(letterIndex);
+      wkIndex = Math.floor((wkIndex-1) / 26);
+    }
+    var nextLetter = "";
+    for(var i=positions.length-1; i>=0; i--) {
+      nextLetter += letters.charAt(positions[i]);
+    }
+    return nextLetter;
   }
 
 };

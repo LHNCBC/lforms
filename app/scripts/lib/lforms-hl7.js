@@ -306,7 +306,7 @@ LForms.HL7 = {
    */
   _precessOBX4AtOneLevel: function(parentOBX4, items) {
     var sectionSN = 0;
-    var repeatingLetter = 'a';
+    var repeatingIndex = 1;
     var prevItem = null;
     // go through questions/sections from top to bottom
     for (var i=0, iLen=items.length; i<iLen; i++) {
@@ -321,12 +321,13 @@ LForms.HL7 = {
           if (!this._isSectionEmpty(item)) {
             // get the repeating instance letter
             if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
-              repeatingLetter = 'a';
+              repeatingIndex = 1;
               sectionSN += 1;
             }
             else {
-              repeatingLetter = this._getNextLetter(repeatingLetter);
+              repeatingIndex +=1;
             }
+            var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
             item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN + repeatingLetter : sectionSN + repeatingLetter;
             this._precessOBX4AtOneLevel(item._obx4, item.items);
           }
@@ -339,7 +340,7 @@ LForms.HL7 = {
         // Note: not to skip even if all questions within is has no values,
         // because the SN still increases in this case.
         else {
-          repeatingLetter = 'a';
+          repeatingIndex = 1;
           sectionSN += 1;
           item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN: sectionSN;
           this._precessOBX4AtOneLevel(item._obx4, item.items);
@@ -354,11 +355,12 @@ LForms.HL7 = {
           if (!LForms.Util.isItemValueEmpty(item.value)) {
             // get the repeating instance letter
             if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
-              repeatingLetter = 'a';
+              repeatingIndex = 1;
             }
             else {
-              repeatingLetter = this._getNextLetter(repeatingLetter);
+              repeatingIndex += 1;
             }
+            var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
             item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
           }
           // skip if it has no values, not to set prevItem
@@ -369,7 +371,7 @@ LForms.HL7 = {
         // if it does not repeat
         else {
           item._obx4 = parentOBX4 ? parentOBX4 : "";
-          repeatingLetter = 'a';
+          repeatingIndex = 1;
         }
 
       }
@@ -550,6 +552,3 @@ LForms.HL7 = {
   }
 
 };
-
-if (typeof module !== 'undefined')
-  module.exports = LForms.HL7;

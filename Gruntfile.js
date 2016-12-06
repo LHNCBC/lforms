@@ -11,7 +11,8 @@ module.exports = function (grunt) {
 
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
-    mochaTest: 'grunt-mocha-test',
+    //mochaTest: 'grunt-mocha-test',
+    karma: 'grunt-karma',
     ngtemplates: 'grunt-angular-templates',
     protractor: 'grunt-protractor-runner'
   });
@@ -101,7 +102,7 @@ module.exports = function (grunt) {
         }
       },
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
+        files: ['test/mocha/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
       styles: {
@@ -447,19 +448,10 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       unit: {
-        configFile: 'test/karma.conf.js',
+        configFile: 'karma.conf.js',
         singleRun: true
       }
-    },
-
-
-    mochaTest: {
-      options: {
-        reporter: 'spec'
-      },
-      src: ['test/mocha/*.spec.js']
     }
-
   });
 
 
@@ -484,10 +476,6 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
-  grunt.registerTask('test:server', [
-    'mochaTest'
-  ]);
-
   grunt.registerTask('test:e2e', [
     'clean:server',
     'ngtemplates',
@@ -500,7 +488,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'nsp',
-    'mochaTest',
+    'karma',
     'build',
     'test:e2e'
   ]);
