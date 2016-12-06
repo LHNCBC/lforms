@@ -22715,6 +22715,18 @@
       "from": "jasmine-core@>=2.3.4 <3.0.0",
       "resolved": "https://registry.npmjs.org/jasmine-core/-/jasmine-core-2.4.1.tgz"
     },
+    "jasmine-spec-reporter": {
+      "version": "2.7.0",
+      "from": "jasmine-spec-reporter@>=2.7.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/jasmine-spec-reporter/-/jasmine-spec-reporter-2.7.0.tgz",
+      "dependencies": {
+        "colors": {
+          "version": "1.1.2",
+          "from": "colors@1.1.2",
+          "resolved": "https://registry.npmjs.org/colors/-/colors-1.1.2.tgz"
+        }
+      }
+    },
     "jit-grunt": {
       "version": "0.10.0",
       "from": "jit-grunt@>=0.10.0 <0.11.0",

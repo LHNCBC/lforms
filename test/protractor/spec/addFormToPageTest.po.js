@@ -1,8 +1,9 @@
 function AddFormToPageTestPage() {
   // This page has two LForms forms.
 
+  var rxtermsForm = require('./rxterms.fo.js');
   // Fields on the RxTerms Demo form
-  this.rxDrugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
+  this.rxDrugNameField = rxtermsForm.drugName;
   this.searchResults = element(by.id('searchResults'));
 
   // Fields on the "full featured" form

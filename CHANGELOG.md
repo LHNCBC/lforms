@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [9.1.0]   2016-11-29
+## [10.0.0]   2016-12-06
 ### Changed
 - Changed OBX4 value calculation method in HL7 messages. 
+
+## [9.0.2]   2016-12-05
+### Changed
+- Updated a test form, and added a test to make sure a problem with the
+  autocompletion stays fixed.
 
 ## [9.0.1]   2016-11-22
 ### Changed
