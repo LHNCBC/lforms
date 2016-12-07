@@ -476,6 +476,11 @@ module.exports = function (grunt) {
     grunt.task.run(['serve:' + target]);
   });
 
+
+  grunt.registerTask('test:server', [
+    'karma'
+  ]);
+
   grunt.registerTask('test:e2e', [
     'clean:server',
     'ngtemplates',

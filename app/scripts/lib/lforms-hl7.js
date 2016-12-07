@@ -214,7 +214,7 @@ LForms.HL7 = {
     var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
-    formObrArray[1] = ""; //Note: might change to 1;
+    formObrArray[1] = "1";
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
     if (formData.templateOptions.obrItems.length > 0) {
@@ -250,38 +250,15 @@ LForms.HL7 = {
       var obxIndex = 0;
       for (var j = 0, jLen = formData.items.length; j < jLen; j++) {
         if (formData.items[j].dataType !== "TITLE") {
-          if (formData.items[j].header) {
-            formInfo.obxIndex = 0;
-          }
-          else {
-            obxIndex++;
-            formInfo.obxIndex = obxIndex;
-          }
+          // Note: OBX1 value is not reset for sub panels in the current design.
+          // if (formData.items[j].header) {
+          //   formInfo.obxIndex = 1;
+          // }
           hl7String += this._itemToField(formData.items[j], formInfo);
         }
       }
     }
     return hl7String;
-  },
-
-
-  /**
-   * Get the next letter (letters) for the next repeating instance
-   * @param currentLetter the letter for the current repeating instance
-   */
-  _getNextLetter: function(currentLetter) {
-    var nextLetter = 'a';
-    if (currentLetter && currentLetter.match(/[a-z]+/)) {
-      var lastChar = currentLetter.slice(currentLetter.length -1);
-      if (lastChar === 'z') {
-        var nextChar = 'aa';
-      }
-      else {
-        var nextChar = String.fromCharCode(lastChar.charCodeAt(lastChar)+1);
-      }
-      nextLetter = currentLetter.slice(0, currentLetter.length-1) + nextChar;
-    }
-    return nextLetter;
   },
 
 
@@ -446,14 +423,10 @@ LForms.HL7 = {
         if(item.items) {
           var obxIndex = 0;
           for(var j=0, jLen=item.items.length; j<jLen; j++) {
-            if (item.items[j].header) {
-              formInfo.obxIndex = 0;
-            }
-            else {
-              obxIndex++;
-              formInfo.obxIndex = obxIndex;
-            }
-
+            // Note: OBX1 value is not reset for sub panels in the current design.
+            // if (item.items[j].header) {
+            //   //formInfo.obxIndex = 1;
+            // }
             hl7Seg += this._itemToField(item.items[j], formInfo);
           }
         }
@@ -461,7 +434,7 @@ LForms.HL7 = {
       // a question, only when it has value
       else if (!LForms.Util.isItemValueEmpty(item.value)) {
         itemObxArray[0] = "OBX";
-        itemObxArray[1] = "";   //formInfo.obxIndex; /// Note: not to use OBX1
+        itemObxArray[1] = formInfo.obxIndex++;
         itemObxArray[2] = this.getHL7V2DataType(item.dataType);
         itemObxArray[3] = item.questionCode + this.delimiters.component +
             item.question + this.delimiters.component + questionCS;
