@@ -1,7 +1,4 @@
 // Tests for the HL7 generation library
-//var hl7 = require('../../app/scripts/lib/lforms-hl7');
-//var assert = require('assert');
-
 describe('HL7 library', function() {
   describe('itemToField', function() {
     it('should use LOINC as the default code system', function() {

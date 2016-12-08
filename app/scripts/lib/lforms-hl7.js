@@ -439,7 +439,6 @@ LForms.HL7 = {
         itemObxArray[3] = item.questionCode + this.delimiters.component +
             item.question + this.delimiters.component + questionCS;
         // sub id
-        //itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
         itemObxArray[4] = item._obx4;
 
         var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;

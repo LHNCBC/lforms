@@ -11,7 +11,6 @@ module.exports = function (grunt) {
 
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
-    //mochaTest: 'grunt-mocha-test',
     karma: 'grunt-karma',
     ngtemplates: 'grunt-angular-templates',
     protractor: 'grunt-protractor-runner'
