@@ -156,7 +156,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // update internal status
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
-    this._updateLastSiblingList(this.items, null);
+//    this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
@@ -196,7 +196,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // update internal status
     this._updateTreeNodes(this.items,this);
     //this._setTreeNodes(this.items, this);
-    this._updateLastSiblingList(this.items, null);
+    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
 
@@ -256,7 +256,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // update internal status
     this._updateTreeNodes(this.items,this);
     //this._setTreeNodes(this.items, this);
-    this._updateLastSiblingList(this.items, null);
+    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
@@ -309,7 +309,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // update internal status
     this._updateTreeNodes(this.items,this);
     //this._setTreeNodes(this.items, this);
-    this._updateLastSiblingList(this.items, null);
+    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
     this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
@@ -1299,7 +1299,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
         var firstTableHeader = tableHeaders[0];
         var lastTableHeader = tableHeaders[tableHeaders.length -1];
         firstTableHeader._lastSibling = lastTableHeader._lastSibling;
-        firstTableHeader._lastSiblingList = lastTableHeader._lastSiblingList;
+        ////firstTableHeader._lastSiblingList = lastTableHeader._lastSiblingList;
       }
     }
   },

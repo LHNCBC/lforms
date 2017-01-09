@@ -623,9 +623,64 @@ Override color of select boxes in calendar widget title bar.
   line-height: 20px;
 }
 
+/*.lf-table-item {*/
+  /*display: table;*/
+/*}*/
+/*.lf-table-item .data-cell {*/
+  /*display: table-cell;*/
+/*}*/
+
+.lf-no-padding {
+  padding: 0 !important;
+  float: left;
+}
+
+/*.clt, .clt ul, .clt li {*/
+  /*position: relative;*/
+/*}*/
+
 .lf-table-item {
-  display: table;
+  padding-left: 24px !important;
+  position: relative;
 }
-.lf-table-item .data-cell {
-  display: table-cell;
+
+/* the horizontal bar of a tree line */
+.lf-table-item::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+
+  border-top: 2px solid #2f96b4;
+  top: 12px;
+  width: 10px;
+  height: 0;
 }
+/* the vertical bar of a tree line */
+.lf-table-item::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+
+  border-left: 2px solid #2f96b4;
+  height: 100%;
+  width: 0px;
+  top: 2px;
+}
+/* shorter vertical bar of a tree line for the last item of a level */
+.lf-table-item.lf-last-item::after {
+  height: 12px;
+}
+
+
+.lf-col-left {
+  width: 50%
+}
+
+.lf-col-fixed-width {
+  float: right;
+
+}
+
+/*.lf-table-item::last-child::after {*/
+  /*height: 8px;*/
+/*}*/

@@ -1,95 +1,86 @@
-<div class="lf-layout-matrix">
-  <table class="t-treeline-field">
-    <tr>
-      <td ng-repeat="lastStatus in item._lastSiblingList track by $index" ng-if="lfData.template ==='table' && !isSmallWindow()"
-          class="t-treeline "
-          ng-class="getTreeLevelClass($index, item._lastSiblingList)" > &nbsp; </td>
-      <td>
-        <div class="lf-form-table-title name-label">
-          {{item.question}}
-        </div>
-        <table class="lf-form-matrix-table lf-form-table">
-            <colgroup>
-              <col class="name">
-              <col ng-repeat="answer in item.items[0].answers">
-              <col class="other-answer" ng-if="item.items[0].dataType ==='CWE'">
-            </colgroup>
-            <thead>
-            <tr>
-              <th class="name"></th>
-              <th ng-repeat="answer in item.items[0].answers"
-                  class="lf-form-matrix-cell lf-form-table-header">{{answer.text}}</th>
-              <th class="lf-form-matrix-cell-other lf-form-table-header" ng-if="item.items[0].dataType ==='CWE'">Other</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="subItem in item.items">
-              <td class="name">
-                <div class="name-label">
-                  <span><label for="{{subItem._elementId}}">{{subItem.question}}</label></span>
-                  <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
-                    <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank">[{{ subItem.questionCode }}]</a>
-                    <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
-                  </span>
-                  <span ng-switch on="getCodingInstructionsDisplayType(subItem)" ng-if="subItem.codingInstructions">
-                    <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(subItem)"></span>
-                    <span ng-switch-when="inline-escaped" class="prompt" ng-bind="subItem.codingInstructions"></span>
-                    <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
-                            popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                            type="button" id="help-{{subItem._elementId}}">?</button>
-                    <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{subItem.codingInstructions}}"
-                            popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                            type="button" id="help-{{subItem._elementId}}">?</button>
-                  </span>
-                  <button ng-if="subItem.copyrightNotice" id="copyright-{{subItem._elementId}}" type="button"
-                          class="copyright-button" uib-popover="{{subItem.copyrightNotice}}"
-                          popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
-                </div>
-              </td>
-              <td ng-repeat="answer in item.items[0].answers" class="lf-form-matrix-cell">
-                <span class="lf-form-matrix-answer">
-                  <label ng-if="subItem._multipleAnswers">
-                    <input type="checkbox" id="{{subItem._elementId + answer.code}}" ng-click="updateCheckboxList(subItem, answer)">
-                  </label>
-                  <label ng-if="!subItem._multipleAnswers">
-                    <input type="radio" id="{{subItem._elementId + answer.code}}" ng-model="subItem.value" ng-value="answer"
-                           name="{{subItem._elementId}}" ng-click="updateRadioList(subItem)">
-                  </label>
-                </span>
-              </td>
-              <td class="lf-form-matrix-cell-other" ng-if="subItem.dataType ==='CWE'">
-                <!--for multiple answers-->
-                <span ng-if="subItem._multipleAnswers" class="lf-form-matrix-answer">
-                  <label>
-                    <input type="checkbox" ng-model="subItem._otherValueChecked"
-                           id="{{subItem._elementId + '_other'}}"
-                           ng-click="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
-                  </label>
-                  <label>
-                    <input type="text" ng-model="subItem.valueOther"
-                           id="{{subItem._elementId + '_otherValue'}}"
-                           ng-change="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
-                  </label>
-                </span>
-                <!--for single answer-->
-                <span ng-if="!subItem._multipleAnswers" class="lf-form-matrix-answer">
-                  <label>
-                    <input type="radio" id="{{subItem._elementId + '_other'}}" ng-model="subItem._otherValueChecked"
-                           ng-value="true" name="{{subItem._elementId}}"
-                           ng-click="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
-                  </label>
-                  <label>
-                    <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subItem.valueOther"
-                           ng-change="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
-                  </label>
-                </span>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-      </td>
-    </tr>
-  </table>
+<div class="lf-layout-matrix lf-table-item col-xs-12 lf-no-padding">
+  <div class="lf-form-table-title name-label">
+    {{item.question}}
+  </div>
+  <table class="lf-form-matrix-table lf-form-table">
+      <colgroup>
+        <col class="name">
+        <col ng-repeat="answer in item.items[0].answers">
+        <col class="other-answer" ng-if="item.items[0].dataType ==='CWE'">
+      </colgroup>
+      <thead>
+      <tr>
+        <th class="name"></th>
+        <th ng-repeat="answer in item.items[0].answers"
+            class="lf-form-matrix-cell lf-form-table-header">{{answer.text}}</th>
+        <th class="lf-form-matrix-cell-other lf-form-table-header" ng-if="item.items[0].dataType ==='CWE'">Other</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="subItem in item.items">
+        <td class="name">
+          <div class="name-label">
+            <span><label for="{{subItem._elementId}}">{{subItem.question}}</label></span>
+            <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+              <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank">[{{ subItem.questionCode }}]</a>
+              <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
+            </span>
+            <span ng-switch on="getCodingInstructionsDisplayType(subItem)" ng-if="subItem.codingInstructions">
+              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(subItem)"></span>
+              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="subItem.codingInstructions"></span>
+              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
+                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                      type="button" id="help-{{subItem._elementId}}">?</button>
+              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{subItem.codingInstructions}}"
+                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+                      type="button" id="help-{{subItem._elementId}}">?</button>
+            </span>
+            <button ng-if="subItem.copyrightNotice" id="copyright-{{subItem._elementId}}" type="button"
+                    class="copyright-button" uib-popover="{{subItem.copyrightNotice}}"
+                    popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+          </div>
+        </td>
+        <td ng-repeat="answer in item.items[0].answers" class="lf-form-matrix-cell">
+          <span class="lf-form-matrix-answer">
+            <label ng-if="subItem._multipleAnswers">
+              <input type="checkbox" id="{{subItem._elementId + answer.code}}" ng-click="updateCheckboxList(subItem, answer)">
+            </label>
+            <label ng-if="!subItem._multipleAnswers">
+              <input type="radio" id="{{subItem._elementId + answer.code}}" ng-model="subItem.value" ng-value="answer"
+                     name="{{subItem._elementId}}" ng-click="updateRadioList(subItem)">
+            </label>
+          </span>
+        </td>
+        <td class="lf-form-matrix-cell-other" ng-if="subItem.dataType ==='CWE'">
+          <!--for multiple answers-->
+          <span ng-if="subItem._multipleAnswers" class="lf-form-matrix-answer">
+            <label>
+              <input type="checkbox" ng-model="subItem._otherValueChecked"
+                     id="{{subItem._elementId + '_other'}}"
+                     ng-click="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+            <label>
+              <input type="text" ng-model="subItem.valueOther"
+                     id="{{subItem._elementId + '_otherValue'}}"
+                     ng-change="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+          </span>
+          <!--for single answer-->
+          <span ng-if="!subItem._multipleAnswers" class="lf-form-matrix-answer">
+            <label>
+              <input type="radio" id="{{subItem._elementId + '_other'}}" ng-model="subItem._otherValueChecked"
+                     ng-value="true" name="{{subItem._elementId}}"
+                     ng-click="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+            <label>
+              <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subItem.valueOther"
+                     ng-change="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+            </label>
+          </span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  <lf-repeating-button></lf-repeating-button>
 </div>
-<lf-repeating-button></lf-repeating-button>
 

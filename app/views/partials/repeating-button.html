@@ -1,12 +1,7 @@
 <!--a button at the end of each repeating section-->
 <div ng-if="item._lastRepeatingItem && targetShown(item) "
      class="lf-form-table-row button-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
-  <div class="data-cell">
-    <table class="t-treeline-field" >
-      <tr>
-        <td ng-if="!isSmallWindow() && lfData.template ==='table'" ng-repeat="lastStatus in item._lastSiblingList track by $index"
-            class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
-        <td>
+  <!--<div class="data-cell col-xs-12">-->
           <div class="has-popover-warning">
             <button type="button"
                     class="float-button" id="add-{{item._elementId}}"
@@ -20,8 +15,5 @@
               Add another [directive] '{{item.question}}'
             </button>
           </div>
-        </td>
-      </tr>
-    </table>
-  </div>
+  <!--</div>-->
 </div>

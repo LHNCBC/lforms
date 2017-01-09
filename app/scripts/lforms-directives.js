@@ -41,6 +41,14 @@
           }
         };
       }])
+      // each item, use inherited scope
+      .directive('lfItem', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'item.html'
+        };
+      })
       // each item in list template, use inherited scope
       .directive('lfListItem', ["RecursionHelper", function (RecursionHelper) {
         return {

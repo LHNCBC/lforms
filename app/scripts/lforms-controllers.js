@@ -33,8 +33,7 @@ angular.module('lformsWidget')
         };
 
 
-        // check the window width when it changes width
-        angular.element($window).bind('resize', function () {
+        $scope.checkScreenSize = function() {
           var width = $window.innerWidth;
           var type;
           // extra small screen
@@ -50,11 +49,21 @@ angular.module('lformsWidget')
           else
             type = "lg";
 
-          $scope.$apply(function() {$scope._screenType = type});
+          //$scope.$apply(function() {$scope._screenType = type});
+          $scope._screenType = type;
 
-          console.log($scope._screenType)
+          //console.log($scope._screenType);
+
+        };
+
+
+        // check the window width when it changes width
+        angular.element($window).bind('resize', function() {
+          $scope.$apply($scope.checkScreenSize());
         });
 
+        // initial values
+        $scope.checkScreenSize();
 
         $scope.isSmallWindow = function() {
           return $scope._screenType === "xs"
@@ -68,6 +77,52 @@ angular.module('lformsWidget')
           $scope.lfData.setActiveRow(item);
         };
 
+        $scope.getScreenWidth = function() {
+          return $scope._screenType === 'lg' ? {'width': $window.innerWidth / 2} : '';
+        };
+
+        $scope.getGridColClass = function(item, fieldIndex) {
+          var gridColClass = ['','','','']; // label&button, input&unit, input, unit
+          var colClass = '';
+          var hideUnit = $scope.lfData.templateOptions.hideUnits;
+
+          var oneRow = item.dataType==="TITLE" || item.dataType==='SECTION' || !item;
+
+          if (oneRow) {
+            gridColClass = ['col-xs-12', '', '', ''];
+          }
+          else {
+            switch($scope._screenType) {
+              // large screen
+              case 'lg':
+                gridColClass = hideUnit || !item.units ? ['lf-col-left', 'lf-col-fixed-width', 'col-xs-12', ''] :
+                    ['lf-col-left', 'lf-col-fixed-width', 'col-xs-6', 'col-xs-6'];
+                break;
+                // medium screen
+              case 'md':
+                gridColClass = hideUnit || !item.units ? ['col-xs-12', 'col-xs-12', 'col-xs-12', ''] :
+                    ['col-xs-12', 'col-xs-12', 'col-xs-6', 'col-xs-6'];
+                colClass = gridColClass[fieldIndex] + ' lf-no-padding';
+                break;
+                // small screen
+              case 'sm':
+                gridColClass = hideUnit || !item.units ? ['col-xs-12', 'col-xs-12', 'col-xs-12', ''] :
+                    ['col-xs-12', 'col-xs-12', 'col-xs-6', 'col-xs-6'];
+                colClass = gridColClass[fieldIndex] + ' lf-no-padding';
+                break;
+                // extra small screen
+              case 'xs':
+                gridColClass = hideUnit || !item.units ? ['col-xs-12', 'col-xs-12', 'col-xs-12', ''] :
+                    ['col-xs-12', 'col-xs-12', 'col-xs-12', 'col-xs-12'];
+                colClass = gridColClass[fieldIndex] + ' lf-no-padding';
+                break;
+            }
+          }
+          if (fieldIndex >=0 && fieldIndex <=4) {
+            colClass = gridColClass[fieldIndex];
+          }
+          return !oneRow && $scope._screenType==='lg' ? colClass : colClass + ' lf-no-padding';
+        };
 
         /**
          * Set the time that a validation message shows for the first time.
@@ -424,6 +479,9 @@ angular.module('lformsWidget')
           return ret;
         };
 
+        $scope.getLastSiblingStatus = function(item) {
+          return item._lastSibling ? 'lf-last-item' : '';
+        };
 
         /**
          * Get the CSS class on each item row
