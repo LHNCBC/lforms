@@ -1,6 +1,6 @@
 <div class="lf-list-item">
   <!--question-->
-  <div class="name-label" >
+  <div class="lf-de-label" >
     <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
     <span><label for="{{item._elementId}}">{{item.question}}</label></span>
     <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
@@ -21,7 +21,7 @@
             class="copyright-button" uib-popover="{{item.copyrightNotice}}"
             popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
     <!--buttons-->
-    <!--<div class="button-col">-->
+    <!--<div class="lf-de-button">-->
     <button ng-if="!hasOneRepeatingItem(item)" class="float-button"
             ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
             type="button" title="Remove this '{{ item.question }}'">-</button>

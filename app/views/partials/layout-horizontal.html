@@ -1,11 +1,11 @@
 <div class="lf-layout-horizontal lf-table-item col-xs-12 lf-no-padding" ng-if="lfData._horizontalTableInfo[item._horizontalTableId]">
-  <div class="lf-form-table-title name-label">
+  <div class="lf-form-table-title lf-de-label">
     {{item.question}}
   </div>
 
   <table class="lf-form-table lf-form-horizontal-table">
     <colgroup>
-      <col class="button-col" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
+      <col class="lf-de-button" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
       <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders"
            ng-style="{{getTableColumnStyle(col)}}">
     </colgroup>
@@ -20,7 +20,7 @@
     <tbody id="" class="">
     <tr ng-repeat="row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index"
         class="data-row has-ng-animate">
-      <td class="button-col" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
+      <td class="lf-de-button" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
         <button ng-if="!hasOneRepeatingItem(item)" type="button"
                 id="del-{{row.header._elementId}}"
                 class="float-button" ng-click="removeOneRepeatingItem(row.header)"

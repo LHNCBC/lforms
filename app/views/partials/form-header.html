@@ -1,19 +1,9 @@
-<div class="lf-form-header">
-  <table cellspacing="0" cellpadding="0" class="lf-form-table" ng-if="lfData.templateOptions.obrHeader">
-    <colgroup >
-      <col ng-repeat="item in lfData.templateOptions.obrItems" ng-style="{{getTableColumnStyle(item)}}">
-    </colgroup>
-    <thead>
-    <tr>
-      <th class="lf-form-table-header"
-          ng-repeat="item in lfData.templateOptions.obrItems">
-        <label for="{{item.questionCode}}">{{item.question}}</label></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr class="lf-form-table-row" ng-if="lfData.templateOptions.obrHeader" ng-click="setActiveRow(null)">
-      <td class="hasTooltip" ng-repeat="item in lfData.templateOptions.obrItems"
-          ng-switch on="item.dataType">
+  <div class="lf-form-header" ng-if="lfData.templateOptions.obrHeader">
+    <div class="lf-header-de" ng-repeat="item in lfData.templateOptions.obrItems">
+      <div class="lf-header-de-label">
+        <span class="lf-question"><label for="{{item.questionCode}}">{{item.question}}</label></span>
+      </div>
+      <div class="lf-header-de-input" ng-switch on="item.dataType">
         <ng-form name="innerForm">
           <div class="lf-form-item-data tooltipContainer">
             <div class="tooltipContent" lf-validate="item" ng-model="item.value"></div>
@@ -34,7 +24,6 @@
                    ng-blur="activeRowOnBlur(item)">
           </div>
         </ng-form>
-      </td>
-    </tr></tbody>
-  </table>
-</div>
+      </div>
+    </div>
+  </div>

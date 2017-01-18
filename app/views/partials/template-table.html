@@ -30,15 +30,17 @@
         <!--vertical-->
         <div ng-switch-default>
           <!-- data row, column header -->
-          <div ng-if="!isSmallWindow()" class="lf-form-table-header">
-            <div class="data-cell col-sm-6" id="th_Name">
+          <div class="lf-column-header">
+            <div class="lf-column-label-button" id="th_Name">
               Name
             </div>
-            <div class="data-cell {{getInputColClass()}}" id="th_Value">
-              Value
-            </div>
-            <div ng-if="!lfData.templateOptions.hideUnits" class="data-cell {{getUnitColClass()}}" id="th_Units">
-              Units
+            <div class="lf-column-input-unit" ng-style="getScreenWidth()">
+              <div class="lf-column-input" id="th_Value">
+                Value
+              </div>
+              <div ng-if="!lfData.templateOptions.hideUnits" class="lf-column-unit" id="th_Units">
+                Units
+              </div>
             </div>
           </div>
           <!-- data row, for each item -->

@@ -158,7 +158,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     this._setTreeNodes(this.items, this);
 //    this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    this._updateLastItemInRepeatingSection(this.items);
+//    this._updateLastItemInRepeatingSection(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -198,7 +198,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     //this._setTreeNodes(this.items, this);
     //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    this._updateLastItemInRepeatingSection(this.items);
+    //this._updateLastItemInRepeatingSection(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -258,7 +258,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     //this._setTreeNodes(this.items, this);
     //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    this._updateLastItemInRepeatingSection(this.items);
+    //this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
@@ -311,7 +311,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     //this._setTreeNodes(this.items, this);
     //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    this._updateLastItemInRepeatingSection(this.items);
+    //this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
@@ -1142,27 +1142,27 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @param items sibling items on one level of the tree
    * @private
    */
-  _updateLastItemInRepeatingSection: function(items) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-
-      // if it is the last repeating item, and it is not hidden by skip logic
-      if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
-        var lastItem = this._getLastSubItem(item);
-        if (lastItem._repeatingSectionList) {
-          lastItem._repeatingSectionList.unshift(item);
-        }
-        else {
-          lastItem._repeatingSectionList = [item];
-        }
-      }
-      // process the sub items if it's not hidden
-      if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
-        this._updateLastItemInRepeatingSection(item.items);
-      }
-    }
-
-  },
+  // _updateLastItemInRepeatingSection: function(items) {
+  //   for (var i=0, iLen=items.length; i<iLen; i++) {
+  //     var item = items[i];
+  //
+  //     // if it is the last repeating item, and it is not hidden by skip logic
+  //     if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
+  //       var lastItem = this._getLastSubItem(item);
+  //       if (lastItem._repeatingSectionList) {
+  //         lastItem._repeatingSectionList.unshift(item);
+  //       }
+  //       else {
+  //         lastItem._repeatingSectionList = [item];
+  //       }
+  //     }
+  //     // process the sub items if it's not hidden
+  //     if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
+  //       this._updateLastItemInRepeatingSection(item.items);
+  //     }
+  //   }
+  //
+  // },
 
 
   /**

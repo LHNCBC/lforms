@@ -27,8 +27,10 @@
   color: #FFF;
   font-size: 120%;
   overflow: hidden;
-  padding: 7px 0 7px 0px;
-  margin: 0;
+  padding: 7px 0;
+  margin: 4px 0;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .lf-form-title span {
   padding-left: 10px;
@@ -37,18 +39,7 @@
   color: #FFFFFF;
 }
 
-/* table structure in the forms */
-.lf-form table {
-  border-collapse: collapse;
-  padding: 0;
-  width: 100%;
-  table-layout: fixed;
-}
-.lf-form-table {
-  border: 1px solid #73A0C8;
-  color: #333333;
-}
-
+/* lf-form-header */
 /* column headers in tables */
 .lf-form-table-header {
   border: 1px solid #ced5d9 ;
@@ -60,9 +51,25 @@
   text-align: left ;
   color: #666666;
   font-weight: 400;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+
 }
 
-/* input fields in tables */
+/* table structure in the forms */
+.lf-form table {
+  border-collapse: collapse;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.lf-form-table {
+  /*border: 1px solid #73A0C8;*/
+}
+
+
+/* input fields */
 .lf-form input[type="text"],
 .lf-form input[type="number"] {
   border: 1px solid #ced5d9 ;
@@ -100,59 +107,45 @@
 }
 
 
-/* rows in tables */
-.lf-form-table .lf-form-table-row {
-  border:  solid #ced5d9 ;
-  border-width: 1px 0 0 0;
-}
-.lf-form-table .lf-form-table-row.row {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.lf-form-table .lf-form-table-row.section-header {
-  background: #E8E8E8;
-}
 
 /* data cells in tables */
-.lf-form-table th,
-.lf-form-table td {
-  border-color: #CED5D9;
-  border-style: solid;
-  /*border-width: 1px 0 0 1px;*/
-  border-width: 0;
-  padding: 2px;
-}
-.lf-form-table th:last-of-type,
-.lf-form-table td:last-of-type {
-  border-right-width: 1px;
-}
-.lf-form-body > td {
-  padding: 0;
-}
+/*.lf-form-table th,*/
+/*.lf-form-table td {*/
+  /*border-color: #CED5D9;*/
+  /*border-style: solid;*/
+  /*!*border-width: 1px 0 0 1px;*!*/
+  /*border-width: 0;*/
+  /*padding: 2px;*/
+/*}*/
+/*.lf-form-table th:last-of-type,*/
+/*.lf-form-table td:last-of-type {*/
+  /*border-right-width: 1px;*/
+/*}*/
+/*.lf-form-body > td {*/
+  /*padding: 0;*/
+/*}*/
 
-.lf-form-table .data-cell {
-  border-color: #CED5D9;
-  border-style: solid;
-  /*border-width: 1px 0 0 0;*/
-  border-width: 0;
-  padding: 0 2px 0 2px;
+/*.lf-form-table .data-cell {*/
+  /*border-color: #CED5D9;*/
+  /*border-style: solid;*/
+  /*!*border-width: 1px 0 0 0;*!*/
+  /*border-width: 0;*/
+  /*padding: 0 2px 0 2px;*/
 
-}
-.lf-form-table .data-cell.values {
-  /*border-width: 1px 1px 0 1px;*/
-  border-width: 0;
-}
-.lf-form-table .data-cell.values,
-.lf-form-table .data-cell.units{
-  padding: 2px;
-}
+/*}*/
+/*.lf-form-table .data-cell.values {*/
+  /*!*border-width: 1px 1px 0 1px;*!*/
+  /*border-width: 0;*/
+/*}*/
+/*.lf-form-table .data-cell.values,*/
+/*.lf-form-table .data-cell.units{*/
+  /*padding: 2px;*/
+/*}*/
 
 
 /* buttons in tables */
-.lf-form-table-header .button-col,
-.lf-form-table .button-col {
-  border-left: none;
+.lf-form-table-header .lf-de-button,
+.lf-form-table .lf-de-button {
   width: 24px;
 }
 .lf-form button {
@@ -165,12 +158,12 @@
 }
 .lf-form .float-button {
   min-width: 24px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   font-weight: bold;
   color: white;
   padding: 2px;
-  margin: 0 2px;
+  margin: 2px 2px;
 }
 .lf-form .help-button{
   width: 18px;
@@ -204,17 +197,20 @@
 }
 
 /* name field */
-.lf-form .name-label span.prompt {
+.lf-form .lf-de-label span.prompt {
   font-style: italic;
   font-size: 75%;
 }
-.lf-form .name-label span.sn {
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+.lf-form .lf-de-label span.lf-sn{
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   background-color: #458AC5;
   font-weight: bold;
   color: white;
-  padding: 2px 8px;
+  padding: 4px 8px;
+}
+.lf-form .lf-de-label span.lf-question{
+  padding: 0 2px 0 2px;
 }
 
 /* form stop sign */
@@ -284,9 +280,10 @@
 }
 
 /* units, overwrite autocomplete default styles */
-.lf-form .units {
-  color: #333333 !important;
-  font-weight: 400 !important;
+.lf-form input.units {
+  color: #333333;
+  font-weight: 400;
+  padding-right: 14px ;
 }
 
 /* please specify (extra row) */
@@ -356,7 +353,7 @@
 .lf-form-horizontal-table-title {
   text-align: left;
 }
-.lf-form-horizontal-table td.button-col {
+.lf-form-horizontal-table td.lf-de-button {
   padding-left: 2px;
   border-right: none;
 }
@@ -373,67 +370,11 @@
   border-right: none;
   border-left: none;
 }
-.lf-form-horizontal-table .button-col {
+.lf-form-horizontal-table .lf-de-button {
   width: 2.5em;
   min-width: 2em;
 }
-
-/* to make the height of the div within td 100% of the td's height.
- * because height: 100% only works when the containing element has a fixed height,
- * using 100% all the way up until an element has a fixed height or to the root
- */
-.lf-form tr.lf-form-table-row,
-.lf-form div.t-treeline-field {
-  height: 100%;
-}
-.lf-form td.has-treeline.name {
-  height: 1px;
-}
-
-/* tree line style setup */
-.lf-form td.has-treeline {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.lf-form .t-treeline.line3 {
-  background-image: url("../images/dot.png"), url("../images/line-h.png");
-  background-position: 8px 0px, 8px 16px;
-  background-repeat: repeat-y, no-repeat;
-}
-.lf-form .t-treeline.line2 {
-  background-image: url("../images/angle.png");
-  background-position: 8px -56px;
-  background-repeat: no-repeat;
-}
-.lf-form .t-treeline.line1 {
-  background-image: url("../images/dot.png");
-  background-position: 8px 0px;
-  background-repeat: repeat-y;
-}
-.lf-form .t-treeline.no_display {
-  display: none;
-}
-.lf-form .t-treeline-field,
-.lf-form .t-treeline-field tr,
-.lf-form .t-treeline-field td {
-  border: none;
-}
-.lf-form .t-treeline-field {
-  height: 100%;
-}
-.lf-form .t-treeline-field .name-label {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  overflow: hidden;
-  border: none;
-  /*width: 90%*/
-}
-.lf-form .t-treeline {
-  width: 26px;
-  border: none;
-  padding: 0;
-}
-/* end of tree line style setup */
+/* end of horizontal table */
 
 /* ng animate css for adding new repeating items and skip logic items*/
 .lf-form-body .data-row.has-ng-animate.question.ng-enter {
@@ -495,13 +436,13 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* popover dialog */
-.lf-form .name-label.has-popover-warning .popover {
+.lf-form .lf-de-label.has-popover-warning .popover {
   border-color: #eea236;
   border-width: 1px;
   padding: 0;
   background-color: #fcf8e3;
 }
-.lf-form .name-label.has-popover-warning .popover .arrow:after {
+.lf-form .lf-de-label.has-popover-warning .popover .arrow:after {
   border-top-color: #fcf8e3;
 }
 .lf-form .popover {
@@ -513,70 +454,11 @@ Override color of select boxes in calendar widget title bar.
 .lf-form .lf-form-table .title-row {
   background-color: rgb(67,115,156);
 }
-.lf-form .lf-form-table .title-row .name-label {
+.lf-form .lf-form-table .title-row .lf-de-label {
   color: white;
 }
 
 
-/*** template-list.html ***/
-.lf-form.lf-template-list .name-label {
-  background-color: #e8e8e8;
-  padding: 2px;
-  font-weight: 400;
-  line-height: 28px;
-}
-.lf-form.lf-template-list .help-button {
-  line-height: 20px;
-}
-.lf-form.lf-template-list .data-row {
-  border: 2px solid #ced5d9;
-  margin: 10px 5px;
-}
-
-.lf-form.lf-template-list .section {
-  margin: 10px;
-}
-
-.lf-form.lf-template-list .lf-form-title,
-.lf-form.lf-template-list .lf-form-header {
-  margin: 0 5px;
-}
-
-.lf-form.lf-template-list .lf-form-item-data,
-.lf-form.lf-template-list .lf-field-units {
-  padding: 2px;
-}
-
-.lf-form.lf-template-list .lf-field-answers {
-}
-
-.lf-form.lf-template-list .lf-list-answer {
-  padding: 2px 5px;
-}
-.lf-form.lf-template-list .lf-list-answer input[type="radio"],
-.lf-form.lf-template-list .lf-list-answer input[type="checkbox"] {
-  margin-right: 2px;
-}
-
-.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {
-  padding: 5px;
-}
-
-.lf-form.lf-template-list .lf-list-item,
-.lf-form.lf-template-list .lf-layout-horizontal,
-.lf-form.lf-template-list .lf-layout-matrix{
-  /*padding-bottom: 2px;*/
-}
-.lf-form . .lf-form-table-title {
-
-}
-.lf-form .lf-form-horizontal-table {
-  margin-bottom: 5px;
-}
-.lf-form .float-button {
-  margin-bottom: 2px;
-}
-/*** end of template-list.html ***/
 
 /*** matrix layout ***/
 .lf-form .lf-layout-matrix .lf-form--table-title {
@@ -606,8 +488,8 @@ Override color of select boxes in calendar widget title bar.
 
 /*** button row ***/
 .lf-form .lf-form-table-row.button-row {
-  /*padding-left: 26px;*/
   background: none;
+  padding: 2px 0;
 }
 
 .lf-form.lf-template-table .lf-layout-horizontal,
@@ -616,34 +498,16 @@ Override color of select boxes in calendar widget title bar.
 
 }
 
-.lf-form {
-  line-height: 26px;
-}
-.lf-form .button-row {
-  line-height: 20px;
-}
 
-/*.lf-table-item {*/
-  /*display: table;*/
-/*}*/
-/*.lf-table-item .data-cell {*/
-  /*display: table-cell;*/
-/*}*/
 
-.lf-no-padding {
-  padding: 0 !important;
-  float: left;
-}
+/* new styles */
 
-/*.clt, .clt ul, .clt li {*/
-  /*position: relative;*/
-/*}*/
 
+/* tree lines */
 .lf-table-item {
   padding-left: 24px !important;
   position: relative;
 }
-
 /* the horizontal bar of a tree line */
 .lf-table-item::before {
   content: "";
@@ -651,8 +515,8 @@ Override color of select boxes in calendar widget title bar.
   left: 12px;
 
   border-top: 2px solid #2f96b4;
-  top: 12px;
-  width: 10px;
+  top: 14px;
+  width: 12px;
   height: 0;
 }
 /* the vertical bar of a tree line */
@@ -668,19 +532,345 @@ Override color of select boxes in calendar widget title bar.
 }
 /* shorter vertical bar of a tree line for the last item of a level */
 .lf-table-item.lf-last-item::after {
-  height: 12px;
+  height: 14px;
+}
+/* end of tree lines */
+
+
+
+.lf-form-view {
+  margin: 15px;
+}
+.lf-form-body {
+  border: 1px solid #ced5d9;
+  padding: 4px 0;
+  margin: 2px 0;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
 }
 
+/* column header */
+.lf-column-header {
+  background-color: #E8E8E8;
+  padding: 4px 2px;
 
-.lf-col-left {
-  width: 50%
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 4px 2px 4px;
+
+  border-width: 0;
+}
+.lf-column-label-button,
+.lf-column-input,
+.lf-column-unit {
+  padding: 0 6px 0px 10px;
 }
 
-.lf-col-fixed-width {
-  float: right;
+/* new flex box layout system based on screen size */
+/* Large */
+.lf-de,
+.lf-column-header{
+  /*width: 100%;*/
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.lf-de-label-button,
+.lf-column-label-button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 1;
+  flex-grow: 1;
+}
+.lf-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lf-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-de-input-unit,
+.lf-column-input-unit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-de-input,
+.lf-column-input {
+  order:1;
+  flex-grow: 1;
+}
+.lf-de-unit,
+.lf-column-unit {
+  order:2;
+  flex-grow: 1;
+}
+
+/* form header */
+.lf-form-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  border-style: solid;
+  border-color: #ced5d9;
+  border-width: 1px;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  margin: 2px 0 4px 0;
+  padding: 2px;
+
+}
+.lf-header-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-grow: 1;
+  width: 100%;
+  padding: 2px;
+
+}
+.lf-header-de-label {
+  order: 1;
+  flex-grow: 1;
+  width: 100%;
+
+  background: #E8E8E8;
+  padding: 4px 2px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border-width: 0;
+  margin: 0 0 2px 0;
+
+}
+.lf-header-de-input {
+  order:2;
+  flex-grow: 1;
+  width: 100%
+}
+
+/* Medium screens */
+@media all and (max-width: 1024px) {
+  .lf-de {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .lf-de-label-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-label {
+    order: 1;
+    flex-grow: 1;
+  }
+  .lf-de-button {
+    order: 2;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .lf-de-input-unit {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 2;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-input {
+    order:1;
+    flex-grow: 1;
+  }
+  .lf-de-unit {
+    order:2;
+    flex-grow: 1;
+  }
+
+  .lf-column-header {
+    display: none;
+  }
+
+
+  /* form header */
+  .lf-form-header {
+    flex-direction: column;
+  }
+  .lf-header-de {
+    flex-direction: row;
+  }
+  .lf-header-de-label {
+    margin: 0 2px 0 0;
+  }
+  .lf-header-de-input {
+    margin: 0 0 0 2px;
+  }
 
 }
 
-/*.lf-table-item::last-child::after {*/
-  /*height: 8px;*/
-/*}*/
+/* Small screens */
+@media all and (max-width: 640px) {
+  .lf-de {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .lf-de-label-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-label {
+    order: 1;
+    flex-grow: 1;
+  }
+  .lf-de-button {
+    order: 2;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .lf-de-input-unit {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+
+    order: 2;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-input {
+    order:1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-unit {
+    order:2;
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  .lf-column-header {
+    display: none;
+  }
+
+  /* form header */
+  .lf-form-header {
+    flex-direction: column;
+  }
+  .lf-header-de {
+    flex-direction: column;
+  }
+  .lf-header-de-label {
+    margin: 0 2px 0 0;
+  }
+  .lf-header-de-input {
+    margin:  2px 2px 0 0;
+  }
+
+}
+/* end of flex box layout */
+
+/* boarder, padding and margin */
+/* rows in tables */
+.lf-form-table .lf-form-table-row {
+  border-style: solid;
+  border-color: #ced5d9;
+  border-width: 1px 0 0 0;
+  margin-left: 2px;
+  /*-moz-border-radius: 4px;*/
+  /*border-radius: 4px;*/
+  /*-webkit-box-sizing: border-box;*/
+  /*-moz-box-sizing: border-box;*/
+  /*box-sizing: border-box;*/
+}
+.lf-table-item div.lf-form-table-row:first-of-type {
+  border: 0;
+}
+
+.lf-form-table .lf-form-table-row.section-header {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 4px 0 2px;
+
+  border-width: 0;
+}
+.lf-form-table .lf-form-table-row.section-header .lf-de-label-button  {
+  padding: 4px 0 4px 0;
+}
+
+.lf-de-label-button {
+  padding: 4px 2px 0 0;
+}
+.lf-de-input-unit {
+  padding: 0 2px 0 0;
+}
+
+.lf-de-input {
+  padding: 2px;
+}
+.lf-de-unit {
+
+  padding: 2px 2px 2px 2px;
+}
+.lf-de-label-button .lf-de-label {
+
+}
+
+.lf-table-item {
+  padding: 0 0 0 0;
+}
+

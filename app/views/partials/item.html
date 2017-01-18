@@ -1,9 +1,9 @@
-<div class="data-cell col-xs-12 lf-no-padding">
-  <!-- label -->
-  <div class="lf-item-label-button {{getGridColClass(item,0)}}">
-    <div class="name-label col-xs-11 lf-no-padding">
-      <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
-      <span><label for="{{item._elementId}}">{{item.question}}</label></span>
+<div class="lf-form-table-row lf-de lf-flex-container {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+  <div class="lf-de-label-button">
+    <!-- label -->
+    <div class="lf-de-label">
+      <span ng-show="item._questionRepeatable" class="lf-sn">{{getRepeatingSN(item) }}</span>
+      <span class="lf-question"><label for="{{item._elementId}}">{{item.question}}</label></span>
       <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
                       <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
                       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
@@ -24,16 +24,16 @@
     </div>
 
     <!-- button -->
-    <div class="button-col lf-no-padding pull-right">
+    <div class="lf-de-button">
       <button ng-if="!hasOneRepeatingItem(item)" class="float-button" type="button"
               ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
               title="Remove this '{{ item.question }}'">-</button>
     </div>
   </div>
 
-  <div class="lf-item-input-unit {{getGridColClass(item,1)}}" ng-style="getScreenWidth()">
+  <div class="lf-de-input-unit" ng-style="getScreenWidth()">
     <!-- input field -->
-    <div ng-switch on="item.dataType" class="data-cell values hasTooltip {{getGridColClass(item,2)}}">
+    <div ng-switch on="item.dataType" class="lf-de-input values hasTooltip">
       <ng-form name="innerForm2">
         <div class="lf-form-item-data tooltipContainer">
           <div class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></div>
@@ -75,7 +75,7 @@
     </div>
 
     <!--units-->
-    <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits" class="data-cell units {{getGridColClass(item,3)}}">
+    <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits && item.units" class="lf-de-unit">
       <input class="units" ng-switch-when="list" type="text"
              ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
              placeholder="Select one" aria-labelledby="th_Units">
@@ -83,16 +83,16 @@
     </div>
 
     <!-- extra question -->
-    <div ng-if="needExtra(item)" class="extra-row lf-form-table-row row col-xs-12 lf-no-padding">
-      <div class="data-cell extra-field col-xs-12 lf-no-padding">
+    <div ng-if="needExtra(item)" class="extra-row lf-form-table-row ">
+      <div class="extra-field">
         <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
       </div>
     </div>
   </div>
 
   <!-- title row -->
-  <div ng-if="item.dataType==='TITLE'" class="title-row lf-form-table-row {{getGridColClass(item,0)}}">
-            <div class="name-label">
+  <div ng-if="item.dataType==='TITLE'" class="title-row lf-form-table-row">
+            <div class="lf-de-label">
               <span><label for="{{item._elementId}}">{{item.question}}</label></span>
               <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions"></span>
               <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
