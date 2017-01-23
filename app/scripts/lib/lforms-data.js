@@ -1391,11 +1391,16 @@ var LFormsData = LForms.LFormsData = Class.extend({
         if (item._parentItem.items[i]._codePath === item._codePath) {
           inRepeating = true;
         }
-        if (inRepeating && (item._parentItem.items[i]._codePath !== item._codePath || i===iLen-1)) {
+        if (inRepeating && item._parentItem.items[i]._codePath !== item._codePath) {
           insertPosition = i;
           break;
         }
       }
+      // until the last item
+      if (inRepeating && i===iLen) {
+        insertPosition = i;
+      }
+
       item._parentItem.items.splice(insertPosition, 0, newItem);
       newItem._parentItem = item._parentItem;
 

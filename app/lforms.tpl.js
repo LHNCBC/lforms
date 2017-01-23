@@ -261,7 +261,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('layout-horizontal.html',
-    "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
+    "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
     "  <div class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
     "    <span class=\"lf-question\">{{item.question}}</span>\n" +
     "  </div>\n" +

@@ -1,4 +1,4 @@
-<div class="lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} " ng-if="lfData._horizontalTableInfo[item._horizontalTableId]">
+<div class="lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} " ng-if="item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]">
   <div class="lf-form-horizontal-table-title lf-de-label">
     <span class="lf-question">{{item.question}}</span>
   </div>
