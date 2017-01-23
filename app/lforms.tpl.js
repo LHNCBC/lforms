@@ -165,7 +165,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('item.html',
     "<div class=\"lf-form-table-row lf-de lf-flex-container  {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
-    "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" +
     "  <div class=\"lf-de-label-button\">\n" +
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
@@ -621,8 +621,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <!--sub sections, check each item's layout -->\n" +
     "  <div ng-if=\"item.items\" class=\"section\">\n" +
     "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
-    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\"\n" +
-    "         ng-click=\"setActiveRow(item)\">\n" +
+    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
     "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "        <div ng-switch-when=\"horizontal\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
@@ -671,11 +670,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!--check form level questionLayout for matrix and horizontal layouts-->\n" +
     "      <div ng-switch on=\"lfData.templateOptions.displayControl.questionLayout\">\n" +
     "        <!--horizontal-->\n" +
-    "        <div ng-switch-when=\"horizontal\" class=\"top-section\">\n" +
+    "        <div ng-switch-when=\"horizontal\" class=\"lf-top-section\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
     "        </div>\n" +
     "        <!--matrix-->\n" +
-    "        <div ng-switch-when=\"matrix\" class=\"top-section\">\n" +
+    "        <div ng-switch-when=\"matrix\" class=\"lf-top-section\">\n" +
     "          <lf-section-matrix></lf-section-matrix>\n" +
     "        </div>\n" +
     "        <!--vertical-->\n" +
@@ -734,11 +733,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!--check form level questionLayout for matrix and horizontal layouts-->\n" +
     "      <div ng-switch on=\"lfData.templateOptions.displayControl.questionLayout\">\n" +
     "        <!--horizontal-->\n" +
-    "        <div ng-switch-when=\"horizontal\" class=\"top-section\">\n" +
+    "        <div ng-switch-when=\"horizontal\" class=\"lf-top-section\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
     "        </div>\n" +
     "        <!--matrix-->\n" +
-    "        <div ng-switch-when=\"matrix\" class=\"top-section\">\n" +
+    "        <div ng-switch-when=\"matrix\" class=\"lf-top-section\">\n" +
     "          <lf-section-matrix></lf-section-matrix>\n" +
     "        </div>\n" +
     "        <!--vertical-->\n" +
@@ -761,8 +760,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <!-- check each top level item's questionLayout -->\n" +
     "          <div ng-if=\"lfData.items\" class=\"lf-form-table\">\n" +
     "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
-    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\"\n" +
-    "                 ng-click=\"setActiveRow(item)\">\n" +
+    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
     "              <!--header item-->\n" +
     "              <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "                <div ng-switch-when=\"horizontal\">\n" +

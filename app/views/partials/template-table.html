@@ -20,11 +20,11 @@
       <!--check form level questionLayout for matrix and horizontal layouts-->
       <div ng-switch on="lfData.templateOptions.displayControl.questionLayout">
         <!--horizontal-->
-        <div ng-switch-when="horizontal" class="top-section">
+        <div ng-switch-when="horizontal" class="lf-top-section">
           <lf-section-horizontal></lf-section-horizontal>
         </div>
         <!--matrix-->
-        <div ng-switch-when="matrix" class="top-section">
+        <div ng-switch-when="matrix" class="lf-top-section">
           <lf-section-matrix></lf-section-matrix>
         </div>
         <!--vertical-->
@@ -47,8 +47,7 @@
           <!-- check each top level item's questionLayout -->
           <div ng-if="lfData.items" class="lf-form-table">
             <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
-                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
-                 ng-click="setActiveRow(item)">
+                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
               <!--header item-->
               <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
                 <div ng-switch-when="horizontal">

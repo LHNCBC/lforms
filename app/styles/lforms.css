@@ -364,7 +364,7 @@
 }
 .lf-form-horizontal-table {
   border: none;
-  margin: 2px 4px 2px 1px;
+  margin: 2px 4px 0 1px;
 }
 .lf-form-horizontal-table tr {
   border: none;
@@ -379,6 +379,7 @@
 }
 .lf-layout-horizontal .lf-form-table-row.button-row {
   margin-right: 0;
+  border: 0;
 }
 /* end of horizontal table */
 
@@ -469,7 +470,7 @@ Override color of select boxes in calendar widget title bar.
 /*** matrix layout ***/
 .lf-form-matrix-table {
   border: none;
-  margin: 2px 4px 2px 1px;
+  margin: 2px 4px 0 1px;
 }
 
 .lf-form-matrix-table-title {
@@ -486,12 +487,14 @@ Override color of select boxes in calendar widget title bar.
   padding: 4px 0 4px 0;
 }
 
-.lf-form .top-section .lf-layout-matrix{
-  margin: 0 5px;
-}
 .lf-form .lf-form-matrix-table .name {
   width: 30%;
   background-color: #e8e8e8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .lf-form .lf-form-matrix-answer {
   padding-left: 5px;
@@ -517,7 +520,7 @@ Override color of select boxes in calendar widget title bar.
 
 .lf-form.lf-template-table .lf-layout-horizontal,
 .lf-form.lf-template-table .lf-layout-matrix {
-  padding: 0 6px 0 2px;
+  padding-right: 6px;
 }
 
 
@@ -527,7 +530,7 @@ Override color of select boxes in calendar widget title bar.
 
 /* tree lines */
 .lf-table-item {
-  padding-left: 24px !important;
+  padding-left: 24px;
   position: relative;
 }
 /* the horizontal bar of a tree line */
@@ -555,6 +558,19 @@ Override color of select boxes in calendar widget title bar.
 /* shorter vertical bar of a tree line for the last item of a level */
 .lf-table-item.lf-last-item::after {
   height: 14px;
+}
+/*no tree lines for form level horizontal and matrix layouts */
+.lf-top-section .lf-layout-horizontal.lf-table-item,
+.lf-top-section .lf-layout-matrix.lf-table-item {
+  padding: 0 4px 0 3px;
+}
+.lf-top-section .lf-layout-horizontal.lf-table-item::before,
+.lf-top-section .lf-layout-matrix.lf-table-item::before {
+  border: 0;
+}
+.lf-top-section .lf-layout-horizontal.lf-table-item::after,
+.lf-top-section .lf-layout-matrix.lf-table-item::after {
+  border: 0;
 }
 /* end of tree lines */
 
@@ -879,12 +895,5 @@ Override color of select boxes in calendar widget title bar.
 .lf-de-unit {
 
   padding: 2px 0 2px 2px;
-}
-.lf-de-label-button .lf-de-label {
-
-}
-
-.lf-table-item {
-  padding: 0 0 0 0;
 }
 
