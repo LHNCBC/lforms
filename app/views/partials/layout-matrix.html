@@ -1,6 +1,6 @@
-<div class="lf-layout-matrix lf-table-item col-xs-12 lf-no-padding">
-  <div class="lf-form-table-title lf-de-label">
-    {{item.question}}
+<div class="lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}">
+  <div class="lf-form-matrix-table-title lf-de-label">
+    <span class="lf-question">{{item.question}}</span>
   </div>
   <table class="lf-form-matrix-table lf-form-table">
       <colgroup>

@@ -1,4 +1,5 @@
-<div class="lf-form-table-row lf-de lf-flex-container {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+<div class="lf-form-table-row lf-de lf-flex-container  {{getSiblingStatus(item)}} {{getRowClass(item)}}
+    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
   <div class="lf-de-label-button">
     <!-- label -->
     <div class="lf-de-label">
@@ -31,7 +32,7 @@
     </div>
   </div>
 
-  <div class="lf-de-input-unit" ng-style="getScreenWidth()">
+  <div ng-if="!item.header" class="lf-de-input-unit" ng-style="getScreenWidth()">
     <!-- input field -->
     <div ng-switch on="item.dataType" class="lf-de-input values hasTooltip">
       <ng-form name="innerForm2">
@@ -75,18 +76,16 @@
     </div>
 
     <!--units-->
-    <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits && item.units" class="lf-de-unit">
-      <input class="units" ng-switch-when="list" type="text"
+    <div ng-if="!lfData.templateOptions.hideUnits && checkUnits(item)" class="lf-de-unit">
+      <input class="units" type="text"
              ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
              placeholder="Select one" aria-labelledby="th_Units">
-      <span ng-switch-when="none" > </span>
     </div>
 
     <!-- extra question -->
-    <div ng-if="needExtra(item)" class="extra-row lf-form-table-row ">
-      <div class="extra-field">
-        <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
-      </div>
+    <div ng-if="needExtra(item)" class="lf-de-unit">
+      <input class="lf-extra-field" ng-model="item.valueOther" placeholder="Please specify"
+             ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
     </div>
   </div>
 

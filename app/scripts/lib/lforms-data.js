@@ -478,6 +478,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @param items sibling items on one level of the tree
    * @param parentSiblingList the last sibling status list of the parent item
    * @private
+   *
+   * not used
    */
   _updateLastSiblingList: function(items, parentSiblingList) {
 
@@ -728,6 +730,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       // set last sibling status
       item._lastSibling = i === lastSiblingIndex;
+      // set the first sibling status
+      item._firstSibling = i === 0;
 
       // set up tooltip and process user data if there's any user data.
       switch (item.dataType) {
@@ -845,7 +849,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       item._repeatingSectionList = null;
 
-
       // set default values on the item
       // questionCardinality
       if (!item.questionCardinality) {
@@ -864,13 +867,14 @@ var LFormsData = LForms.LFormsData = Class.extend({
       item._multipleAnswers = item.answerCardinality.max &&
           (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-      // set last sibling status
+      // set the last sibling status
       item._lastSibling = i === lastSiblingIndex;
 
       // consider if the last sibling is hidden by skip logic
       if (!foundLastSibling) {
         if (item._skipLogicStatus === "target-hide" ) {
           item._lastSibling = false;
+          lastSiblingIndex -= 1;
         }
         else {
           item._lastSibling = true;
@@ -893,6 +897,28 @@ var LFormsData = LForms.LFormsData = Class.extend({
       if (item.items && item.items.length > 0) {
         this._updateTreeNodes(item.items, item);
       }
+    }
+
+    // check first sibling status
+    var foundFirstSibling = false;
+    var firstSiblingIndex = 0;
+    for (var i=0; i<iLen; i++) {
+      var item = items[i];
+      // set the first sibling status
+      item._firstSibling = i === firstSiblingIndex;
+
+      // consider if the first sibling is hidden by skip logic
+      if (!foundFirstSibling) {
+        if (item._skipLogicStatus === "target-hide" ) {
+          item._firstSibling = false;
+          firstSiblingIndex += 1;
+        }
+        else {
+          item._firstSibling = true;
+          foundFirstSibling = true;
+        }
+      }
+
     }
   },
 
@@ -1141,28 +1167,30 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * If it is a repeating section, the last item is the last leaf node within the last repeating section.
    * @param items sibling items on one level of the tree
    * @private
+   *
+   * not used
    */
-  // _updateLastItemInRepeatingSection: function(items) {
-  //   for (var i=0, iLen=items.length; i<iLen; i++) {
-  //     var item = items[i];
-  //
-  //     // if it is the last repeating item, and it is not hidden by skip logic
-  //     if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
-  //       var lastItem = this._getLastSubItem(item);
-  //       if (lastItem._repeatingSectionList) {
-  //         lastItem._repeatingSectionList.unshift(item);
-  //       }
-  //       else {
-  //         lastItem._repeatingSectionList = [item];
-  //       }
-  //     }
-  //     // process the sub items if it's not hidden
-  //     if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
-  //       this._updateLastItemInRepeatingSection(item.items);
-  //     }
-  //   }
-  //
-  // },
+  _updateLastItemInRepeatingSection: function(items) {
+    for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+
+      // if it is the last repeating item, and it is not hidden by skip logic
+      if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
+        var lastItem = this._getLastSubItem(item);
+        if (lastItem._repeatingSectionList) {
+          lastItem._repeatingSectionList.unshift(item);
+        }
+        else {
+          lastItem._repeatingSectionList = [item];
+        }
+      }
+      // process the sub items if it's not hidden
+      if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
+        this._updateLastItemInRepeatingSection(item.items);
+      }
+    }
+
+  },
 
 
   /**

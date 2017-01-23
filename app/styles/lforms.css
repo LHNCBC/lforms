@@ -40,21 +40,6 @@
 }
 
 /* lf-form-header */
-/* column headers in tables */
-.lf-form-table-header {
-  border: 1px solid #ced5d9 ;
-  overflow: hidden;
-  vertical-align: top;
-  line-height: 28px;
-  background: none repeat scroll 0 0 #E8E8E8;
-  padding-left: 5px;
-  text-align: left ;
-  color: #666666;
-  font-weight: 400;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-
-}
 
 /* table structure in the forms */
 .lf-form table {
@@ -144,9 +129,8 @@
 
 
 /* buttons in tables */
-.lf-form-table-header .lf-de-button,
-.lf-form-table .lf-de-button {
-  width: 24px;
+.lf-de-button {
+  width: 22px;
 }
 .lf-form button {
   border: 0 none;
@@ -157,13 +141,12 @@
   background-color: #458AC5;
 }
 .lf-form .float-button {
-  min-width: 24px;
+  min-width: 22px;
   -moz-border-radius: 4px;
   border-radius: 4px;
   font-weight: bold;
   color: white;
-  padding: 2px;
-  margin: 2px 2px;
+  padding: 1px;
 }
 .lf-form .help-button{
   width: 18px;
@@ -279,18 +262,17 @@
   background-color: #AFEEEE;
 }
 
-/* units, overwrite autocomplete default styles */
+/* units */
 .lf-form input.units {
   color: #333333;
   font-weight: 400;
-  padding-right: 14px ;
 }
 
-/* please specify (extra row) */
-.lf-form-table-row.extra-row .extra-field {
-  padding-left: 20px;
-  border-left: none;
+/* overwrite autocomplete default styles */
+.lf-form input.ansList {
+  padding-right: 14px;
 }
+
 
 /* borders for invalid fields */
 .lf-form input.ng-invalid.ng-dirty,
@@ -351,17 +333,38 @@
 /* horizontal table */
 /* title */
 .lf-form-horizontal-table-title {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 0 0 1px;
   text-align: left;
+
+  border-width: 0;
+  padding: 4px 0 4px 0;
 }
+/* column headers in tables */
+.lf-form-horizontal-table-header {
+  overflow: hidden;
+  vertical-align: top;
+  background: none repeat scroll 0 0 #E8E8E8;
+  padding: 4px 2px;
+  text-align: left ;
+  color: #666666;
+  font-weight: 400;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
 .lf-form-horizontal-table td.lf-de-button {
   padding-left: 2px;
   border-right: none;
 }
-.lf-form-table .section-header.horizontal {
-  background-color:white;
-}
 .lf-form-horizontal-table {
   border: none;
+  margin: 2px 4px 2px 1px;
 }
 .lf-form-horizontal-table tr {
   border: none;
@@ -373,6 +376,9 @@
 .lf-form-horizontal-table .lf-de-button {
   width: 2.5em;
   min-width: 2em;
+}
+.lf-layout-horizontal .lf-form-table-row.button-row {
+  margin-right: 0;
 }
 /* end of horizontal table */
 
@@ -461,9 +467,25 @@ Override color of select boxes in calendar widget title bar.
 
 
 /*** matrix layout ***/
-.lf-form .lf-layout-matrix .lf-form--table-title {
-  padding: 5px;
+.lf-form-matrix-table {
+  border: none;
+  margin: 2px 4px 2px 1px;
 }
+
+.lf-form-matrix-table-title {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 0 0 1px;
+  text-align: left;
+
+  border-width: 0;
+  padding: 4px 0 4px 0;
+}
+
 .lf-form .top-section .lf-layout-matrix{
   margin: 0 5px;
 }
@@ -492,10 +514,10 @@ Override color of select boxes in calendar widget title bar.
   padding: 2px 0;
 }
 
+
 .lf-form.lf-template-table .lf-layout-horizontal,
 .lf-form.lf-template-table .lf-layout-matrix {
-    padding-left: 2px;
-
+  padding: 0 6px 0 2px;
 }
 
 
@@ -528,7 +550,7 @@ Override color of select boxes in calendar widget title bar.
   border-left: 2px solid #2f96b4;
   height: 100%;
   width: 0px;
-  top: 2px;
+  top: 0;
 }
 /* shorter vertical bar of a tree line for the last item of a level */
 .lf-table-item.lf-last-item::after {
@@ -544,7 +566,7 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-body {
   border: 1px solid #ced5d9;
   padding: 4px 0;
-  margin: 2px 0;
+  margin: 0 0 2px 0;
 
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -578,7 +600,6 @@ Override color of select boxes in calendar widget title bar.
 /* Large */
 .lf-de,
 .lf-column-header{
-  /*width: 100%;*/
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -645,7 +666,7 @@ Override color of select boxes in calendar widget title bar.
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 
-  margin: 2px 0 4px 0;
+  margin: 2px 0 0 0;
   padding: 2px;
 
 }
@@ -682,7 +703,6 @@ Override color of select boxes in calendar widget title bar.
 /* Medium screens */
 @media all and (max-width: 1024px) {
   .lf-de {
-    width: 100%;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -751,7 +771,6 @@ Override color of select boxes in calendar widget title bar.
 /* Small screens */
 @media all and (max-width: 640px) {
   .lf-de {
-    width: 100%;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -823,17 +842,12 @@ Override color of select boxes in calendar widget title bar.
 /* boarder, padding and margin */
 /* rows in tables */
 .lf-form-table .lf-form-table-row {
-  border-style: solid;
+  border: solid;
   border-color: #ced5d9;
   border-width: 1px 0 0 0;
-  margin-left: 2px;
-  /*-moz-border-radius: 4px;*/
-  /*border-radius: 4px;*/
-  /*-webkit-box-sizing: border-box;*/
-  /*-moz-box-sizing: border-box;*/
-  /*box-sizing: border-box;*/
+  margin: 0 4px 0 2px;
 }
-.lf-table-item div.lf-form-table-row:first-of-type {
+.lf-table-item .lf-form-table-row.lf-first-item {
   border: 0;
 }
 
@@ -853,18 +867,18 @@ Override color of select boxes in calendar widget title bar.
 }
 
 .lf-de-label-button {
-  padding: 4px 2px 0 0;
+  padding: 4px 0 0 0;
 }
 .lf-de-input-unit {
-  padding: 0 2px 0 0;
+  padding: 0 0 0 0;
 }
 
 .lf-de-input {
-  padding: 2px;
+  padding: 2px 0 2px 2px;
 }
 .lf-de-unit {
 
-  padding: 2px 2px 2px 2px;
+  padding: 2px 0 2px 2px;
 }
 .lf-de-label-button .lf-de-label {
 

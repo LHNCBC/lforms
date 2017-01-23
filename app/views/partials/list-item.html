@@ -68,10 +68,8 @@
     </div>
   </ng-form>
   <!--unit-->
-  <div ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits">
-    <div ng-switch-when="list">
-      <lf-units item="item"></lf-units>
-    </div>
+  <div ng-if="!lfData.templateOptions.hideUnits && checkUnits(item)">
+    <lf-units item="item"></lf-units>
   </div>
   <!--extra question-->
   <div ng-if="needExtra(item) && targetShown(item)" ng-click="setActiveRow(item)"

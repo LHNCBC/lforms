@@ -87,70 +87,26 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"lf-form-controls\">\n" +
     "  <div class=\"stopped\" ng-show=\"isFormDone()\"><img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\"><span>This form is complete.</span></div>\n" +
     "  <div class=\"row\" ng-if=\"!lfData.templateOptions.hideHeader\">\n" +
-    "    <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div class=\"col-xs-3\">\n" +
     "      <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
     "        <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display Question Code</label>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div class=\"col-xs-3\">\n" +
     "      <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
     "        <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show Help/Description</label>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"col-md-3 col-xs-3\">\n" +
+    "    <div class=\"col-xs-3\">\n" +
     "      <div ng-hide=\"lfData.templateOptions.hideCheckBoxes\" class=\"checkbox\">\n" +
     "        <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"col-md-3 col-xs-3 text-right\">\n" +
+    "    <div class=\"col-xs-3 text-right\">\n" +
     "      <div class=\"text-info\" >Total # of Questions: {{getNumberOfQuestions()}}</div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n"
-  );
-
-
-  $templateCache.put('form-header-old.html',
-    "<div class=\"lf-form-header\">\n" +
-    "  <table cellspacing=\"0\" cellpadding=\"0\" class=\"lf-form-table\" ng-if=\"lfData.templateOptions.obrHeader\">\n" +
-    "    <colgroup >\n" +
-    "      <col ng-repeat=\"item in lfData.templateOptions.obrItems\" ng-style=\"{{getTableColumnStyle(item)}}\">\n" +
-    "    </colgroup>\n" +
-    "    <thead>\n" +
-    "    <tr>\n" +
-    "      <th class=\"lf-form-table-header\"\n" +
-    "          ng-repeat=\"item in lfData.templateOptions.obrItems\">\n" +
-    "        <label for=\"{{item.questionCode}}\">{{item.question}}</label></th>\n" +
-    "    </tr>\n" +
-    "    </thead>\n" +
-    "    <tbody>\n" +
-    "    <tr class=\"lf-form-table-row\" ng-if=\"lfData.templateOptions.obrHeader\" ng-click=\"setActiveRow(null)\">\n" +
-    "      <td class=\"hasTooltip\" ng-repeat=\"item in lfData.templateOptions.obrItems\"\n" +
-    "          ng-switch on=\"item.dataType\">\n" +
-    "        <ng-form name=\"innerForm\">\n" +
-    "          <div class=\"lf-form-item-data tooltipContainer\">\n" +
-    "            <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\"></div>\n" +
-    "            <input ng-switch-when=\"CWE\" name=\"{{item.question}}\" type=\"text\"\n" +
-    "                   placeholder=\"Select or type a value\"\n" +
-    "                   ng-model=\"item.value\"\n" +
-    "                   autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "                   id=\"{{item.questionCode}}\"\n" +
-    "                   ng-blur=\"activeRowOnBlur(item)\">\n" +
-    "            <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
-    "                   ng-model=\"item.value\" lf-date=\"dateOptions\"\n" +
-    "                   placeholder=\"MM/DD/YYYY\"\n" +
-    "                   id=\"{{item.questionCode}}\"\n" +
-    "                   ng-blur=\"activeRowOnBlur(item)\">\n" +
-    "            <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
-    "                   ng-model=\"item.value\" placeholder=\"Type a value\"\n" +
-    "                   id=\"{{item.questionCode}}\"\n" +
-    "                   ng-blur=\"activeRowOnBlur(item)\">\n" +
-    "          </div>\n" +
-    "        </ng-form>\n" +
-    "      </td>\n" +
-    "    </tr></tbody>\n" +
-    "  </table>\n" +
-    "</div>"
   );
 
 
@@ -208,7 +164,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('item.html',
-    "<div class=\"lf-form-table-row lf-de lf-flex-container {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "<div class=\"lf-form-table-row lf-de lf-flex-container  {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
+    "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
     "  <div class=\"lf-de-label-button\">\n" +
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
@@ -241,7 +198,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div class=\"lf-de-input-unit\" ng-style=\"getScreenWidth()\">\n" +
+    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getScreenWidth()\">\n" +
     "    <!-- input field -->\n" +
     "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" +
     "      <ng-form name=\"innerForm2\">\n" +
@@ -285,18 +242,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "\n" +
     "    <!--units-->\n" +
-    "    <div ng-switch on=\"checkUnits(item)\" ng-if=\"!lfData.templateOptions.hideUnits && item.units\" class=\"lf-de-unit\">\n" +
-    "      <input class=\"units\" ng-switch-when=\"list\" type=\"text\"\n" +
+    "    <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">\n" +
+    "      <input class=\"units\" type=\"text\"\n" +
     "             ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "             placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
-    "      <span ng-switch-when=\"none\" > </span>\n" +
     "    </div>\n" +
     "\n" +
     "    <!-- extra question -->\n" +
-    "    <div ng-if=\"needExtra(item)\" class=\"extra-row lf-form-table-row \">\n" +
-    "      <div class=\"extra-field\">\n" +
-    "        <input ng-model=\"item.valueOther\" placeholder=\"Please specify\" ng-readonly=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" +
-    "      </div>\n" +
+    "    <div ng-if=\"needExtra(item)\" class=\"lf-de-unit\">\n" +
+    "      <input class=\"lf-extra-field\" ng-model=\"item.valueOther\" placeholder=\"Please specify\"\n" +
+    "             ng-readonly=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
@@ -325,12 +280,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('layout-horizontal.html',
-    "<div class=\"lf-layout-horizontal lf-table-item col-xs-12 lf-no-padding\" ng-if=\"lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
-    "  <div class=\"lf-form-table-title lf-de-label\">\n" +
-    "    {{item.question}}\n" +
+    "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
+    "  <div class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
+    "    <span class=\"lf-question\">{{item.question}}</span>\n" +
     "  </div>\n" +
     "\n" +
-    "  <table class=\"lf-form-table lf-form-horizontal-table\">\n" +
+    "  <table class=\"lf-form-horizontal-table\">\n" +
     "    <colgroup>\n" +
     "      <col class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" +
     "      <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" +
@@ -338,9 +293,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </colgroup>\n" +
     "    <thead>\n" +
     "    <tr>\n" +
-    "      <th class=\"lf-form-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" +
+    "      <th class=\"lf-form-horizontal-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" +
     "      <th ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" +
-    "          class=\"lf-form-table-header\"\n" +
+    "          class=\"lf-form-horizontal-table-header\"\n" +
     "          id=\"{{col.id}}\">{{col.label}}</th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
@@ -411,16 +366,31 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </tbody>\n" +
     "  </table>\n" +
     "\n" +
-    "  <lf-repeating-button></lf-repeating-button>\n" +
+    "  <div ng-if=\"item._questionRepeatable && targetShown(item) \"\n" +
+    "       class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" +
+    "    <div class=\"has-popover-warning\">\n" +
+    "      <button type=\"button\"\n" +
+    "              class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
+    "              title=\"Add another '{{ item.question }}'\"\n" +
+    "              ng-click=\"addOneRepeatingItem(item, true)\"\n" +
+    "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
+    "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "              popover-placement=\"top-left\"\n" +
+    "              popover-trigger=\"none\"\n" +
+    "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
+    "        Add another [directive] '{{item.question}}'\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "</div>\n" +
     "\n"
   );
 
 
   $templateCache.put('layout-matrix.html',
-    "<div class=\"lf-layout-matrix lf-table-item col-xs-12 lf-no-padding\">\n" +
-    "  <div class=\"lf-form-table-title lf-de-label\">\n" +
-    "    {{item.question}}\n" +
+    "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" +
+    "  <div class=\"lf-form-matrix-table-title lf-de-label\">\n" +
+    "    <span class=\"lf-question\">{{item.question}}</span>\n" +
     "  </div>\n" +
     "  <table class=\"lf-form-matrix-table lf-form-table\">\n" +
     "      <colgroup>\n" +
@@ -578,10 +548,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </ng-form>\n" +
     "  <!--unit-->\n" +
-    "  <div ng-switch on=\"checkUnits(item)\" ng-if=\"!lfData.templateOptions.hideUnits\">\n" +
-    "    <div ng-switch-when=\"list\">\n" +
-    "      <lf-units item=\"item\"></lf-units>\n" +
-    "    </div>\n" +
+    "  <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\">\n" +
+    "    <lf-units item=\"item\"></lf-units>\n" +
     "  </div>\n" +
     "  <!--extra question-->\n" +
     "  <div ng-if=\"needExtra(item) && targetShown(item)\" ng-click=\"setActiveRow(item)\"\n" +
@@ -628,27 +596,25 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<!--a button at the end of each repeating section-->\n" +
     "<div ng-if=\"item._lastRepeatingItem && targetShown(item) \"\n" +
     "     class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" +
-    "  <!--<div class=\"data-cell col-xs-12\">-->\n" +
-    "          <div class=\"has-popover-warning\">\n" +
-    "            <button type=\"button\"\n" +
-    "                    class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "                    title=\"Add another '{{ item.question }}'\"\n" +
-    "                    ng-click=\"addOneRepeatingItem(item)\"\n" +
-    "                    ng-blur=\"hideUnusedItemWarning(item)\"\n" +
-    "                    uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
-    "                    popover-placement=\"top-left\"\n" +
-    "                    popover-trigger=\"none\"\n" +
-    "                    popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "              Add another [directive] '{{item.question}}'\n" +
-    "            </button>\n" +
-    "          </div>\n" +
-    "  <!--</div>-->\n" +
+    "  <div class=\"has-popover-warning\">\n" +
+    "    <button type=\"button\"\n" +
+    "            class=\"float-button\" id=\"add-{{item._elementId}}\"\n" +
+    "            title=\"Add another '{{ item.question }}'\"\n" +
+    "            ng-click=\"addOneRepeatingItem(item)\"\n" +
+    "            ng-blur=\"hideUnusedItemWarning(item)\"\n" +
+    "            uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "            popover-placement=\"top-left\"\n" +
+    "            popover-trigger=\"none\"\n" +
+    "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
+    "      Add another [directive] '{{item.question}}'\n" +
+    "    </button>\n" +
+    "  </div>\n" +
     "</div>"
   );
 
 
   $templateCache.put('table-item.html',
-    "<div class=\"lf-table-item {{getLastSiblingStatus(item)}}\">\n" +
+    "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" +
     "  <!-- question -->\n" +
     "  <lf-item></lf-item>\n" +
     "\n" +

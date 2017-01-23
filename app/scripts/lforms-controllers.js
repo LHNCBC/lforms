@@ -4,7 +4,7 @@ angular.module('lformsWidget')
         function ($window,$scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = false;
+        $scope.debug = true;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
@@ -136,18 +136,15 @@ angular.module('lformsWidget')
         /**
          * Check if there's a unit list
          * @param item an item in the lforms form items array
-         * @returns {string}
+         * @returns {boolean}
          */
         $scope.checkUnits = function(item) {
-          var ret;
-          if (item.dataType != "CNE" &&
-              item.dataType != "CWE" &&
+          var ret = false;
+          if (item.dataType !== "CNE" &&
+              item.dataType !== "CWE" &&
               item.units &&
               jQuery.isArray(item.units)) {
-            ret = 'list'
-          }
-          else {
-            ret = 'none'
+            ret = true;
           }
           return ret;
         };
@@ -431,8 +428,13 @@ angular.module('lformsWidget')
           return ret;
         };
 
-        $scope.getLastSiblingStatus = function(item) {
-          return item._lastSibling ? 'lf-last-item' : '';
+        $scope.getSiblingStatus = function(item) {
+          var status = "";
+          if (item._lastSibling)
+            status += 'lf-last-item';
+          if (item._firstSibling)
+            status += ' lf-first-item'
+          return status;
         };
 
         /**

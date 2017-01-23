@@ -1,19 +1,17 @@
 <!--a button at the end of each repeating section-->
 <div ng-if="item._lastRepeatingItem && targetShown(item) "
      class="lf-form-table-row button-row {{getSkipLogicClass(item)}}">
-  <!--<div class="data-cell col-xs-12">-->
-          <div class="has-popover-warning">
-            <button type="button"
-                    class="float-button" id="add-{{item._elementId}}"
-                    title="Add another '{{ item.question }}'"
-                    ng-click="addOneRepeatingItem(item)"
-                    ng-blur="hideUnusedItemWarning(item)"
-                    uib-popover='Please enter info in the blank "{{ item.question }}".'
-                    popover-placement="top-left"
-                    popover-trigger="none"
-                    popover-is-open="item._showUnusedItemWarning">
-              Add another [directive] '{{item.question}}'
-            </button>
-          </div>
-  <!--</div>-->
+  <div class="has-popover-warning">
+    <button type="button"
+            class="float-button" id="add-{{item._elementId}}"
+            title="Add another '{{ item.question }}'"
+            ng-click="addOneRepeatingItem(item)"
+            ng-blur="hideUnusedItemWarning(item)"
+            uib-popover='Please enter info in the blank "{{ item.question }}".'
+            popover-placement="top-left"
+            popover-trigger="none"
+            popover-is-open="item._showUnusedItemWarning">
+      Add another [directive] '{{item.question}}'
+    </button>
+  </div>
 </div>
