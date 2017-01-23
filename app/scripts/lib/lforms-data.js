@@ -754,6 +754,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
           else
             item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
           break;
+        case "SECTION":
+        case "TITLE":
         case "":
           item._toolTip = "";
           break;
@@ -1389,7 +1391,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
         if (item._parentItem.items[i]._codePath === item._codePath) {
           inRepeating = true;
         }
-        if (inRepeating && item._parentItem.items[i]._codePath !== item._codePath) {
+        if (inRepeating && (item._parentItem.items[i]._codePath !== item._codePath || i===iLen-1)) {
           insertPosition = i;
           break;
         }

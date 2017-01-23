@@ -1,6 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
-describe('data control', function() {
+fdescribe('data control', function() {
 
   it('data change on source field should update target fields', function() {
     tp.openFullFeaturedForm();

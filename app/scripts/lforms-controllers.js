@@ -465,6 +465,9 @@ angular.module('lformsWidget')
           if (item._showValidation) {
             eleClass += ' show-validation';
           }
+          if (item.dataType === 'TITLE') {
+            eleClass += ' title-row';
+          }
 
           return eleClass;
         };

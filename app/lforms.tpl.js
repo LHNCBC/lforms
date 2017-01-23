@@ -255,25 +255,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!-- title row -->\n" +
-    "  <div ng-if=\"item.dataType==='TITLE'\" class=\"title-row lf-form-table-row\">\n" +
-    "            <div class=\"lf-de-label\">\n" +
-    "              <span><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
-    "              <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\"></span>\n" +
-    "              <span ng-switch-when=\"inline-html\" class=\"prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
-    "              <span ng-switch-when=\"inline-escaped\" class=\"prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
-    "              <button ng-switch-when=\"popover-html\" class=\"help-button\" uib-popover-template=\"'popover.html'\"\n" +
-    "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
-    "              <button ng-switch-when=\"popover-escaped\" class=\"help-button\" uib-popover=\"{{item.codingInstructions}}\"\n" +
-    "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{item._elementId}}\">?</button>\n" +
-    "              <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
-    "                      class=\"copyright-button\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
-    "                      popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">&#9400;</button>\n" +
-    "            </div>\n" +
-    "  </div>\n" +
-    "\n" +
     "</div>\n" +
     "\n"
   );
@@ -378,7 +359,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "        Add another [directive] '{{item.question}}'\n" +
+    "        Add another '{{item.question}}'\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -606,7 +587,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "      Add another [directive] '{{item.question}}'\n" +
+    "      Add another '{{item.question}}'\n" +
     "    </button>\n" +
     "  </div>\n" +
     "</div>"

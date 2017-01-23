@@ -457,13 +457,6 @@ Override color of select boxes in calendar widget title bar.
   width: auto;
 }
 
-/* title row */
-.lf-form .lf-form-table .title-row {
-  background-color: rgb(67,115,156);
-}
-.lf-form .lf-form-table .title-row .lf-de-label {
-  color: white;
-}
 
 
 
@@ -523,6 +516,66 @@ Override color of select boxes in calendar widget title bar.
   padding-right: 6px;
 }
 
+/*** template-list.html ***/
+.lf-form.lf-template-list .lf-de-label {
+  background-color: #e8e8e8;
+  padding: 2px;
+  font-weight: 400;
+  line-height: 28px;
+}
+.lf-form.lf-template-list .help-button {
+  line-height: 20px;
+}
+.lf-form.lf-template-list .data-row {
+  border: 2px solid #ced5d9;
+  margin: 10px 5px;
+}
+
+.lf-form.lf-template-list .section {
+  margin: 10px;
+}
+
+.lf-form.lf-template-list .lf-form-title,
+.lf-form.lf-template-list .lf-form-header {
+  margin: 0 5px;
+}
+
+.lf-form.lf-template-list .lf-form-item-data,
+.lf-form.lf-template-list .lf-field-units {
+  padding: 2px;
+}
+
+.lf-form.lf-template-list .lf-field-answers {
+}
+
+.lf-form.lf-template-list .lf-list-answer {
+  padding: 2px 5px;
+}
+.lf-form.lf-template-list .lf-list-answer input[type="radio"],
+.lf-form.lf-template-list .lf-list-answer input[type="checkbox"] {
+  margin-right: 2px;
+}
+
+.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {
+  padding: 5px;
+}
+
+.lf-form.lf-template-list .lf-list-item,
+.lf-form.lf-template-list .lf-layout-horizontal,
+.lf-form.lf-template-list .lf-layout-matrix{
+  /*padding-bottom: 2px;*/
+}
+.lf-form . .lf-form-table-title {
+
+}
+.lf-form .lf-form-horizontal-table {
+  margin-bottom: 5px;
+}
+.lf-form .float-button {
+  margin-bottom: 2px;
+}
+/*** end of template-list.html ***/
+
 
 
 /* new styles */
@@ -570,6 +623,19 @@ Override color of select boxes in calendar widget title bar.
 }
 .lf-top-section .lf-layout-horizontal.lf-table-item::after,
 .lf-top-section .lf-layout-matrix.lf-table-item::after {
+  border: 0;
+}
+/*no tree lines for in list template */
+.lf-template-list .lf-layout-horizontal.lf-table-item,
+.lf-template-list .lf-layout-matrix.lf-table-item {
+  padding: 0;
+}
+.lf-template-list .lf-layout-horizontal.lf-table-item::before,
+.lf-template-list .lf-layout-matrix.lf-table-item::before {
+  border: 0;
+}
+.lf-template-list .lf-layout-horizontal.lf-table-item::after,
+.lf-template-list .lf-layout-matrix.lf-table-item::after {
   border: 0;
 }
 /* end of tree lines */
@@ -881,6 +947,14 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-table .lf-form-table-row.section-header .lf-de-label-button  {
   padding: 4px 0 4px 0;
 }
+/* title row */
+.lf-form-table .lf-form-table-row.section-header.title-row  {
+  background-color: rgb(67,115,156);
+}
+.lf-form-table .lf-form-table-row.section-header.title-row .lf-de-label {
+  color: white;
+}
+
 
 .lf-de-label-button {
   padding: 4px 0 0 0;
