@@ -31,34 +31,28 @@ describe('Hiding and showing Units column ', function() {
 });
 
 
-describe('Change Obx table columns ', function() {
+describe('Change Obr table columns ', function() {
 
-  it('should be able to dynamically obx table columns names and displayControl', function () {
-
-    var unitsCol = element(by.id("th_Units"));
-    var nameCol = element(by.id("th_Name"));
-    var valueCol = element(by.id("th_Value"));
-    var valuesCol = element(by.id("th_Values"));
-
-    var comment =element(by.id("comment"));
-    var timeDone =element(by.id("time_done"));
+  it('should be able to dynamically obr table columns', function () {
 
     tp.openFullFeaturedForm();
+    var comment =element(by.id("comment"));
+    var timeDone =element(by.id("time_done"));
+    var dateDone =element(by.id("date_done"));
+    var whereDone =element(by.id("where_done"));
 
-    // units column is shown
-    expect(unitsCol.isDisplayed()).toBe(true);
-    expect(nameCol.isDisplayed()).toBe(true);
-    expect(valueCol.isDisplayed()).toBe(true);
-    // change the "value" to "values"
+    expect(comment.isDisplayed()).toBe(true);
+    expect(timeDone.isDisplayed()).toBe(true);
+    expect(dateDone.isDisplayed()).toBe(true);
+    expect(whereDone.isDisplayed()).toBe(true);
+
     element(by.id("change-columns")).click();
-    expect(unitsCol.isDisplayed()).toBe(true);
-    expect(nameCol.isDisplayed()).toBe(true);
-    expect(valuesCol.isDisplayed()).toBe(true);
-    expect(valueCol.isPresent()).toBe(false);
 
     // obr has only two fields
     expect(comment.isPresent()).toBe(false);
     expect(timeDone.isPresent()).toBe(false);
+    expect(dateDone.isDisplayed()).toBe(true);
+    expect(whereDone.isDisplayed()).toBe(true);
   });
 
 });

@@ -149,17 +149,17 @@ var TestPage = function() {
       rpq1_add_btn: element(by.id('add-/rp-q1/2')),
       rpq1_add_btn_3: element(by.id('add-/rp-q1/3')),
 
-      rpq2_1: element(by.id('/rp-q2/1')),
-      rpq2_2: element(by.id('/rp-q2/2')),
+      rpq2_1: element(by.css('label[for="/rp-q2/1"]')),
+      rpq2_2: element(by.css('label[for="/rp-q2/2"]')),
 
       rpq3_1: element(by.id('/rp-q2/rp-q3/1/1')),
       rpq3_2: element(by.id('/rp-q2/rp-q3/2/1')),
 
-      rpq4_1: element(by.id('/rp-q2/rp-q4/1/1')),
-      rpq4_2: element(by.id('/rp-q2/rp-q4/1/2')),
-      rpq4_3: element(by.id('/rp-q2/rp-q4/1/3')),
-      rpq4_4: element(by.id('/rp-q2/rp-q4/1/4')),
-      rpq4_5: element(by.id('/rp-q2/rp-q4/2/1')),
+      rpq4_1: element(by.css('label[for="/rp-q2/rp-q4/1/1"]')),
+      rpq4_2: element(by.css('label[for="/rp-q2/rp-q4/1/2"]')),
+      rpq4_3: element(by.css('label[for="/rp-q2/rp-q4/1/3"]')),
+      rpq4_4: element(by.css('label[for="/rp-q2/rp-q4/1/4"]')),
+      rpq4_5: element(by.css('label[for="/rp-q2/rp-q4/2/1"]')),
 
       rpq5_1: element(by.id('/rp-q2/rp-q4/rp-q5/1/1/1')),
       rpq5_2: element(by.id('/rp-q2/rp-q4/rp-q5/1/2/1')),

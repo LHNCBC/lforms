@@ -95,12 +95,12 @@ describe('Unused repeating item/section control', function() {
   describe('repeating section within a repeating section', function() {
     var familyPopover = element(by.css('div[content=\'Please enter info in the blank "Family member health information".\']'));
     var diseHistPopover = element(by.css('div[content=\'Please enter info in the blank "This family member\\\'s history of disease".\']'));
+
     it("should not add new section if any previous one is empty", function() {
-      ff.btnAnotherFamily.click();
-      expect(familyPopover.isDisplayed()).toBe(true);
       ff.btnAnotherDiseasesHist.click();
       expect(diseHistPopover.isDisplayed()).toBe(true);
-
+      ff.btnAnotherFamily.click();
+      expect(familyPopover.isDisplayed()).toBe(true);
     });
 
   });
