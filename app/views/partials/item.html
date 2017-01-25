@@ -1,4 +1,4 @@
-<div class="lf-form-table-row lf-de lf-flex-container  {{getSiblingStatus(item)}} {{getRowClass(item)}}
+<div class="lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}
     {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-click="setActiveRow(item)">
   <div class="lf-de-label-button">
     <!-- label -->
@@ -38,17 +38,23 @@
       <ng-form name="innerForm2">
         <div class="lf-form-item-data tooltipContainer">
           <div class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></div>
-          <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
-          <input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}" type="text"
-                 ng-model="item.value" autocomplete-lhc="item._autocompOptions"
-                 ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                 ng-blur="activeRowOnBlur(item)">
-          <input ng-switch-when="CWE" name="{{item.question +'_'+ $id}}" type="text"
-                 ng-model="item.value" autocomplete-lhc="item._autocompOptions"
-                 ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                 id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                 ng-blur="activeRowOnBlur(item)">
+          <div ng-switch-when="CNE">
+            <lf-answers item="item"></lf-answers>
+          </div>
+          <div ng-switch-when="CWE">
+            <lf-answers item="item"></lf-answers>
+          </div>
+
+          <!--<input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}" type="text"-->
+                 <!--ng-model="item.value" autocomplete-lhc="item._autocompOptions"-->
+                 <!--ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"-->
+                 <!--id="{{item._elementId}}" ng-focus="setActiveRow(item)"-->
+                 <!--ng-blur="activeRowOnBlur(item)">-->
+          <!--<input ng-switch-when="CWE" name="{{item.question +'_'+ $id}}" type="text"-->
+                 <!--ng-model="item.value" autocomplete-lhc="item._autocompOptions"-->
+                 <!--ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"-->
+                 <!--id="{{item._elementId}}" ng-focus="setActiveRow(item)"-->
+                 <!--ng-blur="activeRowOnBlur(item)">-->
           <input ng-switch-when="REAL" name="{{item.question}}" type="text"
                  ng-model="item.value" placeholder="{{item._toolTip}}"
                  ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
@@ -75,11 +81,15 @@
       </ng-form>
     </div>
 
-    <!--units-->
+    <!--&lt;!&ndash;units&ndash;&gt;-->
+    <!--<div ng-if="!lfData.templateOptions.hideUnits && checkUnits(item)" class="lf-de-unit">-->
+      <!--<input class="units" type="text"-->
+             <!--ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"-->
+             <!--placeholder="Select one" aria-labelledby="th_Units">-->
+    <!--</div>-->
+    <!--unit-->
     <div ng-if="!lfData.templateOptions.hideUnits && checkUnits(item)" class="lf-de-unit">
-      <input class="units" type="text"
-             ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
-             placeholder="Select one" aria-labelledby="th_Units">
+      <lf-units item="item"></lf-units>
     </div>
 
     <!-- extra question -->

@@ -32,12 +32,12 @@ describe('List template', function() {
     item1answer1.click();
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c1');
-      expect(value.text).toBe('Answer X');
+      expect(value.text).toBe('Extra long answer text 123456789 Answer X');
     });
     item1answer3.click();
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c3');
-      expect(value.text).toBe('Answer Z');
+      expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
     });
 
     // second answer list
@@ -48,7 +48,7 @@ describe('List template', function() {
     item2answer1.click();
     item2answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c1');
-      expect(value.text).toBe('Answer X');
+      expect(value.text).toBe('Long answer text 123 Answer X');
     });
     item2Other.click();
     item2answer1.evaluate("item.value").then(function (value) {
@@ -130,7 +130,7 @@ describe('List template', function() {
     // other model values are not changes
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c3');
-      expect(value.text).toBe('Answer Z');
+      expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
     });
     item2answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('other values again');

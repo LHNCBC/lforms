@@ -2,55 +2,51 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('field-answers.html',
-    "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout\">\n" +
+    "<div class=\"lf-field-answers\" ng-switch on=\"getAnswerLayoutType(item)\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"list\">\n" +
-    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-list-answer\">\n" +
-    "      <!--for multiple answers-->\n" +
-    "      <label ng-if=\"item._multipleAnswers\">\n" +
-    "        <input type=\"checkbox\" id=\"{{item._elementId + answer.code}}\" ng-click=\"updateCheckboxList(item, answer)\">{{answer.text}}\n" +
-    "      </label>\n" +
-    "      <!--for single answer-->\n" +
-    "      <label ng-if=\"!item._multipleAnswers\">\n" +
-    "        <input type=\"radio\" id=\"{{item._elementId + answer.code}}\" ng-model=\"item.value\"\n" +
-    "               ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
-    "               ng-click=\"updateRadioList(item)\">{{answer.text}}\n" +
-    "      </label>\n" +
+    "  <div ng-switch-when=\"list\" class=\"lf-answer-type-list\">\n" +
+    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "      <!--checkboxes for multiple selections-->\n" +
+    "      <div ng-if=\"item._multipleAnswers\">\n" +
+    "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
+    "               ng-click=\"updateCheckboxList(item, answer)\">\n" +
+    "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
+    "      </div>\n" +
+    "      <!--radio buttons for single selection-->\n" +
+    "      <div ng-if=\"!item._multipleAnswers\">\n" +
+    "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" +
+    "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
+    "               ng-click=\"updateRadioList(item)\">\n" +
+    "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
+    "      </div>\n" +
     "    </span>\n" +
     "    <!--extra OTHER field-->\n" +
-    "    <span ng-if=\"item.dataType==='CWE'\">\n" +
-    "      <!--for multiple answers-->\n" +
-    "      <span ng-if=\"item._multipleAnswers\" class=\"lf-list-answer\">\n" +
-    "        <label>\n" +
-    "          <input type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
+    "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "      <!--checkboxes for multiple selections-->\n" +
+    "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" +
+    "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
     "                 id=\"{{item._elementId + '_other'}}\"\n" +
-    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">OTHER:\n" +
-    "        </label>\n" +
-    "        <label>\n" +
-    "          <input type=\"text\" ng-model=\"item.valueOther\"\n" +
+    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
+    "          <input class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
     "                 id=\"{{item._elementId + '_otherValue'}}\"\n" +
     "                 ng-change=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
-    "        </label>\n" +
-    "      </span>\n" +
+    "      </div>\n" +
     "\n" +
-    "      <!--for single answer-->\n" +
-    "      <span ng-if=\"!item._multipleAnswers\" class=\"lf-list-answer\">\n" +
-    "        <label>\n" +
-    "          <input type=\"radio\" id=\"{{item._elementId + '_other'}}\" ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
+    "      <!--radio buttons for single selection-->\n" +
+    "      <div ng-if=\"!item._multipleAnswers\" class=\"\">\n" +
+    "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\" ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
     "                 name=\"{{item._elementId}}\"\n" +
     "                 ng-click=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
-    "          OTHER:\n" +
-    "        </label>\n" +
-    "        <label>\n" +
-    "          <input type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
+    "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
+    "          <input class=\"lf-answer-other\" type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
     "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
-    "        </label>\n" +
-    "      </span>\n" +
+    "      </div>\n" +
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
     "  <!--combo style (default is 'combo')-->\n" +
-    "  <div ng-switch-default class=\"lf-combo-answer\">\n" +
+    "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" +
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
@@ -78,6 +74,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" +
     "  </div>\n" +
+    "\n" +
     "</div>\n" +
     "\n"
   );
@@ -164,7 +161,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('item.html',
-    "<div class=\"lf-form-table-row lf-de lf-flex-container  {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
+    "<div class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
     "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" +
     "  <div class=\"lf-de-label-button\">\n" +
     "    <!-- label -->\n" +
@@ -204,17 +201,23 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <ng-form name=\"innerForm2\">\n" +
     "        <div class=\"lf-form-item-data tooltipContainer\">\n" +
     "          <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" +
-    "          <span ng-switch-when=\"SECTION\" id=\"{{item._elementId}}\"> </span>\n" +
-    "          <input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
-    "                 ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "                 ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
-    "          <input ng-switch-when=\"CWE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
-    "                 ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "                 ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
+    "          <div ng-switch-when=\"CNE\">\n" +
+    "            <lf-answers item=\"item\"></lf-answers>\n" +
+    "          </div>\n" +
+    "          <div ng-switch-when=\"CWE\">\n" +
+    "            <lf-answers item=\"item\"></lf-answers>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <!--<input ng-switch-when=\"CNE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"-->\n" +
+    "                 <!--ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"-->\n" +
+    "                 <!--ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"-->\n" +
+    "                 <!--id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"-->\n" +
+    "                 <!--ng-blur=\"activeRowOnBlur(item)\">-->\n" +
+    "          <!--<input ng-switch-when=\"CWE\" name=\"{{item.question +'_'+ $id}}\" type=\"text\"-->\n" +
+    "                 <!--ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"-->\n" +
+    "                 <!--ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"-->\n" +
+    "                 <!--id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"-->\n" +
+    "                 <!--ng-blur=\"activeRowOnBlur(item)\">-->\n" +
     "          <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
     "                 ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
@@ -241,11 +244,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </ng-form>\n" +
     "    </div>\n" +
     "\n" +
-    "    <!--units-->\n" +
+    "    <!--&lt;!&ndash;units&ndash;&gt;-->\n" +
+    "    <!--<div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">-->\n" +
+    "      <!--<input class=\"units\" type=\"text\"-->\n" +
+    "             <!--ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"-->\n" +
+    "             <!--placeholder=\"Select one\" aria-labelledby=\"th_Units\">-->\n" +
+    "    <!--</div>-->\n" +
+    "    <!--unit-->\n" +
     "    <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">\n" +
-    "      <input class=\"units\" type=\"text\"\n" +
-    "             ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
-    "             placeholder=\"Select one\" aria-labelledby=\"th_Units\">\n" +
+    "      <lf-units item=\"item\"></lf-units>\n" +
     "    </div>\n" +
     "\n" +
     "    <!-- extra question -->\n" +

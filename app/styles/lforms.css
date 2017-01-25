@@ -91,43 +91,6 @@
   background-color: #FFF8C6
 }
 
-
-
-/* data cells in tables */
-/*.lf-form-table th,*/
-/*.lf-form-table td {*/
-  /*border-color: #CED5D9;*/
-  /*border-style: solid;*/
-  /*!*border-width: 1px 0 0 1px;*!*/
-  /*border-width: 0;*/
-  /*padding: 2px;*/
-/*}*/
-/*.lf-form-table th:last-of-type,*/
-/*.lf-form-table td:last-of-type {*/
-  /*border-right-width: 1px;*/
-/*}*/
-/*.lf-form-body > td {*/
-  /*padding: 0;*/
-/*}*/
-
-/*.lf-form-table .data-cell {*/
-  /*border-color: #CED5D9;*/
-  /*border-style: solid;*/
-  /*!*border-width: 1px 0 0 0;*!*/
-  /*border-width: 0;*/
-  /*padding: 0 2px 0 2px;*/
-
-/*}*/
-/*.lf-form-table .data-cell.values {*/
-  /*!*border-width: 1px 1px 0 1px;*!*/
-  /*border-width: 0;*/
-/*}*/
-/*.lf-form-table .data-cell.values,*/
-/*.lf-form-table .data-cell.units{*/
-  /*padding: 2px;*/
-/*}*/
-
-
 /* buttons in tables */
 .lf-de-button {
   width: 22px;
@@ -510,77 +473,72 @@ Override color of select boxes in calendar widget title bar.
   padding: 2px 0;
 }
 
-
 .lf-form.lf-template-table .lf-layout-horizontal,
 .lf-form.lf-template-table .lf-layout-matrix {
   padding-right: 6px;
 }
 
 /*** template-list.html ***/
-.lf-form.lf-template-list .lf-de-label {
-  background-color: #e8e8e8;
-  padding: 2px;
-  font-weight: 400;
-  line-height: 28px;
-}
-.lf-form.lf-template-list .help-button {
-  line-height: 20px;
-}
-.lf-form.lf-template-list .data-row {
-  border: 2px solid #ced5d9;
-  margin: 10px 5px;
-}
+/* TO BE REMOVED ONCE THE LIST TEMPLATE IS REDESIGNED */
+/*.lf-form.lf-template-list .lf-de-label {*/
+  /*background-color: #e8e8e8;*/
+  /*padding: 2px;*/
+  /*font-weight: 400;*/
+  /*line-height: 28px;*/
+/*}*/
+/*.lf-form.lf-template-list .help-button {*/
+  /*line-height: 20px;*/
+/*}*/
+/*.lf-form.lf-template-list .data-row {*/
+  /*border: 2px solid #ced5d9;*/
+  /*margin: 10px 5px;*/
+/*}*/
 
-.lf-form.lf-template-list .section {
-  margin: 10px;
-}
+/*.lf-form.lf-template-list .section {*/
+  /*margin: 10px;*/
+/*}*/
 
-.lf-form.lf-template-list .lf-form-title,
-.lf-form.lf-template-list .lf-form-header {
-  margin: 0 5px;
-}
+/*.lf-form.lf-template-list .lf-form-title,*/
+/*.lf-form.lf-template-list .lf-form-header {*/
+  /*margin: 0 5px;*/
+/*}*/
 
-.lf-form.lf-template-list .lf-form-item-data,
-.lf-form.lf-template-list .lf-field-units {
-  padding: 2px;
-}
+/*.lf-form.lf-template-list .lf-form-item-data,*/
+/*.lf-form.lf-template-list .lf-field-units {*/
+  /*padding: 2px;*/
+/*}*/
 
-.lf-form.lf-template-list .lf-field-answers {
-}
+/*.lf-form.lf-template-list .lf-field-answers {*/
+/*}*/
 
-.lf-form.lf-template-list .lf-list-answer {
-  padding: 2px 5px;
-}
-.lf-form.lf-template-list .lf-list-answer input[type="radio"],
-.lf-form.lf-template-list .lf-list-answer input[type="checkbox"] {
-  margin-right: 2px;
-}
+/*.lf-form.lf-template-list .lf-answer {*/
+  /*padding: 2px 5px;*/
+/*}*/
+/*.lf-form.lf-template-list .lf-answer input[type="radio"],*/
+/*.lf-form.lf-template-list .lf-answer input[type="checkbox"] {*/
+  /*margin-right: 2px;*/
+/*}*/
 
-.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {
-  padding: 5px;
-}
+/*.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {*/
+  /*padding: 5px;*/
+/*}*/
 
-.lf-form.lf-template-list .lf-list-item,
-.lf-form.lf-template-list .lf-layout-horizontal,
-.lf-form.lf-template-list .lf-layout-matrix{
-  /*padding-bottom: 2px;*/
-}
-.lf-form . .lf-form-table-title {
-
-}
-.lf-form .lf-form-horizontal-table {
-  margin-bottom: 5px;
-}
-.lf-form .float-button {
-  margin-bottom: 2px;
-}
+/*.lf-form.lf-template-list .lf-list-item,*/
+/*.lf-form.lf-template-list .lf-layout-horizontal,*/
+/*.lf-form.lf-template-list .lf-layout-matrix{*/
+  /*!*padding-bottom: 2px;*!*/
+/*}*/
+/*.lf-form.lf-template-list .lf-form-horizontal-table {*/
+  /*margin-bottom: 5px;*/
+/*}*/
+/*.lf-form.lf-template-list .float-button {*/
+  /*margin-bottom: 2px;*/
+/*}*/
 /*** end of template-list.html ***/
 
 
 
 /* new styles */
-
-
 /* tree lines */
 .lf-table-item {
   padding-left: 24px;
@@ -730,6 +688,64 @@ Override color of select boxes in calendar widget title bar.
   flex-grow: 1;
 }
 
+/* for answerLayout list/combo */
+/*.lf-form .lf-field-answers,*/
+.lf-form .lf-answer-type-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-grow: 1;
+
+}
+
+/* within an answer (radio button/checkbox, label, other) */
+.lf-form .lf-answer-type-list .lf-answer > div {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 2px 8px;
+}
+.lf-form .lf-answer-type-list .lf-answer-button {
+  order:1;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 20px;
+}
+.lf-form .lf-answer-type-list .lf-answer-label {
+  padding-left: 4px;
+  order:1;
+  flex-grow: 1;
+}
+.lf-form .lf-answer-type-list .lf-answer-other {
+  order:1;
+  flex-grow: 1;
+}
+/* end of within an answer */
+/* column number control for list of answers*/
+.lf-form .lf-0-col {
+  /* means flexible */
+}
+.lf-form .lf-1-col {
+  width: 100%;
+}
+.lf-form .lf-2-col {
+  width: 50%;
+}
+.lf-form .lf-3-col {
+  width: 33.3%;
+}
+.lf-form .lf-4-col {
+  width: 25%;
+}
+.lf-form .lf-5-col {
+  width: 20%;
+}
+.lf-form .lf-6-col {
+  width: 16.6%;
+}
+/* end of answerLayout */
+
 /* form header */
 .lf-form-header {
   display: flex;
@@ -783,7 +799,7 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* Medium screens */
-@media all and (max-width: 1024px) {
+@media all and (max-width: 800px) {
   .lf-de {
     display: flex;
     flex-direction: column;
@@ -851,7 +867,7 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* Small screens */
-@media all and (max-width: 640px) {
+@media all and (max-width: 480px) {
   .lf-de {
     display: flex;
     flex-direction: column;
@@ -954,7 +970,6 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-table .lf-form-table-row.section-header.title-row .lf-de-label {
   color: white;
 }
-
 
 .lf-de-label-button {
   padding: 4px 0 0 0;

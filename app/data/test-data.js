@@ -2925,12 +2925,12 @@ var genetic2 ={
 };
 
 
-var listTemplateForm =
+var listLayout =
 {
   "type": "LOINC",
-  "code": "list-template",
-  "name": "List Template",
-  "template": "list",
+  "code": "list-layout",
+  "name": "List Layout",
+  "template": "table",
   "items": [
     {
       "questionCode": "q0",
@@ -2939,66 +2939,92 @@ var listTemplateForm =
     },
     {
       "questionCode": "q1a",
-      "question": "Answer list layout --CNE",
+      "question": "Answer list layout --CNE, --2 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"list", "columns": "2"}
       },
       "answers": [
-        {"code": "c1", "text": "Answer X"},
-        {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c1", "text": "Extra long answer text 123456789 Answer X"},
+        {"code": "c2", "text": "Extra long answer text 123456789 Answer Y"},
+        {"code": "c3", "text": "Extra long answer text 123456789 Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
       ]
     },
     {
       "questionCode": "q1b",
-      "question": "Answer list layout --CWE",
+      "question": "Answer list layout --CWE, --3 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "1"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"list", "columns": "3"}
       },
       "answers": [
-        {"code": "c1", "text": "Answer X"},
-        {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c1", "text": "Long answer text 123 Answer X"},
+        {"code": "c2", "text": "Long answer text 123456 Answer Y"},
+        {"code": "c3", "text": "Long answer text 123456789 Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
+
       ]
     },
     {
       "questionCode": "q1c",
-      "question": "Answer list layout --CNE, Multiple",
+      "question": "Answer list layout --CNE, Multiple, --1 column",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"list", "columns": "1"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},
         {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c3", "text": "Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
       ]
     },
     {
       "questionCode": "q1d",
-      "question": "Answer list layout --CWE, Multiple",
+      "question": "Answer list layout --CWE, Multiple, --flexible",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"list", "columns": "0"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},
         {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c3", "text": "Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
+
       ]
     },
     {

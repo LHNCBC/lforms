@@ -37,10 +37,10 @@ angular.module('lformsWidget')
           var width = $window.innerWidth;
           var type;
           // small screen
-          if (width < 640)
+          if (width <= 480)
             type = "sm";
           // medium screen
-          else if (width < 1024)
+          else if (width <= 800)
             type = "md";
           // large screen
           else
@@ -745,6 +745,28 @@ angular.module('lformsWidget')
           var i = 1;
         };
 
+
+        $scope.getAnswerLayoutType = function(item) {
+          var ret = "combo";
+          if (item && item.displayControl && item.displayControl.answerLayout &&
+              item.displayControl.answerLayout.type)
+            ret = item.displayControl.answerLayout.type;
+
+          return ret;
+        };
+
+        $scope.getAnswerLayoutColumnClass = function(item) {
+          var ret = "";
+          if (item && item.displayControl && item.displayControl.answerLayout &&
+              item.displayControl.answerLayout.type === "list") {
+            var colNum = parseInt(item.displayControl.answerLayout.columns);
+            if (isNaN(colNum) || colNum >6 || colNum <0 )
+              colNum = 0;
+            ret = "lf-" + colNum + "-col";
+          }
+
+          return ret;
+        };
 
         /**
          * Updates the value for an item whose answers are displayed as a list of checkboxes,
