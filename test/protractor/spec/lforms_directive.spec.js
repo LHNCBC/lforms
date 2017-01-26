@@ -21,49 +21,49 @@ describe('horizontal table', function() {
     tp.openDirectiveTest();
 
     // there is an add button
-    expect(element.all(by.css('.float-button')).get(2).isPresent()).toBe(true);
-    expect(element.all(by.css('.float-button')).get(2).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(2).isPresent()).toBe(true);
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
   it('should still have two remove buttons visible after the user adds a row', function() {
 
-    element.all(by.css('.float-button')).get(2).click();
+    element.all(by.css('.lf-float-button')).get(2).click();
 
     // the first row has a '-' button only
-    expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('-');
 
     // the second row has a '-' button
-    expect(element.all(by.css('.float-button')).get(3).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
 
   });
 
   it('should have three remove buttons visible after the user adds a row', function() {
-    element.all(by.css('.float-button')).get(4).click();
+    element.all(by.css('.lf-float-button')).get(4).click();
 
     // the first row has a '-' button only
-    expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('-');
 
     // the second row has a '-' button only
-    expect(element.all(by.css('.float-button')).get(3).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
 
     // the third row has a '-' button
-    expect(element.all(by.css('.float-button')).get(4).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.float-button')).get(5).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(5).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
   it('should have the 2 rows after the user removes the 2nd row', function() {
-    element.all(by.css('.float-button')).get(3).click();
+    element.all(by.css('.lf-float-button')).get(3).click();
 
     // the first row has a '-' button only
-    expect(element.all(by.css('.float-button')).get(2).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('-');
 
     // the second row has a '-' button
-    expect(element.all(by.css('.float-button')).get(3).getText()).toBe('-');
+    expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
   });
 
   describe('autocomp list inside lforms directive', function() {
@@ -98,7 +98,7 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
   it('default value of the checkboxes should not be checked', function() {
     tp.openDirectiveTest();
 
-    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    var checkboxes = element.all(by.css('div.lf-form-control > label > input[type="checkbox"]'));
     expect(checkboxes.get(0).isSelected()).toBe(false);
     expect(checkboxes.get(1).isSelected()).toBe(false);
     expect(checkboxes.get(2).isSelected()).toBe(false);
@@ -109,7 +109,7 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
 
     element(by.id(loadForm2)).click();
     browser.waitForAngular();
-    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    var checkboxes = element.all(by.css('div.lf-form-control > label > input[type="checkbox"]'));
     expect(checkboxes.get(0).isSelected()).toBe(true);
     expect(checkboxes.get(1).isSelected()).toBe(true);
     expect(checkboxes.get(2).isSelected()).toBe(false);
@@ -122,7 +122,7 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
   it('1 checkbox should be checked on form 1', function() {
     element(by.id(loadForm1)).click();
     browser.waitForAngular();
-    var checkboxes = element.all(by.css('div.checkbox > label > input[type="checkbox"]'));
+    var checkboxes = element.all(by.css('div.lf-form-control > label > input[type="checkbox"]'));
     expect(checkboxes.get(0).isSelected()).toBe(true);
     expect(checkboxes.get(1).isSelected()).toBe(false);
     expect(checkboxes.get(2).isSelected()).toBe(false);
@@ -134,7 +134,7 @@ describe('checkbox controlled by templateOptions in the form data: ', function()
   it('changing templateOptions alone should also change the form', function() {
     element(by.id(loadForm3)).click();
     browser.waitForAngular();
-    var checkboxes = element(by.css('div.checkbox > label > input[type="checkbox"]'));
+    var checkboxes = element(by.css('div.lf-form-control > label > input[type="checkbox"]'));
     // no checkboxes
     expect(checkboxes.isPresent()).toBeFalsy();
     // no obr header

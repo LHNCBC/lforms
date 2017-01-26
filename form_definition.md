@@ -11,8 +11,8 @@ about the meaning of each key:
       "name": string,
       "template": string
       "templateOptions": {
-        "obrHeader": boolean,
-        "obrItems": [{
+        "showFormHeader": boolean,
+        "formHeaderItems": [{
           "question": string,
           "dataType": string,
           "answers": [{
@@ -94,10 +94,8 @@ about the meaning of each key:
     * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
       to stop on the input fields only (neither buttons, nor units fields). 
       The default is false.
-    * hideHeader - a boolean that controls whether to hide the header section 
+    * hideFormControls - a boolean that controls whether to hide the controls section 
       on top of the form. The default is false.
-    * hideCheckBoxes - a boolean that controls whether to hide checkboxes in 
-      the header section on top of the form. The default is false.
     * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
@@ -112,11 +110,11 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
-    * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
+    * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      
-    * obrItems - an array defining fields above the form (see
-      [obrHeader](#obrHeader)).  If you omit templateOptions, a default will be
+    * formHeaderItems - an array defining fields above the form (see
+      [showFormHeader](#showFormHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where
       Done", and "Comment". If you wish to specify your own definitions, 
       a complete array should be provided where each
@@ -140,9 +138,9 @@ about the meaning of each key:
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
-    * obxTableColumns - For the "table" template only. An array defining table columns of 
-      the table in the form. If you omit obxTableColumns, a default will be provided with 
-      four columns for: "Name", buttons, "Value" and "Units".  
+    * columnHeaders - For the "table" template only. An array defining table columns of 
+      the table in the form. If you omit columnHeaders, a default will be provided with 
+      four columns for: "Name", "Value" and "Units".  
       If you wish to specify your own definitions, an array of these exact four columns 
       should be provided. You cannot add a new column or remove a existing one or change the order. 
       A null value could be in place where the column does not need a change over the default values.

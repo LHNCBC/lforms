@@ -103,7 +103,7 @@
   position: relative;
   background-color: #458AC5;
 }
-.lf-form .float-button {
+.lf-form .lf-float-button {
   min-width: 22px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -123,18 +123,18 @@
   margin-left:2px;
   vertical-align: middle;
 }
-.lf-form .copyright-button {
+.lf-form .lf-copyright-button {
   color: #458AC5;
   background-color: transparent;
 }
-.lf-form .copyright-button:hover {
+.lf-form .lf-copyright-button:hover {
   color: #015DAD;
   font-weight: bold;
 }
-.lf-form-title .copyright-button {
+.lf-form-title .lf-copyright-button {
   color: white;
 }
-.lf-form-title .copyright-button:hover {
+.lf-form-title .lf-copyright-button:hover {
   color: white;
   font-weight: bold;
 }
@@ -363,10 +363,6 @@
   /*tooltip: "triggered by other questions."*/
 }
 
-.lf-form .text-info {
-  padding-top: 10px;
-}
-
 /* override some settings from autocomplete-lhc */
 .autocomp_selected {
   border: 1px solid #ced5d9;
@@ -531,7 +527,7 @@ Override color of select boxes in calendar widget title bar.
 /*.lf-form.lf-template-list .lf-form-horizontal-table {*/
   /*margin-bottom: 5px;*/
 /*}*/
-/*.lf-form.lf-template-list .float-button {*/
+/*.lf-form.lf-template-list .lf-float-button {*/
   /*margin-bottom: 2px;*/
 /*}*/
 /*** end of template-list.html ***/
@@ -746,6 +742,18 @@ Override color of select boxes in calendar widget title bar.
 }
 /* end of answerLayout */
 
+/* form controls */
+.lf-form-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lf-form-control {
+  order: 1;
+  flex-grow: 1;
+}
 /* form header */
 .lf-form-header {
   display: flex;
@@ -867,7 +875,7 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* Small screens */
-@media all and (max-width: 480px) {
+@media all and (max-width: 640px) {
   .lf-de {
     display: flex;
     flex-direction: column;

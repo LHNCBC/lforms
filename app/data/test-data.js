@@ -1404,9 +1404,9 @@ var rxTerms = {
   name: "RxTerms Demo",
   template: "form-view-b",
   templateOptions: {
-    hideHeader: true,
-    obrHeader: false,
-    obxTableColumns: []
+    hideFormControls: true,
+    showFormHeader: false,
+    showColumnHeaders: false
   },
   items: [
     {

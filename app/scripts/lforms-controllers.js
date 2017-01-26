@@ -33,6 +33,9 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Check the current screen size
+         */
         $scope.checkScreenSize = function() {
           var width = $window.innerWidth;
           var type;
@@ -173,59 +176,6 @@ angular.module('lformsWidget')
             }
           }
           return ret;
-        };
-
-
-        /**
-         * Check if it is a Units column and it should be hidden
-         * @param col index of a table column in the form's data table
-         * @returns {boolean}
-         */
-        $scope.isUnitsColHidden = function(index) {
-          var ret = false;
-          if ($scope.lfData.templateOptions.hideUnits) {
-            if (index === $scope.lfData._unitsColumnIndex) {
-              ret = true;
-            }
-          }
-          return ret;
-        };
-
-
-        $scope.getUnitColClass = function(item) {
-
-          var ret = '';
-          if (!item) {
-            ret = $scope.lfData.templateOptions.hideUnits ? '' : 'col-sm-3';
-          }
-          else if (item.units && !$scope.lfData.templateOptions.hideUnits) {
-            ret = "col-sm-3";
-          }
-          return ret;
-        };
-
-        $scope.getInputColClass = function(item) {
-          var ret = 'col-sm-6';
-          if (!item) {
-            ret = $scope.lfData.templateOptions.hideUnits ? 'col-sm-6' : 'col-sm-3';
-          }
-          else if (item.units && !$scope.lfData.templateOptions.hideUnits) {
-            ret = "col-sm-3";
-          }
-          return ret;
-        };
-
-
-        /**
-         * Get the number of visible columns of the form's data table
-         * (Units columns could be hidden)
-         * @returns {Number}
-         */
-        $scope.getVisibleObxColNumber = function() {
-          var count = $scope.lfData.templateOptions.obxTableColumns.length;
-          if ($scope.lfData.templateOptions.hideUnits)
-              count--;
-          return count;
         };
 
 
@@ -428,6 +378,12 @@ angular.module('lformsWidget')
           return ret;
         };
 
+
+        /**
+         * Get the sibling status, the first and/or last siblings
+         * @param item a form item
+         * @returns {string}
+         */
         $scope.getSiblingStatus = function(item) {
           var status = "";
           if (item._lastSibling)
@@ -436,6 +392,7 @@ angular.module('lformsWidget')
             status += ' lf-first-item'
           return status;
         };
+
 
         /**
          * Get the CSS class on each item row
@@ -470,72 +427,6 @@ angular.module('lformsWidget')
           }
 
           return eleClass;
-        };
-
-
-        /**
-         *  Get the CSS class for tree lines at the current level.
-         *  Unlimited levels are supported, although the screen size limits the number of the levels that can be shown.
-         * @param level the tree level index from left/root to right starting with 0
-         * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
-         * @return {string} 'line1', 'line2', 'line3', or 'no_display'
-         */
-        $scope.getTreeLevelClass = function(level, lastStatusList) {
-          var ret ='';
-          // leaf node
-          if (level === lastStatusList.length-1) {
-            if (lastStatusList[level]) {
-              ret = 'line2'
-            }
-            else {
-              ret = 'line3';
-            }
-          }
-          // non-leaf node
-          else {
-            if (lastStatusList[level] === undefined) {
-              ret = 'no_display';
-            }
-            else if (lastStatusList[level]) {
-              ret = '';
-            }
-            else {
-              ret = 'line1';
-            }
-          }
-          return ret;
-        };
-
-
-        /**
-         *  Get the CSS class for the extra row that holds the field for "Please Specify" value
-         *  The class name depends on the tree level class that this row id depending on.
-         * @param level the tree level index from left/root to right starting with 0
-         * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
-         * @return 'line1', 'line2', 'line3', or 'no_display'
-         */
-        $scope.getExtraRowTreeLevelClass = function(level, lastStatusList) {
-          var ret = '', cssClass = $scope.getTreeLevelClass(level, lastStatusList);
-          switch(cssClass) {
-            case 'line1':
-              ret = 'line1';
-              break;
-            case 'line2':
-              ret = '';
-              break;
-            case 'line3':
-              ret = 'line1';
-              break;
-            case '':
-              ret = ''
-              break;
-            case 'no_display':
-              ret = 'no_display';
-              break;
-            default:
-              ret = '';
-          }
-          return ret;
         };
 
 
@@ -746,6 +637,11 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Get the display layout for an item's answers
+         * @param item a form item
+         * @returns {string}
+         */
         $scope.getAnswerLayoutType = function(item) {
           var ret = "combo";
           if (item && item.displayControl && item.displayControl.answerLayout &&
@@ -755,6 +651,12 @@ angular.module('lformsWidget')
           return ret;
         };
 
+
+        /**
+         * Get the display layout for each answer in a list layout of an item's answers
+         * @param item a form item
+         * @returns {string}
+         */
         $scope.getAnswerLayoutColumnClass = function(item) {
           var ret = "";
           if (item && item.displayControl && item.displayControl.answerLayout &&
@@ -767,6 +669,7 @@ angular.module('lformsWidget')
 
           return ret;
         };
+
 
         /**
          * Updates the value for an item whose answers are displayed as a list of checkboxes,
@@ -801,6 +704,7 @@ angular.module('lformsWidget')
             item.value = [answer];
           }
         };
+
 
         /**
          * Updates the value for an item with the user typed data.
@@ -866,7 +770,7 @@ angular.module('lformsWidget')
         };
 
 
-          /**
+        /**
          *
          * Update the item.value based on selection of extra data input by users
          * @param item a form item that has an answer list and support single selections

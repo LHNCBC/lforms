@@ -17253,14 +17253,13 @@ var MDS3 = {
     "showQuestionCode": true,
     "showCodingInstruction": false,
     "tabOnInputFieldsOnly": false,
-    "hideHeader": false,
-    "hideCheckBoxes": false,
+    "hideFormControls": false,
     "allowMultipleEmptyRepeatingItems": false,
     "allowHTMLInInstructions": false,
     "useAnimation": true,
     "displayControl": {"questionLayout": "vertical"},
-    "obrHeader": true,
-    "obrItems": [{
+    "showFormHeader": true,
+    "formHeaderItems": [{
       "question": "Date Done",
       "questionCode": "date_done",
       "dataType": "DT",

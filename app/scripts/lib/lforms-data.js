@@ -49,65 +49,35 @@ var LFormsData = LForms.LFormsData = Class.extend({
   // active item, where a input field in the row has the focus
   _activeItem: null,
 
-
   // default template options
   _defaultTemplateOptions: {
     showQuestionCode: false,   // whether question code is displayed next to the question
     showCodingInstruction: false, // whether to show coding instruction inline. (false: in popover; true: inline)
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
-    hideHeader: false, // whether to hide the header section on top of the form
-    hideCheckBoxes: false, // whether to hide checkboxes in the header section on top of the form
+    hideFormControls: false, // whether to hide the controls section on top of the form
+    showFormControlsButton: false, // whether to show the button that decides if 'hideFormControls' is true or false, so that form's controls section will be displayed or hidden
+    showItemControlsButton: false, // whether to show the button for each item (question and sections) that shows a control panel for display controls
     hideUnits: false, // whether to hide the unit column/field
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
     useAnimation: true, // whether to use animation on the form
     displayControl: {"questionLayout": "vertical"},
-    obrHeader: true,  // controls if the obr table needs to be displayed
-    obrItems: [
-      {
-        "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-        "displayControl": {
-          "colCSS": [{"name": "width", "value": "20%"}, {"name": "min-width", "value": "2em"}]
-        }
-      },
-      {
-        "question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": "",
-        "displayControl": {
-          "colCSS": [{"name": "width", "value": "20%"}, {"name": "min-width", "value": "2em"}]
-        }
-      },
-      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-        "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-        "displayControl": {
-          "colCSS": [{"name": "width", "value": "25%"}, {"name": "min-width", "value": "2em"}]
-        }
-      },
-      {"question":"Comment", "questionCode":"comment","dataType":"ST","answers":"",
-        "displayControl": {
-          "colCSS": [{"name": "width", "value": "35%"}, {"name": "min-width", "value": "2em"}]
-        }
-      }
+    showFormHeader: true,  // controls if the form's header section needs to be displayed
+    formHeaderItems: [
+      {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
+      {"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},
+      {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
+      {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
     ],
-
-    // for the "table" template only. Each column has its purpose in the template. But each column's "name"
-    // and "displayControl" values can be changed.
-    obxTableColumns: [
-      {"name" : "Name", "displayControl":{
-        "colCSS": [{"name":"width", "value":"45%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "", "displayControl":{
-        "colCSS": [{"name":"width", "value":"2.5em"},{"name":"min-width", "value":"2em"}]}
-      },
-      {"name" : "Value", "displayControl":{
-        "colCSS": [{"name":"width", "value":"40%"},{"name":"min-width", "value":"4em"}]}
-      },
-      {"name" : "Units", "displayControl":{
-        "colCSS": [{"name":"width", "value":"15%"},{"name":"min-width", "value":"4em"}]}
-      }
+    showColumnHeaders: true, // controls if the column headers need to be displayed
+    // form's table column headers' display names for question text, values and units
+    columnHeaders: [
+      {"name" : "Name"},
+      {"name" : "Value"},
+      {"name" : "Units"}
     ]
   },
 
-  _unitsColumnIndex: 3, // index of the Units column, which could be set to hidden or shown
 
   /**
    * Constructor
@@ -156,9 +126,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // update internal status
     this._repeatableItems = {};
     this._setTreeNodes(this.items, this);
-//    this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-//    this._updateLastItemInRepeatingSection(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -195,10 +163,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
-    //this._setTreeNodes(this.items, this);
-    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    //this._updateLastItemInRepeatingSection(this.items);
 
     // create a reference list of all items in the tree
     this.itemList = [];
@@ -255,10 +220,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
-    //this._setTreeNodes(this.items, this);
-    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    //this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
@@ -308,10 +270,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     // update internal status
     this._updateTreeNodes(this.items,this);
-    //this._setTreeNodes(this.items, this);
-    //this._updateLastSiblingList(this.items, null);
     this._updateLastRepeatingItemsStatus(this.items);
-    //this._updateLastItemInRepeatingSection(this.items);
     this._resetHorizontalTableInfo();
     this._adjustLastSiblingListForHorizontalLayout();
   },
@@ -474,38 +433,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
-   * Update the list that contains the last sibling status of the parent item on each level starting from root
-   * @param items sibling items on one level of the tree
-   * @param parentSiblingList the last sibling status list of the parent item
-   * @private
-   *
-   * not used
-   */
-  _updateLastSiblingList: function(items, parentSiblingList) {
-
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-      // update last sibling status list
-      // sub level
-      if (parentSiblingList && Array.isArray(parentSiblingList)) {
-        // make a copy
-        item._lastSiblingList = parentSiblingList.slice();
-        item._lastSiblingList.push(item._lastSibling);
-      }
-      // first level
-      else {
-        item._lastSiblingList = [item._lastSibling]
-      }
-
-      // process the sub items
-      if (item.items && item.items.length > 0) {
-        this._updateLastSiblingList(item.items, item._lastSiblingList);
-      }
-    }
-  },
-
-
-  /**
    * Convert the score rule definition to the standard formula definition
    * @param itemList the reference list of the items in the tree
    * @private
@@ -625,20 +552,20 @@ var LFormsData = LForms.LFormsData = Class.extend({
           existingOptions = angular.copy(this.templateOptions);
 
       // get the fields that contains array
-      var obxTableColumns = newOptions.obxTableColumns;
-      delete newOptions.obxTableColumns;
+      var columnHeaders = newOptions.columnHeaders;
+      delete newOptions.columnHeaders;
       // merge the options
       this.templateOptions = jQuery.extend({}, existingOptions, newOptions);
-      // process obxTableColumns
-      if (obxTableColumns) {
-        this._mergeTwoArrays(this.templateOptions.obxTableColumns, obxTableColumns);
+      // process columnHeaders
+      if (columnHeaders) {
+        this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
       }
 
-      // if there is a new obrItems array, set up autocomplete options
-      if (newOptions.obrItems) {
-        for (var i=0, iLen=this.templateOptions.obrItems.length; i<iLen; i++) {
-          this._updateAutocompOptions(this.templateOptions.obrItems[i]);
-          this._updateUnitAutocompOptions(this.templateOptions.obrItems[i]);
+      // if there is a new formHeaderItems array, set up autocomplete options
+      if (newOptions.formHeaderItems) {
+        for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
+          this._updateAutocompOptions(this.templateOptions.formHeaderItems[i]);
+          this._updateUnitAutocompOptions(this.templateOptions.formHeaderItems[i]);
         }
       }
     }
@@ -950,7 +877,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       templateOptions: angular.copy(this.templateOptions)
     };
     // reset obr fields
-    defData.templateOptions.obrItems = formData.templateData;
+    defData.templateOptions.formHeaderItems = formData.templateData;
 
     return defData;
   },
@@ -969,8 +896,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
     var ret = {};
     ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
     // template options could be optional. Include them, only if they are present
-    if(this.templateOptions && this.templateOptions.obrHeader && this.templateOptions.obrItems ) {
-      ret.templateData = this._processDataInItems(this.templateOptions.obrItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
+    if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
+      ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
     }
     // return a deep copy of the data
     return angular.copy(ret);
@@ -1158,38 +1085,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // check sub levels
     if (items[iLen-1].items && items[iLen-1].items.length > 0) {
       this._updateLastRepeatingItemsStatus(items[iLen-1].items);
-    }
-
-  },
-
-
-  /**
-   * Update the status list that includes the last items of each repeating items and sections from the item up to
-   * the root.
-   * If it is a repeating section, the last item is the last leaf node within the last repeating section.
-   * @param items sibling items on one level of the tree
-   * @private
-   *
-   * not used
-   */
-  _updateLastItemInRepeatingSection: function(items) {
-    for (var i=0, iLen=items.length; i<iLen; i++) {
-      var item = items[i];
-
-      // if it is the last repeating item, and it is not hidden by skip logic
-      if (item._lastRepeatingItem && item._skipLogicStatus !== "target-hide" ) {
-        var lastItem = this._getLastSubItem(item);
-        if (lastItem._repeatingSectionList) {
-          lastItem._repeatingSectionList.unshift(item);
-        }
-        else {
-          lastItem._repeatingSectionList = [item];
-        }
-      }
-      // process the sub items if it's not hidden
-      if (item._skipLogicStatus !== "target-hide" && item.items && item.items.length > 0) {
-        this._updateLastItemInRepeatingSection(item.items);
-      }
     }
 
   },
@@ -1881,9 +1776,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
       this._updateUnitAutocompOptions(this.itemList[i]);
     }
 
-    for (var i=0, iLen=this.templateOptions.obrItems.length; i<iLen; i++) {
-      this._updateAutocompOptions(this.templateOptions.obrItems[i]);
-      this._updateUnitAutocompOptions(this.templateOptions.obrItems[i]);
+    for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
+      this._updateAutocompOptions(this.templateOptions.formHeaderItems[i]);
+      this._updateUnitAutocompOptions(this.templateOptions.formHeaderItems[i]);
     }
 
   },

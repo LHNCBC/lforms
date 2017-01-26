@@ -32,8 +32,8 @@ var TestPage = function() {
 
   var heightFieldID= '/54126-8/8302-2/1/1';
   return {
-    checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
-    headerEl: $('div.row[ng-if="!lfData.templateOptions.hideHeader"]'),
+    checkboxesFinder: element.all(by.css('div.lf-form-control > label > input[type="checkbox"]')),
+    headerEl: $('div[ng-if="!lfData.templateOptions.hideFormControls"]'),
     heightFieldID: heightFieldID,
     heightField: element(by.id(heightFieldID)),
     heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),

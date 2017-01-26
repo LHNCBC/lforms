@@ -138,33 +138,14 @@
               $scope.lfOption2 = {
 
                 // obx display control has limited controls in the new design
-                obxTableColumns: [
-                  null,
+                columnHeaders: [
                   null,
                   {"name":"Values"},
-                  {
-                    "name": "Units",
-                    "displayControl": {
-                      "colCSS": [{"name": "width", "value": "15%"}, {
-                        "name": "min-width",
-                        "value": "4em"
-                      }]
-                    }
-                  }
+                  {"name": "Units"}
                 ],
-                obrItems: [
-                  {
-                    "question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"},
-                    "displayControl": {
-                      "colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]
-                    }
-                  },
-                  {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE",
-                    "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}],
-                    "displayControl": {
-                      "colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]
-                    }
-                  }
+                formHeaderItems: [
+                  {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
+                  {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]}
                 ]
               }
             };
@@ -274,8 +255,8 @@
                       function(data) {
                         $scope.lfData2 = new LForms.LFormsData(data);
                         // hide checkboxes (and show question codes for testing)
-                        $scope.lfOption2 = {hideHeader: true, showQuestionCode: true, useAnimation: useAnimation};
-                        // Or:   $scope.lfData2.setTemplateOptions({hideHeader: true, showQuestionCode: true});
+                        $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: useAnimation};
+                        // Or:   $scope.lfData2.setTemplateOptions({hideFormControls: true, showQuestionCode: true});
                         $scope.$apply();
                       },
                       function(err) {
@@ -305,8 +286,8 @@
           <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
           <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
-          <button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>
-          <button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>
+          <!--<button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>-->
+          <!--<button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>-->
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
         </div>

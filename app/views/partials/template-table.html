@@ -5,13 +5,15 @@
     <!--form title-->
     <h3 class="lf-form-title">
       <span>{{lfData.name}}</span>
-      <span class="item-code" ng-if="lfData.templateOptions.showQuestionCode">
+      <span class="lf-item-code" ng-if="lfData.templateOptions.showQuestionCode">
         <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
         <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
       </span>
       <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}" type="button"
-              class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
+              class="lf-copyright-button" uib-popover="{{lfData.copyrightNotice}}"
               popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+      <button ng-if="lfData.lfData.templateOptions.showFormControlsButton" type="button"
+              class="lf-control-button"></button>
     </h3>
     <!--form header-->
     <lf-form-header></lf-form-header>
@@ -30,16 +32,16 @@
         <!--vertical-->
         <div ng-switch-default>
           <!-- data row, column header -->
-          <div class="lf-column-header">
+          <div class="lf-column-header" ng-if="lfData.templateOptions.showColumnHeaders">
             <div class="lf-column-label-button" id="th_Name">
-              Name
+              {{lfData.templateOptions.columnHeaders[0].name}}
             </div>
             <div class="lf-column-input-unit" ng-style="getScreenWidth()">
               <div class="lf-column-input" id="th_Value">
-                Value
+                {{lfData.templateOptions.columnHeaders[1].name}}
               </div>
               <div ng-if="!lfData.templateOptions.hideUnits" class="lf-column-unit" id="th_Units">
-                Units
+                {{lfData.templateOptions.columnHeaders[2].name}}
               </div>
             </div>
           </div>

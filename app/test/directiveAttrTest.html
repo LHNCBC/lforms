@@ -98,22 +98,6 @@
               controller: "lformsTestControllerH",
               templateUrl: "horizontal-form-default.html"
             }).
-            when("/vertical-form-hide-check-boxes-true", {
-              controller: "lformsTestControllerV",
-              templateUrl: "vertical-form-hide-check-boxes-true.html"
-            }).
-            when("/horizontal-form-hide-check-boxes-true", {
-              controller: "lformsTestControllerH",
-              templateUrl: "horizontal-form-hide-check-boxes-true.html"
-            }).
-            when("/vertical-form-hide-check-boxes-false", {
-              controller: "lformsTestControllerV",
-              templateUrl: "vertical-form-hide-check-boxes-false.html"
-            }).
-            when("/horizontal-form-hide-check-boxes-false", {
-              controller: "lformsTestControllerH",
-              templateUrl: "horizontal-form-hide-check-boxes-false.html"
-            }).
             when("/vertical-form-hide-header-true", {
               controller: "lformsTestControllerV",
               templateUrl: "vertical-form-hide-header-true.html"
@@ -134,17 +118,13 @@
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
           $scope.lfData1 = new LForms.LFormsData(angular.copy(FHTData));
-          $scope.lfData2 = new LForms.LFormsData(angular.copy(FHTData));
-          $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
           $scope.lfData3 = new LForms.LFormsData(angular.copy(FHTData));
-          $scope.lfData3.setTemplateOptions({"hideHeader": true});
+          $scope.lfData3.setTemplateOptions({"hideFormControls": true});
         }]).
         controller('lformsTestControllerH', ['$scope', function ($scope) {
           $scope.lfData1 = new LForms.LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData2.setTemplateOptions({"hideCheckBoxes": true});
           $scope.lfData3 = new LForms.LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData3.setTemplateOptions({"hideHeader": true});
+          $scope.lfData3.setTemplateOptions({"hideFormControls": true});
         }]);
     </script>
 
@@ -152,18 +132,6 @@
       <lforms lf-data="lfData1"></lforms>
     </script>
     <script type="text/ng-template" id="horizontal-form-default.html">
-      <lforms lf-data="lfData1"></lforms>
-    </script>
-    <script type="text/ng-template" id="vertical-form-hide-check-boxes-true.html">
-      <lforms lf-data="lfData2"></lforms>
-    </script>
-    <script type="text/ng-template" id="horizontal-form-hide-check-boxes-true.html">
-      <lforms lf-data="lfData2"></lforms>
-    </script>
-    <script type="text/ng-template" id="vertical-form-hide-check-boxes-false.html">
-      <lforms lf-data="lfData1"></lforms>
-    </script>
-    <script type="text/ng-template" id="horizontal-form-hide-check-boxes-false.html">
       <lforms lf-data="lfData1"></lforms>
     </script>
 

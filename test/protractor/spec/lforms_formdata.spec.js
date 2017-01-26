@@ -138,7 +138,7 @@ describe('get form data', function() {
       expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
       expect(formData.template).toBe("table");
       expect(formData.type).toBe("LOINC");
-      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showFormHeader).toBe(true);
       expect(formData.templateOptions.showQuestionCode).toBe(false);
       expect(formData.items[0].question).toBe("Your health information");
       expect(formData.items[0].questionCode).toBe("54126-8");
@@ -179,7 +179,7 @@ describe('get form data', function() {
       expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
       expect(formData.template).toBe("table");
       expect(formData.type).toBe("LOINC");
-      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showFormHeader).toBe(true);
       expect(formData.templateOptions.showQuestionCode).toBe(false);
       expect(formData.items[0].question).toBe("Your health information");
       expect(formData.items[0].questionCode).toBe("54126-8");

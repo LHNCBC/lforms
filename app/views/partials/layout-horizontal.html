@@ -23,7 +23,7 @@
       <td class="lf-de-button" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
         <button ng-if="!hasOneRepeatingItem(item)" type="button"
                 id="del-{{row.header._elementId}}"
-                class="float-button" ng-click="removeOneRepeatingItem(row.header)"
+                class="lf-float-button" ng-click="removeOneRepeatingItem(row.header)"
                 title="Remove this row of '{{ row.header.question }}'">-</button>
       </td>
 
@@ -88,7 +88,7 @@
        class="lf-form-table-row button-row {{getSkipLogicClass(item)}}">
     <div class="has-popover-warning">
       <button type="button"
-              class="float-button" id="add-{{item._elementId}}"
+              class="lf-float-button" id="add-{{item._elementId}}"
               title="Add another '{{ item.question }}'"
               ng-click="addOneRepeatingItem(item, true)"
               ng-blur="hideUnusedItemWarning(item)"

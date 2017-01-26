@@ -21,7 +21,7 @@
         <td class="name">
           <div class="lf-de-label">
             <span><label for="{{subItem._elementId}}">{{subItem.question}}</label></span>
-            <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+            <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
               <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank">[{{ subItem.questionCode }}]</a>
               <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
             </span>
@@ -36,7 +36,7 @@
                       type="button" id="help-{{subItem._elementId}}">?</button>
             </span>
             <button ng-if="subItem.copyrightNotice" id="copyright-{{subItem._elementId}}" type="button"
-                    class="copyright-button" uib-popover="{{subItem.copyrightNotice}}"
+                    class="lf-copyright-button" uib-popover="{{subItem.copyrightNotice}}"
                     popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
           </div>
         </td>

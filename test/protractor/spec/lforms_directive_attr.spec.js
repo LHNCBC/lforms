@@ -44,22 +44,6 @@ describe('<lforms> hide-check-boxes attribute', function() {
     tp.openDirectiveAttrTest('#/horizontal-form-default');
     assertHiddenCheckboxes(3, false);
   });
-  it('true should hide check boxes on the vertical panel', function() {
-    tp.openDirectiveAttrTest('#/vertical-form-hide-check-boxes-true');
-    assertHiddenCheckboxes(3, true);
-  });
-  it('true should hide check boxes on the horizontal panel', function() {
-    tp.openDirectiveAttrTest('#/horizontal-form-hide-check-boxes-true');
-    assertHiddenCheckboxes(3, true);
-  });
-  it('false should show check boxes on the vertical panel', function() {
-    tp.openDirectiveAttrTest('#/vertical-form-hide-check-boxes-false');
-    assertHiddenCheckboxes(3, false);
-  });
-  it('false should show check boxes on the horizontal panel', function() {
-    tp.openDirectiveAttrTest('#/horizontal-form-hide-check-boxes-false');
-    assertHiddenCheckboxes(3, false);
-  });
   it('false should show header on the vertical panel', function() {
     tp.openDirectiveAttrTest('#/vertical-form-hide-header-false');
     assertHeader(true);

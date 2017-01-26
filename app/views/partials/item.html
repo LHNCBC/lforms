@@ -5,7 +5,7 @@
     <div class="lf-de-label">
       <span ng-show="item._questionRepeatable" class="lf-sn">{{getRepeatingSN(item) }}</span>
       <span class="lf-question"><label for="{{item._elementId}}">{{item.question}}</label></span>
-      <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
+      <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
                       <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
                       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
                     </span>
@@ -20,13 +20,15 @@
                               type="button" id="help-{{item._elementId}}">?</button>
                     </span>
       <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-              class="copyright-button" uib-popover="{{item.copyrightNotice}}"
+              class="lf-copyright-button" uib-popover="{{item.copyrightNotice}}"
               popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
+      <button ng-if="lfData.lfData.templateOptions.showFormControlsButton" type="button"
+              class="lf-control-button"></button>
     </div>
 
     <!-- button -->
     <div class="lf-de-button">
-      <button ng-if="!hasOneRepeatingItem(item)" class="float-button" type="button"
+      <button ng-if="!hasOneRepeatingItem(item)" class="lf-float-button" type="button"
               ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
               title="Remove this '{{ item.question }}'">-</button>
     </div>
