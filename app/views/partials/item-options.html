@@ -1,0 +1,56 @@
+<div ng-if="item._showItemOptionPanel">
+
+  <div class="lf-item-options lf-section-options"  ng-if="item.dataType==='SECTION'">
+    <div class="lf-item-option">
+      <input class="lf-answer-button" type="radio" id="{{item._elementId + 'vertical'}}"
+             ng-model="item.displayControl.questionLayout" value="vertical" name="{{item._elementId}} +'option'">
+      <label class="lf-answer-label" for="{{item._elementId + 'vertical'}}">Vertical</label>
+    </div>
+    <div class="lf-item-option" ng-if="isQuestionLayoutAllowed(item, 'horizontal')">
+      <input class="lf-answer-button" type="radio" id="{{item._elementId + 'horizontal'}}"
+             ng-model="item.displayControl.questionLayout" value="horizontal" name="{{item._elementId}} +'option'">
+      <label class="lf-answer-label" for="{{item._elementId + 'horizontal'}}">Horizontal</label>
+    </div>
+    <div class="lf-item-option" ng-if="isQuestionLayoutAllowed(item, 'matrix')">
+      <input class="lf-answer-button" type="radio" id="{{item._elementId + 'matrix'}}"
+             ng-model="item.displayControl.questionLayout" value="matrix" name="{{item._elementId}} +'option'">
+      <label class="lf-answer-label" for="{{item._elementId + 'matrix'}}">Matrix</label>
+    </div>
+
+  </div>
+
+  <div class="lf-item-options" ng-if="item.dataType==='CWE' || item.dataType==='CNE'">
+    <div class="lf-item-option">
+      <input class="lf-answer-button" type="radio" id="{{item._elementId + 'combo'}}"
+             ng-model="item.displayControl.answerLayout.type" value="combo" name="{{item._elementId}} +'option'">
+      <label class="lf-answer-label" for="{{item._elementId + 'combo'}}">Combo</label>
+    </div>
+    <div class="lf-item-option">
+      <input class="lf-answer-button" type="radio" id="{{item._elementId + 'list'}}"
+             ng-model="item.displayControl.answerLayout.type" value="list" name="{{item._elementId}} +'option'">
+      <label class="lf-answer-label" for="{{item._elementId + 'list'}}">List</label>
+    </div>
+    <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='list'">
+      <label for="{{item._elementId + 'columns'}}"> Display format:</label>
+      <select name="{{item._elementId + 'columns'}}" id="{{item._elementId + 'columns'}}" ng-model="item.displayControl.answerLayout.columns">
+        <option value="">---Please select---</option> <!-- not selected / blank option -->
+        <option value="0">Flexible</option>
+        <option value="1">In 1 column</option>
+        <option value="2">In 2 columns</option>
+        <option value="3">In 3 columns</option>
+        <option value="4">In 4 columns</option>
+        <option value="5">In 5 columns</option>
+        <option value="6">In 6 columns</option>
+      </select>
+    </div>
+    <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='list'">
+      <label for="{{item._elementId + 'flow'}}"> Flow direction:</label>
+      <select name="{{item._elementId + 'flow'}}" id="{{item._elementId + 'flow'}}" ng-model="item.displayControl.answerLayout.flow">
+        <option value="">---Please select---</option> <!-- not selected / blank option -->
+        <option value="row">Left to right</option>
+        <option value="column">Top to bottom</option>
+      </select>
+    </div>
+  </div>
+
+</div>

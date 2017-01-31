@@ -199,6 +199,27 @@
           templateUrl: 'form-controls.html'
         };
       })
+      .directive('lfFormTitle', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-title.html'
+        };
+      })
+      .directive('lfFormOptions', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-options.html'
+        };
+      })
+      .directive('lfItemOptions', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'item-options.html'
+        };
+      })
       .directive('lfFormHeader', function() {
         return {
           restrict: 'E',

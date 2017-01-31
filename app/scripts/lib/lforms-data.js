@@ -55,8 +55,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
     showCodingInstruction: false, // whether to show coding instruction inline. (false: in popover; true: inline)
     tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
     hideFormControls: false, // whether to hide the controls section on top of the form
-    showFormControlsButton: false, // whether to show the button that decides if 'hideFormControls' is true or false, so that form's controls section will be displayed or hidden
-    showItemControlsButton: false, // whether to show the button for each item (question and sections) that shows a control panel for display controls
+    showFormOptionPanel: true, // whether to show the option panel that controls all the template options
+    showFormOptionPanelButton: true, // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden
+    showItemOptionPanelButton: true, // whether to show the button for each item (question and sections) that shows a option panel for display controls
     hideUnits: false, // whether to hide the unit column/field
     allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section
     allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.
@@ -586,14 +587,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
     for (var i=0; i<iLen; i++) {
       var item = items[i];
 
-      // rename layout for backward compatibility
-      if (!item.displayControl) {
-        item.displayControl = {};
-        if (!item.displayControl.questionLayout && item.layout) {
-          item.displayControl.questionLayout = item.layout;
-        }
-      }
-
       // set default dataType
       // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
       // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
@@ -603,9 +596,31 @@ var LFormsData = LForms.LFormsData = Class.extend({
           item.dataType = 'SECTION';
       }
       else {
-        if(!item.dataType || item.calculationMethod !== undefined &&
-            !jQuery.isEmptyObject(item.calculationMethod))
+        if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod))
           item.dataType = "ST";
+      }
+
+      // displayControl default values
+      if (item.dataType === "SECTION") {
+        if (!item.displayControl) {
+          item.displayControl = {"questionLayout": "vertical"};
+          if (item.layout) {
+            // rename layout for backward compatibility
+            item.displayControl.questionLayout = item.layout;
+            delete item.layout;
+          }
+        }
+        else if (!item.displayControl.questionLayout) {
+          item.displayControl.questionLayout = "vertical";
+        }
+      }
+      else if (item.dataType === "CWE" || item.dataType === "CNE") {
+        if (!item.displayControl) {
+          item.displayControl = {"answerLayout": {"type":"combo"}};
+        }
+        else if (!item.displayControl.answerLayout) {
+          item.displayControl.answerLayout = {"type":"combo"};
+        }
       }
 
       // set default values on the item
@@ -1153,7 +1168,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
     for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
       var item = this.itemList[i];
       // header item and horizontal layout
-      if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
+      // if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
+      if (item.dataType === 'SECTION') {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];
@@ -2319,7 +2335,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
    */
   getActiveRowClass: function(item) {
     var ret = "";
-    if (this._activeItem && this._activeItem._elementId === item._elementId ) {
+    if (this._activeItem && this._activeItem._elementId === item._elementId) {
       ret = "active-row";
     }
     return ret;

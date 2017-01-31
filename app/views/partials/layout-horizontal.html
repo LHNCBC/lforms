@@ -1,6 +1,12 @@
 <div class="lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} " ng-if="item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]">
   <div class="lf-form-horizontal-table-title lf-de-label">
     <span class="lf-question">{{item.question}}</span>
+    <button ng-if="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
+            ng-click="hideShowItemOptionPanel(item)">
+      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+    </button>
+
+    <lf-item-options></lf-item-options>
   </div>
 
   <table class="lf-form-horizontal-table">

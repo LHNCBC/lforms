@@ -1,0 +1,78 @@
+<div class="lf-form-options" ng-if="lfData.templateOptions.showFormOptionPanel">
+
+  <!--showQuestionCode: false,   // whether question code is displayed next to the question-->
+  <!--showCodingInstruction: false, // whether to show coding instruction inline. (false: in popover; true: inline)-->
+  <!--tabOnInputFieldsOnly: false, // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).-->
+  <!--hideFormControls: false, // whether to hide the controls section on top of the form-->
+  <!--showFormOptionPanel: true, // whether to show the option panel that controls all the template options-->
+  <!--showFormOptionPanelButton: true, // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden-->
+  <!--showItemOptionPanelButton: true, // whether to show the button for each item (question and sections) that shows a option panel for display controls-->
+  <!--hideUnits: false, // whether to hide the unit column/field-->
+  <!--allowMultipleEmptyRepeatingItems: false, // whether to allow more than one unused repeating item/section-->
+  <!--allowHTMLInInstructions: false, // whether to allow HTML content in the codingInstructions field.-->
+  <!--useAnimation: true, // whether to use animation on the form-->
+  <!--displayControl: {"questionLayout": "vertical"},-->
+  <!--showFormHeader: true,  // controls if the form's header section needs to be displayed-->
+  <!--formHeaderItems: [-->
+    <!--{"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},-->
+    <!--{"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},-->
+    <!--{"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},-->
+    <!--{"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}-->
+  <!--],-->
+  <!--showColumnHeaders: true, // controls if the column headers need to be displayed-->
+  <!--// form's table column headers' display names for question text, values and units-->
+  <!--columnHeaders: [-->
+    <!--{"name" : "Name"},-->
+    <!--{"name" : "Value"},-->
+    <!--{"name" : "Units"}-->
+  <!--]-->
+
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showQuestionCode">Display item code</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showCodingInstruction">Show help/description</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.hideFormControls">Hide form controls</label>
+  </div>
+
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showFormOptionPanelButton">Display form's option button</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showItemOptionPanelButton">Display item's option button</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.hideUnits">Hide units</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.allowMultipleEmptyRepeatingItems">Allow multiple empty repeating questions/sections</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.allowHTMLInInstructions">Allow HTML content in instructions</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.useAnimation">Use animation for adding and removing questions/sections</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showFormHeader">Display form header questions</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.showColumnHeaders">Display column headers</label>
+  </div>
+
+  <!-- complex options -->
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.formHeaderItems">Questions in form header (TBD)</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.displayControl">Form display control (TBD)</label>
+  </div>
+  <div class="lf-form-option">
+    <label><input type="checkbox" value="" ng-model="lfData.templateOptions.columnHeaders">Column headers (TBD)</label>
+  </div>
+
+
+
+</div>

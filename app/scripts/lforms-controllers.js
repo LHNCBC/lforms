@@ -206,6 +206,67 @@ angular.module('lformsWidget')
         };
 
 
+        $scope.hideShowFormOptionPanel = function() {
+          $scope.lfData.templateOptions.showFormOptionPanel = !$scope.lfData.templateOptions.showFormOptionPanel;
+        };
+
+        $scope.isItemOptionPanelButtonShown = function(item) {
+          var buttonShown = $scope.lfData.templateOptions.showItemOptionPanelButton &&
+              (item.dataType === "SECTION" || item.dataType === "CWE" || item.dataType === "CNE" )
+          if (!buttonShown)
+            item._showItemOptionPanel = false;
+
+          return buttonShown;
+        };
+
+        $scope.hideShowItemOptionPanel = function(item) {
+          if ($scope.isItemOptionPanelButtonShown(item)) {
+            item._showItemOptionPanel = !item._showItemOptionPanel;
+          }
+        };
+
+
+        $scope.isQuestionLayoutAllowed = function(item, layout) {
+
+          var allowed = false;
+          if (layout === 'matrix' || layout === 'horizontal') {
+            allowed = true;
+            //for both horizontal and matrix
+            //the item has children but no grand children
+            if (item.dataType === "SECTION" && item.items && item.items.length>0) {
+              var firstItemAnswers = item.items[0].answers;
+              var firstItemDataType = item.items[0].dataType;
+              var firstItemAnswerCardinality = item.items[0].answerCardinality;
+              for (var i = 0, iLen = item.items.length; i<iLen; i++) {
+                var subItem = item.items[i];
+                if (subItem.dataType === "SECTION" || subItem.dataType === "TITLE" || subItem.items && subItem.items.length > 0) {
+                  allowed = false;
+                  break;
+                }
+                // addition requirement for matrix layout: all answers are same
+                if (layout === "matrix") {
+                  if (subItem.dataType !== "CWE" && subItem.dataType !== "CNE") {
+                    allowed = false;
+                    break;
+                  }
+                  else if (firstItemDataType !== item.items[i].dataType ||
+                      !angular.equals(firstItemAnswerCardinality, subItem.answerCardinality) ||
+                      !angular.equals(firstItemAnswers, subItem.answers)) {
+                    allowed = false;
+                    break;
+                  }
+                }
+              }
+            }
+            else {
+              allowed = false;
+            }
+          }
+
+          return allowed;
+        };
+
+
         /**
          * Check the display type of the coding instructions
          * @param item an item in the lforms form items array
@@ -638,21 +699,6 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the display layout for an item's answers
-         * @param item a form item
-         * @returns {string}
-         */
-        $scope.getAnswerLayoutType = function(item) {
-          var ret = "combo";
-          if (item && item.displayControl && item.displayControl.answerLayout &&
-              item.displayControl.answerLayout.type)
-            ret = item.displayControl.answerLayout.type;
-
-          return ret;
-        };
-
-
-        /**
          * Get the display layout for each answer in a list layout of an item's answers
          * @param item a form item
          * @returns {string}
@@ -671,7 +717,22 @@ angular.module('lformsWidget')
         };
 
 
-        /**
+        $scope.getAnswerLayoutFlowClass = function(item) {
+          var ret = "";
+          if (item && item.displayControl && item.displayControl.answerLayout &&
+              item.displayControl.answerLayout.type === "list") {
+            if (item.displayControl.answerLayout.flow ==="row") {
+              ret = " lf-flow-row";
+            }
+            else if (item.displayControl.answerLayout.flow ==="column") {
+              ret = " lf-flow-column";
+            }
+          }
+
+          return ret;
+        };
+
+          /**
          * Updates the value for an item whose answers are displayed as a list of checkboxes,
          * one of which has just been selected or deselected
          * @param item a form item that has an answer list and supports multiple selections

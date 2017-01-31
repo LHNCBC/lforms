@@ -1,20 +1,11 @@
 <form ng-if="lfData" class="lf-form lf-template-table" novalidate autocomplete="false"
       ng-keydown="handleNavigationKeyEventByTab($event)">
-    <!--form options-->
+    <!--form controls-->
     <lf-form-controls></lf-form-controls>
     <!--form title-->
-    <h3 class="lf-form-title">
-      <span>{{lfData.name}}</span>
-      <span class="lf-item-code" ng-if="lfData.templateOptions.showQuestionCode">
-        <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
-        <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
-      </span>
-      <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}" type="button"
-              class="lf-copyright-button" uib-popover="{{lfData.copyrightNotice}}"
-              popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
-      <button ng-if="lfData.lfData.templateOptions.showFormControlsButton" type="button"
-              class="lf-control-button"></button>
-    </h3>
+    <lf-form-title></lf-form-title>
+    <!-- form options -->
+    <lf-form-options></lf-form-options>
     <!--form header-->
     <lf-form-header></lf-form-header>
     <!--form body-->
