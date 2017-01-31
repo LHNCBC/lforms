@@ -43,14 +43,6 @@
         <option value="6">In 6 columns</option>
       </select>
     </div>
-    <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='list'">
-      <label for="{{item._elementId + 'flow'}}"> Flow direction:</label>
-      <select name="{{item._elementId + 'flow'}}" id="{{item._elementId + 'flow'}}" ng-model="item.displayControl.answerLayout.flow">
-        <option value="">---Please select---</option> <!-- not selected / blank option -->
-        <option value="row">Left to right</option>
-        <option value="column">Top to bottom</option>
-      </select>
-    </div>
   </div>
 
 </div>

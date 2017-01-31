@@ -846,6 +846,35 @@ angular.module('lformsWidget')
         };
 
 
+        $scope.checkAnswer = function(item,answer) {
+          var checked = false;
+          if (item && item.value) {
+            if (angular.isArray(item.value)) {
+              for(var i=0, iLen=item.value.length; i<iLen; i++) {
+                var selectedAnswer = item.value[i];
+                if (selectedAnswer.code === answer.code && selectedAnswer.text === answer.text) {
+                  checked = true;
+                  break;
+                }
+              }
+            }
+            else {
+              if (item.value.code === answer.code && item.value.text === answer.text) {
+                checked = true;
+              }
+            }
+          }
+
+          if (item.questionCode==="q1a"){
+            console.log(item.question)
+            console.log(item.value)
+            console.log(answer)
+            console.log(checked)
+
+          }
+          return checked;
+        };
+
         /**
          * Handle navigation keys using TAB/ SHIFT+TAB keys
          * @param event keypress event

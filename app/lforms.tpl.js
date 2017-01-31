@@ -5,11 +5,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"list\" class=\"lf-answer-type-list {{getAnswerLayoutFlowClass(item)}}\">\n" +
-    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "    <span ng-repeat=\"answer in item._autocompOptions.listItems track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
     "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
-    "               ng-click=\"updateCheckboxList(item, answer)\">\n" +
+    "               ng-click=\"updateCheckboxList(item, answer)\"\n" +
+    "               ng-checked=\"checkAnswer(item,answer)\">\n" +
     "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
     "      </div>\n" +
     "      <!--radio buttons for single selection-->\n" +
@@ -26,7 +27,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" +
     "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
     "                 id=\"{{item._elementId + '_other'}}\"\n" +
-    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
+    "                 ng-checked=\"checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
     "          <input class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
     "                 id=\"{{item._elementId + '_otherValue'}}\"\n" +
@@ -309,14 +311,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <option value=\"4\">In 4 columns</option>\n" +
     "        <option value=\"5\">In 5 columns</option>\n" +
     "        <option value=\"6\">In 6 columns</option>\n" +
-    "      </select>\n" +
-    "    </div>\n" +
-    "    <div class=\"lf-item-option\" ng-if=\"item.displayControl.answerLayout.type==='list'\">\n" +
-    "      <label for=\"{{item._elementId + 'flow'}}\"> Flow direction:</label>\n" +
-    "      <select name=\"{{item._elementId + 'flow'}}\" id=\"{{item._elementId + 'flow'}}\" ng-model=\"item.displayControl.answerLayout.flow\">\n" +
-    "        <option value=\"\">---Please select---</option> <!-- not selected / blank option -->\n" +
-    "        <option value=\"row\">Left to right</option>\n" +
-    "        <option value=\"column\">Top to bottom</option>\n" +
     "      </select>\n" +
     "    </div>\n" +
     "  </div>\n" +

@@ -1,11 +1,12 @@
 <div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout.type">
   <!--list style-->
   <div ng-switch-when="list" class="lf-answer-type-list {{getAnswerLayoutFlowClass(item)}}">
-    <span ng-repeat="answer in item.answers track by $index" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
+    <span ng-repeat="answer in item._autocompOptions.listItems track by $index" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
       <!--checkboxes for multiple selections-->
       <div ng-if="item._multipleAnswers">
         <input class="lf-answer-button" type="checkbox" id="{{item._elementId + answer.code}}"
-               ng-click="updateCheckboxList(item, answer)">
+               ng-click="updateCheckboxList(item, answer)"
+               ng-checked="checkAnswer(item,answer)">
         <label class="lf-answer-label" for="{{item._elementId + answer.code}}">{{answer.text}}</label>
       </div>
       <!--radio buttons for single selection-->
@@ -22,7 +23,8 @@
       <div ng-if="item._multipleAnswers" class="">
           <input class="lf-answer-button" type="checkbox" ng-model="item._otherValueChecked"
                  id="{{item._elementId + '_other'}}"
-                 ng-click="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
+                 ng-click="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})"
+                 ng-checked="checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})">
           <label class="lf-answer-label" for="{{item._elementId + '_other'}}">OTHER:</label>
           <input class="lf-answer-other" type="text" ng-model="item.valueOther"
                  id="{{item._elementId + '_otherValue'}}"
