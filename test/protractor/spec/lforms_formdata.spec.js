@@ -16,7 +16,7 @@ describe('get form data', function() {
       expect(formData.itemsData.length).toBe(2);
       expect(formData.itemsData[0].items.length).toBe(13);
       expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
-      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
+      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(9); // name
       // #2 above fields have values, except dob is still empty
       ff.comment.sendKeys("Some comments");
       ff.name.sendKeys("Not Empty");
@@ -50,7 +50,7 @@ describe('get form data', function() {
         expect(formData.itemsData.length).toBe(2);
         expect(formData.itemsData[0].items.length).toBe(13);
         expect(formData.itemsData[0].items[0].value).toBe("Not Empty"); // name
-        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11); // name
+        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         expect(formData.itemsData[0].items[1].value.text).toBe("Male"); // gender
         expect(formData.itemsData[0].items[2].value).toBe(undefined); // dob
         expect(formData.itemsData[0].items[6].value).toBe(70); // height
@@ -201,5 +201,19 @@ describe('get form data', function() {
 
   });
 
+  it('should not get any data with empty values when the noEmptyValue parameter is used', function() {
+    tp.openFullFeaturedForm();
 
+    // only one field has data
+    browser.driver.executeAsyncScript(function () {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormData(null, true, true, true);
+      callback(fData);
+    }).then(function (formData) {
+      // console.log(formData);
+      expect(formData.items.length).toBe(1);
+      expect(formData.items[0].question).toBe("With data type CNE");
+      expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
+    });
+  });
 });

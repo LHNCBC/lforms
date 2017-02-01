@@ -81,10 +81,20 @@ var TestPage = function() {
       disease2: element(by.id('/54126-8/54137-5/54140-9/1/2/1')),
       ageAtDiag2: element(by.id('/54126-8/54137-5/54130-0/1/2/1')),
       btnDiseasesHist2: element(by.id('add-/54126-8/54137-5/1/2')),
+      disease3: element(by.id('/54126-8/54137-5/54140-9/1/3/1')),
+      ageAtDiag3: element(by.id('/54126-8/54137-5/54130-0/1/3/1')),
+      btnDiseasesHist3: element(by.id('add-/54126-8/54137-5/1/3')),
       mockSubItem2: element(by.id('/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1')),
 
+      fmName: element(by.id('/54114-4/54138-3/1/1')),
+      fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
       btnAnotherFamily: element(by.id('add-/54114-4/1')),
-      btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1'))
+      btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
+
+      fmName2: element(by.id('/54114-4/54138-3/2/1')),
+      fmDisease2: element(by.id('/54114-4/54117-7/54116-9/2/1/1')),
+      btnAnotherFamily2: element(by.id('add-/54114-4/2')),
+      btnAnotherDiseasesHist2: element(by.id('add-/54114-4/54117-7/2/1')),
     },
 
     FullFeaturedForm: {

@@ -1,4 +1,4 @@
-<form ng-if="lfData" class="lf-form lf-template-table" novalidate autocomplete="false"
+<form ng-if="lfData" class="lf-form lf-template-table {{getIndentationStyle()}}" novalidate autocomplete="false"
       ng-keydown="handleNavigationKeyEventByTab($event)">
     <!--form controls-->
     <lf-form-controls></lf-form-controls>

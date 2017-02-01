@@ -81,7 +81,7 @@ LForms.HL7 = {
     field: "|",
     component: "^",
     subcomponent: "&",
-    repetition: "~ ",
+    repetition: "~",
     escape: "\\"
   },
 
@@ -205,21 +205,26 @@ LForms.HL7 = {
       obxIndex: 1
     };
 
-    var formData = lfData.getFormData(true, true, true);
+    // get form data with questions that have no values
+    var formData = lfData.getFormData(false, true, true);
+
+    this._generateOBX4(formData);
 
     // form level info
     var formObrArray = new Array(this.obrFieldNum); // initial value is undefined
     // index = seq - 1
     formObrArray[0] = "OBR";
-    formObrArray[1] = 1;
+    formObrArray[1] = "1";
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
     if (formData.templateOptions.formHeaderItems.length > 0) {
       for (var i= 0, iLen=formData.templateOptions.formHeaderItems.length; i< iLen; i++) {
-        if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done") {
+        if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done" &&
+            formData.templateOptions.formHeaderItems[i].value) {
           formObrArray[7] = formData.templateOptions.formHeaderItems[i].value.toString("yyyyMMddHHmmss");
         }
-        else if (formData.templateOptions.formHeaderItems[i].questionCode === "where_done") {
+        else if (formData.templateOptions.formHeaderItems[i].questionCode === "where_done" &&
+            formData.templateOptions.formHeaderItems[i].value) {
           formObrArray[13] = formData.templateOptions.formHeaderItems[i].value.text;
         }
       }
@@ -229,7 +234,7 @@ LForms.HL7 = {
     var foundValue = false;
     for(var i=this.obrFieldNum-1; i>=0; i--) {
       if (!foundValue && formObrArray[i] === undefined) {
-        continue
+        continue;
       }
       else if (formObrArray[i] !== undefined) {
         hl7String = formObrArray[i] + this.delimiters.field + hl7String;
@@ -245,14 +250,11 @@ LForms.HL7 = {
       var obxIndex = 0;
       for (var j = 0, jLen = formData.items.length; j < jLen; j++) {
         if (formData.items[j].dataType !== "TITLE") {
-          if (formData.items[j].header) {
-            formInfo.obxIndex = 0;
-          }
-          else {
-            obxIndex++;
-            formInfo.obxIndex = obxIndex;
-          }
-          hl7String += this.itemToField(formData.items[j], formInfo);
+          // Note: OBX1 value is not reset for sub panels in the current design.
+          // if (formData.items[j].header) {
+          //   formInfo.obxIndex = 1;
+          // }
+          hl7String += this._itemToField(formData.items[j], formInfo);
         }
       }
     }
@@ -261,13 +263,108 @@ LForms.HL7 = {
 
 
   /**
-   *  Constructs an OBX5 for a list item (CNE/CWE)
+   * Calculate OBX4 values of each item in the form
+   * @param formData form data that also includes user data
+   * @private
+   */
+  _generateOBX4: function(formData) {
+
+    if (formData && formData.items) {
+      this._precessOBX4AtOneLevel("", formData.items)
+    }
+  },
+
+
+  /**
+   * Calculate OBX4 values for questions/sections at one level
+   * @param parentOBX4 the containing section item's obx4 value
+   * @param items, the list of items at the level
+   * @private
+   */
+  _precessOBX4AtOneLevel: function(parentOBX4, items) {
+    var sectionSN = 0;
+    var repeatingIndex = 1;
+    var prevItem = null;
+    // go through questions/sections from top to bottom
+    for (var i=0, iLen=items.length; i<iLen; i++) {
+      var item = items[i];
+      // if it's a section
+      if (item.dataType === "SECTION") {
+
+        // if it repeats
+        var max = item.questionCardinality.max;
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          // skip if all questions within it have no values
+          if (!this._isSectionEmpty(item)) {
+            // get the repeating instance letter
+            if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+              repeatingIndex = 1;
+              sectionSN += 1;
+            }
+            else {
+              repeatingIndex +=1;
+            }
+            var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
+            item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN + repeatingLetter : sectionSN + repeatingLetter;
+            this._precessOBX4AtOneLevel(item._obx4, item.items);
+          }
+          // skip if it is an empty section, not to set prevItem
+          else {
+            continue;
+          }
+        }
+        // if it does not repeat
+        // Note: not to skip even if all questions within is has no values,
+        // because the SN still increases in this case.
+        else {
+          repeatingIndex = 1;
+          sectionSN += 1;
+          item._obx4 = parentOBX4 ? parentOBX4 + "." + sectionSN: sectionSN;
+          this._precessOBX4AtOneLevel(item._obx4, item.items);
+        }
+      }
+      // if it's a question
+      else{
+        // if it repeats
+        var max = item.questionCardinality.max;
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          // if it has value
+          if (!LForms.Util.isItemValueEmpty(item.value)) {
+            // get the repeating instance letter
+            if (!prevItem || prevItem && prevItem.questionCode !== item.questionCode) {
+              repeatingIndex = 1;
+            }
+            else {
+              repeatingIndex += 1;
+            }
+            var repeatingLetter = LForms.Util.getNextLetter(repeatingIndex);
+            item._obx4 = parentOBX4 ? parentOBX4 + "." + repeatingLetter : repeatingLetter;
+          }
+          // skip if it has no values, not to set prevItem
+          else {
+            continue;
+          }
+        }
+        // if it does not repeat
+        else {
+          item._obx4 = parentOBX4 ? parentOBX4 : "";
+          repeatingIndex = 1;
+        }
+
+      }
+      prevItem = item;
+    }
+  },
+
+
+  /**
+   * Constructs an OBX5 for a list item (CNE/CWE)
    * @param itemVal a value for a list item
    * @param dataType the data type of the item (CNE or CWE)
    * @param answerCS the answer code system
    * @return the OBX5 field string
    */
-  makeOBX5: function(itemVal, dataType, answerCS) {
+  _generateOBX5: function(itemVal, dataType, answerCS) {
     var rtn;
     var code = itemVal.code;
     if (dataType === 'CWE' && !code && code !== 0) {
@@ -288,7 +385,7 @@ LForms.HL7 = {
    * @param formInfo index info of the form
    * @returns {string}
    */
-  itemToField: function(item, formInfo) {
+  _itemToField: function(item, formInfo) {
     var hl7Seg = "";
     var questionCS = this.LOINC_CS;
 
@@ -298,6 +395,7 @@ LForms.HL7 = {
 
       // a sub panel
       if (item.header) {
+        var obrSeg = "";
         itemObrArray[0] = "OBR";
         itemObrArray[1] = ++formInfo.obrIndex;
 
@@ -308,65 +406,61 @@ LForms.HL7 = {
         var foundValue = false;
         for(var i=this.obrFieldNum-1; i>=0; i--) {
           if (!foundValue && itemObrArray[i] === undefined) {
-            continue
+            continue;
           }
           else if (itemObrArray[i] !== undefined) {
-            hl7Seg = itemObrArray[i] + this.delimiters.field + hl7Seg;
+            obrSeg = itemObrArray[i] + this.delimiters.field + obrSeg;
           }
           else {
-            hl7Seg += this.delimiters.field;
+            obrSeg += this.delimiters.field;
           }
         }
-        hl7Seg += this.delimiters.segment;
+        obrSeg += this.delimiters.segment;
+
+        //// Note: not to add obr segments for now.
+        //hl7Seg += obrSeg;
 
         if(item.items) {
           var obxIndex = 0;
           for(var j=0, jLen=item.items.length; j<jLen; j++) {
-            if (item.items[j].header) {
-              formInfo.obxIndex = 0;
-            }
-            else {
-              obxIndex++;
-              formInfo.obxIndex = obxIndex;
-            }
-
-            hl7Seg += this.itemToField(item.items[j], formInfo);
+            // Note: OBX1 value is not reset for sub panels in the current design.
+            // if (item.items[j].header) {
+            //   //formInfo.obxIndex = 1;
+            // }
+            hl7Seg += this._itemToField(item.items[j], formInfo);
           }
         }
       }
       // a question, only when it has value
-      else {
+      else if (!LForms.Util.isItemValueEmpty(item.value)) {
         itemObxArray[0] = "OBX";
-        itemObxArray[1] = formInfo.obxIndex;
+        itemObxArray[1] = formInfo.obxIndex++;
         itemObxArray[2] = this.getHL7V2DataType(item.dataType);
         itemObxArray[3] = item.questionCode + this.delimiters.component +
-          item.question + this.delimiters.component + questionCS;
+            item.question + this.delimiters.component + questionCS;
         // sub id
-        itemObxArray[4] = item._idPath.slice(1).replace(/\//g,'.');
+        itemObxArray[4] = item._obx4;
 
-        // value
-        if (item.value !== undefined && item.value !== null) {
-          var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
-          // multiple answers
-          if (Array.isArray(item.value)) {
-            var obx5 = [];
-            for(var j= 0, jLen=item.value.length; j<jLen; j++) {
-              if (item.dataType === 'CNE' || item.dataType === 'CWE')
-                obx5.push(this.makeOBX5(item.value[j], item.dataType, answerCS));
-            }
-            itemObxArray[5] = obx5.join(this.delimiters.repetition);
+        var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
+        // multiple answers
+        if (Array.isArray(item.value)) {
+          var obx5 = [];
+          for(var j= 0, jLen=item.value.length; j<jLen; j++) {
+            if (item.dataType === 'CNE' || item.dataType === 'CWE')
+              obx5.push(this._generateOBX5(item.value[j], item.dataType, answerCS));
           }
-          // single answer
+          itemObxArray[5] = obx5.join(this.delimiters.repetition);
+        }
+        // single answer
+        else {
+          if (item.dataType === 'CNE' || item.dataType === 'CWE') {
+            itemObxArray[5] = this._generateOBX5(item.value, item.dataType, answerCS);
+          }
+          else if (item.dataType === 'DT') {
+            itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
+          }
           else {
-            if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = this.makeOBX5(item.value, item.dataType, answerCS);
-            }
-            else if (item.dataType === 'DT') {
-              itemObxArray[5] = item.value.toString("yyyyMMddHHmmss");
-            }
-            else {
-              itemObxArray[5] = item.value.toString();
-            }
+            itemObxArray[5] = item.value.toString();
           }
         }
         // unit
@@ -377,12 +471,11 @@ LForms.HL7 = {
           }
           itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
         }
-
         // ignore ending empty fields
         foundValue = false;
         for(var i=this.obxFieldNum-1; i>=0; i--) {
           if (!foundValue && itemObxArray[i] === undefined) {
-            continue
+            continue;
           }
           else if (itemObxArray[i] !== undefined) {
             hl7Seg = itemObxArray[i] + this.delimiters.field + hl7Seg;
@@ -392,21 +485,42 @@ LForms.HL7 = {
           }
         }
 
-        //for(var i=0; i<this.obxFieldNum; i++) {
-        //  if (itemObxArray[i] !== undefined) {
-        //    hl7Seg += itemObxArray[i] + this.delimiters.field;
-        //  }
-        //  else {
-        //    hl7Seg += this.delimiters.field;
-        //  }
-        //}
-
         hl7Seg += this.delimiters.segment;
-      }
+      } // if value is not empty
     }
     return hl7Seg;
-  }
-};
+  },
 
-if (typeof module !== 'undefined')
-  module.exports = LForms.HL7;
+
+  /**
+   * Check if all questions within a section have no values
+   * @param section a section item
+   * @private
+   */
+  _isSectionEmpty: function(sectionItem) {
+    var empty = true;
+    if (sectionItem.items) {
+      for(var i=0, iLen=sectionItem.items.length; i<iLen && empty; i++) {
+        var item = sectionItem.items[i];
+        // sub section
+        if (item.dataType === "SECTION") {
+          // has been checked already
+          if (item._emptySection === true || item._emptySection === false) {
+            empty = item._emptySection;
+          }
+          else {
+            empty = this._isSectionEmpty(item);
+          }
+        }
+        // questions
+        else {
+          empty = LForms.Util.isItemValueEmpty(item.value);
+        }
+      } // end of for loop
+    }
+    // set the flag
+    sectionItem._emptySection = empty;
+    return empty;
+  }
+
+};

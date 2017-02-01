@@ -1,4 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
+var rxtermsForm = require('./rxterms.fo.js');
+
 describe('horizontal table', function() {
 
   it('should have one add button in the horizontal table when the form loads', function() {
@@ -47,13 +49,28 @@ describe('horizontal table', function() {
 
   it('should not lose focus when the options for an autocompleter change', function() {
     tp.openRxTerms();
-    var drugNameField = element(by.id('/X-002/itemWithExtraData/1/1'));
+    var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
-    drugNameField.sendKeys('ar');
+    drugNameField.sendKeys('asp');
     browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
-    expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('/X-002/controlledItem_LIST/1/1');
+    expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(
+      rxtermsForm.strengthAndFormID);
   });
+
+  it('should populate the RxCUI field on the RxTerms form', function() {
+    // There was a bug where this did not happen when the strength value was
+    // padded.
+    // Continuing from the previous test...
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
+    var strengthField = rxtermsForm.strengthAndForm;
+    strengthField.sendKeys(protractor.Key.ARROW_DOWN);
+    strengthField.sendKeys(protractor.Key.TAB);
+    browser.waitForAngular();
+    expect(strengthField.getAttribute('value')).toBe('75 mg Tab');
+    expect(rxtermsForm.rxcui.getAttribute('value')).toBe('308414');
+  });
+
 });

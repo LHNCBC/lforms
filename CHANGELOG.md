@@ -2,6 +2,56 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.0.0]
+### Changed
+- Redesigned the form template to make it responsive
+
+## [10.0.0]   2016-12-06
+### Changed
+- Changed OBX4 value calculation method in HL7 messages. 
+
+## [9.0.2]   2016-12-05
+### Changed
+- Updated a test form, and added a test to make sure a problem with the
+  autocompletion stays fixed.
+
+## [9.0.1]   2016-11-22
+### Changed
+- Changed the default style of TITLE row to be same as section headers. 
+
+## [9.0.0]   2016-11-17
+### Changed
+- Updated the autocomplete-lhc package to version 10, in which URLs for search
+  autcompleters now take a "maxList" parameter (in place of, but with opposite
+  meaning to, the "autocomp" parameter).  Forms with URLs for search lists might
+  need to be updated, or more likely the servers handling the URLs will need to
+  be changed to handle the new parameter, which is the reason for the major
+  version increment on this package.  The [Clinical Table Search
+  Service](https://clin-table-search.lhc.nlm.nih.gov) supports the new
+  autocomplete-lhc version with the addition of newer API URLs (v3 and higher).
+
+## [8.1.2]   2016-11-08
+### Fixed
+- Fixed a bug in getting form data without questions that have empty values.
+
+## [8.1.1]   2016-11-02
+### Changed
+- Changed a FHIR data processing function's name.
+
+## [8.1.0]   2016-10-28
+### Added
+- Added preliminary support for generating FHIR DiagnosticReport data and merging
+  it back into a form.
+  
+## [8.0.0]   2016-09-21
+### Changed
+- Updated the design and docs of the data control function.
+
+## [7.6.1]   2016-09-21 
+### Fixed
+- Renamed the CSS class 'empty-question' to 'lf-empty-question' to avoid
+  possible confusion.
+
 ## [7.6.0]   2016-08-12
 ### Added
 - Added support for setting the code systems for the form and for questions.

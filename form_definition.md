@@ -83,7 +83,7 @@ about the meaning of each key:
 * **type** - the form type, "LOINC" is the only one supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form. 
-  Currently 'table' (default) and 'list' are supported.
+  Currently only 'table' (default) is supported. More supported templates would be added later.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * showQuestionCode - a boolean that controls whether to show question codes. 
@@ -98,6 +98,10 @@ about the meaning of each key:
       on top of the form. The default is false.
     * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
+    * showFormOptionPanel - a boolean that controls whether to show the option panel
+      that displays all the form options.
+    * showFormOptionPanelButton - a boolean that controls whether to show the button
+      next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML 
@@ -110,6 +114,16 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
+    * defaultAnswerLayout - an object that controls the answer layout for each item
+      that has a dataType of CWE or CNE and has a answer list but does not specify
+      answerLayout on the item itself. It has a single key of "answerLayout", which 
+      has two keys, "type" and "columns". If "type" is set to be "combo", then an
+      auto completer is used for the answer list. If "type" is set to be "list", then
+      all the answers are displayed, where "columns" controls how many columns are used.
+      "columns" value could be "0", meaning flexible, or "1" to "6", meaning the number 
+      of columns being used. "columns" is valid only when "type" is set to be "list".
+      Here is an example:
+      `{"answerLayout": {"type": "list", "columns": "2"}}`      
     * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      
@@ -138,19 +152,6 @@ about the meaning of each key:
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
-    * columnHeaders - For the "table" template only. An array defining table columns of 
-      the table in the form. If you omit columnHeaders, a default will be provided with 
-      four columns for: "Name", "Value" and "Units".  
-      If you wish to specify your own definitions, an array of these exact four columns 
-      should be provided. You cannot add a new column or remove a existing one or change the order. 
-      A null value could be in place where the column does not need a change over the default values.
-      Each element in the array should be a hash with the following keys 
-      (A null value could be in place where the key's value is the default value.):
-        * name - the column header text
-        * displayControl - This controls display styles of the column. It is a hash
-          with the keys of "colCSS" for columns styles. The values are an array of 
-          hashes of valid CSS styles for the "col" DOM element. Here is an example: 
-          `{"colCSS": [{"name":"width","value":"30%"}]}`                  
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
@@ -193,8 +194,9 @@ about the meaning of each key:
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.
-      The [lforms-service](https://lforms-service.nlm.nih.gov/) website provides
-      a number of ready-to-use web APIs that can plugged in here to provide
+      The [Clinical Table Search
+      Service](https://clin-table-search.lhc.nlm.nih.gov/) website provides a number
+      of ready-to-use web APIs that can plugged in here to provide
       searchable lists of drugs, medical conditions, disease names, and more.
       If you wish to set up your own web API on a website, then you just need to
       understand what query parameters to handle on the webserver, and what the
@@ -212,6 +214,7 @@ about the meaning of each key:
         * REAL - a number which might not be an integer
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
+        * TM - a string in the time format
         * ST - a normal free-text string
         * TX - a string for a long free-text
         * YEAR - a string in the format of one to four digits that represents a year
@@ -222,6 +225,10 @@ about the meaning of each key:
         * PHONE - a string in a valid phone number format
         * NR - a numeric range, in the format of two values separated by "^". 
                Having one number on either side of "^" is allowed.
+        * SECTION - a special type for sections, which contain sub items in the 
+                    <a href="#items">items</a> field       
+        * TITLE - a special type for separators that displays some text.               
+               
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
       following keys:
@@ -229,16 +236,18 @@ about the meaning of each key:
         * default - If true, this unit will be the default unit, which means it
           will show up in the field when the question is shown and the user does
           not have to pick it.  If false, this key can be omitted.
+    * editable - (optional) If "0" the input field is readonly, any other value 
+      makes the input field editable.
     * header - If true, then this is not a question but a section, which can
       contain its own <a href="#items">items</a> array of questions and sections.
     * skipLogic - Controls the hiding/showing of this question or section based
       on data entered in other parts of the form. The value is a hash with the
       following keys:
-        * conditions - An array of the conditions to be met.  Each condition is a
+        * conditions - An array of the conditions to be met. Each condition is a
           hash with the following keys:
-            * source - The code of another question.  The source must be either
+            * source - The code of another question. The source must be either
               a sibling of this question (in the tree), or or one of the
-              questions in in the containing sections.
+              questions in the containing sections.
             * trigger - A hash defining a condition about the value for the
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
@@ -295,7 +304,46 @@ about the meaning of each key:
         * questionLayout - the layout of the questions in the section. It works on items 
           that are sections, i.e. they contain sub items. Supported values are: 
           'vertical' (default), 'horizontal' and 'matrix'.
-
+    * dataControl - an array of objects that control the current question's attributes when the controlling
+      source question's value changes. Supported fields are:
+        * source - an object identifying the controlling source question. It has the following fields:
+            * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The 
+              default value is "INTERNAL".
+            * sourceItemCode - the questionCode of the source question in the form. The source question 
+              must be either a sibling of this question (in the tree), or or one of the questions 
+              in the containing sections.
+        * onAttribute - optional, the attribute on this question, whose value will be updated by the newly 
+          constructed value. The default value is "value".
+        * dataFormat - the format of the newly constructed value. It is a hash, such as 
+          `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, when the **construction**
+           is set to be "ARRAY" or "OBJECT". It is a string, such as `"value.STRENGTHS_AND_FORMS[0]"`, 
+           when the **construction** is "SIMPLE". See **construction** for details on how these formats are used.
+        * construction - the method to construct a new value based on the source question's value. 
+          It supports three types:
+            * SIMPLE - the new value is a direct copy of what is on the controlling source question. 
+              The **dataFormat**'s value must be string. 
+              For example, if it's value is `"value.STRENGTHS_AND_FORMS[0]"`, 
+              the new value could be `"325-2.25-0.19 mg Tab"`.
+            * OBJECT - the new value is a hash object. The **dataFormat**'s value must be a hash object.
+              For each key/value pair in the **dataFormat** hash object, the key is a key in the new hash object, 
+              and the value is from the controlling source question's value or its attributes.
+              For example, if the **dataFormat** is `{"code": "value.code", "text": "value.GeneSymbol"}`, 
+              the new object could be created as `{"code": "NM_004315.5", "text": "ASAH1"}`, where "NM_004315.5"
+              and "ASAH1" are values retrieved from the controlling source question for "value.code" and 
+              "value.GeneSymbol", respectively.
+            * ARRAY - the new value is an array. The **dataFormat**'s value must be a hash object.
+              Each element object in the array is constructed according to that hash object. 
+              It is similar to the processing for "OBJECT", except that for each key/value pair in the 
+              **dataFormat** hash object, the value contains an array. 
+              If there are more than one pairs, the arrays retrieved should have the same length. 
+              Elements in the new array are constructed with the corresponding elements in these retrieved arrays.  
+              For example, if the **dataFormat** is `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, 
+              the "value.RXCUIS" and the "value.STRENGTHS_AND_FORMS" of the controlling source question should 
+              both contains an array and these two arrays should have the same length.
+              A sample constructed array could be               
+              `[{"code": "724614", "text": "325-2.25-0.19 mg Tab"},{"code": "637540", "text": "325-4.5-0.38 mg Tab"},{"code": "848768", "text": "325-4.84 mg Tab"}]`
+              where "value.RXCUIS" is `["724614", "637540", "848768"]` and "value.STRENGTHS_AND_FORMS" is
+              `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
 
 ### Emitted (angular) Events:
 

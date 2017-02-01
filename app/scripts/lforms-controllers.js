@@ -454,6 +454,9 @@ angular.module('lformsWidget')
           return status;
         };
 
+        $scope.getIndentationStyle = function () {
+          return $scope.lfData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
+        };
 
         /**
          * Get the CSS class on each item row
@@ -463,28 +466,25 @@ angular.module('lformsWidget')
         $scope.getRowClass = function(item) {
           var eleClass = '';
           if (item._answerRequired) {
-            eleClass += ' answer-required';
+            eleClass += ' lf-answer-required';
           }
           if (item.header) {
-            eleClass += ' section-header';
+            eleClass += ' lf-section-header';
           }
           else {
-            eleClass += ' question';
-          }
-          if (item.displayControl && item.displayControl.questionLayout === 'horizontal') {
-            eleClass += ' horizontal';
+            eleClass += ' lf-question';
           }
           if (!item.question || item.question.length === 0) {
-            eleClass += ' empty-question';
+            eleClass += ' lf-empty-question';
           }
           if (item._visitedBefore) {
-            eleClass += ' visited-before';
+            eleClass += ' lf-visited-before';
           }
           if (item._showValidation) {
-            eleClass += ' show-validation';
+            eleClass += ' lf-show-validation';
           }
           if (item.dataType === 'TITLE') {
-            eleClass += ' title-row';
+            eleClass += ' lf-title-row';
           }
 
           return eleClass;
