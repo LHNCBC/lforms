@@ -4,7 +4,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('field-answers.html',
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"list\" class=\"lf-answer-type-list {{getAnswerLayoutFlowClass(item)}}\">\n" +
+    "  <div ng-switch-when=\"list\" class=\"lf-answer-type-list\">\n" +
     "    <span ng-repeat=\"answer in item._autocompOptions.listItems track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +

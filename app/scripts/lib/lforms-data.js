@@ -94,12 +94,12 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // whether to hide the controls section on top of the form
     hideFormControls: false,
     // whether to show the option panel that controls all the template options
-    showFormOptionPanel: true, // should be false by default
+    showFormOptionPanel: false, // should be false by default
     // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden
-    showFormOptionPanelButton: true, // should be false by default
+    showFormOptionPanelButton: false, // should be false by default
     // whether to show the button for each item (questions and sections) that shows a option panel for display controls
     // Not to use. Unfinished.
-    showItemOptionPanelButton: true,  // should be false by default
+    showItemOptionPanelButton: false,  // should be false by default
     // whether to hide the unit column/field
     hideUnits: false,
     // whether to allow more than one unused repeating item/section
@@ -1787,7 +1787,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
         if (!sourceType)
           sourceType = this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL;
         // "INTERNAL"
-        if (source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL &&
+        if (sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL &&
             source.sourceItemCode) {
           // get the source item object
           var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);

@@ -206,10 +206,18 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         *  Hide/show the form option panel
+         */
         $scope.hideShowFormOptionPanel = function() {
           $scope.lfData.templateOptions.showFormOptionPanel = !$scope.lfData.templateOptions.showFormOptionPanel;
         };
 
+
+        /**
+         * Check if the button for item option panel should be shown
+         * @param item a form item
+         */
         $scope.isItemOptionPanelButtonShown = function(item) {
           var buttonShown = $scope.lfData.templateOptions.showItemOptionPanelButton &&
               (item.dataType === "SECTION" || item.dataType === "CWE" || item.dataType === "CNE" )
@@ -219,13 +227,22 @@ angular.module('lformsWidget')
           return buttonShown;
         };
 
+
+        /**
+         * Hide/show the item's option panel
+         * @param item a form item
+         */
         $scope.hideShowItemOptionPanel = function(item) {
           if ($scope.isItemOptionPanelButtonShown(item)) {
             item._showItemOptionPanel = !item._showItemOptionPanel;
           }
         };
 
-
+        /**
+         * Check if a particular layout is allowed for a section item
+         * @param item a form item
+         * @param layout a type of layout. permissible values are 'horizontal' and 'matrix'
+         */
         $scope.isQuestionLayoutAllowed = function(item, layout) {
 
           var allowed = false;
@@ -420,6 +437,10 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Adjust the height of a textarea
+         * @param e a textarea DOM element or a ID of a textarea element
+         */
         $scope.autoExpand = function(e) {
           var element = typeof e === 'object' ? e.target : document.getElementById(e);
           var scrollHeight = element.scrollHeight +2;
@@ -427,6 +448,10 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Get total number of questions on the form, not including section headers or titles
+         * @returns {number}
+         */
         $scope.getNumberOfQuestions = function() {
           var ret = 0;
           var widgetData = $scope.lfData;
@@ -454,9 +479,15 @@ angular.module('lformsWidget')
           return status;
         };
 
+
+        /**
+         * Get the indentation style of the form
+         * @returns {string}
+         */
         $scope.getIndentationStyle = function () {
           return $scope.lfData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
         };
+
 
         /**
          * Get the CSS class on each item row
@@ -717,22 +748,7 @@ angular.module('lformsWidget')
         };
 
 
-        $scope.getAnswerLayoutFlowClass = function(item) {
-          var ret = "";
-          if (item && item.displayControl && item.displayControl.answerLayout &&
-              item.displayControl.answerLayout.type === "list") {
-            if (item.displayControl.answerLayout.flow ==="row") {
-              ret = " lf-flow-row";
-            }
-            else if (item.displayControl.answerLayout.flow ==="column") {
-              ret = " lf-flow-column";
-            }
-          }
-
-          return ret;
-        };
-
-          /**
+        /**
          * Updates the value for an item whose answers are displayed as a list of checkboxes,
          * one of which has just been selected or deselected
          * @param item a form item that has an answer list and supports multiple selections
@@ -832,7 +848,6 @@ angular.module('lformsWidget')
 
 
         /**
-         *
          * Update the item.value based on selection of extra data input by users
          * @param item a form item that has an answer list and support single selections
          * @param otherValue the value object of the other value radio button
@@ -846,6 +861,12 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Check if a checkbox should be checked based on the value of a form item
+         * @param item a form item
+         * @param answer an answer in the items' answer list
+         * @returns {boolean}
+         */
         $scope.checkAnswer = function(item,answer) {
           var checked = false;
           if (item && item.value) {
@@ -864,16 +885,9 @@ angular.module('lformsWidget')
               }
             }
           }
-
-          if (item.questionCode==="q1a"){
-            console.log(item.question)
-            console.log(item.value)
-            console.log(answer)
-            console.log(checked)
-
-          }
           return checked;
         };
+
 
         /**
          * Handle navigation keys using TAB/ SHIFT+TAB keys

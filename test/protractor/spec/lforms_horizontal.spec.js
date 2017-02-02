@@ -51,7 +51,7 @@ describe('horizontal table', function() {
     tp.openRxTerms();
     var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
-    drugNameField.sendKeys('asp');
+    drugNameField.sendKeys('aspercreme');
     browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
@@ -69,8 +69,8 @@ describe('horizontal table', function() {
     strengthField.sendKeys(protractor.Key.ARROW_DOWN);
     strengthField.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
-    expect(strengthField.getAttribute('value')).toBe('75 mg Tab');
-    expect(rxtermsForm.rxcui.getAttribute('value')).toBe('308414');
+    expect(strengthField.getAttribute('value')).toBe('10% Cream');
+    expect(rxtermsForm.rxcui.getAttribute('value')).toBe('1101827');
   });
 
 });

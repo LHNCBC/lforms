@@ -968,7 +968,7 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType":"INTERNAL",
+                // "sourceType":"INTERNAL",  // sourceType is optional. Data control should work without it.
                 "sourceItemCode":"itemWithExtraData"
               },
               "construction":"SIMPLE",

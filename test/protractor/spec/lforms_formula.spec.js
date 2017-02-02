@@ -1,6 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
-fdescribe('formula', function() {
+describe('formula', function() {
 
   it('Two BMI formulas should both work', function() {
 

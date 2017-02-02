@@ -162,10 +162,6 @@
               $scope.lfData2 = new LForms.LFormsData(formDefData);
             };
 
-            $scope.changeTemplate = function(template) {
-              $scope.lfData2.template = template;
-            };
-
             $scope.showHL7Segments = function() {
               if ($scope.lfData2) {
                 var hl7Seg = LForms.HL7.toHL7Segments($scope.lfData2);
@@ -253,6 +249,11 @@
                   break;
                 case 'list-layout':
                   //'List Layout'
+                  lfOption2 = {
+                    showFormOptionPanelButton: true,
+                    showItemOptionPanelButton: true,
+                    allowMultipleEmptyRepeatingItems: true
+                  };
                   lfData2 = new LForms.LFormsData(angular.copy(listLayout));
                   break;
                 case 'matrix-layout':
@@ -311,8 +312,6 @@
           <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
           <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
-          <!--<button id="to-list" class="btn btn-primary" ng-click="changeTemplate('list')">Use 'list' Template</button>-->
-          <!--<button id="to-table" class="btn btn-primary" ng-click="changeTemplate('table')">Use 'table' Template</button>-->
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
           <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>

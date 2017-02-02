@@ -312,9 +312,9 @@ var TestPage = function() {
 
 
     /**
-     *  Opens the List Template form
+     *  Opens the List Layout form
      */
-    openListTemplate: function () {
+    openListLayout: function () {
       this.openBaseTestPage();
       this.openFormByIndex(10);
     },

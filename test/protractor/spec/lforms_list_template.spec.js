@@ -1,9 +1,9 @@
 var tp = require('./lforms_testpage.po.js');
 
-describe('List template', function() {
+describe('List Layout', function() {
 
   it('displays 4 different types of answer layouts', function () {
-    tp.openListTemplate();
+    tp.openListLayout();
 
     var item1answer1 = element(by.id('/q1a/1c1')),
         item1answer3 = element(by.id('/q1a/1c3')),
@@ -147,7 +147,7 @@ describe('List template', function() {
   });
 
   it('repeating items/sections works', function () {
-    tp.openListTemplate();
+    tp.openListLayout();
 
     var btnAdd1 = element(by.id('add-/g1/1')),
         btnAdd2 = element(by.id('add-/g1/g1g2/1/1')),
@@ -194,7 +194,7 @@ describe('List template', function() {
   });
 
   it('section matrix works', function () {
-    tp.openListTemplate();
+    tp.openListLayout();
 
     var item1answer1 = element(by.id('/g4/g1m1/1/1c1')),
         item1answer2 = element(by.id('/g4/g1m1/1/1c2')),
