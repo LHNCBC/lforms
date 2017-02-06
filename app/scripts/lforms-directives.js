@@ -49,18 +49,6 @@
           templateUrl: 'item.html'
         };
       })
-      // each item in list template, use inherited scope
-      .directive('lfListItem', ["RecursionHelper", function (RecursionHelper) {
-        return {
-          restrict: "E",
-          templateUrl: "list-item.html",
-          compile: function (element) {
-            // Use the compile function from the RecursionHelper,
-            // And return the linking function(s) which it returns
-            return RecursionHelper.compile(element);
-          }
-        }
-      }])
       // each item in table template, use inherited scope
       .directive('lfTableItem', ["RecursionHelper", function (RecursionHelper) {
         return {

@@ -224,7 +224,7 @@
   font-weight: 400;
 }
 
-/* overwrite autocomplete default styles */
+/* restore autocomplete default styles */
 .lf-form input.ansList {
   padding-right: 14px;
 }
@@ -582,6 +582,20 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* new flex box layout system based on screen size */
+/* padding on flex boxes */
+.lf-de-label-button {
+  padding: 4px 0 0 0;
+}
+.lf-de-input-unit {
+  padding: 0 0 0 0;
+}
+.lf-de-input {
+  padding: 2px 0 2px 2px;
+}
+.lf-de-unit {
+  padding: 2px 0 2px 2px;
+}
+
 /* Large */
 .lf-de,
 .lf-column-header{
@@ -870,7 +884,7 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* Small screens */
-@media all and (max-width: 640px) {
+@media all and (max-width: 480px) {
   .lf-de {
     display: flex;
     flex-direction: column;
@@ -960,6 +974,7 @@ Override color of select boxes in calendar widget title bar.
   border: 0;
 }
 
+/* section header */
 .lf-form-table .lf-form-table-row.lf-section-header {
   background: #E8E8E8;
   -moz-border-radius: 4px;
@@ -982,18 +997,4 @@ Override color of select boxes in calendar widget title bar.
   color: white;
 }
 
-.lf-de-label-button {
-  padding: 4px 0 0 0;
-}
-.lf-de-input-unit {
-  padding: 0 0 0 0;
-}
-
-.lf-de-input {
-  padding: 2px 0 2px 2px;
-}
-.lf-de-unit {
-
-  padding: 2px 0 2px 2px;
-}
 

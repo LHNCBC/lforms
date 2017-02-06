@@ -60,6 +60,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   name: null,
 
   // a pre-defined view template used to display the form
+  // only 'table' is supported for now.
   template: null,
   // additional options that controls the selected view template
   templateOptions: {},
@@ -123,7 +124,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
       {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
     ],
-    // controls if the column headers need to be displayed
+    // controls whether the column headers need to be displayed
     showColumnHeaders: true,
     // controls the default answer layout for CWE/CNE typed items if answerLayout is not specified on the item's displayControl.
     // not changeable on a rendered form.
@@ -136,7 +137,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
                          // "1", "2", "3", "4", "5", "6" -- listed in columns
       }
     },
-    // whether to use tree lines for indentations
+    // controls whether to use tree lines for indentations
     useTreeLineStyle: true, // true -- use tree lines
                             // false -- use bars
     // form's table column headers' display names for question text, values and units
@@ -927,7 +928,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
       // consider if the first sibling is hidden by skip logic
       if (!foundFirstSibling) {
-        if (item._skipLogicStatus === "target-hide" ) {
+        if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ) {
           item._firstSibling = false;
           firstSiblingIndex += 1;
         }
@@ -1245,7 +1246,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
       var item = this.itemList[i];
       // header item and horizontal layout
       if (item.header && item.displayControl && item.displayControl.questionLayout == "horizontal" ) {
-      // if (item.dataType === 'SECTION') {
         // same methods for repeating items could be used for repeating and non-repeating items.
         // (need to rename function names in those 'repeatable' functions.)
         var itemsInRow = [];

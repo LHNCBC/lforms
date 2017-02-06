@@ -23,18 +23,18 @@
     <div class="lf-item-option">
       <input class="lf-answer-button" type="radio" id="{{item._elementId + 'combo'}}"
              ng-model="item.displayControl.answerLayout.type" value="combo" name="{{item._elementId}} +'option'">
-      <label class="lf-answer-label" for="{{item._elementId + 'combo'}}">Combo</label>
+      <label class="lf-answer-label" for="{{item._elementId + 'combo'}}">ComboBox</label>
     </div>
     <div class="lf-item-option">
       <input class="lf-answer-button" type="radio" id="{{item._elementId + 'list'}}"
              ng-model="item.displayControl.answerLayout.type" value="list" name="{{item._elementId}} +'option'">
-      <label class="lf-answer-label" for="{{item._elementId + 'list'}}">List</label>
+      <label class="lf-answer-label" for="{{item._elementId + 'list'}}">{{item._multipleAnswers ? "Checkboxes" : "Radio buttons"}}</label>
     </div>
     <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='list'">
       <label for="{{item._elementId + 'columns'}}"> Display format:</label>
       <select name="{{item._elementId + 'columns'}}" id="{{item._elementId + 'columns'}}" ng-model="item.displayControl.answerLayout.columns">
         <option value="">---Please select---</option> <!-- not selected / blank option -->
-        <option value="0">Flexible</option>
+        <option value="0">Compact</option>
         <option value="1">In 1 column</option>
         <option value="2">In 2 columns</option>
         <option value="3">In 3 columns</option>

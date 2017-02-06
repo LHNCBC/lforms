@@ -4,7 +4,7 @@ angular.module('lformsWidget')
         function ($window,$scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = true;
+        $scope.debug = false;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
@@ -61,10 +61,6 @@ angular.module('lformsWidget')
         // initial values
         $scope.checkScreenSize();
 
-        $scope.isSmallWindow = function() {
-          return $scope._screenType === "xs"
-        };
-
         /**
          * Set the active row in table
          * @param index index of an item in the lforms form items array
@@ -74,7 +70,11 @@ angular.module('lformsWidget')
         };
 
 
-        $scope.getScreenWidth = function() {
+        /**
+         * Get the inline width for the input and unit part of an form item
+         * @returns {*}
+         */
+        $scope.getFieldWidth = function() {
           return $scope._screenType === 'lg' ? {'width': $window.innerWidth / 2} : '';
         };
 
@@ -266,7 +266,7 @@ angular.module('lformsWidget')
                     allowed = false;
                     break;
                   }
-                  else if (firstItemDataType !== item.items[i].dataType ||
+                  else if (i>0 && firstItemDataType !== item.items[i].dataType ||
                       !angular.equals(firstItemAnswerCardinality, subItem.answerCardinality) ||
                       !angular.equals(firstItemAnswers, subItem.answers)) {
                     allowed = false;
@@ -466,7 +466,7 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the sibling status, the first and/or last siblings
+         * Get CSS classes for the sibling status (whether it is the first or the last sibling)
          * @param item a form item
          * @returns {string}
          */
@@ -873,14 +873,14 @@ angular.module('lformsWidget')
             if (angular.isArray(item.value)) {
               for(var i=0, iLen=item.value.length; i<iLen; i++) {
                 var selectedAnswer = item.value[i];
-                if (selectedAnswer.code === answer.code && selectedAnswer.text === answer.text) {
+                if (selectedAnswer.code === answer.code) {
                   checked = true;
                   break;
                 }
               }
             }
             else {
-              if (item.value.code === answer.code && item.value.text === answer.text) {
+              if (item.value.code === answer.code) {
                 checked = true;
               }
             }

@@ -1,9 +1,9 @@
 var tp = require('./lforms_testpage.po.js');
 
-describe('List Layout', function() {
+describe('display controls', function() {
 
   it('displays 4 different types of answer layouts', function () {
-    tp.openListLayout();
+    tp.openDisplayControlsDemo();
 
     var item1answer1 = element(by.id('/q1a/1c1')),
         item1answer3 = element(by.id('/q1a/1c3')),
@@ -23,6 +23,12 @@ describe('List Layout', function() {
 
     expect(item1answer1.isDisplayed()).toBe(true);
     expect(item4answer1.isDisplayed()).toBe(true);
+
+    // check answers in 4 different column settings
+    expect(element.all(by.css("span.lf-answer.lf-2-col")).count()).toBe(9);
+    expect(element.all(by.css("span.lf-answer.lf-3-col")).count()).toBe(10);
+    expect(element.all(by.css("span.lf-answer.lf-1-col")).count()).toBe(9);
+    expect(element.all(by.css("span.lf-answer.lf-0-col")).count()).toBe(10);
 
     // first answer list
     item1answer1.evaluate("item.value").then(function (value) {
@@ -147,7 +153,7 @@ describe('List Layout', function() {
   });
 
   it('repeating items/sections works', function () {
-    tp.openListLayout();
+    tp.openDisplayControlsDemo();
 
     var btnAdd1 = element(by.id('add-/g1/1')),
         btnAdd2 = element(by.id('add-/g1/g1g2/1/1')),
@@ -194,7 +200,7 @@ describe('List Layout', function() {
   });
 
   it('section matrix works', function () {
-    tp.openListLayout();
+    tp.openDisplayControlsDemo();
 
     var item1answer1 = element(by.id('/g4/g1m1/1/1c1')),
         item1answer2 = element(by.id('/g4/g1m1/1/1c2')),

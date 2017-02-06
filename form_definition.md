@@ -79,11 +79,11 @@ about the meaning of each key:
   optional.
 * **codeSystem** - (optional) the code system for the code of the form. The default value
   is "LOINC" when the form's **type** is "LOINC".
-* **name** - (required) The name of the form (to be shown to the user).
-* **type** - the form type, "LOINC" is the only one supported. More will be added.
+* **name** - (required) the name of the form (to be shown to the user).
+* **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form. 
-  Currently only 'table' (default) is supported. More supported templates would be added later.
+  'table' (default) is the only template supported. More supported templates would be added.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * showQuestionCode - a boolean that controls whether to show question codes. 
@@ -114,14 +114,19 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
-    * defaultAnswerLayout - an object that controls the answer layout for each item
+    * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
+      an object that controls the answer layout for each item
       that has a dataType of CWE or CNE and has a answer list but does not specify
       answerLayout on the item itself. It has a single key of "answerLayout", which 
-      has two keys, "type" and "columns". If "type" is set to be "combo", then an
-      auto completer is used for the answer list. If "type" is set to be "list", then
-      all the answers are displayed, where "columns" controls how many columns are used.
-      "columns" value could be "0", meaning flexible, or "1" to "6", meaning the number 
-      of columns being used. "columns" is valid only when "type" is set to be "list".
+      has two keys, "type" and "columns". If "type" is set to be "combo", the 
+      [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
+      will be used to handle the list. If "type" is set to be "list", then
+      all the answers are displayed as either radio buttons or check boxes, 
+      and "columns" controls how many columns are used.
+      If value of "columns" is "0", there is no columns specified. The answers will fill
+      in available space one after another. If the value of "columns is "1" to "6", 
+      the specified number of columns are used to group the answers.
+      "columns" is valid only when "type" is set to be "list".
       Here is an example:
       `{"answerLayout": {"type": "list", "columns": "2"}}`      
     * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
@@ -287,9 +292,8 @@ about the meaning of each key:
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
         * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
-          The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
-          the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
-          will be used to handle the list.
+          The supported values are 'combo' (default), and 'list'. (see
+          [defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a 
           horizontal table. It only works when its parent item/section has a 

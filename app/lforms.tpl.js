@@ -252,18 +252,18 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-item-option\">\n" +
     "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'combo'}}\"\n" +
     "             ng-model=\"item.displayControl.answerLayout.type\" value=\"combo\" name=\"{{item._elementId}} +'option'\">\n" +
-    "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'combo'}}\">Combo</label>\n" +
+    "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'combo'}}\">ComboBox</label>\n" +
     "    </div>\n" +
     "    <div class=\"lf-item-option\">\n" +
     "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'list'}}\"\n" +
     "             ng-model=\"item.displayControl.answerLayout.type\" value=\"list\" name=\"{{item._elementId}} +'option'\">\n" +
-    "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'list'}}\">List</label>\n" +
+    "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'list'}}\">{{item._multipleAnswers ? \"Checkboxes\" : \"Radio buttons\"}}</label>\n" +
     "    </div>\n" +
     "    <div class=\"lf-item-option\" ng-if=\"item.displayControl.answerLayout.type==='list'\">\n" +
     "      <label for=\"{{item._elementId + 'columns'}}\"> Display format:</label>\n" +
     "      <select name=\"{{item._elementId + 'columns'}}\" id=\"{{item._elementId + 'columns'}}\" ng-model=\"item.displayControl.answerLayout.columns\">\n" +
     "        <option value=\"\">---Please select---</option> <!-- not selected / blank option -->\n" +
-    "        <option value=\"0\">Flexible</option>\n" +
+    "        <option value=\"0\">Compact</option>\n" +
     "        <option value=\"1\">In 1 column</option>\n" +
     "        <option value=\"2\">In 2 columns</option>\n" +
     "        <option value=\"3\">In 3 columns</option>\n" +
@@ -325,7 +325,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getScreenWidth()\">\n" +
+    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth()\">\n" +
     "    <!-- input field -->\n" +
     "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" +
     "      <ng-form name=\"innerForm2\">\n" +
@@ -688,7 +688,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div class=\"lf-column-label-button\" id=\"th_Name\">\n" +
     "              {{lfData.templateOptions.columnHeaders[0].name}}\n" +
     "            </div>\n" +
-    "            <div class=\"lf-column-input-unit\" ng-style=\"getScreenWidth()\">\n" +
+    "            <div class=\"lf-column-input-unit\" ng-style=\"getFieldWidth()\">\n" +
     "              <div class=\"lf-column-input\" id=\"th_Value\">\n" +
     "                {{lfData.templateOptions.columnHeaders[1].name}}\n" +
     "              </div>\n" +

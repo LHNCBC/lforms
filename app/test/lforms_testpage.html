@@ -107,7 +107,7 @@
               {text: 'Form With User Data', id: 'form-with-user-data'},
               {text: 'CDE sample form #1', id: 'cde1'},
               {text: 'RxTerms Demo', id: 'X-001'},
-              {text: 'List Layout', id: 'list-layout'},
+              {text: 'displayControls (answerLayout and questionLayout)', id: 'display-controls'},
               {text: 'Matrix Layout, single selection', id: 'matrix-layout2'},
               {text: 'Matrix Layout, multiple selections', id: 'matrix-layout'},
               {text: "Validation Test", id: "validationTest"},
@@ -247,14 +247,14 @@
                   //'RxTerms'
                   lfData2 = new LForms.LFormsData(angular.copy(rxTerms));
                   break;
-                case 'list-layout':
-                  //'List Layout'
+                case 'display-controls':
+                  //'displayControls (answerLayout and questionLayout)'
                   lfOption2 = {
                     showFormOptionPanelButton: true,
                     showItemOptionPanelButton: true,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  lfData2 = new LForms.LFormsData(angular.copy(listLayout));
+                  lfData2 = new LForms.LFormsData(angular.copy(displayControlsDemo));
                   break;
                 case 'matrix-layout':
                   //'matrix layout'

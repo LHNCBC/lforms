@@ -2936,11 +2936,11 @@ var genetic2 ={
 };
 
 
-var listLayout =
+var displayControlsDemo =
 {
   "type": "LOINC",
-  "code": "list-layout",
-  "name": "List Layout",
+  "code": "display-controls",
+  "name": "displayControls (answerLayout and questionLayout)",
   "template": "table",
   "items": [
     {

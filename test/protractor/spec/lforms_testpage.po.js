@@ -314,7 +314,7 @@ var TestPage = function() {
     /**
      *  Opens the List Layout form
      */
-    openListLayout: function () {
+    openDisplayControlsDemo: function () {
       this.openBaseTestPage();
       this.openFormByIndex(10);
     },

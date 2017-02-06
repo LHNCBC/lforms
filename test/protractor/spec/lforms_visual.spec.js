@@ -31,9 +31,9 @@ describe('Hiding and showing Units column ', function() {
 });
 
 
-describe('Change Obr table columns ', function() {
+describe('Change fields in form header ', function() {
 
-  it('should be able to dynamically obr table columns', function () {
+  it('should be able to dynamically change form header fields', function () {
 
     tp.openFullFeaturedForm();
     var comment =element(by.id("comment"));
