@@ -2950,13 +2950,13 @@ var displayControlsDemo =
     },
     {
       "questionCode": "q1a",
-      "question": "Answer list layout --CNE, --2 columns",
+      "question": "Answer listOfRadioButtonsOrCheckBoxes layout --CNE, --2 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {
-        "answerLayout": {"type":"list", "columns": "2"}
+        "answerLayout": {"type":"listOfRadioButtonsOrCheckBoxes", "columns": "2"}
       },
       "answers": [
         {"code": "c1", "text": "Extra long answer text 123456789 Answer X"},
@@ -2972,13 +2972,13 @@ var displayControlsDemo =
     },
     {
       "questionCode": "q1b",
-      "question": "Answer list layout --CWE, --3 columns",
+      "question": "Answer listOfRadioButtonsOrCheckBoxes layout --CWE, --3 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "1"},
       "displayControl": {
-        "answerLayout": {"type":"list", "columns": "3"}
+        "answerLayout": {"type":"listOfRadioButtonsOrCheckBoxes", "columns": "3"}
       },
       "answers": [
         {"code": "c1", "text": "Long answer text 123 Answer X"},
@@ -2995,13 +2995,13 @@ var displayControlsDemo =
     },
     {
       "questionCode": "q1c",
-      "question": "Answer list layout --CNE, Multiple, --1 column",
+      "question": "Answer listOfRadioButtonsOrCheckBoxes layout --CNE, Multiple, --1 column",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": {"type":"list", "columns": "1"}
+        "answerLayout": {"type":"listOfRadioButtonsOrCheckBoxes", "columns": "1"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},
@@ -3017,13 +3017,13 @@ var displayControlsDemo =
     },
     {
       "questionCode": "q1d",
-      "question": "Answer list layout --CWE, Multiple, --flexible",
+      "question": "Answer listOfRadioButtonsOrCheckBoxes layout --CWE, Multiple, --flexible",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": {"type":"list", "columns": "0"}
+        "answerLayout": {"type":"listOfRadioButtonsOrCheckBoxes", "columns": "0"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},

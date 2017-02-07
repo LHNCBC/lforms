@@ -730,14 +730,14 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the display layout for each answer in a list layout of an item's answers
+         * Get the display layout for each answer in a listOfRadioButtonsOrCheckBoxes layout of an item's answers
          * @param item a form item
          * @returns {string}
          */
         $scope.getAnswerLayoutColumnClass = function(item) {
           var ret = "";
           if (item && item.displayControl && item.displayControl.answerLayout &&
-              item.displayControl.answerLayout.type === "list") {
+              item.displayControl.answerLayout.type === "listOfRadioButtonsOrCheckBoxes") {
             var colNum = parseInt(item.displayControl.answerLayout.columns);
             if (isNaN(colNum) || colNum >6 || colNum <0 )
               colNum = 0;
@@ -873,14 +873,14 @@ angular.module('lformsWidget')
             if (angular.isArray(item.value)) {
               for(var i=0, iLen=item.value.length; i<iLen; i++) {
                 var selectedAnswer = item.value[i];
-                if (selectedAnswer.code === answer.code) {
+                if (selectedAnswer.text === answer.text) {
                   checked = true;
                   break;
                 }
               }
             }
             else {
-              if (item.value.code === answer.code) {
+              if (item.value.text === answer.text) {
                 checked = true;
               }
             }

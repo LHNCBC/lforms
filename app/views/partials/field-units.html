@@ -1,6 +1,6 @@
 <div class="lf-field-units" ng-switch on="item.displayControl.unitLayout">
   <!--list style-->
-  <div ng-switch-when="list">
+  <div ng-switch-when="listOfRadioButtonsOrCheckBoxes">
     <span ng-repeat="unit in item.units">
       <label>
         <input type="radio" ng-model="item.unit" ng-value="unit" >{{unit.name}}
@@ -8,7 +8,7 @@
     </span>
   </div>
 
-  <!--combo style (default is 'combo')-->
+  <!--comboBox style (default is 'comboBox')-->
   <div ng-switch-default>
     <input class="units" type="text" ng-readonly="item._readOnly"
            ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"

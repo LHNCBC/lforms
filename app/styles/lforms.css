@@ -647,7 +647,7 @@ Override color of select boxes in calendar widget title bar.
   flex-grow: 1;
 }
 
-/* for answerLayout list/combo */
+/* for answerLayout listOfRadioButtonsOrCheckBoxes/comboBox */
 /*.lf-form .lf-field-answers,*/
 .lf-form .lf-answer-type-list{
   display: flex;

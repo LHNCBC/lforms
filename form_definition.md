@@ -116,19 +116,19 @@ about the meaning of each key:
       `{"questionLayout": "matrix"}` 
     * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
       an object that controls the answer layout for each item
-      that has a dataType of CWE or CNE and has a answer list but does not specify
+      that has a dataType of CWE or CNE and has an answer list but does not specify
       answerLayout on the item itself. It has a single key of "answerLayout", which 
-      has two keys, "type" and "columns". If "type" is set to be "combo", the 
+      has two keys, "type" and "columns". If "type" is set to be "comboBox", the 
       [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
-      will be used to handle the list. If "type" is set to be "list", then
+      will be used to handle the list. If "type" is set to be "listOfRadioButtonsOrCheckBoxes", then
       all the answers are displayed as either radio buttons or check boxes, 
       and "columns" controls how many columns are used.
       If value of "columns" is "0", there is no columns specified. The answers will fill
       in available space one after another. If the value of "columns is "1" to "6", 
       the specified number of columns are used to group the answers.
-      "columns" is valid only when "type" is set to be "list".
+      "columns" is valid only when "type" is set to be "listOfRadioButtonsOrCheckBoxes".
       Here is an example:
-      `{"answerLayout": {"type": "list", "columns": "2"}}`      
+      `{"answerLayout": {"type": "listOfRadioButtonsOrCheckBoxes", "columns": "2"}}`      
     * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      
@@ -292,7 +292,7 @@ about the meaning of each key:
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
         * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
-          The supported values are 'combo' (default), and 'list'. (see
+          The supported values are 'comboBox' (default), and 'listOfRadioButtonsOrCheckBoxes'. (see
           [defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a 
