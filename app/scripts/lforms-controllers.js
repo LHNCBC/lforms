@@ -730,14 +730,14 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the display layout for each answer in a listOfRadioButtonsOrCheckBoxes layout of an item's answers
+         * Get the display layout for each answer in a RADIO_CHECKBOX layout of an item's answers
          * @param item a form item
          * @returns {string}
          */
         $scope.getAnswerLayoutColumnClass = function(item) {
           var ret = "";
           if (item && item.displayControl && item.displayControl.answerLayout &&
-              item.displayControl.answerLayout.type === "listOfRadioButtonsOrCheckBoxes") {
+              item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
             var colNum = parseInt(item.displayControl.answerLayout.columns);
             if (isNaN(colNum) || colNum >6 || colNum <0 )
               colNum = 0;

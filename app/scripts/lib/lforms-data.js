@@ -130,9 +130,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // not changeable on a rendered form.
     defaultAnswerLayout: {
       "answerLayout": {
-        "type": "comboBox", // "comboBox" -- use auto completer
-                            // "listOfRadioButtonsOrCheckBoxes" -- all answers displayed as radio buttons or checkboxes
-        "columns": "0"   // valid only when "type" is "listOfRadioButtonsOrCheckBoxes". Permissible values include:
+        "type": "COMBO_BOX", // "COMBO_BOX" -- use auto completer
+                            // "RADIO_CHECKBOX" -- all answers displayed as radio buttons or checkboxes
+        "columns": "0"   // valid only when "type" is "RADIO_CHECKBOX". Permissible values include:
                          // "0" -- flexible
                          // "1", "2", "3", "4", "5", "6" -- listed in columns
       }

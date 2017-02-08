@@ -4,7 +4,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('field-answers.html',
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"listOfRadioButtonsOrCheckBoxes\" class=\"lf-answer-type-list\">\n" +
+    "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\">\n" +
     "    <span ng-repeat=\"answer in item._autocompOptions.listItems track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
@@ -47,7 +47,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!--comboBox style (default is 'comboBox')-->\n" +
+    "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" +
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
@@ -62,7 +62,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('field-units.html',
     "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"listOfRadioButtonsOrCheckBoxes\">\n" +
+    "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" +
     "    <span ng-repeat=\"unit in item.units\">\n" +
     "      <label>\n" +
     "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit.name}}\n" +
@@ -70,7 +70,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
-    "  <!--comboBox style (default is 'comboBox')-->\n" +
+    "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default>\n" +
     "    <input class=\"units\" type=\"text\" ng-readonly=\"item._readOnly\"\n" +
     "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
@@ -251,15 +251,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div class=\"lf-item-options\" ng-if=\"item.dataType==='CWE' || item.dataType==='CNE'\">\n" +
     "    <div class=\"lf-item-option\">\n" +
     "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'combo'}}\"\n" +
-    "             ng-model=\"item.displayControl.answerLayout.type\" value=\"comboBox\" name=\"{{item._elementId}} +'option'\">\n" +
+    "             ng-model=\"item.displayControl.answerLayout.type\" value=\"COMBO_BOX\" name=\"{{item._elementId}} +'option'\">\n" +
     "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'combo'}}\">Combo box</label>\n" +
     "    </div>\n" +
     "    <div class=\"lf-item-option\">\n" +
     "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'list'}}\"\n" +
-    "             ng-model=\"item.displayControl.answerLayout.type\" value=\"listOfRadioButtonsOrCheckBoxes\" name=\"{{item._elementId}} +'option'\">\n" +
+    "             ng-model=\"item.displayControl.answerLayout.type\" value=\"RADIO_CHECKBOX\" name=\"{{item._elementId}} +'option'\">\n" +
     "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'list'}}\">{{item._multipleAnswers ? \"Checkboxes\" : \"Radio buttons\"}}</label>\n" +
     "    </div>\n" +
-    "    <div class=\"lf-item-option\" ng-if=\"item.displayControl.answerLayout.type==='listOfRadioButtonsOrCheckBoxes'\">\n" +
+    "    <div class=\"lf-item-option\" ng-if=\"item.displayControl.answerLayout.type==='RADIO_CHECKBOX'\">\n" +
     "      <label for=\"{{item._elementId + 'columns'}}\"> Display format:</label>\n" +
     "      <select name=\"{{item._elementId + 'columns'}}\" id=\"{{item._elementId + 'columns'}}\" ng-model=\"item.displayControl.answerLayout.columns\">\n" +
     "        <option value=\"\">---Please select---</option> <!-- not selected / blank option -->\n" +

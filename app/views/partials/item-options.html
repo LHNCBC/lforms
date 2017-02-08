@@ -22,15 +22,15 @@
   <div class="lf-item-options" ng-if="item.dataType==='CWE' || item.dataType==='CNE'">
     <div class="lf-item-option">
       <input class="lf-answer-button" type="radio" id="{{item._elementId + 'combo'}}"
-             ng-model="item.displayControl.answerLayout.type" value="comboBox" name="{{item._elementId}} +'option'">
+             ng-model="item.displayControl.answerLayout.type" value="COMBO_BOX" name="{{item._elementId}} +'option'">
       <label class="lf-answer-label" for="{{item._elementId + 'combo'}}">Combo box</label>
     </div>
     <div class="lf-item-option">
       <input class="lf-answer-button" type="radio" id="{{item._elementId + 'list'}}"
-             ng-model="item.displayControl.answerLayout.type" value="listOfRadioButtonsOrCheckBoxes" name="{{item._elementId}} +'option'">
+             ng-model="item.displayControl.answerLayout.type" value="RADIO_CHECKBOX" name="{{item._elementId}} +'option'">
       <label class="lf-answer-label" for="{{item._elementId + 'list'}}">{{item._multipleAnswers ? "Checkboxes" : "Radio buttons"}}</label>
     </div>
-    <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='listOfRadioButtonsOrCheckBoxes'">
+    <div class="lf-item-option" ng-if="item.displayControl.answerLayout.type==='RADIO_CHECKBOX'">
       <label for="{{item._elementId + 'columns'}}"> Display format:</label>
       <select name="{{item._elementId + 'columns'}}" id="{{item._elementId + 'columns'}}" ng-model="item.displayControl.answerLayout.columns">
         <option value="">---Please select---</option> <!-- not selected / blank option -->
