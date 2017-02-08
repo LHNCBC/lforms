@@ -41,7 +41,7 @@ LForms.FHIR = {
 
 
   /**
-   * Get the additional data in a form's obrItems
+   * Get the additional data in a form's formHeaderItems
    * Note: For DiagnosticReport only the effectiveDateTime is needed
    * @param formData an LFormsData object
    * @returns {{}} the extra data captured in the "OBR" fields of an LForms form
@@ -49,9 +49,9 @@ LForms.FHIR = {
    */
   _getExtensionData : function(formData) {
     var extension = {};
-    if (formData.templateOptions.obrItems.length>0) {
-      for(var i=0, iLen= formData.templateOptions.obrItems.length; i<iLen; i++) {
-        var obrItem = formData.templateOptions.obrItems[i];
+    if (formData.templateOptions.formHeaderItems.length>0) {
+      for(var i=0, iLen= formData.templateOptions.formHeaderItems.length; i<iLen; i++) {
+        var obrItem = formData.templateOptions.formHeaderItems[i];
         if (obrItem.questionCode === 'date_done' && obrItem.value) {
           extension["lforms_dateDone"] = obrItem.value;
         }
@@ -569,7 +569,7 @@ LForms.FHIR = {
     if (diagnosticReport.effectiveDateTime) {
       var whenDone = new Date(diagnosticReport.effectiveDateTime);
       if (whenDone) {
-        formData.templateOptions.obrItems[0].value = whenDone;
+        formData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
     return formData;

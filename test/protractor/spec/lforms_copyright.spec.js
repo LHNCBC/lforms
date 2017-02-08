@@ -39,17 +39,17 @@ describe('Copyright popover message', function() {
 // coding instructions
 describe('coding instructions help message', function() {
 
-  var popover = element(by.css('.name-label .popover-content'));
+  var popover = element(by.css('.lf-de-label .popover-content'));
   var popverHTMLLink1 = element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
   var popverHTMLLink2 = element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
   var popverHTMLLink3 = element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
 
   var codeCheckbox = tp.checkboxesFinder.get(1);
 
-  var inline1 = element.all(by.css('.name-label span[ng-switch-when="inline-escaped"]')).get(1);
-  var inline2 = element.all(by.css('.name-label span[ng-switch-when="inline-escaped"]')).get(2);
-  var inline3a = element.all(by.css('.name-label span[ng-switch-when="inline-html"]')).get(0);
-  var inline3b = element.all(by.css('.name-label span[ng-switch-when="inline-escaped"]')).get(3);
+  var inline1 = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(1);
+  var inline2 = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(2);
+  var inline3a = element.all(by.css('.lf-de-label span[ng-switch-when="inline-html"]')).get(0);
+  var inline3b = element.all(by.css('.lf-de-label span[ng-switch-when="inline-escaped"]')).get(3);
 
   var inlineHTMLLink1 = inline1.element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
   var inlineHTMLLink2 = inline2.element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));

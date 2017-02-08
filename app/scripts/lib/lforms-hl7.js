@@ -217,15 +217,15 @@ LForms.HL7 = {
     formObrArray[1] = "1";
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
-    if (formData.templateOptions.obrItems.length > 0) {
-      for (var i= 0, iLen=formData.templateOptions.obrItems.length; i< iLen; i++) {
-        if (formData.templateOptions.obrItems[i].questionCode === "date_done" &&
-            formData.templateOptions.obrItems[i].value) {
-            formObrArray[7] = formData.templateOptions.obrItems[i].value.toString("yyyyMMddHHmmss");
+    if (formData.templateOptions.formHeaderItems.length > 0) {
+      for (var i= 0, iLen=formData.templateOptions.formHeaderItems.length; i< iLen; i++) {
+        if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done" &&
+            formData.templateOptions.formHeaderItems[i].value) {
+          formObrArray[7] = formData.templateOptions.formHeaderItems[i].value.toString("yyyyMMddHHmmss");
         }
-        else if (formData.templateOptions.obrItems[i].questionCode === "where_done" &&
-            formData.templateOptions.obrItems[i].value) {
-          formObrArray[13] = formData.templateOptions.obrItems[i].value.text;
+        else if (formData.templateOptions.formHeaderItems[i].questionCode === "where_done" &&
+            formData.templateOptions.formHeaderItems[i].value) {
+          formObrArray[13] = formData.templateOptions.formHeaderItems[i].value.text;
         }
       }
     }

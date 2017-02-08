@@ -25,44 +25,35 @@
 .lf-form-title {
   background-color: #458AC5;
   color: #FFF;
-  font-size: 120%;
   overflow: hidden;
-  padding: 7px 0 7px 0px;
-  margin: 0;
-}
-.lf-form-title span {
-  padding-left: 10px;
+  padding: 8px;
+  margin: 4px 0;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .lf-form-title a {
   color: #FFFFFF;
 }
+.lf-form-title .lf-question {
+  font-size: 120%;
+}
+
+/* lf-form-header */
 
 /* table structure in the forms */
 .lf-form table {
-  border-collapse: collapse;
+  /*border-collapse: collapse;*/
   padding: 0;
   width: 100%;
   table-layout: fixed;
 }
+
 .lf-form-table {
-  border: 1px solid #73A0C8;
-  color: #333333;
+  /*border: 1px solid #73A0C8;*/
 }
 
-/* column headers in tables */
-.lf-form-table-header {
-  border: 1px solid #ced5d9 ;
-  overflow: hidden;
-  vertical-align: top;
-  line-height: 28px;
-  background: none repeat scroll 0 0 #E8E8E8;
-  padding-left: 5px;
-  text-align: left ;
-  color: #666666;
-  font-weight: 400;
-}
 
-/* input fields in tables */
+/* input fields */
 .lf-form input[type="text"],
 .lf-form input[type="number"] {
   border: 1px solid #ced5d9 ;
@@ -99,35 +90,9 @@
   background-color: #FFF8C6
 }
 
-
-/* rows in tables */
-.lf-form-table .lf-form-table-row {
-  border: 1px solid #ced5d9 ;
-}
-.lf-form-table .lf-form-table-row.section-header {
-  background: #E8E8E8;
-}
-
-/* data cells in tables */
-.lf-form-table th,
-.lf-form-table td {
-  border-color: #CED5D9;
-  border-style: solid;
-  border-width: 1px 0 0 1px;
-  padding: 2px;
-}
-.lf-form-table th:last-of-type,
-.lf-form-table td:last-of-type {
-  border-right-width: 1px;
-}
-.lf-form-body > td {
-  padding: 0;
-}
-
 /* buttons in tables */
-.lf-form-table-header .button-col,
-.lf-form-table .button-col {
-  border-left: none;
+.lf-de-button {
+  width: 22px;
 }
 .lf-form button {
   border: 0 none;
@@ -137,20 +102,21 @@
   position: relative;
   background-color: #458AC5;
 }
-.lf-form .float-button {
-  min-width: 24px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+.lf-form .lf-float-button {
+  min-width: 22px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   font-weight: bold;
   color: white;
-  padding: 2px;
-  margin: 0 2px;
+  padding: 1px;
 }
-.lf-form .help-button{
-  width: 18px;
-  height: 18px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
+.lf-form .lf-help-button,
+.lf-form .lf-control-button,
+.lf-form .lf-copyright-button {
+  width: 16px;
+  height: 16px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
   font-weight: bold;
   color: white;
   padding: 0;
@@ -158,37 +124,32 @@
   margin-left:2px;
   vertical-align: middle;
 }
-.lf-form .copyright-button {
-  color: #458AC5;
-  background-color: transparent;
-}
-.lf-form .copyright-button:hover {
-  color: #015DAD;
+.lf-form .lf-help-button:hover,
+.lf-form .lf-control-button:hover,
+.lf-form .lf-copyright-button:hover {
   font-weight: bold;
+  background-color: #015DAD;
 }
-.lf-form-title .copyright-button {
-  color: white;
-}
-.lf-form-title .copyright-button:hover {
-  color: white;
-  font-weight: bold;
-}
+
 .lf-form-title .popover {
   color: #333333;
 }
 
 /* name field */
-.lf-form .name-label span.prompt {
+.lf-form .lf-de-label span.lf-prompt {
   font-style: italic;
   font-size: 75%;
 }
-.lf-form .name-label span.sn {
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+.lf-form .lf-de-label span.lf-sn{
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   background-color: #458AC5;
   font-weight: bold;
   color: white;
-  padding: 2px 8px;
+  padding: 4px 8px;
+}
+.lf-form .lf-de-label span.lf-question{
+  padding: 0 2px 0 2px;
 }
 
 /* form stop sign */
@@ -257,17 +218,17 @@
   background-color: #AFEEEE;
 }
 
-/* units, overwrite autocomplete default styles */
-.lf-form .units {
-  color: #333333 !important;
-  font-weight: 400 !important;
+/* units */
+.lf-form input.units {
+  color: #333333;
+  font-weight: 400;
 }
 
-/* please specify (extra row) */
-.lf-form-table-row.extra-row .extra-field {
-  padding-left: 20px;
-  border-left: none;
+/* restore autocomplete default styles */
+.lf-form input.ansList {
+  padding-right: 14px;
 }
+
 
 /* borders for invalid fields */
 .lf-form input.ng-invalid.ng-dirty,
@@ -282,9 +243,9 @@
 .lf-form .tooltipContent {
   display: none;
 }
-.lf-form .visited-before .ng-invalid > .tooltipContainer:hover .tooltipContent,
-.lf-form .active-row.visited-before .ng-invalid > .tooltipContainer .tooltipContent,
-.lf-form .show-validation .ng-invalid > .tooltipContainer .tooltipContent {
+.lf-form .lf-visited-before .ng-invalid > .tooltipContainer:hover .tooltipContent,
+.lf-form .active-row.lf-visited-before .ng-invalid > .tooltipContainer .tooltipContent,
+.lf-form .lf-show-validation .ng-invalid > .tooltipContainer .tooltipContent {
   border-radius: 6px;
   bottom: 35px;
   background-color: #fcf8e3;
@@ -299,9 +260,9 @@
   border: 1px solid #eea236;
 
 }
-.lf-form .visited-before .ng-invalid > .tooltipContainer:hover:before,
-.lf-form .active-row.visited-before .ng-invalid > .tooltipContainer:before,
-.lf-form .show-validation .ng-invalid > .tooltipContainer:before {
+.lf-form .lf-visited-before .ng-invalid > .tooltipContainer:hover:before,
+.lf-form .active-row.lf-visited-before .ng-invalid > .tooltipContainer:before,
+.lf-form .lf-show-validation .ng-invalid > .tooltipContainer:before {
   border: solid;
   border-color: #fcf8e3 transparent;
   border-width: 11px 11px 0 11px;
@@ -311,12 +272,12 @@
   position: absolute;
   z-index: 99;
 }
-.lf-form .visited-before .ng-invalid input[type="number"],
-.lf-form .visited-before .ng-invalid input[type="text"],
-.lf-form .visited-before .ng-invalid textarea,
-.lf-form .show-validation .ng-invalid input[type="number"],
-.lf-form .show-validation .ng-invalid input[type="text"],
-.lf-form .show-validation .ng-invalid textarea {
+.lf-form .lf-visited-before .ng-invalid input[type="number"],
+.lf-form .lf-visited-before .ng-invalid input[type="text"],
+.lf-form .lf-visited-before .ng-invalid textarea,
+.lf-form .lf-show-validation .ng-invalid input[type="number"],
+.lf-form .lf-show-validation .ng-invalid input[type="text"],
+.lf-form .lf-show-validation .ng-invalid textarea {
   border-color: red;
 }
 .validation-error:before {
@@ -328,17 +289,38 @@
 /* horizontal table */
 /* title */
 .lf-form-horizontal-table-title {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 0 0 1px;
   text-align: left;
+
+  border-width: 0;
+  padding: 4px 0 4px 0;
 }
-.lf-form-horizontal-table td.button-col {
+/* column headers in tables */
+.lf-form-horizontal-table-header {
+  overflow: hidden;
+  vertical-align: top;
+  background: none repeat scroll 0 0 #E8E8E8;
+  padding: 4px 2px;
+  text-align: left ;
+  color: #666666;
+  font-weight: 400;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.lf-form-horizontal-table td.lf-de-button {
   padding-left: 2px;
   border-right: none;
 }
-.lf-form-table .section-header.horizontal {
-  background-color:white;
-}
 .lf-form-horizontal-table {
   border: none;
+  margin: 2px 4px 0 1px;
 }
 .lf-form-horizontal-table tr {
   border: none;
@@ -347,74 +329,23 @@
   border-right: none;
   border-left: none;
 }
-.lf-form-horizontal-table .button-col {
+.lf-form-horizontal-table .lf-de-button {
   width: 2.5em;
   min-width: 2em;
 }
-
-/* to make the height of the div within td 100% of the td's height.
- * because height: 100% only works when the containing element has a fixed height,
- * using 100% all the way up until an element has a fixed height or to the root
- */
-.lf-form tr.lf-form-table-row,
-.lf-form div.t-treeline-field {
-  height: 100%;
+.lf-layout-horizontal .lf-form-table-row.button-row {
+  margin-right: 0;
+  border: 0;
 }
-.lf-form td.has-treeline.name {
-  height: 1px;
-}
-
-/* tree line style setup */
-.lf-form td.has-treeline {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.lf-form .t-treeline.line3 {
-  background-image: url("../images/dot.png"), url("../images/line-h.png");
-  background-position: 8px 0px, 8px 16px;
-  background-repeat: repeat-y, no-repeat;
-}
-.lf-form .t-treeline.line2 {
-  background-image: url("../images/angle.png");
-  background-position: 8px -56px;
-  background-repeat: no-repeat;
-}
-.lf-form .t-treeline.line1 {
-  background-image: url("../images/dot.png");
-  background-position: 8px 0px;
-  background-repeat: repeat-y;
-}
-.lf-form .t-treeline.no_display {
-  display: none;
-}
-.lf-form .t-treeline-field,
-.lf-form .t-treeline-field tr,
-.lf-form .t-treeline-field td {
-  border: none;
-}
-.lf-form .t-treeline-field {
-  height: 100%;
-}
-.lf-form .t-treeline-field .name-label {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  overflow: hidden;
-  border: none;
-}
-.lf-form .t-treeline {
-  width: 26px;
-  border: none;
-  padding: 0;
-}
-/* end of tree line style setup */
+/* end of horizontal table */
 
 /* ng animate css for adding new repeating items and skip logic items*/
-.lf-form-body .data-row.has-ng-animate.question.ng-enter {
+.lf-form-body .data-row.has-ng-animate.ng-enter {
   -webkit-transition: 4s;
   transition: 4s;
   background-color: #AFEEEE;
 }
-.lf-form-body .data-row.has-ng-animate.question.ng-enter-active {
+.lf-form-body .data-row.has-ng-animate.ng-enter-active {
   background-color: inherit;
 }
 
@@ -423,10 +354,6 @@
   color: #015DAD;
   /* todo */
   /*tooltip: "triggered by other questions."*/
-}
-
-.lf-form .text-info {
-  padding-top: 10px;
 }
 
 /* override some settings from autocomplete-lhc */
@@ -468,13 +395,13 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* popover dialog */
-.lf-form .name-label.has-popover-warning .popover {
+.lf-form .lf-de-label.has-popover-warning .popover {
   border-color: #eea236;
   border-width: 1px;
   padding: 0;
   background-color: #fcf8e3;
 }
-.lf-form .name-label.has-popover-warning .popover .arrow:after {
+.lf-form .lf-de-label.has-popover-warning .popover .arrow:after {
   border-top-color: #fcf8e3;
 }
 .lf-form .popover {
@@ -482,84 +409,592 @@ Override color of select boxes in calendar widget title bar.
   width: auto;
 }
 
-/* title row */
-/*.lf-form .lf-form-table .title-row {*/
-  /*background-color: rgb(67,115,156);*/
-/*}*/
-/*.lf-form .lf-form-table .title-row .name-label {*/
-  /*color: white;*/
-/*}*/
-
-
-/*** template-list.html ***/
-.lf-form.lf-template-list .name-label {
-  background-color: #e8e8e8;
-  padding: 2px;
-  font-weight: 400;
-  line-height: 28px;
-}
-.lf-form.lf-template-list .help-button {
-  line-height: 20px;
-}
-.lf-form.lf-template-list .data-row {
-  border: 2px solid #ced5d9;
-  margin: 10px 5px;
-}
-
-.lf-form.lf-template-list .section {
-  margin: 10px;
-}
-
-.lf-form.lf-template-list .lf-form-title,
-.lf-form.lf-template-list .lf-form-header {
-  margin: 0 5px;
-}
-
-.lf-form.lf-template-list .lf-form-item-data,
-.lf-form.lf-template-list .lf-field-units {
-  padding: 2px;
-}
-
-.lf-form.lf-template-list .lf-field-answers {
-}
-
-.lf-form.lf-template-list .lf-list-answer {
-  padding: 2px 5px;
-}
-.lf-form.lf-template-list .lf-list-answer input[type="radio"],
-.lf-form.lf-template-list .lf-list-answer input[type="checkbox"] {
-  margin-right: 2px;
-}
-
-.lf-form.lf-template-list .lf-layout-horizontal .lf-form--table-title {
-  padding: 5px;
-}
-
-.lf-form.lf-template-list .lf-list-item,
-.lf-form.lf-template-list .lf-layout-horizontal,
-.lf-form.lf-template-list .lf-layout-matrix{
-  /*padding-bottom: 2px;*/
-}
-.lf-form . .lf-form-table-title {
-
-}
-.lf-form.lf-template-list .lf-form-horizontal-table {
-  margin-bottom: 5px;
-}
-.lf-form.lf-template-list .float-button {
-  margin-bottom: 2px;
-}
-/*** end of template-list.html ***/
-
 /*** matrix layout ***/
-.lf-form.lf-template-list .lf-layout-matrix .lf-form--table-title {
-  padding: 5px;
+.lf-layout-matrix.lf-table-item  {
+  padding-bottom: 2px;
 }
-.lf-form.lf-template-list .top-section .lf-layout-matrix{
-  margin: 0 5px;
+.lf-form-matrix-table {
+  border-collapse: separate;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 2px 4px 0 1px;
+  text-align: left;
+  border: 1px solid #ced5d9;
 }
-.lf-form.lf-template-list .lf-form-matrix-answer {
+.lf-form-matrix-table .lf-form-table-header {
+  background: #E8E8E8;
+}
+.lf-form-matrix-table-title {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 0 0 1px;
+  text-align: left;
+
+  border-width: 0;
+  padding: 4px 0 4px 0;
+}
+
+.lf-form .lf-form-matrix-table .lf-question {
+  width: 25%;
+}
+.lf-form .lf-form-matrix-answer {
   padding-left: 5px;
   padding-right: 5px;
 }
+.lf-form .lf-form-matrix-cell,
+.lf-form .lf-form-matrix-cell-other {
+  text-align: center;
+}
+.lf-form .lf-form-matrix-table th {
+  padding: 4px;
+}
+.lf-form .lf-form-matrix-table td {
+  padding: 4px;
+  border-top: 1px solid #ced5d9;
+}
 /*** end of matrix layout ***/
+
+
+/*** button row ***/
+.lf-form .lf-form-table-row.button-row {
+  background: none;
+  padding: 2px 0;
+}
+
+.lf-form.lf-template-table .lf-layout-horizontal,
+.lf-form.lf-template-table .lf-layout-matrix {
+  padding-right: 6px;
+}
+
+/* not to show title when the entire form is in horizontal or matrix layout */
+.lf-top-section .lf-layout-horizontal .lf-form-horizontal-table-title,
+.lf-top-section .lf-layout-matrix .lf-form-matrix-table-title {
+  display: none;
+}
+
+/* tree lines */
+.lf-table-item {
+  padding-left: 24px;
+  position: relative;
+}
+/* the horizontal bar of a tree line */
+.lf-table-item::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+
+  border-top: 2px solid #2f96b4;
+  top: 14px;
+  width: 12px;
+  height: 0;
+}
+/* the vertical bar of a tree line */
+.lf-table-item::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+
+  border-left: 2px solid #2f96b4;
+  height: 100%;
+  width: 0;
+  top: 0;
+}
+/* shorter vertical bar of a tree line for the last item of a level */
+.lf-table-item.lf-last-item::after {
+  height: 14px;
+}
+/*no tree lines for form level horizontal and matrix layouts */
+.lf-top-section .lf-layout-horizontal.lf-table-item,
+.lf-top-section .lf-layout-matrix.lf-table-item {
+  padding: 0 4px 0 3px;
+}
+.lf-top-section .lf-layout-horizontal.lf-table-item::before,
+.lf-top-section .lf-layout-matrix.lf-table-item::before {
+  border: 0;
+}
+.lf-top-section .lf-layout-horizontal.lf-table-item::after,
+.lf-top-section .lf-layout-matrix.lf-table-item::after {
+  border: 0;
+}
+/* end of tree lines */
+/* bar style */
+/* no horizontal bar */
+.lf-indentation-bar .lf-table-item::before {
+  border-top: 0
+}
+/* the vertical bar */
+.lf-indentation-bar .lf-table-item::after {
+  border: 6px solid #c6dde4;;
+  left: 6px;
+}
+/* normal vertical bar of a tree line for the last item of a level */
+.lf-indentation-bar .lf-table-item.lf-last-item::after {
+  height: 100%;
+}
+/* round bar ends for the first and the last item */
+.lf-indentation-bar .lf-table-item.lf-first-item::after {
+  border-top-left-radius: 4px;
+}
+.lf-indentation-bar .lf-table-item.lf-last-item::after {
+  border-bottom-left-radius: 4px;
+}
+/* end of bar style */
+
+
+.lf-form-view {
+  margin: 15px;
+}
+.lf-form-body {
+  border: 1px solid #ced5d9;
+  padding: 4px 0;
+  margin: 0 0 2px 0;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+}
+
+/* column header */
+.lf-column-header {
+  background-color: #E8E8E8;
+  padding: 4px 2px;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 4px 2px 4px;
+
+  border-width: 0;
+}
+.lf-column-label-button,
+.lf-column-input,
+.lf-column-unit {
+  padding: 0 6px 0px 10px;
+}
+
+/* new flex box layout system based on screen size */
+/* padding on flex boxes */
+.lf-de-label-button {
+  padding: 4px 0 0 0;
+}
+.lf-de-input-unit {
+  padding: 0 0 0 0;
+}
+.lf-de-input {
+  padding: 2px 0 2px 2px;
+}
+.lf-de-unit {
+  padding: 2px 0 2px 2px;
+}
+
+/* Large */
+.lf-de,
+.lf-column-header{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.lf-de-label-button,
+.lf-column-label-button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 1;
+  flex-grow: 1;
+}
+.lf-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lf-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-de-input-unit,
+.lf-column-input-unit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-de-input,
+.lf-column-input {
+  order:1;
+  flex-grow: 1;
+}
+.lf-de-unit,
+.lf-column-unit {
+  order:2;
+  flex-grow: 1;
+}
+
+/* for answerLayout RADIO_CHECKBOX/COMBO_BOX */
+/*.lf-form .lf-field-answers,*/
+.lf-form .lf-answer-type-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-grow: 1;
+}
+
+/* within an answer (radio button/checkbox, label, other) */
+.lf-form .lf-answer-type-list .lf-answer > div {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 2px 8px;
+}
+.lf-form .lf-answer-type-list .lf-answer-button {
+  order:1;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 20px;
+}
+.lf-form .lf-answer-type-list .lf-answer-label {
+  padding-left: 4px;
+  order:1;
+  flex-grow: 1;
+}
+.lf-form .lf-answer-type-list .lf-answer-other {
+  order:1;
+  flex-grow: 1;
+}
+/* end of within an answer */
+/* column number control for list of answers*/
+.lf-form .lf-0-col {
+  /* means flexible */
+}
+.lf-form .lf-1-col {
+  width: 100%;
+}
+.lf-form .lf-2-col {
+  width: 50%;
+}
+.lf-form .lf-3-col {
+  width: 33.3%;
+}
+.lf-form .lf-4-col {
+  width: 25%;
+}
+.lf-form .lf-5-col {
+  width: 20%;
+}
+.lf-form .lf-6-col {
+  width: 16.6%;
+}
+/* end of answerLayout */
+
+/* form controls */
+.lf-form-controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lf-form-control {
+  order: 1;
+  flex-grow: 1;
+}
+/* form options, item options */
+.lf-form-options,
+.lf-item-options {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  border: 2px dotted #458AC5;
+  padding: 4px 2px;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+}
+.lf-form-options {
+  margin: 2px;
+}
+.lf-form-option {
+  order: 1;
+  flex-grow: 1;
+  width: 25%;
+}
+.lf-item-options {
+  margin: 2px 0 2px 10px;
+}
+.lf-item-option {
+  order: 1;
+  flex-grow: 1;
+  width: 50%;
+}
+.lf-item-options.lf-section-options .lf-item-option {
+  width: 33.3%;
+}
+/* form header */
+.lf-form-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  border-style: solid;
+  border-color: #ced5d9;
+  border-width: 1px;
+
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  margin: 2px 0 0 0;
+  padding: 2px;
+
+}
+.lf-header-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-grow: 1;
+  width: 100%;
+  padding: 2px;
+
+}
+.lf-header-de-label {
+  order: 1;
+  flex-grow: 1;
+  width: 100%;
+
+  background: #E8E8E8;
+  padding: 4px 2px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border-width: 0;
+  margin: 0 0 2px 0;
+
+}
+.lf-header-de-input {
+  order:2;
+  flex-grow: 1;
+  width: 100%
+}
+
+/* Medium screens */
+@media all and (max-width: 800px) {
+  .lf-de {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .lf-de-label-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-label {
+    order: 1;
+    flex-grow: 1;
+  }
+  .lf-de-button {
+    order: 2;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .lf-de-input-unit {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 2;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-input {
+    order:1;
+    flex-grow: 1;
+  }
+  .lf-de-unit {
+    order:2;
+    flex-grow: 1;
+  }
+
+  .lf-column-header {
+    display: none;
+  }
+
+
+  /* form header */
+  .lf-form-header {
+    flex-direction: column;
+  }
+  .lf-header-de {
+    flex-direction: row;
+  }
+  .lf-header-de-label {
+    margin: 0 2px 0 0;
+  }
+  .lf-header-de-input {
+    margin: 0 0 0 2px;
+  }
+
+  .lf-form-option {
+    width: 33.3%;
+  }
+  .lf-item-option {
+    width: 50%;
+  }
+
+
+
+}
+
+/* Small screens */
+@media all and (max-width: 480px) {
+  .lf-de {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+  .lf-de-label-button {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    order: 1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-label {
+    order: 1;
+    flex-grow: 1;
+  }
+  .lf-de-button {
+    order: 2;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .lf-de-input-unit {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+
+    order: 2;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-input {
+    order:1;
+    flex-grow: 1;
+    width: 100%;
+  }
+  .lf-de-unit {
+    order:2;
+    flex-grow: 1;
+    width: 100%;
+  }
+
+  .lf-column-header {
+    display: none;
+  }
+
+  /* form header */
+  .lf-form-header {
+    flex-direction: column;
+  }
+  .lf-header-de {
+    flex-direction: column;
+  }
+  .lf-header-de-label {
+    margin: 0 2px 0 0;
+  }
+  .lf-header-de-input {
+    margin:  2px 2px 0 0;
+  }
+
+  .lf-form-option {
+    width: 50%;
+  }
+  .lf-item-option {
+    width: 100%;
+  }
+
+
+}
+/* end of flex box layout */
+
+/* boarder, padding and margin */
+/* rows in tables */
+.lf-form-table .lf-form-table-row {
+  border: solid;
+  border-color: #ced5d9;
+  border-width: 1px 0 0 0;
+  margin: 0 4px 0 2px;
+}
+.lf-table-item .lf-form-table-row.lf-first-item {
+  border: 0;
+}
+
+/* section header */
+.lf-form-table .lf-form-table-row.lf-section-header {
+  background: #E8E8E8;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0 4px 0 2px;
+
+  border-width: 0;
+}
+.lf-form-table .lf-form-table-row.lf-section-header .lf-de-label-button  {
+  padding: 4px 0 4px 0;
+}
+/* title row */
+.lf-form-table .lf-form-table-row.lf-section-header.lf-title-row  {
+  background-color: rgb(67,115,156);
+}
+.lf-form-table .lf-form-table-row.lf-section-header.lf-title-row .lf-de-label {
+  color: white;
+}
+
+

@@ -31,34 +31,28 @@ describe('Hiding and showing Units column ', function() {
 });
 
 
-describe('Change Obx table columns ', function() {
+describe('Change fields in form header ', function() {
 
-  it('should be able to dynamically obx table columns names and displayControl', function () {
-
-    var unitsCol = element(by.id("th_Units"));
-    var nameCol = element(by.id("th_Name"));
-    var valueCol = element(by.id("th_Value"));
-    var valuesCol = element(by.id("th_Values"));
-
-    var comment =element(by.id("comment"));
-    var timeDone =element(by.id("time_done"));
+  it('should be able to dynamically change form header fields', function () {
 
     tp.openFullFeaturedForm();
+    var comment =element(by.id("comment"));
+    var timeDone =element(by.id("time_done"));
+    var dateDone =element(by.id("date_done"));
+    var whereDone =element(by.id("where_done"));
 
-    // units column is shown
-    expect(unitsCol.isDisplayed()).toBe(true);
-    expect(nameCol.isDisplayed()).toBe(true);
-    expect(valueCol.isDisplayed()).toBe(true);
-    // change the "value" to "values"
+    expect(comment.isDisplayed()).toBe(true);
+    expect(timeDone.isDisplayed()).toBe(true);
+    expect(dateDone.isDisplayed()).toBe(true);
+    expect(whereDone.isDisplayed()).toBe(true);
+
     element(by.id("change-columns")).click();
-    expect(unitsCol.isDisplayed()).toBe(true);
-    expect(nameCol.isDisplayed()).toBe(true);
-    expect(valuesCol.isDisplayed()).toBe(true);
-    expect(valueCol.isPresent()).toBe(false);
 
     // obr has only two fields
     expect(comment.isPresent()).toBe(false);
     expect(timeDone.isPresent()).toBe(false);
+    expect(dateDone.isDisplayed()).toBe(true);
+    expect(whereDone.isDisplayed()).toBe(true);
   });
 
 });
@@ -74,16 +68,16 @@ describe('Links on question codes', function() {
     var codeCheckbox = tp.checkboxesFinder.get(0);
     codeCheckbox.click();
 
-    var titleCode = element(by.css(".lf-form-title .item-code span"));
-    var titleCodeLink = element(by.css(".lf-form-title .item-code a"));
+    var titleCode = element(by.css(".lf-form-title .lf-item-code span"));
+    var titleCodeLink = element(by.css(".lf-form-title .lf-item-code a"));
     expect(titleCode.getText()).toBe("[all-in-one]");
     // form's code should not have a link
     expect(titleCodeLink.isPresent()).toBe(false);
 
-    var itemCodeLink0 = element.all(by.css(".name-label .item-code a")).get(0);
+    var itemCodeLink0 = element.all(by.css(".lf-de-label .lf-item-code a")).get(0);
     // the first question's code should have a link
     expect(itemCodeLink0.getText()).toBe("[type0]");
-    var itemCode1 = element.all(by.css(".name-label .item-code span")).get(0);
+    var itemCode1 = element.all(by.css(".lf-de-label .lf-item-code span")).get(0);
     // the second question's code should not have a link
     expect(itemCode1.getText()).toBe("[type1]");
   });

@@ -32,8 +32,8 @@ var TestPage = function() {
 
   var heightFieldID= '/54126-8/8302-2/1/1';
   return {
-    checkboxesFinder: element.all(by.css('div.checkbox > label > input[type="checkbox"]')),
-    headerEl: $('div.row[ng-if="!lfData.templateOptions.hideHeader"]'),
+    checkboxesFinder: element.all(by.css('div.lf-form-control > label > input[type="checkbox"]')),
+    headerEl: $('div[ng-if="!lfData.templateOptions.hideFormControls"]'),
     heightFieldID: heightFieldID,
     heightField: element(by.id(heightFieldID)),
     heightLabel: element(by.css('label[for="' + heightFieldID + '"]')),
@@ -62,8 +62,8 @@ var TestPage = function() {
       height1: element(by.id('/54126-8/8302-2/1/1')),
       weight1: element(by.id('/54126-8/29463-7/1/1')),
       bmi1: element(by.id('/54126-8/39156-5/1/1')),
-      heightUnit1: element(by.id('ac1')),
-      weightUnit1: element(by.id('ac2')),
+      heightUnit1: element(by.id('unit_/54126-8/8302-2/1/1')),
+      weightUnit1: element(by.id('unit_/54126-8/29463-7/1/1')),
       height2: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
       weight2: element(by.id('/54114-4/54117-7/29463-7/1/1/1')),
       bmi2: element(by.id('/54114-4/54117-7/39156-5/1/1/1')),
@@ -159,17 +159,17 @@ var TestPage = function() {
       rpq1_add_btn: element(by.id('add-/rp-q1/2')),
       rpq1_add_btn_3: element(by.id('add-/rp-q1/3')),
 
-      rpq2_1: element(by.id('/rp-q2/1')),
-      rpq2_2: element(by.id('/rp-q2/2')),
+      rpq2_1: element(by.css('label[for="/rp-q2/1"]')),
+      rpq2_2: element(by.css('label[for="/rp-q2/2"]')),
 
       rpq3_1: element(by.id('/rp-q2/rp-q3/1/1')),
       rpq3_2: element(by.id('/rp-q2/rp-q3/2/1')),
 
-      rpq4_1: element(by.id('/rp-q2/rp-q4/1/1')),
-      rpq4_2: element(by.id('/rp-q2/rp-q4/1/2')),
-      rpq4_3: element(by.id('/rp-q2/rp-q4/1/3')),
-      rpq4_4: element(by.id('/rp-q2/rp-q4/1/4')),
-      rpq4_5: element(by.id('/rp-q2/rp-q4/2/1')),
+      rpq4_1: element(by.css('label[for="/rp-q2/rp-q4/1/1"]')),
+      rpq4_2: element(by.css('label[for="/rp-q2/rp-q4/1/2"]')),
+      rpq4_3: element(by.css('label[for="/rp-q2/rp-q4/1/3"]')),
+      rpq4_4: element(by.css('label[for="/rp-q2/rp-q4/1/4"]')),
+      rpq4_5: element(by.css('label[for="/rp-q2/rp-q4/2/1"]')),
 
       rpq5_1: element(by.id('/rp-q2/rp-q4/rp-q5/1/1/1')),
       rpq5_2: element(by.id('/rp-q2/rp-q4/rp-q5/1/2/1')),
@@ -312,9 +312,9 @@ var TestPage = function() {
 
 
     /**
-     *  Opens the List Template form
+     *  Opens the List Layout form
      */
-    openListTemplate: function () {
+    openDisplayControlsDemo: function () {
       this.openBaseTestPage();
       this.openFormByIndex(10);
     },

@@ -448,7 +448,10 @@ var horizontalFHTData = {
     {"questionCode": "54114-4", "parentQuestionCode": "", "questionCardinality": {"min": "1", "max": "*"}, "question": "Family member health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"code": "LA33-6"}}],
+            "action": "show"}
+        },
         {"questionCode": "54138-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
         {"questionCode": "54123-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
@@ -491,7 +494,10 @@ var horizontalFHTData = {
             {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         },
-        {"questionCode": "54119-3R", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false}
+        {"questionCode": "54119-3R", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"code": "LA33-6"}}],
+            "action": "show"}
+        }
       ]
     }
   ],
@@ -962,7 +968,7 @@ var allInOne =
           "dataControl": [
             {
               "source": {
-                "sourceType":"INTERNAL",
+                // "sourceType":"INTERNAL",  // sourceType is optional. Data control should work without it.
                 "sourceItemCode":"itemWithExtraData"
               },
               "construction":"SIMPLE",
@@ -1393,16 +1399,14 @@ var rxTerms = {
   name: "RxTerms Demo",
   template: "form-view-b",
   templateOptions: {
-    hideHeader: true,
-    obrHeader: false,
-    obxTableColumns: []
+    hideFormControls: true,
+    showFormHeader: false,
+    showColumnHeaders: false
   },
   items: [
           {
-            "questionCode": "X-002", "question": "Prescription entry", "header":
-true,
-            "layout":"horizontal", "questionCardinality": {"min": "1", "max":
-"*"},
+            "questionCode": "X-002", "question": "Prescription entry", "header":true,
+            "layout":"horizontal", "questionCardinality": {"min": "1", "max": "*"},
             "items": [
               {
                 "questionCode": "nameAndRoute",
@@ -2932,12 +2936,12 @@ var genetic2 ={
 };
 
 
-var listTemplateForm =
+var displayControlsDemo =
 {
   "type": "LOINC",
-  "code": "list-template",
-  "name": "List Template",
-  "template": "list",
+  "code": "display-controls",
+  "name": "displayControls (answerLayout and questionLayout)",
+  "template": "table",
   "items": [
     {
       "questionCode": "q0",
@@ -2946,66 +2950,92 @@ var listTemplateForm =
     },
     {
       "questionCode": "q1a",
-      "question": "Answer list layout --CNE",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
       },
       "answers": [
-        {"code": "c1", "text": "Answer X"},
-        {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c1", "text": "Extra long answer text 123456789 Answer X"},
+        {"code": "c2", "text": "Extra long answer text 123456789 Answer Y"},
+        {"code": "c3", "text": "Extra long answer text 123456789 Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
       ]
     },
     {
       "questionCode": "q1b",
-      "question": "Answer list layout --CWE",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, --3 columns",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "1"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "3"}
       },
       "answers": [
-        {"code": "c1", "text": "Answer X"},
-        {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c1", "text": "Long answer text 123 Answer X"},
+        {"code": "c2", "text": "Long answer text 123456 Answer Y"},
+        {"code": "c3", "text": "Long answer text 123456789 Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
+
       ]
     },
     {
       "questionCode": "q1c",
-      "question": "Answer list layout --CNE, Multiple",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CNE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "1"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},
         {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c3", "text": "Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
       ]
     },
     {
       "questionCode": "q1d",
-      "question": "Answer list layout --CWE, Multiple",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --flexible",
       "copyrightNotice": "a notice",
       "codingInstructions": "coding instructions",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
-        "answerLayout": "list"
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "0"}
       },
       "answers": [
         {"code": "c1", "text": "Answer X"},
         {"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}
+        {"code": "c3", "text": "Answer Z"},
+        {"code": "c4", "text": "Extra long answer text 1234 Answer X1"},
+        {"code": "c5", "text": "Extra long answer text 12345 Answer X2"},
+        {"code": "c6", "text": "Extra long answer text 123456 Answer X3"},
+        {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
+        {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
+        {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
+
       ]
     },
     {
@@ -3370,3 +3400,428 @@ var matrixLayout2 =
         {"code": "c4", "text": "Answer d"}]
     }]
 };
+
+
+var promis = {
+      "type": "LOINC",
+      "code": "76806-9",
+      "name": "PROMIS item bank - social isolation - version 2.0",
+      "template": "list",
+      "templateOptions": {
+        "displayControl": {"questionLayout":"matrix"}
+      },
+      "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+      "items": [{
+        "questionCode": "76883-8",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "People get the wrong idea about my situation",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76757-4",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel isolated even when I am not alone",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76758-2",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that people avoid talking to me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76759-0",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel detached from other people",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76884-6",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that some of my friends avoid me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76885-3",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that some of my family members avoid me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76887-9",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that I am alone in my interests and ideas",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76762-4",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that people barely know me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76760-8",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel like a stranger to those around me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76882-0",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I find that friends or relatives have difficulty talking with me about my health",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76764-0",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that people are around me but not with me",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76763-2",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel isolated from others",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76761-6",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel left out",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 1, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 5, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }, {
+        "questionCode": "76886-1",
+        "localQuestionCode": null,
+        "dataType": "CNE",
+        "header": false,
+        "units": null,
+        "codingInstructions": null,
+        "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+        "question": "I feel that I am no longer close to anyone",
+        "answers": [{"label": null, "code": "LA6270-8", "text": "Never", "score": 5, "other": null}, {
+          "label": null,
+          "code": "LA10066-1",
+          "text": "Rarely",
+          "score": 4,
+          "other": null
+        }, {"label": null, "code": "LA10082-8", "text": "Sometimes", "score": 3, "other": null}, {
+          "label": null,
+          "code": "LA14747-2",
+          "text": "Usually",
+          "score": 2,
+          "other": null
+        }, {"label": null, "code": "LA9933-8", "text": "Always", "score": 1, "other": null}],
+        "skipLogic": null,
+        "restrictions": null,
+        "defaultAnswer": null,
+        "formatting": null,
+        "calculationMethod": null,
+        "items": null
+      }
+      // , {
+      //   "questionCode": "77849-8",
+      //   "localQuestionCode": null,
+      //   "dataType": null,
+      //   "header": false,
+      //   "units": [{"name": "{Tscore}", "default": false, "normalRange": null, "absoluteRange": null}],
+      //   "codingInstructions": null,
+      //   "copyrightNotice": "Copyright © 2010 PROMIS Health Organization or other individuals/entities that have contributed information and materials to Assessment Center, and are being used with the permission of the copyright holders. Use of PROMIS instruments (e.g., item banks, short forms, profile measures) are subject to the PROMIS Terms and Conditions available at: http://www.assessmentcenter.net/TandC.aspx",
+      //   "question": "PROMIS social isolation - version 2.0 T-score",
+      //   "answers": null,
+      //   "skipLogic": null,
+      //   "restrictions": null,
+      //   "defaultAnswer": null,
+      //   "formatting": null,
+      //   "calculationMethod": null,
+      //   "items": null
+      // }
+      ]
+    }
+
+;

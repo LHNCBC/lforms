@@ -42,10 +42,18 @@
         };
       }])
       // each item, use inherited scope
-      .directive('lfListItem', ["RecursionHelper", function (RecursionHelper) {
+      .directive('lfItem', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'item.html'
+        };
+      })
+      // each item in table template, use inherited scope
+      .directive('lfTableItem', ["RecursionHelper", function (RecursionHelper) {
         return {
           restrict: "E",
-          templateUrl: "list-item.html",
+          templateUrl: "table-item.html",
           compile: function (element) {
             // Use the compile function from the RecursionHelper,
             // And return the linking function(s) which it returns
@@ -163,6 +171,48 @@
           restrict: 'E',
           transclude: true,
           templateUrl: 'layout-matrix.html'
+        };
+      })
+      .directive('lfRepeatingButton', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'repeating-button.html'
+        };
+      })
+      .directive('lfFormControls', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-controls.html'
+        };
+      })
+      .directive('lfFormTitle', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-title.html'
+        };
+      })
+      .directive('lfFormOptions', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-options.html'
+        };
+      })
+      .directive('lfItemOptions', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'item-options.html'
+        };
+      })
+      .directive('lfFormHeader', function() {
+        return {
+          restrict: 'E',
+          transclude: true,
+          templateUrl: 'form-header.html'
         };
       })
       .directive('lfValidate', function () {

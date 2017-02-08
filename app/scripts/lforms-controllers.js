@@ -1,7 +1,7 @@
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
-      ['$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
-        function ($scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
+      ['$window','$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+        function ($window,$scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
         $scope.debug = false;
@@ -32,12 +32,50 @@ angular.module('lformsWidget')
           buttonText: ""
         };
 
+
+        /**
+         * Check the current screen size
+         */
+        $scope.checkScreenSize = function() {
+          var width = $window.innerWidth;
+          var type;
+          // small screen
+          if (width <= 480)
+            type = "sm";
+          // medium screen
+          else if (width <= 800)
+            type = "md";
+          // large screen
+          else
+            type = "lg";
+
+          $scope._screenType = type;
+        };
+
+
+        // check the window width when it changes width
+        angular.element($window).bind('resize', function() {
+          $scope.$apply($scope.checkScreenSize());
+        });
+
+        // initial values
+        $scope.checkScreenSize();
+
         /**
          * Set the active row in table
          * @param index index of an item in the lforms form items array
          */
         $scope.setActiveRow = function(item) {
           $scope.lfData.setActiveRow(item);
+        };
+
+
+        /**
+         * Get the inline width for the input and unit part of an form item
+         * @returns {*}
+         */
+        $scope.getFieldWidth = function() {
+          return $scope._screenType === 'lg' ? {'width': $window.innerWidth / 2} : '';
         };
 
 
@@ -101,18 +139,15 @@ angular.module('lformsWidget')
         /**
          * Check if there's a unit list
          * @param item an item in the lforms form items array
-         * @returns {string}
+         * @returns {boolean}
          */
         $scope.checkUnits = function(item) {
-          var ret;
-          if (item.dataType != "CNE" &&
-              item.dataType != "CWE" &&
+          var ret = false;
+          if (item.dataType !== "CNE" &&
+              item.dataType !== "CWE" &&
               item.units &&
               jQuery.isArray(item.units)) {
-            ret = 'list'
-          }
-          else {
-            ret = 'none'
+            ret = true;
           }
           return ret;
         };
@@ -145,35 +180,6 @@ angular.module('lformsWidget')
 
 
         /**
-         * Check if it is a Units column and it should be hidden
-         * @param col index of a table column in the form's data table
-         * @returns {boolean}
-         */
-        $scope.isUnitsColHidden = function(index) {
-          var ret = false;
-          if ($scope.lfData.templateOptions.hideUnits) {
-            if (index === $scope.lfData._unitsColumnIndex) {
-              ret = true;
-            }
-          }
-          return ret;
-        };
-
-
-        /**
-         * Get the number of visible columns of the form's data table
-         * (Units columns could be hidden)
-         * @returns {Number}
-         */
-        $scope.getVisibleObxColNumber = function() {
-          var count = $scope.lfData.templateOptions.obxTableColumns.length;
-          if ($scope.lfData.templateOptions.hideUnits)
-              count--;
-          return count;
-        };
-
-
-        /**
          * Get the CSS styles on an item itself
          * @param item an item in a form
          * @returns {{}} CSS style object
@@ -197,6 +203,84 @@ angular.module('lformsWidget')
          */
         $scope.targetShown = function(item) {
           return $scope.lfData.getSkipLogicClass(item) !== 'target-hide';
+        };
+
+
+        /**
+         *  Hide/show the form option panel
+         */
+        $scope.hideShowFormOptionPanel = function() {
+          $scope.lfData.templateOptions.showFormOptionPanel = !$scope.lfData.templateOptions.showFormOptionPanel;
+        };
+
+
+        /**
+         * Check if the button for item option panel should be shown
+         * @param item a form item
+         */
+        $scope.isItemOptionPanelButtonShown = function(item) {
+          var buttonShown = $scope.lfData.templateOptions.showItemOptionPanelButton &&
+              (item.dataType === "SECTION" || item.dataType === "CWE" || item.dataType === "CNE" )
+          if (!buttonShown)
+            item._showItemOptionPanel = false;
+
+          return buttonShown;
+        };
+
+
+        /**
+         * Hide/show the item's option panel
+         * @param item a form item
+         */
+        $scope.hideShowItemOptionPanel = function(item) {
+          if ($scope.isItemOptionPanelButtonShown(item)) {
+            item._showItemOptionPanel = !item._showItemOptionPanel;
+          }
+        };
+
+        /**
+         * Check if a particular layout is allowed for a section item
+         * @param item a form item
+         * @param layout a type of layout. permissible values are 'horizontal' and 'matrix'
+         */
+        $scope.isQuestionLayoutAllowed = function(item, layout) {
+
+          var allowed = false;
+          if (layout === 'matrix' || layout === 'horizontal') {
+            allowed = true;
+            //for both horizontal and matrix
+            //the item has children but no grand children
+            if (item.dataType === "SECTION" && item.items && item.items.length>0) {
+              var firstItemAnswers = item.items[0].answers;
+              var firstItemDataType = item.items[0].dataType;
+              var firstItemAnswerCardinality = item.items[0].answerCardinality;
+              for (var i = 0, iLen = item.items.length; i<iLen; i++) {
+                var subItem = item.items[i];
+                if (subItem.dataType === "SECTION" || subItem.dataType === "TITLE" || subItem.items && subItem.items.length > 0) {
+                  allowed = false;
+                  break;
+                }
+                // addition requirement for matrix layout: all answers are same
+                if (layout === "matrix") {
+                  if (subItem.dataType !== "CWE" && subItem.dataType !== "CNE") {
+                    allowed = false;
+                    break;
+                  }
+                  else if (i>0 && firstItemDataType !== item.items[i].dataType ||
+                      !angular.equals(firstItemAnswerCardinality, subItem.answerCardinality) ||
+                      !angular.equals(firstItemAnswers, subItem.answers)) {
+                    allowed = false;
+                    break;
+                  }
+                }
+              }
+            }
+            else {
+              allowed = false;
+            }
+          }
+
+          return allowed;
         };
 
 
@@ -353,6 +437,10 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Adjust the height of a textarea
+         * @param e a textarea DOM element or a ID of a textarea element
+         */
         $scope.autoExpand = function(e) {
           var element = typeof e === 'object' ? e.target : document.getElementById(e);
           var scrollHeight = element.scrollHeight +2;
@@ -360,6 +448,10 @@ angular.module('lformsWidget')
         };
 
 
+        /**
+         * Get total number of questions on the form, not including section headers or titles
+         * @returns {number}
+         */
         $scope.getNumberOfQuestions = function() {
           var ret = 0;
           var widgetData = $scope.lfData;
@@ -374,101 +466,59 @@ angular.module('lformsWidget')
 
 
         /**
+         * Get CSS classes for the sibling status (whether it is the first or the last sibling)
+         * @param item a form item
+         * @returns {string}
+         */
+        $scope.getSiblingStatus = function(item) {
+          var status = "";
+          if (item._lastSibling)
+            status += 'lf-last-item';
+          if (item._firstSibling)
+            status += ' lf-first-item'
+          return status;
+        };
+
+
+        /**
+         * Get the indentation style of the form
+         * @returns {string}
+         */
+        $scope.getIndentationStyle = function () {
+          return $scope.lfData.templateOptions.useTreeLineStyle ? "lf-indentation-tree" : "lf-indentation-bar";
+        };
+
+
+        /**
          * Get the CSS class on each item row
          * @param item an item in the lforms form items array
          * @returns {string}
          */
         $scope.getRowClass = function(item) {
-          var eleClass = 'level' + item._displayLevel;
+          var eleClass = '';
           if (item._answerRequired) {
-            eleClass += ' answer-required';
+            eleClass += ' lf-answer-required';
           }
           if (item.header) {
-            eleClass += ' section-header';
+            eleClass += ' lf-section-header';
           }
           else {
-            eleClass += ' question';
-          }
-          if (item.displayControl && item.displayControl.questionLayout === 'horizontal') {
-            eleClass += ' horizontal';
+            eleClass += ' lf-question';
           }
           if (!item.question || item.question.length === 0) {
             eleClass += ' lf-empty-question';
           }
           if (item._visitedBefore) {
-            eleClass += ' visited-before';
+            eleClass += ' lf-visited-before';
           }
           if (item._showValidation) {
-            eleClass += ' show-validation';
+            eleClass += ' lf-show-validation';
+          }
+          if (item.dataType === 'TITLE') {
+            eleClass += ' lf-title-row';
           }
 
           return eleClass;
-        };
-
-
-        /**
-         *  Get the CSS class for tree lines at the current level.
-         *  Unlimited levels are supported, although the screen size limits the number of the levels that can be shown.
-         * @param level the tree level index from left/root to right starting with 0
-         * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
-         * @return {string} 'line1', 'line2', 'line3', or 'no_display'
-         */
-        $scope.getTreeLevelClass = function(level, lastStatusList) {
-          var ret ='';
-          // leaf node
-          if (level === lastStatusList.length-1) {
-            if (lastStatusList[level]) {
-              ret = 'line2'
-            }
-            else {
-              ret = 'line3';
-            }
-          }
-          // non-leaf node
-          else {
-            if (lastStatusList[level] === undefined) {
-              ret = 'no_display';
-            }
-            else if (lastStatusList[level]) {
-              ret = '';
-            }
-            else {
-              ret = 'line1';
-            }
-          }
-          return ret;
-        };
-
-
-        /**
-         *  Get the CSS class for the extra row that holds the field for "Please Specify" value
-         *  The class name depends on the tree level class that this row id depending on.
-         * @param level the tree level index from left/root to right starting with 0
-         * @param lastStatusList the list that contains the last sibling status the item on each level starting from root
-         * @return 'line1', 'line2', 'line3', or 'no_display'
-         */
-        $scope.getExtraRowTreeLevelClass = function(level, lastStatusList) {
-          var ret = '', cssClass = $scope.getTreeLevelClass(level, lastStatusList);
-          switch(cssClass) {
-            case 'line1':
-              ret = 'line1';
-              break;
-            case 'line2':
-              ret = '';
-              break;
-            case 'line3':
-              ret = 'line1';
-              break;
-            case '':
-              ret = ''
-              break;
-            case 'no_display':
-              ret = 'no_display';
-              break;
-            default:
-              ret = '';
-          }
-          return ret;
         };
 
 
@@ -680,6 +730,25 @@ angular.module('lformsWidget')
 
 
         /**
+         * Get the display layout for each answer in a RADIO_CHECKBOX layout of an item's answers
+         * @param item a form item
+         * @returns {string}
+         */
+        $scope.getAnswerLayoutColumnClass = function(item) {
+          var ret = "";
+          if (item && item.displayControl && item.displayControl.answerLayout &&
+              item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+            var colNum = parseInt(item.displayControl.answerLayout.columns);
+            if (isNaN(colNum) || colNum >6 || colNum <0 )
+              colNum = 0;
+            ret = "lf-" + colNum + "-col";
+          }
+
+          return ret;
+        };
+
+
+        /**
          * Updates the value for an item whose answers are displayed as a list of checkboxes,
          * one of which has just been selected or deselected
          * @param item a form item that has an answer list and supports multiple selections
@@ -712,6 +781,7 @@ angular.module('lformsWidget')
             item.value = [answer];
           }
         };
+
 
         /**
          * Updates the value for an item with the user typed data.
@@ -777,8 +847,7 @@ angular.module('lformsWidget')
         };
 
 
-          /**
-         *
+        /**
          * Update the item.value based on selection of extra data input by users
          * @param item a form item that has an answer list and support single selections
          * @param otherValue the value object of the other value radio button
@@ -789,6 +858,34 @@ angular.module('lformsWidget')
           if (item._otherValueChecked) {
             item.value = otherValue;
           }
+        };
+
+
+        /**
+         * Check if a checkbox should be checked based on the value of a form item
+         * @param item a form item
+         * @param answer an answer in the items' answer list
+         * @returns {boolean}
+         */
+        $scope.checkAnswer = function(item,answer) {
+          var checked = false;
+          if (item && item.value) {
+            if (angular.isArray(item.value)) {
+              for(var i=0, iLen=item.value.length; i<iLen; i++) {
+                var selectedAnswer = item.value[i];
+                if (selectedAnswer.text === answer.text) {
+                  checked = true;
+                  break;
+                }
+              }
+            }
+            else {
+              if (item.value.text === answer.text) {
+                checked = true;
+              }
+            }
+          }
+          return checked;
         };
 
 

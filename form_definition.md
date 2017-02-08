@@ -11,8 +11,8 @@ about the meaning of each key:
       "name": string,
       "template": string
       "templateOptions": {
-        "obrHeader": boolean,
-        "obrItems": [{
+        "showFormHeader": boolean,
+        "formHeaderItems": [{
           "question": string,
           "dataType": string,
           "answers": [{
@@ -79,11 +79,11 @@ about the meaning of each key:
   optional.
 * **codeSystem** - (optional) the code system for the code of the form. The default value
   is "LOINC" when the form's **type** is "LOINC".
-* **name** - (required) The name of the form (to be shown to the user).
-* **type** - the form type, "LOINC" is the only one supported. More will be added.
+* **name** - (required) the name of the form (to be shown to the user).
+* **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form. 
-  Currently 'table' (default) and 'list' are supported.
+  'table' (default) is the only template supported. More supported templates would be added.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * showQuestionCode - a boolean that controls whether to show question codes. 
@@ -94,12 +94,14 @@ about the meaning of each key:
     * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
       to stop on the input fields only (neither buttons, nor units fields). 
       The default is false.
-    * hideHeader - a boolean that controls whether to hide the header section 
+    * hideFormControls - a boolean that controls whether to hide the controls section 
       on top of the form. The default is false.
-    * hideCheckBoxes - a boolean that controls whether to hide checkboxes in 
-      the header section on top of the form. The default is false.
     * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
+    * showFormOptionPanel - a boolean that controls whether to show the option panel
+      that displays all the form options.
+    * showFormOptionPanelButton - a boolean that controls whether to show the button
+      next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
     * allowHTMLInInstructions - a boolean that controls whether to allow HTML 
@@ -112,11 +114,26 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
-    * <a name="obrHeader"></a>obrHeader - a boolean that controls whether to
+    * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
+      an object that controls the answer layout for each item
+      that has a dataType of CWE or CNE and has an answer list but does not specify
+      answerLayout on the item itself. It has a single key of "answerLayout", which 
+      has two keys, "type" and "columns". If "type" is set to be "COMBO_BOX", the 
+      [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
+      will be used to handle the list. If "type" is set to be "RADIO_CHECKBOX", then
+      all the answers are displayed as either radio buttons or check boxes, 
+      and "columns" controls how many columns are used.
+      If value of "columns" is "0", there is no columns specified. The answers will fill
+      in available space one after another. If the value of "columns is "1" to "6", 
+      the specified number of columns are used to group the answers.
+      "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
+      Here is an example:
+      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "2"}}`      
+    * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
       The default is true.      
-    * obrItems - an array defining fields above the form (see
-      [obrHeader](#obrHeader)).  If you omit templateOptions, a default will be
+    * formHeaderItems - an array defining fields above the form (see
+      [showFormHeader](#showFormHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where
       Done", and "Comment". If you wish to specify your own definitions, 
       a complete array should be provided where each
@@ -140,19 +157,6 @@ about the meaning of each key:
           user will be required to provide an answer.  If you set "max" to "*",
           the list becomes multi-select.  (Other possibilities are not yet
           supported.)
-    * obxTableColumns - For the "table" template only. An array defining table columns of 
-      the table in the form. If you omit obxTableColumns, a default will be provided with 
-      four columns for: "Name", buttons, "Value" and "Units".  
-      If you wish to specify your own definitions, an array of these exact four columns 
-      should be provided. You cannot add a new column or remove a existing one or change the order. 
-      A null value could be in place where the column does not need a change over the default values.
-      Each element in the array should be a hash with the following keys 
-      (A null value could be in place where the key's value is the default value.):
-        * name - the column header text
-        * displayControl - This controls display styles of the column. It is a hash
-          with the keys of "colCSS" for columns styles. The values are an array of 
-          hashes of valid CSS styles for the "col" DOM element. Here is an example: 
-          `{"colCSS": [{"name":"width","value":"30%"}]}`                  
 * <a name="items"></a><b>items</b> - This is an array of form questions and
   sections.  Questions and sections (containing sub-questions) are mostly
   represented the same in this array, but a section will contain its own
@@ -288,9 +292,8 @@ about the meaning of each key:
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
         * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
-          The supported values are 'combo' (default), and 'list'. When in 'combo' layout, 
-          the [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
-          will be used to handle the list.
+          The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'. (see
+          [defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
         * colCSS - an array of valid CSS settings that could apply to its related column in a 
           horizontal table. It only works when its parent item/section has a 

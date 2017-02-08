@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.0.0]
+### Changed
+- Redesigned the form template to make it responsive
+
 ## [10.0.0]   2016-12-06
 ### Changed
 - Changed OBX4 value calculation method in HL7 messages. 

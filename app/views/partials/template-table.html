@@ -1,255 +1,68 @@
-<form class="lf-form lf-template-table" novalidate autocomplete="false" ng-keydown="handleNavigationKeyEventByTab($event)">
-  <div class="lf-form-view" ng-if="lfData" >
-    <div ng-include="'form-header.html'"></div>
-
-    <h3 class="lf-form-title">
-      <span>{{lfData.name}}</span>
-      <span class="item-code" ng-if="lfData.templateOptions.showQuestionCode">
-        <a ng-if="lfData._linkToDef" href="{{ lfData._linkToDef }}" target="_blank">[{{ lfData.code }}]</a>
-        <span ng-if="!lfData._linkToDef">[{{ lfData.code }}]</span>
-      </span>
-      <button ng-if="lfData.copyrightNotice" id="copyright-{{lfData.code}}" type="button"
-              class="copyright-button" uib-popover="{{lfData.copyrightNotice}}"
-              popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
-    </h3>
+<form ng-if="lfData" class="lf-form lf-template-table {{getIndentationStyle()}}" novalidate autocomplete="false"
+      ng-keydown="handleNavigationKeyEventByTab($event)">
+    <!--form controls-->
+    <lf-form-controls></lf-form-controls>
+    <!--form title-->
+    <lf-form-title></lf-form-title>
+    <!-- form options -->
+    <lf-form-options></lf-form-options>
+    <!--form header-->
+    <lf-form-header></lf-form-header>
+    <!--form body-->
     <div class="lf-form-body">
-      <table cellspacing="0" cellpadding="0" class="lf-form-table">
-        <colgroup ng-if="lfData.templateOptions.obrHeader">
-          <col ng-repeat="item in lfData.templateOptions.obrItems" ng-style="{{getTableColumnStyle(item)}}">
-        </colgroup>
-        <thead ng-if="lfData.templateOptions.obrHeader">
-        <tr>
-          <th class="lf-form-table-header"
-              ng-repeat="item in lfData.templateOptions.obrItems">
-            <label for="{{item.questionCode}}">{{item.question}}</label></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr class="lf-form-table-row" ng-if="lfData.templateOptions.obrHeader" ng-click="setActiveRow(null)">
-          <td class="rowEditText hasTooltip" ng-repeat="item in lfData.templateOptions.obrItems"
-              ng-switch on="item.dataType">
-            <ng-form name="innerForm">
-              <div class="lf-form-item-data tooltipContainer">
-                <div class="tooltipContent" lf-validate="item" ng-model="item.value"></div>
-                <input ng-switch-when="CWE" name="{{item.question}}" type="text"
-                       placeholder="Select or type a value"
-                       ng-model="item.value"
-                       autocomplete-lhc="item._autocompOptions"
-                       id="{{item.questionCode}}"
-                       ng-blur="activeRowOnBlur(item)">
-                <input ng-switch-when="DT" name="{{item.question}}" type="text"
-                       ng-model="item.value" lf-date="dateOptions"
-                       placeholder="MM/DD/YYYY"
-                       id="{{item.questionCode}}"
-                       ng-blur="activeRowOnBlur(item)">
-                <input ng-switch-default name="{{item.question}}" type="text"
-                       ng-model="item.value" placeholder="Type a value"
-                       id="{{item.questionCode}}"
-                       ng-blur="activeRowOnBlur(item)">
-              </div>
-            </ng-form>
-          </td>
-        </tr>
-        <tr class="lf-form-table-row lf-form-body">
-          <td colspan="{{lfData.templateOptions.obrItems.length}}">
-            <div>
-              <table cellspacing="0" cellpadding="0" class="lf-form-table">
-                <colgroup>
-                  <col ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                       ng-style="{{getTableColumnStyle(obxCol)}}"
-                       ng-if="!isUnitsColHidden($index)">
-                </colgroup>
-                <thead>
-                <tr>
-                  <th class="lf-form-table-header"
-                      ng-repeat="obxCol in lfData.templateOptions.obxTableColumns"
-                      ng-if="!isUnitsColHidden($index)"
-                      id="th_{{obxCol.name}}">{{obxCol.name}}</th>
-                </tr>
-                </thead>
-                <tbody class="">
-                <!-- data row -->
-                <tr ng-repeat-start="item in lfData.itemList "
-                    ng-if="!item._inHorizontalTable && item.dataType!=='TITLE' && targetShown(item)"
-                    class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
-                    ng-click="setActiveRow(item)">
-                  <td class="name has-treeline">
-                    <table class="t-treeline-field" >
-                      <tr>
-                        <td class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)" ng-repeat="lastStatus in item._lastSiblingList track by $index"> &nbsp; </td>
-                        <td>
-                          <div class="name-label">
-                            <span ng-show="item._questionRepeatable" class="sn">{{getRepeatingSN(item) }}</span>
-                            <span><label for="{{item._elementId}}">{{item.question}}</label></span>
-                            <span class="item-code" ng-show="lfData.templateOptions.showQuestionCode">
-                              <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
-                              <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
-                            </span>
-                            <span ng-switch on="getCodingInstructionsDisplayType(item)">
-                              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
-                              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
-                              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
-                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      type="button" id="help-{{item._elementId}}">?</button>
-                              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
-                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      type="button" id="help-{{item._elementId}}">?</button>
-                            </span>
-                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-                                    class="copyright-button" uib-popover="{{item.copyrightNotice}}"
-                                    popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td class="button-col">
-                    <button ng-if="!hasOneRepeatingItem(item)" class="float-button" type="button"
-                            ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
-                            title="Remove this '{{ item.question }}'">-</button>
-                  </td>
-                  <td ng-switch on="item.dataType" class="hasTooltip">
-                    <ng-form name="innerForm2">
-                      <div class="lf-form-item-data tooltipContainer">
-                        <div class="tooltipContent" lf-validate="item" ng-model="item.value" ng-if="item._hasValidation"></div>
-                        <span ng-switch-when="SECTION" id="{{item._elementId}}"> </span>
-                        <input ng-switch-when="CNE" name="{{item.question +'_'+ $id}}" type="text"
-                               ng-model="item.value" autocomplete-lhc="item._autocompOptions"
-                               ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                        <input ng-switch-when="CWE" name="{{item.question +'_'+ $id}}" type="text"
-                               ng-model="item.value" autocomplete-lhc="item._autocompOptions"
-                               ng-readonly="item._readOnly" placeholder="{{item._toolTip}}"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                        <input ng-switch-when="REAL" name="{{item.question}}" type="text"
-                               ng-model="item.value" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                        <input ng-switch-when="INT" name="{{item.question}}" type="text"
-                               ng-model="item.value" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                        <input ng-switch-when="DT" name="{{item.question}}" type="text"
-                               ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
-                               ng-readonly="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                        <textarea ng-switch-when="TX" name="{{item.question}}"
-                                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
-                                  id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
-                                  ng-focus="setActiveRow(item)"
-                                  ng-blur="activeRowOnBlur(item)">
-                        </textarea>
-                        <input ng-switch-default name="{{item.question}}" type="text"
-                               ng-model="item.value" placeholder="{{item._toolTip}}" ng-readonly="item._readOnly"
-                               id="{{item._elementId}}" ng-focus="setActiveRow(item)"
-                               ng-blur="activeRowOnBlur(item)">
-                      </div>
-                    </ng-form>
-                  </td>
-                  <!--units-->
-                  <td ng-switch on="checkUnits(item)" ng-if="!lfData.templateOptions.hideUnits">
-                    <input class="units" ng-switch-when="list" type="text"
-                           ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
-                           placeholder="Select one" aria-labelledby="th_Units">
-                    <span ng-switch-when="none" > </span>
-                  </td>
-                  <!--<td>{{item.range}}</td>-->
-                </tr>
-                <!-- horizontal table -->
-                <tr ng-if="item._horizontalTableHeader && item.dataType!=='TITLE' && targetShown(item)"
-                    class="data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-                  <td class="horizontal has-treeline" colspan="{{getVisibleObxColNumber()}}"
-                      ng-include="'horizontal-table.html'"></td>
-                </tr>
-                <!-- title row -->
-                <tr ng-if="!item._inHorizontalTable && item.dataType==='TITLE' && targetShown(item)"
-                    class="title-row data-row has-ng-animate lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
-                  <td class="name has-treeline" colspan="{{getVisibleObxColNumber()}}">
-                    <table class="t-treeline-field" >
-                      <tr>
-                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
-                            class="t-treeline " ng-class="getTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
-                        <td>
-                          <div class="name-label">
-                            <span><label for="{{item._elementId}}">{{item.question}}</label></span>
-                            <span ng-switch on="getCodingInstructionsDisplayType(item)">
-                              <span ng-switch-when="inline-html" class="prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
-                              <span ng-switch-when="inline-escaped" class="prompt" ng-bind="item.codingInstructions"></span>
-                              <button ng-switch-when="popover-html" class="help-button" uib-popover-template="'popover.html'"
-                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      type="button" id="help-{{item._elementId}}">?</button>
-                              <button ng-switch-when="popover-escaped" class="help-button" uib-popover="{{item.codingInstructions}}"
-                                      popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                                      type="button" id="help-{{item._elementId}}">?</button>
-                            </span>
-                            <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
-                                    class="copyright-button" uib-popover="{{item.copyrightNotice}}"
-                                    popover-trigger="focus" popover-placement="right" popover-title="Copyright">&#9400;</button>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <!-- extra question -->
-                <tr ng-if="!item._inHorizontalTable && needExtra(item) && targetShown(item)"
-                    class="extra-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}"
-                    ng-click="setActiveRow(item)">
-                  <td class="name has-treeline">
-                    <table class="t-treeline-field" >
-                      <tr>
-                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
-                            class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
-                        <td>
-                          <div class="name-label">
-                            <span>&nbsp;</span>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td class="button-col"></td>
-                  <td colspan="{{getVisibleObxColNumber()-2}}" class="extra-field">
-                    <input ng-model="item.valueOther" placeholder="Please specify" ng-readonly="item._readOnly" type="text" ng-focus="setActiveRow(item)">
-                  </td>
-                </tr>
-                <!--a button row at the end of each repeating section-->
-                <tr ng-repeat-end ng-if="item._repeatingSectionList && targetShown(item)"
-                    class="button-row lf-form-table-row {{getRowClass(item)}} {{getSkipLogicClass(item)}}">
-                  <td colspan="{{getVisibleObxColNumber()}}" class="name has-treeline" >
-                    <table class="t-treeline-field" >
-                      <tr>
-                        <td ng-repeat="lastStatus in item._lastSiblingList track by $index"
-                            class="t-treeline " ng-class="getExtraRowTreeLevelClass($index, item._lastSiblingList)"> &nbsp; </td>
-                        <td>
-                          <div class="name-label has-popover-warning">
-                            <button ng-repeat="repeatingItem in item._repeatingSectionList" type="button"
-                                    class="float-button" id="add-{{repeatingItem._elementId}}"
-                                    title="Add another '{{ repeatingItem.question }}'"
-                                    ng-click="addOneRepeatingItem(repeatingItem)"
-                                    ng-blur="hideUnusedItemWarning(repeatingItem)"
-                                    uib-popover='Please enter info in the blank "{{ repeatingItem.question }}".'
-                                    popover-placement="top-left"
-                                    popover-trigger="none"
-                                    popover-is-open="repeatingItem._showUnusedItemWarning">
-                              Add another '{{repeatingItem.question}}'
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+      <!--check form level questionLayout for matrix and horizontal layouts-->
+      <div ng-switch on="lfData.templateOptions.displayControl.questionLayout">
+        <!--horizontal-->
+        <div ng-switch-when="horizontal" class="lf-top-section">
+          <lf-section-horizontal></lf-section-horizontal>
+        </div>
+        <!--matrix-->
+        <div ng-switch-when="matrix" class="lf-top-section">
+          <lf-section-matrix></lf-section-matrix>
+        </div>
+        <!--vertical-->
+        <div ng-switch-default>
+          <!-- data row, column header -->
+          <div class="lf-column-header" ng-if="lfData.templateOptions.showColumnHeaders">
+            <div class="lf-column-label-button" id="th_Name">
+              {{lfData.templateOptions.columnHeaders[0].name}}
             </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+            <div class="lf-column-input-unit" ng-style="getFieldWidth()">
+              <div class="lf-column-input" id="th_Value">
+                {{lfData.templateOptions.columnHeaders[1].name}}
+              </div>
+              <div ng-if="!lfData.templateOptions.hideUnits" class="lf-column-unit" id="th_Units">
+                {{lfData.templateOptions.columnHeaders[2].name}}
+              </div>
+            </div>
+          </div>
+          <!-- data row, for each item -->
+          <!-- check each top level item's questionLayout -->
+          <div ng-if="lfData.items" class="lf-form-table">
+            <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
+                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+              <!--header item-->
+              <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
+                <div ng-switch-when="horizontal">
+                  <lf-section-horizontal></lf-section-horizontal>
+                </div>
+                <div ng-switch-when="matrix">
+                  <lf-section-matrix></lf-section-matrix>
+                </div>
+                <div ng-switch-when="vertical">
+                  <lf-table-item></lf-table-item>
+                </div>
+                <div ng-switch-default>
+                  <lf-table-item></lf-table-item>
+                </div>
+              </div>
+              <!--non-header data item-->
+              <div ng-if="!item.header">
+                <lf-table-item></lf-table-item>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 </form>
-<button type="button" ng-if="debug" ng-click="onclick()">Click to debug Panel Controller</button>

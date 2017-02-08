@@ -1,0 +1,30 @@
+<div class="lf-table-item {{getSiblingStatus(item)}}">
+  <!-- question -->
+  <lf-item></lf-item>
+
+  <!--sub sections, check each item's layout -->
+  <div ng-if="item.items" class="section">
+    <div ng-repeat="item in item.items" ng-if="targetShown(item)"
+         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+      <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
+        <div ng-switch-when="horizontal">
+          <lf-section-horizontal></lf-section-horizontal>
+        </div>
+
+        <div ng-switch-when="matrix">
+          <lf-section-matrix></lf-section-matrix>
+        </div>
+        <div ng-switch-when="vertical">
+          <lf-table-item></lf-table-item>
+        </div>
+        <div ng-switch-default>
+          <lf-table-item></lf-table-item>
+        </div>
+      </div>
+      <div ng-if="!item.header">
+        <lf-table-item></lf-table-item>
+      </div>
+    </div>
+  </div>
+  <lf-repeating-button></lf-repeating-button>
+</div>

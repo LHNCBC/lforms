@@ -16,7 +16,7 @@ describe('get form data', function() {
       expect(formData.itemsData.length).toBe(2);
       expect(formData.itemsData[0].items.length).toBe(13);
       expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
-      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
+      expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(9); // name
       // #2 above fields have values, except dob is still empty
       ff.comment.sendKeys("Some comments");
       ff.name.sendKeys("Not Empty");
@@ -50,7 +50,7 @@ describe('get form data', function() {
         expect(formData.itemsData.length).toBe(2);
         expect(formData.itemsData[0].items.length).toBe(13);
         expect(formData.itemsData[0].items[0].value).toBe("Not Empty"); // name
-        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11); // name
+        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         expect(formData.itemsData[0].items[1].value.text).toBe("Male"); // gender
         expect(formData.itemsData[0].items[2].value).toBe(undefined); // dob
         expect(formData.itemsData[0].items[6].value).toBe(70); // height
@@ -138,7 +138,7 @@ describe('get form data', function() {
       expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
       expect(formData.template).toBe("table");
       expect(formData.type).toBe("LOINC");
-      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showFormHeader).toBe(true);
       expect(formData.templateOptions.showQuestionCode).toBe(false);
       expect(formData.items[0].question).toBe("Your health information");
       expect(formData.items[0].questionCode).toBe("54126-8");
@@ -179,7 +179,7 @@ describe('get form data', function() {
       expect(formData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
       expect(formData.template).toBe("table");
       expect(formData.type).toBe("LOINC");
-      expect(formData.templateOptions.obrHeader).toBe(true);
+      expect(formData.templateOptions.showFormHeader).toBe(true);
       expect(formData.templateOptions.showQuestionCode).toBe(false);
       expect(formData.items[0].question).toBe("Your health information");
       expect(formData.items[0].questionCode).toBe("54126-8");

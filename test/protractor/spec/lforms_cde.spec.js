@@ -6,7 +6,7 @@ describe('CDE form template', function() {
     tp.openBaseTestPage();
     tp.openFormByIndex(8);
 
-    var headerRow = element(by.css(".lf-empty-question.section-header"));
+    var headerRow = element(by.css(".lf-empty-question.lf-section-header"));
     expect(headerRow.isDisplayed()).toBe(true);
 
     var headerLabel = element(by.css("label[for='//1']"));
@@ -19,9 +19,9 @@ describe('CDE form template', function() {
     tp.openBaseTestPage();
     tp.openFormByIndex(8);
 
-    var titleCode = element(by.css(".lf-form-title .item-code span"));
+    var titleCode = element(by.css(".lf-form-title .lf-item-code span"));
     expect(titleCode.getText()).toBe("[5603071e1c7581941db4dd50]");
-    var titleCodeLink = element(by.css(".lf-form-title .item-code a"));
+    var titleCodeLink = element(by.css(".lf-form-title .lf-item-code a"));
     expect(titleCodeLink.isPresent()).toBe(false);
 
   });
