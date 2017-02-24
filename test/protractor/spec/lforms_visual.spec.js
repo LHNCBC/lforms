@@ -83,3 +83,37 @@ describe('Links on question codes', function() {
   });
 
 });
+
+
+describe('Question/section in question', function() {
+
+  it('should all the questions/sections defined in the question-in-question form', function () {
+    tp.openQuestionInQuestionForm();
+    browser.wait(function() {
+      return element(by.id('/q1/1')).isPresent();
+    }, 5000);
+
+    expect(element(by.id('/q1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q1/q11/1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q1/q12/1/1')).isDisplayed()).toBe(true);
+
+    expect(element(by.id('/q2/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q2/q21/1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q2/q22/q221/1/1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q2/q22/q222/1/1/1')).isDisplayed()).toBe(true);
+
+    expect(element(by.id('/q3/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q3/q31/1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q3/q32/q321/1/1/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q3/q32/q322/1/1/1')).isDisplayed()).toBe(true);
+
+    element(by.id('add-/q3/q31/1/1')).click();
+    expect(element(by.id('/q3/q31/1/2')).isDisplayed()).toBe(true);
+
+    element(by.id('add-/q3/q32/1/1')).click();
+    expect(element(by.id('/q3/q32/q321/1/2/1')).isDisplayed()).toBe(true);
+    expect(element(by.id('/q3/q32/q322/1/2/1')).isDisplayed()).toBe(true);
+
+  });
+
+});
