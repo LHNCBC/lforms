@@ -970,9 +970,12 @@ Override color of select boxes in calendar widget title bar.
   border-width: 1px 0 0 0;
   margin: 0 4px 0 2px;
 }
-.lf-table-item .lf-form-table-row.lf-first-item {
-  border: 0;
-}
+/* not to use for now.
+   when questions are contained in a question, the first question's border is needed.
+ */
+/*.lf-table-item .lf-form-table-row.lf-first-item {*/
+  /*border: 0;*/
+/*}*/
 
 /* section header */
 .lf-form-table .lf-form-table-row.lf-section-header {

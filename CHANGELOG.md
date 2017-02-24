@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [11.0.1]
+### Changed
+- Fixed the styles for forms where a question contains questions of sections
+
 ## [11.0.0]
 ### Changed
 - Redesigned the form template to make it responsive

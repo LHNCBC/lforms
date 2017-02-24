@@ -346,13 +346,20 @@ var TestPage = function() {
       this.openFormByIndex(13);
     },
 
+    /**
+     *  Opens the question-in-question form.
+     */
+    openQuestionInQuestionForm: function () {
+      this.openBaseTestPage();
+      this.openFormByIndex(14);
+    },
 
     /**
      *  Opens the HL7 Genetic Test Panel.
      */
     openHL7GeneticPanel: function () {
       this.openBaseTestPage();
-      this.openFormByIndex(14);
+      this.openFormByIndex(15);
     }
   }
 };
