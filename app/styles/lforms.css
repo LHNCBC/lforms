@@ -113,6 +113,7 @@
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,
 .lf-form .lf-copyright-button {
+  font-size: 120%;
   font-weight: bold;
   padding: 0;
   margin-right: 2px;
