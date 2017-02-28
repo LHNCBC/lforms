@@ -3,6 +3,14 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [11.0.2]  2017-02-28
+### Fixed
+- Default values are now handled for questions whose answers are presented as
+  radio buttons.  
+- Also eliminated an unnecessary copy of answer data for the case when there is
+  no label value for the answers.
+- Corrected missing fonts in the pre-compiled version.
+
 ## [11.0.1]
 ### Changed
 - Fixed the styles for forms where a question contains questions of sections

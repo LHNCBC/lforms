@@ -1,6 +1,25 @@
 var tp = require('./lforms_testpage.po.js');
 
-describe('display controls', function() {
+describe('display controls demo', function() {
+
+  it('should show values as selected radio buttons/checkboxes', function() {
+    tp.openDisplayControlsDemo();
+
+    var item1Answer2 = element(by.id('/q1a/1c2'))
+    var item1Answer3 = element(by.id('/q1a/1c3'))
+    browser.wait(function () {
+      return item1Answer2.isDisplayed();
+    }, 5000);
+
+    expect(item1Answer2.isSelected()).not.toBe(true);
+    expect(item1Answer3.isSelected()).toBe(true);
+
+    var item3Answer2 = element(by.id('/q1c/1c2'))
+    var item3Answer3 = element(by.id('/q1c/1c3'))
+    expect(item3Answer2.isSelected()).toBe(true);
+    expect(item3Answer3.isSelected()).toBe(true);
+  });
+
 
   it('displays 4 different types of answer layouts', function () {
     tp.openDisplayControlsDemo();
@@ -32,7 +51,8 @@ describe('display controls', function() {
 
     // first answer list
     item1answer1.evaluate("item.value").then(function (value) {
-      expect(value).toBe(null);
+      expect(value).toEqual({"code": "c3",
+        "text": "Extra long answer text 123456789 Answer Z"}); // default value
     });
 
     item1answer1.click();
@@ -75,22 +95,23 @@ describe('display controls', function() {
 
     // third answer list
     item3answer1.evaluate("item.value").then(function (value) {
-      expect(value).toBe(null);
+      expect(value).toEqual([{"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}]); // default values
     });
 
-    item3answer1.click();
+    item3answer1.click(); // appends first answer
     item3answer1.evaluate("item.value").then(function (value) {
-      expect(value.length).toBe(1);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
+      expect(value.length).toBe(3);
+      expect(value[2].code).toBe('c1');
+      expect(value[2].text).toBe('Answer X');
     });
-    item3answer3.click();
+    item3answer3.click(); // deselects third answer
     item3answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe('c3');
-      expect(value[1].text).toBe('Answer Z');
+      expect(value[0].code).toBe('c2');
+      expect(value[0].text).toBe('Answer Y');
+      expect(value[1].code).toBe('c1');
+      expect(value[1].text).toBe('Answer X');
     });
 
     // fourth answer list
@@ -133,7 +154,7 @@ describe('display controls', function() {
       expect(value[1].text).toBe('other values again');
     });
 
-    // other model values are not changes
+    // other model values are not changed
     item1answer1.evaluate("item.value").then(function (value) {
       expect(value.code).toBe('c3');
       expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
@@ -144,10 +165,10 @@ describe('display controls', function() {
     });
     item3answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
-      expect(value[0].code).toBe('c1');
-      expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe('c3');
-      expect(value[1].text).toBe('Answer Z');
+      expect(value[0].code).toBe('c2');
+      expect(value[0].text).toBe('Answer Y');
+      expect(value[1].code).toBe('c1');
+      expect(value[1].text).toBe('Answer X');
     });
 
   });
