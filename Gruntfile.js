@@ -414,6 +414,13 @@ module.exports = function (grunt) {
           ]
         }, {
           expand: true,
+          dest: '<%= uncompressedDist %>',
+          cwd: 'bower_components/bootstrap/dist',
+          src: [
+            'fonts/*'
+          ]
+        }, {
+          expand: true,
           dest: '<%= uncompressedDist %>/styles',
           cwd: 'bower_components/autocomplete-lhc/source',
           src: [
@@ -491,10 +498,10 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test', [
-    'nsp',
     'karma',
     'build',
-    'test:e2e'
+    'test:e2e',
+    'nsp'
   ]);
 
   grunt.registerTask('readBowerVersion', function () {

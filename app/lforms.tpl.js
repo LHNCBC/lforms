@@ -5,7 +5,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\">\n" +
-    "    <span ng-repeat=\"answer in item._autocompOptions.listItems track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
     "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
