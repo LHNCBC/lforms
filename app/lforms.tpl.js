@@ -89,14 +89,14 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "</div>\n" +
     "<div class=\"lf-form-controls\" ng-if=\"!lfData.templateOptions.hideFormControls\">\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display Question Code</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\"> Display Question Code</label>\n" +
     "  </div>\n" +
     "\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show Help/Description</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\"> Show Help/Description</label>\n" +
     "  </div>\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\"> Keyboard Navigation On Input Fields</label>\n" +
     "  </div>\n" +
     "  <div class=\"lf-form-control\">\n" +
     "    <div class=\"text-info\" >Total # of Questions: {{getNumberOfQuestions()}}</div>\n" +

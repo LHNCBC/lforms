@@ -113,23 +113,32 @@
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,
 .lf-form .lf-copyright-button {
-  width: 16px;
-  height: 16px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
+  font-size: 120%;
   font-weight: bold;
-  color: white;
   padding: 0;
   margin-right: 2px;
   margin-left:2px;
   vertical-align: middle;
+  background-color: inherit;
+  color: #458AC5;
 }
 .lf-form .lf-help-button:hover,
 .lf-form .lf-control-button:hover,
 .lf-form .lf-copyright-button:hover {
-  font-weight: bold;
-  background-color: #015DAD;
+  color: #0087fd;
 }
+.lf-form .lf-form-title .lf-help-button,
+.lf-form .lf-form-title .lf-control-button,
+.lf-form .lf-form-title .lf-copyright-button {
+  background-color: inherit;
+  color: white;
+}
+.lf-form .lf-form-title .lf-help-button:hover,
+.lf-form .lf-form-title .lf-control-button:hover,
+.lf-form .lf-form-title .lf-copyright-button:hover {
+  color: #b4fda7;
+}
+
 
 .lf-form-title .popover {
   color: #333333;
