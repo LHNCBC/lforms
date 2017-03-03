@@ -84,7 +84,7 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the inline width for the input and unit part of an form item
+         * Get the inline width for the input and unit part of a form item
          * @returns {*}
          */
         $scope.getFieldWidth = function() {
