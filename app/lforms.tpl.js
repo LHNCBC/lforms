@@ -210,7 +210,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view.html',
-    "<div class=\"lf-form-view\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
+    "<div class=\"lf-form-view {{getViewWidthClass()}}\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
     "  <div ng-switch-when=\"table\">\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +
