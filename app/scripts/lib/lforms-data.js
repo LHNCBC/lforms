@@ -621,7 +621,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
   setTemplateOptions: function(newOptions, existingOptions) {
     if (newOptions) {
       if (!existingOptions)
-          existingOptions = angular.copy(this.templateOptions);
+        existingOptions = angular.copy(this.templateOptions);
 
       // get the fields that contains array
       var columnHeaders = newOptions.columnHeaders;
