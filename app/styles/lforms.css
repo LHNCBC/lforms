@@ -298,7 +298,7 @@
 /* horizontal table */
 /* title */
 .lf-form-horizontal-table-title {
-  background: #E8E8E8;
+  background: #e6f1ff; #E8E8E8;
   -moz-border-radius: 4px;
   border-radius: 4px;
   -webkit-box-sizing: border-box;
