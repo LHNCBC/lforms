@@ -1,7 +1,7 @@
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
-      ['$window','$scope', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
-        function ($window,$scope, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
+      ['$window','$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
+        function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
         $scope.debug = false;
@@ -34,32 +34,45 @@ angular.module('lformsWidget')
 
 
         /**
-         * Check the current screen size
+         * Check the current view's width
          */
-        $scope.checkScreenSize = function() {
-          var width = $window.innerWidth;
-          var type;
+        $scope.checkViewWidth = function() {
+          // the $element is where the controller is set on
+          var width = $element.width(); //$window.innerWidth;
+          $scope._viewWidth = "";
+          $scope._inputFieldWidth = "";
           // small screen
           if (width <= 480)
-            type = "sm";
+            $scope._viewWidth = "lf-view-sm";
           // medium screen
           else if (width <= 800)
-            type = "md";
+            $scope._viewWidth = "lf-view-md";
           // large screen
-          else
-            type = "lg";
+          else {
+            $scope._viewWidth = "lf-view-lg";
+            $scope._inputFieldWidth = {'width': width / 2};
+          }
 
-          $scope._screenType = type;
         };
 
 
         // check the window width when it changes width
         angular.element($window).bind('resize', function() {
-          $scope.$apply($scope.checkScreenSize());
+          $scope.$apply($scope.checkViewWidth());
         });
 
+
         // initial values
-        $scope.checkScreenSize();
+        $scope.checkViewWidth();
+
+
+        /**
+         * get the CSS class for view size
+         */
+        $scope.getViewWidthClass = function() {
+          return $scope._viewWidth;
+        };
+
 
         /**
          * Set the active row in table
@@ -71,11 +84,11 @@ angular.module('lformsWidget')
 
 
         /**
-         * Get the inline width for the input and unit part of an form item
+         * Get the inline width for the input and unit part of a form item
          * @returns {*}
          */
         $scope.getFieldWidth = function() {
-          return $scope._screenType === 'lg' ? {'width': $window.innerWidth / 2} : '';
+          return $scope._inputFieldWidth;
         };
 
 
@@ -495,7 +508,7 @@ angular.module('lformsWidget')
          * @returns {string}
          */
         $scope.getRowClass = function(item) {
-          var eleClass = '';
+          var eleClass = 'level' + item._displayLevel;
           if (item._answerRequired) {
             eleClass += ' lf-answer-required';
           }
@@ -725,6 +738,7 @@ angular.module('lformsWidget')
           // for debug only. to be removed.
         $scope.onclick = function() {
           debugger
+          var ele = $element;
           var i = 1;
         };
 

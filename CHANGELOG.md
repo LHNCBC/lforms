@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.0.3]  2017-03-03
+### Changed
+- Changed some background color on section headers and buttons
+- Made the form responsive to the container's size, not the screen's size
 
 ## [11.0.2]  2017-03-02
 ### Fixed
@@ -12,11 +16,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Corrected missing fonts in the pre-compiled version.
 - Fixed display issues with the icon buttons.
 
-## [11.0.1]
+## [11.0.1]  2017-02-24
 ### Changed
 - Fixed the styles for forms where a question contains questions of sections
 
-## [11.0.0]
+## [11.0.0]  2017-02-08
 ### Changed
 - Redesigned the form template to make it responsive
 
