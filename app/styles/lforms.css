@@ -999,7 +999,7 @@ Override color of select boxes in calendar widget title bar.
   background-color: #e6f1ff; /*rgb(67,115,156);*/
 }
 .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row .lf-de-label {
-  color: white;
+  /*color: white;*/
 }
 
 
