@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "11.0.3",
+  "version": "11.0.4",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
@@ -8,7 +8,8 @@
     "angular-bootstrap": "^1.1.0",
     "autocomplete-lhc": "^10.1.1",
     "bootstrap": "^3.3.5",
-    "ngSmoothScroll": "^2.0.0"
+    "ngSmoothScroll": "^2.0.0",
+    "resize-sensor": "^0.0.6"
   },
   "overrides": {
     "jquery-ui": {

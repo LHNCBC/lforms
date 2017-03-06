@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.0.4]  2017-03-06
+### Changed
+- Added a resize event listener on the container element to make the form 
+  responsive in cases where container's size changes without a change in
+  window size.
+  
 ## [11.0.3]  2017-03-03
 ### Changed
 - Changed some background color on section headers and buttons
