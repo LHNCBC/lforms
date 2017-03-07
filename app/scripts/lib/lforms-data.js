@@ -49,7 +49,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // DTM:    "DTM",   // not supported yet
       // RTO:    "RTO",   // not supported yet
       // QTY:    "QTY",   // not supported yet
-    }
+    },
+    DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
   },
 
   // form type. for now the only type is "LOINC"
@@ -115,6 +116,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // or "matrix" when all the item are on the same level and all are CWE or CNE types items and all have the same list of answers.
     // not changeable on a rendered form.
     displayControl: {"questionLayout": "vertical"},
+    // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto". default is "auto",
+    // meaning the layout is responsive to the screen/container's size
+    viewMode: "auto",
     // controls if the form's header section needs to be displayed
     showFormHeader: true,
     // items in form header section

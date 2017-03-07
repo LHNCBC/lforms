@@ -39,20 +39,20 @@ angular.module('lformsWidget')
         $scope.checkViewWidth = function() {
           // the $element is where the controller is set on
           var width = $element.width(); //$window.innerWidth;
-          $scope._viewWidth = "";
+          $scope._viewMode = "";
           $scope._inputFieldWidth = "";
+
           // small screen
           if (width <= 480)
-            $scope._viewWidth = "lf-view-sm";
+            $scope._viewMode = "lf-view-sm";
           // medium screen
           else if (width <= 800)
-            $scope._viewWidth = "lf-view-md";
+            $scope._viewMode = "lf-view-md";
           // large screen
           else {
-            $scope._viewWidth = "lf-view-lg";
-            $scope._inputFieldWidth = {'width': width / 2};
+            $scope._viewMode = "lf-view-lg";
           }
-
+          $scope._inputFieldWidth = {'width': width / 2};
         };
 
         // check the width when the containing div changes its size
@@ -67,8 +67,31 @@ angular.module('lformsWidget')
         /**
          * get the CSS class for view size
          */
-        $scope.getViewWidthClass = function() {
-          return $scope._viewWidth;
+        $scope.getViewModeClass = function() {
+          var viewMode = "";
+          if ($scope.lfData) {
+            // in cases when viewMode is changed after a form is rendered
+            switch ($scope.lfData.templateOptions.viewMode) {
+                // fixed to be the large layout
+              case "lg":
+                viewMode = "lf-view-lg";
+                break;
+                // fixed to be the large layout
+              case "md":
+                viewMode = "lf-view-md";
+                break;
+                // fixed to be the large layout
+              case "sm":
+                viewMode = "lf-view-sm";
+                break;
+                // responsive to the screen/container's size
+              case "auto":
+              default:
+                viewMode = $scope._viewMode;
+            }
+          }
+
+          return viewMode;
         };
 
 
@@ -86,7 +109,7 @@ angular.module('lformsWidget')
          * @returns {*}
          */
         $scope.getFieldWidth = function() {
-          return $scope._inputFieldWidth;
+          return $scope.getViewModeClass() === 'lf-view-lg' ? $scope._inputFieldWidth : null;
         };
 
 

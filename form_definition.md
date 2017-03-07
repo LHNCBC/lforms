@@ -114,6 +114,10 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
+    * viewMode - (optional) the layout mode for the form. Permitted values are 'lg', 
+      'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
+       screen/container, medium screen/container, small screen/container and a
+       responsive layout.  
     * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
       an object that controls the answer layout for each item
       that has a dataType of CWE or CNE and has an answer list but does not specify

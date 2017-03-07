@@ -183,6 +183,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div class=\"lf-form-option\">\n" +
     "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.useTreeLineStyle\">Tree line style</label>\n" +
     "  </div>\n" +
+    "  <div class=\"lf-form-option\">\n" +
+    "    <label for=\"viewMode\">Display mode</label>\n" +
+    "    <select name=\"viewMode\" ng-model=\"lfData.templateOptions.viewMode\">\n" +
+    "      <option value=\"auto\">Responsive</option>\n" +
+    "      <option value=\"lg\">For large screen</option>\n" +
+    "      <option value=\"md\">For medium screen</option>\n" +
+    "      <option value=\"sm\">For small screen</option>\n" +
+    "    </select>\n" +
+    "\n" +
+    "  </div>\n" +
     "\n" +
     "</div>\n"
   );
@@ -210,7 +220,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view.html',
-    "<div class=\"lf-form-view {{getViewWidthClass()}}\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
+    "<div class=\"lf-form-view {{getViewModeClass()}}\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
     "  <div ng-switch-when=\"table\">\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +
