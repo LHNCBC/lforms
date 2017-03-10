@@ -48,12 +48,13 @@ LForms.Util = {
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
+   * @param keepIdPath optional, to keep _idPath field on item, the default is false
+   * @param keepCodePath optional, to keep _codePath field on item, the default is false
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) : null;
   },
 
 
@@ -64,12 +65,14 @@ LForms.Util = {
    *        It could either be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
+   * @param keepIdPath optional, to keep _idPath field on item, the default is false
+   * @param keepCodePath optional, to keep _codePath field on item, the default is false
+
    * @returns {{}} Form definition data
    */
-  getFormData: function(element, noEmptyValue, noHiddenItem, keepIdPath) {
+  getFormData: function(element, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem, keepIdPath) : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) : null;
   },
 
 

@@ -57,6 +57,7 @@
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="scripts/lib/polyfill.js"></script>
+    <script src="scripts/lib/lforms-fhir-sdc.js"></script>
     <!-- endbower -->
 
     <!-- lforms directive js files -->
@@ -174,6 +175,22 @@
               if ($scope.lfData2) {
                 var dr = LForms.FHIR.createDiagnosticReport($scope.lfData2);
                 var fhirString = JSON.stringify(dr, null, 4);
+                console.log(fhirString);
+              }
+            };
+
+            $scope.showFHIRSDCQuestionnaire = function () {
+              if ($scope.lfData2) {
+                var sdc = LForms.FHIR_SDC.LFORMS_2_SDC.convert2Questionnaire($scope.lfData2);
+                var fhirString = JSON.stringify(sdc, null, 4);
+                console.log(fhirString);
+              }
+            };
+
+            $scope.showFHIRSDCResponse = function () {
+              if ($scope.lfData2) {
+                var sdc = LForms.FHIR_SDC.LFORMS_2_SDC.convert2QuestionnaireResponse($scope.lfData2);
+                var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
             };
@@ -319,6 +336,8 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
           <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
+          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-fhir" class="btn btn-primary" ng-click="testMergeFHIR2LForms()">Merge FHIR Data to LForms (USSGFH)</button>
 

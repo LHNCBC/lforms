@@ -947,13 +947,14 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * The returned data could be fed into a LForms widget directly to render the form.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
+   * @param keepIdPath optional, to keep _idPath field on item, the default is false
+   * @param keepCodePath optional, to keep _codePath field on item, the default is false
    * @return {{}} form definition JSON object
    */
-  getFormData: function(noEmptyValue, noHiddenItem, keepIdPath) {
+  getFormData: function(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
 
     // get the form data
-    var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath);
+    var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
 
     var defData = {
       PATH_DELIMITER: this.PATH_DELIMITER,
@@ -978,16 +979,19 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
+   * @param keepIdPath optional, to keep _idPath field on item, the default is false
+   * @param keepCodePath optional, to keep _codePath field on item, the default is false
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
+  getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
 
     var ret = {};
-    ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
+    ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem,
+        keepIdPath, keepCodePath);
     // template options could be optional. Include them, only if they are present
     if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
-      ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
+      ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue,
+          noHiddenItem, keepIdPath, keepCodePath);
     }
     // return a deep copy of the data
     return angular.copy(ret);
@@ -1000,11 +1004,12 @@ var LFormsData = LForms.LFormsData = Class.extend({
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
+   * @param keepIdPath optional, to keep _idPath field on item, the default is false
+   * @param keepCodePath optional, to keep _codePath field on item, the default is false
    * @returns {Array} form data on one tree level
    * @private
    */
-  _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
+  _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
     var itemsData = [];
     for (var i=0, iLen=items.length; i<iLen; i++) {
       var item = items[i];
@@ -1044,12 +1049,15 @@ var LFormsData = LForms.LFormsData = Class.extend({
           if (keepIdPath) {
             itemData["_idPath"] = item["_idPath"];
           }
+          if (keepCodePath) {
+            itemData["_codePath"] = item["_codePath"];
+          }
         }
       }
 
       // process the sub items
       if (item.items && item.items.length > 0) {
-        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath);
+        itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
       }
       // not to add the section header if noEmptyValue is set, and
       // all its children has empty value (thus have not been added either) or it has not children, and

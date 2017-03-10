@@ -112,6 +112,7 @@ angular.module('lformsWidget')
           }
         };
 
+
         /**
          * Get the css class for the active row
          * @param item an item
