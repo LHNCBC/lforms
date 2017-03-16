@@ -620,7 +620,7 @@ LForms.FHIR_SDC = {
       // "identifier": [
       this._target.identifier = {
         "system": codeSystem,
-        "code": this._source.code
+        "value": this._source.code
       };
 
       // concept
@@ -953,7 +953,7 @@ LForms.FHIR_SDC = {
       // "identifier": [
       this._target.identifier = {
         "system": codeSystem,
-        "code": this._source.code
+        "value": this._source.code
       };
 
       // status, required
@@ -962,22 +962,29 @@ LForms.FHIR_SDC = {
 
 
       // source
-      this._target.source = "LHC-LForms";
+      this._target.source = {
+        "reference": "LHC-LForms"
+      };
 
       // author
-      this._target.author = "LHC-LForms";
+      this._target.author = {
+        "reference": "LHC-LForms"
+      };
 
       // authored, required
       this._target.authored = LForms.Util.dateToString(new Date());
 
       // questionnaire , required
-      this._target.reference =  "http://hl7.org/fhir/us/sdc/Questionnaire/" + this._source.code;
+      this._target.questionnaire = {
+        "reference": "http://hl7.org/fhir/us/sdc/Questionnaire/" + this._source.code
+      };
 
       // meta
       this._target.meta = {
         "profile": [
           "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
-        ]
+        ],
+        "title": this._source.name
       };
 
       // text,

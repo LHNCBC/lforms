@@ -5852,17 +5852,24 @@ var qr =
       "resourceType": "QuestionnaireResponse",
       "identifier": {
         "system": "http://loinc.org",
-        "code": "54127-6N"
+        "value": "54127-6N"
       },
       "status": "completed",
-      "source": "LHC-LForms",
-      "author": "LHC-LForms",
-      "authored": "2017-03-16T11:17:53-04:00",
-      "reference": "http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N",
+      "source": {
+        "reference": "LHC-LForms"
+      },
+      "author": {
+        "reference": "LHC-LForms"
+      },
+      "authored": "2017-03-16T16:36:17-04:00",
+      "questionnaire": {
+        "reference": "http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N"
+      },
       "meta": {
         "profile": [
           "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
-        ]
+        ],
+        "title": "USSG-FHT, (with mock-up items for skip logic demo)"
       },
       "item": [
         {
