@@ -5,7 +5,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
     "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\">\n" +
-    "    <span ng-repeat=\"answer in item._autocompOptions.listItems track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "    <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
     "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
@@ -89,14 +89,14 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "</div>\n" +
     "<div class=\"lf-form-controls\" ng-if=\"!lfData.templateOptions.hideFormControls\">\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display Question Code</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\"> Display Question Code</label>\n" +
     "  </div>\n" +
     "\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show Help/Description</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\"> Show Help/Description</label>\n" +
     "  </div>\n" +
     "  <div class=\"lf-form-control\">\n" +
-    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\">Keyboard Navigation On Input Fields</label>\n" +
+    "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\"> Keyboard Navigation On Input Fields</label>\n" +
     "  </div>\n" +
     "  <div class=\"lf-form-control\">\n" +
     "    <div class=\"text-info\" >Total # of Questions: {{getNumberOfQuestions()}}</div>\n" +
@@ -210,7 +210,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-view.html',
-    "<div class=\"lf-form-view\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
+    "<div class=\"lf-form-view {{getViewWidthClass()}}\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" +
     "  <div ng-switch-when=\"table\">\n" +
     "    <div ng-include=\"'template-table.html'\"></div>\n" +
     "  </div>\n" +

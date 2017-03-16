@@ -100,7 +100,7 @@
   overflow: visible;
   padding: 0;
   position: relative;
-  background-color: #458AC5;
+  background-color: #066aa0; /*#458AC5;*/
 }
 .lf-form .lf-float-button {
   min-width: 22px;
@@ -113,23 +113,32 @@
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,
 .lf-form .lf-copyright-button {
-  width: 16px;
-  height: 16px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
+  font-size: 120%;
   font-weight: bold;
-  color: white;
   padding: 0;
   margin-right: 2px;
   margin-left:2px;
   vertical-align: middle;
+  background-color: inherit;
+  color: #066aa0; /*#458AC5;*/
 }
 .lf-form .lf-help-button:hover,
 .lf-form .lf-control-button:hover,
 .lf-form .lf-copyright-button:hover {
-  font-weight: bold;
-  background-color: #015DAD;
+  color: #0087fd;
 }
+.lf-form .lf-form-title .lf-help-button,
+.lf-form .lf-form-title .lf-control-button,
+.lf-form .lf-form-title .lf-copyright-button {
+  background-color: inherit;
+  color: white;
+}
+.lf-form .lf-form-title .lf-help-button:hover,
+.lf-form .lf-form-title .lf-control-button:hover,
+.lf-form .lf-form-title .lf-copyright-button:hover {
+  color: #b4fda7;
+}
+
 
 .lf-form-title .popover {
   color: #333333;
@@ -143,7 +152,7 @@
 .lf-form .lf-de-label span.lf-sn{
   -moz-border-radius: 4px;
   border-radius: 4px;
-  background-color: #458AC5;
+  background-color: #066aa0;
   font-weight: bold;
   color: white;
   padding: 4px 8px;
@@ -289,7 +298,7 @@
 /* horizontal table */
 /* title */
 .lf-form-horizontal-table-title {
-  background: #E8E8E8;
+  background: #e6f1ff; /*#E8E8E8;*/
   -moz-border-radius: 4px;
   border-radius: 4px;
   -webkit-box-sizing: border-box;
@@ -806,160 +815,153 @@ Override color of select boxes in calendar widget title bar.
   width: 100%
 }
 
-/* Medium screens */
-@media all and (max-width: 800px) {
-  .lf-de {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-    align-content: flex-start;
-  }
-  .lf-de-label-button {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: flex-start;
+/* Medium view width */
+.lf-form-view.lf-view-md .lf-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lf-form-view.lf-view-md .lf-de-label-button {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  
+  order: 1;
+  flex-grow: 1;
+  width: 100%;
+}
+.lf-form-view.lf-view-md .lf-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lf-form-view.lf-view-md .lf-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-form-view.lf-view-md .lf-de-input-unit {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
 
-    order: 1;
-    flex-grow: 1;
-    width: 100%;
-  }
-  .lf-de-label {
-    order: 1;
-    flex-grow: 1;
-  }
-  .lf-de-button {
-    order: 2;
-    flex-grow: 0;
-    flex-shrink: 0;
-  }
-  .lf-de-input-unit {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-
-    order: 2;
-    flex-grow: 1;
-    width: 100%;
-  }
-  .lf-de-input {
-    order:1;
-    flex-grow: 1;
-  }
-  .lf-de-unit {
-    order:2;
-    flex-grow: 1;
-  }
-
-  .lf-column-header {
-    display: none;
-  }
-
-
-  /* form header */
-  .lf-form-header {
-    flex-direction: column;
-  }
-  .lf-header-de {
-    flex-direction: row;
-  }
-  .lf-header-de-label {
-    margin: 0 2px 0 0;
-  }
-  .lf-header-de-input {
-    margin: 0 0 0 2px;
-  }
-
-  .lf-form-option {
-    width: 33.3%;
-  }
-  .lf-item-option {
-    width: 50%;
-  }
-
-
-
+  order: 2;
+  flex-grow: 1;
+  width: 100%;
+}
+.lf-form-view.lf-view-md .lf-de-input {
+  order:1;
+  flex-grow: 1;
+}
+.lf-form-view.lf-view-md .lf-de-unit {
+  order:2;
+  flex-grow: 1;
 }
 
-/* Small screens */
-@media all and (max-width: 480px) {
-  .lf-de {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-    align-content: flex-start;
-  }
-  .lf-de-label-button {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: flex-start;
+.lf-form-view.lf-view-md .lf-column-header {
+  display: none;
+}
 
-    order: 1;
-    flex-grow: 1;
-    width: 100%;
-  }
-  .lf-de-label {
-    order: 1;
-    flex-grow: 1;
-  }
-  .lf-de-button {
-    order: 2;
-    flex-grow: 0;
-    flex-shrink: 0;
-  }
-  .lf-de-input-unit {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-    align-content: flex-start;
+/* form header */
+.lf-form-view.lf-view-md .lf-form-header {
+  flex-direction: column;
+}
+.lf-form-view.lf-view-md .lf-header-de {
+  flex-direction: row;
+}
+.lf-form-view.lf-view-md .lf-header-de-label {
+  margin: 0 2px 0 0;
+}
+.lf-form-view.lf-view-md .lf-header-de-input {
+  margin: 0 0 0 2px;
+}
 
-    order: 2;
-    flex-grow: 1;
-    width: 100%;
-  }
-  .lf-de-input {
-    order:1;
-    flex-grow: 1;
-    width: 100%;
-  }
-  .lf-de-unit {
-    order:2;
-    flex-grow: 1;
-    width: 100%;
-  }
+.lf-form-view.lf-view-md .lf-form-option {
+  width: 33.3%;
+}
+.lf-form-view.lf-view-md .lf-item-option {
+  width: 50%;
+}
+/* end of medium view width */
 
-  .lf-column-header {
-    display: none;
-  }
+/* Small view width */
+.lf-form-view.lf-view-sm .lf-de {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+.lf-form-view.lf-view-sm .lf-de-label-button {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: nowrap;
+   align-items: flex-start;
 
-  /* form header */
-  .lf-form-header {
+   order: 1;
+   flex-grow: 1;
+   width: 100%;
+}
+.lf-form-view.lf-view-sm .lf-de-label {
+  order: 1;
+  flex-grow: 1;
+}
+.lf-form-view.lf-view-sm .lf-de-button {
+  order: 2;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.lf-form-view.lf-view-sm .lf-de-input-unit {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  
+  order: 2;
+  flex-grow: 1;
+  width: 100%;
+}
+.lf-form-view.lf-view-sm .lf-de-input {
+  order:1;
+  flex-grow: 1;
+  width: 100%;
+}
+.lf-form-view.lf-view-sm .lf-de-unit {
+  order:2;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.lf-form-view.lf-view-sm .lf-column-header {
+  display: none;
+}
+/* end of small view width */
+
+/* form header */
+.lf-form-view.lf-view-sm .lf-form-header {
     flex-direction: column;
-  }
-  .lf-header-de {
+}
+.lf-form-view.lf-view-sm .lf-header-de {
     flex-direction: column;
-  }
-  .lf-header-de-label {
+}
+.lf-form-view.lf-view-sm .lf-header-de-label {
     margin: 0 2px 0 0;
-  }
-  .lf-header-de-input {
+}
+.lf-form-view.lf-view-sm .lf-header-de-input {
     margin:  2px 2px 0 0;
-  }
-
-  .lf-form-option {
-    width: 50%;
-  }
-  .lf-item-option {
-    width: 100%;
-  }
-
-
 }
+
+.lf-form-view.lf-view-sm .lf-form-option {
+    width: 50%;
+}
+.lf-form-view.lf-view-sm .lf-item-option {
+    width: 100%;
+}
+
 /* end of flex box layout */
 
 /* boarder, padding and margin */
@@ -979,7 +981,7 @@ Override color of select boxes in calendar widget title bar.
 
 /* section header */
 .lf-form-table .lf-form-table-row.lf-section-header {
-  background: #E8E8E8;
+  background: #e6f1ff; /*#E8E8E8;*/
   -moz-border-radius: 4px;
   border-radius: 4px;
   -webkit-box-sizing: border-box;
@@ -994,10 +996,10 @@ Override color of select boxes in calendar widget title bar.
 }
 /* title row */
 .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row  {
-  background-color: rgb(67,115,156);
+  background-color: #e6f1ff; /*rgb(67,115,156);*/
 }
 .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row .lf-de-label {
-  color: white;
+  /*color: white;*/
 }
 
 

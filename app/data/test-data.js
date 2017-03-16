@@ -2968,7 +2968,9 @@ var displayControlsDemo =
         {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
         {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
         {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
-      ]
+      ],
+      value:
+        {"code": "c3", "text": "Extra long answer text 123456789 Answer Z"}
     },
     {
       "questionCode": "q1b",
@@ -3013,6 +3015,10 @@ var displayControlsDemo =
         {"code": "c7", "text": "Extra long answer text 1234567 Answer X4"},
         {"code": "c8", "text": "Extra long answer text 12345678 Answer X5"},
         {"code": "c9", "text": "Extra long answer text 123456789 Answer X6"}
+      ],
+      value: [
+        {"code": "c2", "text": "Answer Y"},
+        {"code": "c3", "text": "Answer Z"}
       ]
     },
     {

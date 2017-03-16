@@ -2,12 +2,35 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.1.0]  2017-03-16]
+### Changed
+- Added support for FHIR SDC Questionnaire and QuenstionnaireResponse
 
-## [11.0.1]
+## [11.0.4]  2017-03-06
+### Changed
+- Added a resize event listener on the container element to make the form 
+  responsive in cases where container's size changes without a change in
+  window size.
+  
+## [11.0.3]  2017-03-03
+### Changed
+- Changed some background color on section headers and buttons
+- Made the form responsive to the container's size, not the screen's size
+
+## [11.0.2]  2017-03-02
+### Fixed
+- Default values are now handled for questions whose answers are presented as
+  radio buttons.  
+- Also eliminated an unnecessary copy of answer data for the case when there is
+  no label value for the answers.
+- Corrected missing fonts in the pre-compiled version.
+- Fixed display issues with the icon buttons.
+
+## [11.0.1]  2017-02-24
 ### Changed
 - Fixed the styles for forms where a question contains questions of sections
 
-## [11.0.0]
+## [11.0.0]  2017-02-08
 ### Changed
 - Redesigned the form template to make it responsive
 

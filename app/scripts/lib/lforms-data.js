@@ -722,6 +722,29 @@ var LFormsData = LForms.LFormsData = Class.extend({
         item.answers = this.answerLists[item.answers];
       }
 
+      // If there are answers for an answer list and there is a value, replace
+      // the value objects with the corresponding objects from the answer list,
+      // so that when they are displayed as radio buttons, angular will recognize the
+      // one or more answer options as equal to the values.
+      if (item.answers && item.value) {
+        var valueIsArray = angular.isArray(item.value);
+        var vals = valueIsArray ? item.value : [item.value];
+        for (var k=0, kLen=vals.length; k<kLen; ++k) {
+          var val = vals[k];
+          var replaced = false;
+          for (var j=0, jLen=item.answers.length; !replaced && j<jLen; ++j) {
+            var ans = item.answers[j];
+            if (angular.equals(val, ans)) {
+              if (valueIsArray)
+                vals[k] = ans;
+              else
+                item.value = ans;
+              replaced = true;
+            }
+          }
+        }
+      }
+
       // normalize unit value if there is one, needed by calculationMethod
       if (item.unit && !item.unit.text) {
         item.unit.text = item.unit.name;
@@ -2036,11 +2059,17 @@ var LFormsData = LForms.LFormsData = Class.extend({
         // Modify the display label (answer text) for each answer.
         for(var i= 0, iLen = answers.length; i<iLen; i++) {
           // Make a copy of the original answer
-          var answerData = angular.copy(answers[i]);
-          var label = answerData.label ? answerData.label + ". " + answerData.text : answerData.text;
-          answerData.text = label;
-          answerData._orig = angular.copy(answers[i]);
-          listItems.push(answerData);
+          var ans = answers[i];
+          if (ans.label) {
+            var answerData = angular.copy(ans);
+            var label = answerData.label ? answerData.label + ". " + answerData.text :
+              answerData.text;
+            answerData.text = label;
+            answerData._orig = angular.copy(answers[i]);
+            listItems.push(answerData);
+          }
+          else // avoid copying the object, which causes problems for radio buttons
+            listItems.push(ans);
         }
 
         options.listItems = listItems;
