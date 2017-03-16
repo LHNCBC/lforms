@@ -858,6 +858,7 @@ LForms.FHIR_SDC = {
 
       // linkId
       targetItem.linkId = item._id;
+      //targetItem.linkId = item._codePath;
 
       // concept
       targetItem.concept = {
@@ -918,7 +919,7 @@ LForms.FHIR_SDC = {
       if (lfData) {
         this._target = {};
 
-        this._source = lfData.getFormData(false,true,true,true);
+        this._source = lfData.getFormData(true,true,true,true);
 
         this._groupedValues = {};
         this._groupValuesByLinkId(this._source);
@@ -992,13 +993,16 @@ LForms.FHIR_SDC = {
 
       item._id = item._codePath + item._idPath;
 
+      var linkId = item._codePath + item._idPath;
+      //var linkId = item._codePath;
+
       // if the item has not been processed
       // for repeating questions, only the first one will be processed
-      if (this._groupedValues[item._id]) {
+      if (this._groupedValues[linkId]) {
         // if it is a section
         if (item.dataType === "SECTION") {
           // linkId
-          targetItem.linkId = item._id;
+          targetItem.linkId = linkId;
           // text
           targetItem.text = item.question;
 
@@ -1017,7 +1021,7 @@ LForms.FHIR_SDC = {
         else if (item.dataType !== "TITLE")
         {
           // linkId
-          targetItem.linkId = item._id;
+          targetItem.linkId = linkId;
           // text
           targetItem.text = item.question;
 
@@ -1025,7 +1029,7 @@ LForms.FHIR_SDC = {
         }
 
         // remove the processed values
-        delete this._groupedValues[item._id];
+        delete this._groupedValues[linkId];
 
       }
 
@@ -1167,13 +1171,16 @@ LForms.FHIR_SDC = {
 
 
     _groupValuesByLinkId: function(item) {
-      var id = item._codePath + item._idPath;
-      if (!this._groupedValues[id]) {
-        this._groupedValues[id] = [item.value];
+      var linkId = item._codePath + item._idPath;
+      //var linkId = item._codePath;
+
+      if (!this._groupedValues[linkId]) {
+        this._groupedValues[linkId] = [item.value];
       }
       else {
-        this._groupedValues[id].push(item.value);
+        this._groupedValues[linkId].push(item.value);
       }
+
       if (item.items) {
         for (var i=0, iLen=item.items.length; i<iLen; i++) {
           this._groupValuesByLinkId(item.items[i])
@@ -1187,12 +1194,14 @@ LForms.FHIR_SDC = {
       //boolean, decimal, integer, date, dateTime, instant, time, string, uri, Attachment, Coding, Quantity, Reference(Resource)
 
       var answer = [];
+      var linkId = item._id;
+      //var linkId = item._codePath;
       // value not processed by previous repeating items
-      if (this._groupedValues[item._id] && item.dataType !== "SECTION" && item.dataType !=="TITLE") {
+      if (this._groupedValues[linkId] && item.dataType !== "SECTION" && item.dataType !=="TITLE") {
 
         var valueKey = this._getValueKeyByDataType("value", item.dataType);
 
-        var values = this._groupedValues[item._id];
+        var values = this._groupedValues[linkId];
 
         for (var i=0, iLen= values.length; i<iLen; i++) {
 
@@ -1245,8 +1254,19 @@ LForms.FHIR_SDC = {
           //   "system" : "<uri>", // Code System that defines coded unit form
           //   "code" : "<code>" // Coded form of the unit
           // }]
-          else if (item.dataType === 'QTY') {
+          else if (item.dataType === "QTY") {
 
+          }
+          // make a Quantity type if numeric values has a unit value
+          else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL")) {
+            answer.push({
+              "valueQuantity": {
+                "value": values[i],
+                "unit": item.unit.name,
+                "system": "http://unitsofmeasure.org",
+                "code": item.unit.name
+              }
+            });
           }
           // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
           else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
@@ -1467,10 +1487,316 @@ LForms.FHIR_SDC = {
         }
         targetItem.enableWhen = enableWhen;
       }
+    },
+
+
+
+    /**
+     * Merge a QuestionnaireResponse instance into an LFormsData object
+     * @param formData an LFormsData definition data object
+     * @param qr a QuestionnaireResponse instance
+     * @returns {{}} an updated LFormsData object
+     */
+    mergeQuestionnaireResponseToForm : function(formData, qr) {
+
+      var reportStructure = this._getReportStructure(qr);
+
+      this._processObxAndItem(reportStructure, formData);
+
+      return formData;
+    },
+
+
+    /**
+     * Get structure information of a QuestionnaireResponse instance
+     * @param qr a QuestionnaireResponse instance
+     * @returns {{}} a QuestionnaireResponse data structure object
+     * @private
+     */
+    _getReportStructure : function(qr) {
+      var qrStructure = {
+        obxInfoList: []
+      };
+
+      if (qr) {
+        this._checkRepeatingItems(qrStructure, qr);
+      }
+      return qrStructure;
+    },
+
+
+    /**
+     * Get the item's code path from a link id, which is the value of item._id in LForms
+     * @param linkId a link id
+     * @returns {*}
+     * @private
+     */
+    _getCodePathFromLinkId: function(linkId) {
+      var parts = linkId.split("/");
+
+      var level = (parts.length -1)/2;
+      var codePath = parts.slice(0, level +1 ).join("/");
+
+      return codePath;
+    },
+
+
+    /**
+     * Get the item code from a link id, which is the value of item._id in LForms
+     * @param linkId a link id
+     * @returns {*}
+     * @private
+     */
+    _getItemCodeFromLinkId: function(linkId) {
+      var parts = linkId.split("/");
+
+      var level = (parts.length -1)/2;
+
+      var itemCode = parts[level];
+
+      return itemCode;
+    },
+
+
+    /**
+     * Get structural info of a QuestionnaireResponse by going though each level of items
+     * @param parentObxInfo the structural info of a parent item
+     * @param parentItem a parent item
+     * @private
+     */
+    _checkRepeatingItems : function(parentObxInfo, parentItem) {
+
+      var obxInfoList = [];
+      var repeatingItemInfo = {};
+
+      if (parentItem && parentItem.item) {
+        for (var i=0, iLen=parentItem.item.length; i<iLen; i++) {
+          var subItem = parentItem.item[i];
+          var itemCode = this._getItemCodeFromLinkId(subItem.linkId);
+          // first obx that has the same item code, either repeating or non-repeating
+          if (!repeatingItemInfo[itemCode]) {
+            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentItem);
+            repeatingItemInfo[itemCode] = {
+              total: repeatingInfo.total,
+              repeatingItems: repeatingInfo.repeatingItems
+            };
+          }
+
+          // create structure info for the obx
+          var repeatingItems = repeatingItemInfo[itemCode].repeatingItems;
+          for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
+            if (subItem.linkId === repeatingItems[j].linkId) {
+              var obxInfo = {
+                code: itemCode,
+                item: subItem,
+                index: j,
+                total: repeatingItemInfo[itemCode].total
+              };
+              // check observation instances in the sub level
+              this._checkRepeatingItems(obxInfo, subItem);
+              obxInfoList.push(obxInfo);
+            }
+          }
+        }
+
+        parentObxInfo.obxInfoList = obxInfoList;
+
+      }
+    },
+
+
+    /**
+     * Find the number of the repeating items that have the same code
+     * @param code an item code
+     * @param parentItem a parent item
+     * @returns a structural info object for a repeating item
+     * @private
+     */
+    _findTotalRepeatingNum : function(code, parentItem) {
+
+      var total = 0;
+      var repeatingItems = [];
+      for (var i=0, iLen=parentItem.item.length; i<iLen; i++) {
+        var item = parentItem.item[i];
+        var itemCode = this._getItemCodeFromLinkId(item.linkId);
+        if (itemCode === code) {
+          repeatingItems.push(item);
+          total += 1;
+        }
+      }
+
+      return {
+        total: total,
+        repeatingItems: repeatingItems
+      }
+    },
+
+
+    /**
+     * Merge data into items on the same level
+     * @param parentObxInfo structural information of a parent item
+     * @param parentItem a parent item
+     * @private
+     */
+    _processObxAndItem : function(parentObxInfo, parentItem) {
+      for(var i=0, iLen=parentObxInfo.obxInfoList.length; i<iLen; i++) {
+
+        var obxInfo = parentObxInfo.obxInfoList[i];
+        var obx = obxInfo.item;
+        if (obx) {
+          // first repeating obx
+          if (obxInfo.total > 1 && obxInfo.index === 0) {
+            // add repeating items in form data
+            this._addRepeatingItems(parentItem, obxInfo.code, obxInfo.total);
+          }
+
+          var item = this._findTheMatchingItemByCodeAndIndex(parentItem, obxInfo.code, obxInfo.index);
+
+          this._setupItemValueAndUnit(obx, item);
+
+          // process items on sub level
+          if (obxInfo.obxInfoList && obxInfo.obxInfoList.length>0) {
+            this._processObxAndItem(obxInfo, item);
+          }
+        }
+      }
+    },
+
+
+    /**
+     * Add repeating items
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating item
+     * @param total total number of the repeating item with the same code
+     * @private
+     */
+    _addRepeatingItems : function(parentItem, itemCode, total) {
+      // find the first (and the only one) item
+      var item = null;
+      if (parentItem.items) {
+        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            item = parentItem.items[i];
+            break;
+          }
+        }
+        // insert new items
+        if (item) {
+          while(total > 1) {
+            var newItem = angular.copy(item);
+            parentItem.items.splice(i, 0, newItem);
+            total -= 1;
+          }
+        }
+      }
+    },
+
+
+    /**
+     * Find a matching repeating item
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating (or non-repeating) item
+     * @param index index of the item in the sub item array of the parent item
+     * @returns {{}} a matching item
+     * @private
+     */
+    _findTheMatchingItemByCodeAndIndex : function(parentItem, itemCode, index) {
+      var item = null;
+      var idx = 0;
+      if (parentItem.items) {
+        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            if (idx === index) {
+              item = parentItem.items[i];
+              break;
+            }
+            else {
+              idx += 1;
+            }
+          }
+        }
+      }
+      return item;
+    },
+
+
+
+    /**
+     * Merge a data item instance into an form item
+     * @param obx a data item
+     * @param item a form item
+     * @private
+     */
+    _setupItemValueAndUnit : function(obx, item) {
+      var code = this._getItemCodeFromLinkId(obx.linkId);
+
+      if (item && code === item.questionCode && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
+        var dataType = item.dataType;
+        // any one has a unit must be a numerical type, let use REAL for now.
+        // dataType conversion should be handled when panel data are added to lforms-service.
+        if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
+          dataType = "REAL";
+        }
+
+        var qrValue = obx.answer[0];
+
+        switch (dataType) {
+          case "INT":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
+            else if (qrValue.valueInteger) {
+              item.value = qrValue.valueInteger;
+            }
+            break;
+          case "REAL":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
+            else if (qrValue.valueDecimal) {
+              item.value = qrValue.valueDecimal;
+            }
+            break;
+          case "DT":
+            item.value = qrValue.valueDate;
+            break;
+          case "CNE":
+          case "CWE":
+            if (item.answerCardinality.max &&
+                (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+              var value = [];
+              for (var j=0,jLen=obx.answer.length; j<jLen; j++) {
+                var coding = obx.answer[j];
+                value.push({
+                  "code": coding.valueCoding.code,
+                  "text": coding.valueCoding.display
+                });
+              }
+              item.value = value;
+            }
+            else {
+              item.value = {
+                "code": qrValue.valueCoding.code,
+                "text": qrValue.valueCoding.display
+              };
+            }
+
+            break;
+          case "ST":
+            item.value = qrValue.valueString;
+            break;
+          case "SECTION":
+          case "TITLE":
+          case "":
+            // do nothing
+            break;
+          default:
+            item.value = qrValue.valueString;
+        }
+      }
     }
-
-
   }
-
 
 };

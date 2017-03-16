@@ -115,7 +115,8 @@
               {text: "A form that has a question contains a question or a section", id: "question-in-question"},
               {text: "HL7 Genetic Test Panel for Simple Variants", id: "X1000-0"},
               {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"},
-              {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"}
+              {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
+              {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"}
 
             ];
 
@@ -209,6 +210,21 @@
               };
             };
 
+            $scope.testMergeQR2LForms = function() {
+              // use the first form
+              var fhirData = qr;
+              var formData = (new LForms.LFormsData(angular.copy(FHTData))).getFormData();
+
+              var mergedFormData = LForms.FHIR_SDC.LFORMS_2_SDC.mergeQuestionnaireResponseToForm(formData, fhirData);
+              var newFormData = new LFormsData(mergedFormData);
+
+              $scope.lfData2 = newFormData;
+              $scope.lfOption2 = {
+                useAnimation: !window._INTESTING_
+              };
+            };
+
+
             $scope.useForm = function() {
               var useAnimation = !window._INTESTING_;
 
@@ -292,6 +308,9 @@
                 case 'X2000-0':
                   lfData2 = new LForms.LFormsData(angular.copy(genetic2));
                   break;
+                case '81247-9':
+                  lfData2 = new LForms.LFormsData(angular.copy(newGenetic));
+                  break;
                 case '76806-9':
                   lfData2 = new LForms.LFormsData(angular.copy(promis));
                   break;
@@ -340,6 +359,7 @@
           <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-fhir" class="btn btn-primary" ng-click="testMergeFHIR2LForms()">Merge FHIR Data to LForms (USSGFH)</button>
+          <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QR to LForms (USSGFH)</button>
 
         </div>
       </div>
