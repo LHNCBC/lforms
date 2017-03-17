@@ -234,7 +234,7 @@
 }
 
 /* restore autocomplete default styles */
-.lf-form input.ansList {
+.lf-form input.ansList,  .lf-form input.search_field {
   padding-right: 14px;
 }
 
@@ -828,7 +828,7 @@ Override color of select boxes in calendar widget title bar.
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: flex-start;
-  
+
   order: 1;
   flex-grow: 1;
   width: 100%;
@@ -920,7 +920,7 @@ Override color of select boxes in calendar widget title bar.
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
-  
+
   order: 2;
   flex-grow: 1;
   width: 100%;
