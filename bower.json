@@ -6,7 +6,7 @@
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
     "angular-bootstrap": "^1.1.0",
-    "autocomplete-lhc": "^10.1.1",
+    "autocomplete-lhc": "^10.2.1",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",
     "resize-sensor": "^0.0.6"
