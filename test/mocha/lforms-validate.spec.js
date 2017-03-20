@@ -13,6 +13,9 @@ describe('lforms-validate library', function() {
         'http://lforms-service.nlm.nih.gov'),
         true);
       assert.equal(LForms.Validations.checkDataType('URL',
+        'ftp://lforms-service.nlm.nih.gov'),
+        true);
+      assert.equal(LForms.Validations.checkDataType('URL',
         'https://lforms-service.nlm.nih.gov:9001'),
         true);
       assert.equal(LForms.Validations.checkDataType('URL',
@@ -44,9 +47,6 @@ describe('lforms-validate library', function() {
         false);
       assert.equal(LForms.Validations.checkDataType('URL',
         'http:/lforms-service.nlm.nih.gov'),
-        false);
-      assert.equal(LForms.Validations.checkDataType('URL',
-        'ftp://lforms-service.nlm.nih.gov'),
         false);
       assert.equal(LForms.Validations.checkDataType('URL',
         '/lforms-service.nlm.nih.gov'),

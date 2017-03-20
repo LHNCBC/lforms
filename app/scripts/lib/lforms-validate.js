@@ -123,7 +123,7 @@ LForms.Validations = {
           valid = regex.test(value);
           break;
         case "URL":
-          var regex = /^https?:\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?$/;
+          var regex = /^(https?|ftp):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?$/;
           valid = regex.test(value);
           break;
         case "TM":  // time
