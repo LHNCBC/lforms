@@ -1,8 +1,8 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
-describe('get FHIR data from form', function() {
+describe('get FHIR data from LForms forms', function() {
 
-  it('should get a DiagnotsicReport data from form', function() {
+  it('should get a DiagnotsicReport data from a form', function() {
 
     tp.openUSSGFHTVertical();
 
@@ -163,12 +163,20 @@ describe('get FHIR data from form', function() {
     });
   });
 
+  it('shout get FHIR SDC Questionnaire data from a form', function() {
+    // data has not been tested for accuracy, TBD
+  });
+
+  it('shout get FHIR SDC QuestionnaireResponse data from a form', function() {
+    // data has not been tested for accuracy, TBD
+  });
+
 });
 
 
 describe('merge FHIR data into form', function() {
 
-  it('should merge all data into the form', function() {
+  it('should merge all Diagnostic data back into the form', function() {
 
     tp.openUSSGFHTVertical();
 
@@ -196,4 +204,8 @@ describe('merge FHIR data into form', function() {
     expect(ff.ageAtDiag2.getAttribute('value')).toBe("Infancy");
   });
 
+  it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
+    // data has not been tested for accuracy, TBD
+  });
 });
+
