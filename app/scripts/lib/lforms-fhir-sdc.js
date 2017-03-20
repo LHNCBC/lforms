@@ -1,19 +1,19 @@
-/**
- * A package to handle FHIR SDC (STU2, Version 1.6.0) Questionnaire and QuestionnaireResponse profile for LForms.
- * It provides the following functions:
- * -- Convert FHIR SDC Questionnaire resource data into LForms formatted data
- * -- Generate FHIR SDC QUestionnaireResponse resource data from captured data in LForms
- * -- Convert existing LOINC panels/forms data in LForms format into FHIR SDC Questionnaire resource
- * -- Merge data in FHIR SDC QuestionnaireResponse resource back into corresponding Questionnaire resource
- */
 if (typeof LForms === 'undefined')
   LForms = {};
 
 /**
- * A package for handling FHIR SDC Questionnaire and QuestionnireResponse
- * of version STU 2 Ballot
+ * A package to handle FHIR SDC (STU2 Ballot, Version 1.6.0) Questionnaire and QuestionnaireResponse for LForms
+ * STU2 Ballot:
  * http://hl7.org/fhir/us/sdc/2016Sep/sdc-questionnaire.html
  * http://hl7.org/fhir/us/sdc/2016Sep/sdc-response.html
+ *
+ * It provides the following functions:
+ * convert2Questionnaire()
+ * -- Convert existing LOINC panels/forms data in LForms format into FHIR SDC Questionnaire data
+ * convert2QuestionnaireResponse()
+ * -- Generate FHIR SDC QuestionnaireResponse data from captured data in LForms
+ * mergeQuestionnaireResponseToForm()
+ * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 LForms.FHIR_SDC = {
 
@@ -81,7 +81,7 @@ LForms.FHIR_SDC = {
       };
 
       // publisher
-      this._target.publisher = "Lister Hill National Center for Biomedical Communications (LHNCBC)";
+      //this._target.publisher = "Lister Hill National Center for Biomedical Communications (LHNCBC)";
 
       // title
       this._target.title = this._source.name;
@@ -445,14 +445,14 @@ LForms.FHIR_SDC = {
 
 
       // source
-      this._target.source = {
-        "reference": "LHC-LForms"
-      };
+      // this._target.source = {
+      //   "reference": "LHC-LForms"
+      // };
 
       // author
-      this._target.author = {
-        "reference": "LHC-LForms"
-      };
+      // this._target.author = {
+      //   "reference": "LHC-LForms"
+      // };
 
       // authored, required
       this._target.authored = LForms.Util.dateToString(new Date());

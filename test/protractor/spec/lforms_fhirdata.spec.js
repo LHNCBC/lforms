@@ -2,7 +2,7 @@ var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
 describe('get FHIR data from LForms forms', function() {
 
-  it('should get a DiagnotsicReport data from a form', function() {
+  it('should get a DiagnosticReport data from a form', function() {
 
     tp.openUSSGFHTVertical();
 
@@ -167,7 +167,7 @@ describe('get FHIR data from LForms forms', function() {
     // data has not been tested for accuracy, TBD
   });
 
-  it('shout get FHIR SDC QuestionnaireResponse data from a form', function() {
+  it('should get FHIR SDC QuestionnaireResponse data from a form', function() {
     // data has not been tested for accuracy, TBD
   });
 
