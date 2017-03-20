@@ -65,7 +65,7 @@ LForms.FHIR_SDC = {
       this._target.status = "draft";
 
       // date
-      this._target.date = "2017-02-21";
+      this._target.date = LForms.Util.dateToString(new Date());
 
       // version
       this._target.version = "LOINC version 2.56";
@@ -253,7 +253,7 @@ LForms.FHIR_SDC = {
               break;
               // http://hl7.org/fhir/StructureDefinition/maxValue
             case "maxExclusive":
-            case "minInclusive":
+            case "maxInclusive":
               if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
                   item.dataType === "REAL" || item.dataType === "INT" ) {
                 var valueKey = this._getValueKeyByDataType("value", item.dataType)
@@ -534,7 +534,7 @@ LForms.FHIR_SDC = {
     /**
      * Create a key from data type to be used in a hash
      * @param prefix a prefix to be added to the key
-     * @param dataType an FHIR Questionnaire data type
+     * @param dataType a LForms data type
      * @returns {*}
      * @private
      */
@@ -779,7 +779,7 @@ LForms.FHIR_SDC = {
           //   "code" : "<code>" // Coded form of the unit
           // }]
           else if (item.dataType === "QTY") {
-
+            // NOTE: QTY data type in LForms does not have unit. Cannot support it.
           }
           // make a Quantity type if numeric values has a unit value
           else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL")) {
@@ -848,7 +848,7 @@ LForms.FHIR_SDC = {
         //   "code" : "<code>" // Coded form of the unit
         // }]
         else if (item.dataType === 'QTY') {
-
+          // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
