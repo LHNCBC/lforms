@@ -618,10 +618,10 @@ LForms.FHIR_SDC = {
       var codeSystem = this._source.codeSystem === "LOINC" ? "http://loinc.org" : this._source.codeSystem;
 
       // "identifier": [
-      this._target.identifier = {
+      this._target.identifier = [{
         "system": codeSystem,
         "value": this._source.code
-      };
+      }];
 
       // concept
       this._target.concept = {
@@ -950,10 +950,11 @@ LForms.FHIR_SDC = {
 
       var codeSystem = this._source.codeSystem === "LOINC" ? "http://loinc.org" : this._source.codeSystem;
 
-      // "identifier": [
+      // "identifier":
       this._target.identifier = {
         "system": codeSystem,
-        "value": this._source.code
+        "value": this._source.code,
+
       };
 
       // status, required
@@ -983,8 +984,7 @@ LForms.FHIR_SDC = {
       this._target.meta = {
         "profile": [
           "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
-        ],
-        "title": this._source.name
+        ]
       };
 
       // text,
