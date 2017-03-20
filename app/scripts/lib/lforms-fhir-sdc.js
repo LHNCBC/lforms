@@ -9,522 +9,34 @@
 if (typeof LForms === 'undefined')
   LForms = {};
 
+/**
+ * A package for handling FHIR SDC Questionnaire and QuestionnireResponse
+ * of version STU 2 Ballot
+ * http://hl7.org/fhir/us/sdc/2016Sep/sdc-questionnaire.html
+ * http://hl7.org/fhir/us/sdc/2016Sep/sdc-response.html
+ */
 LForms.FHIR_SDC = {
 
-  SDC_2_LFORMS: {
-    _source: null,
-    _target: null,
-
-    convert: function(source) {
-      this._target = null;
-      if (source) {
-        this._target = {};
-        this._source = source;
-        this._setFormOptions();
-        this._setFormLevelFields();
-
-        if (source.item && Array.isArray(source.item)) {
-          this._target.items = [];
-          for (var i=0, iLen=source.item.length; i<iLen; i++) {
-            var newItem = this._processItem(source.item[i]);
-            this._target.items.push(newItem);
-          }
-
-        }
-      }
-
-      return this._target;
-
-    },
-
-
-    _setFormOptions: function() {
-      // showQuestionCode: false,
-      // showCodingInstruction: false,
-      // tabOnInputFieldsOnly: false,
-      // hideFormControls: false,
-      // showFormOptionPanel: false,
-      // showFormOptionPanelButton: false,
-      // showItemOptionPanelButton: false,
-      // hideUnits: false,
-      // allowMultipleEmptyRepeatingItems: false,
-      // allowHTMLInInstructions: false,
-      // useAnimation: true,
-      // displayControl: {"questionLayout": "vertical"},
-      // showFormHeader: true,
-      // formHeaderItems: [
-      //   {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
-      //   {"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},
-      //   {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
-      //   {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
-      // ],
-      // showColumnHeaders: true,
-      // defaultAnswerLayout: {
-      //   "answerLayout": {
-      //     "type": "COMBO_BOX", // "COMBO_BOX" -- use autocompleter
-      //     // "RADIO_CHECKBOX" -- all answers displayed as radio buttons or checkboxes
-      //     "columns": "0"   // valid only when "type" is "RADIO_CHECKBOX". Permissible values include:
-      //                      // "0" -- flexible
-      //                      // "1", "2", "3", "4", "5", "6" -- listed in columns
-      //   }
-      // },
-      // useTreeLineStyle: true, // true -- use tree lines
-      //                         // false -- use bars
-      // columnHeaders: [
-      //   {"name" : "Name"},
-      //   {"name" : "Value"},
-      //   {"name" : "Units"}
-      // ]
-
-      // if any default setting listed above need a change set it on this._target
-      this._target.templateOptions= {
-        hideFormControls: true,
-        showFormHeader: false,
-        showColumnHeaders: false
-      };
-
-    },
-
-    _setFormLevelFields: function() {
-      // keep required fields
-      this._target.url = this._source.url;
-      this._target.status = this._source.status;
-      this._target.date = this._source.date;
-      this._target.title = this._source.title;
-      this._target.subjectType = this._source.subjectType;
-
-      // code
-      // "identifier": [
-      //   {
-      //     "system": "http://loinc.org/vs",
-      //     "value": "74080-3"
-      //   }
-      // ],
-      if (this._source.identifier && Array.isArray(this._source.identifier)) {
-        this._target.code = this._source.identifier[0].value;
-        this._target.codeSystem = this._source.identifier[0].system;
-
-      }
-      else if (this._source.id) {
-        this._target.code = this._source.id;
-      }
-      // codeSystem
-      if (this._source.concept && this._source.concept.code) {
-        this._target.codeSystem = this._source.concept.code;
-      }
-
-      // name
-      this._target.name = this._source.title;
-      // type
-      this._target.type = "FHIR_SDC";
-
-      // template
-      this._target.template = "table";
-      // copyrightNotice
-
-
-
-    },
-
-    _processItem: function(item) {
-      var targetItem = {};
-      // questionCode & // questionCodeSystem
-      var codeAndSystem = this._handleQuestionCode(item);
-      targetItem.questionCode = codeAndSystem[0];
-      targetItem.questionCodeSystem = codeAndSystem[1];
-
-      // localQuestionCode TBD
-
-      // dataType
-      targetItem.dataType = this._handleDataType(item);
-
-      // units
-      targetItem.units = this._handleUnits(item);
-
-      // codingInstructions
-      // copyrightNotice
-
-      // question
-      targetItem.question = item.text;
-
-      // answers
-      targetItem.answers = this._handleAnswers(item);
-
-      // skipLogic TBD
-      targetItem.skipLogic = this._handleSkipLogic(item);
-
-      // restrictions
-      targetItem.restrictions = this._handleRestrictions(item);
-
-      // defaultAnswer
-      targetItem.defaultAnswer = this._handleDefaultAnswer(item);
-
-      // editable
-      targetItem.editable = this._handleEditable(item);
-
-      // displayControl
-      targetItem.displayControl = this._handleDisplayControl(item);
-
-      // answerCardinality (required)
-      targetItem.answerCardinality = this._handleAnswerCardinality(item);
-
-      // questionCardinality
-      targetItem.questionCardinality = this._handleQuestionCardinality(item);
-
-      // Need to add an extension to FHIR SDC Questionnaire !!
-      // dataControl
-      // targetItem.dataControl = this._handleDataControl(item);
-      // formula
-      // targetItem.calculatedMethod = this._handleFormula(item);
-
-      // keep additional fields
-      targetItem.linkId = this._handleLinkId(item);
-      targetItem.prefix = this._handlePrefix(item);
-
-      if (item.item && Array.isArray(item)) {
-        // header
-        targetItem.header = true;
-        targetItem.items = [];
-        for (var i=0, iLen=item.item.length; i<iLen; i++) {
-          var newItem = this._processItem(source.item[i]);
-          target.items.push(newItem);
-        }
-      }
-
-      return targetItem
-    },
-
-    _handleDataType: function(item) {
-      var dataType = "";
-      switch (item.type) {
-        case "group":
-          dataType = 'SECTION';
-          break;
-        case "display":
-          dataType = 'TITLE';
-          break;
-        case "question":
-          dataType = 'ST';
-          break;
-        case "boolean":
-          dataType = 'BL';
-          break;
-        case "decimal":
-          dataType = 'REAL';
-          break;
-        case "integer":
-          dataType = 'INT';
-          break;
-        case "date":
-          dataType = 'DT';
-          break;
-        case "dateTime": // not supported yet
-          dataType = 'DTM';
-          break;
-        case "instant":  // not supported yet
-          dataType = 'DTM';
-          break;
-        case "time":
-          dataType = 'TM';
-          break;
-        case "string":
-          dataType = 'ST';
-          break;
-        case "text":
-          dataType = 'TX';
-          break;
-        case "url":
-          dataType = 'URL';
-          break;
-        case "choice":
-          dataType = 'CNE';
-          break;
-        case "open-choice":
-          dataType = 'CWE';
-          break;
-        case "attachment": // not supported
-          dataType = 'ST';
-          break;
-        case "reference":  // not supported
-          dataType = 'ST';
-          break;
-        case "quantity":
-          dataType = 'QTY';
-          break;
-        default:
-          dataType = 'ST';
-          break;
-      }
-
-      return dataType;
-    },
-
-
-    _handleQuestionCardinality: function(item) {
-      // questionnaire-minOccurs
-      // questionnaire-maxOccurs
-      // repeats
-
-    },
-
-    _handleDisplayControl: function(item) {
-      // questionnaire-itemControl
-
-    },
-
-    _handleRestrictions: function(item) {
-      // minLength
-      // maxSize
-      // regex
-      // minValue
-      // maxValue
-      // maxDecimalPlaces
-      //
-
-    },
-
-    _handleUnits: function(item) {
-      // questionnaire-unit
-    },
-
-    _handleSkipLogic: function(item) {
-      // enableWhen
-    },
-
-    _handleCodingInstructions: function(item) {
-      // questionnaire-displayCategory
-      //
-    },
-
-
-    _handleAnswerLabel: function(item) {
-      //questionnaire-optionPrefix
-    },
-
-    _handleAnswers: function(item) {
-
-      var answers = [];
-      // option
-      if (item.option) {
-        for (var i=0, iLen=item.option.length; i<iLen; i++) {
-          answers.push({
-            "code": item.option[i].code,
-            "text": item.option[i].display
-          })
-        }
-      }
-      // options
-      // "options": {
-      //   "reference": "#ll2682-4"
-      // },
-      else if (item.options && item.options.reference) {
-        answers = this._findAnswersByReference(item.options.reference);
-      }
-
-      return answers;
-    },
-
-
-    // {
-    //   "resourceType": "ValueSet",
-    //   "id": "ll2682-4",
-    //   "name": "AHRQ_Medication_Q28_Q29",
-    //   "status": "active",
-    //   "description": "The answer list for questions 28 and 29 on the AHRQ 'Medication or Other Substance' form",
-    //   "copyright": "This content from LOINC® is copyright © 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at http://loinc.org/terms-of-use",
-    //   "compose": {
-    //     "include": [
-    //       {
-    //         "system": "http://loinc.org",
-    //         "concept": [
-    //           {
-    //             "code": "LA20272-3",
-    //             "display": "Cutaneous, topical application, including ointment, spray, patch"
-    //           },
-    //           {
-    //             "code": "LA9451-1",
-    //             "display": "Subcutaneous"
-    //           },
-    //           ......
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // }
-    _findAnswersByReference: function(answerId) {
-      var answers = [];
-      if (this._source.contained) {
-        for(var i=0, iLen=this._source.contained.length; i<iLen; i++) {
-          var containedResource = this._source.contained[i];
-          if (containedResource.resourceType == "ValueSet" && "#"+containedResource.id===answerId &&
-              containedResource.compose && Array.isArray(containedResource.compose.include)) {
-            // pick the first answer list only (might have to check other values in 'include'
-            var conceptList = containedResource.compose.include[0].concept;
-            if (Array.isArray(conceptList)) {
-              for(var j=0, jLen=conceptList.length; j<jLen; j++) {
-                answers.push({
-                  "code": conceptList[j].code,
-                  "text": conceptList[j].display
-                })
-              }
-            }
-          }
-        }
-      }
-
-      return answers;
-    },
-
-    // {
-    //   "resourceType": "ValueSet",
-    //   "id": "weight",
-    //   "meta": {
-    //     "profile": [
-    //       "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-valueset"
-    //     ]
-    //   },
-    //   "name": "Weight Units",
-    //   "status": "active",
-    //   "description": "Weight units",
-    //   "immutable": true,
-    //   "extensible": false,
-    //   "compose": {
-    //     "include": [
-    //       {
-    //         "system": "http://unitsofmeasure.org",
-    //         "concept": [
-    //           {
-    //             "code": "[lb_i]",
-    //             "display": "pounds"
-    //           },
-    //           {
-    //             "code": "km",
-    //             "display": "kilograms"
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // }
-
-    _findUnitsByReference: function(item) {
-
-    },
-
-    _handleEditable: function(item) {
-      // readonly
-    },
-
-    _handleDefaultAnswer: function(item) {
-      // initial[x]
-    },
-
-
-    // add a prefix field??
-    _handlePrefix: function(item) {
-      // questionnaire-prefix
-    },
-    // add a linkId field??
-    _handleLinkId: function(item) {
-      // linkId
-    },
-    // add a supportLink field??
-    // link to LOINC
-    _handleCodeLink: function(item) {
-      // questionnaire-supportLink
-    },
-
-    _handleQuestionCode: function(item) {
-
-      var questionCode = '';
-      var questionCodeSystem = '';
-      // "concept": [
-      //   {
-      //     "system": "http://loinc.org",
-      //     "code": "54125-0",
-      //     "display": "Name"
-      //   }
-      if (item.concept) {
-        questionCode = item.concept.code;
-        questionCodeSystem = item.concept.system;
-      }
-      // "extension": [
-      //   {
-      //     "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-      //     "valueCodeableConcept": {
-      //       "coding": [
-      //         {
-      //           "system": "http://hl7.org/fhir/questionnaire-item-control",
-      //           "code": "header"
-      //         }
-      //       ]
-      //     }
-      //   }
-      // ],
-      else if (item.extension && Array.isArray(item.extension)) {
-        for(var i=0, iLen=item.extension.length; i<iLen; i++) {
-          if (item.extension[i].url === "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl" &&
-              item.extension[i].valueCodeableConcept &&
-              Array.isArray(item.extension[i].valueCodeableConcept.coding)) {
-            // pick the first coding
-            if (item.extension[i].valueCodeableConcept.coding[0]) {
-              questionCode = item.extension[i].valueCodeableConcept.coding[0].code;
-              questionCodeSystem = item.extension[i].valueCodeableConcept.coding[0].system;
-            }
-          }
-        }
-      }
-      else if (item.linkId) {
-        questionCode = item.linkId;
-      }
-      else if (item.text) {
-        questionCode = item.text;
-      }
-      else {
-        questionCode = 'generated_' + Math.random(10000);
-      }
-
-      return [questionCode, questionCodeSystem];
-    },
-
-
-    _handleAnswerCardinality: function(item) {
-      var answerCardinality = {
-        "max": "1",
-        "min": "0"
-      };
-      if (item.required) {
-        answerCardinality.min = "1";
-      }
-      return answerCardinality;
-    },
-
-
-    // add new extensions for dataControl, formula??
-    _handleDataControl: function(item) {
-
-    },
-
-    _handleFormula: function(item) {
-
-    }
-
-  },
-
+  /**
+   * Handles conversion from LForms format to FHIR SDC format
+   */
   LFORMS_2_SDC : {
+    // the LForms form definition object
     _source: null,
+    // the FHIR SDC Questionnaire or QuestionnaireResponse object
     _target: null,
 
-
-    // need to add "id" by the application of this util
-    // 'source' is the LFormsData object
+    /**
+     * Convert LForms form definition to FHIR SDC Questionnaire
+     * @param lfData a LForms form definition object
+     * @returns {null}
+     */
     convert2Questionnaire: function(lfData) {
       this._target = null;
       if (lfData) {
         this._target = {};
         this._source = lfData
 
-        this._setFormOptions();
         this._setFormLevelFields();
 
         if (this._source.items && Array.isArray(this._source.items)) {
@@ -536,54 +48,14 @@ LForms.FHIR_SDC = {
 
         }
       }
-
       return this._target;
-
     },
 
-    _setFormOptions: function() {
-      // showQuestionCode: false,
-      // showCodingInstruction: false,
-      // tabOnInputFieldsOnly: false,
-      // hideFormControls: false,
-      // showFormOptionPanel: false,
-      // showFormOptionPanelButton: false,
-      // showItemOptionPanelButton: false,
-      // hideUnits: false,
-      // allowMultipleEmptyRepeatingItems: false,
-      // allowHTMLInInstructions: false,
-      // useAnimation: true,
-      // displayControl: {"questionLayout": "vertical"},
-      // showFormHeader: true,
-      // formHeaderItems: [
-      //   {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
-      //   {"question": "Time Done", "questionCode": "time_done", "dataType": "TM", "answers": ""},
-      //   {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]},
-      //   {"question":"Comment", "questionCode":"comment","dataType":"TX","answers":""}
-      // ],
-      // showColumnHeaders: true,
-      // defaultAnswerLayout: {
-      //   "answerLayout": {
-      //     "type": "COMBO_BOX", // "COMBO_BOX" -- use autocompleter
-      //     // "RADIO_CHECKBOX" -- all answers displayed as radio buttons or checkboxes
-      //     "columns": "0"   // valid only when "type" is "RADIO_CHECKBOX". Permissible values include:
-      //                      // "0" -- flexible
-      //                      // "1", "2", "3", "4", "5", "6" -- listed in columns
-      //   }
-      // },
-      // useTreeLineStyle: true, // true -- use tree lines
-      //                         // false -- use bars
-      // columnHeaders: [
-      //   {"name" : "Name"},
-      //   {"name" : "Value"},
-      //   {"name" : "Units"}
-      // ]
 
-      /**
-       * Nothing needs to be done for options
-       */
-    },
-
+    /**
+     * Set form level attributes
+     * @private
+     */
     _setFormLevelFields: function() {
 
       // resourceType
@@ -611,7 +83,6 @@ LForms.FHIR_SDC = {
       // publisher
       this._target.publisher = "Lister Hill National Center for Biomedical Communications (LHNCBC)";
 
-
       // title
       this._target.title = this._source.name;
 
@@ -636,9 +107,15 @@ LForms.FHIR_SDC = {
       // text,
       // not to use. it requires html/xhtml content?
 
-
     },
 
+
+    /**
+     * Process an item of the form
+     * @param item an item in LForms form definition object
+     * @returns {{}}
+     * @private
+     */
     _processItem: function(item) {
       var targetItem = {};
 
@@ -837,7 +314,7 @@ LForms.FHIR_SDC = {
         });
       }
 
-      // ADD LForms Extension to units list
+      // add LForms Extension to units list
       if (item.units) {
         this._handleLFormsUnits(targetItem, item);
       }
@@ -912,8 +389,12 @@ LForms.FHIR_SDC = {
       return targetItem
     },
 
-    // 'source' is the LFormsData object
-    // add "id" and "subject"
+
+    /**
+     * Convert LForms captured data to FHIR SDC QuestionnaireResponse
+     * @param lfData a LForms form definition object
+     * @returns {null}
+     */
     convert2QuestionnaireResponse: function(lfData) {
       this._target = null;
       if (lfData) {
@@ -932,15 +413,16 @@ LForms.FHIR_SDC = {
             var newItem = this._processResponseItem(this._source.items[i]);
             this._target.item.push(newItem);
           }
-
         }
       }
-
       return this._target;
-
     },
 
 
+    /**
+     * Set form level attribute
+     * @private
+     */
     _setResponseFormLevelFields: function() {
 
       // resourceType
@@ -990,9 +472,15 @@ LForms.FHIR_SDC = {
       // text,
       // not to use. it requires html/xhtml content?
 
-
     },
 
+
+    /**
+     * Process an item of the form
+     * @param item an item in LForms form object
+     * @returns {{}}
+     * @private
+     */
     _processResponseItem: function(item) {
       var targetItem = {};
 
@@ -1039,10 +527,17 @@ LForms.FHIR_SDC = {
         delete this._groupedValues[linkId];
 
       }
-
       return targetItem
     },
 
+
+    /**
+     * Create a key from data type to be used in a hash
+     * @param prefix a prefix to be added to the key
+     * @param dataType an FHIR Questionnaire data type
+     * @returns {*}
+     * @private
+     */
     _getValueKeyByDataType: function(prefix, dataType) {
       // prefix could be 'value', 'initial', 'answer'
       if (!prefix) {
@@ -1081,11 +576,16 @@ LForms.FHIR_SDC = {
           valueKey = 'Quantity';
           break;
       }
-
       return prefix + valueKey;
-
     },
 
+
+    /**
+     * Process an item's answer list
+     * @param item an item in the LForms form object
+     * @returns {Array}
+     * @private
+     */
     _handleAnswers: function(item) {
       var optionArray = [];
       for (var i=0, iLen=item.answers.length; i<iLen; i++) {
@@ -1114,12 +614,18 @@ LForms.FHIR_SDC = {
           "code": answer.code,
           "display": answer.text
         };
-
         optionArray.push(option);
       }
       return optionArray;
     },
 
+
+    /**
+     * Convert LForms data type to FHIR SDC data type
+     * @param item an item in the LForms form object
+     * @returns {string}
+     * @private
+     */
     _handleDataType: function(item) {
       var dataType = "";
       switch (item.dataType) {
@@ -1172,11 +678,15 @@ LForms.FHIR_SDC = {
           dataType = 'string';
           break;
       }
-
       return dataType;
     },
 
 
+    /**
+     * Group values of the questions that have the same linkId
+     * @param item an item in the LForms form object
+     * @private
+     */
     _groupValuesByLinkId: function(item) {
       var linkId = item._codePath + item._idPath;
       //var linkId = item._codePath;
@@ -1187,18 +697,24 @@ LForms.FHIR_SDC = {
       else {
         this._groupedValues[linkId].push(item.value);
       }
-
       if (item.items) {
         for (var i=0, iLen=item.items.length; i<iLen; i++) {
           this._groupValuesByLinkId(item.items[i])
         }
       }
-
     },
 
 
+    /**
+     * Process capture user data
+     * @param targetItem an item in FHIR SDC QuestionnaireResponse object
+     * @param item an item in LForms form object
+     * @private
+     */
     _handleAnswerValues: function(targetItem, item) {
-      //boolean, decimal, integer, date, dateTime, instant, time, string, uri, Attachment, Coding, Quantity, Reference(Resource)
+      // dataType:
+      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+      // Attachment, Coding, Quantity, Reference(Resource)
 
       var answer = [];
       var linkId = item._id;
@@ -1216,7 +732,8 @@ LForms.FHIR_SDC = {
           // multiple selections, item.value is an array
           // Note: NO support of multiple selections in FHIR SDC
           if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
-            if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) && Array.isArray(values[i])) {
+            if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) &&
+                Array.isArray(values[i])) {
               for (var j=0, jLen=values[i].length; j<jLen; j++) {
                 if (!jQuery.isEmptyObject(values[i][j])) {
                   answer.push({
@@ -1283,42 +800,23 @@ LForms.FHIR_SDC = {
             answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
             answer.push(answerValue);
           }
-          // no support for reference
-
+          // no support for reference yet
         }
-
         targetItem.answer = answer;
       }
-
-
-
     },
 
-    // _isAnswerEmpty: function(answer) {
-    //   var empty = true;
-    //   for (var i=0, iLen=answer.length; i<iLen && empty; i++) {
-    //     var oneAnswer = answer[i];
-    //     if (!jQuery.isEmptyObject(oneAnswer)) {
-    //       if (oneAnswer.valueCoding) {
-    //         var keys = Object.keys(oneAnswer.valueCoding);
-    //         for (var j= 0, jLen=keys.length; j<jLen && empty; j++) {
-    //           if (oneAnswer.valueCoding[keys[j]]) {
-    //             empty = false;
-    //           }
-    //         }
-    //       }
-    //       else {
-    //         var keys = Object.keys(oneAnswer);
-    //         if (oneAnswer[keys[0]]) {
-    //           empty = false;
-    //         }
-    //       }
-    //     }
-    //   }
-    // },
 
+    /**
+     * Process default values
+     * @param targetItem an item in FHIR SDC Questionnaire object
+     * @param item an item in LForms form object
+     * @private
+     */
     _handleInitialValues: function(targetItem, item) {
-      //boolean, decimal, integer, date, dateTime, instant, time, string, uri, Attachment, Coding, Quantity, Reference(Resource)
+      // dataType:
+      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+      // Attachment, Coding, Quantity, Reference(Resource)
 
       if (item.value) {
         var valueKey = this._getValueKeyByDataType("initial", item.dataType)
@@ -1363,6 +861,13 @@ LForms.FHIR_SDC = {
 
     },
 
+
+    /**
+     * Process units list
+     * @param targetItem an item in FHIR SDC Questionnaire object
+     * @param item an item in LForms form object
+     * @private
+     */
     _handleLFormsUnits: function(targetItem, item) {
 
       // for Quantity item type only
@@ -1436,6 +941,13 @@ LForms.FHIR_SDC = {
       }
     },
 
+
+    /**
+     * Process skip logic
+     * @param targetItem an item in FHIR SDC Questionnaire object
+     * @param item an item in LForms form object
+     * @private
+     */
     _handleSkipLogic: function(targetItem, item) {
       if (item.skipLogic) {
         var enableWhen = [];
@@ -1449,9 +961,10 @@ LForms.FHIR_SDC = {
 
           var enableWhenRule = {
             "question": sourceItem._id
-
           };
-          //boolean, decimal, integer, date, dateTime, instant, time, string, uri, Attachment, Coding, Quantity, Reference(Resource)
+          // dataTypes:
+          // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+          // Attachment, Coding, Quantity, Reference(Resource)
           var valueKey = this._getValueKeyByDataType("answer", sourceItem.dataType);
 
           // for Coding
@@ -1487,7 +1000,7 @@ LForms.FHIR_SDC = {
               sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
             enableWhenRule[valueKey] = condition.trigger.value;
           }
-          // no support for reference
+          // no support for reference yet
 
           // add a rule to enableWhen
           enableWhen.push(enableWhenRule)
@@ -1725,7 +1238,6 @@ LForms.FHIR_SDC = {
       }
       return item;
     },
-
 
 
     /**
