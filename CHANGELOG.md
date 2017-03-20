@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [11.1.0]  2017-03-16]
+## [11.1.0]  2017-03-16
 ### Changed
-- Added support for FHIR SDC Questionnaire and QuenstionnaireResponse
+- Added basic supports for FHIR SDC Questionnaire and QuenstionnaireResponse
 
+## [11.0.5]  2017-03-20
+### Fixed
+- Fixed a bug in URL data type parsing.
+  
 ## [11.0.4]  2017-03-06
 ### Changed
 - Added a resize event listener on the container element to make the form 

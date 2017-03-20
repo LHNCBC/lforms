@@ -1,4 +1,4 @@
-fdescribe('autocomp list', function() {
+describe('autocomp list', function() {
 
   var tp = require('./lforms_testpage.po.js');
   var ff = tp.Autocomp;
