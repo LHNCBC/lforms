@@ -30,7 +30,11 @@ describe('lforms-validate library', function() {
       assert.equal(LForms.Validations.checkDataType('URL',
         'https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/PubTator/index.cgi?searchtype=PubMed_Search&query=ESR1+breast+cancer&submit=Search&user=User199424024'),
         true);
-      
+
+      assert.equal(LForms.Validations.checkDataType('URL',
+        'https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/PubTator/index.cgi?searchtype=PubMed_Search&query=ESR1+breast+cancer&submit=Search&user=User199424024'),
+        true);
+
       // Negative assertions - Just account for some common typos
       assert.equal(LForms.Validations.checkDataType('URL',
         'jfasfakj'),
@@ -46,6 +50,9 @@ describe('lforms-validate library', function() {
         false);
       assert.equal(LForms.Validations.checkDataType('URL',
         '/lforms-service.nlm.nih.gov'),
+        false);
+      assert.equal(LForms.Validations.checkDataType('URL',
+        'somecompany.com'),
         false);
     });
   });

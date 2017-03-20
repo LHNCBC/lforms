@@ -176,7 +176,7 @@ describe('Validations:', function() {
     });
 
     it('should validate URL type', function () {
-      testOneType(url, lblemail, errorURL, "http:/somecompany.com", "somcecompany.com");
+      testOneType(url, lblemail, errorURL, "http:/somecompany.com", "http://somecompany.com");
     });
 
     it('should validate NR type', function () {
