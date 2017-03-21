@@ -232,7 +232,7 @@ angular.module('lformsWidget')
          */
         $scope.isItemOptionPanelButtonShown = function(item) {
           var buttonShown = $scope.lfData.templateOptions.showItemOptionPanelButton &&
-              (item.dataType === "SECTION" || item.dataType === "CWE" || item.dataType === "CNE" )
+              (item.dataType === "SECTION" || item.answers && (item.dataType === "CWE" || item.dataType === "CNE" ))
           if (!buttonShown)
             item._showItemOptionPanel = false;
 
