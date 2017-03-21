@@ -584,6 +584,17 @@ var LFormsData = LForms.LFormsData = Class.extend({
     var defaultOptions = angular.copy(this._defaultTemplateOptions);
 
     this.setTemplateOptions(currentOptions, defaultOptions);
+
+    // process values in templateOptions.formHeaderItems,
+    if (this.templateOptions.formHeaderItems) {
+      for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
+        var item = this.templateOptions.formHeaderItems[i];
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT && item.value) {
+            item.value = LForms.Util.stringToDate(item.value);
+        }
+      }
+    }
+
   },
 
 
