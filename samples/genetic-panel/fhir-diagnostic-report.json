@@ -1,0 +1,2162 @@
+{
+    "resourceType": "DiagnosticReport",
+    "id": "81247-9-a4qaucag45b",
+    "status": "final",
+    "code": {
+        "coding": [
+            {
+                "system": "http://loinc.org",
+                "code": "81247-9",
+                "display": "Master HL7 genetic variant reporting panel (2016-11-21)"
+            }
+        ],
+        "text": "Master HL7 genetic variant reporting panel (2016-11-21)"
+    },
+    "result": [
+        {
+            "reference": "#XXXXX-12-6pofycm56ul"
+        },
+        {
+            "reference": "#XXXXX-10-7pfmvhpsoaw"
+        },
+        {
+            "reference": "#53577-3-g7bmy5lt29v"
+        },
+        {
+            "reference": "#81250-3-vaczl3fzlem"
+        },
+        {
+            "reference": "#81251-1-cdufg7wa6pc"
+        },
+        {
+            "reference": "#XP001-0-vrt0bz6mekp"
+        },
+        {
+            "reference": "#XP001-0-8n9vtpxmxsb"
+        }
+    ],
+    "contained": [
+        {
+            "resourceType": "Observation",
+            "id": "XXXXX-12-6pofycm56ul",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "XXXXX-12"
+                    }
+                ],
+                "text": "Choose kind of mutations targeted"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C01",
+                        "display": "Discrete variants"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C02",
+                        "display": "Complex variants"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C04",
+                        "display": "Pharmacogenomics"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "XXXXX-10-7pfmvhpsoaw",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "XXXXX-10"
+                    }
+                ],
+                "text": "Choose region of interest specification"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C01",
+                        "display": "Specific targeted mutations"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C02",
+                        "display": "Range targeted in the reference sequence"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51967-8-lh0kwe0ekln",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51967-8"
+                    }
+                ],
+                "text": "Genetic disease(s) assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "CN185892",
+                        "display": "Abnormal arm span"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51963-7-7f3rng6wqr2",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51963-7"
+                    }
+                ],
+                "text": "Medications assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "1091",
+                        "display": "Arginine"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "89013",
+                        "display": "aripiprazole"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-n2214l93lz8",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene(s) assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "16754",
+                        "display": "ACAP3"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "37724",
+                        "display": "ACTR3BP1"
+                    },
+                    {
+                        "system": "http://loinc.org",
+                        "code": "24022",
+                        "display": "ACTRT3"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "36908-2-ponojzh11ek",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "36908-2"
+                    }
+                ],
+                "text": "Gene mutations tested"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "31",
+                        "display": "NM_138413.3(HOGA1):c.289C>T (p.Arg97Cys)"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51968-6-19krk9ff4mt",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51968-6"
+                    }
+                ],
+                "text": "Discrete variation analysis overall interpretation"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA6576-8",
+                        "display": "Positive"
+                    }
+                ],
+                "text": "Positive"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "83006-7-937yq00kuff",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "83006-7"
+                    }
+                ],
+                "text": "Deletion-duplication overall interpretation"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA26803-9",
+                        "display": "No deletion or duplication detected in studied region"
+                    }
+                ],
+                "text": "No deletion or duplication detected in studied region"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "62374-4-v4tswzbm5st",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "62374-4"
+                    }
+                ],
+                "text": "Human reference sequence assembly"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA14029-5",
+                        "display": "GRCh37"
+                    }
+                ],
+                "text": "GRCh37"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "53577-3-g7bmy5lt29v",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "53577-3"
+                    }
+                ],
+                "text": "Variables that apply to the overall study"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51967-8-lh0kwe0ekln"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51963-7-7f3rng6wqr2"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-n2214l93lz8"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#36908-2-ponojzh11ek"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51968-6-19krk9ff4mt"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#83006-7-937yq00kuff"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#62374-4-v4tswzbm5st"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "83005-9-4x1gidygv5g",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "83005-9"
+                    }
+                ],
+                "text": "Variant category"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA26801-3",
+                        "display": "Simple Variant"
+                    }
+                ],
+                "text": "Simple Variant"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82122-3-wvl9lsljkum",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82122-3"
+                    }
+                ],
+                "text": "Genetic variant coding system"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "CLINVAR-V",
+                        "display": "ClinVar Variants"
+                    }
+                ],
+                "text": "ClinVar Variants"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81252-9-p0d037judap",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81252-9"
+                    }
+                ],
+                "text": "Discrete genetic variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "31",
+                        "display": "NM_138413.3(HOGA1):c.289C>T (p.Arg97Cys)"
+                    }
+                ],
+                "text": "NM_138413.3(HOGA1):c.289C>T (p.Arg97Cys)"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-32u89aw9t8c",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene studied"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "25155",
+                        "display": "HOGA1"
+                    }
+                ],
+                "text": "HOGA1"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51958-7-n7rotcph1q",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51958-7"
+                    }
+                ],
+                "text": "Transcript RefSeq ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NM_138413.3",
+                        "display": "NM_138413.3"
+                    }
+                ],
+                "text": "NM_138413.3"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "41103-3-5ch7hjlau5",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "41103-3"
+                    }
+                ],
+                "text": "DNA change c.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "c.289C>T",
+                        "display": "c.289C>T"
+                    }
+                ],
+                "text": "c.289C>T"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48005-3-wrch95ra19q",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48005-3"
+                    }
+                ],
+                "text": "Amino acid change p.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "p.Arg97Cys",
+                        "display": "p.Arg97Cys"
+                    }
+                ],
+                "text": "p.Arg97Cys"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48019-4-yjitb33e2fh",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48019-4"
+                    }
+                ],
+                "text": "DNA change type"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "SNV",
+                        "display": "SNV"
+                    }
+                ],
+                "text": "SNV"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48013-7-etgrgcf7dc7",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48013-7"
+                    }
+                ],
+                "text": "Genomic reference sequence"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NC_000010.10",
+                        "display": "NC_000010.10"
+                    }
+                ],
+                "text": "NC_000010.10"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69547-8-5k2mkku46zn",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69547-8"
+                    }
+                ],
+                "text": "Genomic ref allele"
+            },
+            "valueString": "C"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81254-5-7dsuar6h8",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81254-5"
+                    }
+                ],
+                "text": "Genomic allele start-end"
+            },
+            "valueString": "99358609^99358609"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69551-0-ndnu0293m2r",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69551-0"
+                    }
+                ],
+                "text": "Genomic alt allele"
+            },
+            "valueString": "T"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81255-2-i2fqy6czhp",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81255-2"
+                    }
+                ],
+                "text": "dbSNP ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "31",
+                        "display": "rs267606762"
+                    }
+                ],
+                "text": "rs267606762"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48001-2-dhf91urv5m",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48001-2"
+                    }
+                ],
+                "text": "Cytogenetic location of variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "10q24.2",
+                        "display": "10q24.2"
+                    }
+                ],
+                "text": "10q24.2"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81259-4-gv2li6r9xpm",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81259-4"
+                    }
+                ],
+                "text": "Probable associated phenotype"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C3150878",
+                        "display": "Primary hyperoxaluria, type III"
+                    }
+                ],
+                "text": "Primary hyperoxaluria, type III"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81250-3-vaczl3fzlem",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81250-3"
+                    }
+                ],
+                "text": "Discrete genetic variant panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#83005-9-4x1gidygv5g"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82122-3-wvl9lsljkum"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81252-9-p0d037judap"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-32u89aw9t8c"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51958-7-n7rotcph1q"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#41103-3-5ch7hjlau5"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48005-3-wrch95ra19q"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48019-4-yjitb33e2fh"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48013-7-etgrgcf7dc7"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69547-8-5k2mkku46zn"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81254-5-7dsuar6h8"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69551-0-ndnu0293m2r"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81255-2-i2fqy6czhp"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48001-2-dhf91urv5m"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81259-4-gv2li6r9xpm"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81260-2-h876a3qxy57",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81260-2"
+                    }
+                ],
+                "text": "Complex variant ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "9818",
+                        "display": "9818"
+                    }
+                ],
+                "text": "9818"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81262-8-jtmf20x89vb",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81262-8"
+                    }
+                ],
+                "text": "Complex variant HGVS name"
+            },
+            "valueString": "NM_000044.3:c.172_174CAG(10_36)"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81259-4-4q2t70si063",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81259-4"
+                    }
+                ],
+                "text": "Associated phenotype"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C1839259",
+                        "display": "Bulbo-spinal atrophy X-linked"
+                    }
+                ],
+                "text": "Bulbo-spinal atrophy X-linked"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "83005-9-his4wtufozs",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "83005-9"
+                    }
+                ],
+                "text": "Variant category"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA26801-3",
+                        "display": "Simple Variant"
+                    }
+                ],
+                "text": "Simple Variant"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82122-3-i31m1xz7ina",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82122-3"
+                    }
+                ],
+                "text": "Genetic variant coding system"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "CLINVAR-V",
+                        "display": "ClinVar Variants"
+                    }
+                ],
+                "text": "ClinVar Variants"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81252-9-vuhmhbjxn8",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81252-9"
+                    }
+                ],
+                "text": "Discrete genetic variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "4",
+                        "display": "NM_014630.2(ZNF592):c.3136G>A (p.Gly1046Arg)"
+                    }
+                ],
+                "text": "NM_014630.2(ZNF592):c.3136G>A (p.Gly1046Arg)"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-n6ypu3e4i0i",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene studied"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "28986",
+                        "display": "ZNF592"
+                    }
+                ],
+                "text": "ZNF592"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51958-7-mzpto4c40v8",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51958-7"
+                    }
+                ],
+                "text": "Transcript RefSeq ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NM_014630.2",
+                        "display": "NM_014630.2"
+                    }
+                ],
+                "text": "NM_014630.2"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "41103-3-iwakwo4rxs9",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "41103-3"
+                    }
+                ],
+                "text": "DNA change c.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "c.3136G>A",
+                        "display": "c.3136G>A"
+                    }
+                ],
+                "text": "c.3136G>A"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48005-3-jygunukykb9",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48005-3"
+                    }
+                ],
+                "text": "Amino acid change p.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "p.Gly1046Arg",
+                        "display": "p.Gly1046Arg"
+                    }
+                ],
+                "text": "p.Gly1046Arg"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48019-4-hqxr8fo79no",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48019-4"
+                    }
+                ],
+                "text": "DNA change type"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "SNV",
+                        "display": "SNV"
+                    }
+                ],
+                "text": "SNV"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48013-7-uh6ymfg0c6b",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48013-7"
+                    }
+                ],
+                "text": "Genomic reference sequence"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NC_000015.9",
+                        "display": "NC_000015.9"
+                    }
+                ],
+                "text": "NC_000015.9"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69547-8-oy5441xslwn",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69547-8"
+                    }
+                ],
+                "text": "Genomic ref allele"
+            },
+            "valueString": "G"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81254-5-cohjrfe0qc",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81254-5"
+                    }
+                ],
+                "text": "Genomic allele start-end"
+            },
+            "valueString": "85342440^85342440"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69551-0-yd3uo3s30pc",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69551-0"
+                    }
+                ],
+                "text": "Genomic alt allele"
+            },
+            "valueString": "A"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81255-2-zpu27p3smt",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81255-2"
+                    }
+                ],
+                "text": "dbSNP ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "4",
+                        "display": "rs150829393"
+                    }
+                ],
+                "text": "rs150829393"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48001-2-x0hsfgoajf",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48001-2"
+                    }
+                ],
+                "text": "Cytogenetic location of variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "15q25",
+                        "display": "15q25"
+                    }
+                ],
+                "text": "15q25"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81259-4-is2nq91hqyq",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81259-4"
+                    }
+                ],
+                "text": "Probable associated phenotype"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C1847114",
+                        "display": "Spinocerebellar ataxia autosomal recessive 5"
+                    }
+                ],
+                "text": "Spinocerebellar ataxia autosomal recessive 5"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81250-3-ym8zr2vhk7f",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81250-3"
+                    }
+                ],
+                "text": "Discrete genetic variant panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#83005-9-his4wtufozs"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82122-3-i31m1xz7ina"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81252-9-vuhmhbjxn8"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-n6ypu3e4i0i"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51958-7-mzpto4c40v8"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#41103-3-iwakwo4rxs9"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48005-3-jygunukykb9"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48019-4-hqxr8fo79no"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48013-7-uh6ymfg0c6b"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69547-8-oy5441xslwn"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81254-5-cohjrfe0qc"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69551-0-yd3uo3s30pc"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81255-2-zpu27p3smt"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48001-2-x0hsfgoajf"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81259-4-is2nq91hqyq"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "83005-9-3a3dofuk0kx",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "83005-9"
+                    }
+                ],
+                "text": "Variant category"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA26801-3",
+                        "display": "Simple Variant"
+                    }
+                ],
+                "text": "Simple Variant"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82122-3-vsnr0n43qw",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82122-3"
+                    }
+                ],
+                "text": "Genetic variant coding system"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "CLINVAR-V",
+                        "display": "ClinVar Variants"
+                    }
+                ],
+                "text": "ClinVar Variants"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81252-9-rqq8vht82g",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81252-9"
+                    }
+                ],
+                "text": "Discrete genetic variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "36",
+                        "display": "NM_001201543.1(FAM161A):c.1309A>T (p.Arg437Ter)"
+                    }
+                ],
+                "text": "NM_001201543.1(FAM161A):c.1309A>T (p.Arg437Ter)"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-l7kggu4uaxl",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene studied"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "25808",
+                        "display": "FAM161A"
+                    }
+                ],
+                "text": "FAM161A"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51958-7-3xjh4syr8t2",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51958-7"
+                    }
+                ],
+                "text": "Transcript RefSeq ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NM_001201543.1",
+                        "display": "NM_001201543.1"
+                    }
+                ],
+                "text": "NM_001201543.1"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "41103-3-z5cg3j25blr",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "41103-3"
+                    }
+                ],
+                "text": "DNA change c.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "c.1309A>T",
+                        "display": "c.1309A>T"
+                    }
+                ],
+                "text": "c.1309A>T"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48005-3-5l09rd9i0uc",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48005-3"
+                    }
+                ],
+                "text": "Amino acid change p.HGVS"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "p.Arg437Ter",
+                        "display": "p.Arg437Ter"
+                    }
+                ],
+                "text": "p.Arg437Ter"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48019-4-7rehmfujf4",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48019-4"
+                    }
+                ],
+                "text": "DNA change type"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "SNV",
+                        "display": "SNV"
+                    }
+                ],
+                "text": "SNV"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48013-7-tvk8wv8meil",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48013-7"
+                    }
+                ],
+                "text": "Genomic reference sequence"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "NC_000002.11",
+                        "display": "NC_000002.11"
+                    }
+                ],
+                "text": "NC_000002.11"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69547-8-rptj75tceel",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69547-8"
+                    }
+                ],
+                "text": "Genomic ref allele"
+            },
+            "valueString": "T"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81254-5-mxz8p8t0u7",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81254-5"
+                    }
+                ],
+                "text": "Genomic allele start-end"
+            },
+            "valueString": "62066830^62066830"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "69551-0-lqqxkpvqma7",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "69551-0"
+                    }
+                ],
+                "text": "Genomic alt allele"
+            },
+            "valueString": "A"
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81255-2-j0hlsmn3pj",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81255-2"
+                    }
+                ],
+                "text": "dbSNP ID"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "36",
+                        "display": "rs200691042"
+                    }
+                ],
+                "text": "rs200691042"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48001-2-u6jbfisel5",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48001-2"
+                    }
+                ],
+                "text": "Cytogenetic location of variant"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "2p15",
+                        "display": "2p15"
+                    }
+                ],
+                "text": "2p15"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81259-4-pwj0147bhf",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81259-4"
+                    }
+                ],
+                "text": "Probable associated phenotype"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "C1853734",
+                        "display": "Retinitis pigmentosa 28"
+                    }
+                ],
+                "text": "Retinitis pigmentosa 28"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81250-3-dow54jd8rme",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81250-3"
+                    }
+                ],
+                "text": "Discrete genetic variant panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#83005-9-3a3dofuk0kx"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82122-3-vsnr0n43qw"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81252-9-rqq8vht82g"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-l7kggu4uaxl"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51958-7-3xjh4syr8t2"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#41103-3-z5cg3j25blr"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48005-3-5l09rd9i0uc"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48019-4-7rehmfujf4"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48013-7-tvk8wv8meil"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69547-8-rptj75tceel"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81254-5-mxz8p8t0u7"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#69551-0-lqqxkpvqma7"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81255-2-j0hlsmn3pj"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48001-2-u6jbfisel5"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81259-4-pwj0147bhf"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "81251-1-cdufg7wa6pc",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "81251-1"
+                    }
+                ],
+                "text": "Complex genetic variant - panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81260-2-h876a3qxy57"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81262-8-jtmf20x89vb"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81259-4-4q2t70si063"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81250-3-ym8zr2vhk7f"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#81250-3-dow54jd8rme"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-7i3i73yh1ob",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene(s) studied"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "16754",
+                        "display": "ACAP3"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "53040-2-6au0ilutpca",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "53040-2"
+                    }
+                ],
+                "text": "Genetic variation's effect on drug metabolism"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA10315-2",
+                        "display": "Ultrarapid metabolizer"
+                    }
+                ],
+                "text": "Ultrarapid metabolizer"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51963-7-5jevyawcjzw",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51963-7"
+                    }
+                ],
+                "text": "Medication assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "1091",
+                        "display": "Arginine"
+                    }
+                ],
+                "text": "Arginine"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82116-5-7muih45a1hb",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82116-5"
+                    }
+                ],
+                "text": "Medication usage suggestion [type]"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "3",
+                        "display": "Increase Dose"
+                    }
+                ],
+                "text": "Increase Dose"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82117-3-kd7veb27b5r",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82117-3"
+                    }
+                ],
+                "text": "Medication usage implications panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51963-7-5jevyawcjzw"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82116-5-7muih45a1hb"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51963-7-m1ubzsvzig",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51963-7"
+                    }
+                ],
+                "text": "Medication assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "89013",
+                        "display": "aripiprazole"
+                    }
+                ],
+                "text": "aripiprazole"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82116-5-zcsgua3uoxl",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82116-5"
+                    }
+                ],
+                "text": "Medication usage suggestion [type]"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "2",
+                        "display": "Decrease Dose"
+                    }
+                ],
+                "text": "Decrease Dose"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82117-3-shy908xrx6s",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82117-3"
+                    }
+                ],
+                "text": "Medication usage implications panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51963-7-m1ubzsvzig"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82116-5-zcsgua3uoxl"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "XP001-0-vrt0bz6mekp",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "XP001-0"
+                    }
+                ],
+                "text": "Pharmacogenomics gene results panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-7i3i73yh1ob"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#53040-2-6au0ilutpca"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82117-3-kd7veb27b5r"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82117-3-shy908xrx6s"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "48018-6-6fuo7yos3sr",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "48018-6"
+                    }
+                ],
+                "text": "Gene(s) studied"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "167",
+                        "display": "ACTR1A"
+                    }
+                ]
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "53040-2-x4aw80bk3b",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "53040-2"
+                    }
+                ],
+                "text": "Genetic variation's effect on drug metabolism"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "LA10315-2",
+                        "display": "Ultrarapid metabolizer"
+                    }
+                ],
+                "text": "Ultrarapid metabolizer"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "51963-7-0xbtplxwdl6",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "51963-7"
+                    }
+                ],
+                "text": "Medication assessed"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "641465",
+                        "display": "armodafinil"
+                    }
+                ],
+                "text": "armodafinil"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82116-5-p5zyzubctn",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82116-5"
+                    }
+                ],
+                "text": "Medication usage suggestion [type]"
+            },
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "4",
+                        "display": "Use Caution"
+                    }
+                ],
+                "text": "Use Caution"
+            }
+        },
+        {
+            "resourceType": "Observation",
+            "id": "82117-3-yrrnrwlfk4",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "82117-3"
+                    }
+                ],
+                "text": "Medication usage implications panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#51963-7-0xbtplxwdl6"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82116-5-p5zyzubctn"
+                    }
+                }
+            ]
+        },
+        {
+            "resourceType": "Observation",
+            "id": "XP001-0-8n9vtpxmxsb",
+            "status": "final",
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "XP001-0"
+                    }
+                ],
+                "text": "Pharmacogenomics gene results panel"
+            },
+            "related": [
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#48018-6-6fuo7yos3sr"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#53040-2-x4aw80bk3b"
+                    }
+                },
+                {
+                    "type": "has-member",
+                    "target": {
+                        "reference": "#82117-3-yrrnrwlfk4"
+                    }
+                }
+            ]
+        }
+    ],
+    "effectiveDateTime": "2017-03-21T00:00:00-04:00",
+    "issued": "2017-03-21T12:46:26-04:00"
+}

@@ -1,0 +1,887 @@
+{
+    "resourceType": "QuestionnaireResponse",
+    "identifier": {
+        "system": "http://loinc.org",
+        "value": "81247-9"
+    },
+    "status": "completed",
+    "authored": "2017-03-21T12:45:35-04:00",
+    "questionnaire": {
+        "reference": "http://hl7.org/fhir/us/sdc/Questionnaire/81247-9"
+    },
+    "meta": {
+        "profile": [
+            "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
+        ]
+    },
+    "item": [
+        {
+            "linkId": "/XXXXX-12/1",
+            "text": "Choose kind of mutations targeted",
+            "answer": [
+                {
+                    "valueCoding": {
+                        "code": "C01",
+                        "display": "Discrete variants"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "C02",
+                        "display": "Complex variants"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "C04",
+                        "display": "Pharmacogenomics"
+                    }
+                }
+            ]
+        },
+        {
+            "linkId": "/XXXXX-10/1",
+            "text": "Choose region of interest specification",
+            "answer": [
+                {
+                    "valueCoding": {
+                        "code": "C01",
+                        "display": "Specific targeted mutations"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "C02",
+                        "display": "Range targeted in the reference sequence"
+                    }
+                }
+            ]
+        },
+        {
+            "linkId": "/53577-3/1",
+            "text": "Variables that apply to the overall study",
+            "header": true,
+            "item": [
+                {
+                    "linkId": "/53577-3/51967-8/1/1",
+                    "text": "Genetic disease(s) assessed",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "CN185892",
+                                "display": "Abnormal arm span"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/51963-7/1/1",
+                    "text": "Medications assessed",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "1091",
+                                "display": "Arginine"
+                            }
+                        },
+                        {
+                            "valueCoding": {
+                                "code": "89013",
+                                "display": "aripiprazole"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/48018-6/1/1",
+                    "text": "Gene(s) assessed",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "16754",
+                                "display": "ACAP3"
+                            }
+                        },
+                        {
+                            "valueCoding": {
+                                "code": "37724",
+                                "display": "ACTR3BP1"
+                            }
+                        },
+                        {
+                            "valueCoding": {
+                                "code": "24022",
+                                "display": "ACTRT3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/36908-2/1/1",
+                    "text": "Gene mutations tested",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "31",
+                                "display": "NM_138413.3(HOGA1):c.289C>T (p.Arg97Cys)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/51968-6/1/1",
+                    "text": "Discrete variation analysis overall interpretation",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA6576-8",
+                                "display": "Positive"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/83006-7/1/1",
+                    "text": "Deletion-duplication overall interpretation",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA26803-9",
+                                "display": "No deletion or duplication detected in studied region"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/53577-3/62374-4/1/1",
+                    "text": "Human reference sequence assembly",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA14029-5",
+                                "display": "GRCh37"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "linkId": "/81250-3/1",
+            "text": "Discrete genetic variant panel",
+            "header": true,
+            "item": [
+                {
+                    "linkId": "/81250-3/83005-9/1/1",
+                    "text": "Variant category",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA26801-3",
+                                "display": "Simple Variant"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/82122-3/1/1",
+                    "text": "Genetic variant coding system",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "CLINVAR-V",
+                                "display": "ClinVar Variants"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/81252-9/1/1",
+                    "text": "Discrete genetic variant",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "31",
+                                "display": "NM_138413.3(HOGA1):c.289C>T (p.Arg97Cys)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/48018-6/1/1",
+                    "text": "Gene studied",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "25155",
+                                "display": "HOGA1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/51958-7/1/1",
+                    "text": "Transcript RefSeq ID",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "NM_138413.3",
+                                "display": "NM_138413.3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/41103-3/1/1",
+                    "text": "DNA change c.HGVS",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "c.289C>T",
+                                "display": "c.289C>T"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/48005-3/1/1",
+                    "text": "Amino acid change p.HGVS",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "p.Arg97Cys",
+                                "display": "p.Arg97Cys"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/48019-4/1/1",
+                    "text": "DNA change type",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "SNV",
+                                "display": "SNV"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/48013-7/1/1",
+                    "text": "Genomic reference sequence",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "NC_000010.10",
+                                "display": "NC_000010.10"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/69547-8/1/1",
+                    "text": "Genomic ref allele",
+                    "answer": [
+                        {
+                            "valueString": "C"
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/81254-5/1/1",
+                    "text": "Genomic allele start-end",
+                    "answer": []
+                },
+                {
+                    "linkId": "/81250-3/69551-0/1/1",
+                    "text": "Genomic alt allele",
+                    "answer": [
+                        {
+                            "valueString": "T"
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/81255-2/1/1",
+                    "text": "dbSNP ID",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "31",
+                                "display": "rs267606762"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/48001-2/1/1",
+                    "text": "Cytogenetic location of variant",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "10q24.2",
+                                "display": "10q24.2"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81250-3/81259-4/1/1",
+                    "text": "Probable associated phenotype",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "C3150878",
+                                "display": "Primary hyperoxaluria, type III"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "linkId": "/81251-1/1",
+            "text": "Complex genetic variant - panel",
+            "header": true,
+            "item": [
+                {
+                    "linkId": "/81251-1/81260-2/1/1",
+                    "text": "Complex variant ID",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "9818",
+                                "display": "9818"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81251-1/81262-8/1/1",
+                    "text": "Complex variant HGVS name",
+                    "answer": [
+                        {
+                            "valueString": "NM_000044.3:c.172_174CAG(10_36)"
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81251-1/81259-4/1/1",
+                    "text": "Associated phenotype",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "C1839259",
+                                "display": "Bulbo-spinal atrophy X-linked"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81251-1/81250-3/1/1",
+                    "text": "Discrete genetic variant panel",
+                    "header": true,
+                    "item": [
+                        {
+                            "linkId": "/81251-1/81250-3/83005-9/1/1/1",
+                            "text": "Variant category",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "LA26801-3",
+                                        "display": "Simple Variant"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/82122-3/1/1/1",
+                            "text": "Genetic variant coding system",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "CLINVAR-V",
+                                        "display": "ClinVar Variants"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81252-9/1/1/1",
+                            "text": "Discrete genetic variant",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "4",
+                                        "display": "NM_014630.2(ZNF592):c.3136G>A (p.Gly1046Arg)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48018-6/1/1/1",
+                            "text": "Gene studied",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "28986",
+                                        "display": "ZNF592"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/51958-7/1/1/1",
+                            "text": "Transcript RefSeq ID",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "NM_014630.2",
+                                        "display": "NM_014630.2"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/41103-3/1/1/1",
+                            "text": "DNA change c.HGVS",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "c.3136G>A",
+                                        "display": "c.3136G>A"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48005-3/1/1/1",
+                            "text": "Amino acid change p.HGVS",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "p.Gly1046Arg",
+                                        "display": "p.Gly1046Arg"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48019-4/1/1/1",
+                            "text": "DNA change type",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "SNV",
+                                        "display": "SNV"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48013-7/1/1/1",
+                            "text": "Genomic reference sequence",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "NC_000015.9",
+                                        "display": "NC_000015.9"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/69547-8/1/1/1",
+                            "text": "Genomic ref allele",
+                            "answer": [
+                                {
+                                    "valueString": "G"
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81254-5/1/1/1",
+                            "text": "Genomic allele start-end",
+                            "answer": []
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/69551-0/1/1/1",
+                            "text": "Genomic alt allele",
+                            "answer": [
+                                {
+                                    "valueString": "A"
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81255-2/1/1/1",
+                            "text": "dbSNP ID",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "4",
+                                        "display": "rs150829393"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48001-2/1/1/1",
+                            "text": "Cytogenetic location of variant",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "15q25",
+                                        "display": "15q25"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81259-4/1/1/1",
+                            "text": "Probable associated phenotype",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "C1847114",
+                                        "display": "Spinocerebellar ataxia autosomal recessive 5"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/81251-1/81250-3/1/2",
+                    "text": "Discrete genetic variant panel",
+                    "header": true,
+                    "item": [
+                        {
+                            "linkId": "/81251-1/81250-3/83005-9/1/2/1",
+                            "text": "Variant category",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "LA26801-3",
+                                        "display": "Simple Variant"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/82122-3/1/2/1",
+                            "text": "Genetic variant coding system",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "CLINVAR-V",
+                                        "display": "ClinVar Variants"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81252-9/1/2/1",
+                            "text": "Discrete genetic variant",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "36",
+                                        "display": "NM_001201543.1(FAM161A):c.1309A>T (p.Arg437Ter)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48018-6/1/2/1",
+                            "text": "Gene studied",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "25808",
+                                        "display": "FAM161A"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/51958-7/1/2/1",
+                            "text": "Transcript RefSeq ID",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "NM_001201543.1",
+                                        "display": "NM_001201543.1"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/41103-3/1/2/1",
+                            "text": "DNA change c.HGVS",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "c.1309A>T",
+                                        "display": "c.1309A>T"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48005-3/1/2/1",
+                            "text": "Amino acid change p.HGVS",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "p.Arg437Ter",
+                                        "display": "p.Arg437Ter"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48019-4/1/2/1",
+                            "text": "DNA change type",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "SNV",
+                                        "display": "SNV"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48013-7/1/2/1",
+                            "text": "Genomic reference sequence",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "NC_000002.11",
+                                        "display": "NC_000002.11"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/69547-8/1/2/1",
+                            "text": "Genomic ref allele",
+                            "answer": [
+                                {
+                                    "valueString": "T"
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81254-5/1/2/1",
+                            "text": "Genomic allele start-end",
+                            "answer": []
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/69551-0/1/2/1",
+                            "text": "Genomic alt allele",
+                            "answer": [
+                                {
+                                    "valueString": "A"
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81255-2/1/2/1",
+                            "text": "dbSNP ID",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "36",
+                                        "display": "rs200691042"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/48001-2/1/2/1",
+                            "text": "Cytogenetic location of variant",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "2p15",
+                                        "display": "2p15"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/81251-1/81250-3/81259-4/1/2/1",
+                            "text": "Probable associated phenotype",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "C1853734",
+                                        "display": "Retinitis pigmentosa 28"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "linkId": "/XP001-0/1",
+            "text": "Pharmacogenomics gene results panel",
+            "header": true,
+            "item": [
+                {
+                    "linkId": "/XP001-0/48018-6/1/1",
+                    "text": "Gene(s) studied",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "16754",
+                                "display": "ACAP3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/XP001-0/53040-2/1/1",
+                    "text": "Genetic variation's effect on drug metabolism",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA10315-2",
+                                "display": "Ultrarapid metabolizer"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/XP001-0/82117-3/1/1",
+                    "text": "Medication usage implications panel",
+                    "header": true,
+                    "item": [
+                        {
+                            "linkId": "/XP001-0/82117-3/51963-7/1/1/1",
+                            "text": "Medication assessed",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "1091",
+                                        "display": "Arginine"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/XP001-0/82117-3/82116-5/1/1/1",
+                            "text": "Medication usage suggestion [type]",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "3",
+                                        "display": "Increase Dose"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/XP001-0/82117-3/1/2",
+                    "text": "Medication usage implications panel",
+                    "header": true,
+                    "item": [
+                        {
+                            "linkId": "/XP001-0/82117-3/51963-7/1/2/1",
+                            "text": "Medication assessed",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "89013",
+                                        "display": "aripiprazole"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/XP001-0/82117-3/82116-5/1/2/1",
+                            "text": "Medication usage suggestion [type]",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "2",
+                                        "display": "Decrease Dose"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "linkId": "/XP001-0/2",
+            "text": "Pharmacogenomics gene results panel",
+            "header": true,
+            "item": [
+                {
+                    "linkId": "/XP001-0/48018-6/2/1",
+                    "text": "Gene(s) studied",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "167",
+                                "display": "ACTR1A"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/XP001-0/53040-2/2/1",
+                    "text": "Genetic variation's effect on drug metabolism",
+                    "answer": [
+                        {
+                            "valueCoding": {
+                                "code": "LA10315-2",
+                                "display": "Ultrarapid metabolizer"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "linkId": "/XP001-0/82117-3/2/1",
+                    "text": "Medication usage implications panel",
+                    "header": true,
+                    "item": [
+                        {
+                            "linkId": "/XP001-0/82117-3/51963-7/2/1/1",
+                            "text": "Medication assessed",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "641465",
+                                        "display": "armodafinil"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "linkId": "/XP001-0/82117-3/82116-5/2/1/1",
+                            "text": "Medication usage suggestion [type]",
+                            "answer": [
+                                {
+                                    "valueCoding": {
+                                        "code": "4",
+                                        "display": "Use Caution"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

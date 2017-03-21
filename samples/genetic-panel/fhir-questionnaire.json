@@ -1,0 +1,4071 @@
+{
+    "resourceType": "Questionnaire",
+    "status": "draft",
+    "date": "2017-02-21",
+    "version": "LOINC version 2.56",
+    "url": "http://hl7.org/fhir/us/sdc/Questionnaire/81247-9",
+    "meta": {
+        "profile": [
+            "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+        ]
+    },
+    "title": "Master HL7 genetic variant reporting panel (2016-11-21)",
+    "identifier": [
+        {
+            "system": "http://loinc.org",
+            "value": "81247-9"
+        }
+    ],
+    "concept": {
+        "system": "http://loinc.org",
+        "code": "81247-9",
+        "display": "Master HL7 genetic variant reporting panel (2016-11-21)"
+    },
+    "subjectType": [
+        "Patient",
+        "Person"
+    ],
+    "item": [
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "divider01",
+                "display": "Form configuration"
+            },
+            "text": "Form configuration",
+            "type": "display"
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "XXXXX-12",
+                "display": "Choose kind of mutations targeted"
+            },
+            "text": "Choose kind of mutations targeted",
+            "type": "choice",
+            "option": [
+                {
+                    "id": "C01",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C01",
+                        "display": "Discrete variants"
+                    }
+                },
+                {
+                    "id": "C02",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C02",
+                        "display": "Complex variants"
+                    }
+                },
+                {
+                    "id": "C04",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C04",
+                        "display": "Pharmacogenomics"
+                    }
+                }
+            ],
+            "initialCoding": [
+                {}
+            ]
+        },
+        {
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+                    "valueCodeableConcept": {
+                        "text": "Not part of the HL7 specification. Used only to choose whether this is a targeted nutation analysis or a full sequencing analysis",
+                        "coding": [
+                            {
+                                "display": "Not part of the HL7 specification. Used only to choose whether this is a targeted nutation analysis or a full sequencing analysis"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "XXXXX-10",
+                "display": "Choose region of interest specification"
+            },
+            "text": "Choose region of interest specification",
+            "type": "choice",
+            "option": [
+                {
+                    "id": "C01",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C01",
+                        "display": "Specific targeted mutations"
+                    }
+                },
+                {
+                    "id": "C02",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C02",
+                        "display": "Range targeted in the reference sequence"
+                    }
+                }
+            ],
+            "initialCoding": [
+                {}
+            ]
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81248-7",
+                "display": "Default transcript reference sequence coding system"
+            },
+            "text": "Default transcript reference sequence coding system",
+            "type": "open-choice",
+            "option": [
+                {
+                    "id": "LA26214-9",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "LA26214-9",
+                        "display": "NCBI NM"
+                    }
+                },
+                {
+                    "id": "LA26358-4",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "LA26358-4",
+                        "display": "Ensembl ENST"
+                    }
+                },
+                {
+                    "id": "LA26216",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "LA26216",
+                        "display": "LRG"
+                    }
+                },
+                {
+                    "id": "LA2635-6",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "LA2635-6",
+                        "display": "Other transcript reference sequence source"
+                    }
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81249-5",
+                "display": "Default genomic reference sequence coding system"
+            },
+            "text": "Default genomic reference sequence coding system",
+            "type": "open-choice",
+            "option": [
+                {
+                    "id": "C01",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C01",
+                        "display": "Ensembl genomic prefix =”ENSG”"
+                    }
+                },
+                {
+                    "id": "C02",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C02",
+                        "display": "NCBI-NG-NC'"
+                    }
+                },
+                {
+                    "id": "C04",
+                    "valueCoding": {
+                        "system": "http://loinc.org",
+                        "code": "C04",
+                        "display": "Other G RefSeq coding system"
+                    }
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81295-8",
+                "display": "OID for other T RefSeq coding system"
+            },
+            "text": "OID for other T RefSeq coding system",
+            "type": "question",
+            "enableWhen": [
+                {
+                    "question": 1,
+                    "answerCoding": {
+                        "code": "LA2635-6"
+                    }
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81296-6",
+                "display": "OID for other G RefSeq coding system"
+            },
+            "text": "OID for other G RefSeq coding system",
+            "type": "question",
+            "enableWhen": [
+                {
+                    "question": 1,
+                    "answerCoding": {
+                        "code": "C04"
+                    }
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": false,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "53577-3",
+                "display": "Variables that apply to the overall study"
+            },
+            "text": "Variables that apply to the overall study",
+            "type": "group",
+            "header": true,
+            "item": [
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53577-3",
+                        "display": "Reason for study"
+                    },
+                    "text": "Reason for study",
+                    "type": "text"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        },
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+                            "valueCodeableConcept": {
+                                "text": "Choose diseases coded within MedGen or type in your own text name.",
+                                "coding": [
+                                    {
+                                        "display": "Choose diseases coded within MedGen or type in your own text name."
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51967-8",
+                        "display": "Genetic disease(s) assessed"
+                    },
+                    "text": "Genetic disease(s) assessed",
+                    "type": "open-choice"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51963-7",
+                        "display": "Medications assessed"
+                    },
+                    "text": "Medications assessed",
+                    "type": "open-choice",
+                    "enableWhen": [
+                        {
+                            "question": 1,
+                            "answerCoding": {
+                                "code": "C04"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48018-6",
+                        "display": "Gene(s) assessed"
+                    },
+                    "text": "Gene(s) assessed",
+                    "type": "choice"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "36908-2",
+                        "display": "Gene mutations tested"
+                    },
+                    "text": "Gene mutations tested",
+                    "type": "open-choice",
+                    "enableWhen": [
+                        {
+                            "question": 1,
+                            "answerCoding": {
+                                "code": "C01"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": true,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51959-5",
+                        "display": "Ranges of DNA sequences examined"
+                    },
+                    "text": "Ranges of DNA sequences examined",
+                    "type": "string",
+                    "enableWhen": [
+                        {
+                            "question": 1,
+                            "answerCoding": {
+                                "code": "C02"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81293-3",
+                        "display": "Description of ranges of DNA sequences examined"
+                    },
+                    "text": "Description of ranges of DNA sequences examined",
+                    "type": "text",
+                    "enableWhen": [
+                        {
+                            "question": 1,
+                            "answerCoding": {
+                                "code": "C02"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "divider03t",
+                        "display": "Summary results"
+                    },
+                    "text": "Summary results",
+                    "type": "display"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51968-6",
+                        "display": "Discrete variation analysis overall interpretation"
+                    },
+                    "text": "Discrete variation analysis overall interpretation",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6576-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6576-8",
+                                "display": "Positive"
+                            }
+                        },
+                        {
+                            "id": "LA6577-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6577-6",
+                                "display": "Negative"
+                            }
+                        },
+                        {
+                            "id": "LA9663-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9663-1",
+                                "display": "Inconclusive"
+                            }
+                        },
+                        {
+                            "id": "LA9664-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9664-9",
+                                "display": "Failure"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "83006-7",
+                        "display": "Deletion-duplication overall interpretation"
+                    },
+                    "text": "Deletion-duplication overall interpretation",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA26803-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26803-9",
+                                "display": "No deletion or duplication detected in studied region"
+                            }
+                        },
+                        {
+                            "id": "LA26804-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26804-7",
+                                "display": "Deletion and/or duplication detected in studied region"
+                            }
+                        },
+                        {
+                            "id": "LA9663-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9663-1",
+                                "display": "Inconclusive"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51969-4",
+                        "display": "Full narrative report"
+                    },
+                    "text": "Full narrative report",
+                    "type": "text"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81291-7",
+                        "display": "Variant ISCN"
+                    },
+                    "text": "Variant ISCN",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "divider04t",
+                        "display": "Versions of Coding Systems"
+                    },
+                    "text": "Versions of Coding Systems",
+                    "type": "display"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "62374-4",
+                        "display": "Human reference sequence assembly"
+                    },
+                    "text": "Human reference sequence assembly",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA14031-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA14031-1",
+                                "display": "NCBI35"
+                            }
+                        },
+                        {
+                            "id": "LA26805-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26805-4",
+                                "display": "NCBI36"
+                            }
+                        },
+                        {
+                            "id": "LA14029-5",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA14029-5",
+                                "display": "GRCh37"
+                            }
+                        },
+                        {
+                            "id": "LA26806-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26806-2",
+                                "display": "GRCh38"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81303-0",
+                        "display": "HGVS version [ID]"
+                    },
+                    "text": "HGVS version [ID]",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82115-7",
+                        "display": "dbSNP version [Num]"
+                    },
+                    "text": "dbSNP version [Num]",
+                    "type": "integer"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "83007-5",
+                        "display": "COSMIC version [Num]"
+                    },
+                    "text": "COSMIC version [Num]",
+                    "type": "integer"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "83008-3",
+                        "display": "ClinVar version [ID]"
+                    },
+                    "text": "ClinVar version [ID]",
+                    "type": "integer"
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": true,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81250-3",
+                "display": "Discrete genetic variant panel"
+            },
+            "text": "Discrete genetic variant panel",
+            "type": "group",
+            "enableWhen": [
+                {
+                    "question": 1,
+                    "answerCoding": {
+                        "code": "C01"
+                    }
+                }
+            ],
+            "header": true,
+            "item": [
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "83005-9",
+                        "display": "Variant category"
+                    },
+                    "text": "Variant category",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA26801-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26801-3",
+                                "display": "Simple Variant"
+                            }
+                        },
+                        {
+                            "id": "LA26802-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26802-1",
+                                "display": "Structural Variant"
+                            }
+                        }
+                    ],
+                    "initialCoding": [
+                        {
+                            "code": "LA26801-3",
+                            "display": "Simple Variant"
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82122-3",
+                        "display": "Genetic variant coding system"
+                    },
+                    "text": "Genetic variant coding system",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "CLINVAR-V",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "CLINVAR-V",
+                                "display": "ClinVar Variants"
+                            }
+                        },
+                        {
+                            "id": "CLINVAR-A",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "CLINVAR-A",
+                                "display": "ClinVar Alleles"
+                            }
+                        },
+                        {
+                            "id": "cosmic-Smpl",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "cosmic-Smpl",
+                                "display": "COSMIC"
+                            }
+                        },
+                        {
+                            "id": "LA46-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA46-8",
+                                "display": "Other variant source"
+                            }
+                        }
+                    ],
+                    "initialCoding": [
+                        {
+                            "code": "CLINVAR-V",
+                            "display": "ClinVar Variants"
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81252-9",
+                        "display": "Discrete genetic variant"
+                    },
+                    "text": "Discrete genetic variant",
+                    "type": "open-choice"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0008-1",
+                        "display": "Transcript specification"
+                    },
+                    "text": "Transcript specification",
+                    "type": "display"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48018-6",
+                        "display": "Gene studied"
+                    },
+                    "text": "Gene studied",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51958-7",
+                        "display": "Transcript RefSeq ID"
+                    },
+                    "text": "Transcript RefSeq ID",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "41103-3",
+                        "display": "DNA change c.HGVS"
+                    },
+                    "text": "DNA change c.HGVS",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48005-3",
+                        "display": "Amino acid change p.HGVS"
+                    },
+                    "text": "Amino acid change p.HGVS",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48019-4",
+                        "display": "DNA change type"
+                    },
+                    "text": "DNA change type",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA9658-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9658-1",
+                                "display": "Wild Type"
+                            }
+                        },
+                        {
+                            "id": "LA6692-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6692-3",
+                                "display": "Deletion"
+                            }
+                        },
+                        {
+                            "id": "LA6686-5",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6686-5",
+                                "display": "Duplication"
+                            }
+                        },
+                        {
+                            "id": "LA6687-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6687-3",
+                                "display": "Insertion"
+                            }
+                        },
+                        {
+                            "id": "LA6688-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6688-1",
+                                "display": "Insertion/Deletion"
+                            }
+                        },
+                        {
+                            "id": "LA6689-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6689-9",
+                                "display": "Inversion"
+                            }
+                        },
+                        {
+                            "id": "LA6690-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6690-7",
+                                "display": "Substitution"
+                            }
+                        }
+                    ],
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48006-1",
+                        "display": "Amino acid change type"
+                    },
+                    "text": "Amino acid change type",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA9658-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9658-1",
+                                "display": "Wild type"
+                            }
+                        },
+                        {
+                            "id": "LA6692-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6692-3",
+                                "display": "Deletion"
+                            }
+                        },
+                        {
+                            "id": "LA6686-5",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6686-5",
+                                "display": "Duplication"
+                            }
+                        },
+                        {
+                            "id": "LA6694-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6694-9",
+                                "display": "Frameshift"
+                            }
+                        },
+                        {
+                            "id": "LA6695-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6695-6",
+                                "display": "Initiating Methionine"
+                            }
+                        },
+                        {
+                            "id": "LA6687-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6687-3",
+                                "display": "Insertion"
+                            }
+                        },
+                        {
+                            "id": "LA9659-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9659-9",
+                                "display": "Insertion and Deletion"
+                            }
+                        },
+                        {
+                            "id": "LA6698-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6698-0",
+                                "display": "Missense"
+                            }
+                        },
+                        {
+                            "id": "LA6699-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6699-8",
+                                "display": "Nonsense"
+                            }
+                        },
+                        {
+                            "id": "LA6700-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6700-4",
+                                "display": "Silent"
+                            }
+                        },
+                        {
+                            "id": "LA6701-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6701-2",
+                                "display": "Stop Codon Mutation"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0009-1",
+                        "display": "Genomic specification"
+                    },
+                    "text": "Genomic specification",
+                    "type": "display"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48013-7",
+                        "display": "Genomic reference sequence"
+                    },
+                    "text": "Genomic reference sequence",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81290-9",
+                        "display": "Genomic DNA change (gHGVS)"
+                    },
+                    "text": "Genomic DNA change (gHGVS)",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "69547-8",
+                        "display": "Genomic ref allele"
+                    },
+                    "text": "Genomic ref allele",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81254-5",
+                        "display": "Genomic allele start-end"
+                    },
+                    "text": "Genomic allele start-end",
+                    "type": "string"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "69551-0",
+                        "display": "Genomic alt allele"
+                    },
+                    "text": "Genomic alt allele",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0010-1",
+                        "display": "Other optional codes related to a discrete genetic variant"
+                    },
+                    "text": "Other optional codes related to a discrete genetic variant",
+                    "type": "display"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48008-7",
+                        "display": "Haplotype Name"
+                    },
+                    "text": "Haplotype Name",
+                    "type": "question"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81255-2",
+                        "display": "dbSNP ID"
+                    },
+                    "text": "dbSNP ID",
+                    "type": "choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81257-8",
+                        "display": "CIGAR"
+                    },
+                    "text": "CIGAR",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0011-1",
+                        "display": "Other possible attributes"
+                    },
+                    "text": "Other possible attributes",
+                    "type": "display"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48001-2",
+                        "display": "Cytogenetic location of variant"
+                    },
+                    "text": "Cytogenetic location of variant",
+                    "type": "open-choice",
+                    "initialCoding": [
+                        {
+                            "code": null,
+                            "display": null
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48002-0",
+                        "display": "Genomic source class"
+                    },
+                    "text": "Genomic source class",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6683-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6683-2",
+                                "display": "Germline"
+                            }
+                        },
+                        {
+                            "id": "LA6684-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6684-0",
+                                "display": "Somatic"
+                            }
+                        },
+                        {
+                            "id": "LA10429-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA10429-1",
+                                "display": "Prenatal"
+                            }
+                        },
+                        {
+                            "id": "LA18194-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA18194-3",
+                                "display": "Likely germline"
+                            }
+                        },
+                        {
+                            "id": "LA18195-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA18195-0",
+                                "display": "Likely somatic"
+                            }
+                        },
+                        {
+                            "id": "LA18196-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA18196-8",
+                                "display": "Likely prenatal"
+                            }
+                        },
+                        {
+                            "id": "LA18197-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA18197-6",
+                                "display": "Unknown genomic origin"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81304-8",
+                        "display": "Variant analysis method type"
+                    },
+                    "text": "Variant analysis method type",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA26398-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26398-0",
+                                "display": "Sequencing"
+                            }
+                        },
+                        {
+                            "id": "LA26399-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26399-8",
+                                "display": "Oligo aCGH"
+                            }
+                        },
+                        {
+                            "id": "LA26400-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26400-4",
+                                "display": "SNP Array"
+                            }
+                        },
+                        {
+                            "id": "LA26401-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26401-2",
+                                "display": "BAC aCGH"
+                            }
+                        },
+                        {
+                            "id": "LA26402-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26402-0",
+                                "display": "Curated"
+                            }
+                        },
+                        {
+                            "id": "LA26403-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26403-8",
+                                "display": "Digital Array"
+                            }
+                        },
+                        {
+                            "id": "LA26404-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26404-6",
+                                "display": "FISH"
+                            }
+                        },
+                        {
+                            "id": "LA26405-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26405-3",
+                                "display": "Gene Expression Array"
+                            }
+                        },
+                        {
+                            "id": "LA26406-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26406-1",
+                                "display": "Karyotyping"
+                            }
+                        },
+                        {
+                            "id": "LA26407-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26407-9",
+                                "display": "MAPH"
+                            }
+                        },
+                        {
+                            "id": "LA26408-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26408-7",
+                                "display": "MassSpec"
+                            }
+                        },
+                        {
+                            "id": "LA26808-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26808-8",
+                                "display": "Merging"
+                            }
+                        },
+                        {
+                            "id": "LA26414-5",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26414-5",
+                                "display": "Multiple Complete Digestion"
+                            }
+                        },
+                        {
+                            "id": "LA26415-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26415-2",
+                                "display": "MLPA"
+                            }
+                        },
+                        {
+                            "id": "LA26417-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26417-8",
+                                "display": "Optical Mapping"
+                            }
+                        },
+                        {
+                            "id": "LA26418-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26418-6",
+                                "display": "PCR"
+                            }
+                        },
+                        {
+                            "id": "LA26419-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26419-4",
+                                "display": "qPCR (Real-time PCR)"
+                            }
+                        },
+                        {
+                            "id": "LA26420-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26420-2",
+                                "display": "ROMA"
+                            }
+                        },
+                        {
+                            "id": "LA26809-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26809-6",
+                                "display": "Denaturing high pressure liquid chromatography (DHPLC)"
+                            }
+                        },
+                        {
+                            "id": "LA26810-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26810-4",
+                                "display": "DNA hybridization"
+                            }
+                        },
+                        {
+                            "id": "LA26811-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26811-2",
+                                "display": "Computational analysis"
+                            }
+                        },
+                        {
+                            "id": "LA26812-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26812-0",
+                                "display": "Single-stranded conformational polymorphism (SSCP)"
+                            }
+                        },
+                        {
+                            "id": "LA26813-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26813-8",
+                                "display": "Restriction Fragment Length Polymorphism (RFLP)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0012-1",
+                        "display": "Interpretations"
+                    },
+                    "text": "Interpretations",
+                    "type": "display"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53037-8",
+                        "display": "Clinical significance"
+                    },
+                    "text": "Clinical significance",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6668-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6668-3",
+                                "display": "Pathogenic"
+                            }
+                        },
+                        {
+                            "id": "LA6669-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6669-1",
+                                "display": "Likely Pathogenic"
+                            }
+                        },
+                        {
+                            "id": "LA6671-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6671-7",
+                                "display": "Uncertain Significance"
+                            }
+                        },
+                        {
+                            "id": "LA6674-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6674-1",
+                                "display": "Likely Benign"
+                            }
+                        },
+                        {
+                            "id": "LA6675-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6675-8",
+                                "display": "Benign"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "69548-6",
+                        "display": "Genomic variant assessment"
+                    },
+                    "text": "Genomic variant assessment",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA9633-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9633-4",
+                                "display": "Present"
+                            }
+                        },
+                        {
+                            "id": "LA9634-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9634-2",
+                                "display": "Absent"
+                            }
+                        },
+                        {
+                            "id": "LA18198-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA18198-4",
+                                "display": "No call"
+                            }
+                        },
+                        {
+                            "id": "LA11884-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA11884-6",
+                                "display": "Indeterminate"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81259-4",
+                        "display": "Probable associated phenotype"
+                    },
+                    "text": "Probable associated phenotype",
+                    "type": "open-choice"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X0013-1",
+                        "display": "Allelic state/phase information"
+                    },
+                    "text": "Allelic state/phase information",
+                    "type": "display"
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+                            "valueCodeableConcept": {
+                                "text": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
+                                "coding": [
+                                    {
+                                        "display": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53034-5",
+                        "display": "Allelic state"
+                    },
+                    "text": "Allelic state",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6703-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6703-8",
+                                "display": "Heteroplasmic"
+                            }
+                        },
+                        {
+                            "id": "LA6704-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6704-6",
+                                "display": "Homoplasmic"
+                            }
+                        },
+                        {
+                            "id": "LA6705-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6705-3",
+                                "display": "Homozygous"
+                            }
+                        },
+                        {
+                            "id": "LA6706-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6706-1",
+                                "display": "Heterozygous"
+                            }
+                        },
+                        {
+                            "id": "LA6707-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6707-9",
+                                "display": "Hemizygous"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81258-6",
+                        "display": "Allelic Frequency NFR"
+                    },
+                    "text": "Allelic Frequency NFR",
+                    "type": "decimal"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82121-5",
+                        "display": "Allelic read depth"
+                    },
+                    "text": "Allelic read depth",
+                    "type": "decimal"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82120-7",
+                        "display": "Allelic phase [Type]"
+                    },
+                    "text": "Allelic phase [Type]",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA6112-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6112-2",
+                                "display": "1"
+                            }
+                        },
+                        {
+                            "id": "LA6113-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6113-0",
+                                "display": "2"
+                            }
+                        },
+                        {
+                            "id": "LA6114-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6114-8",
+                                "display": "3"
+                            }
+                        },
+                        {
+                            "id": "LA26320-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26320-4",
+                                "display": "Maternal"
+                            }
+                        },
+                        {
+                            "id": "LA26321-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26321-2",
+                                "display": "Paternal"
+                            }
+                        },
+                        {
+                            "id": "LA4489-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA4489-6",
+                                "display": "Unknown"
+                            }
+                        },
+                        {
+                            "id": "LA46-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA46-8",
+                                "display": "Other"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82309-6",
+                        "display": "Basis for allelic phase"
+                    },
+                    "text": "Basis for allelic phase",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "X1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X1",
+                                "display": "Directly measured"
+                            }
+                        },
+                        {
+                            "id": "X2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X2",
+                                "display": "Family DNA"
+                            }
+                        },
+                        {
+                            "id": "X3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X3",
+                                "display": "Family history"
+                            }
+                        },
+                        {
+                            "id": "X4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X4",
+                                "display": "Inferred from population data"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81297-4",
+                        "display": "Structural variant addendum panel"
+                    },
+                    "text": "Structural variant addendum panel",
+                    "type": "group",
+                    "enableWhen": [
+                        {
+                            "question": 1,
+                            "answerCoding": {
+                                "code": "LA26802-1"
+                            }
+                        }
+                    ],
+                    "header": true,
+                    "item": [
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82155-3",
+                                "display": "Copy number"
+                            },
+                            "text": "Copy number",
+                            "type": "integer"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81299-0",
+                                "display": "arrCGH ratio"
+                            },
+                            "text": "arrCGH ratio",
+                            "type": "decimal"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81300-6",
+                                "display": "Structural variant length"
+                            },
+                            "text": "Structural variant length",
+                            "type": "integer"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81301-4",
+                                "display": "Structural variant outer start-end"
+                            },
+                            "text": "Structural variant outer start-end",
+                            "type": "string"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81302-2",
+                                "display": "Structural variant inner start-end"
+                            },
+                            "text": "Structural variant inner start-end",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": true,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "81251-1",
+                "display": "Complex genetic variant - panel"
+            },
+            "text": "Complex genetic variant - panel",
+            "type": "group",
+            "enableWhen": [
+                {
+                    "question": 1,
+                    "answerCoding": {
+                        "code": "C02"
+                    }
+                }
+            ],
+            "header": true,
+            "item": [
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81260-2",
+                        "display": "Complex variant ID"
+                    },
+                    "text": "Complex variant ID",
+                    "type": "open-choice"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81262-8",
+                        "display": "Complex variant HGVS name"
+                    },
+                    "text": "Complex variant HGVS name",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81263-6",
+                        "display": "Complex variant type"
+                    },
+                    "text": "Complex variant type",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA26217-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26217-2",
+                                "display": "Compound heterozygous"
+                            }
+                        },
+                        {
+                            "id": "LA26220-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26220-6",
+                                "display": "Double heterozygous"
+                            }
+                        },
+                        {
+                            "id": "LA26218-0",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA26218-0",
+                                "display": "Haplotype"
+                            }
+                        },
+                        {
+                            "id": "LA6707-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6707-9",
+                                "display": "Hemizygous"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81259-4",
+                        "display": "Associated phenotype"
+                    },
+                    "text": "Associated phenotype",
+                    "type": "open-choice"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53037-8",
+                        "display": "Clinical significance"
+                    },
+                    "text": "Clinical significance",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6668-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6668-3",
+                                "display": "Pathogenic"
+                            }
+                        },
+                        {
+                            "id": "LA6669-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6669-1",
+                                "display": "Likely Pathogenic"
+                            }
+                        },
+                        {
+                            "id": "LA6671-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6671-7",
+                                "display": "Uncertain Significance"
+                            }
+                        },
+                        {
+                            "id": "LA6674-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6674-1",
+                                "display": "Likely Benign"
+                            }
+                        },
+                        {
+                            "id": "LA6675-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6675-8",
+                                "display": "Benign"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+                            "valueCodeableConcept": {
+                                "text": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
+                                "coding": [
+                                    {
+                                        "display": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53034-5",
+                        "display": "Allelic state"
+                    },
+                    "text": "Allelic state",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "LA6703-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6703-8",
+                                "display": "Heteroplasmic"
+                            }
+                        },
+                        {
+                            "id": "LA6704-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6704-6",
+                                "display": "Homoplasmic"
+                            }
+                        },
+                        {
+                            "id": "LA6705-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6705-3",
+                                "display": "Homozygous"
+                            }
+                        },
+                        {
+                            "id": "LA6706-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6706-1",
+                                "display": "Heterozygous"
+                            }
+                        },
+                        {
+                            "id": "LA6707-9",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6707-9",
+                                "display": "Hemizygous"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82309-6",
+                        "display": "Basis for allelic phase"
+                    },
+                    "text": "Basis for allelic phase",
+                    "type": "choice",
+                    "option": [
+                        {
+                            "id": "X1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X1",
+                                "display": "Directly measured"
+                            }
+                        },
+                        {
+                            "id": "X2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X2",
+                                "display": "Family DNA"
+                            }
+                        },
+                        {
+                            "id": "X3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X3",
+                                "display": "Family history"
+                            }
+                        },
+                        {
+                            "id": "X4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "X4",
+                                "display": "Inferred from population data"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": true,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "81250-3",
+                        "display": "Discrete genetic variant panel"
+                    },
+                    "text": "Discrete genetic variant panel",
+                    "type": "group",
+                    "header": true,
+                    "item": [
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "83005-9",
+                                "display": "Variant category"
+                            },
+                            "text": "Variant category",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "LA26801-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26801-3",
+                                        "display": "Simple Variant"
+                                    }
+                                },
+                                {
+                                    "id": "LA26802-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26802-1",
+                                        "display": "Structural Variant"
+                                    }
+                                }
+                            ],
+                            "initialCoding": [
+                                {
+                                    "code": "LA26801-3",
+                                    "display": "Simple Variant"
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82122-3",
+                                "display": "Genetic variant coding system"
+                            },
+                            "text": "Genetic variant coding system",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "CLINVAR-V",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "CLINVAR-V",
+                                        "display": "ClinVar Variants"
+                                    }
+                                },
+                                {
+                                    "id": "CLINVAR-A",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "CLINVAR-A",
+                                        "display": "ClinVar Alleles"
+                                    }
+                                },
+                                {
+                                    "id": "cosmic-Smpl",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "cosmic-Smpl",
+                                        "display": "COSMIC"
+                                    }
+                                },
+                                {
+                                    "id": "LA46-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA46-8",
+                                        "display": "Other variant source"
+                                    }
+                                }
+                            ],
+                            "initialCoding": [
+                                {
+                                    "code": "CLINVAR-V",
+                                    "display": "ClinVar Variants"
+                                }
+                            ]
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81252-9",
+                                "display": "Discrete genetic variant"
+                            },
+                            "text": "Discrete genetic variant",
+                            "type": "open-choice"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0008-1",
+                                "display": "Transcript specification"
+                            },
+                            "text": "Transcript specification",
+                            "type": "display"
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48018-6",
+                                "display": "Gene studied"
+                            },
+                            "text": "Gene studied",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "51958-7",
+                                "display": "Transcript RefSeq ID"
+                            },
+                            "text": "Transcript RefSeq ID",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "41103-3",
+                                "display": "DNA change c.HGVS"
+                            },
+                            "text": "DNA change c.HGVS",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48005-3",
+                                "display": "Amino acid change p.HGVS"
+                            },
+                            "text": "Amino acid change p.HGVS",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48019-4",
+                                "display": "DNA change type"
+                            },
+                            "text": "DNA change type",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "LA9658-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA9658-1",
+                                        "display": "Wild Type"
+                                    }
+                                },
+                                {
+                                    "id": "LA6692-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6692-3",
+                                        "display": "Deletion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6686-5",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6686-5",
+                                        "display": "Duplication"
+                                    }
+                                },
+                                {
+                                    "id": "LA6687-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6687-3",
+                                        "display": "Insertion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6688-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6688-1",
+                                        "display": "Insertion/Deletion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6689-9",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6689-9",
+                                        "display": "Inversion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6690-7",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6690-7",
+                                        "display": "Substitution"
+                                    }
+                                }
+                            ],
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48006-1",
+                                "display": "Amino acid change type"
+                            },
+                            "text": "Amino acid change type",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "LA9658-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA9658-1",
+                                        "display": "Wild type"
+                                    }
+                                },
+                                {
+                                    "id": "LA6692-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6692-3",
+                                        "display": "Deletion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6686-5",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6686-5",
+                                        "display": "Duplication"
+                                    }
+                                },
+                                {
+                                    "id": "LA6694-9",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6694-9",
+                                        "display": "Frameshift"
+                                    }
+                                },
+                                {
+                                    "id": "LA6695-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6695-6",
+                                        "display": "Initiating Methionine"
+                                    }
+                                },
+                                {
+                                    "id": "LA6687-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6687-3",
+                                        "display": "Insertion"
+                                    }
+                                },
+                                {
+                                    "id": "LA9659-9",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA9659-9",
+                                        "display": "Insertion and Deletion"
+                                    }
+                                },
+                                {
+                                    "id": "LA6698-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6698-0",
+                                        "display": "Missense"
+                                    }
+                                },
+                                {
+                                    "id": "LA6699-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6699-8",
+                                        "display": "Nonsense"
+                                    }
+                                },
+                                {
+                                    "id": "LA6700-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6700-4",
+                                        "display": "Silent"
+                                    }
+                                },
+                                {
+                                    "id": "LA6701-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6701-2",
+                                        "display": "Stop Codon Mutation"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0009-1",
+                                "display": "Genomic specification"
+                            },
+                            "text": "Genomic specification",
+                            "type": "display"
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48013-7",
+                                "display": "Genomic reference sequence"
+                            },
+                            "text": "Genomic reference sequence",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81290-9",
+                                "display": "Genomic DNA change (gHGVS)"
+                            },
+                            "text": "Genomic DNA change (gHGVS)",
+                            "type": "question"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "69547-8",
+                                "display": "Genomic ref allele"
+                            },
+                            "text": "Genomic ref allele",
+                            "type": "question"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81254-5",
+                                "display": "Genomic allele start-end"
+                            },
+                            "text": "Genomic allele start-end",
+                            "type": "string"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "69551-0",
+                                "display": "Genomic alt allele"
+                            },
+                            "text": "Genomic alt allele",
+                            "type": "question"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0010-1",
+                                "display": "Other optional codes related to a discrete genetic variant"
+                            },
+                            "text": "Other optional codes related to a discrete genetic variant",
+                            "type": "display"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48008-7",
+                                "display": "Haplotype Name"
+                            },
+                            "text": "Haplotype Name",
+                            "type": "question"
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81255-2",
+                                "display": "dbSNP ID"
+                            },
+                            "text": "dbSNP ID",
+                            "type": "choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81257-8",
+                                "display": "CIGAR"
+                            },
+                            "text": "CIGAR",
+                            "type": "question"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0011-1",
+                                "display": "Other possible attributes"
+                            },
+                            "text": "Other possible attributes",
+                            "type": "display"
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48001-2",
+                                "display": "Cytogenetic location of variant"
+                            },
+                            "text": "Cytogenetic location of variant",
+                            "type": "open-choice",
+                            "initialCoding": [
+                                {
+                                    "code": null,
+                                    "display": null
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "48002-0",
+                                "display": "Genomic source class"
+                            },
+                            "text": "Genomic source class",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "LA6683-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6683-2",
+                                        "display": "Germline"
+                                    }
+                                },
+                                {
+                                    "id": "LA6684-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6684-0",
+                                        "display": "Somatic"
+                                    }
+                                },
+                                {
+                                    "id": "LA10429-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA10429-1",
+                                        "display": "Prenatal"
+                                    }
+                                },
+                                {
+                                    "id": "LA18194-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA18194-3",
+                                        "display": "Likely germline"
+                                    }
+                                },
+                                {
+                                    "id": "LA18195-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA18195-0",
+                                        "display": "Likely somatic"
+                                    }
+                                },
+                                {
+                                    "id": "LA18196-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA18196-8",
+                                        "display": "Likely prenatal"
+                                    }
+                                },
+                                {
+                                    "id": "LA18197-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA18197-6",
+                                        "display": "Unknown genomic origin"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81304-8",
+                                "display": "Variant analysis method type"
+                            },
+                            "text": "Variant analysis method type",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "LA26398-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26398-0",
+                                        "display": "Sequencing"
+                                    }
+                                },
+                                {
+                                    "id": "LA26399-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26399-8",
+                                        "display": "Oligo aCGH"
+                                    }
+                                },
+                                {
+                                    "id": "LA26400-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26400-4",
+                                        "display": "SNP Array"
+                                    }
+                                },
+                                {
+                                    "id": "LA26401-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26401-2",
+                                        "display": "BAC aCGH"
+                                    }
+                                },
+                                {
+                                    "id": "LA26402-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26402-0",
+                                        "display": "Curated"
+                                    }
+                                },
+                                {
+                                    "id": "LA26403-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26403-8",
+                                        "display": "Digital Array"
+                                    }
+                                },
+                                {
+                                    "id": "LA26404-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26404-6",
+                                        "display": "FISH"
+                                    }
+                                },
+                                {
+                                    "id": "LA26405-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26405-3",
+                                        "display": "Gene Expression Array"
+                                    }
+                                },
+                                {
+                                    "id": "LA26406-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26406-1",
+                                        "display": "Karyotyping"
+                                    }
+                                },
+                                {
+                                    "id": "LA26407-9",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26407-9",
+                                        "display": "MAPH"
+                                    }
+                                },
+                                {
+                                    "id": "LA26408-7",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26408-7",
+                                        "display": "MassSpec"
+                                    }
+                                },
+                                {
+                                    "id": "LA26808-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26808-8",
+                                        "display": "Merging"
+                                    }
+                                },
+                                {
+                                    "id": "LA26414-5",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26414-5",
+                                        "display": "Multiple Complete Digestion"
+                                    }
+                                },
+                                {
+                                    "id": "LA26415-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26415-2",
+                                        "display": "MLPA"
+                                    }
+                                },
+                                {
+                                    "id": "LA26417-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26417-8",
+                                        "display": "Optical Mapping"
+                                    }
+                                },
+                                {
+                                    "id": "LA26418-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26418-6",
+                                        "display": "PCR"
+                                    }
+                                },
+                                {
+                                    "id": "LA26419-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26419-4",
+                                        "display": "qPCR (Real-time PCR)"
+                                    }
+                                },
+                                {
+                                    "id": "LA26420-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26420-2",
+                                        "display": "ROMA"
+                                    }
+                                },
+                                {
+                                    "id": "LA26809-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26809-6",
+                                        "display": "Denaturing high pressure liquid chromatography (DHPLC)"
+                                    }
+                                },
+                                {
+                                    "id": "LA26810-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26810-4",
+                                        "display": "DNA hybridization"
+                                    }
+                                },
+                                {
+                                    "id": "LA26811-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26811-2",
+                                        "display": "Computational analysis"
+                                    }
+                                },
+                                {
+                                    "id": "LA26812-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26812-0",
+                                        "display": "Single-stranded conformational polymorphism (SSCP)"
+                                    }
+                                },
+                                {
+                                    "id": "LA26813-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26813-8",
+                                        "display": "Restriction Fragment Length Polymorphism (RFLP)"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0012-1",
+                                "display": "Interpretations"
+                            },
+                            "text": "Interpretations",
+                            "type": "display"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "53037-8",
+                                "display": "Clinical significance"
+                            },
+                            "text": "Clinical significance",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "LA6668-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6668-3",
+                                        "display": "Pathogenic"
+                                    }
+                                },
+                                {
+                                    "id": "LA6669-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6669-1",
+                                        "display": "Likely Pathogenic"
+                                    }
+                                },
+                                {
+                                    "id": "LA6671-7",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6671-7",
+                                        "display": "Uncertain Significance"
+                                    }
+                                },
+                                {
+                                    "id": "LA6674-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6674-1",
+                                        "display": "Likely Benign"
+                                    }
+                                },
+                                {
+                                    "id": "LA6675-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6675-8",
+                                        "display": "Benign"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "69548-6",
+                                "display": "Genomic variant assessment"
+                            },
+                            "text": "Genomic variant assessment",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "LA9633-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA9633-4",
+                                        "display": "Present"
+                                    }
+                                },
+                                {
+                                    "id": "LA9634-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA9634-2",
+                                        "display": "Absent"
+                                    }
+                                },
+                                {
+                                    "id": "LA18198-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA18198-4",
+                                        "display": "No call"
+                                    }
+                                },
+                                {
+                                    "id": "LA11884-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA11884-6",
+                                        "display": "Indeterminate"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81259-4",
+                                "display": "Probable associated phenotype"
+                            },
+                            "text": "Probable associated phenotype",
+                            "type": "open-choice"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "X0013-1",
+                                "display": "Allelic state/phase information"
+                            },
+                            "text": "Allelic state/phase information",
+                            "type": "display"
+                        },
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+                                    "valueCodeableConcept": {
+                                        "text": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n",
+                                        "coding": [
+                                            {
+                                                "display": "The level of occurrence of a single DNA Marker within a set of chromosomes. Heterozygous indicates the DNA Marker is only present in one of the two genes contained in homologous chromosomes. Homozygous indicates the DNA Marker is present in both genes contained in homologous chromosomes. Hemizygous indicates the DNA Marker exists in the only single copy of a gene in a non-homologous chromosome (The male X and Y chromosome are non-homologous). Hemiplasmic indicates that the DNA Marker is present in some but not all of the copies of mitochondrial DNA. Homoplasmic indicates that the DNA Maker is present in all of the copies of mitochondrial DNA.\r\n"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "53034-5",
+                                "display": "Allelic state"
+                            },
+                            "text": "Allelic state",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "LA6703-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6703-8",
+                                        "display": "Heteroplasmic"
+                                    }
+                                },
+                                {
+                                    "id": "LA6704-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6704-6",
+                                        "display": "Homoplasmic"
+                                    }
+                                },
+                                {
+                                    "id": "LA6705-3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6705-3",
+                                        "display": "Homozygous"
+                                    }
+                                },
+                                {
+                                    "id": "LA6706-1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6706-1",
+                                        "display": "Heterozygous"
+                                    }
+                                },
+                                {
+                                    "id": "LA6707-9",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6707-9",
+                                        "display": "Hemizygous"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81258-6",
+                                "display": "Allelic Frequency NFR"
+                            },
+                            "text": "Allelic Frequency NFR",
+                            "type": "decimal"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82121-5",
+                                "display": "Allelic read depth"
+                            },
+                            "text": "Allelic read depth",
+                            "type": "decimal"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82120-7",
+                                "display": "Allelic phase [Type]"
+                            },
+                            "text": "Allelic phase [Type]",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "LA6112-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6112-2",
+                                        "display": "1"
+                                    }
+                                },
+                                {
+                                    "id": "LA6113-0",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6113-0",
+                                        "display": "2"
+                                    }
+                                },
+                                {
+                                    "id": "LA6114-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA6114-8",
+                                        "display": "3"
+                                    }
+                                },
+                                {
+                                    "id": "LA26320-4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26320-4",
+                                        "display": "Maternal"
+                                    }
+                                },
+                                {
+                                    "id": "LA26321-2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA26321-2",
+                                        "display": "Paternal"
+                                    }
+                                },
+                                {
+                                    "id": "LA4489-6",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA4489-6",
+                                        "display": "Unknown"
+                                    }
+                                },
+                                {
+                                    "id": "LA46-8",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "LA46-8",
+                                        "display": "Other"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82309-6",
+                                "display": "Basis for allelic phase"
+                            },
+                            "text": "Basis for allelic phase",
+                            "type": "choice",
+                            "option": [
+                                {
+                                    "id": "X1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "X1",
+                                        "display": "Directly measured"
+                                    }
+                                },
+                                {
+                                    "id": "X2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "X2",
+                                        "display": "Family DNA"
+                                    }
+                                },
+                                {
+                                    "id": "X3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "X3",
+                                        "display": "Family history"
+                                    }
+                                },
+                                {
+                                    "id": "X4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "X4",
+                                        "display": "Inferred from population data"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "81297-4",
+                                "display": "Structural variant addendum panel"
+                            },
+                            "text": "Structural variant addendum panel",
+                            "type": "group",
+                            "enableWhen": [
+                                {
+                                    "question": 1,
+                                    "answerCoding": {
+                                        "code": "LA26802-1"
+                                    }
+                                }
+                            ],
+                            "header": true,
+                            "item": [
+                                {
+                                    "required": false,
+                                    "repeats": false,
+                                    "linkId": 1,
+                                    "concept": {
+                                        "system": "LOINC",
+                                        "code": "82155-3",
+                                        "display": "Copy number"
+                                    },
+                                    "text": "Copy number",
+                                    "type": "integer"
+                                },
+                                {
+                                    "required": false,
+                                    "repeats": false,
+                                    "linkId": 1,
+                                    "concept": {
+                                        "system": "LOINC",
+                                        "code": "81299-0",
+                                        "display": "arrCGH ratio"
+                                    },
+                                    "text": "arrCGH ratio",
+                                    "type": "decimal"
+                                },
+                                {
+                                    "required": false,
+                                    "repeats": false,
+                                    "linkId": 1,
+                                    "concept": {
+                                        "system": "LOINC",
+                                        "code": "81300-6",
+                                        "display": "Structural variant length"
+                                    },
+                                    "text": "Structural variant length",
+                                    "type": "integer"
+                                },
+                                {
+                                    "required": false,
+                                    "repeats": false,
+                                    "linkId": 1,
+                                    "concept": {
+                                        "system": "LOINC",
+                                        "code": "81301-4",
+                                        "display": "Structural variant outer start-end"
+                                    },
+                                    "text": "Structural variant outer start-end",
+                                    "type": "string"
+                                },
+                                {
+                                    "required": false,
+                                    "repeats": false,
+                                    "linkId": 1,
+                                    "concept": {
+                                        "system": "LOINC",
+                                        "code": "81302-2",
+                                        "display": "Structural variant inner start-end"
+                                    },
+                                    "text": "Structural variant inner start-end",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "required": false,
+            "repeats": true,
+            "linkId": 1,
+            "concept": {
+                "system": "LOINC",
+                "code": "XP001-0",
+                "display": "Pharmacogenomics gene results panel"
+            },
+            "text": "Pharmacogenomics gene results panel",
+            "type": "group",
+            "enableWhen": [
+                {
+                    "question": 1,
+                    "answerCoding": {
+                        "code": "C04"
+                    }
+                }
+            ],
+            "header": true,
+            "item": [
+                {
+                    "extension": [
+                        {
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                        "code": "Lookup",
+                                        "display": "Lookup"
+                                    }
+                                ],
+                                "text": "Lookup"
+                            }
+                        }
+                    ],
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "48018-6",
+                        "display": "Gene(s) studied"
+                    },
+                    "text": "Gene(s) studied",
+                    "type": "open-choice"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "47998-0",
+                        "display": "Genotype display name"
+                    },
+                    "text": "Genotype display name",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "X00D3-0",
+                        "display": "Cross reference to full genetic details"
+                    },
+                    "text": "Cross reference to full genetic details",
+                    "type": "question"
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "53040-2",
+                        "display": "Genetic variation's effect on drug metabolism"
+                    },
+                    "text": "Genetic variation's effect on drug metabolism",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA10315-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA10315-2",
+                                "display": "Ultrarapid metabolizer"
+                            }
+                        },
+                        {
+                            "id": "LA25390-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA25390-8",
+                                "display": "Rapid metabolizer"
+                            }
+                        },
+                        {
+                            "id": "LA25391-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA25391-6",
+                                "display": "Normal metabolizer"
+                            }
+                        },
+                        {
+                            "id": "LA10317-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA10317-8",
+                                "display": "Intermediate metabolizer"
+                            }
+                        },
+                        {
+                            "id": "LA9657-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9657-3",
+                                "display": "Poor metabolizer"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "51961-1",
+                        "display": "Genetic variation's effect on drug efficacy"
+                    },
+                    "text": "Genetic variation's effect on drug efficacy",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA6676-6",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6676-6",
+                                "display": "Resistant"
+                            }
+                        },
+                        {
+                            "id": "LA6677-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6677-4",
+                                "display": "Responsive"
+                            }
+                        },
+                        {
+                            "id": "LA9660-7",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9660-7",
+                                "display": "Presumed resistant"
+                            }
+                        },
+                        {
+                            "id": "LA9661-5",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9661-5",
+                                "display": "Presumed responsive"
+                            }
+                        },
+                        {
+                            "id": "LA6682-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6682-4",
+                                "display": "Unknown Significance"
+                            }
+                        },
+                        {
+                            "id": "LA6675-8",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6675-8",
+                                "display": "Benign"
+                            }
+                        },
+                        {
+                            "id": "LA6674-1",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA6674-1",
+                                "display": "Presumed Benign"
+                            }
+                        },
+                        {
+                            "id": "LA9662-3",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA9662-3",
+                                "display": "Presumed non-responsive"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": false,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "83009-1",
+                        "display": "Genetic variation’s risk for hypersensitivity"
+                    },
+                    "text": "Genetic variation’s risk for hypersensitivity",
+                    "type": "open-choice",
+                    "option": [
+                        {
+                            "id": "LA19542-2",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA19542-2",
+                                "display": "Low risk"
+                            }
+                        },
+                        {
+                            "id": "LA19541-4",
+                            "valueCoding": {
+                                "system": "http://loinc.org",
+                                "code": "LA19541-4",
+                                "display": "High risk"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "required": false,
+                    "repeats": true,
+                    "linkId": 1,
+                    "concept": {
+                        "system": "LOINC",
+                        "code": "82117-3",
+                        "display": "Medication usage implications panel"
+                    },
+                    "text": "Medication usage implications panel",
+                    "type": "group",
+                    "header": true,
+                    "item": [
+                        {
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                                "code": "Lookup",
+                                                "display": "Lookup"
+                                            }
+                                        ],
+                                        "text": "Lookup"
+                                    }
+                                }
+                            ],
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "51963-7",
+                                "display": "Medication assessed"
+                            },
+                            "text": "Medication assessed",
+                            "type": "open-choice"
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "82116-5",
+                                "display": "Medication usage suggestion [type]"
+                            },
+                            "text": "Medication usage suggestion [type]",
+                            "type": "open-choice",
+                            "option": [
+                                {
+                                    "id": "1",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "1",
+                                        "display": "Consider Alternative Medication"
+                                    }
+                                },
+                                {
+                                    "id": "2",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "2",
+                                        "display": "Decrease Dose"
+                                    }
+                                },
+                                {
+                                    "id": "3",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "3",
+                                        "display": "Increase Dose"
+                                    }
+                                },
+                                {
+                                    "id": "4",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "4",
+                                        "display": "Use Caution"
+                                    }
+                                },
+                                {
+                                    "id": "5",
+                                    "valueCoding": {
+                                        "system": "http://loinc.org",
+                                        "code": "5",
+                                        "display": "Normal Response Expected"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "required": false,
+                            "repeats": false,
+                            "linkId": 1,
+                            "concept": {
+                                "system": "LOINC",
+                                "code": "XP006-0",
+                                "display": "Medication usage suggestion [narrative]"
+                            },
+                            "text": "Medication usage suggestion [narrative]",
+                            "type": "text"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
