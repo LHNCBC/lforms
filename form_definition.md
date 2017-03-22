@@ -232,7 +232,7 @@ about the meaning of each key:
                Having one number on either side of "^" is allowed.
         * SECTION - a special type for sections, which contain sub items in the 
                     <a href="#items">items</a> field       
-        * TITLE - a special type for separators that displays some text.               
+        * TITLE - a special type for separators that display some text.               
                
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
