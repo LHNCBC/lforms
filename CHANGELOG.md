@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.1.0]  2017-03-29
+### Added
+- Support for the default answers for questions via the defaultAnswer field in
+  the form definition.
+
 ## [11.0.5]  2017-03-20
 ### Fixed
 - Fixed a bug in URL data type parsing.
