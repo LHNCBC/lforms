@@ -110,6 +110,10 @@ about the meaning of each key:
       formatted coding instructions will be displayed.
     * useAnimation - a boolean that controls whether to use animation on the form. 
       The default is true.
+    * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
+      question.  For an answer list, it can be an answer label or code.  For a
+      date field, it can be a date shortcut (like "t" for today).  For other
+      field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
@@ -289,6 +293,8 @@ about the meaning of each key:
       working on formulas like computing a body-mass index based on weight and
       height, but that is still under development.  To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
+    * defaultAnswer - The same as [defaultAnswer](#defaultAnswer) in the
+      templateOptions section.
     * displayControl - an object that controls the display of the item or the section.
       Supported the fields are: 
         * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
