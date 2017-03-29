@@ -3941,3 +3941,146 @@ var questionInQuestion =
         }
       ]
     };
+
+var defaultAnswerForm = {
+  "type": "LOINC",
+  "code": "defaultAnswerForm",
+  "name": null,
+  "items": [
+    {
+      "question": "Integer field with default",
+      "questionCode": "intField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "INT",
+      "defaultAnswer": "24",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "Decimal field",
+      "questionCode": "decField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "REAL",
+      "defaultAnswer": "3.14159",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "String field",
+      "questionCode": "strField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "ST",
+      "defaultAnswer": "Green",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "Date field",
+      "questionCode": "dateField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "DT",
+      "defaultAnswer": "t",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "List via answer label",
+      "questionCode": "ansLabelDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": "ii"
+    },
+    {
+      "question": "List via answer code",
+      "questionCode": "ansCodeDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": "B"
+    },
+    {
+      "question": "List via answer text (not in specification)",
+      "questionCode": "ansTextDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R"},
+        {"text": "Blue", "code": "B"},
+        {"text": "Green", "code": "G"}
+      ],
+      "defaultAnswer": "Blue"
+    }
+  ]
+}

@@ -360,6 +360,14 @@ var TestPage = function() {
     openHL7GeneticPanel: function () {
       this.openBaseTestPage();
       this.openFormByIndex(15);
+    },
+
+    /**
+     *  Opens the defaultAnswer form.
+     */
+    openDefaultAnswerForm: function () {
+      this.openBaseTestPage();
+      this.openFormByIndex(17);
     }
   }
 };
