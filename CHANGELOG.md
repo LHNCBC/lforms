@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [11.1.0]  2017-03-07
+## [11.1.0]  2017-03-27
 ### Added
-- Added a viewMode option to control the layout of the form
+- Added a viewMode option to the form and to the individual items to 
+  control the layout  
 
+## [11.0.5]  2017-03-20
+### Fixed
+- Fixed a bug in URL data type parsing.
+  
 ## [11.0.4]  2017-03-06
 ### Changed
 - Added a resize event listener on the container element to make the form 

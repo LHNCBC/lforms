@@ -752,6 +752,43 @@ var allInOne =
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "items": [
+    // for view mode tesing
+    {
+      "questionCode": "q_lg",
+      "question": "'lg' view mode",
+      "dataType": "INT",
+      "displayControl": {
+        "viewMode": "lg"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_md",
+      "question": "'md' view mode",
+      "dataType": "INT",
+      "displayControl": {
+        "viewMode": "md"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_sm",
+      "question": "'sm' view mode",
+      "dataType": "INT",
+      "displayControl": {
+        "viewMode": "sm"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_auto",
+      "question": "'auto' view mode",
+      "dataType": "INT",
+      "displayControl": {
+        "viewMode": "auto"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
     // different data type
     {"questionCode": "type0", "dataType": "", "header": false, "units": null, "codingInstructions": "simple text instructions", "copyrightNotice": "A Copyright notice of the item",
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,

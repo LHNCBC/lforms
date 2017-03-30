@@ -74,11 +74,11 @@ describe('Links on question codes', function() {
     // form's code should not have a link
     expect(titleCodeLink.isPresent()).toBe(false);
 
-    var itemCodeLink0 = element.all(by.css(".lf-de-label .lf-item-code a")).get(0);
-    // the first question's code should have a link
+    var itemCodeLink0 = element.all(by.css(".lf-de-label .lf-item-code a")).get(4);
+    // the 5th question's code should have a link
     expect(itemCodeLink0.getText()).toBe("[type0]");
     var itemCode1 = element.all(by.css(".lf-de-label .lf-item-code span")).get(0);
-    // the second question's code should not have a link
+    // the 6th question's code should not have a link
     expect(itemCode1.getText()).toBe("[type1]");
   });
 
@@ -113,6 +113,94 @@ describe('Question/section in question', function() {
     element(by.id('add-/q3/q32/1/1')).click();
     expect(element(by.id('/q3/q32/q321/1/2/1')).isDisplayed()).toBe(true);
     expect(element(by.id('/q3/q32/q322/1/2/1')).isDisplayed()).toBe(true);
+
+  });
+
+});
+
+
+describe('Responsive display layout', function() {
+
+  it('container should have different css class on different size', function () {
+    tp.openFullFeaturedForm();
+    browser.wait(function() {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
+
+
+    // break points, 800
+    browser.executeScript('jQuery(".lf-form-view").width(801)').then(function(){
+      element(by.css(".lf-form-view")).getSize().then(function(eleSize){
+        expect(eleSize.width).toEqual(801);
+      });
+      expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(true);
+      expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(false);
+      expect(element(by.css(".lf-form-view.lf-view-sm")).isPresent()).toBe(false);
+
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).first().element(by.id("/q_lg/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).first().element(by.id("/q_md/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).first().element(by.id("/q_sm/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+    });
+
+
+    browser.executeScript('jQuery(".lf-form-view").width(799)').then(function(){
+      element(by.css(".lf-form-view")).getSize().then(function(eleSize){
+        console.log('element size: '+eleSize);
+        expect(eleSize.width).toEqual(799);
+      });
+      expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
+      expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(true);
+      expect(element(by.css(".lf-form-view.lf-view-sm")).isPresent()).toBe(false);
+
+      // check 4 questions
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).first().element(by.id("/q_lg/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).first().element(by.id("/q_md/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).first().element(by.id("/q_sm/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+    });
+
+    // break points, 480
+    browser.executeScript('jQuery(".lf-form-view").width(479)').then(function(){
+      element(by.css(".lf-form-view")).getSize().then(function(eleSize){
+        console.log('element size: '+eleSize);
+        expect(eleSize.width).toEqual(479);
+      });
+      expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
+      expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(false);
+      expect(element(by.css(".lf-form-view.lf-view-sm")).isPresent()).toBe(true);
+
+      // check 4 questions
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).first().element(by.id("/q_lg/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).first().element(by.id("/q_md/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).first().element(by.id("/q_sm/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(true);
+    });
+
+    browser.executeScript('jQuery(".lf-form-view").width(481)').then(function(){
+      element(by.css(".lf-form-view")).getSize().then(function(eleSize){
+        console.log('element size: '+eleSize);
+        expect(eleSize.width).toEqual(481);
+      });
+      expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
+      expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(true);
+      expect(element(by.css(".lf-form-view.lf-view-sm")).isPresent()).toBe(false);
+
+      // check 4 questions
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).first().element(by.id("/q_lg/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).first().element(by.id("/q_md/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).first().element(by.id("/q_sm/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-lg")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+      expect(element.all(by.css(".data-row.lf-item-view-md")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(true);
+      expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
+
+    });
 
   });
 

@@ -111,13 +111,16 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // whether to use animation on the form
     // not changeable on a rendered form.
     useAnimation: true,
-    // controls the question layout of the form. default value for questionLayout is "vertical".
-    // available value could be "horizontal" when all the items in the form are on the same level,
-    // or "matrix" when all the item are on the same level and all are CWE or CNE types items and all have the same list of answers.
-    // not changeable on a rendered form.
-    displayControl: {"questionLayout": "vertical"},
+    displayControl: {
+      // controls the question layout of the form. default value for questionLayout is "vertical".
+      // available value could be "horizontal" when all the items in the form are on the same level,
+      // or "matrix" when all the item are on the same level and all are CWE or CNE types items and all have the same list of answers.
+      // not changeable on a rendered form.
+      "questionLayout": "vertical"
+    },
     // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto". default is "auto",
     // meaning the layout is responsive to the screen/container's size
+    // each item can override this setting for the item by setting its own value in displayControl.viewMode
     viewMode: "auto",
     // controls if the form's header section needs to be displayed
     showFormHeader: true,

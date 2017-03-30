@@ -184,12 +184,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.useTreeLineStyle\">Tree line style</label>\n" +
     "  </div>\n" +
     "  <div class=\"lf-form-option\">\n" +
-    "    <label for=\"viewMode\">Display mode</label>\n" +
+    "    <label for=\"viewMode\">View mode</label>\n" +
     "    <select name=\"viewMode\" ng-model=\"lfData.templateOptions.viewMode\">\n" +
-    "      <option value=\"auto\">Responsive</option>\n" +
-    "      <option value=\"lg\">For large screen</option>\n" +
-    "      <option value=\"md\">For medium screen</option>\n" +
-    "      <option value=\"sm\">For small screen</option>\n" +
+    "      <option value=\"auto\">Responsive [auto]</option>\n" +
+    "      <option value=\"lg\">For large screen [lg]</option>\n" +
+    "      <option value=\"md\">For medium screen [md]</option>\n" +
+    "      <option value=\"sm\">For small screen [sm]</option>\n" +
     "    </select>\n" +
     "\n" +
     "  </div>\n" +
@@ -335,7 +335,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth()\">\n" +
+    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" +
     "    <!-- input field -->\n" +
     "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" +
     "      <ng-form name=\"innerForm2\">\n" +
@@ -642,12 +642,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <!--sub sections, check each item's layout -->\n" +
     "  <div ng-if=\"item.items\" class=\"section\">\n" +
     "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
-    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" +
+    "         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" +
     "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "        <div ng-switch-when=\"horizontal\">\n" +
     "          <lf-section-horizontal></lf-section-horizontal>\n" +
     "        </div>\n" +
-    "\n" +
     "        <div ng-switch-when=\"matrix\">\n" +
     "          <lf-section-matrix></lf-section-matrix>\n" +
     "        </div>\n" +
@@ -698,7 +698,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <div class=\"lf-column-label-button\" id=\"th_Name\">\n" +
     "              {{lfData.templateOptions.columnHeaders[0].name}}\n" +
     "            </div>\n" +
-    "            <div class=\"lf-column-input-unit\" ng-style=\"getFieldWidth()\">\n" +
+    "            <div class=\"lf-column-input-unit\" ng-style=\"getFieldWidth(item)\">\n" +
     "              <div class=\"lf-column-input\" id=\"th_Value\">\n" +
     "                {{lfData.templateOptions.columnHeaders[1].name}}\n" +
     "              </div>\n" +
@@ -711,7 +711,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <!-- check each top level item's questionLayout -->\n" +
     "          <div ng-if=\"lfData.items\" class=\"lf-form-table\">\n" +
     "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
-    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\">\n" +
+    "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" +
+    "                 {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" +
     "              <!--header item-->\n" +
     "              <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
     "                <div ng-switch-when=\"horizontal\">\n" +
