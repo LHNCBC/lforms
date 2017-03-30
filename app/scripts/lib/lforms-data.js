@@ -1943,8 +1943,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     var itemLists = [this.templateOptions.formHeaderItems];
     if (!templateOptionsOnly)
       itemLists.push(this.itemList);
-    for (var itemLists = [this.itemList, ],
-         j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
+    for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
       for (var i=0, iLen=itemList.length; i<iLen; i++) {
         var item = itemList[i];
         if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||

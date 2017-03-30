@@ -248,5 +248,9 @@ describe('defaultAnswer', function() {
     // Also test specifying by answer text, to preserve the current behavior,
     // evn though that is not in the LHC-Forms form specification.
     expect(element(by.id('/ansTextDefault/1')).getAttribute('value')).toEqual('Blue');
+
+    // Also test the date field default in the templateOptions, to make sure
+    // those are getting processed.
+    expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
   });
 });
