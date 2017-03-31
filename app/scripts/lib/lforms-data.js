@@ -118,7 +118,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // not changeable on a rendered form.
       "questionLayout": "vertical"
     },
-    // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto". default is "auto",
+    // controls the view mode of the form, permitted values are "lg", "md", "sm", and "auto".
     // meaning the layout is responsive to the screen/container's size
     // each item can override this setting for the item by setting its own value in displayControl.viewMode
     viewMode: "auto",

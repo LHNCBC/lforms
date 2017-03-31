@@ -752,7 +752,7 @@ var allInOne =
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "items": [
-    // for view mode tesing
+    // for view mode testing
     {
       "questionCode": "q_lg",
       "question": "'lg' view mode",
