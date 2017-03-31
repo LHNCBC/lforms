@@ -119,7 +119,7 @@
   margin-right: 2px;
   margin-left:2px;
   vertical-align: middle;
-  background-color: inherit;
+  background-color: transparent;
   color: #066aa0; /*#458AC5;*/
 }
 .lf-form .lf-help-button:hover,
