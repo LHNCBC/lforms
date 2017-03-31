@@ -82,7 +82,7 @@
     <script src="data/sample-data.js"></script>
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
-    <!--<script src="data/cde-data.js"></script>-->
+    <script src="data/fhir-sdc-response-ussgfht.js"></script>
     <!-- end of test data files -->
 
     <!-- lforms-converter files -->
@@ -183,7 +183,7 @@
 
             $scope.showFHIRSDCQuestionnaire = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.LFORMS_2_SDC.convert2Questionnaire($scope.lfData2);
+                var sdc = LForms.FHIR_SDC.convert2Questionnaire($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
@@ -191,7 +191,7 @@
 
             $scope.showFHIRSDCResponse = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.LFORMS_2_SDC.convert2QuestionnaireResponse($scope.lfData2);
+                var sdc = LForms.FHIR_SDC.convert2QuestionnaireResponse($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
@@ -216,7 +216,7 @@
               var fhirData = qr;
               var formData = (new LForms.LFormsData(angular.copy(FHTData))).getFormData();
 
-              var mergedFormData = LForms.FHIR_SDC.LFORMS_2_SDC.mergeQuestionnaireResponseToForm(formData, fhirData);
+              var mergedFormData = LForms.FHIR_SDC.mergeQuestionnaireResponseToForm(formData, fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;

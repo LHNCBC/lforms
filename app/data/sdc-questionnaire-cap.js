@@ -1,3 +1,5 @@
+// Existing sample data from FHIR
+// Not used
 var sdcCAP =
 {
   "resourceType": "Questionnaire",
