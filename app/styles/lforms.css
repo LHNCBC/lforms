@@ -119,7 +119,7 @@
   margin-right: 2px;
   margin-left:2px;
   vertical-align: middle;
-  background-color: inherit;
+  background-color: transparent;
   color: #066aa0; /*#458AC5;*/
 }
 .lf-form .lf-help-button:hover,
@@ -816,14 +816,14 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* Medium view width */
-.lf-form-view.lf-view-md .lf-de {
+.lf-item-view-md .lf-de {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
 }
-.lf-form-view.lf-view-md .lf-de-label-button {
+.lf-item-view-md .lf-de-label-button {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -833,16 +833,16 @@ Override color of select boxes in calendar widget title bar.
   flex-grow: 1;
   width: 100%;
 }
-.lf-form-view.lf-view-md .lf-de-label {
+.lf-item-view-md .lf-de-label {
   order: 1;
   flex-grow: 1;
 }
-.lf-form-view.lf-view-md .lf-de-button {
+.lf-item-view-md .lf-de-button {
   order: 2;
   flex-grow: 0;
   flex-shrink: 0;
 }
-.lf-form-view.lf-view-md .lf-de-input-unit {
+.lf-item-view-md .lf-de-input-unit {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -852,19 +852,18 @@ Override color of select boxes in calendar widget title bar.
   flex-grow: 1;
   width: 100%;
 }
-.lf-form-view.lf-view-md .lf-de-input {
+.lf-item-view-md .lf-de-input {
   order:1;
   flex-grow: 1;
 }
-.lf-form-view.lf-view-md .lf-de-unit {
+.lf-item-view-md .lf-de-unit {
   order:2;
   flex-grow: 1;
 }
-
+/* column header */
 .lf-form-view.lf-view-md .lf-column-header {
   display: none;
 }
-
 /* form header */
 .lf-form-view.lf-view-md .lf-form-header {
   flex-direction: column;
@@ -878,7 +877,6 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-view.lf-view-md .lf-header-de-input {
   margin: 0 0 0 2px;
 }
-
 .lf-form-view.lf-view-md .lf-form-option {
   width: 33.3%;
 }
@@ -888,14 +886,14 @@ Override color of select boxes in calendar widget title bar.
 /* end of medium view width */
 
 /* Small view width */
-.lf-form-view.lf-view-sm .lf-de {
+.lf-item-view-sm .lf-de {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
   align-content: flex-start;
 }
-.lf-form-view.lf-view-sm .lf-de-label-button {
+.lf-item-view-sm .lf-de-label-button {
    display: flex;
    flex-direction: row;
    flex-wrap: nowrap;
@@ -905,16 +903,16 @@ Override color of select boxes in calendar widget title bar.
    flex-grow: 1;
    width: 100%;
 }
-.lf-form-view.lf-view-sm .lf-de-label {
+.lf-item-view-sm .lf-de-label {
   order: 1;
   flex-grow: 1;
 }
-.lf-form-view.lf-view-sm .lf-de-button {
+.lf-item-view-sm .lf-de-button {
   order: 2;
   flex-grow: 0;
   flex-shrink: 0;
 }
-.lf-form-view.lf-view-sm .lf-de-input-unit {
+.lf-item-view-sm .lf-de-input-unit {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -925,22 +923,20 @@ Override color of select boxes in calendar widget title bar.
   flex-grow: 1;
   width: 100%;
 }
-.lf-form-view.lf-view-sm .lf-de-input {
+.lf-item-view-sm .lf-de-input {
   order:1;
   flex-grow: 1;
   width: 100%;
 }
-.lf-form-view.lf-view-sm .lf-de-unit {
+.lf-item-view-sm .lf-de-unit {
   order:2;
   flex-grow: 1;
   width: 100%;
 }
-
+/* column header */
 .lf-form-view.lf-view-sm .lf-column-header {
   display: none;
 }
-/* end of small view width */
-
 /* form header */
 .lf-form-view.lf-view-sm .lf-form-header {
     flex-direction: column;
@@ -961,6 +957,7 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-view.lf-view-sm .lf-item-option {
     width: 100%;
 }
+/* end of small view width */
 
 /* end of flex box layout */
 
