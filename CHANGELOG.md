@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.1.0]  2017-03-27
+### Added
+- Added a viewMode option to the form and to the individual items to 
+  control the layout  
+
 ## [11.0.5]  2017-03-20
 ### Fixed
 - Fixed a bug in URL data type parsing.

@@ -36,5 +36,15 @@
   <div class="lf-form-option">
     <label><input type="checkbox" value="" ng-model="lfData.templateOptions.useTreeLineStyle">Tree line style</label>
   </div>
+  <div class="lf-form-option">
+    <label for="viewMode">View mode</label>
+    <select name="viewMode" ng-model="lfData.templateOptions.viewMode">
+      <option value="auto">Responsive [auto]</option>
+      <option value="lg">For large screen [lg]</option>
+      <option value="md">For medium screen [md]</option>
+      <option value="sm">For small screen [sm]</option>
+    </select>
+
+  </div>
 
 </div>

@@ -5,12 +5,12 @@
   <!--sub sections, check each item's layout -->
   <div ng-if="item.items" class="section">
     <div ng-repeat="item in item.items" ng-if="targetShown(item)"
-         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+         class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}
+         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}">
       <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
         <div ng-switch-when="horizontal">
           <lf-section-horizontal></lf-section-horizontal>
         </div>
-
         <div ng-switch-when="matrix">
           <lf-section-matrix></lf-section-matrix>
         </div>
