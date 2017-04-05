@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [11.1.0]  2017-03-29
+## [11.2.0]  2017-04-05
 ### Added
 - Support for the default answers for questions via the defaultAnswer field in
   the form definition.
+
+## [11.1.0]  2017-03-27
+### Added
+- Added a viewMode option to the form and to the individual items to 
+  control the layout  
 
 ## [11.0.5]  2017-03-20
 ### Fixed

@@ -119,6 +119,10 @@ about the meaning of each key:
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
       `{"questionLayout": "matrix"}` 
+    * <a name="viewMode"></a>viewMode - (optional) the view mode for the form. Permitted values are 'lg', 
+      'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
+       screen/container, medium screen/container, small screen/container and a
+       responsive layout. The default value is 'auto'. 
     * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
       an object that controls the answer layout for each item
       that has a dataType of CWE or CNE and has an answer list but does not specify
@@ -315,6 +319,11 @@ about the meaning of each key:
         * questionLayout - the layout of the questions in the section. It works on items 
           that are sections, i.e. they contain sub items. Supported values are: 
           'vertical' (default), 'horizontal' and 'matrix'.
+        * viewMode - (optional) the view mode for the item. Permitted values are 'lg', 
+          'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
+          screen/container, medium screen/container, small screen/container and a
+          responsive layout. It has the priority over the value in the form level [viewMode](#viewMode).
+          If its value is not set, then the form level viewMode value is used for the item.          
     * dataControl - an array of objects that control the current question's attributes when the controlling
       source question's value changes. Supported fields are:
         * source - an object identifying the controlling source question. It has the following fields:
