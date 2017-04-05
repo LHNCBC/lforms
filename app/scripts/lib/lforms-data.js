@@ -2059,10 +2059,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
         options.addSeqNum = !hasLabel;
 
         // Modify the display label (answer text) for each answer.
-        // Also build hashes to figure out the default item if needed
-        var answerCodes = null;
-        var answerLabels = null;
-        var textToItemAnswerText = null; // needed when there are labels
         for(var i= 0, iLen = answers.length; i<iLen; i++) {
           // Make a copy of the original answer if we are using labels
           var ans = answers[i];
@@ -2077,36 +2073,12 @@ var LFormsData = LForms.LFormsData = Class.extend({
           }
           else // avoid copying the object, which causes problems for radio buttons
             listItems.push(ans);
-
-          if (item.defaultAnswer) {
-            if (!answerCodes) {
-              answerCodes = {};
-              answerLabels = {};
-              textToItemAnswerText = {};
-            }
-            var originalText, displayText;
-            if (ans.label) {
-              originalText = answerData._orig.text;
-              displayText = answerData.text;
-            }
-            else
-              originalText = displayText = ans.text;
-            answerCodes[ans.code] = true;
-            answerLabels[ans.label] = true;
-            textToItemAnswerText[originalText] = displayText;
-          }
         }
 
         options.listItems = listItems;
         // See if there is a default value defined for the question.
-        if (item.defaultAnswer) {
-          if (answerLabels[item.defaultAnswer])
-            options.defaultValue = {label: item.defaultAnswer}
-          else if (answerCodes[item.defaultAnswer])
-            options.defaultValue = {code: item.defaultAnswer}
-          else
-            options.defaultValue = textToItemAnswerText[item.defaultAnswer];
-        }
+        if (item.defaultAnswer)
+          options.defaultValue = item.defaultAnswer;
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0].text;
         }

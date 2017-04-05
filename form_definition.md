@@ -111,7 +111,8 @@ about the meaning of each key:
     * useAnimation - a boolean that controls whether to use animation on the form. 
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
-      question.  For an answer list, it can be an answer label or code.  For a
+      question.  For an answer list, it can be an answer label or code, using
+      the syntax:  {"code": "B12"}, or {"label: "A"}.  For a
       date field, it can be a date shortcut (like "t" for today).  For other
       field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the selected template.

@@ -4038,7 +4038,7 @@ var defaultAnswerForm = {
         {"text": "Blue", "code": "B", "label": "ii" },
         {"text": "Green", "code": "G", "label": "iii" }
       ],
-      "defaultAnswer": "ii"
+      "defaultAnswer": {"label": "ii"}
     },
     {
       "question": "List via answer code",
@@ -4059,7 +4059,7 @@ var defaultAnswerForm = {
         {"text": "Blue", "code": "B", "label": "ii" },
         {"text": "Green", "code": "G", "label": "iii" }
       ],
-      "defaultAnswer": "B"
+      "defaultAnswer": {"code": "B"}
     },
     {
       "question": "List via answer text (not in specification)",
