@@ -1931,14 +1931,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
     return (i === iLen && dataSource) ? dataSource : null;
   },
 
-  /**
-   *  Sets default values for questions that are not answer lists.
-   * @param item an item that is not an answer list
-   */
-  setDefaultVal: function(item) {
-    if (item.defaultAnswer && !item.value)
-      item.value = item.defaultAnswer;
-  },
 
   /**
    * Set up autocomplete options for each items
@@ -1957,8 +1949,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
             item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
           this._updateAutocompOptions(item);
         }
-        else
-          this.setDefaultVal(item);
+        else if (item.defaultAnswer && !item.value) // && not a list
+          item.value = item.defaultAnswer;
         this._updateUnitAutocompOptions(item);
       }
     }
