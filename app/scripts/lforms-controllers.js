@@ -39,20 +39,20 @@ angular.module('lformsWidget')
         $scope.checkViewWidth = function() {
           // the $element is where the controller is set on
           var width = $element.width(); //$window.innerWidth;
-          $scope._viewWidth = "";
+          $scope._viewMode = "";
           $scope._inputFieldWidth = "";
+
           // small screen
           if (width <= 480)
-            $scope._viewWidth = "lf-view-sm";
+            $scope._viewMode = "sm";
           // medium screen
           else if (width <= 800)
-            $scope._viewWidth = "lf-view-md";
+            $scope._viewMode = "md";
           // large screen
           else {
-            $scope._viewWidth = "lf-view-lg";
-            $scope._inputFieldWidth = {'width': width / 2};
+            $scope._viewMode = "lg";
           }
-
+          $scope._inputFieldWidth = {'width': width / 2};
         };
 
         // check the width when the containing div changes its size
@@ -65,14 +65,83 @@ angular.module('lformsWidget')
 
 
         /**
-         * get the CSS class for view size
+         * get the CSS class the form's view mode
+         * @returns {string}
          */
-        $scope.getViewWidthClass = function() {
-          return $scope._viewWidth;
+        $scope.getViewModeClass = function() {
+          var viewModeClass = "";
+          if ($scope.lfData) {
+            var viewMode = $scope.lfData.templateOptions.viewMode;
+            // responsive to the screen/container's size
+            if (! viewMode || viewMode === "auto") {
+              viewMode = $scope._viewMode;
+            }
+            switch (viewMode) {
+                // fixed to be the large layout
+              case "lg":
+                viewModeClass = "lf-view-lg";
+                break;
+                // fixed to be the large layout
+              case "md":
+                viewModeClass = "lf-view-md";
+                break;
+                // fixed to be the large layout
+              case "sm":
+                viewModeClass = "lf-view-sm";
+                break;
+            }
+          }
+
+          return viewModeClass;
         };
 
 
         /**
+         * get the CSS class for an item's view mode
+         * @param item a form item
+         * @returns {string}
+         */
+        $scope.getItemViewModeClass = function(item) {
+          var viewMode;
+          var viewModeClass = "";
+          if ($scope.lfData) {
+            // if viewMode is specified on the item
+            if (item.displayControl && item.displayControl.viewMode) {
+              viewMode = item.displayControl.viewMode;
+            }
+            // otherwise use the default viewMode of the form
+            else {
+              viewMode = $scope.lfData.templateOptions.viewMode;
+            }
+
+            // responsive to the screen/container's size
+            if (!viewMode || viewMode === "auto") {
+              viewMode = $scope._viewMode;
+            }
+
+            switch (viewMode) {
+                // fixed to be the large layout
+              case "lg":
+                viewModeClass = "lf-item-view-lg";
+                break;
+                // fixed to be the large layout
+              case "md":
+                viewModeClass = "lf-item-view-md";
+                break;
+                // fixed to be the large layout
+              case "sm":
+                viewModeClass = "lf-item-view-sm";
+                break;
+              default:
+                viewModeClass = "lf-item-view-lg";
+            }
+          }
+
+          return viewModeClass;
+        };
+
+
+          /**
          * Set the active row in table
          * @param index index of an item in the lforms form items array
          */
@@ -83,10 +152,11 @@ angular.module('lformsWidget')
 
         /**
          * Get the inline width for the input and unit part of a form item
+         * @item a form item
          * @returns {*}
          */
-        $scope.getFieldWidth = function() {
-          return $scope._inputFieldWidth;
+        $scope.getFieldWidth = function(item) {
+          return $scope.getItemViewModeClass(item) === 'lf-item-view-lg' ? $scope._inputFieldWidth : null;
         };
 
 

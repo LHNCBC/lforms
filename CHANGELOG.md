@@ -2,9 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [11.1.0]  2017-03-16
+## [11.2.0]  2017-04-16
 ### Changed
 - Added limited supports for FHIR SDC Questionnaire and QuenstionnaireResponse
+
+## [11.1.0]  2017-03-27
+### Added
+- Added a viewMode option to the form and to the individual items to 
+  control the layout  
+>>>>>>> master
 
 ## [11.0.5]  2017-03-20
 ### Fixed

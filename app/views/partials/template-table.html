@@ -27,7 +27,7 @@
             <div class="lf-column-label-button" id="th_Name">
               {{lfData.templateOptions.columnHeaders[0].name}}
             </div>
-            <div class="lf-column-input-unit" ng-style="getFieldWidth()">
+            <div class="lf-column-input-unit" ng-style="getFieldWidth(item)">
               <div class="lf-column-input" id="th_Value">
                 {{lfData.templateOptions.columnHeaders[1].name}}
               </div>
@@ -40,7 +40,8 @@
           <!-- check each top level item's questionLayout -->
           <div ng-if="lfData.items" class="lf-form-table">
             <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
-                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}">
+                 class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}
+                 {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}">
               <!--header item-->
               <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
                 <div ng-switch-when="horizontal">
