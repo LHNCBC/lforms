@@ -3998,7 +3998,7 @@ var defaultAnswerForm = {
         "max": "1"
       },
       "dataType": "INT",
-      "defaultAnswer": "24",
+      "defaultAnswer": 24,
       "displayControl": {},
       "questionCodeSystem": "LOINC"
     },
@@ -4016,7 +4016,7 @@ var defaultAnswerForm = {
         "max": "1"
       },
       "dataType": "REAL",
-      "defaultAnswer": "3.14159",
+      "defaultAnswer": 3.14159,
       "displayControl": {},
       "questionCodeSystem": "LOINC"
     },
