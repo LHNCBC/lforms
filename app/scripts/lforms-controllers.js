@@ -56,9 +56,22 @@ angular.module('lformsWidget')
         };
 
         // check the width when the containing div changes its size
-        new ResizeSensor($element, function() {
+        // new ResizeSensor($element, function() {
+        //     $scope.$apply($scope.checkViewWidth());
+        // });
+
+          var erd = elementResizeDetectorMaker({
+            strategy: "scroll" //<- For ultra performance.
+          });
+
+
+          erd.listenTo($element, function(element) {
+            var width = element.offsetWidth;
+            var height = element.offsetHeight;
+            console.log("Size: " + width + "x" + height);
             $scope.$apply($scope.checkViewWidth());
-        });
+          });
+
 
         // initial values
         $scope.checkViewWidth();

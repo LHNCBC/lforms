@@ -9,7 +9,7 @@
     "autocomplete-lhc": "^10.1.1",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",
-    "resize-sensor": "^0.0.6"
+    "element-resize-detector": "^1.1.11"
   },
   "overrides": {
     "jquery-ui": {
