@@ -90,12 +90,12 @@ LForms.FHIR_SDC = {
       "value": this._source.code
     }];
 
-    // concept
-    this._target.concept = {
-      "system": codeSystem,
-      "code": this._source.code,
-      "display": this._source.name
-    };
+    // concept, removed in FHIR v3.0.0
+    // this._target.concept = {
+    //   "system": codeSystem,
+    //   "code": this._source.code,
+    //   "display": this._source.name
+    // };
 
     // subjectType
     this._target.subjectType = ["Patient", "Person"];
@@ -304,8 +304,10 @@ LForms.FHIR_SDC = {
       targetItem.extension.push({
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
         "valueCoding" : {
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit.name
+          "coding": [{
+            "system": "http://unitsofmeasure.org",
+            "code": item.unit.name
+          }]
         }
       });
     }
@@ -330,15 +332,15 @@ LForms.FHIR_SDC = {
     }
 
     // linkId
-    targetItem.linkId = item._id;
+    targetItem.linkId = item._codePath + item._idPath;
     //targetItem.linkId = item._codePath;
 
-    // concept
-    targetItem.concept = {
-      "system": item.questionCodeSystem,
-      "code": item.questionCode,
-      "display": item.question
-    };
+    // concept, removed in FHIR v3.0.0
+    // targetItem.concept = {
+    //   "system": item.questionCodeSystem,
+    //   "code": item.questionCode,
+    //   "display": item.question
+    // };
 
     // text
     targetItem.text = item.question;
@@ -482,8 +484,6 @@ LForms.FHIR_SDC = {
 
     // id (empty for new record)
 
-    item._id = item._codePath + item._idPath;
-
     var linkId = item._codePath + item._idPath;
     //var linkId = item._codePath;
 
@@ -586,9 +586,8 @@ LForms.FHIR_SDC = {
     var optionArray = [];
     for (var i=0, iLen=item.answers.length; i<iLen; i++) {
       var answer = item.answers[i];
-      var option = {
-        "id": answer.code
-      };
+      var option = {};
+
       // needs an extension for label
       if (answer.label) {
         option.extension = [{
@@ -606,9 +605,10 @@ LForms.FHIR_SDC = {
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
       option.valueCoding = {
-        "system": "http://loinc.org",
-        "code": answer.code,
-        "display": answer.text
+          "system": "http://loinc.org",
+          "code": answer.code,
+          "display": answer.text
+
       };
       optionArray.push(option);
     }
@@ -632,7 +632,7 @@ LForms.FHIR_SDC = {
         dataType = 'display';
         break;
       case "ST":
-        dataType = 'question';
+        dataType = 'string';
         break;
       case "BL":
         dataType = 'boolean';
@@ -713,7 +713,7 @@ LForms.FHIR_SDC = {
     // Attachment, Coding, Quantity, Reference(Resource)
 
     var answer = [];
-    var linkId = item._id;
+    var linkId = item._codePath + item._idPath;
     //var linkId = item._codePath;
     // value not processed by previous repeating items
     if (this._groupedValues[linkId] && item.dataType !== "SECTION" && item.dataType !=="TITLE") {
