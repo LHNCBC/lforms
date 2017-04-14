@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.1.1]  2017-04-14
+- Used a different library (element resize detector) for checking 
+  the container element's size, which can handle multiple rendered
+  forms on a page.
+
 ## [11.1.0]  2017-03-27
 ### Added
 - Added a viewMode option to the form and to the individual items to 

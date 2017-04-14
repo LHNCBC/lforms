@@ -55,22 +55,17 @@ angular.module('lformsWidget')
           $scope._inputFieldWidth = {'width': width / 2};
         };
 
+
+        // initialize an element resize detector
+        var erd = elementResizeDetectorMaker({
+          strategy: "scroll" //<- For ultra performance.
+        });
+
+
         // check the width when the containing div changes its size
-        // new ResizeSensor($element, function() {
-        //     $scope.$apply($scope.checkViewWidth());
-        // });
-
-          var erd = elementResizeDetectorMaker({
-            strategy: "scroll" //<- For ultra performance.
-          });
-
-
-          erd.listenTo($element, function(element) {
-            var width = element.offsetWidth;
-            var height = element.offsetHeight;
-            console.log("Size: " + width + "x" + height);
-            $scope.$apply($scope.checkViewWidth());
-          });
+        erd.listenTo($element, function(element) {
+          $scope.$apply($scope.checkViewWidth());
+        });
 
 
         // initial values
