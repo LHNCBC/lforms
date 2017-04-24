@@ -596,7 +596,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     if (this.templateOptions.formHeaderItems) {
       for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
         var item = this.templateOptions.formHeaderItems[i];
-        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT && item.value) {
+        if (item.value && item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
             item.value = LForms.Util.stringToDate(item.value);
         }
       }

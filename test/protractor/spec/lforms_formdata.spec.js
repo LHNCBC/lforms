@@ -207,7 +207,7 @@ describe('get form data', function() {
     // only one field has data
     browser.driver.executeAsyncScript(function () {
       var callback = arguments[arguments.length - 1];
-      var fData = LForms.Util.getFormData(null, true, true, true);
+      var fData = LForms.Util.getFormData(null, true, true);
       callback(fData);
     }).then(function (formData) {
       // console.log(formData);

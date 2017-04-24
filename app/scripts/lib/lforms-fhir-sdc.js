@@ -734,7 +734,6 @@ LForms.FHIR_SDC = {
 
     var answer = [];
     var linkId = item._codePath + item._idPath;
-    //var linkId = item._codePath;
     // value not processed by previous repeating items
     if (this._groupedValues[linkId] && item.dataType !== "SECTION" && item.dataType !=="TITLE") {
 
@@ -1009,7 +1008,7 @@ LForms.FHIR_SDC = {
 
 
   /**
-   * Get the item's code path from a link id, which is the value of item._id in LForms
+   * Get the item's code path from a link id
    * @param linkId a link id
    * @returns {*}
    * @private
@@ -1023,7 +1022,7 @@ LForms.FHIR_SDC = {
 
 
   /**
-   * Get the item code from a link id, which is the value of item._id in LForms
+   * Get the item code from a link id
    * @param linkId a link id
    * @returns {*}
    * @private
