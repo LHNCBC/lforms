@@ -1,6 +1,3 @@
-if (typeof LForms === 'undefined')
-  LForms = {};
-
 /**
  * A package to handle FHIR SDC (STU2 Ballot, Version 1.6.0) Questionnaire and QuestionnaireResponse for LForms
  * STU2 Ballot:
@@ -15,11 +12,12 @@ if (typeof LForms === 'undefined')
  * mergeQuestionnaireResponseToForm()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
+if (typeof LForms === 'undefined')
+  LForms = {};
+
 LForms.FHIR_SDC = {
 
-  // the LForms form definition object
   _source: null,
-  // the FHIR SDC Questionnaire or QuestionnaireResponse object
   _target: null,
 
   /**
@@ -63,8 +61,8 @@ LForms.FHIR_SDC = {
     // date
     this._target.date = LForms.Util.dateToString(new Date());
 
-    // version
-    this._target.version = "LOINC version 2.56";
+    // version, assuming questionnaires are from LOINC forms
+    this._target.version = "2.56";
 
     // url
     this._target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + this._source.code;
@@ -76,13 +74,13 @@ LForms.FHIR_SDC = {
       ]
     };
 
-    // publisher
-    //this._target.publisher = "Lister Hill National Center for Biomedical Communications (LHNCBC)";
-
     // title
     this._target.title = this._source.name;
 
-    var codeSystem = this._source.codeSystem === "LOINC" ? "http://loinc.org" : this._source.codeSystem;
+    // name
+    this._target.name = this._source.name;
+
+    var codeSystem = this._getCodeSystem(this._source.codeSystem);
 
     // "identifier": [
     this._target.identifier = [{
@@ -90,18 +88,18 @@ LForms.FHIR_SDC = {
       "value": this._source.code
     }];
 
-    // concept, removed in FHIR v3.0.0
-    // this._target.concept = {
-    //   "system": codeSystem,
-    //   "code": this._source.code,
-    //   "display": this._source.name
-    // };
+    // code
+    this._target.code = [{
+      "system": codeSystem,
+      "code": this._source.code,
+      "display": this._source.name
+    }];
 
     // subjectType
     this._target.subjectType = ["Patient", "Person"];
 
-    // text,
-    // not to use. it requires html/xhtml content?
+    // text, not to use. it requires html/xhtml content?
+    // concept, removed in FHIR v3.0.0
 
   },
 
@@ -121,7 +119,7 @@ LForms.FHIR_SDC = {
     targetItem.extension = [];
 
     // required
-    targetItem.required = item._answerRequired
+    targetItem.required = item._answerRequired;
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
     if (targetItem.required) {
@@ -147,6 +145,204 @@ LForms.FHIR_SDC = {
       targetItem.repeats = false;
     }
 
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    this._handleItemControl(targetItem, item);
+
+    // questionnaire-choiceOrientation , not supported yet
+
+    // check restrictions
+    this._handleRestrictions(targetItem, item);
+
+    // http://hl7.org/fhir/StructureDefinition/entryFormat
+    // looks like tooltip, TBD
+
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
+    // this is for a single unit, where is the units list?????
+    // for user selected unit, not item.units! Not to use here
+    if (item.unit) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+        "valueCoding" : {
+          "system": "http://unitsofmeasure.org",
+          "code": item.unit.name
+        }
+      });
+    }
+
+    // add LForms Extension to units list
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
+
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+    if (item.codingInstructions) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
+        "valueCodeableConcept": {
+          "text": item.codingInstructions,
+          "coding": [{
+            "code": item.codingInstructionsFormat,
+            "display": item.codingInstructions
+          }]
+        }
+      });
+    }
+
+    // linkId
+    targetItem.linkId = item._codePath + item._idPath;
+
+    var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+
+    // code
+    targetItem.code = [{
+      "system": codeSystem,
+      "code": item.questionCode,
+      "display": this.question
+    }];
+
+    // concept, removed in FHIR v3.0.0
+
+    // text
+    targetItem.text = item.question;
+
+    // type
+    targetItem.type = this._handleDataType(item);
+
+    // enableWhen
+    if (item.skipLogic) {
+      this._handleSkipLogic(targetItem, item)
+    }
+
+    // repeats, handled above
+    // readonly, (editable)
+    if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
+      targetItem.readonly = true;
+    }
+
+    // options , a reference to ValueSet resource, not to use for now
+    // option, for answer list
+    if (item.answers) {
+      targetItem.option = this._handleAnswers(item)
+    }
+
+    // initialValue, for default values
+    if (item.value) {
+      this._handleInitialValues(targetItem, item);
+    }
+
+    if (item.items && Array.isArray(item.items)) {
+      targetItem.item = [];
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        var newItem = this._processItem(item.items[i]);
+        targetItem.item.push(newItem);
+      }
+    }
+
+    // if there is no extension, remove it
+    if (targetItem.extension.length === 0)
+      delete targetItem.extension;
+
+    return targetItem
+  },
+
+
+  /**
+   * Process various restriction settings
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  _handleRestrictions: function(targetItem, item) {
+    // http://hl7.org/fhir/StructureDefinition/minLength
+    // http://hl7.org/fhir/StructureDefinition/regex
+    // http://hl7.org/fhir/StructureDefinition/minValue
+    // http://hl7.org/fhir/StructureDefinition/maxValue
+    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces, not supported yet
+    // http://hl7.org/fhir/StructureDefinition/maxSize, for attachment, not supported yet
+    // maxLength
+    if (item.restrictions) {
+      for (var key in item.restrictions) {
+        var value = item.restrictions[key];
+        var extValue;
+
+        switch (key) {
+          // http://hl7.org/fhir/StructureDefinition/minValue
+          // { // Must be >= this value
+          //   // from Element: extension
+          //   "url" : "http://hl7.org/fhir/StructureDefinition/minValue", // R!
+          //   // value[x]: Value of extension. One of these 6:
+          //   "valueDate" : "<date>" // R! Value of extension
+          //   "valueDateTime" : "<dateTime>", // R! Value of extension
+          //   "valueTime" : "<time>", // R! Value of extension
+          //   "valueInstant" : "<instant>", // R! Value of extension
+          //   "valueDecimal" : <decimal>, // R! Value of extension
+          //   "valueInteger" : <integer>, // R! Value of extension
+          // }
+          case "minExclusive":
+          case "minInclusive":
+            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
+                item.dataType === "REAL" || item.dataType === "INT" ) {
+              var valueKey = this._getValueKeyByDataType("value", item.dataType)
+              extValue = {
+                "url":"http://hl7.org/fhir/StructureDefinition/minValue"
+              };
+              extValue[valueKey] = parseInt(value);
+            }
+            break;
+          // http://hl7.org/fhir/StructureDefinition/maxValue
+          case "maxExclusive":
+          case "maxInclusive":
+            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
+                item.dataType === "REAL" || item.dataType === "INT" ) {
+              var valueKey = this._getValueKeyByDataType("value", item.dataType)
+              extValue = {
+                "url":"http://hl7.org/fhir/StructureDefinition/maxValue"
+              };
+              extValue[valueKey] = parseInt(value);
+            }
+            break;
+          // http://hl7.org/fhir/StructureDefinition/minLength
+          case "minLength":
+            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" ||
+                item.dataType === "QTY") {
+              extValue = {
+                "url":"http://hl7.org/fhir/StructureDefinition/minLength",
+                "valueInteger": parseInt(value)
+              };
+            }
+            break;
+          // maxLength, not an extension, directly on item
+          case "maxLength":
+            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" ||
+                item.dataType === "QTY") {
+              targetItem.maxLength = parseInt(value);
+            }
+            break;
+          // http://hl7.org/fhir/StructureDefinition/regex
+          case "pattern":
+            if (item.dataType === "ST" || item.dataType === "TX" ) {
+              extValue = {
+                "url":"http://hl7.org/fhir/StructureDefinition/regex",
+                "valueInteger": value
+              };
+            }
+            break
+        }
+        if (extValue) {
+          targetItem.extension.push(extValue);
+        }
+      }
+    }
+  },
+
+
+  /**
+   * Process itemControl based on LForms item's answerLayout and questionLayout
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  _handleItemControl: function(targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
     // Fly-over, Table, Checkbox, Combo-box, Lookup
@@ -206,185 +402,6 @@ LForms.FHIR_SDC = {
             });
       }
     }
-
-    // questionnaire-choiceOrientation , not supported yet
-
-    // check restrictions
-    // http://hl7.org/fhir/StructureDefinition/minLength
-    // http://hl7.org/fhir/StructureDefinition/regex
-    // http://hl7.org/fhir/StructureDefinition/minValue
-    // http://hl7.org/fhir/StructureDefinition/maxValue
-    // http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces, not supported yet
-    // http://hl7.org/fhir/StructureDefinition/maxSize, for attachment, not supported yet
-    // maxLength
-    if (item.restrictions) {
-      for (var key in item.restrictions) {
-        var value = item.restrictions[key];
-        var extValue;
-
-        switch (key) {
-
-            // http://hl7.org/fhir/StructureDefinition/minValue
-            // { // Must be >= this value
-            //   // from Element: extension
-            //   "url" : "http://hl7.org/fhir/StructureDefinition/minValue", // R!
-            //   // value[x]: Value of extension. One of these 6:
-            //   "valueDate" : "<date>" // R! Value of extension
-            //   "valueDateTime" : "<dateTime>", // R! Value of extension
-            //   "valueTime" : "<time>", // R! Value of extension
-            //   "valueInstant" : "<instant>", // R! Value of extension
-            //   "valueDecimal" : <decimal>, // R! Value of extension
-            //   "valueInteger" : <integer>, // R! Value of extension
-            // }
-          case "minExclusive":
-          case "minInclusive":
-            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
-                item.dataType === "REAL" || item.dataType === "INT" ) {
-              var valueKey = this._getValueKeyByDataType("value", item.dataType)
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/minValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-            break;
-            // http://hl7.org/fhir/StructureDefinition/maxValue
-          case "maxExclusive":
-          case "maxInclusive":
-            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
-                item.dataType === "REAL" || item.dataType === "INT" ) {
-              var valueKey = this._getValueKeyByDataType("value", item.dataType)
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/maxValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-            break;
-            // http://hl7.org/fhir/StructureDefinition/minLength
-          case "minLength":
-            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" ||
-                item.dataType === "QTY") {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/minLength",
-                "valueInteger": parseInt(value)
-              };
-            }
-            break;
-            // maxLength, not an extension, directly on item
-          case "maxLength":
-            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" ||
-                item.dataType === "QTY") {
-              targetItem.maxLength = parseInt(value);
-            }
-            break;
-            // http://hl7.org/fhir/StructureDefinition/regex
-          case "pattern":
-            if (item.dataType === "ST" || item.dataType === "TX" ) {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/regex",
-                "valueInteger": value
-              };
-            }
-            break
-        }
-
-        if (extValue) {
-          targetItem.extension.push(extValue);
-        }
-      }
-
-    }
-
-    // http://hl7.org/fhir/StructureDefinition/entryFormat
-    // looks like tooltip, TBD
-
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
-    // this is for a single unit, where is the units list?????
-    // for user selected unit, not item.units! Not to use here
-    if (item.unit) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
-        "valueCoding" : {
-          "coding": [{
-            "system": "http://unitsofmeasure.org",
-            "code": item.unit.name
-          }]
-        }
-      });
-    }
-
-    // add LForms Extension to units list
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    }
-
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
-    if (item.codingInstructions) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-        "valueCodeableConcept": {
-          "text": item.codingInstructions,
-          "coding": [{
-            "code": item.codingInstructionsFormat,
-            "display": item.codingInstructions
-          }]
-        }
-      });
-    }
-
-    // linkId
-    targetItem.linkId = item._codePath + item._idPath;
-    //targetItem.linkId = item._codePath;
-
-    // concept, removed in FHIR v3.0.0
-    // targetItem.concept = {
-    //   "system": item.questionCodeSystem,
-    //   "code": item.questionCode,
-    //   "display": item.question
-    // };
-
-    // text
-    targetItem.text = item.question;
-
-    // type
-    targetItem.type = this._handleDataType(item);
-
-    // enableWhen
-    if (item.skipLogic) {
-      this._handleSkipLogic(targetItem, item)
-    }
-
-    // repeats, handled above
-    // readonly, (editable)
-    if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
-      targetItem.readonly = true;
-    }
-
-    // options , a reference to ValueSet resource, not to use for now
-    // option
-    if (item.answers) {
-      targetItem.option = this._handleAnswers(item)
-    }
-
-    // initialValue, for default values
-    if (item.value) {
-      this._handleInitialValues(targetItem, item);
-    }
-
-    if (item.items && Array.isArray(item.items)) {
-      // header
-      targetItem.header = true;
-      targetItem.item = [];
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i]);
-        targetItem.item.push(newItem);
-      }
-    }
-
-    // if there is no extension, remove it
-    if (targetItem.extension.length === 0)
-      delete targetItem.extension;
-
-    return targetItem
   },
 
 
@@ -418,6 +435,27 @@ LForms.FHIR_SDC = {
 
 
   /**
+   * Get a code system based on the code system value used in LForms
+   * @param codeSystemInLForms code system value used in LForms
+   * @private
+   */
+  _getCodeSystem: function(codeSystemInLForms) {
+
+    var codeSystem;
+    switch (codeSystemInLForms) {
+      case "LOINC":
+        codeSystem = "http://loinc.org";
+        break;
+      case "CDE": // TBD
+      default:
+        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+    }
+
+    return codeSystem;
+  },
+
+
+  /**
    * Set form level attribute
    * @private
    */
@@ -426,38 +464,23 @@ LForms.FHIR_SDC = {
     // resourceType
     this._target.resourceType = "QuestionnaireResponse";
 
-    // contained
-
-    var codeSystem = this._source.codeSystem === "LOINC" ? "http://loinc.org" : this._source.codeSystem;
-
     // "identifier":
     this._target.identifier = {
-      "system": codeSystem,
+      "system": this._getCodeSystem(this._source.codeSystem),
       "value": this._source.code
-
     };
 
     // status, required
     // "in-progress", "completed", "amended"
     this._target.status = "completed";
 
-
-    // source
-    // this._target.source = {
-    //   "reference": "LHC-LForms"
-    // };
-
-    // author
-    // this._target.author = {
-    //   "reference": "LHC-LForms"
-    // };
-
     // authored, required
     this._target.authored = LForms.Util.dateToString(new Date());
 
     // questionnaire , required
     this._target.questionnaire = {
-      "reference": "http://hl7.org/fhir/us/sdc/Questionnaire/" + this._source.code
+      // questionnaireId should be an id of a related existing questionnaire resource stored in the server
+      "reference": "Questionnaire/{{questionnaireId}}"
     };
 
     // meta
@@ -467,8 +490,7 @@ LForms.FHIR_SDC = {
       ]
     };
 
-    // text,
-    // not to use. it requires html/xhtml content?
+    // text, not to use. it requires html/xhtml content?
 
   },
 
@@ -485,7 +507,6 @@ LForms.FHIR_SDC = {
     // id (empty for new record)
 
     var linkId = item._codePath + item._idPath;
-    //var linkId = item._codePath;
 
     // if the item has not been processed
     // for repeating questions, only the first one will be processed
@@ -499,14 +520,12 @@ LForms.FHIR_SDC = {
 
         if (item.items && Array.isArray(item.items)) {
           // header
-          targetItem.header = true;
           targetItem.item = [];
           for (var i=0, iLen=item.items.length; i<iLen; i++) {
             var newItem = this._processResponseItem(item.items[i]);
             targetItem.item.push(newItem);
           }
         }
-
       }
       // if it is a question
       else if (item.dataType !== "TITLE")
@@ -547,7 +566,8 @@ LForms.FHIR_SDC = {
         valueKey = "Decimal";
         break;
       case "DT":
-        valueKey = "Date";
+        //valueKey = "Date";
+        valueKey = "DateTime";
         break;
       case "DTM":
         valueKey = "DateTime";
@@ -608,7 +628,6 @@ LForms.FHIR_SDC = {
           "system": "http://loinc.org",
           "code": answer.code,
           "display": answer.text
-
       };
       optionArray.push(option);
     }
@@ -644,7 +663,8 @@ LForms.FHIR_SDC = {
         dataType = 'integer';
         break;
       case "DT":
-        dataType = 'date';
+        //dataType = 'date';
+        dataType = 'dateTime';
         break;
       case "DTM": // not supported yet
         dataType = 'dateTime';
@@ -728,12 +748,14 @@ LForms.FHIR_SDC = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
+          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
           if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) &&
               Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
                 answer.push({
                   "valueCoding" : {
+                    "system": codeSystem,
                     "code": values[i][j].code,
                     "display": values[i][j].text
                   }
@@ -752,6 +774,7 @@ LForms.FHIR_SDC = {
             if (!jQuery.isEmptyObject(values[i])) {
               answer.push({
                 "valueCoding" : {
+                  "system": codeSystem,
                   "code": values[i].code,
                   "display": values[i].text
                 }
@@ -781,7 +804,7 @@ LForms.FHIR_SDC = {
         else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL")) {
           answer.push({
             "valueQuantity": {
-              "value": values[i],
+              "value": parseFloat(values[i]),
               "unit": item.unit.name,
               "system": "http://unitsofmeasure.org",
               "code": item.unit.name
@@ -820,18 +843,21 @@ LForms.FHIR_SDC = {
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
+        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
         if (item.questionCardinality.max==="*" || parseInt(item.questionCardinality.max) >1) {
-          targetItem[valueKey] = [{
+          targetItem[valueKey] = {
+            "system": codeSystem,
             "code": item.value[0].code,
             "display": item.value[0].text
-          }];
+          };
         }
         // single selection, item.value is an object
         else {
-          targetItem[valueKey] = [{
+          targetItem[valueKey] = {
+            "system": codeSystem,
             "code": item.value.code,
             "display": item.value.text
-          }];
+          };
         }
       }
       // for Quantity,
@@ -865,58 +891,6 @@ LForms.FHIR_SDC = {
    * @private
    */
   _handleLFormsUnits: function(targetItem, item) {
-
-    // for Quantity item type only
-
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-units ???
-
-    // This does not seem right !!!!
-
-    // "extension": [
-    //   {
-    //     "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-    //     "valueCodeableConcept": {
-    //       "coding": [
-    //         {
-    //           "system": "http://unitsofmeasure.org",
-    //           "code": "a"
-    //         }
-    //       ]
-    //     }
-    //   }
-    // ],
-
-    // {
-    //   "resourceType": "ValueSet",
-    //   "id": "length",
-    //   "meta": {
-    //     "profile": [
-    //       "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-valueset"
-    //     ]
-    //   },
-    //   "name": "Length Units",
-    //   "status": "active",
-    //   "description": "Length units",
-    //   "immutable": true,
-    //   "extensible": false,
-    //   "compose": {
-    //     "include": [
-    //       {
-    //         "system": "http://unitsofmeasure.org",
-    //         "concept": [
-    //           {
-    //             "code": "[in_i]",
-    //             "display": "inches"
-    //           },
-    //           {
-    //             "code": "cm",
-    //             "display": "centimeters"
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // },
 
     if (item.units) {
       var unitsArray = [];
@@ -956,7 +930,7 @@ LForms.FHIR_SDC = {
         var sourceItem = this._source._getSkipLogicSourceItem(item,condition.source);
 
         var enableWhenRule = {
-          "question": sourceItem._id
+          "question": sourceItem.linkId
         };
         // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
@@ -988,7 +962,7 @@ LForms.FHIR_SDC = {
         //   "code" : "<code>" // Coded form of the unit
         // }]
         else if (sourceItem.dataType === 'QTY') {
-
+          // TBD
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" ||
@@ -996,15 +970,12 @@ LForms.FHIR_SDC = {
             sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
           enableWhenRule[valueKey] = condition.trigger.value;
         }
-        // no support for reference yet
-
         // add a rule to enableWhen
         enableWhen.push(enableWhenRule)
       }
       targetItem.enableWhen = enableWhen;
     }
   },
-
 
 
   /**
@@ -1014,11 +985,8 @@ LForms.FHIR_SDC = {
    * @returns {{}} an updated LFormsData object
    */
   mergeQuestionnaireResponseToForm : function(formData, qr) {
-
     var reportStructure = this._getReportStructure(qr);
-
     this._processObxAndItem(reportStructure, formData);
-
     return formData;
   },
 
@@ -1033,7 +1001,6 @@ LForms.FHIR_SDC = {
     var qrStructure = {
       obxInfoList: []
     };
-
     if (qr) {
       this._checkRepeatingItems(qrStructure, qr);
     }
@@ -1049,10 +1016,8 @@ LForms.FHIR_SDC = {
    */
   _getCodePathFromLinkId: function(linkId) {
     var parts = linkId.split("/");
-
     var level = (parts.length -1)/2;
     var codePath = parts.slice(0, level +1 ).join("/");
-
     return codePath;
   },
 
@@ -1065,11 +1030,8 @@ LForms.FHIR_SDC = {
    */
   _getItemCodeFromLinkId: function(linkId) {
     var parts = linkId.split("/");
-
     var level = (parts.length -1)/2;
-
     var itemCode = parts[level];
-
     return itemCode;
   },
 
@@ -1114,9 +1076,7 @@ LForms.FHIR_SDC = {
           }
         }
       }
-
       parentObxInfo.obxInfoList = obxInfoList;
-
     }
   },
 
@@ -1144,7 +1104,7 @@ LForms.FHIR_SDC = {
     return {
       total: total,
       repeatingItems: repeatingItems
-    }
+    };
   },
 
 
@@ -1165,9 +1125,7 @@ LForms.FHIR_SDC = {
           // add repeating items in form data
           this._addRepeatingItems(parentItem, obxInfo.code, obxInfo.total);
         }
-
         var item = this._findTheMatchingItemByCodeAndIndex(parentItem, obxInfo.code, obxInfo.index);
-
         this._setupItemValueAndUnit(obx, item);
 
         // process items on sub level
@@ -1297,7 +1255,6 @@ LForms.FHIR_SDC = {
               "text": qrValue.valueCoding.display
             };
           }
-
           break;
         case "ST":
           item.value = qrValue.valueString;
