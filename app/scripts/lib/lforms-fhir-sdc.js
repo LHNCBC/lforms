@@ -346,7 +346,8 @@ LForms.FHIR_SDC = {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
     // Fly-over, Table, Checkbox, Combo-box, Lookup
-    if (!jQuery.isEmptyObject(item.displayControl)) {
+    // if (!jQuery.isEmptyObject(item.displayControl)) {
+    if (item.displayControl) {
       // for answers
       if (item.displayControl.answerLayout &&
           (item.dataType === "CNE" || item.dataType === "CWE")) {
@@ -751,7 +752,8 @@ LForms.FHIR_SDC = {
           if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) &&
               Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
+              // if (!jQuery.isEmptyObject(values[i][j])) {
+              if (values[i][j]) {
                 answer.push({
                   "valueCoding" : {
                     "system": codeSystem,
@@ -770,7 +772,8 @@ LForms.FHIR_SDC = {
           }
           // single selection, item.value is an object
           else {
-            if (!jQuery.isEmptyObject(values[i])) {
+            // if (!jQuery.isEmptyObject(values[i])) {
+            if (values[i]) {
               answer.push({
                 "valueCoding" : {
                   "system": codeSystem,
