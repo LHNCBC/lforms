@@ -3978,3 +3978,178 @@ var questionInQuestion =
         }
       ]
     };
+
+var defaultAnswerForm = {
+  "type": "LOINC",
+  "code": "defaultAnswerForm",
+  "name": null,
+  "items": [
+    {
+      "question": "Integer field with default",
+      "questionCode": "intField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "INT",
+      "defaultAnswer": 24,
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "Decimal field",
+      "questionCode": "decField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "REAL",
+      "defaultAnswer": 3.14159,
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "String field",
+      "questionCode": "strField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "ST",
+      "defaultAnswer": "Green",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "Date field",
+      "questionCode": "dateField",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "DT",
+      "defaultAnswer": "t",
+      "displayControl": {},
+      "questionCodeSystem": "LOINC"
+    },
+    {
+      "question": "List via answer label",
+      "questionCode": "ansLabelDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": {"label": "ii"}
+    },
+    {
+      "question": "List via answer code",
+      "questionCode": "ansCodeDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": {"code": "B"}
+    },
+    {
+      "question": "List via answer text (not in specification)",
+      "questionCode": "ansTextDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CWE",
+      "answers": [
+        {"text": "Red", "code": "R"},
+        {"text": "Blue", "code": "B"},
+        {"text": "Green", "code": "G"}
+      ],
+      "defaultAnswer": "Blue"
+    }
+  ],
+  "templateOptions": {
+    "formHeaderItems": [{
+      "question": "Date Done",
+      "questionCode": "date_done",
+      "dataType": "DT",
+      "answers": "",
+      "answerCardinality": {"min": "1", "max": "1"},
+      "displayControl": {"colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]},
+      "defaultAnswer": "t"
+    }, {
+      "question": "Time Done",
+      "questionCode": "time_done",
+      "dataType": "TM",
+      "answers": "",
+      "displayControl": {"colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]}
+    }, {
+      "question": "Where Done",
+      "questionCode": "where_done",
+      "dataType": "CWE",
+      "answers": [{"text": "Home", "code": "1"}, {"text": "Hospital", "code": "2"}, {
+        "text": "MD Office",
+        "code": "3"
+      }, {"text": "Lab", "code": "4"}, {"text": "Other", "code": "5"}],
+      "displayControl": {"colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]}
+    }, {
+      "question": "Comment",
+      "questionCode": "comment",
+      "dataType": "ST",
+      "answers": "",
+      "displayControl": {"colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]}
+    }]
+  }
+}

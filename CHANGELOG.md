@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.2.0]  2017-04-24
+### Added
+- Support for default answers for questions via the defaultAnswer field in
+  the form definition.
+
 ## [11.1.1]  2017-04-14
 - Used a different library (element resize detector) for checking 
   the container element's size, which can handle multiple rendered

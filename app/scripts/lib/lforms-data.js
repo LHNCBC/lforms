@@ -198,7 +198,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
     //TODO, validate form data
 
-    // set default values
+    // set default values of certain form definition fields
     this._setDefaultValues();
 
     // update internal status
@@ -220,8 +220,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
     // create a navigation map
     this.Navigation.setupNavigationMap(this);
 
-    // create auto-completer options
-    this._setupAutocompOptions();
+    // create auto-completer options and assign field default values
+    this._setUpDefaultsAndAutocomp();
 
     // set up a mapping from controlling items to controlled items
     // for skip logic, data controls and formulas
@@ -258,7 +258,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
     this.Navigation.setupNavigationMap(this);
 
     // create auto-completer options
-    this._setupAutocompOptions();
+    this._setUpDefaultsAndAutocomp();
 
     // set up a mapping from controlling items to controlled items
     // for skip logic, data controls and formulas
@@ -641,12 +641,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
       }
 
       // if there is a new formHeaderItems array, set up autocomplete options
-      if (newOptions.formHeaderItems) {
-        for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-          this._updateAutocompOptions(this.templateOptions.formHeaderItems[i]);
-          this._updateUnitAutocompOptions(this.templateOptions.formHeaderItems[i]);
-        }
-      }
+      if (newOptions.formHeaderItems)
+        this._setUpDefaultsAndAutocomp(true);
     }
   },
 
@@ -1938,20 +1934,26 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
   /**
    * Set up autocomplete options for each items
-   * @private
+   * @param templateOptionsOnly (default false) set to true if only the
+   *  templateOptions items need processing.
    */
-  _setupAutocompOptions: function() {
-
-    for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
-      this._updateAutocompOptions(this.itemList[i]);
-      this._updateUnitAutocompOptions(this.itemList[i]);
+  _setUpDefaultsAndAutocomp: function(templateOptionsOnly) {
+    var itemList;
+    var itemLists = [this.templateOptions.formHeaderItems];
+    if (!templateOptionsOnly)
+      itemLists.push(this.itemList);
+    for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
+      for (var i=0, iLen=itemList.length; i<iLen; i++) {
+        var item = itemList[i];
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
+        }
+        else if (item.defaultAnswer && !item.value) // && not a list
+          item.value = item.defaultAnswer;
+        this._updateUnitAutocompOptions(item);
+      }
     }
-
-    for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
-      this._updateAutocompOptions(this.templateOptions.formHeaderItems[i]);
-      this._updateUnitAutocompOptions(this.templateOptions.formHeaderItems[i]);
-    }
-
   },
 
 
@@ -2057,14 +2059,15 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
         // Modify the display label (answer text) for each answer.
         for(var i= 0, iLen = answers.length; i<iLen; i++) {
-          // Make a copy of the original answer
+          // Make a copy of the original answer if we are using labels
           var ans = answers[i];
+          var answerData;
           if (ans.label) {
-            var answerData = angular.copy(ans);
+            answerData = angular.copy(ans);
             var label = answerData.label ? answerData.label + ". " + answerData.text :
               answerData.text;
             answerData.text = label;
-            answerData._orig = angular.copy(answers[i]);
+            answerData._orig = ans;
             listItems.push(answerData);
           }
           else // avoid copying the object, which causes problems for radio buttons
@@ -2073,9 +2076,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
         options.listItems = listItems;
         // See if there is a default value defined for the question.
-        if (item.defaultAnswer) {
+        if (item.defaultAnswer)
           options.defaultValue = item.defaultAnswer;
-        }
         else if (listItems.length === 1) {
           options.defaultValue = listItems[0].text;
         }
