@@ -746,10 +746,7 @@ var LFormsData = LForms.LFormsData = Class.extend({
             for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
               var ans = item.answers[j];
               if (valValue == ans[valKey]) {
-                if (ans.label)
-                  listVals.push(item._labeledAnswers[j]);
-                else
-                  listVals.push(item._labeledAnswers[j]);
+                listVals.push(item._labeledAnswers[j]);
                 found = true;
               }
             }
@@ -2014,8 +2011,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
-   *  Initializes (if not already done) item._labledItems and returns them.
+   *  Initializes (if not already done) item._labledAnswers and returns them.
    *  Also sets item._hasLabeledAnswers.
+   * @param item the item for which labeled answers should be created.
    */
   _getLabeledAnswers: function(item) {
      if (!item._labeledAnswers) {
@@ -2044,7 +2042,6 @@ var LFormsData = LForms.LFormsData = Class.extend({
         for(var i= 0, iLen = answers.length; i<iLen; i++) {
           // Make a copy of the original answer if we are using labels
           var ans = answers[i];
-          var answerData;
           if (ans.label) {
             var labeledAnswer = this._buildLabeledAnswer(ans);
             item._labeledAnswers.push(labeledAnswer);
