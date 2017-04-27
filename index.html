@@ -52,7 +52,8 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (7.x)</li>
+        <li>Current (11.x)</li>
+        <li><a href="versions/7.x/index.html">7.x</a></li>
         <li><a href="versions/6.x/index.html">6.x</a></li>
         <li><a href="versions/5.5/index.html">5.5</a></li>
       </ul>
@@ -117,11 +118,11 @@ using LForms is by linking to the prebuilt version hosted on clin-table-search. 
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
-  <dt>JavaScript</dt><dd>https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/9.0.0/lforms.min.js</dd>
-  <dt>CSS</dt><dd>https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/9.0.0/styles/lforms.min.css</dd>
+  <dt>JavaScript</dt><dd>https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/11.2.0/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/11.2.0/styles/lforms.min.css</dd>
 </dl>
 
-<p>(Note that the URLs contain a release version number, 9.0.0, for which you
+<p>(Note that the URLs contain a release version number, 11.2.0, for which you
 can substitute any of the other prebuilt versions available at
 https://clin-table-search.lhc.nlm.nih.gov/lforms-versions).</p>
 
@@ -145,14 +146,14 @@ header:</p>
 
 <pre><code>
 &lt;link
- href="https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/9.0.0/styles/lforms.min.css"
+ href="https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/11.2.0/styles/lforms.min.css"
  media="screen" rel="stylesheet" /&gt;
 </code></pre>
 
 And with your other JavaScript:
 
 <pre><code>&lt;script
- src="https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/9.0.0/lforms.min.js"
+ src="https://clin-table-search.lhc.nlm.nih.gov/lforms-versions/11.2.0/lforms.min.js"
  &gt;&lt;/script&gt;
 </code></pre>
 
@@ -282,6 +283,11 @@ the two filled-in items as data.  That is why there is just one entry in the
 itemsData itself, and that item has two sub-items in "items" array.  One of the
 two items was numeric and had an associated unit field, while the other was a
 coded list field.</p>
+
+<p>Another utility method, LForms.Util.getFormData(), will return both the user
+data and form definition data together in a way that can be fed back to LForms
+to display the form with the data.  This is useful when you want to allow the
+user to save the form so it can be redisplayed later for completion or editing.</p>
 
 <h2>
 <a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
