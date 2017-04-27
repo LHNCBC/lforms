@@ -4090,7 +4090,130 @@ var defaultAnswerForm = {
         "min": "0",
         "max": "1"
       },
-      "dataType": "CWE",
+      "dataType": "CNE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": {"code": "B"}
+    },
+    {
+      "question": "List via answer code, unlabeled",
+      "questionCode": "ansCodeDefaultNoLabel",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CNE",
+      "answers": [
+        {"text": "Red", "code": "R"},
+        {"text": "Blue", "code": "B"},
+        {"text": "Green", "code": "G"}
+      ],
+      "defaultAnswer": {"code": "B"}
+    },
+    {
+      "question": "Radio buttons via answer code",
+      "questionCode": "radioAnsCodeDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CNE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": {"code": "B"},
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": 2
+        }
+      }
+    },
+    {
+      "question": "Check boxes via answer code",
+      "questionCode": "checkBoxAnsCodeDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "dataType": "CNE",
+      "answers": [
+        {"text": "Red", "code": "R", "label": "i" },
+        {"text": "Blue", "code": "B", "label": "ii" },
+        {"text": "Green", "code": "G", "label": "iii" }
+      ],
+      "defaultAnswer": {"code": "B"},
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": 2
+        }
+      }
+    },
+    {
+      "question": "Radio buttons via answer code, unlabeled",
+      "questionCode": "radioAnsCodeDefaultNoLabel",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "dataType": "CNE",
+      "answers": [
+        {"text": "Red", "code": "R"},
+        {"text": "Blue", "code": "B"},
+        {"text": "Green", "code": "G"}
+      ],
+      "defaultAnswer": {"code": "B"},
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": 2
+        }
+      }
+    },
+    {
+      "question": "Multi-select list via answer code",
+      "questionCode": "multiSelAnsCodeDefault",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "header": false,
+      "editable": "1",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "dataType": "CNE",
       "answers": [
         {"text": "Red", "code": "R", "label": "i" },
         {"text": "Blue", "code": "B", "label": "ii" },
