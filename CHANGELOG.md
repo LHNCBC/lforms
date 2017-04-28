@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.2.1]  2017-04-27
+### Fixed
+- There was a problem with the handling of defaultAnswer for radio buttons and
+  checkboxes.
+
 ## [11.2.0]  2017-04-24
 ### Added
 - Support for default answers for questions via the defaultAnswer field in
