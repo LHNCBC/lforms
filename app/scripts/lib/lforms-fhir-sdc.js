@@ -159,8 +159,8 @@ LForms.FHIR_SDC = {
     // looks like tooltip, TBD
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
-    // this is for a single unit, where is the units list?????
-    // for user selected unit, not item.units! Not to use here
+    // this is for a single unit, where is the units list??
+    // for user selected unit, not item.units! Not using here
     if (item.unit) {
       targetItem.extension.push({
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
@@ -221,7 +221,7 @@ LForms.FHIR_SDC = {
       targetItem.readonly = true;
     }
 
-    // options , a reference to ValueSet resource, not to use for now
+    // options , a reference to ValueSet resource, not using for now
     // option, for answer list
     if (item.answers) {
       targetItem.option = this._handleAnswers(item)
@@ -358,16 +358,17 @@ LForms.FHIR_SDC = {
         }
         // prefetch list
         // combo-box
-        else if (item.displayControl.answerLayout === "COMBO_BOX") {
+        else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
           itemControlType = "Combo-box";
         }
         // radio or checkbox
-        else if (item.displayControl.answerLayout === "RADIO_CHECKBOX") {
-          if (item.dataType === "CNE") {
-            itemControlType = "Radio";
-          }
-          else if (item.dataType === "CWE") {
+        else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+          if (item.answerCardinality &&
+              (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
             itemControlType = "Checkbox";
+          }
+          else {
+            itemControlType = "Radio";
           }
         }
       }
