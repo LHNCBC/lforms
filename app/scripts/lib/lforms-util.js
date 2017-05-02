@@ -87,13 +87,29 @@ LForms.Util = {
   /**
    * Get FHIR DiagnosticReport data from the form.
    * Empty or hidden questions are not included.
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
+   * and "QuestionnaireResponse" (SDC profile)
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
    * @returns {null}
    */
-  getFormFHIRData: function(element) {
+  getFormFHIRData: function(resourceType, element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? LForms.FHIR.createDiagnosticReport(formObj) : null;
+    var fhirData = null;
+    if (formObj) {
+      switch (resourceType) {
+        case "DiagnosticReport":
+          fhirData = LForms.FHIR.createDiagnosticReport(formObj);
+          break;
+        case "Questionnaire":
+          fhirData = LForms.FHIR_SDC.convert2Questionnaire(formObj);
+          break;
+        case "QuestionnaireResponse":
+          fhirData = LForms.FHIR_SDC.convert2QuestionnaireResponse(formObj);
+          break;
+      }
+    }
+    return fhirData;
   },
 
   

@@ -17,86 +17,85 @@ if (typeof LForms === 'undefined')
 
 LForms.FHIR_SDC = {
 
-  _source: null,
-  _target: null,
-
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire
    * @param lfData a LForms form definition object
-   * @returns {null}
+   * @returns {{}}
    */
   convert2Questionnaire: function(lfData) {
-    this._target = null;
+    var target = {};
+    var source = lfData;
+
     if (lfData) {
-      this._target = {};
-      this._source = lfData
 
-      this._setFormLevelFields();
+      this._setFormLevelFields(target, source);
 
-      if (this._source.items && Array.isArray(this._source.items)) {
-        this._target.item = [];
-        for (var i=0, iLen=this._source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(this._source.items[i]);
-          this._target.item.push(newItem);
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+        for (var i=0, iLen=source.items.length; i<iLen; i++) {
+          var newItem = this._processItem(source.items[i], source);
+          target.item.push(newItem);
         }
 
       }
     }
-    return this._target;
+    return target;
   },
 
 
   /**
    * Set form level attributes
+   * @param target a Questionnaire object
+   * @param source a LForms form definition object
    * @private
    */
-  _setFormLevelFields: function() {
+  _setFormLevelFields: function(target, source) {
 
     // resourceType
-    this._target.resourceType = "Questionnaire";
+    target.resourceType = "Questionnaire";
 
     // status
-    this._target.status = "draft";
+    target.status = "draft";
 
     // date
-    this._target.date = LForms.Util.dateToString(new Date());
+    target.date = LForms.Util.dateToString(new Date());
 
     // version, assuming questionnaires are from LOINC forms
-    this._target.version = "2.56";
+    target.version = "2.56";
 
     // url
-    this._target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + this._source.code;
+    target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
-    this._target.meta = {
+    target.meta = {
       "profile": [
         "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
       ]
     };
 
     // title
-    this._target.title = this._source.name;
+    target.title = source.name;
 
     // name
-    this._target.name = this._source.name;
+    target.name = source.name;
 
-    var codeSystem = this._getCodeSystem(this._source.codeSystem);
+    var codeSystem = this._getCodeSystem(source.codeSystem);
 
     // "identifier": [
-    this._target.identifier = [{
+    target.identifier = [{
       "system": codeSystem,
-      "value": this._source.code
+      "value": source.code
     }];
 
     // code
-    this._target.code = [{
+    target.code = [{
       "system": codeSystem,
-      "code": this._source.code,
-      "display": this._source.name
+      "code": source.code,
+      "display": source.name
     }];
 
     // subjectType
-    this._target.subjectType = ["Patient", "Person"];
+    target.subjectType = ["Patient", "Person"];
 
     // text, not to use. it requires html/xhtml content?
     // concept, removed in FHIR v3.0.0
@@ -107,10 +106,11 @@ LForms.FHIR_SDC = {
   /**
    * Process an item of the form
    * @param item an item in LForms form definition object
+   * @param source a LForms form definition object
    * @returns {{}}
    * @private
    */
-  _processItem: function(item) {
+  _processItem: function(item, source) {
     var targetItem = {};
 
     // id (empty for new record)
@@ -131,15 +131,17 @@ LForms.FHIR_SDC = {
 
     // repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    if (item.questionCardinality.max === "*") {
-      targetItem.repeats = true;
-    }
-    else if (parseInt(item.questionCardinality.max) > 1) {
-      targetItem.repeats = true;
-      targetItem.extension.push({
-        "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
-        "valueInteger" : parseInt(item.questionCardinality.max)
-      });
+    if (item.questionCardinality) {
+      if (item.questionCardinality.max === "*") {
+        targetItem.repeats = true;
+      }
+      else if (parseInt(item.questionCardinality.max) > 1) {
+        targetItem.repeats = true;
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": parseInt(item.questionCardinality.max)
+        });
+      }
     }
     else {
       targetItem.repeats = false;
@@ -197,7 +199,7 @@ LForms.FHIR_SDC = {
     targetItem.code = [{
       "system": codeSystem,
       "code": item.questionCode,
-      "display": this.question
+      "display": item.question
     }];
 
     // concept, removed in FHIR v3.0.0
@@ -210,7 +212,7 @@ LForms.FHIR_SDC = {
 
     // enableWhen
     if (item.skipLogic) {
-      this._handleSkipLogic(targetItem, item)
+      this._handleSkipLogic(targetItem, item, source)
     }
 
     // repeats, handled above
@@ -233,7 +235,7 @@ LForms.FHIR_SDC = {
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i]);
+        var newItem = this._processItem(item.items[i], source);
         targetItem.item.push(newItem);
       }
     }
@@ -346,8 +348,7 @@ LForms.FHIR_SDC = {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
     // Fly-over, Table, Checkbox, Combo-box, Lookup
-    // if (!jQuery.isEmptyObject(item.displayControl)) {
-    if (item.displayControl) {
+    if (!jQuery.isEmptyObject(item.displayControl)) {
       // for answers
       if (item.displayControl.answerLayout &&
           (item.dataType === "CNE" || item.dataType === "CWE")) {
@@ -409,29 +410,28 @@ LForms.FHIR_SDC = {
   /**
    * Convert LForms captured data to FHIR SDC QuestionnaireResponse
    * @param lfData a LForms form definition object
-   * @returns {null}
+   * @returns {{}}
    */
   convert2QuestionnaireResponse: function(lfData) {
-    this._target = null;
+    var target = {};
     if (lfData) {
-      this._target = {};
 
-      this._source = lfData.getFormData(true,true,true,true);
+      var source = lfData.getFormData(true,true,true,true);
 
       this._groupedValues = {};
-      this._groupValuesByLinkId(this._source);
+      this._groupValuesByLinkId(source);
 
-      this._setResponseFormLevelFields();
+      this._setResponseFormLevelFields(target, source);
 
-      if (this._source.items && Array.isArray(this._source.items)) {
-        this._target.item = [];
-        for (var i=0, iLen=this._source.items.length; i<iLen; i++) {
-          var newItem = this._processResponseItem(this._source.items[i]);
-          this._target.item.push(newItem);
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+        for (var i=0, iLen=source.items.length; i<iLen; i++) {
+          var newItem = this._processResponseItem(source.items[i]);
+          target.item.push(newItem);
         }
       }
     }
-    return this._target;
+    return target;
   },
 
 
@@ -458,34 +458,37 @@ LForms.FHIR_SDC = {
 
   /**
    * Set form level attribute
+   * @param target a QuestionnaireResponse object
+   * @param source a LForms form definition object
+
    * @private
    */
-  _setResponseFormLevelFields: function() {
+  _setResponseFormLevelFields: function(target, source) {
 
     // resourceType
-    this._target.resourceType = "QuestionnaireResponse";
+    target.resourceType = "QuestionnaireResponse";
 
     // "identifier":
-    this._target.identifier = {
-      "system": this._getCodeSystem(this._source.codeSystem),
-      "value": this._source.code
+    target.identifier = {
+      "system": this._getCodeSystem(source.codeSystem),
+      "value": source.code
     };
 
     // status, required
     // "in-progress", "completed", "amended"
-    this._target.status = "completed";
+    target.status = "completed";
 
     // authored, required
-    this._target.authored = LForms.Util.dateToString(new Date());
+    target.authored = LForms.Util.dateToString(new Date());
 
     // questionnaire , required
-    this._target.questionnaire = {
+    target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
 
     // meta
-    this._target.meta = {
+    target.meta = {
       "profile": [
         "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
       ]
@@ -752,8 +755,7 @@ LForms.FHIR_SDC = {
           if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) &&
               Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
-              // if (!jQuery.isEmptyObject(values[i][j])) {
-              if (values[i][j]) {
+              if (!jQuery.isEmptyObject(values[i][j])) {
                 answer.push({
                   "valueCoding" : {
                     "system": codeSystem,
@@ -772,8 +774,7 @@ LForms.FHIR_SDC = {
           }
           // single selection, item.value is an object
           else {
-            // if (!jQuery.isEmptyObject(values[i])) {
-            if (values[i]) {
+            if (!jQuery.isEmptyObject(values[i])) {
               answer.push({
                 "valueCoding" : {
                   "system": codeSystem,
@@ -918,9 +919,10 @@ LForms.FHIR_SDC = {
    * Process skip logic
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
+   * @param source a LForms form definition object
    * @private
    */
-  _handleSkipLogic: function(targetItem, item) {
+  _handleSkipLogic: function(targetItem, item, source) {
     if (item.skipLogic) {
       var enableWhen = [];
 
@@ -929,10 +931,10 @@ LForms.FHIR_SDC = {
 
       for (var i=0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
-        var sourceItem = this._source._getSkipLogicSourceItem(item,condition.source);
+        var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
 
         var enableWhenRule = {
-          "question": sourceItem.linkId
+          "question": sourceItem._codePath + sourceItem._idPath
         };
         // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
@@ -1235,7 +1237,7 @@ LForms.FHIR_SDC = {
           }
           break;
         case "DT":
-          item.value = qrValue.valueDate;
+          item.value = qrValue.valueDateTime;
           break;
         case "CNE":
         case "CWE":
