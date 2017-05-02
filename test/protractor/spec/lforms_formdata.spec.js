@@ -217,3 +217,93 @@ describe('get form data', function() {
     });
   });
 });
+
+
+describe('defaultAnswer', function() {
+  it('should work for various data types', function() {
+    tp.openDefaultAnswerForm();
+    var intField = element(by.id('/intField/1'));
+    expect(intField.getAttribute('value')).toBe("24");
+    expect(element(by.id('/decField/1')).getAttribute('value')).toBe("3.14159");
+    expect(element(by.id('/strField/1')).getAttribute('value')).toBe("Green");
+
+    // Test date field default (with value of "t" -- today)
+    var now = new Date();
+    /**
+     *  Returns a string version of the given number, zero padded on the left to
+     *  be at least two characters.
+     */
+    function zeroPad(num) {
+      var rtn = "" + num;
+      if (rtn.length === 1)
+        rtn = "0" + rtn;
+      return rtn;
+    }
+    var today = zeroPad(now.getMonth()+1) + "/" + zeroPad(now.getDate()) +
+      "/" + now.getFullYear();
+    expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual(today);
+
+    expect(element(by.id('/ansLabelDefault/1')).getAttribute('value')).toEqual('ii. Blue');
+    expect(element(by.id('/ansCodeDefault/1')).getAttribute('value')).toEqual('ii. Blue');
+    expect(element(by.id('/ansCodeDefaultNoLabel/1')).getAttribute('value')).toEqual('Blue');
+
+    // Check a radio button question
+    var radioQCode = '/radioAnsCodeDefault/1';
+    expect(element(by.id(radioQCode+'R')).isSelected()).toBe(false);
+    expect(element(by.id(radioQCode+'B')).isSelected()).toBe(true);
+    expect(element(by.id(radioQCode+'G')).isSelected()).toBe(false);
+    element(by.id(radioQCode+'R')).evaluate('item.value').then(function(val) {
+      expect(val.code).toEqual('B');
+      expect(val.text).toEqual('ii. Blue');
+    });
+
+    // Check a radio button question whose answers do not have labels
+    var radioQCodeNL = '/radioAnsCodeDefaultNoLabel/1';
+    expect(element(by.id(radioQCodeNL+'R')).isSelected()).toBe(false);
+    expect(element(by.id(radioQCodeNL+'B')).isSelected()).toBe(true);
+    expect(element(by.id(radioQCodeNL+'G')).isSelected()).toBe(false);
+    element(by.id(radioQCodeNL+'R')).evaluate('item.value').then(function(val) {
+      expect(val.code).toEqual('B');
+      expect(val.text).toEqual('Blue');
+    });
+
+    // Test a check box question
+    var cbQCode = '/checkBoxAnsCodeDefault/1';
+    expect(element(by.id(cbQCode+'R')).isSelected()).toBe(false);
+    expect(element(by.id(cbQCode+'B')).isSelected()).toBe(true);
+    expect(element(by.id(cbQCode+'G')).isSelected()).toBe(false);
+    element(by.id(cbQCode+'R')).evaluate('item.value').then(function(val) {
+      expect(val[0].code).toEqual('B');
+      expect(val[0].text).toEqual('ii. Blue');
+    });
+
+    // Check a multi-select list
+    var multiSelID = '/multiSelAnsCodeDefault/1';
+    var multiSel = element(by.id(multiSelID));
+    multiSel.evaluate('item.value').then(function(value) {
+      expect(value.length).toBe(1);
+      expect(value[0].text).toEqual('ii. Blue');
+      expect(value[0].code).toEqual('B');
+    });
+    expect(multiSel.getAttribute('value')).toEqual('');
+    var escapedID = multiSelID.replace( /\//g, "\\\\/" );
+    browser.executeScript('return $("#'+escapedID+'")[0].autocomp.getSelectedCodes()'
+     ).then(function(codes) {
+      expect(codes.length).toBe(1);
+      expect(codes[0]).toEqual('B');
+    });
+    browser.executeScript('return $("#'+escapedID+'")[0].autocomp.getSelectedItems()'
+     ).then(function(items) {
+      expect(items.length).toBe(1);
+      expect(items[0]).toEqual('ii. Blue');
+    });
+
+    // Also test specifying by answer text, to preserve the current behavior,
+    // even though that is not in the LHC-Forms form specification.
+    expect(element(by.id('/ansTextDefault/1')).getAttribute('value')).toEqual('Blue');
+
+    // Also test the date field default in the templateOptions, to make sure
+    // those are getting processed.
+    expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
+  });
+});

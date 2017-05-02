@@ -1,24 +1,22 @@
 <div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout.type">
   <!--list style-->
-  <div ng-switch-when="RADIO_CHECKBOX" ng-if="item.answers">
-    <div class="lf-answer-type-list">
-      <span ng-repeat="answer in item.answers track by $index" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
-        <!--checkboxes for multiple selections-->
-        <div ng-if="item._multipleAnswers">
-          <input class="lf-answer-button" type="checkbox" id="{{item._elementId + answer.code}}"
-                 ng-click="updateCheckboxList(item, answer)"
-                 ng-checked="checkAnswer(item,answer)">
-          <label class="lf-answer-label" for="{{item._elementId + answer.code}}">{{answer.text}}</label>
-        </div>
-        <!--radio buttons for single selection-->
-        <div ng-if="!item._multipleAnswers">
-          <input class="lf-answer-button" type="radio" id="{{item._elementId + answer.code}}"
-                 ng-model="item.value" ng-value="answer" name="{{item._elementId}}"
-                 ng-click="updateRadioList(item)">
-          <label class="lf-answer-label" for="{{item._elementId + answer.code}}">{{answer.text}}</label>
-        </div>
-      </span>
-    </div>
+  <div ng-switch-when="RADIO_CHECKBOX" class="lf-answer-type-list">
+    <span ng-repeat="answer in item._labeledAnswers track by $index" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
+      <!--checkboxes for multiple selections-->
+      <div ng-if="item._multipleAnswers">
+        <input class="lf-answer-button" type="checkbox" id="{{item._elementId + answer.code}}"
+               ng-click="updateCheckboxList(item, answer)"
+               ng-checked="checkAnswer(item,answer)">
+        <label class="lf-answer-label" for="{{item._elementId + answer.code}}">{{answer.text}}</label>
+      </div>
+      <!--radio buttons for single selection-->
+      <div ng-if="!item._multipleAnswers">
+        <input class="lf-answer-button" type="radio" id="{{item._elementId + answer.code}}"
+               ng-model="item.value" ng-value="answer" name="{{item._elementId}}"
+               ng-click="updateRadioList(item)">
+        <label class="lf-answer-label" for="{{item._elementId + answer.code}}">{{answer.text}}</label>
+      </div>
+    </span>
     <!--extra OTHER field-->
     <!--<div class="lf-answer-type-list-other">-->
     <span ng-if="item.dataType==='CWE'" class="lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}">

@@ -4,25 +4,23 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('field-answers.html',
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"RADIO_CHECKBOX\" ng-if=\"item.answers\">\n" +
-    "    <div class=\"lf-answer-type-list\">\n" +
-    "      <span ng-repeat=\"answer in item.answers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
-    "        <!--checkboxes for multiple selections-->\n" +
-    "        <div ng-if=\"item._multipleAnswers\">\n" +
-    "          <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
-    "                 ng-click=\"updateCheckboxList(item, answer)\"\n" +
-    "                 ng-checked=\"checkAnswer(item,answer)\">\n" +
-    "          <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
-    "        </div>\n" +
-    "        <!--radio buttons for single selection-->\n" +
-    "        <div ng-if=\"!item._multipleAnswers\">\n" +
-    "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" +
-    "                 ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
-    "                 ng-click=\"updateRadioList(item)\">\n" +
-    "          <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
-    "        </div>\n" +
-    "      </span>\n" +
-    "    </div>\n" +
+    "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\">\n" +
+    "    <span ng-repeat=\"answer in item._labeledAnswers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "      <!--checkboxes for multiple selections-->\n" +
+    "      <div ng-if=\"item._multipleAnswers\">\n" +
+    "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
+    "               ng-click=\"updateCheckboxList(item, answer)\"\n" +
+    "               ng-checked=\"checkAnswer(item,answer)\">\n" +
+    "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
+    "      </div>\n" +
+    "      <!--radio buttons for single selection-->\n" +
+    "      <div ng-if=\"!item._multipleAnswers\">\n" +
+    "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" +
+    "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
+    "               ng-click=\"updateRadioList(item)\">\n" +
+    "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer.text}}</label>\n" +
+    "      </div>\n" +
+    "    </span>\n" +
     "    <!--extra OTHER field-->\n" +
     "    <!--<div class=\"lf-answer-type-list-other\">-->\n" +
     "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}\">\n" +

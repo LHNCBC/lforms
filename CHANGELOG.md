@@ -2,15 +2,29 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [11.2.0]  2017-04-16
+## [11.3.0]  2017-05-02
 ### Changed
-- Added limited supports for FHIR SDC Questionnaire and QuenstionnaireResponse
+- Added supports for FHIR SDC Questionnaire and QuestionnaireResponse
+
+## [11.2.1]  2017-04-27
+### Fixed
+- There was a problem with the handling of defaultAnswer for radio buttons and
+  checkboxes.
+
+## [11.2.0]  2017-04-24
+### Added
+- Support for default answers for questions via the defaultAnswer field in
+  the form definition.
+
+## [11.1.1]  2017-04-14
+- Used a different library (element resize detector) for checking 
+  the container element's size, which can handle multiple rendered
+  forms on a page.
 
 ## [11.1.0]  2017-03-27
 ### Added
 - Added a viewMode option to the form and to the individual items to 
   control the layout  
->>>>>>> master
 
 ## [11.0.5]  2017-03-20
 ### Fixed

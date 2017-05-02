@@ -401,7 +401,7 @@ describe('get FHIR data from LForms forms', function() {
 });
 
 
-fdescribe('merge FHIR data into form', function() {
+describe('merge FHIR data into form', function() {
 
   it('should merge all DiagnosticReport data back into the form', function() {
 
