@@ -19,7 +19,7 @@ LForms.FHIR_SDC = {
 
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire
-   * @param lfData a LForms form definition object
+   * @param lfData a LForms form object
    * @returns {{}}
    */
   convert2Questionnaire: function(lfData) {
@@ -46,7 +46,7 @@ LForms.FHIR_SDC = {
   /**
    * Set form level attributes
    * @param target a Questionnaire object
-   * @param source a LForms form definition object
+   * @param source a LForms form object
    * @private
    */
   _setFormLevelFields: function(target, source) {
@@ -97,7 +97,7 @@ LForms.FHIR_SDC = {
     // subjectType
     target.subjectType = ["Patient", "Person"];
 
-    // text, not to use. it requires html/xhtml content?
+    // text, removed in FHIR v3.0.0
     // concept, removed in FHIR v3.0.0
 
   },
@@ -105,8 +105,8 @@ LForms.FHIR_SDC = {
 
   /**
    * Process an item of the form
-   * @param item an item in LForms form definition object
-   * @param source a LForms form definition object
+   * @param item an item in LForms form object
+   * @param source a LForms form object
    * @returns {{}}
    * @private
    */
@@ -325,7 +325,7 @@ LForms.FHIR_SDC = {
             if (item.dataType === "ST" || item.dataType === "TX" ) {
               extValue = {
                 "url":"http://hl7.org/fhir/StructureDefinition/regex",
-                "valueInteger": value
+                "valueString": value
               };
             }
             break
@@ -410,7 +410,7 @@ LForms.FHIR_SDC = {
 
   /**
    * Convert LForms captured data to FHIR SDC QuestionnaireResponse
-   * @param lfData a LForms form definition object
+   * @param lfData a LForms form object
    * @returns {{}}
    */
   convert2QuestionnaireResponse: function(lfData) {
@@ -460,7 +460,7 @@ LForms.FHIR_SDC = {
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
-   * @param source a LForms form definition object
+   * @param source a LForms form object
 
    * @private
    */
@@ -559,6 +559,8 @@ LForms.FHIR_SDC = {
    * @private
    */
   _getValueKeyByDataType: function(prefix, dataType) {
+
+    var valueKey;
     // prefix could be 'value', 'initial', 'answer'
     if (!prefix) {
       prefix = "value"
@@ -705,7 +707,7 @@ LForms.FHIR_SDC = {
 
   /**
    * Group values of the questions that have the same linkId
-   * @param item an item in the LForms form object
+   * @param item an item in the LForms form object or a form item object
    * @private
    */
   _groupValuesByLinkId: function(item) {
@@ -920,7 +922,7 @@ LForms.FHIR_SDC = {
    * Process skip logic
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
-   * @param source a LForms form definition object
+   * @param source a LForms form object
    * @private
    */
   _handleSkipLogic: function(targetItem, item, source) {
@@ -984,10 +986,10 @@ LForms.FHIR_SDC = {
 
 
   /**
-   * Merge a QuestionnaireResponse instance into an LFormsData object
-   * @param formData an LFormsData definition data object
+   * Merge a QuestionnaireResponse instance into an LForms form object
+   * @param formData an LForms form object
    * @param qr a QuestionnaireResponse instance
-   * @returns {{}} an updated LFormsData object
+   * @returns {{}} an updated LForms form object
    */
   mergeQuestionnaireResponseToForm : function(formData, qr) {
     var reportStructure = this._getReportStructure(qr);
@@ -1044,7 +1046,7 @@ LForms.FHIR_SDC = {
   /**
    * Get structural info of a QuestionnaireResponse by going though each level of items
    * @param parentObxInfo the structural info of a parent item
-   * @param parentItem a parent item
+   * @param parentItem a parent item in a QuestionnaireResponse object
    * @private
    */
   _checkRepeatingItems : function(parentObxInfo, parentItem) {
@@ -1089,7 +1091,7 @@ LForms.FHIR_SDC = {
   /**
    * Find the number of the repeating items that have the same code
    * @param code an item code
-   * @param parentItem a parent item
+   * @param parentItem a parent item in a QuestionnaireResponse object
    * @returns a structural info object for a repeating item
    * @private
    */
@@ -1116,7 +1118,7 @@ LForms.FHIR_SDC = {
   /**
    * Merge data into items on the same level
    * @param parentObxInfo structural information of a parent item
-   * @param parentItem a parent item
+   * @param parentItem a parent item, could be a LForms form object or a form item object.
    * @private
    */
   _processObxAndItem : function(parentObxInfo, parentItem) {
