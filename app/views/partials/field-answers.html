@@ -18,7 +18,8 @@
       </div>
     </span>
     <!--extra OTHER field-->
-    <span ng-if="item.dataType==='CWE'" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
+    <!--<div class="lf-answer-type-list-other">-->
+    <span ng-if="item.dataType==='CWE'" class="lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}">
       <!--checkboxes for multiple selections-->
       <div ng-if="item._multipleAnswers" class="">
           <input class="lf-answer-button" type="checkbox" ng-model="item._otherValueChecked"
@@ -26,7 +27,7 @@
                  ng-click="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})"
                  ng-checked="checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})">
           <label class="lf-answer-label" for="{{item._elementId + '_other'}}">OTHER:</label>
-          <input class="lf-answer-other" type="text" ng-model="item.valueOther"
+          <input ng-if="item._otherValueChecked" class="lf-answer-other" type="text" ng-model="item.valueOther"
                  id="{{item._elementId + '_otherValue'}}"
                  ng-change="updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
       </div>
@@ -37,10 +38,11 @@
                  name="{{item._elementId}}"
                  ng-click="updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
           <label class="lf-answer-label" for="{{item._elementId + '_other'}}">OTHER:</label>
-          <input class="lf-answer-other" type="text" id="{{item._elementId + '_otherValue'}}" ng-model="item.valueOther"
+          <input ng-if="item._otherValueChecked" class="lf-answer-other" type="text" id="{{item._elementId + '_otherValue'}}" ng-model="item.valueOther"
                  ng-change="updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})">
       </div>
     </span>
+    <!--</div>-->
   </div>
 
   <!--COMBO_BOX style (default is 'COMBO_BOX')-->

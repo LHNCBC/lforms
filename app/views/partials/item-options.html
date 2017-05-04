@@ -19,7 +19,7 @@
 
   </div>
 
-  <div class="lf-item-options" ng-if="item.dataType==='CWE' || item.dataType==='CNE'">
+  <div class="lf-item-options" ng-if="item.answers && (item.dataType==='CWE' || item.dataType==='CNE')">
     <div class="lf-item-option">
       <input class="lf-answer-button" type="radio" id="{{item._elementId + 'combo'}}"
              ng-model="item.displayControl.answerLayout.type" value="COMBO_BOX" name="{{item._elementId}} +'option'">

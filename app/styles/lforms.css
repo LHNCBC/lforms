@@ -684,11 +684,28 @@ Override color of select boxes in calendar widget title bar.
   order:1;
   flex-grow: 1;
 }
-.lf-form .lf-answer-type-list .lf-answer-other {
+/* end of within an answer */
+/* cwe type, other field */
+.lf-form .lf-answer-cwe-other > div {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 2px 8px;
+}
+.lf-form .lf-answer-cwe-other .lf-answer-button {
+  order:1;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 20px;
+}
+.lf-form .lf-answer-cwe-other .lf-answer-label {
+  padding-left: 4px;
   order:1;
   flex-grow: 1;
 }
-/* end of within an answer */
+.lf-form .lf-answer-cwe-other .lf-answer-other {
+  order:1;
+  flex-grow: 1;
+}
 /* column number control for list of answers*/
 .lf-form .lf-0-col {
   /* means flexible */

@@ -48,12 +48,11 @@ LForms.Util = {
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
   },
 
 
@@ -64,12 +63,11 @@ LForms.Util = {
    *        It could either be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
    * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-   * @param keepIdPath optional, to keep _idPath field on item
    * @returns {{}} Form definition data
    */
-  getFormData: function(element, noEmptyValue, noHiddenItem, keepIdPath) {
+  getFormData: function(element, noEmptyValue, noHiddenItem) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem, keepIdPath) : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem) : null;
   },
 
 
@@ -89,13 +87,29 @@ LForms.Util = {
   /**
    * Get FHIR DiagnosticReport data from the form.
    * Empty or hidden questions are not included.
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
+   * and "QuestionnaireResponse" (SDC profile)
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
    * @returns {null}
    */
-  getFormFHIRData: function(element) {
+  getFormFHIRData: function(resourceType, element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? LForms.FHIR.createDiagnosticReport(formObj) : null;
+    var fhirData = null;
+    if (formObj) {
+      switch (resourceType) {
+        case "DiagnosticReport":
+          fhirData = LForms.FHIR.createDiagnosticReport(formObj);
+          break;
+        case "Questionnaire":
+          fhirData = LForms.FHIR_SDC.convert2Questionnaire(formObj);
+          break;
+        case "QuestionnaireResponse":
+          fhirData = LForms.FHIR_SDC.convert2QuestionnaireResponse(formObj);
+          break;
+      }
+    }
+    return fhirData;
   },
 
   

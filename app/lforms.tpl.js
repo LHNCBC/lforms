@@ -22,7 +22,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </span>\n" +
     "    <!--extra OTHER field-->\n" +
-    "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
+    "    <!--<div class=\"lf-answer-type-list-other\">-->\n" +
+    "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" +
     "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
@@ -30,7 +31,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
     "                 ng-checked=\"checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
-    "          <input class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
+    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
     "                 id=\"{{item._elementId + '_otherValue'}}\"\n" +
     "                 ng-change=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "      </div>\n" +
@@ -41,10 +42,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 name=\"{{item._elementId}}\"\n" +
     "                 ng-click=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
-    "          <input class=\"lf-answer-other\" type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
+    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
     "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "      </div>\n" +
     "    </span>\n" +
+    "    <!--</div>-->\n" +
     "  </div>\n" +
     "\n" +
     "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
@@ -258,7 +260,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "  </div>\n" +
     "\n" +
-    "  <div class=\"lf-item-options\" ng-if=\"item.dataType==='CWE' || item.dataType==='CNE'\">\n" +
+    "  <div class=\"lf-item-options\" ng-if=\"item.answers && (item.dataType==='CWE' || item.dataType==='CNE')\">\n" +
     "    <div class=\"lf-item-option\">\n" +
     "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'combo'}}\"\n" +
     "             ng-model=\"item.displayControl.answerLayout.type\" value=\"COMBO_BOX\" name=\"{{item._elementId}} +'option'\">\n" +
