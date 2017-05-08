@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.4.0]  2017-05-08
+### Changed
+- Added support for non-clickable headers in lists (when the list items are
+  defined in the form).
+
 ## [11.3.0]  2017-05-02
 ### Changed
 - Added supports for FHIR SDC Questionnaire and QuestionnaireResponse
