@@ -2145,7 +2145,7 @@ if (typeof LForms === 'undefined')
           var answers = options.listItems;
           var noHeadings = true;
           for (i=0, len=answers.length; i<len && noHeadings; ++i)
-            noHeadings = answers[i].parentAnswerCode === undefined;
+            noHeadings = !!answers[i].parentAnswerCode;
           if (!noHeadings) {
             var codes = [];
             var itemToHeading = {}; // list item (answer) to heading
