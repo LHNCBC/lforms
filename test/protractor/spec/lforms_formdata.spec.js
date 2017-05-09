@@ -307,3 +307,12 @@ describe('defaultAnswer', function() {
     expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
   });
 });
+
+describe('lists with headings', function() {
+  it('should style the heading items', function() {
+    tp.openFullFeaturedForm();
+    var listField = element(by.id('/listWHeaders/1'));
+    listField.click();
+    expect(tp.Autocomp.searchResult(1).getAttribute('class')).toEqual('heading');
+  });
+});
