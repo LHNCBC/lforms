@@ -740,7 +740,11 @@ var LFormsData = LForms.LFormsData = Class.extend({
       // the value objects with the corresponding objects from the answer list,
       // so that when they are displayed as radio buttons, angular will recognize the
       // one or more answer options as equal to the values.
-      this._getLabeledAnswers(item); // sets item._labeledAnswers
+      if (item.dataType === this._CONSTANTS.DATA_TYPE.CNE ||
+          item.dataType === this._CONSTANTS.DATA_TYPE.CWE) {
+        this._setModifiedAnswers(item); // sets item._modifiedAnswers
+      }
+
       if (item.answers) {
         var vals = item.value || item.defaultAnswer;
         if (vals) {
@@ -757,12 +761,15 @@ var LFormsData = LForms.LFormsData = Class.extend({
             for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
               var ans = item.answers[j];
               if (valValue == ans[valKey]) {
-                listVals.push(item._labeledAnswers[j]);
+                listVals.push(item._modifiedAnswers[j]);
                 found = true;
               }
             }
-            if (item.value && !found)
-              listVals.push(val); // a saved value not in the list
+            // a saved value not in the list
+            if (item.value && !found) {
+              val._displayText = val.text;
+              listVals.push(val);
+            }
           }
           item.value = item._multipleAnswers ? listVals : listVals[0];
         }
@@ -1117,6 +1124,70 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
+   * Remove internal data whose field/key names start with _.
+   * @param obj
+   * @returns {{}}
+   * @private
+   */
+  _filterInternalData: function(obj) {
+    var objReturn = {};
+    if (angular.isObject(obj)) {
+      for (var field in obj) {
+        if (!field.match(/^[_\$]/)) {
+          objReturn[field] = obj[field];
+        }
+      }
+    }
+    return objReturn;
+  },
+
+
+  /**
+   * Process value where it is an object or an array of objects
+   * @param value the captured value
+   * @returns {*}
+   * @private
+   */
+  _getObjectValue: function(value) {
+    var retValue;
+    if (value) {
+      // an array
+      if (Array.isArray(value)) {
+        var answers = [];
+        for (var j = 0, jLen = value.length; j < jLen; j++) {
+          // for answers (and future complex data types)
+          if (angular.isObject(value[j])) {
+            // special handling for the user typed value for CWE data type
+            if (value[j]._notOnList && value[j]._displayText) {
+              answers.push({text: value[j]._displayText});
+            }
+            else {
+              answers.push(this._filterInternalData(value[j]));
+            }
+
+          }
+          // for primitive data type (multiple values not supported yet)
+          //else {
+          //  answers.push(value[j]);
+          //}
+        }
+        retValue = answers;
+      }
+      // an object
+      else if (angular.isObject(value)) {
+        if (value._notOnList && value._displayText) {
+          retValue = {text: value._displayText};
+        }
+        else {
+          retValue = this._filterInternalData(value);
+        }
+      }
+    }
+    return retValue;
+  },
+
+
+  /**
    * Special handling for user input values, to get the original answer or unit object if there is one
    * @param value the data object of the selected answer
    * @param dataType optional, the data type of the value
@@ -1125,25 +1196,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _getOriginalValue: function(value, dataType) {
     var retValue;
     if (value) {
-      // an array
-      if (Array.isArray(value)) {
-        var answers = [];
-        for (var j= 0, jLen=value.length; j<jLen; j++) {
-          if (angular.isObject(value[j]) && value[j]._orig) {
-            answers.push(value[j]._orig);
-          }
-          else {
-            answers.push(value[j]);
-          }
-        }
-        retValue = answers;
-      }
-      // an object
-      else if (angular.isObject(value) && value._orig) {
-        retValue = value._orig;
-      }
-      // not an object or an array, and has a data type
-      else if (dataType) {
+      // has a data type
+      if (dataType) {
         switch (dataType) {
           case this._CONSTANTS.DATA_TYPE.INT:
             retValue = parseInt(value);
@@ -1154,13 +1208,16 @@ var LFormsData = LForms.LFormsData = Class.extend({
           case this._CONSTANTS.DATA_TYPE.DT:
             retValue = LForms.Util.dateToString(value);
             break;
+          case this._CONSTANTS.DATA_TYPE.CNE:
+          case this._CONSTANTS.DATA_TYPE.CWE:
+            retValue = this._getObjectValue(value);
           default:
             retValue = value;
         }
       }
-      // default
+      // it is for units when there is no dataType
       else {
-        retValue = value;
+        retValue = this._getObjectValue(value);
       }
     }
     return retValue;
@@ -1741,8 +1798,8 @@ var LFormsData = LForms.LFormsData = Class.extend({
   _processItemDataControl: function(item) {
     if (item.dataControl && angular.isArray(item.dataControl)) {
       this._updateDataByDataControl(item);
-      item._labeledAnswers = undefined; // Force a reload
-      this._updateAutocompOptions(item);
+      // Force a reset of answers
+      this._updateAutocompOptions(item, true);
       this._updateUnitAutocompOptions(item);
     }
   },
@@ -1998,30 +2055,24 @@ var LFormsData = LForms.LFormsData = Class.extend({
       item._unitAutocompOptions = null;
 
       var listItems = [], answers = item.units;
-      // Modify the label (question text) for each question.
+      // Modify the label for each unit.
       var defaultValue;
       for (var i= 0, iLen = answers.length; i<iLen; i++) {
-        // Make a copy of the original unit
-        var answerData = angular.copy(answers[i]);
-        listItems.push(
-            {name: answerData.name,
-             text: answerData.name,
-             _orig: angular.copy(answers[i])
-            });
-        if (answerData.default)
-          defaultValue = answerData.name;
-      }
+         if (answers[i].default)
+           defaultValue = answers[i].name;
+       }
 
       var options = {
-        listItems: listItems,
+        listItems: answers,
         matchListValue: true,
-        autoFill: true
+        autoFill: true,
+        display: "name"
       };
       if (defaultValue !== undefined) {
         options.defaultValue = defaultValue;
       }
-      else if (listItems.length === 1) {
-        options.defaultValue = listItems[0].text;
+      else if (answers.length === 1) {
+        options.defaultValue = answers[0].name;
       }
 
       item._unitAutocompOptions = options;
@@ -2030,15 +2081,17 @@ var LFormsData = LForms.LFormsData = Class.extend({
 
 
   /**
-   *  Initializes (if not already done) item._labledAnswers and returns them.
-   *  Also sets item._hasLabeledAnswers.
+   * Initializes (if not already done) item._modifiedAnswers.
+   * Also sets item._hasOneAnswerLabel
    * @param item the item for which labeled answers should be created.
+   * @param forceReset always reset item._modifiedAnswers
    */
-  _getLabeledAnswers: function(item) {
-     if (!item._labeledAnswers) {
+  _setModifiedAnswers: function(item, forceReset) {
+    if (!item._modifiedAnswers || forceReset) {
       var answers = [];
 
       // 'answers' might be null even for CWE
+      // need to recheck answers in case its value has been changed by data control
       if (item.answers) {
         if (angular.isArray(item.answers)) {
           answers = item.answers;
@@ -2048,62 +2101,44 @@ var LFormsData = LForms.LFormsData = Class.extend({
         }
       }
 
-      // Just check the first answer to see if there's a label
-      // (Labels should be on all answers if one has a label.)
-      var hasLabel;
-      if (answers.length > 0 && answers[0].label &&
-          typeof answers[0].label === 'string' && answers[0].label.trim()) {
-        item._hasLabeledAnswers = true;
-      }
+      // reset the modified answers (for the display text)
+      item._modifiedAnswers = [];
+      item._hasOneAnswerLabel =false;
+      for (var i = 0, iLen = answers.length; i < iLen; i++) {
+        var answerData = angular.copy(answers[i]);
 
-      if (item._hasLabeledAnswers) {
-        item._labeledAnswers = [];
-        for(var i= 0, iLen = answers.length; i<iLen; i++) {
-          // Make a copy of the original answer if we are using labels
-          var ans = answers[i];
-          if (ans.label) {
-            var labeledAnswer = this._buildLabeledAnswer(ans);
-            item._labeledAnswers.push(labeledAnswer);
-          }
-          else // avoid copying the object, which causes problems for radio buttons
-            item._labeledAnswers.push(ans);
+        var displayText = answerData.text;
+        // label is a string
+        if (answerData.label) {
+          displayText = answerData.label + ". " + displayText;
+          item._hasOneAnswerLabel = true;
         }
+
+        if (answerData.score !== undefined && answerData.score !== null) // score is an int
+          displayText = displayText + " - " + answerData.score;
+        // always uses _displayText in autocomplete-lhc for display
+        answerData._displayText = displayText;
+        item._modifiedAnswers.push(answerData);
       }
-      else
-        item._labeledAnswers = answers;
     }
-    return item._labeledAnswers;
-  },
 
-
-  /**
-   *  Constructs and returns a list answer object with the label prefixed to the
-   *  text.
-   * @param ans the list answer object, assumed to have a label property
-   */
-  _buildLabeledAnswer: function (ans) {
-    var rtn;
-    if (!ans._orig && ans.label !== undefined) {
-      var answerData = angular.copy(ans);
-      answerData.text = answerData.label + ". " + answerData.text;
-      answerData._orig = ans;
-      rtn = answerData;
-    }
-    else
-      rtn = ans;
-    return rtn;
   },
 
 
   /**
    * Update an item's autocomplete options
    * @param item an item on the form
+   * @param forceReset force to reset _modifiedAnswers
    * @private
    */
-  _updateAutocompOptions: function(item) {
+  _updateAutocompOptions: function(item, forceReset) {
     // for list only
     if (item.dataType === this._CONSTANTS.DATA_TYPE.CNE ||
         item.dataType === this._CONSTANTS.DATA_TYPE.CWE) {
+
+      if (!item._modifiedAnswers || forceReset) {
+        this._setModifiedAnswers(item, forceReset);
+      }
 
       var maxSelect = item.answerCardinality ? item.answerCardinality.max : 1;
       if (maxSelect !== '*' && typeof maxSelect === 'string') {
@@ -2131,8 +2166,9 @@ var LFormsData = LForms.LFormsData = Class.extend({
         }
       }
       else {
-        options.listItems = this._getLabeledAnswers(item);
-        options.addSeqNum = !item._hasLabeledAnswers;
+        options.listItems = item._modifiedAnswers;
+        options.addSeqNum = !item._hasOneAnswerLabel;
+        options.display = "_displayText";
 
         // Defaults are now handled by setting .value (elsewhere), so we don't
         // need to set options.defaultValue.

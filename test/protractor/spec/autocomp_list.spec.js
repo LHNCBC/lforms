@@ -46,7 +46,7 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
-    expect(ff.eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command");
+    expect(ff.eyeField.getAttribute('value')).toBe("3. Eye opening to verbal command - 3");
     expect(ff.scoreField.getAttribute('value')).toEqual('3');
 
     // Try the 4th answer, which has a null label
@@ -56,7 +56,7 @@ describe('autocomp list', function() {
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.ARROW_DOWN);
     ff.eyeField.sendKeys(protractor.Key.TAB);
-    expect(ff.eyeField.getAttribute('value')).toBe("4. Eyes open spontaneously");
+    expect(ff.eyeField.getAttribute('value')).toBe("4. Eyes open spontaneously - 4");
     expect(ff.scoreField.getAttribute('value')).toEqual('4');
   });
 

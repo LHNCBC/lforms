@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.3.1]  2017-05-10
+### Changed
+- Used the autocomple-lhc v13.0.0 and changed the way to handle modified 
+  display text for answers.
+
 ## [11.3.0]  2017-05-02
 ### Changed
 - Added supports for FHIR SDC Questionnaire and QuestionnaireResponse
