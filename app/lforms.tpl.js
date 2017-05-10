@@ -333,7 +333,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-de-button\">\n" +
     "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" +
     "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
-    "              title=\"Remove this '{{ item.question }}'\">-</button>\n" +
+    "              title='Remove this \"{{ item.question }}\"'>-</button>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
@@ -427,7 +427,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" +
     "                id=\"del-{{row.header._elementId}}\"\n" +
     "                class=\"lf-float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" +
-    "                title=\"Remove this row of '{{ row.header.question }}'\">-</button>\n" +
+    "                title='Remove this row of \"{{ row.header.question }}\"'>-</button>\n" +
     "      </td>\n" +
     "\n" +
     "      <td ng-repeat=\"cell in row.cells\"\n" +
@@ -492,14 +492,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"has-popover-warning\">\n" +
     "      <button type=\"button\"\n" +
     "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "              title=\"Add another '{{ item.question }}'\"\n" +
     "              ng-click=\"addOneRepeatingItem(item, true)\"\n" +
     "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
     "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
     "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "        Add another '{{item.question}}'\n" +
+    "        Add another \"{{item.question}}\"\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -622,14 +621,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div class=\"has-popover-warning\">\n" +
     "    <button type=\"button\"\n" +
     "            class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "            title=\"Add another '{{ item.question }}'\"\n" +
     "            ng-click=\"addOneRepeatingItem(item)\"\n" +
     "            ng-blur=\"hideUnusedItemWarning(item)\"\n" +
     "            uib-popover='{{item._unusedItemWarning}}'\n" +
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "      Add another '{{item.question}}'\n" +
+    "      Add another \"{{item.question}}\"\n" +
     "    </button>\n" +
     "  </div>\n" +
     "</div>\n"

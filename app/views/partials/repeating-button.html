@@ -4,14 +4,13 @@
   <div class="has-popover-warning">
     <button type="button"
             class="lf-float-button" id="add-{{item._elementId}}"
-            title="Add another '{{ item.question }}'"
             ng-click="addOneRepeatingItem(item)"
             ng-blur="hideUnusedItemWarning(item)"
             uib-popover='{{item._unusedItemWarning}}'
             popover-placement="top-left"
             popover-trigger="none"
             popover-is-open="item._showUnusedItemWarning">
-      Add another '{{item.question}}'
+      Add another "{{item.question}}"
     </button>
   </div>
 </div>

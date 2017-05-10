@@ -30,7 +30,7 @@
         <button ng-if="!hasOneRepeatingItem(item)" type="button"
                 id="del-{{row.header._elementId}}"
                 class="lf-float-button" ng-click="removeOneRepeatingItem(row.header)"
-                title="Remove this row of '{{ row.header.question }}'">-</button>
+                title='Remove this row of "{{ row.header.question }}"'>-</button>
       </td>
 
       <td ng-repeat="cell in row.cells"
@@ -95,14 +95,13 @@
     <div class="has-popover-warning">
       <button type="button"
               class="lf-float-button" id="add-{{item._elementId}}"
-              title="Add another '{{ item.question }}'"
               ng-click="addOneRepeatingItem(item, true)"
               ng-blur="hideUnusedItemWarning(item)"
               uib-popover='Please enter info in the blank "{{ item.question }}".'
               popover-placement="top-left"
               popover-trigger="none"
               popover-is-open="item._showUnusedItemWarning">
-        Add another '{{item.question}}'
+        Add another "{{item.question}}"
       </button>
     </div>
   </div>
