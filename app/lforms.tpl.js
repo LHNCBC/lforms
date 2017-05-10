@@ -625,14 +625,14 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            title=\"Add another '{{ item.question }}'\"\n" +
     "            ng-click=\"addOneRepeatingItem(item)\"\n" +
     "            ng-blur=\"hideUnusedItemWarning(item)\"\n" +
-    "            uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "            uib-popover='{{item._unusedItemWarning}}'\n" +
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
     "      Add another '{{item.question}}'\n" +
     "    </button>\n" +
     "  </div>\n" +
-    "</div>"
+    "</div>\n"
   );
 
 

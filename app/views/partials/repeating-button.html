@@ -7,7 +7,7 @@
             title="Add another '{{ item.question }}'"
             ng-click="addOneRepeatingItem(item)"
             ng-blur="hideUnusedItemWarning(item)"
-            uib-popover='Please enter info in the blank "{{ item.question }}".'
+            uib-popover='{{item._unusedItemWarning}}'
             popover-placement="top-left"
             popover-trigger="none"
             popover-is-open="item._showUnusedItemWarning">
