@@ -1117,6 +1117,23 @@ var allInOne =
           }
         }
       ]
+    },
+
+    // A list with headers
+    {"questionCode": "listWHeaders", "question": "A list with headers",
+     "dataType": "CWE",
+     "answers": [
+       {"code": "food", "text": "Food allergies"},
+       {"code": "FOOD-2", "text": "Chocolate",
+        "parentAnswerCode": "food"},
+       {"code": "FOOD-22", "text": "Crab",
+        "parentAnswerCode": "food"},
+       {"code": "environmental", "text": "Environmental allergies"},
+       {"code": "OTHR-18", "text": "Cat",
+        "parentAnswerCode": "environmental"},
+       {"code": "OTHR-5", "text": "Cold Weather",
+        "parentAnswerCode": "environmental"}
+     ]
     }
 
 

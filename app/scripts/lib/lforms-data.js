@@ -6,7 +6,9 @@ if (typeof LForms === 'undefined')
 
 (function() {
   "use strict";
-  var LFormsData = LForms.LFormsData = Class.extend({
+
+  LForms.LFormsData = Class.extend({
+
     // constants
     _CONSTANTS: {
       DATA_CONTROL: {
@@ -547,7 +549,6 @@ if (typeof LForms === 'undefined')
           break;
         }
       }
-
     },
 
 
@@ -602,7 +603,6 @@ if (typeof LForms === 'undefined')
           }
         }
       }
-
     },
 
 
@@ -991,7 +991,6 @@ if (typeof LForms === 'undefined')
             foundFirstSibling = true;
           }
         }
-
       }
     },
 
@@ -1576,7 +1575,6 @@ if (typeof LForms === 'undefined')
           }
         }
       }
-
       return isEmpty;
     },
 
@@ -2122,7 +2120,6 @@ if (typeof LForms === 'undefined')
           item._modifiedAnswers.push(answerData);
         }
       }
-
     },
 
 
@@ -2170,6 +2167,28 @@ if (typeof LForms === 'undefined')
           options.listItems = item._modifiedAnswers;
           options.addSeqNum = !item._hasOneAnswerLabel;
           options.display = "_displayText";
+
+          // See if there are list headings, and set them up if so.
+          // The only way to determine this is to check whether parentAnswerCode
+          // is defined on any item.
+          // It would be more efficient to have a flag defined on the question
+          // level.
+          var answers = options.listItems;
+          var noHeadings = true;
+          for (i=0, len=answers.length; i<len && noHeadings; ++i)
+            noHeadings = !!answers[i].parentAnswerCode;
+          if (!noHeadings) {
+            var codes = [];
+            var itemToHeading = {}; // list item (answer) to heading
+            for (var i=0, len=answers.length; i<len; ++i) {
+              var ans = answers[i];
+              codes.push(ans.code);
+              if (ans.parentAnswerCode)
+                itemToHeading[ans.code] = ans.parentAnswerCode;
+            }
+            options.codes = codes;
+            options.itemToHeading = itemToHeading;
+          }
 
           // Defaults are now handled by setting .value (elsewhere), so we don't
           // need to set options.defaultValue.
@@ -2309,7 +2328,6 @@ if (typeof LForms === 'undefined')
       } // end of valid range and numValue
 
       return inRange;
-
     },
 
 
@@ -2573,7 +2591,6 @@ if (typeof LForms === 'undefined')
         }
       }
       return extra;
-
     },
 
 
