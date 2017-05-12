@@ -1124,17 +1124,28 @@ if (typeof LForms === 'undefined')
 
 
     /**
-     * Remove internal data whose field/key names start with _.
-     * @param obj
-     * @returns {{}}
+     * Process values for a user selected/typed answer or unit.
+     * Also remove internal data whose field/key names start with _.
+     * @param obj either an answer object or a unit object
+     * @param autocompleteData optional, a flag indicates it is the data
+     * handled by autocomplete-lhc. default is false.
+     * @returns {{}}  a new object with the internal attributes removed.
      * @private
      */
-    _filterInternalData: function(obj) {
+    _filterInternalData: function(obj, autocompleteData) {
       var objReturn = {};
+
+      // for answers (and future complex data types)
       if (angular.isObject(obj)) {
-        for (var field in obj) {
-          if (!field.match(/^[_\$]/)) {
-            objReturn[field] = obj[field];
+        // special handling for the user-typed value for CWE data type
+        if (autocompleteData && obj._notOnList && obj._displayText) {
+          objReturn = {text: obj._displayText};
+        }
+        else {
+          for (var field in obj) {
+            if (!field.match(/^[_\$]/)) {
+              objReturn[field] = obj[field];
+            }
           }
         }
       }
@@ -1145,26 +1156,19 @@ if (typeof LForms === 'undefined')
     /**
      * Process value where it is an object or an array of objects
      * @param value the captured value
+     * @param autocompleteData optional, a flag indicates it is the data
      * @returns {*}
      * @private
      */
-    _getObjectValue: function(value) {
-      var retValue;
+    _getObjectValue: function(value, autocompleteData) {
+      var retValue =null;
       if (value) {
         // an array
         if (Array.isArray(value)) {
           var answers = [];
           for (var j = 0, jLen = value.length; j < jLen; j++) {
-            // for answers (and future complex data types)
             if (angular.isObject(value[j])) {
-              // special handling for the user typed value for CWE data type
-              if (value[j]._notOnList && value[j]._displayText) {
-                answers.push({text: value[j]._displayText});
-              }
-              else {
-                answers.push(this._filterInternalData(value[j]));
-              }
-
+              answers.push(this._filterInternalData(value[j], autocompleteData));
             }
             // for primitive data type (multiple values not supported yet)
             //else {
@@ -1175,12 +1179,7 @@ if (typeof LForms === 'undefined')
         }
         // an object
         else if (angular.isObject(value)) {
-          if (value._notOnList && value._displayText) {
-            retValue = {text: value._displayText};
-          }
-          else {
-            retValue = this._filterInternalData(value);
-          }
+          retValue = this._filterInternalData(value, autocompleteData);
         }
       }
       return retValue;
@@ -1210,14 +1209,15 @@ if (typeof LForms === 'undefined')
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
             case this._CONSTANTS.DATA_TYPE.CWE:
-              retValue = this._getObjectValue(value);
+              retValue = this._getObjectValue(value, true);
+              break;
             default:
               retValue = value;
           }
         }
         // it is for units when there is no dataType
         else {
-          retValue = this._getObjectValue(value);
+          retValue = this._getObjectValue(value, true);
         }
       }
       return retValue;
@@ -2043,7 +2043,7 @@ if (typeof LForms === 'undefined')
 
 
     /**
-     * Update an item's autocomplete options for the units field
+     * Update an item's units autocomplete options
      * @param item an item on the form
      * @private
      */
@@ -2056,10 +2056,10 @@ if (typeof LForms === 'undefined')
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
         var defaultValue;
-        for (var i= 0, iLen = answers.length; i<iLen; i++) {
+        for (var i= 0, iLen = answers.length; i<iLen && !defaultValue; i++) {
            if (answers[i].default)
              defaultValue = answers[i].name;
-         }
+        }
 
         var options = {
           listItems: answers,

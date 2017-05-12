@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [11.4.1]  2017-05-10
 ### Changed
-- Used the autocomple-lhc v13.0.0 and changed the way to handle modified 
+- Used autocomple-lhc v13.0.0 and changed the way to handle modified 
   display text for answers.
 
 ## [11.4.0]  2017-05-08

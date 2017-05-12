@@ -213,7 +213,7 @@ describe('get form data', function() {
       // console.log(formData);
       expect(formData.items.length).toBe(1);
       expect(formData.items[0].question).toBe("With data type CNE");
-      expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2", "_displayText": "Answer 2"});
+      expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
     });
   });
 });
@@ -266,6 +266,7 @@ describe('defaultAnswer', function() {
     element(by.id(radioQCodeNL+'R')).evaluate('item.value').then(function(val) {
       expect(val.code).toEqual('B');
       expect(val.text).toEqual('Blue');
+      expect(val._displayText).toEqual('Blue');
     });
 
     // Test a check box question
