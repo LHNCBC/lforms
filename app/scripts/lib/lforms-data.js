@@ -1135,17 +1135,14 @@ if (typeof LForms === 'undefined')
     _filterInternalData: function(obj, autocompleteData) {
       var objReturn = {};
 
-      // for answers (and future complex data types)
-      if (angular.isObject(obj)) {
-        // special handling for the user-typed value for CWE data type
-        if (autocompleteData && obj._notOnList && obj._displayText) {
-          objReturn = {text: obj._displayText};
-        }
-        else {
-          for (var field in obj) {
-            if (!field.match(/^[_\$]/)) {
-              objReturn[field] = obj[field];
-            }
+      // special handling for the user-typed value for CWE data type
+      if (autocompleteData && obj._notOnList && obj._displayText) {
+        objReturn = {text: obj._displayText};
+      }
+      else {
+        for (var field in obj) {
+          if (!field.match(/^[_\$]/)) {
+            objReturn[field] = obj[field];
           }
         }
       }
@@ -1157,6 +1154,7 @@ if (typeof LForms === 'undefined')
      * Process value where it is an object or an array of objects
      * @param value the captured value
      * @param autocompleteData optional, a flag indicates it is the data
+     * handled by autocomplete-lhc. default is false.
      * @returns {*}
      * @private
      */
