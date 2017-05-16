@@ -252,7 +252,7 @@
 
             //For DOM -> model validation
             ctrl.$parsers.unshift(function(value) {
-              if (value !==undefined && value !==null) {
+              if (value !==undefined) {
                 scope.itemData._validationErrors = [];
                 var valid = validate(scope.itemData, value, ctrl);
                 return valid? value : undefined;
@@ -263,7 +263,7 @@
             // In the current use, lf-validate is applied to a separate non-input element, the validation always
             // happens when the model data changes, i.e. in this function.
             ctrl.$formatters.unshift(function(value) {
-              if (value !==undefined && value !==null) {
+              if (value !==undefined) {
                 scope.itemData._validationErrors = [];
                 validate(scope.itemData, value, ctrl);
                 return value;

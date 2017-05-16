@@ -1294,8 +1294,9 @@ var formWithUserData =
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    // multi-select CWE
-    {"questionCode": "q9", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
+    // multi-select CWE, with a mix of selected answers and user typed data
+    {"questionCode": "q9", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
