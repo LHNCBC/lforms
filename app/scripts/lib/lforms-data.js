@@ -741,10 +741,7 @@ if (typeof LForms === 'undefined')
         // the value objects with the corresponding objects from the answer list,
         // so that when they are displayed as radio buttons, angular will recognize the
         // one or more answer options as equal to the values.
-        if (item.dataType === this._CONSTANTS.DATA_TYPE.CNE ||
-            item.dataType === this._CONSTANTS.DATA_TYPE.CWE) {
-          this._setModifiedAnswers(item); // sets item._modifiedAnswers
-        }
+        this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
         if (item.answers) {
           var vals = item.value || item.defaultAnswer;
@@ -2084,39 +2081,48 @@ if (typeof LForms === 'undefined')
      * @param forceReset always reset item._modifiedAnswers
      */
     _setModifiedAnswers: function(item, forceReset) {
-      if (!item._modifiedAnswers || forceReset) {
-        var answers = [];
 
-        // 'answers' might be null even for CWE
-        // need to recheck answers in case its value has been changed by data control
-        if (item.answers) {
-          if (angular.isArray(item.answers)) {
-            answers = item.answers;
+      if (item.dataType === this._CONSTANTS.DATA_TYPE.CNE ||
+          item.dataType === this._CONSTANTS.DATA_TYPE.CWE) {
+        // initial setting or a reset triggered by Data Control
+        if (!item._modifiedAnswers || forceReset) {
+          var answers = [];
+
+          // 'answers' might be null even for CWE
+          // need to recheck answers in case its value has been changed by data control
+          if (item.answers) {
+            if (angular.isArray(item.answers)) {
+              answers = item.answers;
+            }
+            else if (item.answers !== "" && this.answerLists) {
+              answers = this.answerLists[item.answers];
+            }
           }
-          else if (item.answers !== "" && this.answerLists) {
-            answers = this.answerLists[item.answers];
+
+          // reset the modified answers (for the display text)
+          item._modifiedAnswers = [];
+          item._hasOneAnswerLabel = false;
+          for (var i = 0, iLen = answers.length; i < iLen; i++) {
+            var answerData = angular.copy(answers[i]);
+
+            var displayText = answerData.text;
+            // label is a string
+            if (answerData.label) {
+              displayText = answerData.label + ". " + displayText;
+              item._hasOneAnswerLabel = true;
+            }
+
+            if (answerData.score !== undefined && answerData.score !== null) // score is an int
+              displayText = displayText + " - " + answerData.score;
+            // always uses _displayText in autocomplete-lhc for display
+            answerData._displayText = displayText;
+            item._modifiedAnswers.push(answerData);
           }
         }
-
-        // reset the modified answers (for the display text)
-        item._modifiedAnswers = [];
-        item._hasOneAnswerLabel =false;
-        for (var i = 0, iLen = answers.length; i < iLen; i++) {
-          var answerData = angular.copy(answers[i]);
-
-          var displayText = answerData.text;
-          // label is a string
-          if (answerData.label) {
-            displayText = answerData.label + ". " + displayText;
-            item._hasOneAnswerLabel = true;
-          }
-
-          if (answerData.score !== undefined && answerData.score !== null) // score is an int
-            displayText = displayText + " - " + answerData.score;
-          // always uses _displayText in autocomplete-lhc for display
-          answerData._displayText = displayText;
-          item._modifiedAnswers.push(answerData);
-        }
+      }
+      // data type has been changed (by Data Control)
+      else if(forceReset) {
+        delete item._modifiedAnswers;
       }
     },
 
