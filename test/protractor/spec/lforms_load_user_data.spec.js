@@ -44,7 +44,7 @@ describe('load saved user data', function() {
     expect(ff.rpq1_2.isDisplayed()).toBe(true);
     expect(ff.rpq1_2.getAttribute('value')).toBe('instance B');
     expect(ff.rpq1_add_btn.isDisplayed()).toBe(true);
-    expect(ff.rpq1_add_btn.getText()).toBe("Add another 'A Repeating Item'");
+    expect(ff.rpq1_add_btn.getText()).toBe('Add another "A Repeating Item"');
 
   });
 
@@ -69,11 +69,11 @@ describe('load saved user data', function() {
     expect(ff.rpq5_5.getAttribute('value')).toBe('403');
 
     expect(ff.rpq4_add_btn_1.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_1.getText()).toBe("Add another 'A repeating section in a repeating section'");
+    expect(ff.rpq4_add_btn_1.getText()).toBe('Add another "A repeating section in a repeating section"');
     expect(ff.rpq4_add_btn_2.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_2.getText()).toBe("Add another 'A repeating section in a repeating section'");
+    expect(ff.rpq4_add_btn_2.getText()).toBe('Add another "A repeating section in a repeating section"');
     expect(ff.rpq2_add_btn.isDisplayed()).toBe(true);
-    expect(ff.rpq2_add_btn.getText()).toBe("Add another 'A Repeating Section'");
+    expect(ff.rpq2_add_btn.getText()).toBe('Add another "A Repeating Section"');
 
     expect(ff.rpq4_del_btn_3.isDisplayed()).toBe(true);
     expect(ff.rpq4_del_btn_3.getText()).toBe('-');
@@ -105,13 +105,13 @@ describe('load saved user data', function() {
     ff.rpq1_add_btn.click();
     expect(ff.rpq1_add_btn.isPresent()).toBe(false);
     expect(ff.rpq1_add_btn_3.isDisplayed()).toBe(true);
-    expect(ff.rpq1_add_btn_3.getText()).toBe("Add another 'A Repeating Item'");
+    expect(ff.rpq1_add_btn_3.getText()).toBe('Add another "A Repeating Item"');
     expect(ff.rpq1_3.getAttribute('value')).toBe('');
     // add a repeating section
     ff.rpq4_add_btn_1.click();
     expect(ff.rpq4_add_btn_1.isPresent()).toBe(false);
     expect(ff.rpq4_add_btn_1b.isDisplayed()).toBe(true);
-    expect(ff.rpq4_add_btn_1b.getText()).toBe("Add another 'A repeating section in a repeating section'");
+    expect(ff.rpq4_add_btn_1b.getText()).toBe('Add another "A repeating section in a repeating section"');
     expect(ff.rpq5_4.getAttribute('value')).toBe('');
 
     // select from an answer list

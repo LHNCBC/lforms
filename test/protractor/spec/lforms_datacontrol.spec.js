@@ -71,7 +71,7 @@ describe('data control', function() {
     expect(btnAdd2.isPresent()).toBe(false);
     expect(btnDel1.isPresent()).toBe(false);
     expect(btnDel2.isPresent()).toBe(false);
-    expect(btnAdd1.getText()).toBe("Add another 'A repeating horizontal table'");
+    expect(btnAdd1.getText()).toBe('Add another "A repeating horizontal table"');
 
     // 'add' button works
     btnAdd1.click();
@@ -79,7 +79,7 @@ describe('data control', function() {
     expect(btnAdd2.isPresent()).toBe(false);
     expect(btnDel1.isDisplayed()).toBe(true);
     expect(btnDel2.isDisplayed()).toBe(true);
-    expect(btnAdd1.getText()).toBe("Add another 'A repeating horizontal table'");
+    expect(btnAdd1.getText()).toBe('Add another "A repeating horizontal table"');
     expect(field1.isDisplayed()).toBe(true);
     expect(field2.isDisplayed()).toBe(true);
 
