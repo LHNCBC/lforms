@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
 describe('get FHIR data from LForms forms', function() {
 
@@ -395,6 +396,35 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.code).toBe("LA10394-7");
       expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.display).toBe("Infancy");
       expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
+    });
+  });
+
+  it('should get a DiagnosticReport data from a form without questions in header', function() {
+
+    tp.openRxTerms();
+
+    var drugNameField = rxtermsForm.drugName;
+    drugNameField.click();
+    drugNameField.sendKeys('aspercreme');
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
+    drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
+    drugNameField.sendKeys(protractor.Key.TAB);
+
+    browser.driver.executeAsyncScript(function() {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormFHIRData("DiagnosticReport");
+      callback(fData);
+    }).then(function(fhirData) {
+      expect(fhirData.result.length).toBe(1);
+      expect(fhirData.result[0].reference).not.toBe(undefined);
+      expect(fhirData.contained.length).toBe(2);
+      // drug name
+      expect(fhirData.contained[0].resourceType).toBe("Observation");
+      expect(fhirData.contained[0].id).not.toBe(undefined);
+      expect(fhirData.contained[0].code.coding[0].code).toBe("nameAndRoute");
+      expect(fhirData.contained[0].code.coding[0].system).toBe("http://loinc.org");
+      expect(fhirData.contained[0].code.text).toBe("Drug Name");
+      expect(fhirData.contained[0].valueCodeableConcept).toEqual({"coding": [{"code": "ASPERCREME (Topical)", "display": "ASPERCREME (Topical)", "system": "http://loinc.org"}], "text": "ASPERCREME (Topical)"});
     });
   });
 
