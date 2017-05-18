@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.4.1]  2017-05-10
+### Changed
+- Used autocomplete-lhc v13.0.0 and changed the way to handle modified 
+  display text for answers.
+
 ## [11.4.0]  2017-05-08
 ### Changed
 - Added support for non-clickable headers in lists (when the list items are

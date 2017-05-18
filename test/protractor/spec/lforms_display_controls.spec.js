@@ -51,8 +51,9 @@ describe('display controls demo', function() {
 
     // first answer list
     item1answer1.evaluate("item.value").then(function (value) {
-      expect(value).toEqual({"code": "c3",
-        "text": "Extra long answer text 123456789 Answer Z"}); // default value
+      // default value
+      expect(value.code).toBe("c3");
+      expect(value.text).toBe("Extra long answer text 123456789 Answer Z");
     });
 
     item1answer1.click();
@@ -95,8 +96,8 @@ describe('display controls demo', function() {
 
     // third answer list
     item3answer1.evaluate("item.value").then(function (value) {
-      expect(value).toEqual([{"code": "c2", "text": "Answer Y"},
-        {"code": "c3", "text": "Answer Z"}]); // default values
+      expect(value).toEqual([{"code": "c2", "text": "Answer Y", "_displayText": "Answer Y" },
+        {"code": "c3", "text": "Answer Z", "_displayText": "Answer Z" }]); // default values
     });
 
     item3answer1.click(); // appends first answer

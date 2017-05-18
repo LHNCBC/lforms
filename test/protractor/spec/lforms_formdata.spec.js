@@ -254,7 +254,8 @@ describe('defaultAnswer', function() {
     expect(element(by.id(radioQCode+'G')).isSelected()).toBe(false);
     element(by.id(radioQCode+'R')).evaluate('item.value').then(function(val) {
       expect(val.code).toEqual('B');
-      expect(val.text).toEqual('ii. Blue');
+      expect(val.text).toEqual('Blue');
+      expect(val._displayText).toEqual('ii. Blue');
     });
 
     // Check a radio button question whose answers do not have labels
@@ -265,6 +266,7 @@ describe('defaultAnswer', function() {
     element(by.id(radioQCodeNL+'R')).evaluate('item.value').then(function(val) {
       expect(val.code).toEqual('B');
       expect(val.text).toEqual('Blue');
+      expect(val._displayText).toEqual('Blue');
     });
 
     // Test a check box question
@@ -274,7 +276,8 @@ describe('defaultAnswer', function() {
     expect(element(by.id(cbQCode+'G')).isSelected()).toBe(false);
     element(by.id(cbQCode+'R')).evaluate('item.value').then(function(val) {
       expect(val[0].code).toEqual('B');
-      expect(val[0].text).toEqual('ii. Blue');
+      expect(val[0].text).toEqual('Blue');
+      expect(val[0]._displayText).toEqual('ii. Blue');
     });
 
     // Check a multi-select list
@@ -282,8 +285,9 @@ describe('defaultAnswer', function() {
     var multiSel = element(by.id(multiSelID));
     multiSel.evaluate('item.value').then(function(value) {
       expect(value.length).toBe(1);
-      expect(value[0].text).toEqual('ii. Blue');
+      expect(value[0].text).toEqual('Blue');
       expect(value[0].code).toEqual('B');
+      expect(value[0]._displayText).toEqual('ii. Blue');
     });
     expect(multiSel.getAttribute('value')).toEqual('');
     var escapedID = multiSelID.replace( /\//g, "\\\\/" );
