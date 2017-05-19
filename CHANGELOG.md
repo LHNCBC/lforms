@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.4.2]  2017-05-18
+### Fixed
+- Added checking for questions in form header when generating HL7 and FHIR data.
+
 ## [11.4.1]  2017-05-10
 ### Changed
 - Used autocomplete-lhc v13.0.0 and changed the way to handle modified 

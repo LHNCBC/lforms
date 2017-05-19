@@ -217,7 +217,8 @@ LForms.HL7 = {
     formObrArray[1] = "1";
     formObrArray[4] = formData.code + this.delimiters.component + formData.name + this.delimiters.component + this.LOINC_CS;
 
-    if (formData.templateOptions.formHeaderItems.length > 0) {
+    if (formData.templateOptions.formHeaderItems &&
+        formData.templateOptions.formHeaderItems.length > 0) {
       for (var i= 0, iLen=formData.templateOptions.formHeaderItems.length; i< iLen; i++) {
         if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done" &&
             formData.templateOptions.formHeaderItems[i].value) {
