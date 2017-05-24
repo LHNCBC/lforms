@@ -201,7 +201,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-title.html',
-    "<div class=\"lf-form-title\">\n" +
+    "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" +
     "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\">{{lfData.name}}</span>\n" +
     "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
@@ -293,7 +293,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('item.html',
-    "<div class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
+    "<div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    " ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    " class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
     "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" +
     "  <div class=\"lf-de-label-button\">\n" +
     "    <!-- label -->\n" +
@@ -402,10 +404,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('layout-horizontal.html',
     "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
-    "  <div class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
+    "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    "   ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    "   class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
     "    <span class=\"lf-question\">{{item.question}}</span>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
-    "            ng-click=\"hideShowItemOptionPanel(item)\">\n" +
+    "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" +
+    "            aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
     "    </button>\n" +
     "    <!-- TBD -->\n" +
@@ -515,7 +520,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('layout-matrix.html',
     "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" +
-    "  <div class=\"lf-form-matrix-table-title lf-de-label\">\n" +
+    "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    "   ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    "   class=\"lf-form-matrix-table-title lf-de-label\">\n" +
     "    <span id=\"label-{{item._elementId}}\" class=\"lf-question\">{{item.question}}</span>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
     "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" +

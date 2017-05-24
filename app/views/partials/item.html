@@ -1,4 +1,6 @@
-<div class="lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}
+<div ng-attr-role="{{item.header ? 'heading' : undefined}}"
+ ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
+ class="lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}
     {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-click="setActiveRow(item)">
   <div class="lf-de-label-button">
     <!-- label -->
