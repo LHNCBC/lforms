@@ -49,7 +49,8 @@ LForms.FHIR = {
    */
   _getExtensionData : function(formData) {
     var extension = {};
-    if (formData.templateOptions.formHeaderItems.length>0) {
+    if (formData.templateOptions.formHeaderItems &&
+        formData.templateOptions.formHeaderItems.length>0) {
       for(var i=0, iLen= formData.templateOptions.formHeaderItems.length; i<iLen; i++) {
         var obrItem = formData.templateOptions.formHeaderItems[i];
         if (obrItem.questionCode === 'date_done' && obrItem.value) {
@@ -566,7 +567,7 @@ LForms.FHIR = {
     this._processObxAndItem(reportStructure, formData, diagnosticReport);
 
     // date
-    if (diagnosticReport.effectiveDateTime) {
+    if (diagnosticReport.effectiveDateTime && formData.templateOptions.formHeaderItems) {
       var whenDone = new Date(diagnosticReport.effectiveDateTime);
       if (whenDone) {
         formData.templateOptions.formHeaderItems[0].value = whenDone;
