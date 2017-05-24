@@ -2,7 +2,7 @@ var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
 describe('data control', function() {
 
-  it('data change on source field should update target fields', function() {
+  fit('data change on source field should update target fields', function() {
     tp.openFullFeaturedForm();
 
     ff.dcSource.sendKeys('Haloperidol');
@@ -35,6 +35,7 @@ describe('data control', function() {
     expect(ff.dcSource.getAttribute('value')).toBe("Haloperidol (Injectable)");
 
     ff.dcTarget1.click();
+    ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcTarget1.sendKeys(protractor.Key.TAB);
