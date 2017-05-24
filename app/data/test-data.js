@@ -3349,6 +3349,7 @@ var displayControlsDemo =
       "questionCode": "g4",
       "question": "A group with matrix layout (non-repeating)",
       "header": true,
+      "codingInstructions": "a coding instruction string",
       "questionCardinality": {"min": "1", "max":"1"},
       "displayControl": {"questionLayout":"matrix"},
       "items": [

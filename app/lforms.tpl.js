@@ -400,10 +400,34 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('layout-horizontal.html',
     "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
     "  <div class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\">{{item.question}}</span>\n" +
+    "\n" +
+    "    <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "      </span>\n" +
+    "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
+    "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "        </button>\n" +
+    "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "        </button>\n" +
+    "      </span>\n" +
+    "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
+    "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
+    "      <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "    </button>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
     "            ng-click=\"hideShowItemOptionPanel(item)\">\n" +
-    "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
+    "      <span class=\"glyphicon glyphicon-cog\"></span>\n" +
     "    </button>\n" +
     "    <!-- TBD -->\n" +
     "    <lf-item-options></lf-item-options>\n" +
@@ -514,7 +538,30 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('layout-matrix.html',
     "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" +
     "  <div class=\"lf-form-matrix-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\">{{item.question}}</span>\n" +
+    "    <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
+    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "      </span>\n" +
+    "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
+    "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "        </button>\n" +
+    "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "        </button>\n" +
+    "      </span>\n" +
+    "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
+    "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
+    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
+    "      <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "    </button>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
     "            ng-click=\"hideShowItemOptionPanel(item)\">\n" +
     "      <span class=\"glyphicon glyphicon-cog\"></span>\n" +
