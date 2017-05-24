@@ -10,7 +10,7 @@
 
   <!--COMBO_BOX style (default is 'COMBO_BOX')-->
   <div ng-switch-default>
-    <input class="units" type="text" ng-readonly="item._readOnly"
+    <input class="units" type="text" ng-disabled="item._readOnly"
            ng-model="item.unit" autocomplete-lhc="item._unitAutocompOptions"
            placeholder="Select one" id="unit_{{item._elementId}}" aria-labelledby="th_Units">
   </div>

@@ -1134,7 +1134,71 @@ var allInOne =
        {"code": "OTHR-5", "text": "Cold Weather",
         "parentAnswerCode": "environmental"}
      ]
-    }
+    },
+    // readonly (editable:"0") on ST
+    {
+      "questionCode": "readonlyST",
+      "dataType": "ST",
+      "question": "editable='0' data type ST",
+      "editable": "0"
+    },
+    // readonly (editable:"0") on CNE, single selection
+    {
+      "questionCode": "readonlyCNE-s",
+      "dataType": "CNE",
+      "question": "editable='0' data type CNE, single selection",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "value": {"code": "c1", "text": "Answer 1", "other": null},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    // readonly (editable:"0") on CWE, multiple selections
+    {
+      "questionCode": "readonlyCWE-m",
+      "dataType": "CNE",
+      "question": "editable='0' data type CWE, multiple selections",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    // readonly (editable:"0") on CNE, single selection, radio button
+    {
+      "questionCode": "readonlyCNE-sb",
+      "dataType": "CNE",
+      "question": "editable='0' data type CNE, single selection, radio button",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "value": {"code": "c2", "text": "Answer 2", "other": null},
+      "displayControl": {"answerLayout": {"type":"RADIO_CHECKBOX", "columns": "1"}},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    // readonly (editable:"0") on CWE, multiple selections, check boxes
+    {
+      "questionCode": "readonlyCWE-mb",
+      "dataType": "CNE",
+      "question": "editable='0' data type CWE, multiple selections, checkboxes",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {"answerLayout": {"type":"RADIO_CHECKBOX", "columns": "1"}},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+
 
 
     // skip logic, controlling child items and headers (one level below)

@@ -729,7 +729,7 @@ if (typeof LForms === 'undefined')
             (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
         // set up readonly flag
-        item._readOnly = (item.editable && item.editable == "0") || (item.calculationMethod);
+        item._readOnly = (item.editable && item.editable === "0") || (item.calculationMethod);
 
         // reset answers if it is an answer list id
         if ((angular.isString(item.answers) || angular.isNumber(item.answers)) &&
@@ -799,40 +799,40 @@ if (typeof LForms === 'undefined')
         item._firstSibling = i === 0;
 
         // set up tooltip and process user data if there's any user data.
-        switch (item.dataType) {
-          case this._CONSTANTS.DATA_TYPE.DT:
-            item._toolTip = "MM/DD/YYYY";
-            // process user data
-            if (item.value) {
-              item.value = LForms.Util.stringToDate(item.value);
-            }
-            break;
-          case this._CONSTANTS.DATA_TYPE.CNE:
-            if (item.externallyDefined)
-              item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
-            else
-              item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
-            break;
-          case this._CONSTANTS.DATA_TYPE.CWE:
-            if (item.externallyDefined)
-              item._toolTip = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
-            else
-              item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
-            break;
-          case "SECTION":
-          case "TITLE":
-          case "":
-            item._toolTip = "";
-            break;
-          case this._CONSTANTS.DATA_TYPE.INT:
-          case this._CONSTANTS.DATA_TYPE.REAL:
-            item._toolTip = "Type a number";
-            // internally all numeric values are of string type
-            if (typeof item.value === "number")
-              item.value = item.value + "";
-            break;
-          default: {
-            if (!item.calculationMethod) {
+        if (!item._readOnly) {
+          switch (item.dataType) {
+            case this._CONSTANTS.DATA_TYPE.DT:
+              item._toolTip = "MM/DD/YYYY";
+              // process user data
+              if (item.value) {
+                item.value = LForms.Util.stringToDate(item.value);
+              }
+              break;
+            case this._CONSTANTS.DATA_TYPE.CNE:
+              if (item.externallyDefined)
+                item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
+              else
+                item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
+              break;
+            case this._CONSTANTS.DATA_TYPE.CWE:
+              if (item.externallyDefined)
+                item._toolTip = item._multipleAnswers ? "Search for or type values" : "Search for or type a value";
+              else
+                item._toolTip = item._multipleAnswers ? "Select one or more or type a value" : "Select one or type a value";
+              break;
+            case "SECTION":
+            case "TITLE":
+            case "":
+              item._toolTip = "";
+              break;
+            case this._CONSTANTS.DATA_TYPE.INT:
+            case this._CONSTANTS.DATA_TYPE.REAL:
+              item._toolTip = "Type a number";
+              // internally all numeric values are of string type
+              if (typeof item.value === "number")
+                item.value = item.value + "";
+              break;
+            default: {
               item._toolTip = "Type a value";
             }
           }
@@ -936,6 +936,9 @@ if (typeof LForms === 'undefined')
             (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
         item._multipleAnswers = item.answerCardinality.max &&
             (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+
+        // set up readonly flag
+        item._readOnly = (item.editable && item.editable === "0") || (item.calculationMethod);
 
         // set the last sibling status
         item._lastSibling = i === lastSiblingIndex;

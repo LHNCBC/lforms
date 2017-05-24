@@ -9,7 +9,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
     "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" +
-    "               ng-click=\"updateCheckboxList(item, answer)\"\n" +
+    "               ng-click=\"updateCheckboxList(item, answer)\" ng-disabled=\"item._readOnly\"\n" +
     "               ng-checked=\"checkAnswer(item,answer)\">\n" +
     "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" +
     "      </div>\n" +
@@ -17,7 +17,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-if=\"!item._multipleAnswers\">\n" +
     "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" +
     "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" +
-    "               ng-click=\"updateRadioList(item)\">\n" +
+    "               ng-click=\"updateRadioList(item)\" ng-disabled=\"item._readOnly\" >\n" +
     "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" +
     "      </div>\n" +
     "    </span>\n" +
@@ -27,23 +27,26 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" +
     "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
-    "                 id=\"{{item._elementId + '_other'}}\"\n" +
+    "                 id=\"{{item._elementId + '_other'}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
     "                 ng-checked=\"checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
     "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
-    "                 id=\"{{item._elementId + '_otherValue'}}\"\n" +
+    "                 id=\"{{item._elementId + '_otherValue'}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 ng-change=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "      </div>\n" +
     "\n" +
     "      <!--radio buttons for single selection-->\n" +
     "      <div ng-if=\"!item._multipleAnswers\" class=\"\">\n" +
-    "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\" ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
-    "                 name=\"{{item._elementId}}\"\n" +
+    "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\"\n" +
+    "                 ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
+    "                 name=\"{{item._elementId}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 ng-click=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
-    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
-    "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\"\n" +
+    "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
+    "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
+    "                 ng-disabled=\"item._readOnly\">\n" +
     "      </div>\n" +
     "    </span>\n" +
     "    <!--</div>-->\n" +
@@ -53,7 +56,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" +
     "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
-    "           ng-readonly=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
+    "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
     "           id=\"{{item._elementId}}\"\n" +
     "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" +
     "  </div>\n" +
@@ -74,7 +77,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default>\n" +
-    "    <input class=\"units\" type=\"text\" ng-readonly=\"item._readOnly\"\n" +
+    "    <input class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" +
     "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
     "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" +
     "  </div>\n" +
@@ -352,24 +355,24 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "          <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
     "          <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
     "          <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 ng-readonly=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
-    "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
     "                    ng-focus=\"setActiveRow(item)\"\n" +
     "                    ng-blur=\"activeRowOnBlur(item)\">\n" +
     "          </textarea>\n" +
     "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
-    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-readonly=\"item._readOnly\"\n" +
+    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
     "        </div>\n" +
@@ -384,7 +387,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <!-- extra question -->\n" +
     "    <div ng-if=\"needExtra(item)\" class=\"lf-de-unit\">\n" +
     "      <input class=\"lf-extra-field\" ng-model=\"item.valueOther\" placeholder=\"Please specify\"\n" +
-    "             ng-readonly=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" +
+    "             ng-disabled=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
@@ -440,43 +443,43 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
     "                   autocomplete-lhc=\"cell._autocompOptions\"\n" +
-    "                   ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
+    "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
     "                   autocomplete-lhc=\"cell._autocompOptions\"\n" +
-    "                   ng-readonly=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
+    "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
-    "                   placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
-    "                   placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" +
     "                   ng-model=\"cell.value\"\n" +
-    "                   lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                   lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
-    "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                      id=\"{{cell._elementId}}\"\n" +
     "                      aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                      ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" +
     "                      ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" +
     "            <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" +
-    "                   ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-readonly=\"cell._readOnly\"\n" +
+    "                   ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
