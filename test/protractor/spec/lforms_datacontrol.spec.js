@@ -2,7 +2,7 @@ var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
 describe('data control', function() {
 
-  fit('data change on source field should update target fields', function() {
+  it('data change on source field should update target fields', function() {
     tp.openFullFeaturedForm();
 
     ff.dcSource.sendKeys('Haloperidol');
