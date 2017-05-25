@@ -1,8 +1,11 @@
 <div class="lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} " ng-if="item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]">
-  <div class="lf-form-horizontal-table-title lf-de-label">
+  <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
+   ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
+   class="lf-form-horizontal-table-title lf-de-label">
     <span class="lf-question">{{item.question}}</span>
     <button ng-if="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
-            ng-click="hideShowItemOptionPanel(item)">
+            ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
+            aria-describedby="label-{{ item._elementId }}">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
     </button>
     <!-- TBD -->
@@ -30,7 +33,7 @@
         <button ng-if="!hasOneRepeatingItem(item)" type="button"
                 id="del-{{row.header._elementId}}"
                 class="lf-float-button" ng-click="removeOneRepeatingItem(row.header)"
-                title="Remove this row of '{{ row.header.question }}'">-</button>
+                title='Remove this row of "{{ row.header.question }}"'>-</button>
       </td>
 
       <td ng-repeat="cell in row.cells"
@@ -95,14 +98,13 @@
     <div class="has-popover-warning">
       <button type="button"
               class="lf-float-button" id="add-{{item._elementId}}"
-              title="Add another '{{ item.question }}'"
               ng-click="addOneRepeatingItem(item, true)"
               ng-blur="hideUnusedItemWarning(item)"
               uib-popover='Please enter info in the blank "{{ item.question }}".'
               popover-placement="top-left"
               popover-trigger="none"
               popover-is-open="item._showUnusedItemWarning">
-        Add another '{{item.question}}'
+        Add another "{{item.question}}"
       </button>
     </div>
   </div>

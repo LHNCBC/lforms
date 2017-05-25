@@ -5,7 +5,7 @@ describe('keyboard navigation', function() {
     tp.openUSSGFHTHorizontal();
     // there is an add button
     expect(element.all(by.css('.lf-float-button')).get(2).isPresent()).toBe(true);
-    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('Add another "This family member\'s history of disease"');
   });
 
   it('should move around the lists and the tables by using ctrl-arrow keys', function() {
@@ -52,7 +52,7 @@ describe('keyboard navigation', function() {
     // the second row has a '-' button
     expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe("Add another 'This family member's history of disease'");
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('Add another "This family member\'s history of disease"');
 
     var eleDisease2 = element(by.id('/54114-4/54117-7/54116-9/1/2/1'));
     var eleAgeAtD2 = element(by.id('/54114-4/54117-7/54115-1/1/2/1'));

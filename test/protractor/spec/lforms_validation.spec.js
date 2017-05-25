@@ -186,13 +186,14 @@ describe('Validations:', function() {
   });
 
   describe('restrictions validations (table)', function () {
-
-    it('should validate minInclusive on INT', function () {
+    beforeAll(function() {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
       }, 5000);
+    });
 
+    it('should validate minInclusive on INT', function () {
       shortenValidationMsgShowTime();
       testOneType(int1, lblurl, errorMinInclusive, "2", "5");
     });

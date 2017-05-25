@@ -798,10 +798,13 @@ var allInOne =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
       "codingInstructionsFormat": "text",
+      "copyrightNotice": "not copyrighted",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "type3", "dataType": "REAL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+    {"questionCode": "type3", "dataType": "REAL", "header": false, "units":
+    null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
       "codingInstructionsFormat": "html",
+      "copyrightNotice": "not copyrighted",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type REAL", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
@@ -3354,6 +3357,8 @@ var matrixLayout =
   "type": "LOINC",
   "code": "matrix-layout",
   "name": "A form with matrix layout, multiple selections",
+  "copyrightNotice": "This question is not copyrighted",
+  "codingInstructions": "Choose answer 1 for best results",
   "template": "list",
   "templateOptions": {
     "displayControl": {"questionLayout":"matrix"},
@@ -3364,6 +3369,8 @@ var matrixLayout =
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "*"},
       "question": "Question #1",
+      "copyrightNotice": "This question is not copyrighted",
+      "codingInstructions": "Choose answer 1 for best results",
       "answers": [
         {"code": "c1", "text": "Answer 1"},
         {"code": "c2", "text": "Answer 2"},
