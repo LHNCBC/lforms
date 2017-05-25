@@ -38,7 +38,7 @@ describe('data control', function() {
     ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcTarget1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcTarget1.sendKeys(protractor.Key.TAB);
-    expect(ff.dcTarget1.getAttribute('value')).toBe("5 mg/ml Sol");
+    expect(ff.dcTarget1.getAttribute('value')).toBe("5 mg/ml Prefilled Syringe 1 ml");
 
     ff.dcTarget2.getAttribute('value').then(function(v) {
       expect(v.trim()).toBe("5 mg/ml Injection 1 ml");
