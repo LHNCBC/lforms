@@ -1,10 +1,12 @@
-<div class="lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}
+<div ng-attr-role="{{item.header ? 'heading' : undefined}}"
+ ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
+ class="lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}
     {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}" ng-click="setActiveRow(item)">
   <div class="lf-de-label-button">
     <!-- label -->
     <div class="lf-de-label">
       <span ng-show="item._questionRepeatable" class="lf-sn">{{getRepeatingSN(item) }}</span>
-      <span class="lf-question"><label for="{{item._elementId}}">{{item.question}}</label></span>
+      <span class="lf-question"><label id="label-{{ item._elementId }}" for="{{item._elementId}}">{{item.question}}</label></span>
       <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
         <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
         <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
@@ -14,23 +16,27 @@
         <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
         <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
                 popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                type="button" id="help-{{item._elementId}}">
-          <span class="glyphicon glyphicon-question-sign"></span>
+                type="button" id="help-{{item._elementId}}" aria-label="Help"
+                aria-describedby="label-{{ item._elementId }}">
+          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
         </button>
         <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
                 popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                type="button" id="help-{{item._elementId}}">
-          <span class="glyphicon glyphicon-question-sign"></span>
+                type="button" id="help-{{item._elementId}}" aria-label="Help"
+                aria-describedby="label-{{ item._elementId }}">
+          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
         </button>
       </span>
       <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
               class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
-              popover-trigger="focus" popover-placement="right" popover-title="Copyright">
-        <span class="glyphicon glyphicon-copyright-mark"></span>
+              popover-trigger="focus" popover-placement="right" popover-title="Copyright"
+              aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
       </button>
       <button ng-if="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
-              ng-click="hideShowItemOptionPanel(item)">
-        <span class="glyphicon glyphicon-cog"></span>
+              ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
+              aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
       </button>
       <!-- TBD -->
       <lf-item-options></lf-item-options>
@@ -40,7 +46,7 @@
     <div class="lf-de-button">
       <button ng-if="!hasOneRepeatingItem(item)" class="lf-float-button" type="button"
               ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
-              title="Remove this '{{ item.question }}'">-</button>
+              title='Remove this "{{ item.question }}"'>-</button>
     </div>
   </div>
 

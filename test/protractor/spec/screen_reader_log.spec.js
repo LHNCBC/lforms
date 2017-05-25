@@ -44,7 +44,7 @@ describe('508', function() {
       element(by.id('add-/54126-8/54137-5/1/1')).click();  // Add another 'Your Diseases History'
       expect(tp.readerLogEntries.getText()).toEqual(['Added section']);
       // Remove the section
-      var minusButtonCSS = "button[title=\"Remove this 'Your diseases history'\"]";
+      var minusButtonCSS = "button[title='Remove this \"Your diseases history\"']";
       element.all(by.css(minusButtonCSS)).first().click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added section', 'Removed section']);
     });
@@ -58,15 +58,15 @@ describe('508', function() {
       expect(tp.readerLogEntries.getText()).toEqual(['Added row']);
       // Remove the row
       var minusButtonCSS =
-        "button[title=\"Remove this row of 'This family member's history of disease'\"]";
+        "button[title=\"Remove this row of \\\"This family member's history of disease\\\"\"]";
       element.all(by.css(minusButtonCSS)).first().click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added row', 'Removed row']);
     });
     it('should add an entry when a question is added or removed', function () {
       // Switch to the first form, which has a repeating question
       tp.openUSSGFHTVertical();
-      var addNameCSS = "button[title=\"Add another 'Name'\"]";
-      var addNameButton = element(by.css(addNameCSS));
+      var addNameButton = element(by.cssContainingText('button',
+        'Add another "Name"'));
       browser.wait(function() {
         return addNameButton.isPresent();
       }, 10000);
@@ -78,7 +78,7 @@ describe('508', function() {
       addNameButton.click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added question']);
       // Remove the question
-      element.all(by.css("button[title=\"Remove this 'Name'\"]")).first().click();
+      element.all(by.css("button[title='Remove this \"Name\"']")).first().click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added question', 'Removed question']);
     });
   });

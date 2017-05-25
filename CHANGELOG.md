@@ -8,6 +8,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added support for displaying coding instructions, copyright info on the section headers of 
   horizontal tables and matrix tables.
 
+## [11.4.3]  2017-05-24
+### Fixed
+- Addressed some accessibility issues.
+
 ## [11.4.2]  2017-05-18
 ### Fixed
 - Added checking for questions in form header when generating HL7 and FHIR data.

@@ -204,20 +204,22 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('form-title.html',
-    "<div class=\"lf-form-title\">\n" +
-    "  <span class=\"lf-question\">{{lfData.name}}</span>\n" +
+    "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" +
+    "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\">{{lfData.name}}</span>\n" +
     "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
     "      </span>\n" +
     "  <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" +
     "          class=\"lf-copyright-button btn-sm\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" +
-    "          popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
-    "    <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "          popover-trigger=\"focus\" popover-placement=\"right\"\n" +
+    "          popover-title=\"Copyright\" aria-label=\"Copyright notice\"\n" +
+    "          aria-describedby=\"label-{{ lfData.code }}\">\n" +
+    "    <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" +
     "  </button>\n" +
     "  <button ng-if=\"lfData.templateOptions.showFormOptionPanelButton\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
-    "          ng-click=\"hideShowFormOptionPanel()\">\n" +
-    "    <span class=\"glyphicon glyphicon-cog\"></span>\n" +
+    "          ng-click=\"hideShowFormOptionPanel()\" aria-label=\"Form Option Panel\">\n" +
+    "    <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
     "  </button>\n" +
     "\n" +
     "</div>\n"
@@ -294,13 +296,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('item.html',
-    "<div class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
+    "<div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    " ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    " class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" +
     "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" +
     "  <div class=\"lf-de-label-button\">\n" +
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
     "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" +
-    "      <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
     "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -310,23 +314,27 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
     "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
     "      </span>\n" +
     "      <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "              class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
-    "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
-    "        <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" +
+    "              aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "        <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" +
     "      </button>\n" +
     "      <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
-    "              ng-click=\"hideShowItemOptionPanel(item)\">\n" +
-    "        <span class=\"glyphicon glyphicon-cog\"></span>\n" +
+    "              ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" +
+    "              aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "        <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
     "      </button>\n" +
     "      <!-- TBD -->\n" +
     "      <lf-item-options></lf-item-options>\n" +
@@ -336,7 +344,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-de-button\">\n" +
     "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" +
     "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
-    "              title=\"Remove this '{{ item.question }}'\">-</button>\n" +
+    "              title='Remove this \"{{ item.question }}\"'>-</button>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
@@ -399,8 +407,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('layout-horizontal.html',
     "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
-    "  <div class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
-    "\n" +
+    "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
     "    <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
@@ -411,23 +420,27 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
     "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
     "      </span>\n" +
     "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
-    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
-    "      <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" +
+    "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" +
     "    </button>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
-    "            ng-click=\"hideShowItemOptionPanel(item)\">\n" +
-    "      <span class=\"glyphicon glyphicon-cog\"></span>\n" +
+    "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" +
+    "            aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
     "    </button>\n" +
     "    <!-- TBD -->\n" +
     "    <lf-item-options></lf-item-options>\n" +
@@ -454,7 +467,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" +
     "                id=\"del-{{row.header._elementId}}\"\n" +
     "                class=\"lf-float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" +
-    "                title=\"Remove this row of '{{ row.header.question }}'\">-</button>\n" +
+    "                title='Remove this row of \"{{ row.header.question }}\"'>-</button>\n" +
     "      </td>\n" +
     "\n" +
     "      <td ng-repeat=\"cell in row.cells\"\n" +
@@ -519,14 +532,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"has-popover-warning\">\n" +
     "      <button type=\"button\"\n" +
     "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "              title=\"Add another '{{ item.question }}'\"\n" +
     "              ng-click=\"addOneRepeatingItem(item, true)\"\n" +
     "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
     "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
     "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "        Add another '{{item.question}}'\n" +
+    "        Add another \"{{item.question}}\"\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -537,34 +549,42 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('layout-matrix.html',
     "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" +
-    "  <div class=\"lf-form-matrix-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
+    "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
+    "       class=\"lf-form-matrix-table-title lf-de-label\">\n" +
+    "    <span id=\"label-{{item._elementId}}\" class=\"lf-question\">\n" +
+    "      <label for=\"{{item._elementId}}\">{{item.question}}</label>\n" +
+    "    </span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
-    "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
-    "      </span>\n" +
+    "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
+    "    </span>\n" +
     "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
-    "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
-    "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
-    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
-    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
-    "        </button>\n" +
-    "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
-    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\">\n" +
-    "          <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
-    "        </button>\n" +
-    "      </span>\n" +
+    "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "              type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "              aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
+    "      </button>\n" +
+    "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "              type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "              aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
+    "      </button>\n" +
+    "    </span>\n" +
     "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" +
     "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" +
-    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
-    "      <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" +
+    "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" +
+    "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" +
     "    </button>\n" +
     "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" +
-    "            ng-click=\"hideShowItemOptionPanel(item)\">\n" +
-    "      <span class=\"glyphicon glyphicon-cog\"></span>\n" +
+    "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" +
+    "            aria-describedby=\"label-{{item._elementId}}\">\n" +
+    "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" +
     "    </button>\n" +
     "    <!-- TBD -->\n" +
     "    <lf-item-options></lf-item-options>\n" +
@@ -587,7 +607,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <tr ng-repeat=\"subItem in item.items\">\n" +
     "        <td class=\"lf-question\">\n" +
     "          <div class=\"lf-de-label\">\n" +
-    "            <span class=\"lf-question\"><label for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" +
+    "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
+    "             for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" +
     "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\">[{{ subItem.questionCode }}]</a>\n" +
     "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" +
@@ -597,19 +618,23 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" +
     "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
     "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{subItem._elementId}}\">\n" +
-    "                <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                      type=\"button\" id=\"help-{{subItem._elementId}}\"\n" +
+    "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" +
+    "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "              </button>\n" +
     "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" +
     "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{subItem._elementId}}\">\n" +
-    "                <span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "                      type=\"button\" id=\"help-{{subItem._elementId}}\" aria-label=\"Help\"\n" +
+    "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" +
+    "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "              </button>\n" +
     "            </span>\n" +
     "            <button ng-if=\"subItem.copyrightNotice\" id=\"copyright-{{subItem._elementId}}\" type=\"button\"\n" +
     "                    class=\"lf-copyright-button btn-sm\" uib-popover=\"{{subItem.copyrightNotice}}\"\n" +
-    "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\">\n" +
-    "              <span class=\"glyphicon glyphicon-copyright-mark\"></span>\n" +
+    "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" +
+    "                    aria-label=\"Copyright notice\"\n" +
+    "                    aria-describedby=\"label-{{ subItem._elementId }}\">\n" +
+    "              <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" +
     "            </button>\n" +
     "          </div>\n" +
     "        </td>\n" +
@@ -672,17 +697,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div class=\"has-popover-warning\">\n" +
     "    <button type=\"button\"\n" +
     "            class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" +
-    "            title=\"Add another '{{ item.question }}'\"\n" +
     "            ng-click=\"addOneRepeatingItem(item)\"\n" +
     "            ng-blur=\"hideUnusedItemWarning(item)\"\n" +
-    "            uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "            uib-popover='{{item._unusedItemWarning}}'\n" +
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "      Add another '{{item.question}}'\n" +
+    "      Add another \"{{item.question}}\"\n" +
     "    </button>\n" +
     "  </div>\n" +
-    "</div>"
+    "</div>\n"
   );
 
 

@@ -622,6 +622,12 @@ angular.module('lformsWidget')
           var anyEmpty = false;
           if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
             anyEmpty = widgetData.areAnyRepeatingItemsEmpty(item);
+            if (anyEmpty && item._showUnusedItemWarning) {
+              if (!item._unusedItemWarning)
+                item._unusedItemWarning = 'Please enter info in the blank "' +
+                  item.question+'"';
+              $scope.sendMsgToScreenReader(item._unusedItemWarning);
+            }
           }
           if (!anyEmpty) {
             var newItem = append ? widgetData.appendRepeatingItems(item) : widgetData.addRepeatingItems(item);
@@ -680,6 +686,16 @@ angular.module('lformsWidget')
           if ($scope.lfData && !$scope.lfData.templateOptions.allowMultipleEmptyRepeatingItems) {
             item._showUnusedItemWarning = false;
           }
+        };
+
+
+        /**
+         *  Writes a single message to the reader_log element on the page
+         *  so that screen readers can read it.
+         * @param msg the message to be read
+         */
+        $scope.sendMsgToScreenReader = function(msg) {
+          Def.Autocompleter.screenReaderLog(msg);
         };
 
 
