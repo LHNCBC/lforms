@@ -281,4 +281,34 @@ describe('display controls demo', function() {
 
   });
 
+  it('should show disabled inputs', function() {
+    tp.openFullFeaturedForm();
+
+    var item1 = element(by.id('/readonlyST/1'));
+    var item2 = element(by.id('/readonlyCNE-s/1'));
+    var item3 = element(by.id('/readonlyCWE-m/1'));
+    var item4c1 = element(by.id('/readonlyCNE-sb/1c1'));
+    var item4c2 = element(by.id('/readonlyCNE-sb/1c2'));
+    var item4c3 = element(by.id('/readonlyCNE-sb/1c3'));
+    var item4c4 = element(by.id('/readonlyCNE-sb/1c4'));
+    var item5c1 = element(by.id('/readonlyCWE-mb/1c1'));
+    var item5c2 = element(by.id('/readonlyCWE-mb/1c2'));
+    var item5c3 = element(by.id('/readonlyCWE-mb/1c3'));
+    var item5c4 = element(by.id('/readonlyCWE-mb/1c4'));
+    browser.wait(function () {
+      return item1.isDisplayed();
+    }, 5000);
+    expect(item1.isEnabled()).toBe(false);
+    expect(item2.isEnabled()).toBe(false);
+    expect(item3.isEnabled()).toBe(false);
+    expect(item4c1.isEnabled()).toBe(false);
+    expect(item4c2.isEnabled()).toBe(false);
+    expect(item4c3.isEnabled()).toBe(false);
+    expect(item4c4.isEnabled()).toBe(false);
+    expect(item5c1.isEnabled()).toBe(false);
+    expect(item5c2.isEnabled()).toBe(false);
+    expect(item5c3.isEnabled()).toBe(false);
+    expect(item5c4.isEnabled()).toBe(false);
+
+  });
 });

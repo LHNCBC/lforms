@@ -2,9 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [11.5.0]  2017-05-18
+### Added
+- Added support for disabling CNE/CWE items (autocomplete input fields or radio buttons/checkboxes) 
+- Added support for displaying coding instructions and copyright info on the section headers of 
+  horizontal tables and matrix tables.
+
 ## [11.4.3]  2017-05-24
 ### Fixed
-- Addressed some accessbility issues.
+- Addressed some accessibility issues.
 
 ## [11.4.2]  2017-05-18
 ### Fixed

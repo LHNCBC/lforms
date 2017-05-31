@@ -1,8 +1,34 @@
 <div class="lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}">
   <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
-   ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
-   class="lf-form-matrix-table-title lf-de-label">
-    <span id="label-{{item._elementId}}" class="lf-question">{{item.question}}</span>
+       ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
+       class="lf-form-matrix-table-title lf-de-label">
+    <span class="lf-question"><label id="label-{{ item._elementId }}">{{item.question}}</label></span>
+    <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
+      <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+      <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
+    </span>
+    <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">
+      <span ng-switch-when="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
+      <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
+      <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
+              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+              type="button" id="help-{{item._elementId}}" aria-label="Help"
+              aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+      </button>
+      <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
+              popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
+              type="button" id="help-{{item._elementId}}" aria-label="Help"
+              aria-describedby="label-{{ item._elementId }}">
+        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+      </button>
+    </span>
+    <button ng-if="item.copyrightNotice" id="copyright-{{item._elementId}}" type="button"
+            class="lf-copyright-button btn-sm" uib-popover="{{item.copyrightNotice}}"
+            popover-trigger="focus" popover-placement="right" popover-title="Copyright"
+            aria-label="Copyright notice" aria-describedby="label-{{ item._elementId }}">
+      <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+    </button>
     <button ng-if="isItemOptionPanelButtonShown(item)" type="button" class="lf-control-button btn-sm"
             ng-click="hideShowItemOptionPanel(item)" aria-label="Item controls"
             aria-describedby="label-{{item._elementId}}">
