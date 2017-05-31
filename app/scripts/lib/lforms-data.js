@@ -938,7 +938,7 @@ if (typeof LForms === 'undefined')
             (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
         // set up readonly flag
-        item._readOnly = (item.editable && item.editable === "0") || (item.calculationMethod);
+        item._readOnly = item.editable === "0" || (item.calculationMethod);
 
         // set the last sibling status
         item._lastSibling = i === lastSiblingIndex;

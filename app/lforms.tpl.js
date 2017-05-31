@@ -410,7 +410,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -552,9 +552,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-matrix-table-title lf-de-label\">\n" +
-    "    <span id=\"label-{{item._elementId}}\" class=\"lf-question\">\n" +
-    "      <label for=\"{{item._elementId}}\">{{item.question}}</label>\n" +
-    "    </span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
     "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +

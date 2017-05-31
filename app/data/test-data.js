@@ -3302,6 +3302,8 @@ var displayControlsDemo =
       "questionCode": "g3",
       "question": "A non-repeating group with horizontal layout",
       "header": true,
+      "codingInstructions": "a coding instruction string",
+      "copyrightNotice": "a copyright notice",
       "questionCardinality": {"min": "1", "max":"1"},
       "displayControl": {"questionLayout":"horizontal"},
       "items": [
@@ -3353,6 +3355,7 @@ var displayControlsDemo =
       "question": "A group with matrix layout (non-repeating)",
       "header": true,
       "codingInstructions": "a coding instruction string",
+      "copyrightNotice": "a copyright notice",
       "questionCardinality": {"min": "1", "max":"1"},
       "displayControl": {"questionLayout":"matrix"},
       "items": [

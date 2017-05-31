@@ -2,9 +2,7 @@
   <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
        ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
        class="lf-form-matrix-table-title lf-de-label">
-    <span id="label-{{item._elementId}}" class="lf-question">
-      <label for="{{item._elementId}}">{{item.question}}</label>
-    </span>
+    <span class="lf-question"><label id="label-{{ item._elementId }}">{{item.question}}</label></span>
     <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
       <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
