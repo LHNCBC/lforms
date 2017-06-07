@@ -1,0 +1,75 @@
+/* Theme definitions */
+
+/* Spring theme */
+
+.theme-spring .lf-form {
+  font-family: Georgia, serif;
+}
+
+.theme-spring .lf-form-title {
+  background-color: #227124;
+}
+
+/* Column headers */
+.theme-spring .lf-header-de-label, /* for form header questions */
+.theme-spring .lf-column-header, /* for Name/Value/Unit columns */
+.theme-spring .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
+.theme-spring .lf-form-horizontal-table-header { /* for horizontal layout */
+  background-color: #E8F0E8;
+}
+
+/* section headers & titles */
+.theme-spring .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-spring .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  background-color: #E8F8E8;
+}
+
+/* Buttons */
+.theme-spring .lf-form button {
+  background-color: #289e0b; /* "Add another"/Remove */
+}
+.theme-spring .lf-form .lf-help-button, /* help button */
+.theme-spring .lf-form .lf-control-button, /* item control button */
+.theme-spring .lf-form .lf-copyright-button { /* copyright info button */
+  color: #289e0b;
+  background-color: transparent;
+}
+/* Buttons in the form title bar */
+.theme-spring .lf-form .lf-form-title .lf-help-button, /* help button */
+.theme-spring .lf-form .lf-form-title .lf-control-button, /* item control button */
+.theme-spring .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
+  color: #dcfcd4;
+}
+
+/* Button hover color */
+.theme-spring .lf-form .lf-help-button:hover, /* help button */
+.theme-spring .lf-form .lf-control-button:hover, /* item control button */
+.theme-spring .lf-form .lf-copyright-button:hover { /* copyright info button */
+   color: #27eb05;
+}
+
+/* Button hover color in the form title bar */
+.theme-spring .lf-form .lf-form-title .lf-help-button:hover, /* help button */
+.theme-spring .lf-form .lf-form-title .lf-control-button:hover, /* item control button */
+.theme-spring .lf-form .lf-form-title .lf-copyright-button:hover { /* copyright info button */
+   color: #b4fda7;
+}
+
+/* Repeating section numbers */
+.theme-spring .lf-form .lf-de-label span.lf-sn {
+  background-color: #057341;
+}
+
+/* Active row color */
+.theme-spring .lf-form-table-row.active-row {
+  background-color: #d1f5e6;
+}
+
+/* Calendar widget colors */
+.theme-spring .ui-datepicker .ui-widget-header, /* header */
+.theme-spring .ui-datepicker .ui-state-default { /* day in shown month */
+  background: #23c021;
+}
+
+
+/******************************** Fire theme ********************************/
