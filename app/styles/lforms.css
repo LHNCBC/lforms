@@ -109,6 +109,8 @@
   font-weight: bold;
   color: white;
   padding: 1px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,

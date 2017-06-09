@@ -701,7 +701,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "      Add another \"{{item.question}}\"\n" +
+    "      + Add another \"{{item.question}}\"\n" +
     "    </button>\n" +
     "  </div>\n" +
     "</div>\n"
