@@ -1,6 +1,6 @@
 /* Theme definitions */
 
-/* Spring theme */
+/**************************** Spring theme ****************************/
 
 .theme-spring .lf-form {
   font-family: Georgia, serif;
@@ -72,4 +72,179 @@
 }
 
 
-/******************************** Fire theme ********************************/
+/******************************** MC theme ********************************/
+/* Colors:
+Base blue - #3d74bc (all dark blues including calendar heading, calendar box
+outlines, all icons ie. Copyright, calendar, question mark, and settings gear)
+
+Lighter blue - #c0dbff (header backgrounds, calendar box backgrounds, previous
+and next month calendar box outlines)
+
+Even lighter blue - #DBEBFF (for mouseover in list)
+
+Highlight yellow - #f2e3c7 (background of highlighted rows and background of
+calendar current day box)
+
+Darker yellow - #d1b278 (outline of calendar current day box, rollover of icons)
+
+Pale yellow - #F2EFDF (active field background color)
+
+*/
+
+.theme-mc .lf-form {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.theme-mc .lf-form-title {
+  background-color: #3d74bc;
+}
+
+/* Column headers */
+.theme-mc .lf-header-de-label, /* for form header questions */
+.theme-mc .lf-column-header, /* for Name/Value/Unit columns */
+.theme-mc .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
+.theme-mc .lf-form-horizontal-table-header { /* for horizontal layout */
+}
+
+/* section headers & titles */
+.theme-mc .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-mc .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  background-color: #c0dbff;
+}
+
+/* Buttons */
+.theme-mc .lf-form button {
+  background-color: #3d74bc; /* "Add another"/Remove */
+}
+.theme-mc .lf-form .lf-help-button, /* help button */
+.theme-mc .lf-form .lf-control-button, /* item control button */
+.theme-mc .lf-form .lf-copyright-button { /* copyright info button */
+  color: #3d74bc;
+  background-color: transparent;
+}
+/* Buttons in the form title bar */
+.theme-mc .lf-form .lf-form-title .lf-help-button, /* help button */
+.theme-mc .lf-form .lf-form-title .lf-control-button, /* item control button */
+.theme-mc .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
+  color: #3d74bc;
+}
+
+/* Button hover color */
+.theme-mc .lf-form .lf-help-button:hover, /* help button */
+.theme-mc .lf-form .lf-control-button:hover, /* item control button */
+.theme-mc .lf-form .lf-copyright-button:hover { /* copyright info button */
+   color: #d1b278;
+}
+
+/* Button hover color in the form title bar */
+.theme-mc .lf-form .lf-form-title .lf-help-button:hover, /* help button */
+.theme-mc .lf-form .lf-form-title .lf-control-button:hover, /* item control button */
+.theme-mc .lf-form .lf-form-title .lf-copyright-button:hover { /* copyright info button */
+   color: #d1b278;
+}
+
+/* Repeating section numbers */
+.theme-mc .lf-form .lf-de-label span.lf-sn {
+  color: #3d74bc;
+  background-color: transparent;
+  border: 2px solid #3d74bc;
+  border-radius: 0;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* Active row color */
+.theme-mc .lf-form-table-row.active-row {
+  background-color: #f2e3c7;
+}
+
+/* Active (focused) field color */
+.theme-mc .lf-form input:focus {
+  background-color: #F2EFDF;
+}
+
+/* Autocomplete-lhc colors */
+.theme-mc .autocomp_selected li > button {
+  background-color: #D7DADD; /* restoring multi-select button color */
+}
+.theme-mc .autocomp_selected li > button:hover {
+  background-color: #999; /* restoring multi-select button color */
+}
+.theme-mc .ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
+  background-color: #d1b278; /* non-matching field color */
+}
+.theme-mc .autocomplete .heading {
+  background-color: #E8E8E8; /* list heading colors */
+}
+.theme-mc .auto_complete .selected { /* selected list item */
+  background-color: #c0dbff;
+}
+.theme-mc .auto_complete li:hover,  .auto_complete tr:hover { /* list item hover */
+  background-color: #DBEBFF;
+}
+.theme-mc .auto_complete .listNum { /* list item number color */
+  color: #3d74bc;
+}
+
+
+/* Calendar widget colors */
+.theme-mc .ui-datepicker .ui-widget-header { /* header */
+  background: #3d74bc;
+}
+.theme-mc .ui-datepicker-calendar td a { /* day in shown month */
+  background: #c0dbff;
+  color: black;
+  border-color: #3d74bc;
+}
+.theme-mc .ui-datepicker-calendar .ui-datepicker-today a { /* today's date */
+  background-color:  #f2e3c7;
+  border-color: #d1b278;
+}
+.theme-mc .ui-datepicker-calendar .ui-datepicker-current-day a { /* selected date */
+  background-color: white;
+  border-color: #d1b278;
+}
+
+.theme-mc .ui-datepicker .ui-datepicker-next, /*next/prev buttons*/
+.theme-mc .ui-datepicker .ui-datepicker-prev {
+  color: #c0dbff;
+  border: 0;
+}
+.theme-mc .ui-datepicker .ui-datepicker-next .ui-icon,
+.theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon {
+  visibility: hidden;
+  /* glyphicon settings */
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  /* other settings needed with the glyphicon */
+  padding: 0.2em;
+  text-indent: initial;
+}
+.theme-mc .ui-datepicker .ui-datepicker-next .ui-icon:before {
+  visibility: visible;
+  content: "\e080";
+}
+.theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+  visibility: visible;
+  content: "\e079";
+}
+.theme-mc .ui-datepicker .ui-datepicker-next:hover,
+.theme-mc .ui-datepicker .ui-datepicker-prev:hover {
+  background: #c0dbff;
+  color: #3d74bc;
+}
+
+/* Calendar button styles */
+.theme-mc .lf-form .ui-datepicker-trigger {
+  background-color: transparent;
+}
+.theme-mc .ui-datepicker-trigger {
+  color: #3d74bc;
+}
+.theme-mc .ui-datepicker-trigger:hover {
+  color: #d1b278;
+}
