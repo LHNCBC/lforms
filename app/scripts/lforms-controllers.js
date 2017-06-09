@@ -22,8 +22,6 @@ angular.module('lformsWidget')
           changeMonth: true,
           yearRange: '1800:-0',
           showOn: 'button',
-          buttonImage: LF_CONSTANTS.BLANK_GIF_DATAURL,
-          buttonImageOnly: true,
 
           constrainInput: false,
           showOtherMonths: true,
