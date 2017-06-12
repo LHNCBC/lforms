@@ -1,76 +1,70 @@
 /* Theme definitions */
-
 /**************************** Spring theme ****************************/
-
 .theme-spring .lf-form {
-  font-family: Georgia, serif;
-}
+  font-family: Georgia, serif; }
 
 .theme-spring .lf-form-title {
-  background-color: #227124;
-}
+  background-color: #227124; }
 
 /* Column headers */
-.theme-spring .lf-header-de-label, /* for form header questions */
-.theme-spring .lf-column-header, /* for Name/Value/Unit columns */
-.theme-spring .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
-.theme-spring .lf-form-horizontal-table-header { /* for horizontal layout */
-  background-color: #E8F0E8;
-}
+.theme-spring .lf-header-de-label,
+.theme-spring .lf-column-header,
+.theme-spring .lf-form-matrix-table .lf-form-table-header,
+.theme-spring .lf-form-horizontal-table-header {
+  /* for horizontal layout */
+  background-color: #E8F0E8; }
 
 /* section headers & titles */
 .theme-spring .lf-form-table .lf-form-table-row.lf-section-header,
 .theme-spring .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
-  background-color: #E8F8E8;
-}
+  background-color: #E8F8E8; }
 
 /* Buttons */
 .theme-spring .lf-form button {
-  background-color: #289e0b; /* "Add another"/Remove */
-}
-.theme-spring .lf-form .lf-help-button, /* help button */
-.theme-spring .lf-form .lf-control-button, /* item control button */
-.theme-spring .lf-form .lf-copyright-button { /* copyright info button */
+  background-color: #289e0b;
+  /* "Add another"/Remove */ }
+
+.theme-spring .lf-form .lf-help-button,
+.theme-spring .lf-form .lf-control-button,
+.theme-spring .lf-form .lf-copyright-button {
+  /* copyright info button */
   color: #289e0b;
-  background-color: transparent;
-}
+  background-color: transparent; }
+
 /* Buttons in the form title bar */
-.theme-spring .lf-form .lf-form-title .lf-help-button, /* help button */
-.theme-spring .lf-form .lf-form-title .lf-control-button, /* item control button */
-.theme-spring .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
-  color: #dcfcd4;
-}
+.theme-spring .lf-form .lf-form-title .lf-help-button,
+.theme-spring .lf-form .lf-form-title .lf-control-button,
+.theme-spring .lf-form .lf-form-title .lf-copyright-button {
+  /* copyright info button */
+  color: #dcfcd4; }
 
 /* Button hover color */
-.theme-spring .lf-form .lf-help-button:hover, /* help button */
-.theme-spring .lf-form .lf-control-button:hover, /* item control button */
-.theme-spring .lf-form .lf-copyright-button:hover { /* copyright info button */
-   color: #27eb05;
-}
+.theme-spring .lf-form .lf-help-button:hover,
+.theme-spring .lf-form .lf-control-button:hover,
+.theme-spring .lf-form .lf-copyright-button:hover {
+  /* copyright info button */
+  color: #27eb05; }
 
 /* Button hover color in the form title bar */
-.theme-spring .lf-form .lf-form-title .lf-help-button:hover, /* help button */
-.theme-spring .lf-form .lf-form-title .lf-control-button:hover, /* item control button */
-.theme-spring .lf-form .lf-form-title .lf-copyright-button:hover { /* copyright info button */
-   color: #b4fda7;
-}
+.theme-spring .lf-form .lf-form-title .lf-help-button:hover,
+.theme-spring .lf-form .lf-form-title .lf-control-button:hover,
+.theme-spring .lf-form .lf-form-title .lf-copyright-button:hover {
+  /* copyright info button */
+  color: #b4fda7; }
 
 /* Repeating section numbers */
 .theme-spring .lf-form .lf-de-label span.lf-sn {
-  background-color: #057341;
-}
+  background-color: #057341; }
 
 /* Active row color */
 .theme-spring .lf-form-table-row.active-row {
-  background-color: #d1f5e6;
-}
+  background-color: #d1f5e6; }
 
 /* Calendar widget colors */
-.theme-spring .ui-datepicker .ui-widget-header, /* header */
-.theme-spring .ui-datepicker .ui-state-default { /* day in shown month */
-  background: #23c021;
-}
-
+.theme-spring .ui-datepicker .ui-widget-header,
+.theme-spring .ui-datepicker .ui-state-default {
+  /* day in shown month */
+  background: #23c021; }
 
 /******************************** MC theme ********************************/
 /* Colors:
@@ -90,161 +84,136 @@ Darker yellow - #d1b278 (outline of calendar current day box, rollover of icons)
 Pale yellow - #F2EFDF (active field background color)
 
 */
+/*************************** theme-mc *****************************************/
+.theme-mc {
+  /* Column headers */
+  /* section headers & titles */
+  /* Buttons */
+  /* Buttons in the form title bar */
+  /* Button hover color */
+  /* Button hover color in the form title bar */
+  /* Repeating section numbers */
+  /* Active row color */
+  /* Active (focused) field color */
+  /* Autocomplete-lhc colors */
+  /* Calendar widget colors */
+  /* Calendar button styles */ }
+  .theme-mc .lf-form-title {
+    background-color: #3d74bc; }
+  .theme-mc .lf-header-de-label,
+  .theme-mc .lf-column-header,
+  .theme-mc .lf-form-matrix-table .lf-form-table-header,
+  .theme-mc .lf-form-horizontal-table-header {
+    /* for horizontal layout */ }
+  .theme-mc .lf-form-table .lf-form-table-row.lf-section-header,
+  .theme-mc .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+    background-color: #c0dbff; }
+  .theme-mc .lf-form button {
+    background-color: #3d74bc;
+    /* "Add another"/Remove */ }
+  .theme-mc .lf-form .lf-help-button,
+  .theme-mc .lf-form .lf-control-button,
+  .theme-mc .lf-form .lf-copyright-button {
+    /* copyright info button */
+    color: #3d74bc;
+    background-color: transparent; }
+  .theme-mc .lf-form .lf-form-title .lf-help-button,
+  .theme-mc .lf-form .lf-form-title .lf-control-button,
+  .theme-mc .lf-form .lf-form-title .lf-copyright-button {
+    /* copyright info button */
+    color: #3d74bc; }
+  .theme-mc .lf-form .lf-help-button:hover,
+  .theme-mc .lf-form .lf-control-button:hover,
+  .theme-mc .lf-form .lf-copyright-button:hover {
+    /* copyright info button */
+    color: #d1b278; }
+  .theme-mc .lf-form .lf-form-title .lf-help-button:hover,
+  .theme-mc .lf-form .lf-form-title .lf-control-button:hover,
+  .theme-mc .lf-form .lf-form-title .lf-copyright-button:hover {
+    /* copyright info button */
+    color: #d1b278; }
+  .theme-mc .lf-form .lf-de-label span.lf-sn {
+    color: #3d74bc;
+    background-color: transparent;
+    border: 2px solid #3d74bc;
+    border-radius: 0;
+    padding-top: 1px;
+    padding-bottom: 1px; }
+  .theme-mc .lf-form-table-row.active-row {
+    background-color: #f2e3c7; }
+  .theme-mc .lf-form input:focus {
+    background-color: #F2EFDF; }
+  .theme-mc .autocomp_selected li > button {
+    background-color: #D7DADD;
+    /* restoring multi-select button color */ }
+  .theme-mc .autocomp_selected li > button:hover {
+    background-color: #999;
+    /* restoring multi-select button color */ }
+  .theme-mc .ansList.no_match, .theme-mc input[type='text'].ansList.no_match, .theme-mc .search_field.no_match {
+    background-color: #d1b278;
+    /* non-matching field color */ }
+  .theme-mc .autocomplete .heading {
+    background-color: #E8E8E8;
+    /* list heading colors */ }
+  .theme-mc .auto_complete .selected {
+    /* selected list item */
+    background-color: #c0dbff; }
+  .theme-mc .auto_complete li:hover, .theme-mc .auto_complete tr:hover {
+    /* list item hover */
+    background-color: veryLightBaseColor; }
+  .theme-mc .auto_complete .listNum {
+    /* list item number color */
+    color: #3d74bc; }
+  .theme-mc .ui-datepicker .ui-widget-header {
+    /* header */
+    background: #3d74bc; }
+  .theme-mc .ui-datepicker-calendar td a {
+    /* day in shown month */
+    background: #c0dbff;
+    color: black;
+    border-color: #3d74bc; }
+  .theme-mc .ui-datepicker-calendar .ui-datepicker-today a {
+    /* today's date */
+    background-color: #f2e3c7;
+    border-color: #d1b278; }
+  .theme-mc .ui-datepicker-calendar .ui-datepicker-current-day a {
+    /* selected date */
+    background-color: white;
+    border-color: #d1b278; }
+  .theme-mc .ui-datepicker .ui-datepicker-next,
+  .theme-mc .ui-datepicker .ui-datepicker-prev {
+    color: #c0dbff;
+    border: 0; }
+  .theme-mc .ui-datepicker .ui-datepicker-next .ui-icon,
+  .theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon {
+    visibility: hidden;
+    /* glyphicon settings */
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    /* other settings needed with the glyphicon */
+    padding: 0.2em;
+    text-indent: initial; }
+  .theme-mc .ui-datepicker .ui-datepicker-next .ui-icon:before {
+    visibility: visible;
+    content: "\e080"; }
+  .theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+    visibility: visible;
+    content: "\e079"; }
+  .theme-mc .ui-datepicker .ui-datepicker-next:hover,
+  .theme-mc .ui-datepicker .ui-datepicker-prev:hover {
+    background: #c0dbff;
+    color: #3d74bc; }
+  .theme-mc .lf-form .ui-datepicker-trigger {
+    background-color: transparent; }
+  .theme-mc .ui-datepicker-trigger {
+    color: #3d74bc; }
+  .theme-mc .ui-datepicker-trigger:hover {
+    color: #d1b278; }
+  .theme-mc .lf-form {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; }
 
-.theme-mc .lf-form {
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-
-.theme-mc .lf-form-title {
-  background-color: #3d74bc;
-}
-
-/* Column headers */
-.theme-mc .lf-header-de-label, /* for form header questions */
-.theme-mc .lf-column-header, /* for Name/Value/Unit columns */
-.theme-mc .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
-.theme-mc .lf-form-horizontal-table-header { /* for horizontal layout */
-}
-
-/* section headers & titles */
-.theme-mc .lf-form-table .lf-form-table-row.lf-section-header,
-.theme-mc .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
-  background-color: #c0dbff;
-}
-
-/* Buttons */
-.theme-mc .lf-form button {
-  background-color: #3d74bc; /* "Add another"/Remove */
-}
-.theme-mc .lf-form .lf-help-button, /* help button */
-.theme-mc .lf-form .lf-control-button, /* item control button */
-.theme-mc .lf-form .lf-copyright-button { /* copyright info button */
-  color: #3d74bc;
-  background-color: transparent;
-}
-/* Buttons in the form title bar */
-.theme-mc .lf-form .lf-form-title .lf-help-button, /* help button */
-.theme-mc .lf-form .lf-form-title .lf-control-button, /* item control button */
-.theme-mc .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
-  color: #3d74bc;
-}
-
-/* Button hover color */
-.theme-mc .lf-form .lf-help-button:hover, /* help button */
-.theme-mc .lf-form .lf-control-button:hover, /* item control button */
-.theme-mc .lf-form .lf-copyright-button:hover { /* copyright info button */
-   color: #d1b278;
-}
-
-/* Button hover color in the form title bar */
-.theme-mc .lf-form .lf-form-title .lf-help-button:hover, /* help button */
-.theme-mc .lf-form .lf-form-title .lf-control-button:hover, /* item control button */
-.theme-mc .lf-form .lf-form-title .lf-copyright-button:hover { /* copyright info button */
-   color: #d1b278;
-}
-
-/* Repeating section numbers */
-.theme-mc .lf-form .lf-de-label span.lf-sn {
-  color: #3d74bc;
-  background-color: transparent;
-  border: 2px solid #3d74bc;
-  border-radius: 0;
-  padding-top: 1px;
-  padding-bottom: 1px;
-}
-
-/* Active row color */
-.theme-mc .lf-form-table-row.active-row {
-  background-color: #f2e3c7;
-}
-
-/* Active (focused) field color */
-.theme-mc .lf-form input:focus {
-  background-color: #F2EFDF;
-}
-
-/* Autocomplete-lhc colors */
-.theme-mc .autocomp_selected li > button {
-  background-color: #D7DADD; /* restoring multi-select button color */
-}
-.theme-mc .autocomp_selected li > button:hover {
-  background-color: #999; /* restoring multi-select button color */
-}
-.theme-mc .ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
-  background-color: #d1b278; /* non-matching field color */
-}
-.theme-mc .autocomplete .heading {
-  background-color: #E8E8E8; /* list heading colors */
-}
-.theme-mc .auto_complete .selected { /* selected list item */
-  background-color: #c0dbff;
-}
-.theme-mc .auto_complete li:hover,  .auto_complete tr:hover { /* list item hover */
-  background-color: #DBEBFF;
-}
-.theme-mc .auto_complete .listNum { /* list item number color */
-  color: #3d74bc;
-}
-
-
-/* Calendar widget colors */
-.theme-mc .ui-datepicker .ui-widget-header { /* header */
-  background: #3d74bc;
-}
-.theme-mc .ui-datepicker-calendar td a { /* day in shown month */
-  background: #c0dbff;
-  color: black;
-  border-color: #3d74bc;
-}
-.theme-mc .ui-datepicker-calendar .ui-datepicker-today a { /* today's date */
-  background-color:  #f2e3c7;
-  border-color: #d1b278;
-}
-.theme-mc .ui-datepicker-calendar .ui-datepicker-current-day a { /* selected date */
-  background-color: white;
-  border-color: #d1b278;
-}
-
-.theme-mc .ui-datepicker .ui-datepicker-next, /*next/prev buttons*/
-.theme-mc .ui-datepicker .ui-datepicker-prev {
-  color: #c0dbff;
-  border: 0;
-}
-.theme-mc .ui-datepicker .ui-datepicker-next .ui-icon,
-.theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon {
-  visibility: hidden;
-  /* glyphicon settings */
-  display: inline-block;
-  font-family: 'Glyphicons Halflings';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  /* other settings needed with the glyphicon */
-  padding: 0.2em;
-  text-indent: initial;
-}
-.theme-mc .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080";
-}
-.theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079";
-}
-.theme-mc .ui-datepicker .ui-datepicker-next:hover,
-.theme-mc .ui-datepicker .ui-datepicker-prev:hover {
-  background: #c0dbff;
-  color: #3d74bc;
-}
-
-/* Calendar button styles */
-.theme-mc .lf-form .ui-datepicker-trigger {
-  background-color: transparent;
-}
-.theme-mc .ui-datepicker-trigger {
-  color: #3d74bc;
-}
-.theme-mc .ui-datepicker-trigger:hover {
-  color: #d1b278;
-}
+/*# sourceMappingURL=themes.css.map */
