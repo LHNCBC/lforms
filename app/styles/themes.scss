@@ -99,8 +99,9 @@ $paleHighlightColor (active field background color)
   .ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
     background-color: $darkHighlightColor; /* non-matching field color */
   }
-  .autocomplete .heading {
+  .auto_complete .heading, .auto_complete .heading:hover {
     background-color: #E8E8E8; /* list heading colors */
+    color: black;
   }
   .auto_complete .selected { /* selected list item */
     background-color: $lightBaseColor;
