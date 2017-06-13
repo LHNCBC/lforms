@@ -22,7 +22,6 @@ angular.module('lformsWidget')
           changeMonth: true,
           yearRange: '1800:-0',
           showOn: 'button',
-
           constrainInput: false,
           showOtherMonths: true,
           selectOtherMonths: true,
