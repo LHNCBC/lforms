@@ -376,7 +376,6 @@ Override color of select boxes in calendar widget title bar.
 }
 .lf-form-item-data .ui-datepicker-trigger {
   position: absolute;
-  /* background: url("../images/calendar.png") no-repeat scroll transparent;*/
   top: 4px;
   right: 4px;
   width: 16px;
