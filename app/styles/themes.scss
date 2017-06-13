@@ -1,93 +1,22 @@
 /* Theme definitions */
 
-/**************************** Spring theme ****************************/
-
-.theme-spring .lf-form {
-  font-family: Georgia, serif;
-}
-
-.theme-spring .lf-form-title {
-  background-color: #227124;
-}
-
-/* Column headers */
-.theme-spring .lf-header-de-label, /* for form header questions */
-.theme-spring .lf-column-header, /* for Name/Value/Unit columns */
-.theme-spring .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
-.theme-spring .lf-form-horizontal-table-header { /* for horizontal layout */
-  background-color: #E8F0E8;
-}
-
-/* section headers & titles */
-.theme-spring .lf-form-table .lf-form-table-row.lf-section-header,
-.theme-spring .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
-  background-color: #E8F8E8;
-}
-
-/* Buttons */
-.theme-spring .lf-form button {
-  background-color: #289e0b; /* "Add another"/Remove */
-}
-.theme-spring .lf-form .lf-help-button, /* help button */
-.theme-spring .lf-form .lf-control-button, /* item control button */
-.theme-spring .lf-form .lf-copyright-button { /* copyright info button */
-  color: #289e0b;
-  background-color: transparent;
-}
-/* Buttons in the form title bar */
-.theme-spring .lf-form .lf-form-title .lf-help-button, /* help button */
-.theme-spring .lf-form .lf-form-title .lf-control-button, /* item control button */
-.theme-spring .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
-  color: #dcfcd4;
-}
-
-/* Button hover color */
-.theme-spring .lf-form .lf-help-button:hover, /* help button */
-.theme-spring .lf-form .lf-control-button:hover, /* item control button */
-.theme-spring .lf-form .lf-copyright-button:hover { /* copyright info button */
-   color: #27eb05;
-}
-
-/* Button hover color in the form title bar */
-.theme-spring .lf-form .lf-form-title .lf-help-button:hover, /* help button */
-.theme-spring .lf-form .lf-form-title .lf-control-button:hover, /* item control button */
-.theme-spring .lf-form .lf-form-title .lf-copyright-button:hover { /* copyright info button */
-   color: #b4fda7;
-}
-
-/* Repeating section numbers */
-.theme-spring .lf-form .lf-de-label span.lf-sn {
-  background-color: #057341;
-}
-
-/* Active row color */
-.theme-spring .lf-form-table-row.active-row {
-  background-color: #d1f5e6;
-}
-
-/* Calendar widget colors */
-.theme-spring .ui-datepicker .ui-widget-header, /* header */
-.theme-spring .ui-datepicker .ui-state-default { /* day in shown month */
-  background: #23c021;
-}
-
-
-/******************************** MC theme ********************************/
+/******************************** Base theme ********************************/
+/* Styles here get mixed in with the actual theme definitions below. */
 /* Colors:
-Base blue - #3d74bc (all dark blues including calendar heading, calendar box
-outlines, all icons ie. Copyright, calendar, question mark, and settings gear)
+$baseColor (intended for calendar heading, calendar box
+outlines, all icons, i.e. copyright, calendar, question mark, and settings gear)
 
-Lighter blue - #c0dbff (header backgrounds, calendar box backgrounds, previous
+$lightBaseColor (header backgrounds, calendar box backgrounds, previous
 and next month calendar box outlines)
 
-Even lighter blue - #DBEBFF (for mouseover in list)
+$veryLightBaseColor (for mouseover in list)
 
-Highlight yellow - #f2e3c7 (background of highlighted rows and background of
+$highlightColor (background of highlighted rows and background of
 calendar current day box)
 
-Darker yellow - #d1b278 (outline of calendar current day box, rollover of icons)
+$darkHighlightColor (outline of calendar current day box, rollover of icons)
 
-Pale yellow - #F2EFDF (active field background color)
+$paleHighlightColor (active field background color)
 
 */
 
@@ -123,7 +52,7 @@ Pale yellow - #F2EFDF (active field background color)
   .lf-form .lf-form-title .lf-help-button, /* help button */
   .lf-form .lf-form-title .lf-control-button, /* item control button */
   .lf-form .lf-form-title .lf-copyright-button { /* copyright info button */
-    color: $baseColor;
+    color: white;
   }
 
   /* Button hover color */
@@ -177,7 +106,7 @@ Pale yellow - #F2EFDF (active field background color)
     background-color: $lightBaseColor;
   }
   .auto_complete li:hover,  .auto_complete tr:hover { /* list item hover */
-    background-color: veryLightBaseColor;
+    background-color: $veryLightBaseColor;
   }
   .auto_complete .listNum { /* list item number color */
     color: $baseColor;
@@ -192,6 +121,11 @@ Pale yellow - #F2EFDF (active field background color)
     background: $lightBaseColor;
     color: black;
     border-color: $baseColor;
+  }
+  .ui-datepicker-calendar td a:hover { /* day in shown month */
+    background: $baseColor;
+    color: white;
+    border-color: $lightBaseColor;
   }
   .ui-datepicker-calendar .ui-datepicker-today a { /* today's date */
     background-color:  $highlightColor;
@@ -247,7 +181,7 @@ Pale yellow - #F2EFDF (active field background color)
   }
 }
 
-/*************************** theme-mc *****************************************/
+/*************************** MC Theme *****************************************/
 $baseColor: #3d74bc;
 $lightBaseColor: #c0dbff;
 $veryLightBaseColor: #DBEBFF;
@@ -264,8 +198,19 @@ $paleHighlightColor: #F2EFDF;
 
 }
 
-$baseColor: orange;
-.theme-spring {
-//  @include base-theme;
 
+/**************************** Greene theme ****************************/
+$baseColor: #227124;
+$lightBaseColor: #D0F8D0; //E8F8E8;
+$veryLightBaseColor: #F8FFF8;
+$highlightColor: #E5E3CC;
+$darkHighlightColor: #BFB55E;
+$paleHighlightColor: #FFFCE3;
+
+
+.theme-green {
+  @include base-theme;
+
+  font-family: Georgia, serif;
 }
+
