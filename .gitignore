@@ -4,3 +4,5 @@ bower_components
 .*
 !.gitignore
 !.bowerrc
+app/styles/themes.css
+app/styles/themes.css.map
