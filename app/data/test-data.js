@@ -1083,7 +1083,7 @@ var allInOne =
     },
     // a horizontal table, repeatable
     {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "1"},
-      "question": "A repeating horizontal table", "header": true, "layout": "horizontal",
+      "question": "A non-repeating horizontal table", "header": true, "layout": "horizontal",
       "dataControl": [
         {
           "source": {
