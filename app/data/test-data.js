@@ -1081,7 +1081,7 @@ var allInOne =
         {"code": "c4", "text": "2 rows, repeating",      "questionCardinality": {"min": "2", "max": "*"}},
         {"code": "c5", "text": "2 rows, repeating, 5 rows max",  "questionCardinality": {"min": "2", "max": "5"}}],
     },
-    // a horizontal table, repeatable
+    // a horizontal table, non-repeatable
     {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "1"},
       "question": "A non-repeating horizontal table", "header": true, "layout": "horizontal",
       "dataControl": [
