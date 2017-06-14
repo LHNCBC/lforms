@@ -3,17 +3,25 @@
     <title>Test for the compressed build of LForms</title>
     <link rel="stylesheet" href="latestBuild/styles/lforms.min.css" />
   </head>
-  <body ng-app="testApp">
-    <div ng-controller="testController">
+  <body ng-app="testApp" ng-controller="testController" ng-class="theme.code ? 'theme-'+theme.code : ''">
+    <div>
+      <div id="themeList">
+        <label for="theme" id="themeLabel">Theme:</label>
+        <input id="theme" autocomplete-lhc="themeList" ng-model="theme">
+      </div>
+
       <lforms lf-data="testForm"></lforms>
     </div>
     <script src="latestBuild/lforms.min.js"></script>
     <script src="/data/test-data.js"></script>
+    <script src="themeList.js"></script>
     <script>
       angular.module('testApp', ['lformsWidget'])
        .controller('testController', ['$scope', function ($scope) {
           // allInOne is defined in test-data.js
           $scope.testForm = new LForms.LFormsData(allInOne);
+
+          $scope.themeList = themeList; // see themeList.js
       }]);
     </script>
   </body>

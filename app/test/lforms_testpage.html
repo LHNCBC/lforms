@@ -85,6 +85,7 @@
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
     <script src="data/fhir-sdc-response-ussgfht.js"></script>
+    <script src="test/themeList.js"></script>
     <!-- end of test data files -->
 
     <!-- lforms-converter files -->
@@ -101,14 +102,7 @@
           .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q',
               function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q) {
 
-            $scope.themeList = {
-              defaultValue: "Default",
-              listItems: [
-                {text: "Default"},
-                {text: "Green", code: "green"},
-                {text: "MC", code: "mc"}
-              ]
-            };
+            $scope.themeList = themeList; // see themeList.js
 
             $scope.selectedForm = null;
             $scope.testForms = [
