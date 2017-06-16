@@ -257,7 +257,7 @@ LForms.HL7 = (function() {
             // if (formData.items[j].header) {
             //   formInfo.obxIndex = 1;
             // }
-            hl7String += this._itemToField(formData.items[j], formInfo);
+            hl7String += this._itemToHL7v2(formData.items[j], formInfo);
           }
         }
       }
@@ -388,7 +388,7 @@ LForms.HL7 = (function() {
      * @param formInfo index info of the form
      * @returns {string}
      */
-    _itemToField: function(item, formInfo) {
+    _itemToHL7v2: function(item, formInfo) {
       var hl7Seg = "";
       var questionCS = this.LOINC_CS;
 
@@ -429,7 +429,7 @@ LForms.HL7 = (function() {
               // if (item.items[j].header) {
               //   //formInfo.obxIndex = 1;
               // }
-              hl7Seg += this._itemToField(item.items[j], formInfo);
+              hl7Seg += this._itemToHL7v2(item.items[j], formInfo);
             }
           }
         }
