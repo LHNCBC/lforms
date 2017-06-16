@@ -172,6 +172,9 @@ LForms.HL7 = (function() {
         case "CWE":
             ret = lformsDataType;
           break;
+        // Commenting out these cases which are handled by the default, but
+        // leaving them here for reference.
+        /*
         case "BIN":
         case "RTO":
         case "QTY":
@@ -185,7 +188,7 @@ LForms.HL7 = (function() {
         case "":
         case "ST":
           ret = "ST";
-          break;
+          break; */
         default:
           ret = "ST";
       }
