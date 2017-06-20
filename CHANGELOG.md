@@ -6,6 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - The HL7 v2 output has changed.  In particular, for questions with repeating
   answers, each answer is now in a separate OBX record.
+- Added a themes capability, with two new themes.
 
 ## [11.5.0]  2017-05-18
 ### Added
