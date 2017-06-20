@@ -4,3 +4,4 @@ bower_components
 .*
 !.gitignore
 !.bowerrc
+*css.map

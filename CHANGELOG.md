@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+# [12.0.0]  TBD (pending another pending breaking change)
+### Changed
+- The HL7 v2 output has changed.  In particular, for questions with repeating
+  answers, each answer is now in a separate OBX record.
+
 ## [11.5.0]  2017-05-18
 ### Added
 - Added support for disabling CNE/CWE items (autocomplete input fields or radio buttons/checkboxes) 
