@@ -58,6 +58,17 @@ module.exports = function (grunt) {
     },
 
 
+    sass: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          'app/styles/themes.css': 'app/styles/themes.scss'
+        }
+      }
+    },
+
     shell: {
       dist_dir_link: {
         // Make a softlink to the versioned dist directory, for the tests
@@ -469,6 +480,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'wiredep',
+      'sass',
       'ngtemplates',
       'concurrent:server',
       'autoprefixer',
@@ -515,6 +527,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'ngtemplates',
+    'sass',
     'readBowerVersion',
     'copy:dist',
     'cssmin',

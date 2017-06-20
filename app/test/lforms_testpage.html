@@ -19,10 +19,12 @@
 
     <!-- lforms directive css files -->
     <link rel="stylesheet" href="styles/lforms.css">
+    <link rel="stylesheet" href="styles/themes.css">
     <!-- end of lforms directive css files -->
 
   </head>
-  <body ng-app="lformsTestApp">
+  <!-- Theme class needs to be on "body" for the jQuery datepicker -->
+  <body ng-app="lformsTestApp" ng-class="theme.code ? 'theme-'+theme.code : ''" ng-controller="lformsTestController">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -83,6 +85,7 @@
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
     <script src="data/fhir-sdc-response-ussgfht.js"></script>
+    <script src="test/themeList.js"></script>
     <!-- end of test data files -->
 
     <!-- lforms-converter files -->
@@ -98,6 +101,9 @@
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q',
               function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q) {
+
+            $scope.themeList = themeList; // see themeList.js
+
             $scope.selectedForm = null;
             $scope.testForms = [
               {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
@@ -350,7 +356,7 @@
           }]);
     </script>
 
-    <div id="lforms-form" ng-controller="lformsTestController">
+    <div id="lforms-form">
       <div class="panel panel-default">
         <div class="panel-heading">LForms Directive Test Page</div>
         <div class="panel-body">
@@ -373,6 +379,12 @@
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QR to LForms (USSGFH)</button>
 
         </div>
+      </div>
+
+      <div id="themeList"
+       ng-attr-style="margin-left: 1em; display: {{lfData2 ? 'block': 'none'}}">
+        <label for="theme" id="themeLabel">Theme:</label>
+        <input id="theme" autocomplete-lhc="themeList" ng-model="theme">
       </div>
 
       <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>

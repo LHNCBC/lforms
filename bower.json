@@ -51,6 +51,7 @@
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
     "app/styles/lforms.css",
+    "app/styles/themes.css",
     "app/lforms.tpl.js"
   ],
   "keywords": [

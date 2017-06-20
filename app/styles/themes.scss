@@ -1,0 +1,232 @@
+/* Theme definitions - generated from themes.scss via "grunt sass" */
+
+//******************************** Base theme ********************************/
+// Styles here get mixed in with the actual theme definitions below.
+//
+// Colors:
+// $baseColor (intended for calendar heading, calendar box
+//   outlines, all icons, i.e. copyright, calendar, question mark, and settings gear)
+//
+// $lightBaseColor (header backgrounds, calendar box backgrounds, previous
+//   and next month calendar box outlines)
+//
+// $veryLightBaseColor (for mouseover in list)
+//
+// $highlightColor (background of highlighted rows and background of
+//   calendar current day box)
+//
+// $darkHighlightColor (outline of calendar current day box, rollover of icons)
+//
+// $paleHighlightColor (active field background color)
+
+@mixin base-theme {
+  .lf-form-title {
+    background-color: $baseColor;
+  }
+
+  // Column headers - here for reference, but not used
+  // .lf-header-de-label, /* for form header questions */
+  // .lf-column-header, /* for Name/Value/Unit columns */
+  // .lf-form-matrix-table .lf-form-table-header, /* for matrix layout */
+  // .lf-form-horizontal-table-header { /* for horizontal layout */
+  // }
+
+  .lf-form-table .lf-form-table-row.lf-section-header,
+  .lf-form-horizontal-table-title,
+  .lf-form-matrix-table-title,
+  .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+    /* section headers & titles */
+    background-color: $lightBaseColor;
+  }
+
+  // Buttons
+  .lf-form button {
+    /* "Add another"/Remove buttons*/
+    background-color: $baseColor;
+  }
+  .lf-form .lf-help-button, // help button
+  .lf-form .lf-control-button, // item control button
+  .lf-form .lf-copyright-button { // copyright info button
+    /* Item buttons */
+    color: $baseColor;
+    background-color: transparent;
+  }
+  .lf-form .lf-form-title .lf-help-button, // help button
+  .lf-form .lf-form-title .lf-control-button, // item control button
+  .lf-form .lf-form-title .lf-copyright-button { // copyright info button
+    /* Buttons in the form title bar */
+    color: white;
+  }
+  .lf-form .lf-help-button:hover, // help button
+  .lf-form .lf-control-button:hover, // item control button
+  .lf-form .lf-copyright-button:hover { // copyright info button
+     /* Item button hover color */
+     color: $darkHighlightColor;
+  }
+  .lf-form .lf-form-title .lf-help-button:hover, // help button/
+  .lf-form .lf-form-title .lf-control-button:hover, // item control button
+  .lf-form .lf-form-title .lf-copyright-button:hover { // copyright info button
+     /* Item button hover color in the form title bar */
+     color: $darkHighlightColor;
+  }
+
+  .lf-form .lf-de-label span.lf-sn {
+    /* Repeating section numbers */
+    color: $baseColor;
+    background-color: transparent;
+    border: 2px solid $baseColor;
+    border-radius: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .lf-form-table-row.active-row {
+    /* Active row color */
+    background-color: $highlightColor;
+  }
+
+  .lf-form input:focus {
+    /* Active (focused) field color */
+    background-color: $paleHighlightColor;
+  }
+
+  // Autocomplete-lhc colors
+  .autocomp_selected li > button {
+    background-color: #D7DADD; /* restoring multi-select button color */
+  }
+  .autocomp_selected li > button:hover {
+    background-color: #999; /* restoring multi-select button color */
+  }
+  .ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
+    /* non-matching field color */
+    background-color: $darkHighlightColor;
+  }
+  .auto_complete .heading, .auto_complete .heading:hover {
+    /* list heading colors */
+    background-color: #E8E8E8;
+    color: black;
+  }
+  .auto_complete .selected {
+    /* selected list item */
+    background-color: $lightBaseColor;
+  }
+  .auto_complete li:hover,  .auto_complete tr:hover {
+    /* list item hover */
+    background-color: $veryLightBaseColor;
+  }
+  .auto_complete .listNum {
+    /* list item number color */
+    color: $baseColor;
+  }
+
+
+  // Calendar widget colors
+  .ui-datepicker .ui-widget-header {
+    /* calendar header */
+    background: $baseColor;
+  }
+  .ui-datepicker-calendar td a {
+    /* Colors for days in currently shown month */
+    background: $lightBaseColor;
+    color: black;
+    border-color: $baseColor;
+  }
+  .ui-datepicker-calendar td a:hover {
+    /* Hover colors for days in currently shown month */
+    background: $baseColor;
+    color: white;
+    border-color: $lightBaseColor;
+  }
+  .ui-datepicker-calendar .ui-datepicker-today a {
+    /* Today's date in the calendar widget */
+    background-color:  $highlightColor;
+    border-color: $darkHighlightColor;
+  }
+  .ui-datepicker-calendar .ui-datepicker-current-day a {
+    /* Selected date in the calendar */
+    background-color: white;
+    border-color: $darkHighlightColor;
+  }
+  .ui-datepicker .ui-datepicker-next,
+  .ui-datepicker .ui-datepicker-prev {
+    /* next/prev buttons in the calendar*/
+    color: $lightBaseColor;
+    border: 0;
+  }
+  .ui-datepicker .ui-datepicker-next .ui-icon,
+  .ui-datepicker .ui-datepicker-prev .ui-icon {
+    /* next/prev buttons in the calendar*/
+    visibility: hidden;
+    /* glyphicon settings */
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    /* other settings needed with the glyphicon */
+    padding: 0.2em;
+    text-indent: initial;
+  }
+  .ui-datepicker .ui-datepicker-next .ui-icon:before {
+    visibility: visible;
+    content: "\e080";
+  }
+  .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+    visibility: visible;
+    content: "\e079";
+  }
+  .ui-datepicker .ui-datepicker-next:hover,
+  .ui-datepicker .ui-datepicker-prev:hover {
+    background: $lightBaseColor;
+    color: $baseColor;
+  }
+
+  // Calendar trigger button styles
+  .lf-form .ui-datepicker-trigger {
+    /* Calendar trigger button */
+    background-color: transparent;
+  }
+  .ui-datepicker-trigger {
+    color: $baseColor;
+  }
+  .ui-datepicker-trigger:hover {
+    color: $darkHighlightColor;
+  }
+}
+
+/*************************** MC Theme *****************************************/
+$baseColor: #3d74bc;
+$lightBaseColor: #c0dbff;
+$veryLightBaseColor: #DBEBFF;
+$highlightColor: #f2e3c7;
+$darkHighlightColor: #d1b278;
+$paleHighlightColor: #F2EFDF;
+
+.theme-mc {
+  @include base-theme;
+
+  .lf-form {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+
+}
+
+
+/**************************** Green theme ****************************/
+$baseColor: #227124;
+$lightBaseColor: #D0F8D0; //E8F8E8;
+$veryLightBaseColor: #F8FFF8;
+$highlightColor: #E5E3CC;
+$darkHighlightColor: #BFB55E;
+$paleHighlightColor: #FFFCE3;
+
+
+.theme-green {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+

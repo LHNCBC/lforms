@@ -36,6 +36,8 @@
 }
 .lf-form-title .lf-question {
   font-size: 120%;
+  /* Center title within containing div */
+  vertical-align: text-top;
 }
 
 /* lf-form-header */
@@ -109,6 +111,8 @@
   font-weight: bold;
   color: white;
   padding: 1px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 .lf-form .lf-help-button,
 .lf-form .lf-control-button,
@@ -200,26 +204,6 @@
   font-weight: 400;
   color: #999999;
   opacity: 1;
-}
-
-/* date picker */
-.lf-form-item-data .ui-datepicker {
-  font-size: 80%;
-}
-.lf-form-item-data {
-  position: relative;
-}
-.lf-form-item-data .ui-datepicker-trigger {
-  position: absolute;
-  background: url("../images/calendar.png") no-repeat scroll transparent;
-  top: 8px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
-  z-index: 10;
-}
-.lf-form-item-data .ui-datepicker-trigger:hover {
-  background-image: url("../images/calendar-hover.png");
 }
 
 /* active row */
@@ -392,15 +376,20 @@ Override color of select boxes in calendar widget title bar.
 }
 .lf-form-item-data .ui-datepicker-trigger {
   position: absolute;
-  background: url("../images/calendar.png") no-repeat scroll transparent;
-  top: 8px;
+  top: 4px;
   right: 4px;
   width: 16px;
   height: 16px;
   z-index: 10;
+  background: transparent;
+  color: #066aa0;
+  font-family: 'Glyphicons Halflings';
+}
+.lf-form-item-data .ui-datepicker-trigger:before {
+  content: "\e109";
 }
 .lf-form-item-data .ui-datepicker-trigger:hover {
-  background-image: url("../images/calendar-hover.png");
+  color: #0087fd;
 }
 
 /* popover dialog */
@@ -741,6 +730,10 @@ Override color of select boxes in calendar widget title bar.
 .lf-form-control {
   order: 1;
   flex-grow: 1;
+}
+.lf-form-control input {
+  /* Turn off top margin so these align with "Total # of Questions" */
+  margin-top: 0;
 }
 /* form options, item options */
 .lf-form-options,
