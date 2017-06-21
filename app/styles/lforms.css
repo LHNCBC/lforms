@@ -292,6 +292,7 @@
   text-align: left;
 
   border-width: 0;
+  border-top: 2px solid white; /* leave space between headers */
   padding: 4px 0 4px 0;
 }
 /* column headers in tables */
@@ -433,6 +434,7 @@ Override color of select boxes in calendar widget title bar.
   text-align: left;
 
   border-width: 0;
+  border-top: 2px solid white; /* leave space between headers */
   padding: 4px 0 4px 0;
 }
 
@@ -997,6 +999,7 @@ Override color of select boxes in calendar widget title bar.
   margin: 0 4px 0 2px;
 
   border-width: 0;
+  border-top: 2px solid white; /* leave space between headers */
 }
 .lf-form-table .lf-form-table-row.lf-section-header .lf-de-label-button  {
   padding: 4px 0 4px 0;
@@ -1004,6 +1007,7 @@ Override color of select boxes in calendar widget title bar.
 /* title row */
 .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row  {
   background-color: #e6f1ff; /*rgb(67,115,156);*/
+  border-top: 2px solid white; /* leave space between headers */
 }
 .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row .lf-de-label {
   /*color: white;*/
