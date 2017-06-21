@@ -4,13 +4,6 @@ describe('horizontal table', function() {
   var tp = require('./lforms_testpage.po.js');
 
   describe('should have BLANK_GIF_DATAURL', function() {
-    it('in datepicker img tags', function() {
-      tp.openDirectiveTest();
-
-      expect(element.all(by.css('img.ui-datepicker-trigger'))
-        .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
-    });
-
     it('in datepicker stop-sign image tag', function() {
       expect(element.all(by.css('img.stop-sign'))
         .getAttribute('src')).toContain(BLANK_GIF_DATAURL);
@@ -22,7 +15,7 @@ describe('horizontal table', function() {
 
     // there is an add button
     expect(element.all(by.css('.lf-float-button')).get(2).isPresent()).toBe(true);
-    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('Add another "This family member\'s history of disease"');
+    expect(element.all(by.css('.lf-float-button')).get(2).getText()).toBe('+ Add another "This family member\'s history of disease"');
   });
 
   it('should still have two remove buttons visible after the user adds a row', function() {
@@ -35,7 +28,7 @@ describe('horizontal table', function() {
     // the second row has a '-' button
     expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('Add another "This family member\'s history of disease"');
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('+ Add another "This family member\'s history of disease"');
 
   });
 
@@ -51,7 +44,7 @@ describe('horizontal table', function() {
     // the third row has a '-' button
     expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.lf-float-button')).get(5).getText()).toBe('Add another "This family member\'s history of disease"');
+    expect(element.all(by.css('.lf-float-button')).get(5).getText()).toBe('+ Add another "This family member\'s history of disease"');
   });
 
   it('should have the 2 rows after the user removes the 2nd row', function() {
@@ -63,7 +56,7 @@ describe('horizontal table', function() {
     // the second row has a '-' button
     expect(element.all(by.css('.lf-float-button')).get(3).getText()).toBe('-');
     // and an add button
-    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('Add another "This family member\'s history of disease"');
+    expect(element.all(by.css('.lf-float-button')).get(4).getText()).toBe('+ Add another "This family member\'s history of disease"');
   });
 
   describe('autocomp list inside lforms directive', function() {
