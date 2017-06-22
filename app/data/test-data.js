@@ -994,7 +994,7 @@ var allInOne =
                 "sourceItemCode":"itemWithExtraData"
               },
               "construction":"ARRAY",
-              "dataFormat":{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"},
+              "dataFormat":{"code": "value.data.RXCUIS", "text": "value.data.STRENGTHS_AND_FORMS"},
               "onAttribute":"answers"
             }
           ]
@@ -1012,7 +1012,7 @@ var allInOne =
                 "sourceItemCode":"itemWithExtraData"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.STRENGTHS_AND_FORMS[0]",
+              "dataFormat": "value.data.STRENGTHS_AND_FORMS[0]",
               "onAttribute":"value"
             }
           ]
@@ -1550,8 +1550,8 @@ var rxTerms = {
                       "sourceItemCode": "nameAndRoute"
                     },
                     "construction": "ARRAY",
-                    "dataFormat": {"code": "value.RXCUIS",
-                      "text": "value.STRENGTHS_AND_FORMS"},
+                    "dataFormat": {"code": "value.data.RXCUIS",
+                      "text": "value.data.STRENGTHS_AND_FORMS"},
                     "onAttribute": "answers"
                   }
                 ]
@@ -1713,7 +1713,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.code", "text": "value.GeneSymbol"},
+              "dataFormat":{"code": "value.code", "text": "value.data.GeneSymbol"},
               "onAttribute":"value"
             }
           ]
@@ -1729,7 +1729,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.code", "text": "value.RefSeqID"},
+              "dataFormat":{"code": "value.code", "text": "value.data.RefSeqID"},
               "onAttribute":"value"
             }
           ]
@@ -1744,7 +1744,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.NucleotideChange",
+              "dataFormat": "value.data.NucleotideChange",
               "onAttribute":"value"
             }
           ]
@@ -1759,7 +1759,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.AminoAcidChange",
+              "dataFormat": "value.data.AminoAcidChange",
               "onAttribute":"value"
             }
           ]
@@ -1773,7 +1773,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.ReferenceAllele",
+              "dataFormat": "value.data.ReferenceAllele",
               "onAttribute":"value"
             }
           ]
@@ -1790,7 +1790,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.AlternateAllele",
+              "dataFormat": "value.data.AlternateAllele",
               "onAttribute":"value"
             }
           ]
@@ -1866,7 +1866,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.code", "text": "value.Cytogenetic"},
+              "dataFormat":{"code": "value.code", "text": "value.data.Cytogenetic"},
               "onAttribute":"value"
             }
           ]
@@ -1934,7 +1934,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.phenotype",
+              "dataFormat":"value.data.phenotype",
               "onAttribute":"value"
             }
           ]
@@ -1953,7 +1953,7 @@ var genetic = {
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat": {"text": "value.dbSNP", "code": "value.code"},
+              "dataFormat": {"text": "value.data.dbSNP", "code": "value.code"},
               "onAttribute":"value"
             }
           ]
@@ -1996,7 +1996,7 @@ var genetic = {
                 "sourceItemCode":"48018-6"
               },
               "construction":"OBJECT",
-              "dataFormat": {"text": "value.refseq_accession", "code": "value.code"},
+              "dataFormat": {"text": "value.data.refseq_accession", "code": "value.code"},
               "onAttribute":"value"
             }
           ]
@@ -2236,7 +2236,7 @@ var genetic2 ={
                 "sourceItemCode":"XXXXX-5"
               },
                 "construction":"SIMPLE",
-                "dataFormat": "value.Name",
+                "dataFormat": "value.data.Name",
                 "onAttribute":"value"
             }
           ]
@@ -2298,7 +2298,7 @@ var genetic2 ={
                     "sourceItemCode":"XXXXX-5"
                   },
                   "construction":"OBJECT",
-                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "dataFormat": {"code": "value.code", "text": "value.data.GeneSymbol"},
                   "onAttribute":"value"
                 }
               ],
@@ -2322,7 +2322,7 @@ var genetic2 ={
                     "sourceItemCode":"XXXXX-5"
                   },
                   "construction":"OBJECT",
-                  "dataFormat": {"code": "value.code", "text": "value.RefSeqID"},
+                  "dataFormat": {"code": "value.code", "text": "value.data.RefSeqID"},
                   "onAttribute":"value"
                 }
               ]
@@ -2342,7 +2342,7 @@ var genetic2 ={
                     "sourceItemCode":"XXXXX-5"
                   },
                   "construction":"OBJECT",
-                  "dataFormat": {"code": "value.code", "text": "value.NucleotideChange"},
+                  "dataFormat": {"code": "value.code", "text": "value.data.NucleotideChange"},
                   "onAttribute":"value"
                 }
               ]
@@ -2362,7 +2362,7 @@ var genetic2 ={
                     "sourceItemCode":"XXXXX-5"
                   },
                   "construction":"OBJECT",
-                  "dataFormat": {"code": "value.code", "text": "value.AminoAcidChange"},
+                  "dataFormat": {"code": "value.code", "text": "value.data.AminoAcidChange"},
                   "onAttribute":"value"
                 }
               ]
@@ -2412,7 +2412,7 @@ var genetic2 ={
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat": {"code": "value.code", "text": "value.dbSNP"},
+              "dataFormat": {"code": "value.code", "text": "value.data.dbSNP"},
               "onAttribute":"value"
             }
           ]
@@ -2442,7 +2442,7 @@ var genetic2 ={
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"OBJECT",
-              "dataFormat": {"code": "value.code", "text": "value.Cytogenetic"},
+              "dataFormat": {"code": "value.code", "text": "value.data.Cytogenetic"},
               "onAttribute":"value"
             }
           ]
@@ -2569,7 +2569,7 @@ var genetic2 ={
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.phenotype",
+              "dataFormat": "value.data.phenotype",
               "onAttribute":"value"
             }
           ]
@@ -2607,7 +2607,7 @@ var genetic2 ={
                 "sourceItemCode":"XXXXX-5"
               },
               "construction":"SIMPLE",
-              "dataFormat": "value.Name",
+              "dataFormat": "value.data.Name",
               "onAttribute":"value"
             }
           ]
@@ -2700,7 +2700,7 @@ var genetic2 ={
                     "sourceItemCode":"XXXXX-5"
                   },
                   "construction":"OBJECT",
-                  "dataFormat": {"code": "value.code", "text": "value.GeneSymbol"},
+                  "dataFormat": {"code": "value.code", "text": "value.data.GeneSymbol"},
                   "onAttribute":"value"
                 }
               ],

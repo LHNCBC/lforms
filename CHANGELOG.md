@@ -2,11 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-# [12.0.0]  TBD (pending another pending breaking change)
+# [12.0.0]
 ### Changed
 - The HL7 v2 output has changed.  In particular, for questions with repeating
   answers, each answer is now in a separate OBX record.
 - Added a themes capability, with two new themes.
+- List fields whose data comes from an external source (via the URL in the
+  "externallyDefined" property) have a revised format for the content of the
+  AngularJS data model.  This will only affect you if you are accessing the data
+  model directly.  The change is that any extra data properties for a selected
+  item (other than the "text" and "code" properties) are now placed inside
+  value.data, instead of directly on the item value object.
 
 ## [11.5.0]  2017-05-18
 ### Added
