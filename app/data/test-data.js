@@ -758,7 +758,11 @@ var allInOne =
       "question": "'lg' view mode",
       "dataType": "INT",
       "displayControl": {
-        "viewMode": "lg"
+        "viewMode": "lg",
+        "css": [{
+          "name": "color",
+          "value": "red"
+        }]
       },
       "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
     },

@@ -1,6 +1,6 @@
 <div class="lf-table-item {{getSiblingStatus(item)}}">
   <!-- question -->
-  <lf-item></lf-item>
+  <lf-item ng-style="getItemStyle(item)"></lf-item>
 
   <!--sub sections, check each item's layout -->
   <div ng-if="item.items" class="section">
