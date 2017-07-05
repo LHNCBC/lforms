@@ -711,7 +711,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('table-item.html',
     "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" +
     "  <!-- question -->\n" +
-    "  <lf-item></lf-item>\n" +
+    "  <lf-item ng-style=\"getItemStyle(item)\"></lf-item>\n" +
     "\n" +
     "  <!--sub sections, check each item's layout -->\n" +
     "  <div ng-if=\"item.items\" class=\"section\">\n" +

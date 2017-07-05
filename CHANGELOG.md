@@ -2,7 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-# [12.0.0]
+## [12.1.0]  2017-06-28
+### Changed
+- CSS styles in displayControl.css can now be applied to the item.
+
+## [12.0.0]  2017-06-22
 ### Changed
 - The HL7 v2 output has changed.  In particular, for questions with repeating
   answers, each answer is now in a separate OBX record.

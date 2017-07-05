@@ -311,4 +311,16 @@ describe('display controls demo', function() {
     expect(item5c4.isEnabled()).toBe(false);
 
   });
+
+  it('should show changed font color', function() {
+    tp.openFullFeaturedForm();
+
+    var label1 = element(by.id('label-/q_lg/1'));
+
+    browser.wait(function () {
+      return label1.isDisplayed();
+    }, 5000);
+    expect(label1.getCssValue('color')).toBe('rgba(255, 0, 0, 1)'); // red
+
+  });
 });
