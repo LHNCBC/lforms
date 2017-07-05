@@ -145,7 +145,11 @@ module.exports = function (grunt) {
       },
       livereload: {
         options: {
-          open: true,
+          //open: true,
+          open: {
+            target: '<%= connect.options.hostname %>:<%= connect.options.port %>',
+            appName: 'firefox'
+          },
           middleware: function (connect) {
             return [
               connect.static('.tmp'),

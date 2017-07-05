@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+# [12.0.2]
+### Changed
+- Added support back for displayControl.colCSS of items in formHeaderItems.
+
 # [12.0.0]
 ### Changed
 - The HL7 v2 output has changed.  In particular, for questions with repeating

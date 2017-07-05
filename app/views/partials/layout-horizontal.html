@@ -42,7 +42,7 @@
     <colgroup>
       <col class="lf-de-button" ng-if="item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1">
       <col ng-repeat="col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders"
-           ng-style="{{getTableColumnStyle(col)}}">
+           ng-style="getTableColumnStyle(col)">
     </colgroup>
     <thead>
     <tr>
