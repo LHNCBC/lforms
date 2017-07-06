@@ -255,15 +255,15 @@ angular.module('lformsWidget')
          * @returns {{}} CSS style object
          */
         $scope.getHeaderItemStyle = function(col) {
-          var ret = null;
+          var ret = {};
           if (col.displayControl &&
               angular.isArray(col.displayControl.colCSS)) {
             // only when the view mode is lg, i.e. the items are listed like table columns
             var viewModeClass = $scope.getViewModeClass();
             if (viewModeClass === 'lf-view-lg') {
-              ret = {};
-              for (var i = 0, iLen = col.displayControl.colCSS.length; i < iLen; i++) {
-                var css = col.displayControl.colCSS[i];
+              var colCSS = col.displayControl.colCSS;
+              for (var i = 0, iLen = colCSS.length; i < iLen; i++) {
+                var css = colCSS[i];
                 ret[css.name] = css.value;
               }
             }
@@ -280,8 +280,9 @@ angular.module('lformsWidget')
         $scope.getTableColumnStyle = function(col) {
           var ret = {};
           if (col.displayControl && angular.isArray(col.displayControl.colCSS)) {
-            for (var i= 0, iLen= col.displayControl.colCSS.length; i<iLen; i++) {
-              var css = col.displayControl.colCSS[i];
+            var colCSS = col.displayControl.colCSS;
+            for (var i= 0, iLen= colCSS.length; i<iLen; i++) {
+              var css = colCSS[i];
               ret[ css.name ] = css.value;
             }
           }
