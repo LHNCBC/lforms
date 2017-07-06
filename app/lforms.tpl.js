@@ -112,7 +112,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-header.html',
     "  <div class=\"lf-form-header\" ng-if=\"lfData.templateOptions.showFormHeader\">\n" +
-    "    <div class=\"lf-header-de\" ng-repeat=\"item in lfData.templateOptions.formHeaderItems\">\n" +
+    "    <div class=\"lf-header-de\" ng-style=\"getHeaderItemStyle(item)\"\n" +
+    "         ng-repeat=\"item in lfData.templateOptions.formHeaderItems\">\n" +
     "      <div class=\"lf-header-de-label\">\n" +
     "        <span class=\"lf-question\"><label for=\"{{item.questionCode}}\">{{item.question}}</label></span>\n" +
     "      </div>\n" +
@@ -140,7 +141,6 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                      id=\"{{item.questionCode}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
     "                      ng-blur=\"activeRowOnBlur(item)\">\n" +
     "                      </textarea>\n" +
-    "\n" +
     "          </div>\n" +
     "        </ng-form>\n" +
     "      </div>\n" +
@@ -450,7 +450,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <colgroup>\n" +
     "      <col class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" +
     "      <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" +
-    "           ng-style=\"{{getTableColumnStyle(col)}}\">\n" +
+    "           ng-style=\"getTableColumnStyle(col)\">\n" +
     "    </colgroup>\n" +
     "    <thead>\n" +
     "    <tr>\n" +

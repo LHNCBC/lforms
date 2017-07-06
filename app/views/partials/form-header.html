@@ -1,5 +1,6 @@
   <div class="lf-form-header" ng-if="lfData.templateOptions.showFormHeader">
-    <div class="lf-header-de" ng-repeat="item in lfData.templateOptions.formHeaderItems">
+    <div class="lf-header-de" ng-style="getHeaderItemStyle(item)"
+         ng-repeat="item in lfData.templateOptions.formHeaderItems">
       <div class="lf-header-de-label">
         <span class="lf-question"><label for="{{item.questionCode}}">{{item.question}}</label></span>
       </div>
@@ -27,7 +28,6 @@
                       id="{{item.questionCode}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
                       ng-blur="activeRowOnBlur(item)">
                       </textarea>
-
           </div>
         </ng-form>
       </div>

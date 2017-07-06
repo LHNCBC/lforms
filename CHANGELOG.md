@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.2.0]
+### Changed
+- Added support back for displayControl.colCSS of items in formHeaderItems.
+
 ## [12.1.0]  2017-06-28
 ### Changed
 - CSS styles in displayControl.css can now be applied to the item.
