@@ -201,6 +201,59 @@ describe('Responsive display layout', function() {
       expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
 
     });
+  });
+});
+
+describe('displayControl.colCSS in formHeaderItems', function() {
+
+  it('displayControl.colCSS in formHeaderItems should work in lg view mode', function () {
+    tp.openFullFeaturedForm();
+    browser.wait(function () {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
+
+    // break points, 800
+    browser.executeScript('jQuery(".lf-form-view").width(801)').then(function () {
+      element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
+        expect(eleSize.width).toEqual(801);
+      });
+      expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("width: 10em; min-width: 4em;");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("56px");
+      expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("width: 12em; min-width: 4em;");
+      expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("width: 30%; min-width: 4em;");
+      expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("width: 70%; min-width: 4em;");
+    });
+  });
+
+  it('displayControl.colCSS in formHeaderItems should not work in md or sm view mode', function () {
+    tp.openFullFeaturedForm();
+    browser.wait(function () {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
+
+    // break points, 800
+    browser.executeScript('jQuery(".lf-form-view").width(799)').then(function () {
+      element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
+        expect(eleSize.width).toEqual(799);
+      });
+      expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
+    });
+
+    // break points, 480
+    browser.executeScript('jQuery(".lf-form-view").width(479)').then(function () {
+      element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
+        expect(eleSize.width).toEqual(479);
+      });
+      expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
+      expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
+    });
 
   });
 
