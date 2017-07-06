@@ -254,7 +254,20 @@ describe('displayControl.colCSS in formHeaderItems', function() {
       expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
     });
-
   });
+});
 
+
+describe('displayControl.colCSS in horizontal table', function() {
+
+  it('displayControl.colCSS should work for items in horizontal tables', function () {
+    tp.openFullFeaturedForm();
+    browser.wait(function () {
+      return element(by.id('/type0/1')).isPresent();
+    }, 5000);
+
+    expect(element.all(by.css(".lf-form-horizontal-table col")).first().getAttribute("style")).toBe("width: 25%; min-width: 10%;");
+    expect(element.all(by.css(".lf-form-horizontal-table col")).get(1).getAttribute("style")).toBe("width: 25%; min-width: 15%;");
+    expect(element.all(by.css(".lf-form-horizontal-table col")).get(2).getAttribute("style")).toBe("width: 50%;");
+  });
 });
