@@ -250,7 +250,7 @@ about the meaning of each key:
         * default - If true, this unit will be the default unit, which means it
           will show up in the field when the question is shown and the user does
           not have to pick it.  If false, this key can be omitted.
-    * editable - (optional) If "0" the input field is readonly, any other value 
+    * editable - (optional) If "0" the input field is readonly/disabled, any other value 
       makes the input field editable.
     * header - If true, then this is not a question but a section, which can
       contain its own <a href="#items">items</a> array of questions and sections.
