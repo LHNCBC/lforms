@@ -632,7 +632,7 @@ describe('Validations:', function() {
   });
 
 
-  describe('validation messages should shown in horizontal table', function () {
+  describe('validation messages should be shown in horizontal table', function () {
 
     var height1 = element(by.id("/54114-4/54117-7/8302-2/1/1/1"));
     var weight1 = element(by.id("/54114-4/54117-7/29463-7/1/1/1"));
