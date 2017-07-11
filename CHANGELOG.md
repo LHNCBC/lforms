@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.3.0]
+### Added
+- Added cyan and teal color themes.
+
 ## [12.2.0]
 ### Changed
 - Added support back for displayControl.colCSS of items in formHeaderItems.
