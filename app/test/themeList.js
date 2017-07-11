@@ -5,6 +5,8 @@ window.themeList = {
   listItems: [
     {text: "Default"},
     {text: "Green", code: "green"},
-    {text: "MC", code: "mc"}
+    {text: "MC", code: "mc"},
+    {text: "Cyan", code: "cyan"},
+    {text: "Teal", code: "teal"}
   ]
 };
