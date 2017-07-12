@@ -230,3 +230,21 @@ $paleHighlightColor: #FFFCE3;
   }
 }
 
+
+/**************************** Coffee theme ****************************/
+$baseColor: #694C2F;
+$lightBaseColor: #A98C6F;
+$veryLightBaseColor: #D9BC9F;
+$highlightColor: #88DD88;
+$darkHighlightColor: #CCFFCC;
+$paleHighlightColor: #DDFFDD;
+
+
+.theme-coffee {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
