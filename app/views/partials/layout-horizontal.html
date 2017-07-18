@@ -63,7 +63,7 @@
       </td>
 
       <td ng-repeat="cell in row.cells"
-          class="hasTooltip"
+          class="hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}"
           ng-switch on="cell.dataType">
         <ng-form name="innerForm2">
           <div class="lf-form-item-data tooltipContainer">

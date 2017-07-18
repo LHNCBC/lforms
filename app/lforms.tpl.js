@@ -471,7 +471,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </td>\n" +
     "\n" +
     "      <td ng-repeat=\"cell in row.cells\"\n" +
-    "          class=\"hasTooltip\"\n" +
+    "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" +
     "          ng-switch on=\"cell.dataType\">\n" +
     "        <ng-form name=\"innerForm2\">\n" +
     "          <div class=\"lf-form-item-data tooltipContainer\">\n" +

@@ -631,4 +631,36 @@ describe('Validations:', function() {
 
   });
 
+
+  describe('validation messages should be shown in horizontal table', function () {
+
+    var height1 = element(by.id("/54114-4/54117-7/8302-2/1/1/1"));
+    var weight1 = element(by.id("/54114-4/54117-7/29463-7/1/1/1"));
+    var height2 = element(by.id("/54114-4/54117-7/8302-2/1/2/1"));
+    var weight2 = element(by.id("/54114-4/54117-7/29463-7/1/2/1"));
+    var age1 = element(by.id("/54114-4/54117-7/54115-1/1/1/1"));
+    var heightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Height" must be a decimal number'));
+    var weightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Weight" must be a decimal number'));
+
+    it('should validate REAL type in horizontal table', function () {
+      tp.openUSSGFHTHorizontal();
+      browser.wait(function () {
+        return height1.isPresent();
+      }, 5000);
+
+      shortenValidationMsgShowTime();
+
+      testOneType(height1, age1, heightError, "not a number", "123.45");
+      testOneType(weight1, age1, weightError, "not a number", "123.45");
+
+      //add a new row
+      var button1 = element(by.id("add-/54114-4/54117-7/1/1"));
+      button1.click();
+
+      testOneType(height2, age1, heightError, "not a number", "123.45");
+      testOneType(weight2, age1, weightError, "not a number", "123.45");
+
+    });
+
+  });
 });
