@@ -826,13 +826,13 @@
 .theme-winter .lf-form .lf-control-button:hover,
 .theme-winter .lf-form .lf-copyright-button:hover {
   /* Item button hover color */
-  color: #FF000; }
+  color: #FF0000; }
 
 .theme-winter .lf-form .lf-form-title .lf-help-button:hover,
 .theme-winter .lf-form .lf-form-title .lf-control-button:hover,
 .theme-winter .lf-form .lf-form-title .lf-copyright-button:hover {
   /* Item button hover color in the form title bar */
-  color: #FF000; }
+  color: #FF0000; }
 
 .theme-winter .lf-form .lf-de-label span.lf-sn {
   /* Repeating section numbers */
@@ -861,7 +861,7 @@
 
 .theme-winter .ansList.no_match, .theme-winter input[type='text'].ansList.no_match, .theme-winter .search_field.no_match {
   /* non-matching field color */
-  background-color: #FF000; }
+  background-color: #FF0000; }
 
 .theme-winter .auto_complete .heading, .theme-winter .auto_complete .heading:hover {
   /* list heading colors */
@@ -899,12 +899,12 @@
 .theme-winter .ui-datepicker-calendar .ui-datepicker-today a {
   /* Today's date in the calendar widget */
   background-color: #FF6666;
-  border-color: #FF000; }
+  border-color: #FF0000; }
 
 .theme-winter .ui-datepicker-calendar .ui-datepicker-current-day a {
   /* Selected date in the calendar */
   background-color: white;
-  border-color: #FF000; }
+  border-color: #FF0000; }
 
 .theme-winter .ui-datepicker .ui-datepicker-next,
 .theme-winter .ui-datepicker .ui-datepicker-prev {
@@ -948,7 +948,7 @@
   color: #858EAD; }
 
 .theme-winter .ui-datepicker-trigger:hover {
-  color: #FF000; }
+  color: #FF0000; }
 
 .theme-winter .lf-form {
   font-family: Georgia, serif; }
