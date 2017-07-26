@@ -826,13 +826,13 @@
 .theme-winter .lf-form .lf-control-button:hover,
 .theme-winter .lf-form .lf-copyright-button:hover {
   /* Item button hover color */
-  color: #FF0000; }
+  color: #B3B3CC; }
 
 .theme-winter .lf-form .lf-form-title .lf-help-button:hover,
 .theme-winter .lf-form .lf-form-title .lf-control-button:hover,
 .theme-winter .lf-form .lf-form-title .lf-copyright-button:hover {
   /* Item button hover color in the form title bar */
-  color: #FF0000; }
+  color: #B3B3CC; }
 
 .theme-winter .lf-form .lf-de-label span.lf-sn {
   /* Repeating section numbers */
@@ -845,11 +845,11 @@
 
 .theme-winter .lf-form-table-row.active-row {
   /* Active row color */
-  background-color: #FF6666; }
+  background-color: #FFC0CB; }
 
 .theme-winter .lf-form input:focus {
   /* Active (focused) field color */
-  background-color: #FFE6E6; }
+  background-color: #FFE6EA; }
 
 .theme-winter .autocomp_selected li > button {
   background-color: #D7DADD;
@@ -861,7 +861,7 @@
 
 .theme-winter .ansList.no_match, .theme-winter input[type='text'].ansList.no_match, .theme-winter .search_field.no_match {
   /* non-matching field color */
-  background-color: #FF0000; }
+  background-color: #B3B3CC; }
 
 .theme-winter .auto_complete .heading, .theme-winter .auto_complete .heading:hover {
   /* list heading colors */
@@ -898,13 +898,13 @@
 
 .theme-winter .ui-datepicker-calendar .ui-datepicker-today a {
   /* Today's date in the calendar widget */
-  background-color: #FF6666;
-  border-color: #FF0000; }
+  background-color: #FFC0CB;
+  border-color: #B3B3CC; }
 
 .theme-winter .ui-datepicker-calendar .ui-datepicker-current-day a {
   /* Selected date in the calendar */
   background-color: white;
-  border-color: #FF0000; }
+  border-color: #B3B3CC; }
 
 .theme-winter .ui-datepicker .ui-datepicker-next,
 .theme-winter .ui-datepicker .ui-datepicker-prev {
@@ -948,7 +948,7 @@
   color: #858EAD; }
 
 .theme-winter .ui-datepicker-trigger:hover {
-  color: #FF0000; }
+  color: #B3B3CC; }
 
 .theme-winter .lf-form {
   font-family: Georgia, serif; }
