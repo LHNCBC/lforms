@@ -3,6 +3,11 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [12.3.1]  2017-07-27
+### Fixed
+- The autofill for list fields with only a single list item had been
+  accidentally disabled by previous changes.
+
 ## [12.3.0]  2017-07-07
 ### Changed
 - Added support back for validations of items in horizontal tables.
@@ -29,8 +34,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [11.5.0]  2017-05-18
 ### Added
-- Added support for disabling CNE/CWE items (autocomplete input fields or radio buttons/checkboxes) 
-- Added support for displaying coding instructions and copyright info on the section headers of 
+- Added support for disabling CNE/CWE items (autocomplete input fields or radio buttons/checkboxes)
+- Added support for displaying coding instructions and copyright info on the section headers of
   horizontal tables and matrix tables.
 
 ## [11.4.3]  2017-05-24
@@ -43,7 +48,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [11.4.1]  2017-05-10
 ### Changed
-- Used autocomplete-lhc v13.0.0 and changed the way to handle modified 
+- Used autocomplete-lhc v13.0.0 and changed the way to handle modified
   display text for answers.
 
 ## [11.4.0]  2017-05-08
@@ -66,25 +71,25 @@ This project follows [Semantic Versioning](http://semver.org/).
   the form definition.
 
 ## [11.1.1]  2017-04-14
-- Used a different library (element resize detector) for checking 
+- Used a different library (element resize detector) for checking
   the container element's size, which can handle multiple rendered
   forms on a page.
 
 ## [11.1.0]  2017-03-27
 ### Added
-- Added a viewMode option to the form and to the individual items to 
-  control the layout  
+- Added a viewMode option to the form and to the individual items to
+  control the layout
 
 ## [11.0.5]  2017-03-20
 ### Fixed
 - Fixed a bug in URL data type parsing.
-  
+
 ## [11.0.4]  2017-03-06
 ### Changed
-- Added a resize event listener on the container element to make the form 
+- Added a resize event listener on the container element to make the form
   responsive in cases where container's size changes without a change in
   window size.
-  
+
 ## [11.0.3]  2017-03-03
 ### Changed
 - Changed some background color on section headers and buttons
@@ -93,7 +98,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [11.0.2]  2017-03-02
 ### Fixed
 - Default values are now handled for questions whose answers are presented as
-  radio buttons.  
+  radio buttons.
 - Also eliminated an unnecessary copy of answer data for the case when there is
   no label value for the answers.
 - Corrected missing fonts in the pre-compiled version.
@@ -109,7 +114,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [10.0.0]   2016-12-06
 ### Changed
-- Changed OBX4 value calculation method in HL7 messages. 
+- Changed OBX4 value calculation method in HL7 messages.
 
 ## [9.0.2]   2016-12-05
 ### Changed
@@ -118,7 +123,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [9.0.1]   2016-11-22
 ### Changed
-- Changed the default style of TITLE row to be same as section headers. 
+- Changed the default style of TITLE row to be same as section headers.
 
 ## [9.0.0]   2016-11-17
 ### Changed
@@ -143,12 +148,12 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added preliminary support for generating FHIR DiagnosticReport data and merging
   it back into a form.
-  
+
 ## [8.0.0]   2016-09-21
 ### Changed
 - Updated the design and docs of the data control function.
 
-## [7.6.1]   2016-09-21 
+## [7.6.1]   2016-09-21
 ### Fixed
 - Renamed the CSS class 'empty-question' to 'lf-empty-question' to avoid
   possible confusion.
@@ -161,7 +166,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added support for a new data type, NR (numeric range).
 
-## [7.4.1]   2016-08-08 
+## [7.4.1]   2016-08-08
 ### Fixed
 - Prevented HTML tags in listColHeaders from rendering, to reduce the risk
   of XSS attacks.
@@ -170,14 +175,14 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added an option to hide the Units column/field.
 
-## [7.3.0]   2016-08-04 
+## [7.3.0]   2016-08-04
 ### Added
 - A listColHeaders option for specifying column headers to appear over the lists
   for search fields (lists specified with "externallyDefined").
 
 ## [7.2.0]   2016-08-01
 ### Added
-- Added an optional codingInstructionsFormat field on item level to specify 
+- Added an optional codingInstructionsFormat field on item level to specify
   the format of coding instructions for each individual item.
 
 ### Fixed
@@ -187,7 +192,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Uncoded CWE values rendered as HL7 are now placed into OBX5.9.
 - Adjusted formatting of HL7 output to allow the message lines to wrap after a
-  repeat. 
+  repeat.
 
 ## [7.1.0]   2016-07-21
 ### Added
@@ -199,7 +204,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - User data validations based on dataType and restrictions
 
 ### Changed
-- Use a single namespace, LForms, for all LForms functions and objects. 
+- Use a single namespace, LForms, for all LForms functions and objects.
 
 ## [6.1.3]   2016-06-13
 ### Fixed
@@ -232,7 +237,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - A getFormData function to get complete form definition data, including
   user input data.
 - Events are emitted when a repeating item or section is added or removed.
-  
+
 ### Changed
 - The existing getFormData function is renamed to getUserData.
 
@@ -241,13 +246,13 @@ This project follows [Semantic Versioning](http://semver.org/).
 - A 'list' template.
 - A 'matrix' layout for section items, in addition to 'horizontal' and
   'vertical'.
-- A attribute 'answerLayout' in the 'displayControl' field for items 
+- A attribute 'answerLayout' in the 'displayControl' field for items
   that have answers.
 - A 'displayControl' field in 'templateOptions' at the form level.
-  
+
 ### Changed
 - All existing template names are combined into a new 'table' template
-- The existing 'layout' field is renamed as 'questionLayout' and moved 
+- The existing 'layout' field is renamed as 'questionLayout' and moved
   into the 'displayControl' field.
 
 ## [5.6.1]   2016-04-01
