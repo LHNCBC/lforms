@@ -31,6 +31,8 @@ var TestPage = function() {
   };
 
   var heightFieldID= '/54126-8/8302-2/1/1';
+  var autoCompBasePage = require("../../../bower_components/autocomplete-lhc/test/protractor/basePage").BasePage;
+  var autoCompHelpers = new autoCompBasePage();
   return {
     checkboxesFinder: element.all(by.css('div.lf-form-control > label > input[type="checkbox"]')),
     headerEl: $('div[ng-if="!lfData.templateOptions.hideFormControls"]'),
@@ -46,16 +48,9 @@ var TestPage = function() {
       raceField: element(by.id('/54126-8/54134-2/1/1')),
       eyeField: element(by.id('/9267-6/1')),
       scoreField: element(by.css('input[name="GCS total"]')),
-      searchResults: element(by.id('searchResults')),
-
-      /**
-       *  Returns the list item in the search results list at the given position
-       *  number (starting at 1).  The returned item might be a heading.
-       * @param pos the item position number (starting at 1).
-       */
-      searchResult: function(pos) {
-        return $('#searchResults li:nth-child('+pos+')');
-      }
+      searchResults: autoCompHelpers.searchResults,
+      searchResult: autoCompHelpers.searchResult,
+      helpers: autoCompHelpers
     },
 
     USSGFHTVertical: {
