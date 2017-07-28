@@ -16,7 +16,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added support back for validations of items in horizontal tables.
 
 ## [12.2.0]  2017-07-06
-
 ### Changed
 - Added support back for displayControl.colCSS of items in formHeaderItems.
 
