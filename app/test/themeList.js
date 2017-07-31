@@ -5,6 +5,10 @@ window.themeList = {
   listItems: [
     {text: "Default"},
     {text: "Green", code: "green"},
-    {text: "MC", code: "mc"}
+    {text: "MC", code: "mc"},
+    {text: "Spring", code: "spring"},
+    {text: "Summer", code: "summer"},
+    {text: "Fall", code: "fall"},
+    {text: "Winter", code: "winter"}
   ]
 };

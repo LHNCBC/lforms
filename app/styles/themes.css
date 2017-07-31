@@ -317,4 +317,640 @@
 .theme-green .lf-form {
   font-family: Georgia, serif; }
 
+/**************************** Spring theme ****************************/
+.theme-spring .lf-form-title {
+  background-color: #68CF63; }
+
+.theme-spring .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-spring .lf-form-horizontal-table-title,
+.theme-spring .lf-form-matrix-table-title,
+.theme-spring .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  /* section headers & titles */
+  background-color: #D5F7D4; }
+
+.theme-spring .lf-form button {
+  /* "Add another"/Remove buttons*/
+  background-color: #68CF63; }
+
+.theme-spring .lf-form .lf-help-button,
+.theme-spring .lf-form .lf-control-button,
+.theme-spring .lf-form .lf-copyright-button {
+  /* Item buttons */
+  color: #68CF63;
+  background-color: transparent; }
+
+.theme-spring .lf-form .lf-form-title .lf-help-button,
+.theme-spring .lf-form .lf-form-title .lf-control-button,
+.theme-spring .lf-form .lf-form-title .lf-copyright-button {
+  /* Buttons in the form title bar */
+  color: white; }
+
+.theme-spring .lf-form .lf-help-button:hover,
+.theme-spring .lf-form .lf-control-button:hover,
+.theme-spring .lf-form .lf-copyright-button:hover {
+  /* Item button hover color */
+  color: #FF99C7; }
+
+.theme-spring .lf-form .lf-form-title .lf-help-button:hover,
+.theme-spring .lf-form .lf-form-title .lf-control-button:hover,
+.theme-spring .lf-form .lf-form-title .lf-copyright-button:hover {
+  /* Item button hover color in the form title bar */
+  color: #FF99C7; }
+
+.theme-spring .lf-form .lf-de-label span.lf-sn {
+  /* Repeating section numbers */
+  color: #68CF63;
+  background-color: transparent;
+  border: 2px solid #68CF63;
+  border-radius: 0;
+  padding-top: 1px;
+  padding-bottom: 1px; }
+
+.theme-spring .lf-form-table-row.active-row {
+  /* Active row color */
+  background-color: #FFD7E9; }
+
+.theme-spring .lf-form input:focus {
+  /* Active (focused) field color */
+  background-color: #FFE6F1; }
+
+.theme-spring .autocomp_selected li > button {
+  background-color: #D7DADD;
+  /* restoring multi-select button color */ }
+
+.theme-spring .autocomp_selected li > button:hover {
+  background-color: #999;
+  /* restoring multi-select button color */ }
+
+.theme-spring .ansList.no_match, .theme-spring input[type='text'].ansList.no_match, .theme-spring .search_field.no_match {
+  /* non-matching field color */
+  background-color: #FF99C7; }
+
+.theme-spring .auto_complete .heading, .theme-spring .auto_complete .heading:hover {
+  /* list heading colors */
+  background-color: #E8E8E8;
+  color: black; }
+
+.theme-spring .auto_complete .selected {
+  /* selected list item */
+  background-color: #D5F7D4; }
+
+.theme-spring .auto_complete li:hover, .theme-spring .auto_complete tr:hover {
+  /* list item hover */
+  background-color: #D1FCD0; }
+
+.theme-spring .auto_complete .listNum {
+  /* list item number color */
+  color: #68CF63; }
+
+.theme-spring .ui-datepicker .ui-widget-header {
+  /* calendar header */
+  background: #68CF63; }
+
+.theme-spring .ui-datepicker-calendar td a {
+  /* Colors for days in currently shown month */
+  background: #D5F7D4;
+  color: black;
+  border-color: #68CF63; }
+
+.theme-spring .ui-datepicker-calendar td a:hover {
+  /* Hover colors for days in currently shown month */
+  background: #68CF63;
+  color: white;
+  border-color: #D5F7D4; }
+
+.theme-spring .ui-datepicker-calendar .ui-datepicker-today a {
+  /* Today's date in the calendar widget */
+  background-color: #FFD7E9;
+  border-color: #FF99C7; }
+
+.theme-spring .ui-datepicker-calendar .ui-datepicker-current-day a {
+  /* Selected date in the calendar */
+  background-color: white;
+  border-color: #FF99C7; }
+
+.theme-spring .ui-datepicker .ui-datepicker-next,
+.theme-spring .ui-datepicker .ui-datepicker-prev {
+  /* next/prev buttons in the calendar*/
+  color: #D5F7D4;
+  border: 0; }
+
+.theme-spring .ui-datepicker .ui-datepicker-next .ui-icon,
+.theme-spring .ui-datepicker .ui-datepicker-prev .ui-icon {
+  /* next/prev buttons in the calendar*/
+  visibility: hidden;
+  /* glyphicon settings */
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  /* other settings needed with the glyphicon */
+  padding: 0.2em;
+  text-indent: initial; }
+
+.theme-spring .ui-datepicker .ui-datepicker-next .ui-icon:before {
+  visibility: visible;
+  content: "\e080"; }
+
+.theme-spring .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+  visibility: visible;
+  content: "\e079"; }
+
+.theme-spring .ui-datepicker .ui-datepicker-next:hover,
+.theme-spring .ui-datepicker .ui-datepicker-prev:hover {
+  background: #D5F7D4;
+  color: #68CF63; }
+
+.theme-spring .lf-form .ui-datepicker-trigger {
+  /* Calendar trigger button */
+  background-color: transparent; }
+
+.theme-spring .ui-datepicker-trigger {
+  color: #68CF63; }
+
+.theme-spring .ui-datepicker-trigger:hover {
+  color: #FF99C7; }
+
+.theme-spring .lf-form {
+  font-family: Georgia, serif; }
+
+/**************************** Summer theme ****************************/
+.theme-summer .lf-form-title {
+  background-color: #00CCCC; }
+
+.theme-summer .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-summer .lf-form-horizontal-table-title,
+.theme-summer .lf-form-matrix-table-title,
+.theme-summer .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  /* section headers & titles */
+  background-color: #BBFFFF; }
+
+.theme-summer .lf-form button {
+  /* "Add another"/Remove buttons*/
+  background-color: #00CCCC; }
+
+.theme-summer .lf-form .lf-help-button,
+.theme-summer .lf-form .lf-control-button,
+.theme-summer .lf-form .lf-copyright-button {
+  /* Item buttons */
+  color: #00CCCC;
+  background-color: transparent; }
+
+.theme-summer .lf-form .lf-form-title .lf-help-button,
+.theme-summer .lf-form .lf-form-title .lf-control-button,
+.theme-summer .lf-form .lf-form-title .lf-copyright-button {
+  /* Buttons in the form title bar */
+  color: white; }
+
+.theme-summer .lf-form .lf-help-button:hover,
+.theme-summer .lf-form .lf-control-button:hover,
+.theme-summer .lf-form .lf-copyright-button:hover {
+  /* Item button hover color */
+  color: #E6D119; }
+
+.theme-summer .lf-form .lf-form-title .lf-help-button:hover,
+.theme-summer .lf-form .lf-form-title .lf-control-button:hover,
+.theme-summer .lf-form .lf-form-title .lf-copyright-button:hover {
+  /* Item button hover color in the form title bar */
+  color: #E6D119; }
+
+.theme-summer .lf-form .lf-de-label span.lf-sn {
+  /* Repeating section numbers */
+  color: #00CCCC;
+  background-color: transparent;
+  border: 2px solid #00CCCC;
+  border-radius: 0;
+  padding-top: 1px;
+  padding-bottom: 1px; }
+
+.theme-summer .lf-form-table-row.active-row {
+  /* Active row color */
+  background-color: #FFF7AE; }
+
+.theme-summer .lf-form input:focus {
+  /* Active (focused) field color */
+  background-color: #FFFCE6; }
+
+.theme-summer .autocomp_selected li > button {
+  background-color: #D7DADD;
+  /* restoring multi-select button color */ }
+
+.theme-summer .autocomp_selected li > button:hover {
+  background-color: #999;
+  /* restoring multi-select button color */ }
+
+.theme-summer .ansList.no_match, .theme-summer input[type='text'].ansList.no_match, .theme-summer .search_field.no_match {
+  /* non-matching field color */
+  background-color: #E6D119; }
+
+.theme-summer .auto_complete .heading, .theme-summer .auto_complete .heading:hover {
+  /* list heading colors */
+  background-color: #E8E8E8;
+  color: black; }
+
+.theme-summer .auto_complete .selected {
+  /* selected list item */
+  background-color: #BBFFFF; }
+
+.theme-summer .auto_complete li:hover, .theme-summer .auto_complete tr:hover {
+  /* list item hover */
+  background-color: #D7FFFF; }
+
+.theme-summer .auto_complete .listNum {
+  /* list item number color */
+  color: #00CCCC; }
+
+.theme-summer .ui-datepicker .ui-widget-header {
+  /* calendar header */
+  background: #00CCCC; }
+
+.theme-summer .ui-datepicker-calendar td a {
+  /* Colors for days in currently shown month */
+  background: #BBFFFF;
+  color: black;
+  border-color: #00CCCC; }
+
+.theme-summer .ui-datepicker-calendar td a:hover {
+  /* Hover colors for days in currently shown month */
+  background: #00CCCC;
+  color: white;
+  border-color: #BBFFFF; }
+
+.theme-summer .ui-datepicker-calendar .ui-datepicker-today a {
+  /* Today's date in the calendar widget */
+  background-color: #FFF7AE;
+  border-color: #E6D119; }
+
+.theme-summer .ui-datepicker-calendar .ui-datepicker-current-day a {
+  /* Selected date in the calendar */
+  background-color: white;
+  border-color: #E6D119; }
+
+.theme-summer .ui-datepicker .ui-datepicker-next,
+.theme-summer .ui-datepicker .ui-datepicker-prev {
+  /* next/prev buttons in the calendar*/
+  color: #BBFFFF;
+  border: 0; }
+
+.theme-summer .ui-datepicker .ui-datepicker-next .ui-icon,
+.theme-summer .ui-datepicker .ui-datepicker-prev .ui-icon {
+  /* next/prev buttons in the calendar*/
+  visibility: hidden;
+  /* glyphicon settings */
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  /* other settings needed with the glyphicon */
+  padding: 0.2em;
+  text-indent: initial; }
+
+.theme-summer .ui-datepicker .ui-datepicker-next .ui-icon:before {
+  visibility: visible;
+  content: "\e080"; }
+
+.theme-summer .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+  visibility: visible;
+  content: "\e079"; }
+
+.theme-summer .ui-datepicker .ui-datepicker-next:hover,
+.theme-summer .ui-datepicker .ui-datepicker-prev:hover {
+  background: #BBFFFF;
+  color: #00CCCC; }
+
+.theme-summer .lf-form .ui-datepicker-trigger {
+  /* Calendar trigger button */
+  background-color: transparent; }
+
+.theme-summer .ui-datepicker-trigger {
+  color: #00CCCC; }
+
+.theme-summer .ui-datepicker-trigger:hover {
+  color: #E6D119; }
+
+.theme-summer .lf-form {
+  font-family: Georgia, serif; }
+
+/**************************** Fall theme ****************************/
+.theme-fall .lf-form-title {
+  background-color: #1946CC; }
+
+.theme-fall .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-fall .lf-form-horizontal-table-title,
+.theme-fall .lf-form-matrix-table-title,
+.theme-fall .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  /* section headers & titles */
+  background-color: #A4B8F4; }
+
+.theme-fall .lf-form button {
+  /* "Add another"/Remove buttons*/
+  background-color: #1946CC; }
+
+.theme-fall .lf-form .lf-help-button,
+.theme-fall .lf-form .lf-control-button,
+.theme-fall .lf-form .lf-copyright-button {
+  /* Item buttons */
+  color: #1946CC;
+  background-color: transparent; }
+
+.theme-fall .lf-form .lf-form-title .lf-help-button,
+.theme-fall .lf-form .lf-form-title .lf-control-button,
+.theme-fall .lf-form .lf-form-title .lf-copyright-button {
+  /* Buttons in the form title bar */
+  color: white; }
+
+.theme-fall .lf-form .lf-help-button:hover,
+.theme-fall .lf-form .lf-control-button:hover,
+.theme-fall .lf-form .lf-copyright-button:hover {
+  /* Item button hover color */
+  color: #0F8357; }
+
+.theme-fall .lf-form .lf-form-title .lf-help-button:hover,
+.theme-fall .lf-form .lf-form-title .lf-control-button:hover,
+.theme-fall .lf-form .lf-form-title .lf-copyright-button:hover {
+  /* Item button hover color in the form title bar */
+  color: #0F8357; }
+
+.theme-fall .lf-form .lf-de-label span.lf-sn {
+  /* Repeating section numbers */
+  color: #1946CC;
+  background-color: transparent;
+  border: 2px solid #1946CC;
+  border-radius: 0;
+  padding-top: 1px;
+  padding-bottom: 1px; }
+
+.theme-fall .lf-form-table-row.active-row {
+  /* Active row color */
+  background-color: #15B779; }
+
+.theme-fall .lf-form input:focus {
+  /* Active (focused) field color */
+  background-color: #BBF7E0; }
+
+.theme-fall .autocomp_selected li > button {
+  background-color: #D7DADD;
+  /* restoring multi-select button color */ }
+
+.theme-fall .autocomp_selected li > button:hover {
+  background-color: #999;
+  /* restoring multi-select button color */ }
+
+.theme-fall .ansList.no_match, .theme-fall input[type='text'].ansList.no_match, .theme-fall .search_field.no_match {
+  /* non-matching field color */
+  background-color: #0F8357; }
+
+.theme-fall .auto_complete .heading, .theme-fall .auto_complete .heading:hover {
+  /* list heading colors */
+  background-color: #E8E8E8;
+  color: black; }
+
+.theme-fall .auto_complete .selected {
+  /* selected list item */
+  background-color: #A4B8F4; }
+
+.theme-fall .auto_complete li:hover, .theme-fall .auto_complete tr:hover {
+  /* list item hover */
+  background-color: #E8EDFC; }
+
+.theme-fall .auto_complete .listNum {
+  /* list item number color */
+  color: #1946CC; }
+
+.theme-fall .ui-datepicker .ui-widget-header {
+  /* calendar header */
+  background: #1946CC; }
+
+.theme-fall .ui-datepicker-calendar td a {
+  /* Colors for days in currently shown month */
+  background: #A4B8F4;
+  color: black;
+  border-color: #1946CC; }
+
+.theme-fall .ui-datepicker-calendar td a:hover {
+  /* Hover colors for days in currently shown month */
+  background: #1946CC;
+  color: white;
+  border-color: #A4B8F4; }
+
+.theme-fall .ui-datepicker-calendar .ui-datepicker-today a {
+  /* Today's date in the calendar widget */
+  background-color: #15B779;
+  border-color: #0F8357; }
+
+.theme-fall .ui-datepicker-calendar .ui-datepicker-current-day a {
+  /* Selected date in the calendar */
+  background-color: white;
+  border-color: #0F8357; }
+
+.theme-fall .ui-datepicker .ui-datepicker-next,
+.theme-fall .ui-datepicker .ui-datepicker-prev {
+  /* next/prev buttons in the calendar*/
+  color: #A4B8F4;
+  border: 0; }
+
+.theme-fall .ui-datepicker .ui-datepicker-next .ui-icon,
+.theme-fall .ui-datepicker .ui-datepicker-prev .ui-icon {
+  /* next/prev buttons in the calendar*/
+  visibility: hidden;
+  /* glyphicon settings */
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  /* other settings needed with the glyphicon */
+  padding: 0.2em;
+  text-indent: initial; }
+
+.theme-fall .ui-datepicker .ui-datepicker-next .ui-icon:before {
+  visibility: visible;
+  content: "\e080"; }
+
+.theme-fall .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+  visibility: visible;
+  content: "\e079"; }
+
+.theme-fall .ui-datepicker .ui-datepicker-next:hover,
+.theme-fall .ui-datepicker .ui-datepicker-prev:hover {
+  background: #A4B8F4;
+  color: #1946CC; }
+
+.theme-fall .lf-form .ui-datepicker-trigger {
+  /* Calendar trigger button */
+  background-color: transparent; }
+
+.theme-fall .ui-datepicker-trigger {
+  color: #1946CC; }
+
+.theme-fall .ui-datepicker-trigger:hover {
+  color: #0F8357; }
+
+.theme-fall .lf-form {
+  font-family: Georgia, serif; }
+
+/**************************** Winter theme ****************************/
+.theme-winter .lf-form-title {
+  background-color: #858EAD; }
+
+.theme-winter .lf-form-table .lf-form-table-row.lf-section-header,
+.theme-winter .lf-form-horizontal-table-title,
+.theme-winter .lf-form-matrix-table-title,
+.theme-winter .lf-form-table .lf-form-table-row.lf-section-header.lf-title-row {
+  /* section headers & titles */
+  background-color: #C2C7D6; }
+
+.theme-winter .lf-form button {
+  /* "Add another"/Remove buttons*/
+  background-color: #858EAD; }
+
+.theme-winter .lf-form .lf-help-button,
+.theme-winter .lf-form .lf-control-button,
+.theme-winter .lf-form .lf-copyright-button {
+  /* Item buttons */
+  color: #858EAD;
+  background-color: transparent; }
+
+.theme-winter .lf-form .lf-form-title .lf-help-button,
+.theme-winter .lf-form .lf-form-title .lf-control-button,
+.theme-winter .lf-form .lf-form-title .lf-copyright-button {
+  /* Buttons in the form title bar */
+  color: white; }
+
+.theme-winter .lf-form .lf-help-button:hover,
+.theme-winter .lf-form .lf-control-button:hover,
+.theme-winter .lf-form .lf-copyright-button:hover {
+  /* Item button hover color */
+  color: #B3B3CC; }
+
+.theme-winter .lf-form .lf-form-title .lf-help-button:hover,
+.theme-winter .lf-form .lf-form-title .lf-control-button:hover,
+.theme-winter .lf-form .lf-form-title .lf-copyright-button:hover {
+  /* Item button hover color in the form title bar */
+  color: #B3B3CC; }
+
+.theme-winter .lf-form .lf-de-label span.lf-sn {
+  /* Repeating section numbers */
+  color: #858EAD;
+  background-color: transparent;
+  border: 2px solid #858EAD;
+  border-radius: 0;
+  padding-top: 1px;
+  padding-bottom: 1px; }
+
+.theme-winter .lf-form-table-row.active-row {
+  /* Active row color */
+  background-color: #FFC0CB; }
+
+.theme-winter .lf-form input:focus {
+  /* Active (focused) field color */
+  background-color: #FFE6EA; }
+
+.theme-winter .autocomp_selected li > button {
+  background-color: #D7DADD;
+  /* restoring multi-select button color */ }
+
+.theme-winter .autocomp_selected li > button:hover {
+  background-color: #999;
+  /* restoring multi-select button color */ }
+
+.theme-winter .ansList.no_match, .theme-winter input[type='text'].ansList.no_match, .theme-winter .search_field.no_match {
+  /* non-matching field color */
+  background-color: #B3B3CC; }
+
+.theme-winter .auto_complete .heading, .theme-winter .auto_complete .heading:hover {
+  /* list heading colors */
+  background-color: #E8E8E8;
+  color: black; }
+
+.theme-winter .auto_complete .selected {
+  /* selected list item */
+  background-color: #C2C7D6; }
+
+.theme-winter .auto_complete li:hover, .theme-winter .auto_complete tr:hover {
+  /* list item hover */
+  background-color: #F0F1F5; }
+
+.theme-winter .auto_complete .listNum {
+  /* list item number color */
+  color: #858EAD; }
+
+.theme-winter .ui-datepicker .ui-widget-header {
+  /* calendar header */
+  background: #858EAD; }
+
+.theme-winter .ui-datepicker-calendar td a {
+  /* Colors for days in currently shown month */
+  background: #C2C7D6;
+  color: black;
+  border-color: #858EAD; }
+
+.theme-winter .ui-datepicker-calendar td a:hover {
+  /* Hover colors for days in currently shown month */
+  background: #858EAD;
+  color: white;
+  border-color: #C2C7D6; }
+
+.theme-winter .ui-datepicker-calendar .ui-datepicker-today a {
+  /* Today's date in the calendar widget */
+  background-color: #FFC0CB;
+  border-color: #B3B3CC; }
+
+.theme-winter .ui-datepicker-calendar .ui-datepicker-current-day a {
+  /* Selected date in the calendar */
+  background-color: white;
+  border-color: #B3B3CC; }
+
+.theme-winter .ui-datepicker .ui-datepicker-next,
+.theme-winter .ui-datepicker .ui-datepicker-prev {
+  /* next/prev buttons in the calendar*/
+  color: #C2C7D6;
+  border: 0; }
+
+.theme-winter .ui-datepicker .ui-datepicker-next .ui-icon,
+.theme-winter .ui-datepicker .ui-datepicker-prev .ui-icon {
+  /* next/prev buttons in the calendar*/
+  visibility: hidden;
+  /* glyphicon settings */
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  /* other settings needed with the glyphicon */
+  padding: 0.2em;
+  text-indent: initial; }
+
+.theme-winter .ui-datepicker .ui-datepicker-next .ui-icon:before {
+  visibility: visible;
+  content: "\e080"; }
+
+.theme-winter .ui-datepicker .ui-datepicker-prev .ui-icon:before {
+  visibility: visible;
+  content: "\e079"; }
+
+.theme-winter .ui-datepicker .ui-datepicker-next:hover,
+.theme-winter .ui-datepicker .ui-datepicker-prev:hover {
+  background: #C2C7D6;
+  color: #858EAD; }
+
+.theme-winter .lf-form .ui-datepicker-trigger {
+  /* Calendar trigger button */
+  background-color: transparent; }
+
+.theme-winter .ui-datepicker-trigger {
+  color: #858EAD; }
+
+.theme-winter .ui-datepicker-trigger:hover {
+  color: #B3B3CC; }
+
+.theme-winter .lf-form {
+  font-family: Georgia, serif; }
+
 /*# sourceMappingURL=themes.css.map */
