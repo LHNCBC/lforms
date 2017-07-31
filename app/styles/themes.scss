@@ -239,8 +239,75 @@ $highlightColor: #88DD88;
 $darkHighlightColor: #33BB33;
 $paleHighlightColor: #CCFFCC;
 
-
 .theme-coffee {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
+/**************************** Spring theme ****************************/
+$baseColor:  #68CF63;
+$lightBaseColor:  #D5F7D4;
+$veryLightBaseColor: #D1FCD0;
+$highlightColor:    #FFD7E9;
+$darkHighlightColor:  #FF99C7;
+$paleHighlightColor:  #FFE6F1;
+
+
+.theme-spring {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
+/**************************** Summer theme ****************************/
+$baseColor:  #00CCCC;
+$lightBaseColor: #BBFFFF;
+$veryLightBaseColor: #D7FFFF;
+$highlightColor:   #FFF7AE;
+$darkHighlightColor:  #E6D119;
+$paleHighlightColor:   #FFFCE6;
+
+
+.theme-summer {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
+/**************************** Fall theme ****************************/
+$baseColor:  #1946CC;
+$lightBaseColor: #A4B8F4;
+$veryLightBaseColor: #E8EDFC;
+$highlightColor:   #15B779;
+$darkHighlightColor:  #0F8357;
+$paleHighlightColor:   #BBF7E0;
+
+
+.theme-fall {
+  @include base-theme;
+
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
+/**************************** Winter theme ****************************/
+$baseColor:  #858EAD;
+$lightBaseColor: #C2C7D6;
+$veryLightBaseColor: #F0F1F5;
+$highlightColor:   #FFC0CB;
+$darkHighlightColor:  #B3B3CC;
+$paleHighlightColor:   #FFE6EA;
+
+
+.theme-winter {
   @include base-theme;
 
   .lf-form {
