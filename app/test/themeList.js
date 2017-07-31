@@ -6,6 +6,7 @@ window.themeList = {
     {text: "Default"},
     {text: "Green", code: "green"},
     {text: "MC", code: "mc"},
+    {text: "Coffee", code: "coffee"},
     {text: "Spring", code: "spring"},
     {text: "Summer", code: "summer"},
     {text: "Fall", code: "fall"},

@@ -2,6 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.3.2]
+### Changed
+- Added color theme coffee.
 
 ## [12.3.1]  2017-07-27
 ### Fixed
