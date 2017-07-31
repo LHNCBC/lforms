@@ -239,6 +239,7 @@ $darkHighlightColor: #00b8d4;
 $paleHighlightColor: #e0ffff;
 
 .theme-cyan {
+  @include base-theme;
   .lf-form {
     font-family: Georgia, serif;
   }
@@ -254,6 +255,7 @@ $darkHighlightColor: #00bfa5;
 $paleHighlightColor: #e0f2f1;
 
 .theme-teal {
+  @include base-theme;
   .lf-form {
     font-family: Georgia, serif;
   }
