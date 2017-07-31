@@ -2197,8 +2197,10 @@ if (typeof LForms === 'undefined')
             options.itemToHeading = itemToHeading;
           }
 
-          // Defaults are now handled by setting .value (elsewhere), so we don't
-          // need to set options.defaultValue.
+          // If there isn't already a default value set (handled elsewhere), and
+          // there is just one item in the list, use that as the default value.
+          if (!options.defaultAnswer && options.listItems.length === 1)
+            options.defaultValue = options.listItems[0];
         }
         item._autocompOptions = options;
       } // end of list

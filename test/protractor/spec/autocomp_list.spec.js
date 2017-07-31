@@ -1,3 +1,4 @@
+"use strict";
 describe('autocomp list', function() {
 
   var tp = require('./lforms_testpage.po.js');
@@ -94,6 +95,14 @@ describe('autocomp list', function() {
     }, 10000);
     // This test also checks the escaping of HTML tags
     expect($('#searchResults th:first-child').getText()).toBe('Variant ID <a>');
+  });
+
+
+  it('should autofill lists when there is just one item', function() {
+    tp.openRxTerms();
+    let rxterms = require('./rxterms.fo');
+    tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'az');
+    expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('mixed Pack');
   });
 
 });
