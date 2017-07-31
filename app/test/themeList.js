@@ -7,6 +7,11 @@ window.themeList = {
     {text: "Green", code: "green"},
     {text: "MC", code: "mc"},
     {text: "Cyan", code: "cyan"},
-    {text: "Teal", code: "teal"}
+    {text: "Teal", code: "teal"},
+    {text: "Coffee", code: "coffee"},
+    {text: "Spring", code: "spring"},
+    {text: "Summer", code: "summer"},
+    {text: "Fall", code: "fall"},
+    {text: "Winter", code: "winter"}
   ]
 };

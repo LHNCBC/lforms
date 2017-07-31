@@ -5,6 +5,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [12.4.0]
 ### Added
 - Added cyan and teal color themes.
+- Added color theme coffee.
 
 ## [12.3.1]  2017-07-27
 ### Fixed
