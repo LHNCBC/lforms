@@ -2,6 +2,7 @@ node_modules
 dist
 bower_components
 .*
+!.gitattributes
 !.gitignore
 !.bowerrc
 *css.map

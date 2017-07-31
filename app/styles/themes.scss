@@ -230,6 +230,36 @@ $paleHighlightColor: #FFFCE3;
   }
 }
 
+/**************************** Cyan theme ****************************/
+$baseColor: #00838f;
+$lightBaseColor: #80deea;
+$veryLightBaseColor: #e0f7fa;
+$highlightColor: #84ffff;
+$darkHighlightColor: #00b8d4;
+$paleHighlightColor: #e0ffff;
+
+.theme-cyan {
+  @include base-theme;
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
+
+
+/**************************** Teal theme ****************************/
+$baseColor: #00695c;
+$lightBaseColor:  #4db6ac;
+$veryLightBaseColor: #b2dfdb;
+$highlightColor: #a7ffeb;
+$darkHighlightColor: #00bfa5;
+$paleHighlightColor: #e0f2f1;
+
+.theme-teal {
+  @include base-theme;
+  .lf-form {
+    font-family: Georgia, serif;
+  }
+}
 
 /**************************** Coffee theme ****************************/
 $baseColor: #694C2F;
