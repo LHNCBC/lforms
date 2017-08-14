@@ -113,14 +113,11 @@
 
 .theme-mc .ui-datepicker .ui-datepicker-next,
 .theme-mc .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #c0dbff;
   border: 0; }
 
 .theme-mc .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -130,15 +127,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-mc .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-mc .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-mc .ui-datepicker .ui-datepicker-next:hover,
 .theme-mc .ui-datepicker .ui-datepicker-prev:hover {
@@ -272,14 +269,11 @@
 
 .theme-green .ui-datepicker .ui-datepicker-next,
 .theme-green .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #D0F8D0;
   border: 0; }
 
 .theme-green .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-green .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -289,15 +283,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-green .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-green .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-green .ui-datepicker .ui-datepicker-next:hover,
 .theme-green .ui-datepicker .ui-datepicker-prev:hover {
@@ -431,14 +425,11 @@
 
 .theme-cyan .ui-datepicker .ui-datepicker-next,
 .theme-cyan .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #80deea;
   border: 0; }
 
 .theme-cyan .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-cyan .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -448,15 +439,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-cyan .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-cyan .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-cyan .ui-datepicker .ui-datepicker-next:hover,
 .theme-cyan .ui-datepicker .ui-datepicker-prev:hover {
@@ -590,14 +581,11 @@
 
 .theme-teal .ui-datepicker .ui-datepicker-next,
 .theme-teal .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #4db6ac;
   border: 0; }
 
 .theme-teal .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-teal .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -607,15 +595,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-teal .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-teal .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-teal .ui-datepicker .ui-datepicker-next:hover,
 .theme-teal .ui-datepicker .ui-datepicker-prev:hover {
@@ -749,14 +737,11 @@
 
 .theme-coffee .ui-datepicker .ui-datepicker-next,
 .theme-coffee .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #EECFB4;
   border: 0; }
 
 .theme-coffee .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-coffee .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -766,15 +751,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-coffee .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-coffee .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-coffee .ui-datepicker .ui-datepicker-next:hover,
 .theme-coffee .ui-datepicker .ui-datepicker-prev:hover {
@@ -908,14 +893,11 @@
 
 .theme-spring .ui-datepicker .ui-datepicker-next,
 .theme-spring .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #D5F7D4;
   border: 0; }
 
 .theme-spring .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-spring .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -925,15 +907,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-spring .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-spring .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-spring .ui-datepicker .ui-datepicker-next:hover,
 .theme-spring .ui-datepicker .ui-datepicker-prev:hover {
@@ -1067,14 +1049,11 @@
 
 .theme-summer .ui-datepicker .ui-datepicker-next,
 .theme-summer .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #BBFFFF;
   border: 0; }
 
 .theme-summer .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-summer .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -1084,15 +1063,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-summer .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-summer .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-summer .ui-datepicker .ui-datepicker-next:hover,
 .theme-summer .ui-datepicker .ui-datepicker-prev:hover {
@@ -1226,14 +1205,11 @@
 
 .theme-fall .ui-datepicker .ui-datepicker-next,
 .theme-fall .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #A4B8F4;
   border: 0; }
 
 .theme-fall .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-fall .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -1243,15 +1219,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-fall .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-fall .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-fall .ui-datepicker .ui-datepicker-next:hover,
 .theme-fall .ui-datepicker .ui-datepicker-prev:hover {
@@ -1385,14 +1361,11 @@
 
 .theme-winter .ui-datepicker .ui-datepicker-next,
 .theme-winter .ui-datepicker .ui-datepicker-prev {
-  /* next/prev buttons in the calendar*/
   color: #C2C7D6;
   border: 0; }
 
 .theme-winter .ui-datepicker .ui-datepicker-next .ui-icon,
 .theme-winter .ui-datepicker .ui-datepicker-prev .ui-icon {
-  /* next/prev buttons in the calendar*/
-  visibility: hidden;
   /* glyphicon settings */
   display: inline-block;
   font-family: 'Glyphicons Halflings';
@@ -1402,15 +1375,15 @@
   -webkit-font-smoothing: antialiased;
   /* other settings needed with the glyphicon */
   padding: 0.2em;
-  text-indent: initial; }
+  text-indent: 0;
+  background-image: none; }
 
 .theme-winter .ui-datepicker .ui-datepicker-next .ui-icon:before {
-  visibility: visible;
-  content: "\e080"; }
+  content: "\e080   \n    ";
+  /* whitespace pushes real content out of sight */ }
 
 .theme-winter .ui-datepicker .ui-datepicker-prev .ui-icon:before {
-  visibility: visible;
-  content: "\e079"; }
+  content: "\e079   \n    "; }
 
 .theme-winter .ui-datepicker .ui-datepicker-next:hover,
 .theme-winter .ui-datepicker .ui-datepicker-prev:hover {
