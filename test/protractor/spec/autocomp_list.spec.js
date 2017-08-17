@@ -101,8 +101,8 @@ describe('autocomp list', function() {
   it('should autofill lists when there is just one item', function() {
     tp.openRxTerms();
     let rxterms = require('./rxterms.fo');
-    tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'az');
-    expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('mixed Pack');
+    tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
+    expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
   });
 
 });
