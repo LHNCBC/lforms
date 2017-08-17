@@ -106,17 +106,57 @@ describe('FHIR SDC library', function() {
       assert.equal(out.item[0].repeats, undefined);
       assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X/1/1/1");
       assert.equal(out.item[0].text,"Mock-up sub item #1");
-      assert.equal(out.item[0].type,"integer")
+      assert.equal(out.item[0].type,"integer");
       assert.equal(out.item[1].required, undefined);
       assert.equal(out.item[1].repeats, undefined);
       assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X/1/1/1");
       assert.equal(out.item[1].text,"Mock-up sub item #2");
-      assert.equal(out.item[1].type,"decimal")
+      assert.equal(out.item[1].type,"decimal");
 
     });
 
   });
 
+  describe.skip('Questionnaire to lforms item conversion', function () {
+    var item = {
+      "questionCode": "54137-5X",
+      "questionCardinality": {"min": "1", "max": "*"},
+      "question": "Mock-up section: Shown when Height = 15",
+      "dataType": "SECTION",
+      // level 3
+      "items": [
+        { "questionCode": "54140-9X",
+          "question": "Mock-up sub item #1",
+          "dataType": "INT",
+          "_codePath": "/54126-8/54137-5X/54140-9X",
+          "_idPath": "/1/1/1"
+        },
+        {
+          "questionCode": "54130-0X",
+          "question": "Mock-up sub item #2",
+          "dataType": "REAL",
+          "_codePath": "/54126-8/54137-5X/54130-0X",
+          "_idPath": "/1/1/1"
+        }
+      ],
+      "_codePath": "/54126-8/54137-5X",
+      "_idPath": "/1/1"
+    };
+
+    it('should convert fhir questionnaire to lforms', function () {
+      var fhirQ = LForms.FHIR_SDC._processItem(item, {});
+      var convertedLfData = LForms.FHIR_SDC._processQuestionnaireItem(fhirQ);
+      var lfData = $.extend({}, item);
+      delete lfData._codePath;
+      delete lfData._idPath;
+      delete lfData.items[0]._codePath;
+      delete lfData.items[0]._idPath;
+      delete lfData.items[1]._codePath;
+      delete lfData.items[1]._idPath;
+
+      assert.deepEqual(lfData, convertedLfData);
+    });
+  });
 });
 
 

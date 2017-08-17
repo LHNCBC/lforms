@@ -15,7 +15,10 @@
 if (typeof LForms === 'undefined')
   LForms = {};
 
-LForms.FHIR_SDC = {
+if (typeof LForms.FHIR_SDC === 'undefined')
+  LForms.FHIR_SDC = {};
+
+$.extend(LForms.FHIR_SDC, {
 
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire
@@ -1276,4 +1279,4 @@ LForms.FHIR_SDC = {
       }
     }
   }
-};
+});

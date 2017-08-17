@@ -219,6 +219,46 @@ LForms.Util = {
       nextLetter += letters.charAt(positions[i]);
     }
     return nextLetter;
-  }
+  },
 
+
+  /**
+   * Finds an object from an array using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   * Only returns the first matched object in the array.
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - Key of the the target object to match the value.
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   *
+   * @returns {*} - Matched object, otherwise null;
+   */
+  findObjectInArray: function(targetObjects, key, matchingValue, starting_index) {
+    var ret = null;
+    if(Array.isArray(targetObjects)) {
+      var start = 0;
+      // Figure out start index.
+      if(starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if(starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        }
+        else {
+          start = starting_index;
+        }
+      }
+      for(var i = start; i < targetObjects.length; i++) {
+        if(targetObjects[i][key] === matchingValue) {
+          ret = targetObjects[i];
+          break;
+        }
+      }
+    }
+
+    return ret;
+  }
 };
