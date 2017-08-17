@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.4.2]
+### Changed
+- Moved themeList.js, which is just for demos, out of the test directory and
+  into app/scripts, so that other applications (e.g. our demo site) can make use
+  of it.
+
 ## [12.4.1]
 ### Fixed
 - Fixed the calendar next/previous buttons under themes for IE.
