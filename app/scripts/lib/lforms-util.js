@@ -260,5 +260,38 @@ LForms.Util = {
     }
 
     return ret;
+  },
+
+
+  /**
+   * Remove key/values from an object based on a regular expression of key.
+   *
+   * @param obj {object} - Object to prune
+   * @param keyRegex {regex} - A regular expression to match the keys for deletion
+   * @param recursiveKey {optional|string} - Key of the recursive field. The value
+   *                                of this should be an object or an Array of objects.
+   * @private
+   */
+  _pruneObject: function (keyRegex, obj, recursiveKey) {
+    if(typeof obj === 'object') {
+      for(var k in obj) {
+        if(k.match(keyRegex)) {
+          delete obj[k];
+        }
+        else if(recursiveKey && k === recursiveKey) {
+          if(Array.isArray(obj[k])) {
+            for(var i = 0; i < obj[k].length; i++) {
+              this._pruneObject(keyRegex, obj[k][i], recursiveKey);
+            }
+          }
+          else {
+            this._pruneObject(keyRegex, obj[k], recursiveKey);
+          }
+        }
+      }
+    }
   }
+
+
+
 };

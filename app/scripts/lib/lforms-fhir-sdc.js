@@ -18,7 +18,7 @@ if (typeof LForms === 'undefined')
 if (typeof LForms.FHIR_SDC === 'undefined')
   LForms.FHIR_SDC = {};
 
-$.extend(LForms.FHIR_SDC, {
+jQuery.extend(LForms.FHIR_SDC, {
 
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire

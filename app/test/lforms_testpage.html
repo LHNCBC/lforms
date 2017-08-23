@@ -61,6 +61,7 @@
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
     <script src="scripts/lib/polyfill.js"></script>
     <script src="scripts/lib/lforms-fhir-sdc.js"></script>
+    <script src="scripts/lib/lforms-fhir-sdc-converter.js"></script>
     <!-- endbower -->
 
     <!-- lforms directive js files -->
@@ -125,7 +126,6 @@
               {text: "Fields with default answers", id: "defaultAnswerTest"},
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"}
-
             ];
 
             // indirect testing of the events emitted from within the LForms widget
@@ -193,6 +193,11 @@
                 var sdc = LForms.FHIR_SDC.convert2Questionnaire($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
+                var convertedLforms = LForms.FHIR_SDC.convertQuestionnaire2Lforms(sdc);
+                convertedLforms.name = convertedLforms.name + ' - ' + sdc.url;
+                $scope.lfData2 = new LForms.LFormsData(convertedLforms);
+                $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
+                $scope.disableFHIRButton = true;
               }
             };
 
@@ -234,6 +239,7 @@
 
 
             $scope.useForm = function() {
+              $scope.disableFHIRButton = false;
               var useAnimation = !window._INTESTING_;
 
               var lfData2,
@@ -372,7 +378,7 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
           <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
-          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-disabled="disableFHIRButton" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
           <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge FHIR Data to LForms (USSGFH)</button>

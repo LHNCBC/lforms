@@ -21,7 +21,8 @@ module.exports = function(config) {
       'app/*.js',
       'app/scripts/lib/*.js',
       'app/scripts/*.js',
-      'test/mocha/*.js'
+      'test/mocha/*.js',
+      'app/data/test-data.js'
     ],
 
     // list of files to exclude
@@ -71,4 +72,4 @@ module.exports = function(config) {
     // how many browser should be started simultaneous
     concurrency: Infinity
   })
-}
+};
