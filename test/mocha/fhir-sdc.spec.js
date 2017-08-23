@@ -117,7 +117,7 @@ describe('FHIR SDC library', function() {
 
   });
 
-  describe('Questionnaire to lforms item conversion', function () {
+  describe.only('Questionnaire to lforms item conversion', function () {
     it('should convert FHTData to lforms', function () {
       var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(FHTData));
       var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
@@ -152,9 +152,12 @@ describe('FHIR SDC library', function() {
       assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
       // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
+      // Skip logic action and logic is not supported.
       // Only code/value triggers are supported.
       assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].source, "54125-0");
       assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].trigger.value, "Alex");
+      assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].source, "54130-0");
+      assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].trigger.code, "LA10402-8");
 
       assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
       assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
@@ -162,10 +165,22 @@ describe('FHIR SDC library', function() {
       assert.equal(convertedLfData.items[0].items[6].units.length, 2);
       assert.equal(convertedLfData.items[0].items[6].units[0].name, "inches");
       assert.equal(convertedLfData.items[0].items[6].units[1].name, "centimeters");
+
+      // Display control
+      fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(displayControlsDemo));
+      convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+
+      // TODO -
+      // unsupported fields: viewMode, css, colCSS, listColHeaders, answerLayout.columns
+      // supported fields: questionLayout, answerLayout.type
+      assert.equal(convertedLfData.items[1].displayControl.answerLayout.type, "RADIO_CHECKBOX");
+      // Vertical layout is not converted as it is default.
+      assert.equal(convertedLfData.items[5].displayControl, undefined);
+      assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
     });
 
-    it('should convert validationTestForm to lforms', function () {
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(validationTestForm);
+    it('should convert restrictions', function () {
+      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
       var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
 
       assert.equal(convertedLfData.items.length, 32);
