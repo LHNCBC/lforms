@@ -251,7 +251,8 @@ LForms.Util = {
           start = starting_index;
         }
       }
-      for(var i = start; i < targetObjects.length; i++) {
+      var len = targetObjects.length;
+      for(var i = start; i < len; i++) {
         if(targetObjects[i][key] === matchingValue) {
           ret = targetObjects[i];
           break;
@@ -279,13 +280,15 @@ LForms.Util = {
           delete obj[k];
         }
         else if(recursiveKey && k === recursiveKey) {
-          if(Array.isArray(obj[k])) {
-            for(var i = 0; i < obj[k].length; i++) {
-              this._pruneObject(keyRegex, obj[k][i], recursiveKey);
+          var val = obj[k];
+          if(Array.isArray(val)) {
+            var len = val.length;
+            for(var i = 0; i < len; i++) {
+              this._pruneObject(keyRegex, val[i], recursiveKey);
             }
           }
           else {
-            this._pruneObject(keyRegex, obj[k], recursiveKey);
+            this._pruneObject(keyRegex, val, recursiveKey);
           }
         }
       }
