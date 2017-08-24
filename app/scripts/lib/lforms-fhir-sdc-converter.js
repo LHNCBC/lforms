@@ -36,7 +36,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
     if(fhirData) {
       target = {};
-      _processFormLevelFields(fhirData, target);
+      _processFormLevelFields(target, fhirData);
 
       if(fhirData.item && fhirData.item.length > 0) {
         target.items = [];
@@ -54,11 +54,11 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
    *
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
    * @param lfData - LForms object to assign the extracted fields
+   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
    * @private
    */
-  function _processFormLevelFields(questionnaire, lfData) {
+  function _processFormLevelFields(lfData, questionnaire) {
     lfData.name = questionnaire.title;
     var code = _getCode(questionnaire);
     if(code) {
@@ -87,7 +87,6 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     _processAnswerCardinality(targetItem, qItem);
     _processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
-    _processUnit(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     _processDefaultAnswer(targetItem, qItem);
@@ -109,7 +108,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire object for answer cardinality
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign answer cardinality
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -154,7 +153,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for answers list
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign answer list
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -182,7 +181,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for editable
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign editable
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -196,7 +195,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for default answer
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign default answer
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -226,7 +225,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for units list
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign units
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -245,7 +244,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for question cardinality
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign question cardinality
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -272,7 +271,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
   /**
    * Parse questionnaire item for code and code system
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign question code
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -281,6 +280,8 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     lfItem.questionCode = code.code;
     lfItem.questionCodeSystem = code.system;
   }
+
+
   /**
    * Get an object with code and code system
    *
@@ -325,7 +326,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -339,24 +340,9 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 
   /**
-   * Parse questionnaire item for unit
-   *
-   * @param lfItem {object} - lfItem to assign the skip logic
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _processUnit(lfItem, qItem) {
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-    if(unit) {
-      lfItem.unit = {name: unit.valueCoding};
-    }
-  }
-
-
-  /**
    * Parse questionnaire item for restrictions
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign restrictions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -398,7 +384,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for data type
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign data type
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -469,7 +455,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for display control
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - lfItem to assign display control
    * @param qItem {object} - Questionnaire item object
    * @private
    */

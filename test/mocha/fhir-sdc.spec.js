@@ -117,7 +117,7 @@ describe('FHIR SDC library', function() {
 
   });
 
-  describe.only('Questionnaire to lforms item conversion', function () {
+  describe('Questionnaire to lforms item conversion', function () {
     it('should convert FHTData to lforms', function () {
       var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(FHTData));
       var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
