@@ -194,7 +194,7 @@
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
                 var convertedLforms = LForms.FHIR_SDC.convertQuestionnaire2Lforms(sdc);
-                convertedLforms.name = convertedLforms.name + ' - ' + sdc.url;
+                convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
                 $scope.lfData2 = new LForms.LFormsData(convertedLforms);
                 $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
                 $scope.disableFHIRButton = true;

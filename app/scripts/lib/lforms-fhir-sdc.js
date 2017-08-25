@@ -67,7 +67,8 @@ jQuery.extend(LForms.FHIR_SDC, {
     target.version = "2.56";
 
     // url
-    target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
+    // TODO - Commented out until we figure out the right url. -Ajay
+    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
     target.meta = {
