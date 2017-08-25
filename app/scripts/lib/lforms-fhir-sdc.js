@@ -811,7 +811,7 @@ jQuery.extend(LForms.FHIR_SDC, {
           // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         }
         // make a Quantity type if numeric values has a unit value
-        else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL")) {
+        else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
           answer.push({
             "valueQuantity": {
               "value": parseFloat(values[i]),

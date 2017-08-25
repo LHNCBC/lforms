@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.5.1]
+### Fixed
+- Fixed a bug in FHIR QuestionnaireResponse convert function to handle cases where
+  items with units could have data types as "ST" 
+
 ## [12.5.0]
 ### Added
 - Added support to convert a FHIR Questionnaire resource to LForms format.
