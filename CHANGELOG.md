@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.5.0]
+### Added
+- Added support to convert a FHIR Questionnaire resource to LForms format.
+
 ## [12.4.2]
 ### Changed
 - Moved themeList.js, which is just for demos, out of the test directory and
