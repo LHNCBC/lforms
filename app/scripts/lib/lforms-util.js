@@ -219,6 +219,82 @@ LForms.Util = {
       nextLetter += letters.charAt(positions[i]);
     }
     return nextLetter;
+  },
+
+
+  /**
+   * Finds an object from an array using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   * Only returns the first matched object in the array.
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - Key of the the target object to match the value.
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   *
+   * @returns {*} - Matched object, otherwise null;
+   */
+  findObjectInArray: function(targetObjects, key, matchingValue, starting_index) {
+    var ret = null;
+    if(Array.isArray(targetObjects)) {
+      var start = 0;
+      // Figure out start index.
+      if(starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if(starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        }
+        else {
+          start = starting_index;
+        }
+      }
+      var len = targetObjects.length;
+      for(var i = start; i < len; i++) {
+        if(targetObjects[i][key] === matchingValue) {
+          ret = targetObjects[i];
+          break;
+        }
+      }
+    }
+
+    return ret;
+  },
+
+
+  /**
+   * Remove key/values from an object based on a regular expression of key.
+   *
+   * @param obj {object} - Object to prune
+   * @param keyRegex {regex} - A regular expression to match the keys for deletion
+   * @param recursiveKey {optional|string} - Key of the recursive field. The value
+   *                                of this should be an object or an Array of objects.
+   * @private
+   */
+  _pruneObject: function (keyRegex, obj, recursiveKey) {
+    if(typeof obj === 'object') {
+      for(var k in obj) {
+        if(k.match(keyRegex)) {
+          delete obj[k];
+        }
+        else if(recursiveKey && k === recursiveKey) {
+          var val = obj[k];
+          if(Array.isArray(val)) {
+            var len = val.length;
+            for(var i = 0; i < len; i++) {
+              this._pruneObject(keyRegex, val[i], recursiveKey);
+            }
+          }
+          else {
+            this._pruneObject(keyRegex, val, recursiveKey);
+          }
+        }
+      }
+    }
   }
+
+
 
 };

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "12.4.2",
+  "version": "12.5.0",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
@@ -48,6 +48,7 @@
     "app/scripts/lib/lforms-hl7.js",
     "app/scripts/lib/lforms-fhir.js",
     "app/scripts/lib/lforms-fhir-sdc.js",
+    "app/scripts/lib/lforms-fhir-sdc-converter.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
     "app/styles/lforms.css",

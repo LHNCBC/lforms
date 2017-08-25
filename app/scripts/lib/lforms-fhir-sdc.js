@@ -15,7 +15,10 @@
 if (typeof LForms === 'undefined')
   LForms = {};
 
-LForms.FHIR_SDC = {
+if (typeof LForms.FHIR_SDC === 'undefined')
+  LForms.FHIR_SDC = {};
+
+jQuery.extend(LForms.FHIR_SDC, {
 
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire
@@ -64,7 +67,8 @@ LForms.FHIR_SDC = {
     target.version = "2.56";
 
     // url
-    target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
+    // TODO - Commented out until we figure out the right url. -Ajay
+    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
     target.meta = {
@@ -1276,4 +1280,4 @@ LForms.FHIR_SDC = {
       }
     }
   }
-};
+});
