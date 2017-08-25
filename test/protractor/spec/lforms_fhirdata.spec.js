@@ -174,9 +174,10 @@ describe('get FHIR data from LForms forms', function() {
       callback(fData);
     }).then(function (fhirData) {
       expect(fhirData.resourceType).toBe("Questionnaire");
-      expect(fhirData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");;
-      expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo)");;
-      expect(fhirData.url).toBe("http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N");
+      expect(fhirData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
+      expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
+      // No URL conversion for now. -Ajay
+      //expect(fhirData.url).toBe("http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N");
       expect(fhirData.code[0].code).toBe("54127-6N");
       expect(fhirData.code[0].display).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
       expect(fhirData.code[0].system).toBe("http://loinc.org");
