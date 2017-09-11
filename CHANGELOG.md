@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.6.0]
+### Added
+- Added conversion of externallyDefined field. 
+
 ## [12.5.1]
 ### Fixed
 - Fixed a bug in FHIR QuestionnaireResponse convert function to handle cases where

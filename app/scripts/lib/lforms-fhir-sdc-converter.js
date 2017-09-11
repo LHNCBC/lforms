@@ -90,6 +90,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     _processCodingInstructions(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     _processDefaultAnswer(targetItem, qItem);
+    _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, qResource);
 
@@ -149,6 +150,18 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     }
   }
 
+
+  /**
+   *
+   * @param lfItem
+   * @param qItem
+   * @private
+   */
+  function _processExternallyDefined(lfItem, qItem) {
+    if(qItem.options) {
+      lfItem.externallyDefined = qItem.options.reference;
+    }
+  }
 
   /**
    * Parse questionnaire item for answers list

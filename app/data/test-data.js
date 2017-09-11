@@ -1312,6 +1312,9 @@ var validationTestForm = {
     {"questionCode": "INTA", "dataType": "INT", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "INT with minInclusive, maxExclusive"},
     {"questionCode": "REALA", "dataType": "REAL", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "REAL with minInclusive, maxExclusive"},
     {"questionCode": "STA", "dataType": "ST", "restrictions":{"maxLength": 10, "minLength": 5, "pattern": "/^[a-z]+$/"},"answerCardinality": null, "question": "ST with maxLength, minLength, pattern"},
+    {"questionCode": "externallyDefined1", "dataType": "CNE", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "Externally defined 1",
+      "externallyDefined": "https://lforms-service.nlm.nih.gov/dummy/test?var1=1&va2=a%20b"
+    },
 
     {"questionCode": "DT", "dataType": "DT", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "DT"},
     {"questionCode": "ST0", "dataType": "ST", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "ST required"},
