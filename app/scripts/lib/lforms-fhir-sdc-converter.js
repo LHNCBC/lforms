@@ -65,6 +65,10 @@ if (typeof LForms.FHIR_SDC === 'undefined')
       lfData.code = code.code;
       lfData.codeSystem = code.system;
     }
+
+    if(questionnaire.id) {
+      lfData.id = questionnaire.id;
+    }
   }
 
 

@@ -101,6 +101,10 @@ jQuery.extend(LForms.FHIR_SDC, {
     // subjectType
     target.subjectType = ["Patient", "Person"];
 
+    if(source.id) {
+      target.id = source.id;
+    }
+
     // text, removed in FHIR v3.0.0
     // concept, removed in FHIR v3.0.0
 
