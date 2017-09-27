@@ -684,7 +684,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('popover.html',
-    "<div aria-live=polite class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n"
+    "<div class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n"
   );
 
 
@@ -695,9 +695,9 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  ng-class=\"{ in: isOpen() }\">\n" +
     "  <div class=\"arrow\"></div>\n" +
     "\n" +
-    "  <div class=\"popover-inner\">\n" +
-    "      <h3 aria-live=polite class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
-    "      <div aria-live=polite class=\"popover-content\"\n" +
+    "  <div aria-live=polite class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\"\n" +
     "        uib-tooltip-template-transclude=\"contentExp()\"\n" +
     "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
     "  </div>\n" +
