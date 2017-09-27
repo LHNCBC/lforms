@@ -751,6 +751,7 @@ var allInOne =
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "templateOptions": {
+    showFormOptionPanel: true,
     "formHeaderItems": [{
       "question": "Date Done",
       "questionCode": "date_done",
