@@ -2,8 +2,8 @@
 angular.module('lformsWidget')
   .config(['$provide', function Decorate($provide) {
     var directiveToTemplate = {
-      'uibPopoverPopupDirective': "popover/uib-popover.html",
-      'uibPopoverTemplatePopupDirective': "popover/uib-popover-template.html"
+      'uibPopoverPopupDirective': "uib-popover-templates/uib-popover.html",
+      'uibPopoverTemplatePopupDirective': "uib-popover-templates/uib-popover-template.html"
     };
 
     var names=Object.keys(directiveToTemplate);
