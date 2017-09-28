@@ -314,13 +314,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
     "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\"\n" +
     "                uib-popover-template=\"'popover-content.html'\"\n" +
-    "                popover-trigger=\"click\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
     "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
     "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
     "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
-    "                popover-trigger=\"click\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
+    "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
     "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
     "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
@@ -834,7 +834,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('uib-popover-templates/uib-popover.html',
-    "<div class=\"popover\" tabindex=\"-1\"\n" +
+    "<div class=\"popover\"\n" +
     "  tooltip-animation-class=\"fade\"\n" +
     "  uib-tooltip-classes\n" +
     "  ng-class=\"{ in: isOpen() }\">\n" +

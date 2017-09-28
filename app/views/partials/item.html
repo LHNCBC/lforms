@@ -16,13 +16,13 @@
         <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
         <button ng-switch-when="popover-html" class="lf-help-button btn-sm"
                 uib-popover-template="'popover-content.html'"
-                popover-trigger="click" popover-placement="right"  popover-title="Instruction"
+                popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
                 type="button" id="help-{{item._elementId}}" aria-label="Help"
                 aria-describedby="label-{{ item._elementId }}">
           <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
         </button>
         <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
-                popover-trigger="click" popover-placement="right"  popover-title="Instruction"
+                popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
                 type="button" id="help-{{item._elementId}}" aria-label="Help"
                 aria-describedby="label-{{ item._elementId }}">
           <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
