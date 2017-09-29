@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.5.2]
+### Fixed
+- Fixed an accessibility issue with plain-text popups.  Popups with HTML (e.g.
+  HTML-encoded help) are still not completely read.
+
 ## [12.5.1]
 ### Fixed
 - Fixed a bug in FHIR QuestionnaireResponse convert function to handle cases where
-  items with units could have data types as "ST" 
+  items with units could have data types as "ST"
 
 ## [12.5.0]
 ### Added

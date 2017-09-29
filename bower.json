@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "12.5.1",
+  "version": "12.5.2",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
@@ -40,6 +40,7 @@
     "app/scripts/lforms-config.js",
     "app/scripts/lforms-controllers.js",
     "app/scripts/lforms-directives.js",
+    "app/scripts/bootstrap-decorators.js",
     "app/scripts/lib/date.js",
     "app/scripts/lib/js-class.js",
     "app/scripts/lib/cross_browser.js",
