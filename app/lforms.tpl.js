@@ -312,7 +312,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
     "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
     "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
-    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
+    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\"\n" +
+    "                uib-popover-template=\"'popover-content.html'\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
     "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
     "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
@@ -683,7 +684,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   );
 
 
-  $templateCache.put('popover.html',
+  $templateCache.put('popover-content.html',
     "<div class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n"
   );
 
@@ -812,6 +813,38 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "</form>\n"
+  );
+
+
+  $templateCache.put('uib-popover-templates/uib-popover-template.html',
+    "<div class=\"popover\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div aria-live=polite class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\"\n" +
+    "        uib-tooltip-template-transclude=\"contentExp()\"\n" +
+    "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('uib-popover-templates/uib-popover.html',
+    "<div class=\"popover\"\n" +
+    "  tooltip-animation-class=\"fade\"\n" +
+    "  uib-tooltip-classes\n" +
+    "  ng-class=\"{ in: isOpen() }\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "\n" +
+    "  <div aria-live=polite class=\"popover-inner\">\n" +
+    "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" +
+    "      <div class=\"popover-content\" ng-bind=\"content\" ng-if=\"content\"></div>\n" +
+    "  </div>\n" +
+    "</div>\n"
   );
 
 }]);
