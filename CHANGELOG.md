@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.5.3]
+### Changed
+- Changed our internal development environment shell from tcsh to bash.
+
 ## [12.5.2]
 ### Fixed
 - Fixed an accessibility issue with plain-text popups.  Popups with HTML (e.g.
