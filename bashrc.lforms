@@ -1,0 +1,55 @@
+# The following is the standard environment file for the LForms
+# development team.
+# You should explicitly source
+# this first  and then do your own environment
+# customizations.
+#     You may set variables before sourcing this to change execution
+# of it.
+
+# Use the globally installed node and its modules
+NODE_DIR=node-v4.4.4-linux-x64
+# Set path
+PATH=/depot/packages/${NODE_DIR}/bin:/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/etc
+
+# Add node_modules/.bin to the path. We can find that from `npm bin`, but that
+# takes a second or two, and slows things down.  Instead, look in pwd for the
+# top-most directory in the containing a node_modules directory.
+dir=`pwd`
+node_modules_dir=''
+if [ -e "$dir/node_modules" ]
+then
+  node_modules_dir="$dir/node_modules"
+fi
+while [[ "$dir" != '/' ]]
+do
+  dir=`dirname "$dir"`
+  if [ -e "$dir/node_modules" ]
+  then
+    node_modules_dir="$dir/node_modules"
+  fi
+done
+if [ "$node_modules_dir" != '' ]
+then
+  PATH=$PATH:$node_modules_dir/.bin
+fi
+
+# Set node in development mode
+unset NODE_ENV
+
+# Set editor for git
+EDITOR=/usr/bin/vim
+
+umask 022
+
+# Set some things only if in an interactive shell
+if [[ "$-" == *i* ]]
+then
+
+  # Maybe needed for CDE
+  #stty erase ^H
+  stty erase ^\?
+fi
+
+# Set LD_LIBRARY_PATH, which is needed for the protractor tests while we are
+# using Chrome instead of Firefox....
+export LD_LIBRARY_PATH=/opt/google/chrome/lib
