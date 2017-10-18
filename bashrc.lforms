@@ -12,26 +12,10 @@ NODE_DIR=node-v4.4.4-linux-x64
 PATH=/depot/packages/${NODE_DIR}/bin:/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/etc
 
 # Add node_modules/.bin to the path. We can find that from `npm bin`, but that
-# takes a second or two, and slows things down.  Instead, look in pwd for the
-# top-most directory in the containing a node_modules directory.
-dir=`pwd`
-node_modules_dir=''
-if [ -e "$dir/node_modules" ]
-then
-  node_modules_dir="$dir/node_modules"
-fi
-while [[ "$dir" != '/' ]]
-do
-  dir=`dirname "$dir"`
-  if [ -e "$dir/node_modules" ]
-  then
-    node_modules_dir="$dir/node_modules"
-  fi
-done
-if [ "$node_modules_dir" != '' ]
-then
-  PATH=$PATH:$node_modules_dir/.bin
-fi
+# takes a second or two, and slows things down.
+script_dir=`dirname ${BASH_SOURCE}`
+npm_bin=`readlink -f $script_dir/node_modules/.bin`
+PATH=$PATH:$npm_bin
 
 # Set node in development mode
 unset NODE_ENV
@@ -49,7 +33,3 @@ then
   #stty erase ^H
   stty erase ^\?
 fi
-
-# Set LD_LIBRARY_PATH, which is needed for the protractor tests while we are
-# using Chrome instead of Firefox....
-export LD_LIBRARY_PATH=/opt/google/chrome/lib
