@@ -24,6 +24,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
 
+  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
 
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
@@ -82,6 +83,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     //A lot of parsing depends on data type. Extract it first.
     _processDataType(targetItem, qItem);
     _processCode(targetItem, qItem);
+    _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
     _processQuestionCardinality(targetItem, qItem);
     _processAnswerCardinality(targetItem, qItem);
@@ -116,6 +118,17 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     if(qItem.required) {
       lfItem.answerCardinality = {min: '1'};
     }
+    else {
+      lfItem.answerCardinality = {min: '0'};
+    }
+
+    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+    if(answerRepeats && answerRepeats.valueBoolean) {
+      lfItem.answerCardinality.max = '*';
+    }
+    else {
+      lfItem.answerCardinality.max = '1';
+    }
   }
 
 
@@ -134,7 +147,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = null;
         for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingQuestionText(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
+          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
         }
         var condition = {source: source.questionCode};
         var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
@@ -208,7 +221,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           lfItem.value = [{code: val.code, text: val.display}];
           lfItem.defaultAnswer = [{code: val.code, text: val.display}];
         }
-        // single selection, item.value is an object
+        // single selection
         else {
           lfItem.value = {code: val.code, text: val.display};
           lfItem.defaultAnswer = {code: val.code, text: val.display};
@@ -236,6 +249,23 @@ if (typeof LForms.FHIR_SDC === 'undefined')
       for(var i = 0; i < units.valueCodeableConcept.coding.length; i++) {
         var unit = units.valueCodeableConcept.coding[i];
         lfItem.units.push({name: unit.code});
+      }
+    }
+  }
+
+
+  /**
+   * Parse 'linkId' for 'display' item's questionCode, which does not have a 'code'
+   *
+   * @param lfItem {object} - lfItem to assign question cardinality
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  function _processDisplayItemCode(lfItem, qItem) {
+    if (qItem.type === "display" && qItem.linkId) {
+      var codes = qItem.linkId.split("/");
+      if (codes && codes[codes.length-1]) {
+        lfItem.questionCode = codes[codes.length-1];
       }
     }
   }
@@ -277,8 +307,10 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    */
   function _processCode(lfItem, qItem) {
     var code = _getCode(qItem);
-    lfItem.questionCode = code.code;
-    lfItem.questionCodeSystem = code.system;
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    }
   }
 
 
@@ -530,14 +562,14 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    *
    * @param topLevelItem - Top level item object to traverse the path searching for
    * enableWhen.question text in linkId .
-   * @param questionPath - This is the text in enableWhen.question
+   * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
-  function _getSourceCodeUsingQuestionText(topLevelItem, questionPath) {
+  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
 
 
-    if(topLevelItem.linkId === questionPath) {
+    if(topLevelItem.linkId === questionLinkId) {
       return {
         questionCode: topLevelItem.code[0].code,
         dataType: _getDataType(topLevelItem)
@@ -547,7 +579,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     var ret = null;
     if(Array.isArray(topLevelItem.item)) {
       for(var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingQuestionText(topLevelItem.item[i], questionPath);
+        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
       }
     }
 

@@ -4133,7 +4133,7 @@ var newGenetic = {
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
       ],
-      "value": [
+      "defaultAnswer": [
         {"code": "C01", "text": "Discrete variants"},
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
@@ -4148,7 +4148,7 @@ var newGenetic = {
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ],
-      "value": [
+      "defaultAnswer": [
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ]

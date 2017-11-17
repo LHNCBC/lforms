@@ -27,10 +27,10 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   convert2Questionnaire: function(lfData) {
     var target = {};
-    var source = lfData;
 
     if (lfData) {
-
+      var source = angular.copy(lfData);
+      this._removeRepeatingItems(source);
       this._setFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
@@ -43,6 +43,26 @@ jQuery.extend(LForms.FHIR_SDC, {
       }
     }
     return target;
+  },
+
+
+  /**
+   * Remove repeating items in a form data object
+   * @param source a LForms form data object
+   * @private
+   */
+  _removeRepeatingItems: function(source) {
+
+    if (source.items && Array.isArray(source.items)) {
+      for (var i= source.items.length-1; i>=0; i--) {
+        if (source.items[i]._id > 1) {
+          source.items.splice(i,1);
+        }
+        else {
+          this._removeRepeatingItems(source.items[i]);
+        }
+      }
+    }
   },
 
 
@@ -101,9 +121,6 @@ jQuery.extend(LForms.FHIR_SDC, {
     // subjectType
     target.subjectType = ["Patient", "Person"];
 
-    // text, removed in FHIR v3.0.0
-    // concept, removed in FHIR v3.0.0
-
   },
 
 
@@ -133,7 +150,7 @@ jQuery.extend(LForms.FHIR_SDC, {
       });
     }
 
-    // repeats
+    // question repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
     if (item.questionCardinality) {
       if (item.questionCardinality.max === "*") {
@@ -149,6 +166,17 @@ jQuery.extend(LForms.FHIR_SDC, {
     }
     else {
       targetItem.repeats = false;
+    }
+
+    // answer repeats
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
+    if (item.answerCardinality) {
+      if (item.answerCardinality.max === "*") {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+          "valueBoolean": true
+        });
+      }
     }
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
@@ -195,7 +223,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     }
 
     // linkId
-    targetItem.linkId = item._codePath + item._idPath;
+    targetItem.linkId = item._codePath;
 
     var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 
@@ -205,8 +233,6 @@ jQuery.extend(LForms.FHIR_SDC, {
       "code": item.questionCode,
       "display": item.question
     }];
-
-    // concept, removed in FHIR v3.0.0
 
     // text
     targetItem.text = item.question;
@@ -225,16 +251,14 @@ jQuery.extend(LForms.FHIR_SDC, {
       targetItem.readonly = true;
     }
 
-    // options , a reference to ValueSet resource, not using for now
+    // options, a reference to ValueSet resource, not using for now
     // option, for answer list
     if (item.answers) {
       targetItem.option = this._handleAnswers(item)
     }
 
     // initialValue, for default values
-    if (item.value) {
-      this._handleInitialValues(targetItem, item);
-    }
+    this._handleInitialValues(targetItem, item);
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -244,11 +268,33 @@ jQuery.extend(LForms.FHIR_SDC, {
       }
     }
 
+    // handle special constraints for "display" item
+    this._handleSpecialConstraints(targetItem, item);
+
     // if there is no extension, remove it
     if (targetItem.extension.length === 0)
       delete targetItem.extension;
 
     return targetItem
+  },
+
+
+  /**
+   * Handle special requirements for 'display' items
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   * @private
+   */
+  _handleSpecialConstraints: function(targetItem, item) {
+    //Display items cannot have a "code" asserted
+    //Required and repeat aren't permitted for display items
+    //Read-only can't be specified for "display" items
+    if (targetItem && item.dataType === "TITLE") {
+      delete targetItem.code;
+      delete targetItem.required;
+      delete targetItem.repeats;
+      delete targetItem.readOnly;
+    }
   },
 
 
@@ -420,23 +466,45 @@ jQuery.extend(LForms.FHIR_SDC, {
   convert2QuestionnaireResponse: function(lfData) {
     var target = {};
     if (lfData) {
-
       var source = lfData.getFormData(true,true,true,true);
-
-      this._groupedValues = {};
-      this._groupValuesByLinkId(source);
-
+      this._processRepeatingItemValues(source);
       this._setResponseFormLevelFields(target, source);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
         for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processResponseItem(source.items[i]);
-          target.item.push(newItem);
+          if (!source.items[i]._repeatingItem) {
+            var newItem = this._processResponseItem(source.items[i], source);
+            target.item.push(newItem);
+          }
         }
       }
     }
     return target;
+  },
+
+
+  /**
+   * Check if a LForms item has repeating questions
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+  _questionRepeats: function(item) {
+    return item && item.questionCardinality && item.questionCardinality.max &&
+        (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1)
+  },
+
+
+  /**
+   * Check if a LForms item has repeating answers
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+  _answerRepeats: function(item) {
+    return item && item.answerCardinality && item.answerCardinality.max &&
+        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)
   },
 
 
@@ -498,59 +566,52 @@ jQuery.extend(LForms.FHIR_SDC, {
         "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
       ]
     };
-
-    // text, not to use. it requires html/xhtml content?
-
   },
 
 
   /**
    * Process an item of the form
    * @param item an item in LForms form object
+   * @param parentItem a parent item of the item
    * @returns {{}}
    * @private
    */
-  _processResponseItem: function(item) {
+  _processResponseItem: function(item, parentItem) {
     var targetItem = {};
+    var linkId = item._codePath;
 
-    // id (empty for new record)
-
-    var linkId = item._codePath + item._idPath;
-
-    // if the item has not been processed
-    // for repeating questions, only the first one will be processed
-    if (this._groupedValues[linkId]) {
-      // if it is a section
-      if (item.dataType === "SECTION") {
-        // linkId
-        targetItem.linkId = linkId;
-        // text
-        targetItem.text = item.question;
-
-        if (item.items && Array.isArray(item.items)) {
-          // header
-          targetItem.item = [];
-          for (var i=0, iLen=item.items.length; i<iLen; i++) {
-            var newItem = this._processResponseItem(item.items[i]);
+    // if it is a section
+    if (item.dataType === "SECTION") {
+      // linkId
+      targetItem.linkId = linkId;
+      // text
+      targetItem.text = item.question;
+      if (item.items && Array.isArray(item.items)) {
+        // header
+        targetItem.item = [];
+        for (var i=0, iLen=item.items.length; i<iLen; i++) {
+          if (!item.items[i]._repeatingItem) {
+            var newItem = this._processResponseItem(item.items[i], item);
             targetItem.item.push(newItem);
           }
         }
       }
-      // if it is a question
-      else if (item.dataType !== "TITLE")
-      {
-        // linkId
-        targetItem.linkId = linkId;
-        // text
-        targetItem.text = item.question;
-
-        this._handleAnswerValues(targetItem, item);
-      }
-
-      // remove the processed values
-      delete this._groupedValues[linkId];
-
     }
+    // if it is a question
+    else if (item.dataType !== "TITLE")
+    {
+      // linkId
+      targetItem.linkId = linkId;
+      // text
+      targetItem.text = item.question;
+
+      this._handleAnswerValues(targetItem, item, parentItem);
+      // remove the processed values
+      if (parentItem._questionValues) {
+        delete parentItem._questionValues[linkId];
+      }
+    }
+
     return targetItem
   },
 
@@ -713,22 +774,32 @@ jQuery.extend(LForms.FHIR_SDC, {
    * Group values of the questions that have the same linkId
    * @param item an item in the LForms form object or a form item object
    * @private
+   *
    */
-  _groupValuesByLinkId: function(item) {
-    var linkId = item._codePath + item._idPath;
-    //var linkId = item._codePath;
-
-    if (!this._groupedValues[linkId]) {
-      this._groupedValues[linkId] = [item.value];
-    }
-    else {
-      this._groupedValues[linkId].push(item.value);
-    }
+  _processRepeatingItemValues: function(item) {
     if (item.items) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        this._groupValuesByLinkId(item.items[i])
+        var subItem = item.items[i];
+        // if it is a question and the it repeats
+        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
+          var linkId = subItem._codePath;
+          if (!item._questionValues) {
+            item._questionValues = {};
+          }
+          if (!item._questionValues[linkId]) {
+            item._questionValues[linkId] = [subItem.value];
+          }
+          else {
+            item._questionValues[linkId].push(subItem.value);
+            subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
+          }
+        }
+        else if (subItem.dataType === 'SECTION') {
+          this._processRepeatingItemValues(subItem);
+        }
       }
     }
+
   },
 
 
@@ -738,19 +809,27 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @param item an item in LForms form object
    * @private
    */
-  _handleAnswerValues: function(targetItem, item) {
+  _handleAnswerValues: function(targetItem, item, parentItem) {
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
     var answer = [];
-    var linkId = item._codePath + item._idPath;
+    var linkId = item._codePath;
     // value not processed by previous repeating items
-    if (this._groupedValues[linkId] && item.dataType !== "SECTION" && item.dataType !=="TITLE") {
+    if (item.dataType !== "SECTION" && item.dataType !=="TITLE") {
 
       var valueKey = this._getValueKeyByDataType("value", item.dataType);
 
-      var values = this._groupedValues[linkId];
+      if (this._questionRepeats(item)) {
+        var values = parentItem._questionValues[linkId];
+      }
+      else if (this._answerRepeats(item)) {
+        values = item.value;
+      }
+      else {
+        values = [item.value];
+      }
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
 
@@ -759,8 +838,7 @@ jQuery.extend(LForms.FHIR_SDC, {
         // Note: NO support of multiple selections in FHIR SDC
         if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
           var codeSystem = this._getCodeSystem(item.questionCodeSystem);
-          if ((item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1) &&
-              Array.isArray(values[i])) {
+          if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
                 answer.push({
@@ -771,7 +849,7 @@ jQuery.extend(LForms.FHIR_SDC, {
                   }
                 })
               }
-              // empty answer
+              // empty answer ??
               else {
                 answer.push({
                   "valueCoding" : {}
@@ -790,7 +868,7 @@ jQuery.extend(LForms.FHIR_SDC, {
                 }
               })
             }
-            // empty answer
+            // empty answer ??
             else {
               answer.push({
                 "valueCoding" : {}
@@ -811,7 +889,8 @@ jQuery.extend(LForms.FHIR_SDC, {
           // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         }
         // make a Quantity type if numeric values has a unit value
-        else if (item.unit && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
+        else if (item.unit && typeof values[i] !== 'undefined' &&
+            (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
           answer.push({
             "valueQuantity": {
               "value": parseFloat(values[i]),
@@ -847,26 +926,40 @@ jQuery.extend(LForms.FHIR_SDC, {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
-    if (item.value) {
-      var valueKey = this._getValueKeyByDataType("initial", item.dataType)
+    if (item.defaultAnswer) {
+
+      var valueKey = this._getValueKeyByDataType("initial", item.dataType);
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
         var codeSystem = this._getCodeSystem(item.questionCodeSystem);
-        if (item.questionCardinality.max==="*" || parseInt(item.questionCardinality.max) >1) {
+        var answerRepeats = item.answerCardinality &&
+            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+        if (answerRepeats && Array.isArray(item.defaultAnswer)) {
+          // TBD, defaultAnswer has multiple values
+          // targetItem[valueKey] = [];
+          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
+          //   targetItem[valueKey].push({
+          //     "system": codeSystem,
+          //     "code": item.defaultAnswer[i].code,
+          //     "display": item.defaultAnswer[i].text
+          //   })
+          // };
+
+          // pick the first one only
           targetItem[valueKey] = {
             "system": codeSystem,
-            "code": item.value[0].code,
-            "display": item.value[0].text
+            "code": item.defaultAnswer[0].code,
+            "display": item.defaultAnswer[0].text
           };
         }
-        // single selection, item.value is an object
+        // single selection, item.defaultAnswer is an object
         else {
           targetItem[valueKey] = {
             "system": codeSystem,
-            "code": item.value.code,
-            "display": item.value.text
+            "code": item.defaultAnswer.code,
+            "display": item.defaultAnswer.text
           };
         }
       }
@@ -890,7 +983,6 @@ jQuery.extend(LForms.FHIR_SDC, {
       }
       // no support for reference
     }
-
   },
 
 
@@ -941,7 +1033,8 @@ jQuery.extend(LForms.FHIR_SDC, {
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
 
         var enableWhenRule = {
-          "question": sourceItem._codePath + sourceItem._idPath
+          //"question": sourceItem._codePath + sourceItem._idPath
+          "question": sourceItem._codePath
         };
         // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
@@ -996,8 +1089,8 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @returns {{}} an updated LForms form object
    */
   mergeQuestionnaireResponseToForm : function(formData, qr) {
-    var reportStructure = this._getReportStructure(qr);
-    this._processObxAndItem(reportStructure, formData);
+    var qrInfo = this._getQRStructure(qr);
+    this._processQRItemAndLFormsItem(qrInfo, formData);
     return formData;
   },
 
@@ -1008,28 +1101,14 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @returns {{}} a QuestionnaireResponse data structure object
    * @private
    */
-  _getReportStructure : function(qr) {
-    var qrStructure = {
-      obxInfoList: []
+  _getQRStructure : function(qr) {
+    var qrInfo = {
+      qrItemsInfo: []
     };
     if (qr) {
-      this._checkRepeatingItems(qrStructure, qr);
+      this._checkQRItems(qrInfo, qr);
     }
-    return qrStructure;
-  },
-
-
-  /**
-   * Get the item's code path from a link id
-   * @param linkId a link id
-   * @returns {*}
-   * @private
-   */
-  _getCodePathFromLinkId: function(linkId) {
-    var parts = linkId.split("/");
-    var level = (parts.length -1)/2;
-    var codePath = parts.slice(0, level +1 ).join("/");
-    return codePath;
+    return qrInfo;
   },
 
 
@@ -1041,53 +1120,47 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   _getItemCodeFromLinkId: function(linkId) {
     var parts = linkId.split("/");
-    var level = (parts.length -1)/2;
-    var itemCode = parts[level];
+    var itemCode = parts[parts.length -1];
     return itemCode;
   },
 
 
   /**
    * Get structural info of a QuestionnaireResponse by going though each level of items
-   * @param parentObxInfo the structural info of a parent item
+   * @param parentQRItemInfo the structural info of a parent item
    * @param parentItem a parent item in a QuestionnaireResponse object
    * @private
    */
-  _checkRepeatingItems : function(parentObxInfo, parentItem) {
+  _checkQRItems : function(parentQRItemInfo, parentQRItem) {
 
-    var obxInfoList = [];
-    var repeatingItemInfo = {};
+    var qrItemsInfo = [];
+    var repeatingItemProcessed = {};
 
-    if (parentItem && parentItem.item) {
-      for (var i=0, iLen=parentItem.item.length; i<iLen; i++) {
-        var subItem = parentItem.item[i];
-        var itemCode = this._getItemCodeFromLinkId(subItem.linkId);
-        // first obx that has the same item code, either repeating or non-repeating
-        if (!repeatingItemInfo[itemCode]) {
-          var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentItem);
-          repeatingItemInfo[itemCode] = {
-            total: repeatingInfo.total,
-            repeatingItems: repeatingInfo.repeatingItems
-          };
-        }
+    if (parentQRItem && parentQRItem.item) {
+      for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
+        var item = parentQRItem.item[i];
+        var itemCode = this._getItemCodeFromLinkId(item.linkId);
+        // first item that has the same code, either repeating or non-repeating
+        if (!repeatingItemProcessed[itemCode]) {
+          var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem);
 
-        // create structure info for the obx
-        var repeatingItems = repeatingItemInfo[itemCode].repeatingItems;
-        for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
-          if (subItem.linkId === repeatingItems[j].linkId) {
-            var obxInfo = {
+          // create structure info for the item
+          var repeatingItems = repeatingInfo.repeatingItems;
+          for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
+            var qrItemInfo = {
               code: itemCode,
-              item: subItem,
+              item: repeatingItems[j],
               index: j,
-              total: repeatingItemInfo[itemCode].total
+              total: repeatingInfo.total
             };
             // check observation instances in the sub level
-            this._checkRepeatingItems(obxInfo, subItem);
-            obxInfoList.push(obxInfo);
+            this._checkQRItems(qrItemInfo, repeatingItems[j]);
+            qrItemsInfo.push(qrItemInfo);
           }
+          repeatingItemProcessed[itemCode] = true;
         }
       }
-      parentObxInfo.obxInfoList = obxInfoList;
+      parentQRItemInfo.qrItemsInfo = qrItemsInfo;
     }
   },
 
@@ -1095,20 +1168,25 @@ jQuery.extend(LForms.FHIR_SDC, {
   /**
    * Find the number of the repeating items that have the same code
    * @param code an item code
-   * @param parentItem a parent item in a QuestionnaireResponse object
+   * @param parentQRItem a parent item in a QuestionnaireResponse object
    * @returns a structural info object for a repeating item
    * @private
    */
-  _findTotalRepeatingNum : function(code, parentItem) {
+  _findTotalRepeatingNum : function(code, parentQRItem) {
 
     var total = 0;
     var repeatingItems = [];
-    for (var i=0, iLen=parentItem.item.length; i<iLen; i++) {
-      var item = parentItem.item[i];
+    for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
+      var item = parentQRItem.item[i];
       var itemCode = this._getItemCodeFromLinkId(item.linkId);
       if (itemCode === code) {
         repeatingItems.push(item);
-        total += 1;
+        if (Array.isArray(item.answer)) {
+          total += item.answer.length; // answers for repeating questions and repeating answers
+        }
+        else {
+          total += 1;
+        }
       }
     }
 
@@ -1118,30 +1196,56 @@ jQuery.extend(LForms.FHIR_SDC, {
     };
   },
 
-
   /**
    * Merge data into items on the same level
-   * @param parentObxInfo structural information of a parent item
-   * @param parentItem a parent item, could be a LForms form object or a form item object.
+   * @param parentQRItemInfo structural information of a parent item
+   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
    * @private
    */
-  _processObxAndItem : function(parentObxInfo, parentItem) {
-    for(var i=0, iLen=parentObxInfo.obxInfoList.length; i<iLen; i++) {
+  _processQRItemAndLFormsItem : function(parentQRItemInfo, parentLFormsItem) {
 
-      var obxInfo = parentObxInfo.obxInfoList[i];
-      var obx = obxInfo.item;
-      if (obx) {
-        // first repeating obx
-        if (obxInfo.total > 1 && obxInfo.index === 0) {
+    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
+    for(var i=0; i<parentQRItemInfo.qrItemsInfo.length; i++) {
+
+      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
+      var qrItem = qrItemInfo.item;
+      if (qrItem) {
+        // first repeating qrItem
+        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
+          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
           // add repeating items in form data
-          this._addRepeatingItems(parentItem, obxInfo.code, obxInfo.total);
+          // if it is a case of repeating questions, not repeating answers
+          if (this._questionRepeats(defItem)) {
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total);
+            // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
+            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
+              for (var j=1; j<qrItemInfo.total; j++) {
+                var newQRItemInfo = angular.copy(qrItemInfo);
+                newQRItemInfo.index = j;
+                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+                parentQRItemInfo.qrItemsInfo.splice(j, 0, newQRItemInfo);
+              }
+              // change the first qr item's answer too
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
+            }
+          }
+          // reset the total number of questions when it is the answers that repeats
+          else if (this._answerRepeats(defItem)) {
+            qrItemInfo.total = 1;
+          }
         }
-        var item = this._findTheMatchingItemByCodeAndIndex(parentItem, obxInfo.code, obxInfo.index);
-        this._setupItemValueAndUnit(obx, item);
+        // find the matching LForms item
+        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index);
 
-        // process items on sub level
-        if (obxInfo.obxInfoList && obxInfo.obxInfoList.length>0) {
-          this._processObxAndItem(obxInfo, item);
+        // set up value and units if it is a question
+        if ((item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
+          var code = this._getItemCodeFromLinkId(qrItem.linkId);
+          this._setupItemValueAndUnit(code, qrItem.answer, item);
+        }
+
+        // process items on the sub-level
+        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length>0) {
+          this._processQRItemAndLFormsItem(qrItemInfo, item);
         }
       }
     }
@@ -1149,7 +1253,7 @@ jQuery.extend(LForms.FHIR_SDC, {
 
 
   /**
-   * Add repeating items
+   * Add repeating items into LForms definition data object
    * @param parentItem a parent item
    * @param itemCode code of a repeating item
    * @param total total number of the repeating item with the same code
@@ -1178,7 +1282,7 @@ jQuery.extend(LForms.FHIR_SDC, {
 
 
   /**
-   * Find a matching repeating item
+   * Find a matching repeating item by item code and the index in the items array
    * @param parentItem a parent item
    * @param itemCode code of a repeating (or non-repeating) item
    * @param index index of the item in the sub item array of the parent item
@@ -1206,13 +1310,45 @@ jQuery.extend(LForms.FHIR_SDC, {
 
 
   /**
+   * Find a matching repeating item by item code alone
+   * When used on the LForms definition data object, there is no repeating items yet.
+   * @param parentItem a parent item
+   * @param itemCode code of an item
+   * @returns {{}} a matching item
+   * @private
+   */
+  _findTheMatchingItemByCode : function(parentItem, itemCode) {
+    var item = null;
+    var idx = 0;
+    if (parentItem.items) {
+      for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+        if (itemCode === parentItem.items[i].questionCode) {
+          item = parentItem.items[i];
+          break;
+        }
+        else {
+          idx += 1;
+        }
+      }
+    }
+    return item;
+  },
+
+
+  /**
    * Merge a data item instance into an form item
-   * @param obx a data item
+   * @param qrItem a data item
    * @param item a form item
    * @private
    */
-  _setupItemValueAndUnit : function(obx, item) {
-    var code = this._getItemCodeFromLinkId(obx.linkId);
+  /**
+   * Set value and units on a LForms item
+   * @param code an item code
+   * @param answer value for the item
+   * @param item a LForms item
+   * @private
+   */
+  _setupItemValueAndUnit : function(code, answer, item) {
 
     if (item && code === item.questionCode && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
       var dataType = item.dataType;
@@ -1222,7 +1358,7 @@ jQuery.extend(LForms.FHIR_SDC, {
         dataType = "REAL";
       }
 
-      var qrValue = obx.answer[0];
+      var qrValue = answer[0];
 
       switch (dataType) {
         case "INT":
@@ -1248,11 +1384,10 @@ jQuery.extend(LForms.FHIR_SDC, {
           break;
         case "CNE":
         case "CWE":
-          if (item.answerCardinality.max &&
-              (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+          if (this._answerRepeats(item)) {
             var value = [];
-            for (var j=0,jLen=obx.answer.length; j<jLen; j++) {
-              var coding = obx.answer[j];
+            for (var j=0,jLen=answer.length; j<jLen; j++) {
+              var coding = answer[j];
               value.push({
                 "code": coding.valueCoding.code,
                 "text": coding.valueCoding.display
