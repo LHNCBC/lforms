@@ -195,7 +195,6 @@
                 convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
                 $scope.lfData2 = new LForms.LFormsData(convertedLforms);
                 $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
-                $scope.disableFHIRButton = true;
               }
             };
 
@@ -237,7 +236,6 @@
 
 
             $scope.useForm = function() {
-              $scope.disableFHIRButton = false;
               var useAnimation = !window._INTESTING_;
 
               var lfData2,
@@ -376,7 +374,7 @@
           <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
           <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
           <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
-          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-disabled="disableFHIRButton" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
           <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport to LForms (USSGFH)</button>

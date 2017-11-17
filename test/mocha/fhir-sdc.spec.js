@@ -183,12 +183,21 @@ describe('FHIR SDC library', function() {
       var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
       var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
 
-      assert.equal(convertedLfData.items.length, 32);
+      assert.equal(convertedLfData.items.length, 33);
       // TODO - min/max exclusive is not supported
       assert.equal(convertedLfData.items[12].restrictions.minInclusive, 5);
       assert.equal(convertedLfData.items[14].restrictions.maxInclusive, 10);
       assert.equal(convertedLfData.items[21].restrictions.minLength, 5);
       assert.equal(convertedLfData.items[22].restrictions.maxLength, 10);
+    });
+
+    it('should convert externally defined', function () {
+      var optionsRes = validationTestForm.items[23].externallyDefined;
+      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+
+      assert.equal(convertedLfData.items.length, 33);
+      assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
     });
 
   });

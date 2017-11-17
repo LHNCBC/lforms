@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.6.0]
+### Added
+- Added conversion of externallyDefined field in LForms to store it in FHIR questionnaire resource. 
+
+## [12.5.3]
+### Changed
+- Changed our internal development environment shell from tcsh to bash.
+
 ## [12.5.2]
 ### Fixed
 - Fixed an accessibility issue with plain-text popups.  Popups with HTML (e.g.

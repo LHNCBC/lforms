@@ -121,6 +121,10 @@ jQuery.extend(LForms.FHIR_SDC, {
     // subjectType
     target.subjectType = ["Patient", "Person"];
 
+    if(source.id) {
+      target.id = source.id;
+    }
+
   },
 
 
@@ -251,10 +255,14 @@ jQuery.extend(LForms.FHIR_SDC, {
       targetItem.readonly = true;
     }
 
-    // options, a reference to ValueSet resource, not using for now
+    // options , a reference to ValueSet resource, not using for now
+
+    if(item.externallyDefined) {
+      targetItem.options = this._handleExternallyDefined(item);
+    }
     // option, for answer list
-    if (item.answers) {
-      targetItem.option = this._handleAnswers(item)
+    else if (item.answers) {
+      targetItem.option = this._handleAnswers(item);
     }
 
     // initialValue, for default values
@@ -665,6 +673,25 @@ jQuery.extend(LForms.FHIR_SDC, {
         break;
     }
     return prefix + valueKey;
+  },
+
+
+  /**
+   * Process an item's externally defined answer list
+   * Use FHIR's options field to store the reference. However it needs to
+   * satisfy FHIR's value set resource definition
+   *
+   * @param item
+   * @returns {*}
+   * @private
+   */
+  _handleExternallyDefined: function (item) {
+
+    var options = null;
+    if(item && item.externallyDefined) {
+      options = {reference: item.externallyDefined};
+    }
+    return options;
   },
 
 
