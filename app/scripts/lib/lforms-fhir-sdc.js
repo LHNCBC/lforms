@@ -55,6 +55,7 @@ jQuery.extend(LForms.FHIR_SDC, {
 
     if (source.items && Array.isArray(source.items)) {
       for (var i= source.items.length-1; i>=0; i--) {
+        // if it is a repeating item, whose _id is not 1
         if (source.items[i]._id > 1) {
           source.items.splice(i,1);
         }
@@ -807,8 +808,12 @@ jQuery.extend(LForms.FHIR_SDC, {
     if (item.items) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
+        // if it is a section
+        if (subItem.dataType === 'SECTION') {
+          this._processRepeatingItemValues(subItem);
+        }
         // if it is a question and the it repeats
-        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
+        else if (subItem.dataType !== 'TITLE' && this._questionRepeats(subItem)) {
           var linkId = subItem._codePath;
           if (!item._questionValues) {
             item._questionValues = {};
@@ -820,9 +825,6 @@ jQuery.extend(LForms.FHIR_SDC, {
             item._questionValues[linkId].push(subItem.value);
             subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
           }
-        }
-        else if (subItem.dataType === 'SECTION') {
-          this._processRepeatingItemValues(subItem);
         }
       }
     }
@@ -1346,15 +1348,11 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   _findTheMatchingItemByCode : function(parentItem, itemCode) {
     var item = null;
-    var idx = 0;
     if (parentItem.items) {
       for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
         if (itemCode === parentItem.items[i].questionCode) {
           item = parentItem.items[i];
           break;
-        }
-        else {
-          idx += 1;
         }
       }
     }

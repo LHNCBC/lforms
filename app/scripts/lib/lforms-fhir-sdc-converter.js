@@ -274,7 +274,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse 'linkId' for 'display' item's questionCode, which does not have a 'code'
    *
-   * @param lfItem {object} - lfItem to assign question cardinality
+   * @param lfItem {object} - lfItem to assign questionCode
    * @param qItem {object} - Questionnaire item object
    * @private
    */
