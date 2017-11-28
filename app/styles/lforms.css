@@ -381,7 +381,7 @@ Override color of select boxes in calendar widget title bar.
   right: 4px;
   width: 16px;
   height: 16px;
-  z-index: 10;
+  z-index: 1;
   background: transparent;
   color: #066aa0;
   font-family: 'Glyphicons Halflings';
