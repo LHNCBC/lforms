@@ -55,10 +55,10 @@ describe('coding instructions help message', function() {
   var inlineHTMLLink2 = inline2.element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
   var inlineHTMLLink3a = inline3a.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
   var inlineHTMLLink3b = inline3b.element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
-  var helpButton0 = element(by.id("help-/type0/1")); // text formatted content, no 'codingInstructionsFormat'
-  var helpButton1 = element(by.id("help-/type1/1")); // html formatted content, no 'codingInstructionsFormat'
-  var helpButton2 = element(by.id("help-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
-  var helpButton3 = element(by.id("help-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
+  var helpButton0 = element(by.id("helpButton-/type0/1")); // text formatted content, no 'codingInstructionsFormat'
+  var helpButton1 = element(by.id("helpButton-/type1/1")); // html formatted content, no 'codingInstructionsFormat'
+  var helpButton2 = element(by.id("helpButton-/type2/1")); // html formatted content, 'codingInstructionsFormat' is 'text'
+  var helpButton3 = element(by.id("helpButton-/type3/1")); // html formatted content, 'codingInstructionsFormat' is 'html'
 
   var field1 = element(by.id("/type0/1"));
 

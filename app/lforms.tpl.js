@@ -310,18 +310,21 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
     "      </span>\n" +
     "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
-    "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
-    "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
-    "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\"\n" +
-    "                uib-popover-template=\"'popover-content.html'\"\n" +
+    "        <span ng-switch-when=\"inline-html\" id=\"help-{{ item._elementId }}\"\n" +
+    "         class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
+    "        <span ng-switch-when=\"inline-escaped\" id=\"help-{{ item._elementId }}\"\n" +
+    "         class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "        <button ng-switch-when=\"popover-html\" id=\"helpButton-{{ item._elementId }}\"\n" +
+    "                class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover-content.html'\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                type=\"button\" aria-label=\"Help\"\n" +
     "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
-    "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
+    "        <button ng-switch-when=\"popover-escaped\" id=\"helpButton-{{ item._elementId }}\"\n" +
+    "                class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "                type=\"button\" aria-label=\"Help\"\n" +
     "                aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "        </button>\n" +
@@ -362,28 +365,20 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <lf-answers item=\"item\"></lf-answers>\n" +
     "          </div>\n" +
     "\n" +
-    "          <input ng-switch-when=\"REAL\" name=\"{{item.question}}\" type=\"text\"\n" +
-    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
-    "          <input ng-switch-when=\"INT\" name=\"{{item.question}}\" type=\"text\"\n" +
-    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
-    "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
     "          <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
-    "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
-    "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
-    "                    ng-focus=\"setActiveRow(item)\"\n" +
-    "                    ng-blur=\"activeRowOnBlur(item)\">\n" +
+    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
+    "                 id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" +
+    "                 ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          </textarea>\n" +
     "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\">\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "        </div>\n" +
     "      </ng-form>\n" +
     "    </div>\n" +
