@@ -963,9 +963,7 @@ jQuery.extend(LForms.FHIR_SDC, {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
         var codeSystem = this._getCodeSystem(item.questionCodeSystem);
-        var answerRepeats = item.answerCardinality &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
-        if (answerRepeats && Array.isArray(item.defaultAnswer)) {
+        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           // targetItem[valueKey] = [];
           // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
@@ -1062,7 +1060,6 @@ jQuery.extend(LForms.FHIR_SDC, {
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
 
         var enableWhenRule = {
-          //"question": sourceItem._codePath + sourceItem._idPath
           "question": sourceItem._codePath
         };
         // dataTypes:
