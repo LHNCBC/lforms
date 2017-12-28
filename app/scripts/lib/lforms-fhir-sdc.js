@@ -256,10 +256,10 @@ jQuery.extend(LForms.FHIR_SDC, {
       targetItem.readonly = true;
     }
 
-    // options , a reference to ValueSet resource, not using for now
-
+    // options , a reference to ValueSet resource,
+    // an extension is used for now
     if(item.externallyDefined) {
-      targetItem.options = this._handleExternallyDefined(item);
+      this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
     else if (item.answers) {
@@ -679,20 +679,18 @@ jQuery.extend(LForms.FHIR_SDC, {
 
   /**
    * Process an item's externally defined answer list
-   * Use FHIR's options field to store the reference. However it needs to
-   * satisfy FHIR's value set resource definition
-   *
-   * @param item
+   * @param targetItem a QuestionnaireResponse object
+   * @param item an item in the LForms form object
    * @returns {*}
    * @private
    */
-  _handleExternallyDefined: function (item) {
-
-    var options = null;
-    if(item && item.externallyDefined) {
-      options = {reference: item.externallyDefined};
+  _handleExternallyDefined: function(targetItem, item) {
+    if (item.externallyDefined) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+        "valueUri": item.externallyDefined
+      });
     }
-    return options;
   },
 
 

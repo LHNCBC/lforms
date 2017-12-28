@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.7.1]
+### Fixed
+- Added an FHIR Questionnaire extension for externallyDefined.
+ 
 ## [12.7.0]
 ### Changed
 - Changed the linkId of FHIR Questionnaire item to be the _codePath of LForms' item, and updated
