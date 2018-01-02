@@ -26,6 +26,8 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
 
+  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -176,8 +178,9 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @private
    */
   function _processExternallyDefined(lfItem, qItem) {
-    if(qItem.options) {
-      lfItem.externallyDefined = qItem.options.reference;
+    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
+    if (externallyDefined && externallyDefined.valueUri) {
+      lfItem.externallyDefined = externallyDefined.valueUri;
     }
   }
 

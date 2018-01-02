@@ -51,12 +51,9 @@
     "time-grunt": "^1.0.0",
     "wiredep": "^3.0.0"
   },
-  "engines": {
-    "node": ">=0.10.0"
-  },
   "scripts": {
     "test": "grunt test",
     "postinstall": "npm run update-webdriver",
-    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
   }
 }

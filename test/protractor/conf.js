@@ -6,7 +6,7 @@ exports.config = {
   //directConnect: true,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'firebox'
+    'browserName': 'firefox'
   },
   specs: 'spec/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
