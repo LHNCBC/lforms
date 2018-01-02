@@ -22,7 +22,7 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, true);
-      assert.equal(out.linkId, "/54126-8/54125-0/1/1");
+      assert.equal(out.linkId, "/54126-8/54125-0");
       assert.equal(out.text, "Name");
       assert.equal(out.type, "string");
       assert.equal(out.code[0].system,"http://loinc.org");
@@ -49,7 +49,7 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, undefined);
-      assert.equal(out.linkId, "/54126-8/54131-8/1/1");
+      assert.equal(out.linkId, "/54126-8/54131-8");
       assert.equal(out.text, "Gender");
       assert.equal(out.type, "choice");
       assert.equal(out.code[0].system,"http://loinc.org");
@@ -97,19 +97,19 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, true);
-      assert.equal(out.linkId, "/54126-8/54137-5X/1/1");
+      assert.equal(out.linkId, "/54126-8/54137-5X");
       assert.equal(out.text, "Mock-up section: Shown when Height = 15");
       assert.equal(out.type, "group");
 
       assert.equal(out.item.length, 2);
       assert.equal(out.item[0].required, undefined);
       assert.equal(out.item[0].repeats, undefined);
-      assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X/1/1/1");
+      assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X");
       assert.equal(out.item[0].text,"Mock-up sub item #1");
       assert.equal(out.item[0].type,"integer");
       assert.equal(out.item[1].required, undefined);
       assert.equal(out.item[1].repeats, undefined);
-      assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X/1/1/1");
+      assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X");
       assert.equal(out.item[1].text,"Mock-up sub item #2");
       assert.equal(out.item[1].type,"decimal");
 

@@ -190,7 +190,7 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[0].code[0].system).toBe("http://loinc.org");
       expect(fhirData.item[0].text).toBe("Your health information");
       expect(fhirData.item[0].required).toBe(false);
-      expect(fhirData.item[0].linkId).toBe("/54126-8/1");
+      expect(fhirData.item[0].linkId).toBe("/54126-8");
       expect(fhirData.item[0].type).toBe("group");
 
       expect(fhirData.item[0].item.length).toBe(13);
@@ -199,7 +199,7 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[0].item[0].type).toBe("string");
       expect(fhirData.item[0].item[0].required).toBe(false);
       expect(fhirData.item[0].item[0].repeats).toBe(true);
-      expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0/1/1");
+      expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0");
       expect(fhirData.item[0].item[0].code[0].code).toBe("54125-0");
       expect(fhirData.item[0].item[0].code[0].display).toBe("Name");
       expect(fhirData.item[0].item[0].code[0].system).toBe("http://loinc.org");
@@ -208,7 +208,7 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[0].item[12].type).toBe("group");
       expect(fhirData.item[0].item[12].required).toBe(false);
       expect(fhirData.item[0].item[12].repeats).toBe(true);
-      expect(fhirData.item[0].item[12].linkId).toBe("/54126-8/54137-5/1/1");
+      expect(fhirData.item[0].item[12].linkId).toBe("/54126-8/54137-5");
       expect(fhirData.item[0].item[12].code[0].code).toBe("54137-5");
       expect(fhirData.item[0].item[12].code[0].display).toBe("Your diseases history");
       expect(fhirData.item[0].item[12].code[0].system).toBe("http://loinc.org");
@@ -218,7 +218,7 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[0].item[12].item[0].type).toBe("choice");
       expect(fhirData.item[0].item[12].item[0].required).toBe(false);
       expect(fhirData.item[0].item[12].item[0].repeats).toBeFalsy();
-      expect(fhirData.item[0].item[12].item[0].linkId).toBe("/54126-8/54137-5/54140-9/1/1/1");
+      expect(fhirData.item[0].item[12].item[0].linkId).toBe("/54126-8/54137-5/54140-9");
       expect(fhirData.item[0].item[12].item[0].code[0].code).toBe("54140-9");
       expect(fhirData.item[0].item[12].item[0].code[0].display).toBe("Disease or Condition");
       expect(fhirData.item[0].item[12].item[0].code[0].system).toBe("http://loinc.org");
@@ -236,7 +236,7 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.item[1].code[0].system).toBe("http://loinc.org");
       expect(fhirData.item[1].text).toBe("Family member health information");
       expect(fhirData.item[1].required).toBe(false);
-      expect(fhirData.item[1].linkId).toBe("/54114-4/1");
+      expect(fhirData.item[1].linkId).toBe("/54114-4");
       expect(fhirData.item[1].type).toBe("group");
 
     });
@@ -302,101 +302,97 @@ describe('get FHIR data from LForms forms', function() {
       expect(fhirData.questionnaire.reference).toBe("Questionnaire/{{questionnaireId}}");
 
       expect(fhirData.item.length).toBe(1);
-      expect(fhirData.item[0].linkId).toBe("/54126-8/1");
+      expect(fhirData.item[0].linkId).toBe("/54126-8");
       expect(fhirData.item[0].text).toBe("Your health information");
 
-      expect(fhirData.item[0].item.length).toBe(10);
+      expect(fhirData.item[0].item.length).toBe(9);
 
-      // name 1
+      // name 1 & name 2
       expect(fhirData.item[0].item[0].text).toBe("Name");
-      expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0/1/1");
-      expect(fhirData.item[0].item[0].answer.length).toBe(1);
+      expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0");
+      expect(fhirData.item[0].item[0].answer.length).toBe(2);
       expect(fhirData.item[0].item[0].answer[0].valueString).toBe("name 1");
-      // name 2
-      expect(fhirData.item[0].item[1].text).toBe("Name");
-      expect(fhirData.item[0].item[1].linkId).toBe("/54126-8/54125-0/1/2");
-      expect(fhirData.item[0].item[1].answer.length).toBe(1);
-      expect(fhirData.item[0].item[1].answer[0].valueString).toBe("name 2");
+      expect(fhirData.item[0].item[0].answer[1].valueString).toBe("name 2");
       // gender
-      expect(fhirData.item[0].item[2].text).toBe("Gender");
-      expect(fhirData.item[0].item[2].linkId).toBe("/54126-8/54131-8/1/1");
-      expect(fhirData.item[0].item[2].answer.length).toBe(1);
-      expect(fhirData.item[0].item[2].answer[0].valueCoding.code).toBe("LA2-8");
-      expect(fhirData.item[0].item[2].answer[0].valueCoding.display).toBe("Male");
-      expect(fhirData.item[0].item[2].answer[0].valueCoding.system).toBe("http://loinc.org");
+      expect(fhirData.item[0].item[1].text).toBe("Gender");
+      expect(fhirData.item[0].item[1].linkId).toBe("/54126-8/54131-8");
+      expect(fhirData.item[0].item[1].answer.length).toBe(1);
+      expect(fhirData.item[0].item[1].answer[0].valueCoding.code).toBe("LA2-8");
+      expect(fhirData.item[0].item[1].answer[0].valueCoding.display).toBe("Male");
+      expect(fhirData.item[0].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
       // DOB
-      expect(fhirData.item[0].item[3].text).toBe("Date of Birth");
-      expect(fhirData.item[0].item[3].linkId).toBe("/54126-8/21112-8/1/1");
-      expect(fhirData.item[0].item[3].answer.length).toBe(1);
-      expect(fhirData.item[0].item[3].answer[0].valueDateTime).toBe("2016-10-27T00:00:00-04:00");
+      expect(fhirData.item[0].item[2].text).toBe("Date of Birth");
+      expect(fhirData.item[0].item[2].linkId).toBe("/54126-8/21112-8");
+      expect(fhirData.item[0].item[2].answer.length).toBe(1);
+      expect(fhirData.item[0].item[2].answer[0].valueDateTime).toBe("2016-10-27T00:00:00-04:00");
       // Height
-      expect(fhirData.item[0].item[4].text).toBe("Height");
-      expect(fhirData.item[0].item[4].linkId).toBe("/54126-8/8302-2/1/1");
-      expect(fhirData.item[0].item[4].answer.length).toBe(1);
-      expect(fhirData.item[0].item[4].answer[0].valueQuantity.code).toBe("inches");
-      expect(fhirData.item[0].item[4].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
-      expect(fhirData.item[0].item[4].answer[0].valueQuantity.unit).toBe("inches");
-      expect(fhirData.item[0].item[4].answer[0].valueQuantity.value).toBe(70);
+      expect(fhirData.item[0].item[3].text).toBe("Height");
+      expect(fhirData.item[0].item[3].linkId).toBe("/54126-8/8302-2");
+      expect(fhirData.item[0].item[3].answer.length).toBe(1);
+      expect(fhirData.item[0].item[3].answer[0].valueQuantity.code).toBe("inches");
+      expect(fhirData.item[0].item[3].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
+      expect(fhirData.item[0].item[3].answer[0].valueQuantity.unit).toBe("inches");
+      expect(fhirData.item[0].item[3].answer[0].valueQuantity.value).toBe(70);
       // Weight
-      expect(fhirData.item[0].item[5].text).toBe("Weight");
-      expect(fhirData.item[0].item[5].linkId).toBe("/54126-8/29463-7/1/1");
-      expect(fhirData.item[0].item[5].answer.length).toBe(1);
-      expect(fhirData.item[0].item[5].answer[0].valueQuantity.code).toBe("lbs");
-      expect(fhirData.item[0].item[5].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
-      expect(fhirData.item[0].item[5].answer[0].valueQuantity.unit).toBe("lbs");
-      expect(fhirData.item[0].item[5].answer[0].valueQuantity.value).toBe(170);
+      expect(fhirData.item[0].item[4].text).toBe("Weight");
+      expect(fhirData.item[0].item[4].linkId).toBe("/54126-8/29463-7");
+      expect(fhirData.item[0].item[4].answer.length).toBe(1);
+      expect(fhirData.item[0].item[4].answer[0].valueQuantity.code).toBe("lbs");
+      expect(fhirData.item[0].item[4].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
+      expect(fhirData.item[0].item[4].answer[0].valueQuantity.unit).toBe("lbs");
+      expect(fhirData.item[0].item[4].answer[0].valueQuantity.value).toBe(170);
       // BMI
-      expect(fhirData.item[0].item[6].text).toBe("Mock-up item: Body mass index (BMI) [Ratio]");
-      expect(fhirData.item[0].item[6].linkId).toBe("/54126-8/39156-5/1/1");
-      expect(fhirData.item[0].item[6].answer.length).toBe(1);
-      expect(fhirData.item[0].item[6].answer[0].valueString).toBe("24.39");
+      expect(fhirData.item[0].item[5].text).toBe("Mock-up item: Body mass index (BMI) [Ratio]");
+      expect(fhirData.item[0].item[5].linkId).toBe("/54126-8/39156-5");
+      expect(fhirData.item[0].item[5].answer.length).toBe(1);
+      expect(fhirData.item[0].item[5].answer[0].valueString).toBe("24.39");
       // Race
-      expect(fhirData.item[0].item[7].text).toBe("Race");
-      expect(fhirData.item[0].item[7].linkId).toBe("/54126-8/54134-2/1/1");
-      expect(fhirData.item[0].item[7].answer.length).toBe(2);
-      expect(fhirData.item[0].item[7].answer[0].valueCoding.code).toBe("LA10608-0");
-      expect(fhirData.item[0].item[7].answer[0].valueCoding.display).toBe("American Indian or Alaska Native");
-      expect(fhirData.item[0].item[7].answer[0].valueCoding.system).toBe("http://loinc.org");
-      expect(fhirData.item[0].item[7].answer[1].valueCoding.code).toBe("LA6156-9");
-      expect(fhirData.item[0].item[7].answer[1].valueCoding.display).toBe("Asian");
-      expect(fhirData.item[0].item[7].answer[1].valueCoding.system).toBe("http://loinc.org");
+      expect(fhirData.item[0].item[6].text).toBe("Race");
+      expect(fhirData.item[0].item[6].linkId).toBe("/54126-8/54134-2");
+      expect(fhirData.item[0].item[6].answer.length).toBe(2);
+      expect(fhirData.item[0].item[6].answer[0].valueCoding.code).toBe("LA10608-0");
+      expect(fhirData.item[0].item[6].answer[0].valueCoding.display).toBe("American Indian or Alaska Native");
+      expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe("http://loinc.org");
+      expect(fhirData.item[0].item[6].answer[1].valueCoding.code).toBe("LA6156-9");
+      expect(fhirData.item[0].item[6].answer[1].valueCoding.display).toBe("Asian");
+      expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe("http://loinc.org");
       // Disease history #1
+      expect(fhirData.item[0].item[7].text).toBe("Your diseases history");
+      expect(fhirData.item[0].item[7].linkId).toBe("/54126-8/54137-5");
+      expect(fhirData.item[0].item[7].item.length).toBe(2);
+      //-- Disease or Condition
+      expect(fhirData.item[0].item[7].item[0].text).toBe("Disease or Condition");
+      expect(fhirData.item[0].item[7].item[0].linkId).toBe("/54126-8/54137-5/54140-9");
+      expect(fhirData.item[0].item[7].item[0].answer.length).toBe(1);
+      expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.code).toBe("LA10533-0");
+      expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.display).toBe("Blood Clots");
+      expect(fhirData.item[0].item[7].item[0].answer[0].valueCoding.system).toBe("http://loinc.org");
+      //-- Age at Diagnosis
+      expect(fhirData.item[0].item[7].item[1].text).toBe("Age at Diagnosis");
+      expect(fhirData.item[0].item[7].item[1].linkId).toBe("/54126-8/54137-5/54130-0");
+      expect(fhirData.item[0].item[7].item[1].answer.length).toBe(1);
+      expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.code).toBe("LA10403-6");
+      expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.display).toBe("Newborn");
+      expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
+
+      // Disease history #2
       expect(fhirData.item[0].item[8].text).toBe("Your diseases history");
-      expect(fhirData.item[0].item[8].linkId).toBe("/54126-8/54137-5/1/1");
+      expect(fhirData.item[0].item[8].linkId).toBe("/54126-8/54137-5");
       expect(fhirData.item[0].item[8].item.length).toBe(2);
       //-- Disease or Condition
       expect(fhirData.item[0].item[8].item[0].text).toBe("Disease or Condition");
-      expect(fhirData.item[0].item[8].item[0].linkId).toBe("/54126-8/54137-5/54140-9/1/1/1");
+      expect(fhirData.item[0].item[8].item[0].linkId).toBe("/54126-8/54137-5/54140-9");
       expect(fhirData.item[0].item[8].item[0].answer.length).toBe(1);
-      expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.code).toBe("LA10533-0");
-      expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.display).toBe("Blood Clots");
+      expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.code).toBe("LA10572-8");
+      expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.display).toBe("-- Blood Clot in Leg");
       expect(fhirData.item[0].item[8].item[0].answer[0].valueCoding.system).toBe("http://loinc.org");
       //-- Age at Diagnosis
       expect(fhirData.item[0].item[8].item[1].text).toBe("Age at Diagnosis");
-      expect(fhirData.item[0].item[8].item[1].linkId).toBe("/54126-8/54137-5/54130-0/1/1/1");
+      expect(fhirData.item[0].item[8].item[1].linkId).toBe("/54126-8/54137-5/54130-0");
       expect(fhirData.item[0].item[8].item[1].answer.length).toBe(1);
-      expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe("LA10403-6");
-      expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe("Newborn");
+      expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe("LA10394-7");
+      expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe("Infancy");
       expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
-
-      // Disease history #2
-      expect(fhirData.item[0].item[9].text).toBe("Your diseases history");
-      expect(fhirData.item[0].item[9].linkId).toBe("/54126-8/54137-5/1/2");
-      expect(fhirData.item[0].item[9].item.length).toBe(2);
-      //-- Disease or Condition
-      expect(fhirData.item[0].item[9].item[0].text).toBe("Disease or Condition");
-      expect(fhirData.item[0].item[9].item[0].linkId).toBe("/54126-8/54137-5/54140-9/1/2/1");
-      expect(fhirData.item[0].item[9].item[0].answer.length).toBe(1);
-      expect(fhirData.item[0].item[9].item[0].answer[0].valueCoding.code).toBe("LA10572-8");
-      expect(fhirData.item[0].item[9].item[0].answer[0].valueCoding.display).toBe("-- Blood Clot in Leg");
-      expect(fhirData.item[0].item[9].item[0].answer[0].valueCoding.system).toBe("http://loinc.org");
-      //-- Age at Diagnosis
-      expect(fhirData.item[0].item[9].item[1].text).toBe("Age at Diagnosis");
-      expect(fhirData.item[0].item[9].item[1].linkId).toBe("/54126-8/54137-5/54130-0/1/2/1");
-      expect(fhirData.item[0].item[9].item[1].answer.length).toBe(1);
-      expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.code).toBe("LA10394-7");
-      expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.display).toBe("Infancy");
-      expect(fhirData.item[0].item[9].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
     });
   });
 

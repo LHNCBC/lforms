@@ -19,29 +19,23 @@ var qr =
       },
       "item": [
         {
-          "linkId": "/54126-8/1",
+          "linkId": "/54126-8",
           "text": "Your health information",
           "item": [
             {
-              "linkId": "/54126-8/54125-0/1/1",
+              "linkId": "/54126-8/54125-0",
               "text": "Name",
               "answer": [
                 {
                   "valueString": "name 1"
-                }
-              ]
-            },
-            {
-              "linkId": "/54126-8/54125-0/1/2",
-              "text": "Name",
-              "answer": [
+                },
                 {
                   "valueString": "name 2"
                 }
               ]
             },
             {
-              "linkId": "/54126-8/54131-8/1/1",
+              "linkId": "/54126-8/54131-8",
               "text": "Gender",
               "answer": [
                 {
@@ -54,7 +48,7 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/21112-8/1/1",
+              "linkId": "/54126-8/21112-8",
               "text": "Date of Birth",
               "answer": [
                 {
@@ -63,7 +57,7 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/8302-2/1/1",
+              "linkId": "/54126-8/8302-2",
               "text": "Height",
               "answer": [
                 {
@@ -77,7 +71,7 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/29463-7/1/1",
+              "linkId": "/54126-8/29463-7",
               "text": "Weight",
               "answer": [
                 {
@@ -91,7 +85,7 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/39156-5/1/1",
+              "linkId": "/54126-8/39156-5",
               "text": "Mock-up item: Body mass index (BMI) [Ratio]",
               "answer": [
                 {
@@ -100,7 +94,7 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/54134-2/1/1",
+              "linkId": "/54126-8/54134-2",
               "text": "Race",
               "answer": [
                 {
@@ -120,11 +114,11 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/54137-5/1/1",
+              "linkId": "/54126-8/54137-5",
               "text": "Your diseases history",
               "item": [
                 {
-                  "linkId": "/54126-8/54137-5/54140-9/1/1/1",
+                  "linkId": "/54126-8/54137-5/54140-9",
                   "text": "Disease or Condition",
                   "answer": [
                     {
@@ -137,7 +131,7 @@ var qr =
                   ]
                 },
                 {
-                  "linkId": "/54126-8/54137-5/54130-0/1/1/1",
+                  "linkId": "/54126-8/54137-5/54130-0",
                   "text": "Age at Diagnosis",
                   "answer": [
                     {
@@ -152,11 +146,11 @@ var qr =
               ]
             },
             {
-              "linkId": "/54126-8/54137-5/1/2",
+              "linkId": "/54126-8/54137-5",
               "text": "Your diseases history",
               "item": [
                 {
-                  "linkId": "/54126-8/54137-5/54140-9/1/2/1",
+                  "linkId": "/54126-8/54137-5/54140-9",
                   "text": "Disease or Condition",
                   "answer": [
                     {
@@ -169,7 +163,7 @@ var qr =
                   ]
                 },
                 {
-                  "linkId": "/54126-8/54137-5/54130-0/1/2/1",
+                  "linkId": "/54126-8/54137-5/54130-0",
                   "text": "Age at Diagnosis",
                   "answer": [
                     {

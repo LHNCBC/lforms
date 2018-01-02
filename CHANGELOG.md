@@ -2,6 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.7.1]
+### Fixed
+- Added an FHIR Questionnaire extension for externallyDefined.
+ 
+## [12.7.0]
+### Changed
+- Changed the linkId of FHIR Questionnaire item to be the _codePath of LForms' item, and updated
+  related conversion functions between FHIR data and LForms data.
+- Added an FHIR extension to support repeating answers in FHIR Questionnaire.
+- Added support for multiple answers for the initial values of an FHIR Questionnaire.
+
 ## [12.6.1] 2017-12-08
 ### Fixed
 - Fixed z-index of icon in date input field to go behind any calendar widget coming on the top.

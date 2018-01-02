@@ -24,6 +24,9 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
 
+  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
+
+  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
 
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
@@ -86,6 +89,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     //A lot of parsing depends on data type. Extract it first.
     _processDataType(targetItem, qItem);
     _processCode(targetItem, qItem);
+    _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
     _processQuestionCardinality(targetItem, qItem);
     _processAnswerCardinality(targetItem, qItem);
@@ -113,7 +117,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire object for answer cardinality
    *
-   * @param lfItem {object} - lfItem to assign answer cardinality
+   * @param lfItem {object} - LForms item object to assign answer cardinality
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -121,13 +125,24 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     if(qItem.required) {
       lfItem.answerCardinality = {min: '1'};
     }
+    else {
+      lfItem.answerCardinality = {min: '0'};
+    }
+
+    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+    if(answerRepeats && answerRepeats.valueBoolean) {
+      lfItem.answerCardinality.max = '*';
+    }
+    else {
+      lfItem.answerCardinality.max = '1';
+    }
   }
 
 
   /**
    * Parse questionnaire object for skip logic information
    *
-   * @param lfItem {object} - lfItem to assign the skip logic
+   * @param lfItem {object} - LForms item object to assign the skip logic
    * @param qItem {object} - Questionnaire item object
    * @param sourceQuestionnaire - Questionnaire resource object. This is to provide top level
    *                              item to navigate the tree for skip logic source items.
@@ -139,7 +154,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = null;
         for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingQuestionText(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
+          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
         }
         var condition = {source: source.questionCode};
         var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
@@ -156,21 +171,24 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 
   /**
+   * Parse Questionnaire item for externallyDefined url
    *
-   * @param lfItem
-   * @param qItem
+   * @param lfItem - LForms item object to assign externallyDefined
+   * @param qItem - Questionnaire item object
    * @private
    */
   function _processExternallyDefined(lfItem, qItem) {
-    if(qItem.options) {
-      lfItem.externallyDefined = qItem.options.reference;
+    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
+    if (externallyDefined && externallyDefined.valueUri) {
+      lfItem.externallyDefined = externallyDefined.valueUri;
     }
   }
+
 
   /**
    * Parse questionnaire item for answers list
    *
-   * @param lfItem {object} - lfItem to assign answer list
+   * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -198,7 +216,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for editable
    *
-   * @param lfItem {object} - lfItem to assign editable
+   * @param lfItem {object} - LForms item object to assign editable
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -212,7 +230,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for default answer
    *
-   * @param lfItem {object} - lfItem to assign default answer
+   * @param lfItem {object} - LForms item object to assign default answer
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -225,7 +243,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           lfItem.value = [{code: val.code, text: val.display}];
           lfItem.defaultAnswer = [{code: val.code, text: val.display}];
         }
-        // single selection, item.value is an object
+        // single selection
         else {
           lfItem.value = {code: val.code, text: val.display};
           lfItem.defaultAnswer = {code: val.code, text: val.display};
@@ -242,7 +260,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for units list
    *
-   * @param lfItem {object} - lfItem to assign units
+   * @param lfItem {object} - LForms item object to assign units
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -259,9 +277,26 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 
   /**
+   * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
+   *
+   * @param lfItem {object} - LForms item object to assign questionCode
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  function _processDisplayItemCode(lfItem, qItem) {
+    if (qItem.type === "display" && qItem.linkId) {
+      var codes = qItem.linkId.split("/");
+      if (codes && codes[codes.length-1]) {
+        lfItem.questionCode = codes[codes.length-1];
+      }
+    }
+  }
+
+
+  /**
    * Parse questionnaire item for question cardinality
    *
-   * @param lfItem {object} - lfItem to assign question cardinality
+   * @param lfItem {object} - LForms item object to assign question cardinality
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -288,14 +323,16 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
   /**
    * Parse questionnaire item for code and code system
-   * @param lfItem {object} - lfItem to assign question code
+   * @param lfItem {object} - LForms item object to assign question code
    * @param qItem {object} - Questionnaire item object
    * @private
    */
   function _processCode(lfItem, qItem) {
     var code = _getCode(qItem);
-    lfItem.questionCode = code.code;
-    lfItem.questionCodeSystem = code.system;
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    }
   }
 
 
@@ -343,7 +380,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - lfItem to assign coding instructions
+   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -359,7 +396,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for restrictions
    *
-   * @param lfItem {object} - lfItem to assign restrictions
+   * @param lfItem {object} - LForms item object to assign restrictions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -401,7 +438,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for data type
    *
-   * @param lfItem {object} - lfItem to assign data type
+   * @param lfItem {object} - LForms item object to assign data type
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -415,7 +452,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 
   /**
-   * Get lforms data type from questionnaire item
+   * Get LForms data type from questionnaire item
    *
    * @param qItem {object} - Questionnaire item object
    * @private
@@ -472,7 +509,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
   /**
    * Parse questionnaire item for display control
    *
-   * @param lfItem {object} - lfItem to assign display control
+   * @param lfItem {object} - LForms item object to assign display control
    * @param qItem {object} - Questionnaire item object
    * @private
    */
@@ -547,14 +584,14 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    *
    * @param topLevelItem - Top level item object to traverse the path searching for
    * enableWhen.question text in linkId .
-   * @param questionPath - This is the text in enableWhen.question
+   * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
-  function _getSourceCodeUsingQuestionText(topLevelItem, questionPath) {
+  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
 
 
-    if(topLevelItem.linkId === questionPath) {
+    if(topLevelItem.linkId === questionLinkId) {
       return {
         questionCode: topLevelItem.code[0].code,
         dataType: _getDataType(topLevelItem)
@@ -564,7 +601,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     var ret = null;
     if(Array.isArray(topLevelItem.item)) {
       for(var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingQuestionText(topLevelItem.item[i], questionPath);
+        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
       }
     }
 
