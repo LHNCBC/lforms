@@ -256,8 +256,7 @@ jQuery.extend(LForms.FHIR_SDC, {
       targetItem.readonly = true;
     }
 
-    // options , a reference to ValueSet resource,
-    // an extension is used for now
+    // an extension for the search url of the auto-complete field.
     if(item.externallyDefined) {
       this._handleExternallyDefined(targetItem, item);
     }
