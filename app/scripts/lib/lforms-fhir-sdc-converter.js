@@ -1,3 +1,13 @@
+/**
+ * A package to handle FHIR SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
+ * STU2 Ballot:
+ * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
+ * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
+ *
+ * It provides the following functions:
+ * convertQuestionnaire2Lforms()
+ * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
+ */
 if (typeof LForms === 'undefined')
   LForms = {};
 

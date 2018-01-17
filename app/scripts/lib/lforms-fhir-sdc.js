@@ -1,8 +1,8 @@
 /**
- * A package to handle FHIR SDC (STU2 Ballot, Version 1.6.0) Questionnaire and QuestionnaireResponse for LForms
+ * A package to handle FHIR SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
  * STU2 Ballot:
- * http://hl7.org/fhir/us/sdc/2016Sep/sdc-questionnaire.html
- * http://hl7.org/fhir/us/sdc/2016Sep/sdc-response.html
+ * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
+ * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
  *
  * It provides the following functions:
  * convert2Questionnaire()
@@ -1112,9 +1112,12 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @returns {{}} an updated LForms form object
    */
   mergeQuestionnaireResponseToForm : function(formData, qr) {
+
+    // get the default settings in case they are missing in the form data
+    var newFormData = (new LForms.LFormsData(formData)).getFormData();
     var qrInfo = this._getQRStructure(qr);
-    this._processQRItemAndLFormsItem(qrInfo, formData);
-    return formData;
+    this._processQRItemAndLFormsItem(qrInfo, newFormData);
+    return newFormData;
   },
 
 
