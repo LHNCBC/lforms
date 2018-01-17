@@ -289,7 +289,77 @@ data and form definition data together in a way that can be fed back to LForms
 to display the form with the data.  This is useful when you want to allow the
 user to save the form so it can be redisplayed later for completion or editing.</p>
 
-<h2>
+
+  <h3>
+    <a id="retrieving-hl7-data" class="anchor" href="#retrieving-hl7-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Retrieving User-Entered Data as HL7 v2 OBR and OBX segments
+  </h3>
+  <p>The user entered data, along with some form definition data could be retrieved as HL7 v2 OBR and OBX segments.
+    To retrieve that data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.getFormHL7Data(element)</code></pre>
+
+  <p>The parameter is:</p>
+  <ol>
+    <li>element - optional if there is only one LForms widget on the page, The containing HTML element that includes
+      the LForms rendered form. It could be the DOM element or its id.</li>
+  </ol>
+
+
+  <h3>
+    <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Retrieving User-Entered Data as FHIR Resources
+  </h3>
+  <p>The user entered data, along with some form definition data could be retrieved as FHIR resources.
+    To retrieve that data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, element, inBundle, bundleType)</code></pre>
+
+  <p>The parameters are:</p>
+  <ol>
+    <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
+      and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>element - optional if there is only one LForms widget on the page, The containing HTML element that includes
+      the LForms rendered form. It could be the DOM element or its id.</li>
+    <li>inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
+      are included in a FHIR Bundle. The default is false.</li>
+    <li>bundleType - optional, the FHIR Bundle type if inBundle is true.</li>
+  </ol>
+
+  <h3>
+    <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Converting FHIR Questionnaire Resource to LForms Data
+  </h3>
+  <p>The FHIR Questionnaire resource retrieved from LForms form could be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
+    To convert FHIR Questionnaire resources to LForms data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData)</code></pre>
+
+  <p>The parameter is:</p>
+  <ol>
+    <li>fhirData - a FHIR Questionnaire resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+  </ol>
+
+  <h3>
+    <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Merging FHIR Resources to LForms Data
+  </h3>
+  <p>The FHIR resource retrieved from LForms form could be merged back to LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
+    To merge FHIR resources to LForms data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.mergeFHIRDataIntoLForms(fhirData)</code></pre>
+
+  <p>The parameters are:</p>
+  <ol>
+    <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport" (a DiagnosticReport resource with
+      "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and
+      associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>fhirData - a FHIR resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+    <li>ormData - a LForms form data object.</li>
+  </ol>
+
+
+  <h2>
 <a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
 
 <p>Form definitions are stored in a JSON structure.  To get a rough idea of what
