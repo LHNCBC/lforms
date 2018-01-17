@@ -91,11 +91,15 @@ LForms.Util = {
    * and "QuestionnaireResponse" (SDC profile)
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
+   * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
+   *        are included in a FHIR Bundle. The default is false.
+   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
+
    * @returns {*} a FHIR resource
    */
-  getFormFHIRData: function(resourceType, element) {
+  getFormFHIRData: function(resourceType, element, inBundle, bundleType) {
     var formObj = this._getFormObjectInScope(element);
-    return this.convertLFormsToFHIRData(resourceType, formObj);
+    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType);
   },
 
 
@@ -104,13 +108,16 @@ LForms.Util = {
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
    * and "QuestionnaireResponse" (SDC profile)
    * @param formData a LForms data object
+   * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
+   *        are included in a FHIR Bundle. The default is false.
+   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    * @returns {*} a FHIR resource
    */
-  convertLFormsToFHIRData: function(resourceType, formData) {
+  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType) {
     if (formData) {
       switch (resourceType) {
         case "DiagnosticReport":
-          fhirData = LForms.FHIR.createDiagnosticReport(formData);
+          fhirData = LForms.FHIR.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
           fhirData = LForms.FHIR_SDC.convert2Questionnaire(formData);

@@ -3,7 +3,7 @@ var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
 describe('get FHIR data from LForms forms', function() {
 
-  it('should get a DiagnosticReport data from a form', function() {
+  it('should get a DiagnosticReport (contained) data from a form', function() {
 
     tp.openUSSGFHTVertical();
 
@@ -159,6 +159,169 @@ describe('get FHIR data from LForms forms', function() {
         expect(fhirData.contained[13].related.length).toBe(2);
         // Your health information
         expect(fhirData.contained[14].related.length).toBe(10);
+
+      });
+    });
+  });
+
+  it('should get a DiagnosticReport (Bundle) data from a form', function() {
+
+    tp.openUSSGFHTVertical();
+
+    // #1 all fields are empty
+    browser.driver.executeAsyncScript(function() {
+      var callback = arguments[arguments.length - 1];
+      var fData = LForms.Util.getFormFHIRData("DiagnosticReport", null, true, "collection");
+      callback(fData);
+    }).then(function(fhirData) {
+      expect(fhirData.resourceType).toBe("Bundle");
+      expect(fhirData.entry.length).toBe(1);
+      expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
+      expect(fhirData.entry[0].resource.result).toEqual([]);
+      // #2 has some values
+      // ST, repeating
+      ff.name.sendKeys("name 1");
+      ff.btnName.click();
+      ff.name2.sendKeys("name 2");
+      // DT
+      ff.dob.sendKeys("10/27/2016");
+      // CWE/CNE
+      ff.gender.click();
+      // pick the 1st item
+      ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.gender.sendKeys(protractor.Key.TAB);
+      // CWE, multiple answers
+      ff.race.click();
+      // pick the first 2 items
+      ff.race.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.race.sendKeys(protractor.Key.TAB);
+      ff.race.click();
+      ff.race.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.race.sendKeys(protractor.Key.TAB);
+      // REAL
+      ff.height.sendKeys("70");
+      ff.weight.sendKeys("170");
+      // repeating sub panel
+      ff.disease.click();
+      ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.disease.sendKeys(protractor.Key.TAB);
+      ff.ageAtDiag.click();
+      ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.ageAtDiag.sendKeys(protractor.Key.TAB);
+
+      ff.btnDiseasesHist.click();
+
+      ff.disease2.click();
+      ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.disease2.sendKeys(protractor.Key.TAB);
+      ff.ageAtDiag2.click();
+      ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
+      ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+
+
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var fData = LForms.Util.getFormFHIRData("DiagnosticReport", null, true, "collection");
+        callback(fData);
+      }).then(function (fhirData) {
+        expect(fhirData.resourceType).toBe("Bundle");
+        expect(fhirData.entry.length).toBe(16);
+        expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
+        expect(fhirData.entry[0].resource.result.length).toBe(1);
+        expect(fhirData.entry[0].resource.result[0].reference).not.toBe(undefined);
+        // name 1
+        expect(fhirData.entry[1].resource.resourceType).toBe("Observation");
+        expect(fhirData.entry[1].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[1].resource.code.coding[0].code).toBe("54125-0");
+        expect(fhirData.entry[1].resource.code.coding[0].system).toBe("http://loinc.org");
+        expect(fhirData.entry[1].resource.code.text).toBe("Name");
+        expect(fhirData.entry[1].resource.valueString).toBe("name 1");
+        // name 2
+        expect(fhirData.entry[2].resource.resourceType).toBe("Observation");
+        expect(fhirData.entry[2].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[2].resource.code.coding[0].code).toBe("54125-0");
+        expect(fhirData.entry[2].resource.code.coding[0].system).toBe("http://loinc.org");
+        expect(fhirData.entry[2].resource.code.text).toBe("Name");
+        expect(fhirData.entry[2].resource.valueString).toBe("name 2");
+        // gender
+        expect(fhirData.entry[3].resource.resourceType).toBe("Observation");
+        expect(fhirData.entry[3].resource.id).not.toBe(undefined);
+        expect(fhirData.entry[3].resource.code.coding[0].code).toBe("54131-8");
+        expect(fhirData.entry[3].resource.code.coding[0].system).toBe("http://loinc.org");
+        expect(fhirData.entry[3].resource.code.text).toBe("Gender");
+        expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
+        // DOB
+        expect(fhirData.entry[4].resource.valueDateTime).toBe("2016-10-27T00:00:00-04:00");
+        // Height
+        expect(fhirData.entry[5].resource.valueQuantity).toEqual({"code":"inches","system":"http://unitsofmeasure.org","unit":"inches","value":70});
+        // Weight
+        expect(fhirData.entry[6].resource.valueQuantity).toEqual({"code":"lbs","system":"http://unitsofmeasure.org","unit":"lbs","value":170});
+        // BMI
+        expect(fhirData.entry[7].resource.valueString).toBe("24.39");
+        // Race
+        expect(fhirData.entry[8].resource.valueCodeableConcept).toEqual({
+          "coding": [
+            {
+              code:"LA10608-0",
+              display:"American Indian or Alaska Native",
+              system:"http://loinc.org"
+            },
+            {
+              code:"LA6156-9",
+              display:"Asian",
+              system:"http://loinc.org"
+            }]
+        });
+        // Disease
+        expect(fhirData.entry[9].resource.valueCodeableConcept).toEqual({
+          "coding": [
+            {
+              code:"LA10533-0",
+              display:"Blood Clots",
+              system:"http://loinc.org"
+            }],
+          "text": "Blood Clots"
+        });
+        // Age at diagnosis
+        expect(fhirData.entry[10].resource.valueCodeableConcept).toEqual({
+          "coding": [
+            {
+              code:"LA10403-6",
+              display:"Newborn",
+              system:"http://loinc.org"
+            }],
+          "text": "Newborn"
+        });
+        // Your diseases history (sub panel)
+        expect(fhirData.entry[11].resource.related.length).toBe(2);
+        // Disease 2
+        expect(fhirData.entry[12].resource.valueCodeableConcept).toEqual({
+          "coding": [
+            {
+              code:"LA10572-8",
+              display:"-- Blood Clot in Leg",
+              system:"http://loinc.org"
+            }],
+          "text": "-- Blood Clot in Leg"
+        });
+        // Age at diagnosis 2
+        expect(fhirData.entry[13].resource.valueCodeableConcept).toEqual({
+          "coding": [
+            {
+              code:"LA10394-7",
+              display:"Infancy",
+              system:"http://loinc.org"
+            }],
+          "text": "Infancy"
+        });
+        // Your diseases history (sub panel) 2
+        expect(fhirData.entry[14].resource.related.length).toBe(2);
+        // Your health information
+        expect(fhirData.entry[15].resource.related.length).toBe(10);
 
       });
     });
@@ -430,7 +593,7 @@ describe('get FHIR data from LForms forms', function() {
 
 describe('merge FHIR data into form', function() {
 
-  it('should merge all DiagnosticReport data back into the form', function() {
+  it('should merge all DiagnosticReport (contained) data back into the form', function() {
 
     tp.openUSSGFHTVertical();
 
@@ -456,6 +619,28 @@ describe('merge FHIR data into form', function() {
     expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
     expect(ff.disease2.getAttribute('value')).toBe("-- Blood Clot in Leg");
     expect(ff.ageAtDiag2.getAttribute('value')).toBe("Infancy");
+  });
+
+  it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
+
+    tp.openUSSGFHTVertical();
+
+    element(by.id("merge-bundle-dr")).click();
+
+    browser.wait(function() {
+      return ff.name.isDisplayed();
+    }, 5000);
+
+    expect(ff.name.getAttribute('value')).toBe("12");
+    expect(ff.gender.getAttribute('value')).toBe("Male");
+    expect(ff.dob.getAttribute('value')).toBe("01/10/2018");
+
+    var races = element.all(by.css('.autocomp_selected li'));
+    expect(races.get(0).getText()).toBe('×American Indian or Alaska Native');
+    expect(races.get(1).getText()).toBe('×Asian');
+
+    expect(ff.disease.getAttribute('value')).toBe("Hemolytic-uremic syndrome (HUS)");
+    expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
   });
 
   it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {

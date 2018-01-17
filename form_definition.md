@@ -403,7 +403,10 @@ about the meaning of each key:
     * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
                      and "QuestionnaireResponse" (SDC profile) are supported.
     * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
-                the LForms rendered form. It could be the DOM element or its id.                       
+                the LForms rendered form. It could be the DOM element or its id.      
+    * inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
+                 are included in a FHIR Bundle. The default is false.
+    * bundleType - optional, the FHIR Bundle type if inBundle is true.                 
 * **LForms.Util.convertLFormsToFHIRData()** - a function to convert a LForms form data object into a FHIR resource.
     * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
                      and "QuestionnaireResponse" (SDC profile) are supported.
