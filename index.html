@@ -294,7 +294,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
     <a id="retrieving-hl7-data" class="anchor" href="#retrieving-hl7-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Retrieving User-Entered Data as HL7 v2 OBR and OBX segments
   </h3>
-  <p>The user entered data, along with some form definition data could be retrieved as HL7 v2 OBR and OBX segments.
+  <p>The user entered data, along with some form definition data can be retrieved as HL7 v2 OBR and OBX segments.
     To retrieve that data, LForms provides the following utility method:</p>
   <pre>
     <code>LForms.Util.getFormHL7Data(element)</code></pre>
@@ -310,7 +310,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Retrieving User-Entered Data as FHIR Resources
   </h3>
-  <p>The user entered data, along with some form definition data could be retrieved as FHIR resources.
+  <p>The user entered data, along with some form definition data, can be retrieved as FHIR resources.
     To retrieve that data, LForms provides the following utility method:</p>
   <pre>
     <code>LForms.Util.getFormFHIRData(resourceType, element, inBundle, bundleType)</code></pre>
@@ -319,7 +319,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
   <ol>
     <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
       and "QuestionnaireResponse" (SDC profile) are supported.</li>
-    <li>element - optional if there is only one LForms widget on the page, The containing HTML element that includes
+    <li>element - optional if there is only one LForms widget on the page. The containing HTML element that includes
       the LForms rendered form. It could be the DOM element or its id.</li>
     <li>inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
       are included in a FHIR Bundle. The default is false.</li>
@@ -330,7 +330,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
     <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Converting FHIR Questionnaire Resource to LForms Data
   </h3>
-  <p>The FHIR Questionnaire resource retrieved from LForms form could be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
+  <p>The FHIR Questionnaire resource retrieved from LForms form can be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
     To convert FHIR Questionnaire resources to LForms data, LForms provides the following utility method:</p>
   <pre>
     <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData)</code></pre>
@@ -342,12 +342,12 @@ user to save the form so it can be redisplayed later for completion or editing.<
 
   <h3>
     <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Merging FHIR Resources to LForms Data
+    Merging FHIR Resources into LForms Data
   </h3>
-  <p>The FHIR resource retrieved from LForms form could be merged back to LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
-    To merge FHIR resources to LForms data, LForms provides the following utility method:</p>
+  <p>The FHIR resource retrieved from LForms form can be merged back into LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
+    To merge FHIR resources into LForms data, LForms provides the following utility method:</p>
   <pre>
-    <code>LForms.Util.mergeFHIRDataIntoLForms(fhirData)</code></pre>
+    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
@@ -355,7 +355,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
       "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and
       associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.</li>
     <li>fhirData - a FHIR resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
-    <li>ormData - a LForms form data object.</li>
+    <li>formData - an LForms form data object.</li>
   </ol>
 
 
