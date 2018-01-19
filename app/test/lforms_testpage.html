@@ -236,7 +236,7 @@
 
             $scope.testMergeBundleDR2LForms = function() {
               // use the first form
-              var fhirData = serachsetBundleDr;
+              var fhirData = searchsetBundleDr;
 
               var mergedFormData = LForms.FHIR.mergeDiagnosticReportToLForms(angular.copy(FHTData), fhirData);
               var newFormData = new LFormsData(mergedFormData);

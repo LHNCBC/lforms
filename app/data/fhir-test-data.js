@@ -1,4 +1,4 @@
-var serachsetBundleDr = {
+var searchsetBundleDr = {
   "resourceType": "Bundle",
   "id": "6ed7ea2e-dac7-4563-98af-b6612d5d9947",
   "meta": {
