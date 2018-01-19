@@ -203,10 +203,10 @@
 
             $scope.showFHIRSDCQuestionnaire = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.convert2Questionnaire($scope.lfData2);
+                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaire($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
-                var convertedLforms = LForms.FHIR_SDC.convertQuestionnaire2Lforms(sdc);
+                var convertedLforms = LForms.FHIR_SDC.convertQuestionnaireToLForms(sdc);
                 convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
                 $scope.lfData2 = new LForms.LFormsData(convertedLforms);
                 $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
@@ -215,7 +215,7 @@
 
             $scope.showFHIRSDCResponse = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.convert2QuestionnaireResponse($scope.lfData2);
+                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
@@ -225,7 +225,7 @@
               // use the first form
               var fhirData = containedDr;
 
-              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToForm(angular.copy(FHTData), fhirData);
+              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToLForms(angular.copy(FHTData), fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;
@@ -238,7 +238,7 @@
               // use the first form
               var fhirData = serachsetBundleDr;
 
-              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToForm(angular.copy(FHTData), fhirData);
+              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToLForms(angular.copy(FHTData), fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;
@@ -252,7 +252,7 @@
               var fhirData = qr;
               var formData = angular.copy(FHTData);
 
-              var mergedFormData = LForms.FHIR_SDC.mergeQuestionnaireResponseToForm(formData, fhirData);
+              var mergedFormData = LForms.FHIR_SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;

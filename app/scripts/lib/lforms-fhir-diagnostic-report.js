@@ -5,7 +5,7 @@
  * It provides the following functions:
  * createDiagnosticReport()
  * -- Convert existing LOINC panels/forms data in LForms format into FHIR DiagnosticReport data
- * mergeDiagnosticReportToForm()
+ * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
 if (typeof LForms === 'undefined')
@@ -231,7 +231,7 @@ LForms.FHIR = {
    * Convert a DiagnosticReport resource with contained Observation resources to
    * a FHIR Bundle resource that includes a DiagnosticReport resource and associated Observation resources
    * @param dr a DiagnosticReport resource with contained Observation resources
-   * @param bundleType the FHIR Bundle type.
+   * @param bundleType the FHIR Bundle type. Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Bundle resource that includes a DiagnosticReport resource and associated Observation resources
    */
   _convertFromContainedToBundle: function (dr, bundleType) {
@@ -296,8 +296,8 @@ LForms.FHIR = {
 
       // if it is a section, update references to the sub observations
       if (res.related) {
-        for (var l=0, lLen=res.related.length; l<lLen; l++) {
-          var targetObservation = res.related[l];
+        for (var k=0, kLen=res.related.length; k<kLen; k++) {
+          var targetObservation = res.related[k];
           targetObservation.target.reference =  "Observation/" + targetObservation.target.reference.slice(1);
         }
       }
@@ -359,6 +359,7 @@ LForms.FHIR = {
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
+   *        Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Diagnostic Report instance
    */
   createDiagnosticReport : function(formData, patient, inBundle, bundleType) {
@@ -691,7 +692,8 @@ LForms.FHIR = {
   /**
    * Convert a FHIR Bundle resource that includes a DiagnosticReport resource and associated Observation resources
    * to a DiagnosticReport resource with contained Observation resources
-   * @param bundleDr a Bundle that includes a DiagnosticReport resource and associated Observation resources
+   * @param bundleDr a Bundle that includes a DiagnosticReport resource and associated Observation resources.
+   *        Only "searchset" type is allowed.
    * @returns {{}} a DiagnosticReport resource with contained Observation resources
    */
   _convertFromBundleToContained: function (bundleDr) {
@@ -715,20 +717,23 @@ LForms.FHIR = {
           break;
         }
       }
-      // Move all Observation resource into "contained" field of the DiagnosticReport resource
-      for (var i=0, iLen=entry.length; i<iLen; i++) {
-        if (entry[i].resource.resourceType === "Observation") {
-          var obx = entry[i].resource;
-          // change reference ids in related
-          if (obx.related) {
-            for (var j=0, jLen=obx.related.length; j<jLen; j++) {
-              var related = obx.related[j];
-              if (related.target && related.target.reference && related.target.reference.match(/^Observation/)) {
-                related.target.reference = related.target.reference.slice("Observation".length + 1);
+      // if DiagnosticReport is found
+      if (containedDr) {
+        // Move all Observation resource into "contained" field of the DiagnosticReport resource
+        for (var i=0, iLen=entry.length; i<iLen; i++) {
+          if (entry[i].resource.resourceType === "Observation") {
+            var obx = entry[i].resource;
+            // change reference ids in related
+            if (obx.related) {
+              for (var j=0, jLen=obx.related.length; j<jLen; j++) {
+                var related = obx.related[j];
+                if (related.target && related.target.reference && related.target.reference.match(/^Observation/)) {
+                  related.target.reference = related.target.reference.slice("Observation".length + 1);
+                }
               }
             }
+            containedDr.contained.push(obx)
           }
-          containedDr.contained.push(obx)
         }
       }
     }
@@ -745,7 +750,7 @@ LForms.FHIR = {
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    * @returns {{}} an updated LFormsData object
    */
-  mergeDiagnosticReportToForm : function(formData, diagnosticReport) {
+  mergeDiagnosticReportToLForms : function(formData, diagnosticReport) {
 
     // get the default settings in case they are missing in the form data
     var newFormData = (new LForms.LFormsData(formData)).getFormData();

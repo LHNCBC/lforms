@@ -5,11 +5,11 @@
  * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
  *
  * It provides the following functions:
- * convert2Questionnaire()
+ * convertLFormsToQuestionnaire()
  * -- Convert existing LOINC panels/forms data in LForms format into FHIR SDC Questionnaire data
- * convert2QuestionnaireResponse()
+ * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR SDC QuestionnaireResponse data from captured data in LForms
- * mergeQuestionnaireResponseToForm()
+ * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 if (typeof LForms === 'undefined')
@@ -25,7 +25,7 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @param lfData a LForms form object
    * @returns {{}}
    */
-  convert2Questionnaire: function(lfData) {
+  convertLFormsToQuestionnaire: function(lfData) {
     var target = {};
 
     if (lfData) {
@@ -471,7 +471,7 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @param lfData a LForms form object
    * @returns {{}}
    */
-  convert2QuestionnaireResponse: function(lfData) {
+  convertLFormsToQuestionnaireResponse: function(lfData) {
     var target = {};
     if (lfData) {
       var source = lfData.getFormData(true,true,true,true);
@@ -1111,7 +1111,7 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @param qr a QuestionnaireResponse instance
    * @returns {{}} an updated LForms form object
    */
-  mergeQuestionnaireResponseToForm : function(formData, qr) {
+  mergeQuestionnaireResponseToLForms : function(formData, qr) {
 
     // get the default settings in case they are missing in the form data
     var newFormData = (new LForms.LFormsData(formData)).getFormData();

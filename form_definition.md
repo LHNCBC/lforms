@@ -413,8 +413,8 @@ about the meaning of each key:
     * formData - a LForms form data object.
 * **LForms.Util.convertFHIRQuestionnaireToLForms()** - a function to convert FHIR SQC Questionnaire resource to 
   a LForms definition data object.
-    * fhirData - a FHIR Questionnaire resource, which should be generated through the above function, 
-                 "getFormFHIRData('Questionnaire', ...)".
+    * fhirData - a FHIR Questionnaire resource, which should be generated through the above functions, 
+                 "getFormFHIRData('Questionnaire', ...)" or "convertFHIRQuestionnaireToLForms('Questionnaire',...')".
 * **LForms.Util.mergeFHIRDataIntoLForms()** a function to merge a FHIR resource into an LForms form data object.
     * resourceType - a FHIR resource type. Currently only "DiagnosticReport" (a DiagnosticReport resource with 
                      "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and 

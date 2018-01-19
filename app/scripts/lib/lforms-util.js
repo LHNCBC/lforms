@@ -111,6 +111,7 @@ LForms.Util = {
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
+   *        Only "transaction" and "collection" types are allowed.
    * @returns {*} a FHIR resource
    */
   convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType) {
@@ -120,10 +121,10 @@ LForms.Util = {
           fhirData = LForms.FHIR.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = LForms.FHIR_SDC.convert2Questionnaire(formData);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData);
           break;
         case "QuestionnaireResponse":
-          fhirData = LForms.FHIR_SDC.convert2QuestionnaireResponse(formData);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData);
           break;
       }
     }
@@ -139,7 +140,7 @@ LForms.Util = {
    * @returns {*} - a LForms json object
    */
   convertFHIRQuestionnaireToLForms: function(fhirData) {
-    return fhirData ? LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirData) : null;
+    return fhirData ? LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirData) : null;
   },
 
 
@@ -156,10 +157,10 @@ LForms.Util = {
     if (fhirData) {
       switch (resourceType) {
         case "DiagnosticReport":
-          LForms.FHIR.mergeDiagnosticReportToForm(formData, fhirData);
+          LForms.FHIR.mergeDiagnosticReportToLForms(formData, fhirData);
           break;
         case "QuestionnaireResponse":
-          LForms.FHIR_SDC.mergeQuestionnaireResponseToForm(formData, fhirData);
+          LForms.FHIR_SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
           break;
       }
     }

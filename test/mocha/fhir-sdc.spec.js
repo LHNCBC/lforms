@@ -119,8 +119,8 @@ describe('FHIR SDC library', function() {
 
   describe('Questionnaire to lforms item conversion', function () {
     it('should convert FHTData to lforms', function () {
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(FHTData));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(FHTData));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
       assert.equal(convertedLfData.code, '54127-6N');
@@ -167,8 +167,8 @@ describe('FHIR SDC library', function() {
       assert.equal(convertedLfData.items[0].items[6].units[1].name, "centimeters");
 
       // Display control
-      fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(displayControlsDemo));
-      convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(displayControlsDemo));
+      convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       // TODO -
       // unsupported fields: viewMode, css, colCSS, listColHeaders, answerLayout.columns
@@ -180,8 +180,8 @@ describe('FHIR SDC library', function() {
     });
 
     it('should convert restrictions', function () {
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.items.length, 33);
       // TODO - min/max exclusive is not supported
@@ -193,8 +193,8 @@ describe('FHIR SDC library', function() {
 
     it('should convert externally defined', function () {
       var optionsRes = validationTestForm.items[23].externallyDefined;
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.items.length, 33);
       assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
