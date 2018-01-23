@@ -13,6 +13,10 @@ if (typeof LForms === 'undefined')
 
 LForms.FHIR = {
 
+  // a prefix for references to Observation resources
+  _OBX_REF_PREFIX: "Observation/",
+
+  
   /**
    * Functions for creating a DiagnosticReport instance from an LFormsData object
    */
@@ -279,7 +283,7 @@ LForms.FHIR = {
     // update reference to Observation resources
     for (var i=0, iLen=dr.result.length; i<iLen; i++) {
       var ref = dr.result[i];
-      ref.reference = "Observation/" + ref.reference.slice(1);
+      ref.reference = this._OBX_REF_PREFIX + ref.reference.slice(1);
     }
     // add DiagnosticReport resource into Bundle entry
     bundleDr.entry.push({
@@ -299,7 +303,7 @@ LForms.FHIR = {
       if (res.related) {
         for (var k=0, kLen=res.related.length; k<kLen; k++) {
           var targetObservation = res.related[k];
-          targetObservation.target.reference =  "Observation/" + targetObservation.target.reference.slice(1);
+          targetObservation.target.reference = this._OBX_REF_PREFIX + targetObservation.target.reference.slice(1);
         }
       }
 
@@ -710,8 +714,8 @@ LForms.FHIR = {
           // change reference ids in result
           for (var j=0, jLen=containedDr.result.length; j<jLen; j++) {
             var ref = containedDr.result[j];
-            if (ref.reference && ref.reference.match(/^Observation/)) {
-              ref.reference = ref.reference.slice("Observation".length + 1);
+            if (ref.reference && ref.reference.match(new RegExp(this._OBX_REF_PREFIX))) {
+              ref.reference = ref.reference.slice(this._OBX_REF_PREFIX.length);
             }
           }
           containedDr.contained =[];
@@ -728,8 +732,9 @@ LForms.FHIR = {
             if (obx.related) {
               for (var j=0, jLen=obx.related.length; j<jLen; j++) {
                 var related = obx.related[j];
-                if (related.target && related.target.reference && related.target.reference.match(/^Observation/)) {
-                  related.target.reference = related.target.reference.slice("Observation".length + 1);
+                if (related.target && related.target.reference &&
+                    related.target.reference.match(new RegExp(this._OBX_REF_PREFIX))) {
+                  related.target.reference = related.target.reference.slice(this._OBX_REF_PREFIX.length);
                 }
               }
             }
