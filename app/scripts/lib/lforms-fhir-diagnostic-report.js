@@ -294,7 +294,8 @@ LForms.FHIR = {
     for (var j=0, jLen=contained.length; j<jLen; j++) {
       var res = contained[j];
 
-      // if it is a section, update references to the sub observations
+      // if it has related Observation resources (as it is a section in LForms)
+      // update values of the references to the related Observation resources
       if (res.related) {
         for (var k=0, kLen=res.related.length; k<kLen; k++) {
           var targetObservation = res.related[k];
@@ -357,7 +358,7 @@ LForms.FHIR = {
    * @param formData an LFormsData object
    * @param patient optional, patient data
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
-   *        are included in a FHIR Bundle. The default is false.
+   *        should be placed into a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Diagnostic Report instance
