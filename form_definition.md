@@ -386,15 +386,39 @@ about the meaning of each key:
 * **LForms.Util.getFormData()** - a function to get the complete form definition data, including the user input data 
   from the form. The returned data could be fed into a LForms widget directly to render the form. 
   It has the following parameters:
-    * element - required. The containing HTML element that includes the LForm's rendered form. It could be the DOM
-                element or its id.     
+    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
+                the LForms rendered form. It could be the DOM element or its id.     
 * **LForms.Util.getUserData()** - a function to get user input data from the form, with or without 
   form definition data. It has the following parameters:
-    * element - required, the containing HTML element that includes the LForm's rendered form. It could be the DOM
-                element or its id.
+    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
+                the LForms rendered form. It could be the DOM element or its id.     
     * noFormDefData - optional, to include form definition data, the default is false.
     * noEmptyValue - optional, to remove items that have an empty value, the default is false.
     * noHiddenItem - optional, to remove items that are hidden by skip logic, the default is false.
-                
-                
+* **LForms.Util.getFormHL7Data()** - a function to get HL7 v2 OBR and OBX segment data from the form, not including
+  empty or hidden questions.
+    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
+                the LForms rendered form. It could be the DOM element or its id.     
+* **LForms.Util.getFormFHIRData()** - a function to get FHIR resource data from the form.
+    * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
+                     and "QuestionnaireResponse" (SDC profile) are supported.
+    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
+                the LForms rendered form. It could be the DOM element or its id.      
+    * inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
+                 are included in a FHIR Bundle. The default is false.
+    * bundleType - optional, the FHIR Bundle type if inBundle is true.                 
+* **LForms.Util.convertLFormsToFHIRData()** - a function to convert a LForms form data object into a FHIR resource.
+    * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
+                     and "QuestionnaireResponse" (SDC profile) are supported.
+    * formData - a LForms form data object.
+* **LForms.Util.convertFHIRQuestionnaireToLForms()** - a function to convert FHIR SQC Questionnaire resource to 
+  a LForms definition data object.
+    * fhirData - a FHIR Questionnaire resource, which should be generated through the above functions, 
+                 "getFormFHIRData('Questionnaire', ...)" or "convertFHIRQuestionnaireToLForms('Questionnaire',...')".
+* **LForms.Util.mergeFHIRDataIntoLForms()** a function to merge a FHIR resource into an LForms form data object.
+    * resourceType - a FHIR resource type. Currently only "DiagnosticReport" (a DiagnosticReport resource with 
+                     "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and 
+                     associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.
+    * fhirData - a FHIR resource, which should be generated through the above function, "getFormFHIRData()".
+    * formData - a LForms form data object.
      
