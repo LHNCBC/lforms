@@ -52,7 +52,7 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (11.x)</li>
+        <li>Current (>=11.x)</li>
         <li><a href="versions/7.x/index.html">7.x</a></li>
         <li><a href="versions/6.x/index.html">6.x</a></li>
         <li><a href="versions/5.5/index.html">5.5</a></li>
@@ -289,7 +289,77 @@ data and form definition data together in a way that can be fed back to LForms
 to display the form with the data.  This is useful when you want to allow the
 user to save the form so it can be redisplayed later for completion or editing.</p>
 
-<h2>
+
+  <h3>
+    <a id="retrieving-hl7-data" class="anchor" href="#retrieving-hl7-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Retrieving User-Entered Data as HL7 v2 OBR and OBX segments (version >= 12.8)
+  </h3>
+  <p>The user entered data, along with some form definition data can be retrieved as HL7 v2 OBR and OBX segments.
+    To retrieve that data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.getFormHL7Data(element)</code></pre>
+
+  <p>The parameter is:</p>
+  <ol>
+    <li>element - optional if there is only one LForms widget on the page, The containing HTML element that includes
+      the LForms rendered form. It could be the DOM element or its id.</li>
+  </ol>
+
+
+  <h3>
+    <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Retrieving User-Entered Data as FHIR Resources (version >= 12.8)
+  </h3>
+  <p>The user entered data, along with some form definition data, can be retrieved as FHIR resources.
+    To retrieve that data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, element, inBundle, bundleType)</code></pre>
+
+  <p>The parameters are:</p>
+  <ol>
+    <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
+      and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>element - optional if there is only one LForms widget on the page. The containing HTML element that includes
+      the LForms rendered form. It could be the DOM element or its id.</li>
+    <li>inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
+      are included in a FHIR Bundle. The default is false.</li>
+    <li>bundleType - optional, the FHIR Bundle type if inBundle is true.</li>
+  </ol>
+
+  <h3>
+    <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Converting FHIR Questionnaire Resource to LForms Data (version >= 12.8)
+  </h3>
+  <p>The FHIR Questionnaire resource retrieved from LForms form can be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
+    To convert FHIR Questionnaire resources to LForms data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData)</code></pre>
+
+  <p>The parameter is:</p>
+  <ol>
+    <li>fhirData - a FHIR Questionnaire resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+  </ol>
+
+  <h3>
+    <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Merging FHIR Resources into LForms Data (version >= 12.8)
+  </h3>
+  <p>The FHIR resource retrieved from LForms form can be merged back into LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
+    To merge FHIR resources into LForms data, LForms provides the following utility method:</p>
+  <pre>
+    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData)</code></pre>
+
+  <p>The parameters are:</p>
+  <ol>
+    <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport" (a DiagnosticReport resource with
+      "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and
+      associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>fhirData - a FHIR resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+    <li>formData - an LForms form data object.</li>
+  </ol>
+
+
+  <h2>
 <a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
 
 <p>Form definitions are stored in a JSON structure.  To get a rough idea of what
@@ -299,65 +369,11 @@ these are you can take a look at one of the
 
 <h2>
 <a id="licensing-and-copyright-notice" class="anchor" href="#licensing-and-copyright-notice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Licensing and Copyright Notice</h2>
+<p>See the <a href="https://github.com/lhncbc/lforms/blob/master/LICENSE.md"
+  >LICENSE.md</a> file in the lforms package on GitHub.</p>
 
-<p>The LForms software employs the LOINC data model, including the LOINC table,
-LOINC codes, LOINC panels and forms file, which are copyrighted © 1995-2015,
-Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and
-Codes (LOINC) Committee, and are available at no cost under the license at
-<a href="http://loinc.org/terms-of-use">http://loinc.org/terms-of-use</a>. LOINC® is a registered United States trademark of
-Regenstrief Institute, Inc.</p>
+<hr>
 
-<p>Please cite as: <a
-href="http://lhncbc.nlm.nih.gov/project/lhc-forms">http://lhncbc.nlm.nih.gov/project/lhc-forms</a></p>
-
-<p>This software is distributed under the license set forth below, which is based
-on the BSD open-source license.</p>
-
-<p>No warranty or indemnification for damages resulting from claims brought by
-third parties whose proprietary rights may be infringed by your usage of this
-software are provided by any of the owners.</p>
-
-<h3>
-<a id="nih-license" class="anchor" href="#nih-license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NIH License</h3>
-
-<p>Owner Notice: The Owner of this software, LForms, is the National Institutes of
-Health/Department of Health and Human Services, Bethesda, MD, U.S.A. All rights
-reserved.</p>
-
-<p>The software includes elements owned by Joyent, Inc., TJ Holowaychuk, Google,
-Inc., Kit Cambridge, Kristopher Michael Kowal, jQuery Foundation, Twitter, Inc,
-The AngularUI Team, and Karsten Sperling, who have distributed them to NIH under
-the MIT open-source license.</p>
-
-<p>Redistribution and use in source and binary forms, with or without modification,
-are permitted for commercial and non-commercial purposes and products alike,
-provided that the following conditions are met:</p>
-
-<ul>
-<li>Redistributions of source code shall retain the above Owner Notice, this list
-of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form shall reproduce the above Owner Notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.</li>
-<li>Neither the names of the National Library of Medicine (NLM), the Lister Hill
-National Center for Biomedical Communications (LHNCBC), the National
-Institutes of Health (NIH), nor the names of any of the software contributors
-may be used to endorse or promote products derived from this software without
-specific prior written permission.</li>
-</ul>
-
-<p>THIS SOFTWARE IS PROVIDED BY THE OWNER AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
-SHALL THE OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
-OF SUCH DAMAGE.</p>
-
-    <hr>
     <span class="credits left">Project maintained by <a href="https://github.com/lhncbc">lhncbc</a></span>
     <span class="credits right">Hosted on GitHub Pages &mdash; Based on theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
       </section>
