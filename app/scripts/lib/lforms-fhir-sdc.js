@@ -23,20 +23,22 @@ jQuery.extend(LForms.FHIR_SDC, {
   /**
    * Convert LForms form definition to FHIR SDC Questionnaire
    * @param lfData a LForms form object
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @returns {{}}
    */
-  convertLFormsToQuestionnaire: function(lfData) {
+  convertLFormsToQuestionnaire: function(lfData, noExtension) {
     var target = {};
 
     if (lfData) {
       var source = angular.copy(lfData);
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source);
+      this._setFormLevelFields(target, source, noExtension);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
         for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(source.items[i], source);
+          var newItem = this._processItem(source.items[i], source, noExtension);
           target.item.push(newItem);
         }
 
@@ -71,9 +73,11 @@ jQuery.extend(LForms.FHIR_SDC, {
    * Set form level attributes
    * @param target a Questionnaire object
    * @param source a LForms form object
+   * @param noExtension  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @private
    */
-  _setFormLevelFields: function(target, source) {
+  _setFormLevelFields: function(target, source, noExtension) {
 
     // resourceType
     target.resourceType = "Questionnaire";
@@ -92,11 +96,13 @@ jQuery.extend(LForms.FHIR_SDC, {
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
-    target.meta = {
-      "profile": [
-        "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
-      ]
-    };
+    if (!noExtension) {
+      target.meta = {
+        "profile": [
+          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+        ]
+      };
+    }
 
     // title
     target.title = source.name;
@@ -133,10 +139,12 @@ jQuery.extend(LForms.FHIR_SDC, {
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @returns {{}}
    * @private
    */
-  _processItem: function(item, source) {
+  _processItem: function(item, source, noExtension) {
     var targetItem = {};
 
     // id (empty for new record)
@@ -262,7 +270,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     }
     // option, for answer list
     else if (item.answers) {
-      targetItem.option = this._handleAnswers(item);
+      targetItem.option = this._handleAnswers(item, noExtension);
     }
 
     // initialValue, for default values
@@ -271,7 +279,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i], source);
+        var newItem = this._processItem(item.items[i], source, noExtension);
         targetItem.item.push(newItem);
       }
     }
@@ -279,8 +287,8 @@ jQuery.extend(LForms.FHIR_SDC, {
     // handle special constraints for "display" item
     this._handleSpecialConstraints(targetItem, item);
 
-    // if there is no extension, remove it
-    if (targetItem.extension.length === 0)
+    // if no extensions are allowed or there is no extension, remove it
+    if (noExtension || targetItem.extension.length === 0)
       delete targetItem.extension;
 
     return targetItem
@@ -696,24 +704,26 @@ jQuery.extend(LForms.FHIR_SDC, {
   /**
    * Process an item's answer list
    * @param item an item in the LForms form object
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @returns {Array}
    * @private
    */
-  _handleAnswers: function(item) {
+  _handleAnswers: function(item, noExtension) {
     var optionArray = [];
     for (var i=0, iLen=item.answers.length; i<iLen; i++) {
       var answer = item.answers[i];
       var option = {};
 
       // needs an extension for label
-      if (answer.label) {
+      if (!noExtension && answer.label) {
         option.extension = [{
           "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
           "valueString" : answer.label
         }];
       }
       // needs a modifierExtension for score and others (default, other?)
-      if (answer.score) {
+      if (!noExtension && answer.score) {
         option.modifierExtension = [{
           "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore",  // LForms Extension
           "valueInteger" : parseInt(answer.score)
