@@ -220,7 +220,6 @@ describe('FHIR SDC library', function() {
 
       assert.equal(fhirQ.meta, undefined);
       assert.equal(fhirQ.item[0].item[1].extension, undefined);
-      assert.equal(fhirQ.item[0].item[1].extension, undefined);
 
       assert.equal(fhirQ.toString().match(/extension/), undefined);
 
