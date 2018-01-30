@@ -1,5 +1,9 @@
 /**
- * A package to handle FHIR SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
+ * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
+ *
+ * FHIR Questionnaire:
+ * https://www.hl7.org/fhir/questionnaire.html
+ *
  * STU2 Ballot:
  * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
  * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
@@ -21,7 +25,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 jQuery.extend(LForms.FHIR_SDC, {
 
   /**
-   * Convert LForms form definition to FHIR SDC Questionnaire
+   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
    * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions.
    *        The default is false.

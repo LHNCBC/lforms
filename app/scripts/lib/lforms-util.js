@@ -87,7 +87,8 @@ LForms.Util = {
   /**
    * Get FHIR data from the form.
    * Empty or hidden questions are not included.
-   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
+   * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * and "QuestionnaireResponse" (SDC profile)
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
@@ -107,8 +108,8 @@ LForms.Util = {
 
   /**
    * Convert LForms data into a FHIR resource
-   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
-   * and "QuestionnaireResponse" (SDC profile)
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
+   * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * @param formData a LForms data object
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
