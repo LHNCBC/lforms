@@ -213,6 +213,14 @@
               }
             };
 
+            $scope.showFHIRQuestionnaire = function () {
+              if ($scope.lfData2) {
+                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaire($scope.lfData2, true);
+                var fhirString = JSON.stringify(sdc, null, 4);
+                console.log(fhirString);
+              }
+            };
+
             $scope.showFHIRSDCResponse = function () {
               if ($scope.lfData2) {
                 var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse($scope.lfData2);
@@ -423,6 +431,7 @@
           <button id="get-fhir-bundle1" class="btn btn-primary" ng-click="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle</button>
           <button id="get-fhir-bundle2" class="btn btn-primary" ng-click="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle</button>
           <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-questionnaire" class="btn btn-primary" ng-click="showFHIRQuestionnaire()">Show FHIR Questionnaire</button>
           <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>

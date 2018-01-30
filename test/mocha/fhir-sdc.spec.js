@@ -119,7 +119,8 @@ describe('FHIR SDC library', function() {
 
   describe('Questionnaire to lforms item conversion', function () {
     it('should convert FHTData to lforms', function () {
-      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(FHTData));
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
+
       var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
@@ -198,6 +199,30 @@ describe('FHIR SDC library', function() {
 
       assert.equal(convertedLfData.items.length, 33);
       assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
+    });
+  });
+
+
+
+  describe('LForms data to Questionnaire conversion', function() {
+
+    it('should convert to SDC Questionnaire with extensions', function() {
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
+
+      assert.equal(fhirQ.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire");
+      assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs");
+      assert.equal(fhirQ.item[0].item[1].extension[1].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+
+    });
+
+    it('should convert to standard Questionnaire without any extensions', function() {
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)), true);
+
+      assert.equal(fhirQ.meta, undefined);
+      assert.equal(fhirQ.item[0].item[1].extension, undefined);
+
+      assert.equal(fhirQ.toString().match(/extension/), undefined);
+
     });
 
   });

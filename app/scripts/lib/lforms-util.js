@@ -87,41 +87,46 @@ LForms.Util = {
   /**
    * Get FHIR data from the form.
    * Empty or hidden questions are not included.
-   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
+   * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * and "QuestionnaireResponse" (SDC profile)
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions,
+   *        when resourceType is Questionnaire. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
 
    * @returns {*} a FHIR resource
    */
-  getFormFHIRData: function(resourceType, element, inBundle, bundleType) {
+  getFormFHIRData: function(resourceType, element, inBundle, bundleType, noExtension) {
     var formObj = this._getFormObjectInScope(element);
-    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType);
+    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType, noExtension);
   },
 
 
   /**
    * Convert LForms data into a FHIR resource
-   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport", "Questionnaire" (SDC profile)
-   * and "QuestionnaireResponse" (SDC profile)
+   * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
+   * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * @param formData a LForms data object
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions,
+   *        when resourceType is Questionnaire. The default is false.
    * @returns {*} a FHIR resource
    */
-  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType) {
+  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType, noExtension) {
     if (formData) {
       switch (resourceType) {
         case "DiagnosticReport":
           fhirData = LForms.FHIR.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData, noExtension);
           break;
         case "QuestionnaireResponse":
           fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData);
