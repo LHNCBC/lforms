@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [12.8.2]
+### Changed
+- Modified the TOTALSCORE function to support multiple TOTALSCORE rules on one form. 
+
 ## [12.8.1]
 ### Changed
 - Added an option to export LForms data in a standard FHIR Questionnaire resource without 
