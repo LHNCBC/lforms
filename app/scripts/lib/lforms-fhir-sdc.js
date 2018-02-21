@@ -10,9 +10,9 @@
  *
  * It provides the following functions:
  * convertLFormsToQuestionnaire()
- * -- Convert existing LOINC panels/forms data in LForms format into FHIR SDC Questionnaire data
+ * -- Convert existing LOINC panels/forms data in LForms format into FHIR (standard or SDC) Questionnaire data
  * convertLFormsToQuestionnaireResponse()
- * -- Generate FHIR SDC QuestionnaireResponse data from captured data in LForms
+ * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
@@ -481,14 +481,16 @@ jQuery.extend(LForms.FHIR_SDC, {
   /**
    * Convert LForms captured data to FHIR SDC QuestionnaireResponse
    * @param lfData a LForms form object
+   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @returns {{}}
    */
-  convertLFormsToQuestionnaireResponse: function(lfData) {
+  convertLFormsToQuestionnaireResponse: function(lfData, noExtension) {
     var target = {};
     if (lfData) {
       var source = lfData.getFormData(true,true,true,true);
       this._processRepeatingItemValues(source);
-      this._setResponseFormLevelFields(target, source);
+      this._setResponseFormLevelFields(target, source, noExtension);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -552,11 +554,13 @@ jQuery.extend(LForms.FHIR_SDC, {
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
+   * @param noExtension  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    * @param source a LForms form object
 
    * @private
    */
-  _setResponseFormLevelFields: function(target, source) {
+  _setResponseFormLevelFields: function(target, source, noExtension) {
 
     // resourceType
     target.resourceType = "QuestionnaireResponse";
@@ -581,11 +585,13 @@ jQuery.extend(LForms.FHIR_SDC, {
     };
 
     // meta
-    target.meta = {
-      "profile": [
-        "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
-      ]
-    };
+    if (!noExtension) {
+      target.meta = {
+        "profile": [
+          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse"
+        ]
+      };
+    }
   },
 
 

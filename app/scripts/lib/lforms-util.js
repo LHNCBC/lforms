@@ -115,8 +115,9 @@ LForms.Util = {
    *        are included in a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
-   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions,
-   *        when resourceType is Questionnaire. The default is false.
+   * @param noExtension a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+   *        without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
+   *        The default is false.
    * @returns {*} a FHIR resource
    */
   convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType, noExtension) {
@@ -129,7 +130,7 @@ LForms.Util = {
           fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData, noExtension);
           break;
         case "QuestionnaireResponse":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData, noExtension);
           break;
       }
     }
