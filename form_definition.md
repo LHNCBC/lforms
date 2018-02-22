@@ -407,14 +407,14 @@ about the meaning of each key:
     * inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
                  are included in a FHIR Bundle. The default is false.
     * bundleType - optional, the FHIR Bundle type if inBundle is true.                 
-    * noExtension - a flag that a standard FHIR Questionnaire is to be created without any extensions, 
+    * noExtensions - a flag that a standard FHIR Questionnaire is to be created without any extensions, 
                     when resourceType is Questionnaire. The default is false.
 
 * **LForms.Util.convertLFormsToFHIRData()** - a function to convert a LForms form data object into a FHIR resource.
     * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
                      and "QuestionnaireResponse" (SDC profile) are supported.
     * formData - a LForms form data object.
-    * noExtension - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created 
+    * noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created 
                     without any extensions, when resourceType is Questionnaire or QuestionnaireResponse. 
                     The default is false.
 

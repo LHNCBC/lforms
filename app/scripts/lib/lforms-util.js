@@ -94,15 +94,15 @@ LForms.Util = {
    *        It could either be the DOM element or its id
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        are included in a FHIR Bundle. The default is false.
-   * @param noExtension a flag that a standard FHIR Questionnaire is to be created without any extensions,
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions,
    *        when resourceType is Questionnaire. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
 
    * @returns {*} a FHIR resource
    */
-  getFormFHIRData: function(resourceType, element, inBundle, bundleType, noExtension) {
+  getFormFHIRData: function(resourceType, element, inBundle, bundleType, noExtensions) {
     var formObj = this._getFormObjectInScope(element);
-    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType, noExtension);
+    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType, noExtensions);
   },
 
 
@@ -115,22 +115,22 @@ LForms.Util = {
    *        are included in a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
-   * @param noExtension a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+   * @param noExtensions a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *        without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *        The default is false.
    * @returns {*} a FHIR resource
    */
-  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType, noExtension) {
+  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType, noExtensions) {
     if (formData) {
       switch (resourceType) {
         case "DiagnosticReport":
           fhirData = LForms.FHIR.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData, noExtension);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData, noExtensions);
           break;
         case "QuestionnaireResponse":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData, noExtension);
+          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions);
           break;
       }
     }
