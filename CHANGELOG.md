@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.9.0]
+### Changed
+- Added an option to export LForms data in a standard FHIR QuestionnaireResponse resource
+  without any extensions.
+- Changed related functions definitions in LForms.Util  
 
 ## [12.8.2]
 ### Changed

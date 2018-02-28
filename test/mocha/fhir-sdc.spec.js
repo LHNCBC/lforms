@@ -226,6 +226,27 @@ describe('FHIR SDC library', function() {
     });
 
   });
+
+  describe('LForms data to QuestionnaireResponse conversion', function() {
+
+    it('should convert to SDC Questionnaire with extensions', function() {
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(new LForms.LFormsData(angular.copy(FHTData)));
+
+      assert.equal(fhirQ.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse");
+
+    });
+
+    it('should convert to standard QuestionnaireResponse without any extensions', function() {
+      var fhirQR = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(new LForms.LFormsData(angular.copy(FHTData)), true);
+
+      assert.equal(fhirQR.meta, undefined);
+
+      assert.equal(fhirQR.toString().match(/extension/), undefined);
+
+    });
+
+  });
+
 });
 
 
