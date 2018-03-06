@@ -555,17 +555,19 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
     "    </span>\n" +
     "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
-    "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" +
-    "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" +
+    "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"\n" +
+    "       id=\"help-{{ item._elementId }}\"></span>\n" +
+    "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"\n" +
+    "       id=\"help-{{ item._elementId }}\"></span>\n" +
     "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
     "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "              type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" +
     "              aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "      </button>\n" +
     "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" +
     "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "              type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" +
+    "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" +
     "              aria-describedby=\"label-{{ item._elementId }}\">\n" +
     "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "      </button>\n" +
@@ -602,7 +604,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </thead>\n" +
     "      <tbody>\n" +
     "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" +
-    "         aria-labeledby=\"label-{{subItem._elementId }}\">\n" +
+    "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" +
+    "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" +
     "        <td class=\"lf-question\">\n" +
     "          <div class=\"lf-de-label\">\n" +
     "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
@@ -612,17 +615,19 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" +
     "            </span>\n" +
     "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" +
-    "              <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" +
-    "              <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" +
+    "              <span ng-switch-when=\"inline-html\" id=\"help-{{subItem._elementId}}\"\n" +
+    "               class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" +
+    "              <span ng-switch-when=\"inline-escaped\" id=\"help-{{subItem._elementId}}\"\n" +
+    "               class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" +
     "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" +
     "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{subItem._elementId}}\"\n" +
+    "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\"\n" +
     "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" +
     "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "              </button>\n" +
     "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" +
     "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" +
-    "                      type=\"button\" id=\"help-{{subItem._elementId}}\" aria-label=\"Help\"\n" +
+    "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\" aria-label=\"Help\"\n" +
     "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" +
     "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" +
     "              </button>\n" +
@@ -637,13 +642,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          </div>\n" +
     "        </td>\n" +
     "        <td ng-repeat=\"answer in item.items[0].answers\"\n" +
-    "         class=\"lf-form-matrix-cell\" aria-labeledby=\"answer-{{$index}}\">\n" +
+    "         class=\"lf-form-matrix-cell\">\n" +
     "          <span class=\"lf-form-matrix-answer\">\n" +
     "            <label ng-if=\"subItem._multipleAnswers\">\n" +
-    "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\" ng-click=\"updateCheckboxList(subItem, answer)\">\n" +
+    "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\"\n" +
+    "               ng-click=\"updateCheckboxList(subItem, answer)\" aria-labeledby=\"answer-{{$index}}\">\n" +
     "            </label>\n" +
     "            <label ng-if=\"!subItem._multipleAnswers\">\n" +
-    "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" +
+    "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\"\n" +
+    "               aria-labeledby=\"answer-{{$index}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" +
     "                     name=\"{{subItem._elementId}}\" ng-click=\"updateRadioList(subItem)\">\n" +
     "            </label>\n" +
     "          </span>\n" +

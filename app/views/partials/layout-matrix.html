@@ -8,17 +8,19 @@
       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
     </span>
     <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">
-      <span ng-switch-when="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"></span>
-      <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"></span>
+      <span ng-switch-when="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(item)"
+       id="help-{{ item._elementId }}"></span>
+      <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="item.codingInstructions"
+       id="help-{{ item._elementId }}"></span>
       <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
               popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-              type="button" id="help-{{item._elementId}}" aria-label="Help"
+              type="button" id="helpButton-{{item._elementId}}" aria-label="Help"
               aria-describedby="label-{{ item._elementId }}">
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
       </button>
       <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{item.codingInstructions}}"
               popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-              type="button" id="help-{{item._elementId}}" aria-label="Help"
+              type="button" id="helpButton-{{item._elementId}}" aria-label="Help"
               aria-describedby="label-{{ item._elementId }}">
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
       </button>
@@ -55,7 +57,8 @@
       </thead>
       <tbody>
       <tr ng-repeat="subItem in item.items" role="radiogroup"
-         aria-labeledby="label-{{subItem._elementId }}">
+         aria-labeledby="label-{{subItem._elementId }}"
+         aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
         <td class="lf-question">
           <div class="lf-de-label">
             <span class="lf-question"><label id="label-{{ subItem._elementId }}"
@@ -65,17 +68,19 @@
               <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
             </span>
             <span ng-switch on="getCodingInstructionsDisplayType(subItem)" ng-if="subItem.codingInstructions">
-              <span ng-switch-when="inline-html" class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(subItem)"></span>
-              <span ng-switch-when="inline-escaped" class="lf-prompt" ng-bind="subItem.codingInstructions"></span>
+              <span ng-switch-when="inline-html" id="help-{{subItem._elementId}}"
+               class="lf-prompt" ng-bind-html="getTrustedCodingInstructions(subItem)"></span>
+              <span ng-switch-when="inline-escaped" id="help-{{subItem._elementId}}"
+               class="lf-prompt" ng-bind="subItem.codingInstructions"></span>
               <button ng-switch-when="popover-html" class="lf-help-button btn-sm" uib-popover-template="'popover.html'"
                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                      type="button" id="help-{{subItem._elementId}}"
+                      type="button" id="helpButton-{{subItem._elementId}}"
                       aria-label="Help" aria-describedby="label-{{ subItem._elementId }}">
                 <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
               </button>
               <button ng-switch-when="popover-escaped" class="lf-help-button btn-sm" uib-popover="{{subItem.codingInstructions}}"
                       popover-trigger="focus" popover-placement="right"  popover-title="Instruction"
-                      type="button" id="help-{{subItem._elementId}}" aria-label="Help"
+                      type="button" id="helpButton-{{subItem._elementId}}" aria-label="Help"
                       aria-describedby="label-{{ subItem._elementId }}">
                 <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
               </button>
@@ -90,13 +95,15 @@
           </div>
         </td>
         <td ng-repeat="answer in item.items[0].answers"
-         class="lf-form-matrix-cell" aria-labeledby="answer-{{$index}}">
+         class="lf-form-matrix-cell">
           <span class="lf-form-matrix-answer">
             <label ng-if="subItem._multipleAnswers">
-              <input type="checkbox" id="{{subItem._elementId + answer.code}}" ng-click="updateCheckboxList(subItem, answer)">
+              <input type="checkbox" id="{{subItem._elementId + answer.code}}"
+               ng-click="updateCheckboxList(subItem, answer)" aria-labeledby="answer-{{$index}}">
             </label>
             <label ng-if="!subItem._multipleAnswers">
-              <input type="radio" id="{{subItem._elementId + answer.code}}" ng-model="subItem.value" ng-value="answer"
+              <input type="radio" id="{{subItem._elementId + answer.code}}"
+               aria-labeledby="answer-{{$index}}" ng-model="subItem.value" ng-value="answer"
                      name="{{subItem._elementId}}" ng-click="updateRadioList(subItem)">
             </label>
           </span>
