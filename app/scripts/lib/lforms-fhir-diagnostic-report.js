@@ -1,13 +1,22 @@
 /**
- * A package to handle FHIR data for LForms.
- * It can only generate FHIR DiagnosticReport resource from an LForms data,
- * and can only merge the FHIR DiagnosticReport data it generates back to an LForms form.
-*/
+ * A package to handle FHIR DiagnosticReport for LForms
+ * https://www.hl7.org/fhir/diagnosticreport.html
+ *
+ * It provides the following functions:
+ * createDiagnosticReport()
+ * -- Convert existing LOINC panels/forms data in LForms format into FHIR DiagnosticReport data
+ * mergeDiagnosticReportToLForms()
+ * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
+ */
 if (typeof LForms === 'undefined')
   LForms = {};
 
 LForms.FHIR = {
 
+  // a prefix for references to Observation resources
+  _OBX_REF_PREFIX: "Observation/",
+
+  
   /**
    * Functions for creating a DiagnosticReport instance from an LFormsData object
    */
@@ -223,12 +232,142 @@ LForms.FHIR = {
 
 
   /**
+   * Convert a DiagnosticReport resource with contained Observation resources to
+   * a FHIR Bundle resource that includes a DiagnosticReport resource and associated Observation resources
+   * @param dr a DiagnosticReport resource with contained Observation resources
+   * @param bundleType the FHIR Bundle type. Only "transaction" and "collection" types are allowed.
+   * @returns {{}} a Bundle resource that includes a DiagnosticReport resource and associated Observation resources
+   */
+  _convertFromContainedToBundle: function (dr, bundleType) {
+    var bundleDr = {};
+
+    // default bundleType
+    if (!bundleType) {
+      bundleType = "transaction";
+    }
+    if (dr) {
+      switch(bundleType) {
+        case "transaction":
+          bundleDr = this._convertContainedToTransactionBundle(dr);
+          break;
+        case "collection":
+          bundleDr = this._convertContainedToCollectionBundle(dr);
+          break;
+        default:
+          console.log("Bundle type not supported: " + bundleType);
+      }
+    }
+    return bundleDr;
+  },
+
+
+  /**
+   * Convert a DiagnosticReport resource with contained Observation resources to
+   * a FHIR "transaction" typed Bundle resource that includes a DiagnosticReport resource
+   * and associated Observation resources
+   * @param dr a DiagnosticReport resource with contained Observation resources
+   * @returns {{}} a Bundle resource that includes a DiagnosticReport resource and associated Observation resources
+   * @private
+   */
+  _convertContainedToTransactionBundle: function(dr) {
+
+    var bundleDr = {
+      resourceType:"Bundle",
+      type: "transaction",
+      entry: []
+    };
+
+    var contained = dr.contained;
+    delete dr.contained;
+
+    // update reference to Observation resources
+    for (var i=0, iLen=dr.result.length; i<iLen; i++) {
+      var ref = dr.result[i];
+      ref.reference = this._OBX_REF_PREFIX + ref.reference.slice(1);
+    }
+    // add DiagnosticReport resource into Bundle entry
+    bundleDr.entry.push({
+      resource: dr,
+      request: {
+        method: "POST",
+        url: "DiagnosticReport"
+      }
+    });
+
+    // add Observation resources into Bundle entry
+    for (var j=0, jLen=contained.length; j<jLen; j++) {
+      var res = contained[j];
+
+      // if it has related Observation resources (as it is a section in LForms)
+      // update values of the references to the related Observation resources
+      if (res.related) {
+        for (var k=0, kLen=res.related.length; k<kLen; k++) {
+          var targetObservation = res.related[k];
+          targetObservation.target.reference = this._OBX_REF_PREFIX + targetObservation.target.reference.slice(1);
+        }
+      }
+
+      // add to the Bundle entry
+      bundleDr.entry.push({
+        resource: res,
+        request: {
+          method: "POST",
+          url: "Observation"
+        }
+      });
+    }
+
+    return bundleDr;
+  },
+
+
+  /**
+   * Convert a DiagnosticReport resource with contained Observation resources to
+   * a FHIR "collection" typed Bundle resource that includes a DiagnosticReport resource
+   * and associated Observation resources
+   * @param dr a DiagnosticReport resource with contained Observation resources
+   * @returns {{}} a Bundle resource that includes a DiagnosticReport resource and associated Observation resources
+   * @private
+   */
+  _convertContainedToCollectionBundle: function(dr) {
+    var bundleDr = {
+      resourceType:"Bundle",
+      type: "collection",
+      entry: []
+    };
+
+    var contained = dr.contained;
+    delete dr.contained;
+
+    // add DiagnosticReport resource into Bundle entry
+    bundleDr.entry.push({
+      resource: dr
+    });
+
+    // add Observation resources into Bundle entry
+    for (var j=0, jLen=contained.length; j<jLen; j++) {
+      var res = contained[j];
+      // add to the Bundle entry
+      bundleDr.entry.push({
+        resource: res
+      });
+    }
+
+    return bundleDr;
+  },
+
+
+  /**
    * Generate FHIR DiagnosticReport data from an LForms form data
    * @param formData an LFormsData object
    * @param patient optional, patient data
+   * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
+   *        should be placed into a FHIR Bundle. The default is false.
+   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
+   *        Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Diagnostic Report instance
    */
-  createDiagnosticReport : function(formData, patient) {
+  createDiagnosticReport : function(formData, patient, inBundle, bundleType) {
     var dr = null, contained =[];
     if (formData) {
 
@@ -269,7 +408,9 @@ LForms.FHIR = {
       // issued
       dr["issued"] = this._getFormattedDate(new Date());
     }
-    return dr;
+
+    return inBundle ? this._convertFromContainedToBundle(dr, bundleType) : dr;
+
   },
 
 
@@ -287,7 +428,7 @@ LForms.FHIR = {
   _findObxById : function(refId, contained) {
     var obx = null;
     if (refId) {
-      var id = refId.slice(1);
+      var id = refId[0] === "#" ? refId.slice(1) : refId;
       for(var i=0, iLen=contained.length; i<iLen; i++) {
         if (contained[i].id === id) {
           obx = contained[i];
@@ -553,27 +694,93 @@ LForms.FHIR = {
     }
   },
 
+  /**
+   * Convert a FHIR Bundle resource that includes a DiagnosticReport resource and associated Observation resources
+   * to a DiagnosticReport resource with contained Observation resources
+   * @param bundleDr a Bundle that includes a DiagnosticReport resource and associated Observation resources.
+   *        Only "searchset" type is allowed.
+   * @returns {{}} a DiagnosticReport resource with contained Observation resources
+   */
+  _convertFromBundleToContained: function (bundleDr) {
+
+    var containedDr;
+    // "searchset" is the only supported type at this point.
+    if (bundleDr && bundleDr.type === "searchset") {
+      var entry = bundleDr.entry;
+      // find the DiagnosticReport in the bundle
+      for (var i=0, iLen=entry.length; i<iLen; i++) {
+        if (entry[i].resource.resourceType === "DiagnosticReport") {
+          containedDr = entry[i].resource;
+          // change reference ids in result
+          for (var j=0, jLen=containedDr.result.length; j<jLen; j++) {
+            var ref = containedDr.result[j];
+            if (ref.reference && ref.reference.match(new RegExp(this._OBX_REF_PREFIX))) {
+              ref.reference = ref.reference.slice(this._OBX_REF_PREFIX.length);
+            }
+          }
+          containedDr.contained =[];
+          break;
+        }
+      }
+      // if DiagnosticReport is found
+      if (containedDr) {
+        // Move all Observation resource into "contained" field of the DiagnosticReport resource
+        for (var i=0, iLen=entry.length; i<iLen; i++) {
+          if (entry[i].resource.resourceType === "Observation") {
+            var obx = entry[i].resource;
+            // change reference ids in related
+            if (obx.related) {
+              for (var j=0, jLen=obx.related.length; j<jLen; j++) {
+                var related = obx.related[j];
+                if (related.target && related.target.reference &&
+                    related.target.reference.match(new RegExp(this._OBX_REF_PREFIX))) {
+                  related.target.reference = related.target.reference.slice(this._OBX_REF_PREFIX.length);
+                }
+              }
+            }
+            containedDr.contained.push(obx)
+          }
+        }
+      }
+    }
+
+    return containedDr;
+  },
+
 
   /**
    * Merge a DiagnosticReport instance into an LFormsData object
    * @param formData an LFormsData object
-   * @param diagnosticReport a DiagnosticReport instance
+   * @param diagnosticReport a DiagnosticReport resource with contained Observation resources,
+   * or a Bundle that includes a DiagnosticReport resource and associated Observation resources
+   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    * @returns {{}} an updated LFormsData object
    */
-  mergeDiagnosticReportToForm : function(formData, diagnosticReport) {
+  mergeDiagnosticReportToLForms : function(formData, diagnosticReport) {
 
-    var reportStructure = this._getReportStructure(diagnosticReport);
+    // get the default settings in case they are missing in the form data
+    var newFormData = (new LForms.LFormsData(formData)).getFormData();
 
-    this._processObxAndItem(reportStructure, formData, diagnosticReport);
+    var inBundle = diagnosticReport && diagnosticReport.resourceType === "Bundle";
+
+    // move Observation resources in Bundle to be in "contained" in DiagnosticReport resource
+    // as a base data structure for converting
+    var dr = inBundle ? this._convertFromBundleToContained(diagnosticReport) : diagnosticReport;
+
+    console.log(dr);
+
+    var reportStructure = this._getReportStructure(dr);
+
+    this._processObxAndItem(reportStructure, newFormData, dr);
 
     // date
-    if (diagnosticReport.effectiveDateTime && formData.templateOptions.formHeaderItems) {
-      var whenDone = new Date(diagnosticReport.effectiveDateTime);
+    if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
+      var whenDone = new Date(dr.effectiveDateTime);
       if (whenDone) {
-        formData.templateOptions.formHeaderItems[0].value = whenDone;
+        newFormData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
-    return formData;
+    return newFormData;
   }
 
 };

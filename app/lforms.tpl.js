@@ -4,7 +4,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('field-answers.html',
     "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" +
     "  <!--list style-->\n" +
-    "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\">\n" +
+    "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" +
+    "  role=\"radiogroup\" aria-labeledby=\"label-{{ item._elementId }}\">\n" +
     "    <span ng-repeat=\"answer in item._modifiedAnswers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" +
     "      <!--checkboxes for multiple selections-->\n" +
     "      <div ng-if=\"item._multipleAnswers\">\n" +
@@ -593,12 +594,15 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <tr class=\"lf-\">\n" +
     "        <th class=\"lf-question lf-form-table-header\"></th>\n" +
     "        <th ng-repeat=\"answer in item.items[0].answers\"\n" +
-    "            class=\"lf-form-matrix-cell lf-form-table-header\">{{answer.text}}</th>\n" +
-    "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\">Other</th>\n" +
+    "            class=\"lf-form-matrix-cell lf-form-table-header\"\n" +
+    "            id=\"answer-{{$index}}\">{{answer.text}}</th>\n" +
+    "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\"\n" +
+    "         id=\"otherAnswer\">Other</th>\n" +
     "      </tr>\n" +
     "      </thead>\n" +
     "      <tbody>\n" +
-    "      <tr ng-repeat=\"subItem in item.items\">\n" +
+    "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" +
+    "         aria-labeledby=\"label-{{subItem._elementId }}\">\n" +
     "        <td class=\"lf-question\">\n" +
     "          <div class=\"lf-de-label\">\n" +
     "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
@@ -632,7 +636,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </button>\n" +
     "          </div>\n" +
     "        </td>\n" +
-    "        <td ng-repeat=\"answer in item.items[0].answers\" class=\"lf-form-matrix-cell\">\n" +
+    "        <td ng-repeat=\"answer in item.items[0].answers\"\n" +
+    "         class=\"lf-form-matrix-cell\" aria-labeledby=\"answer-{{$index}}\">\n" +
     "          <span class=\"lf-form-matrix-answer\">\n" +
     "            <label ng-if=\"subItem._multipleAnswers\">\n" +
     "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\" ng-click=\"updateCheckboxList(subItem, answer)\">\n" +
@@ -643,7 +648,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </label>\n" +
     "          </span>\n" +
     "        </td>\n" +
-    "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\">\n" +
+    "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\"\n" +
+    "         aria-labeledby=otherAnswer>\n" +
     "          <!--for multiple answers-->\n" +
     "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" +
     "            <label>\n" +

@@ -372,7 +372,24 @@ var TestPage = function() {
     openDefaultAnswerForm: function () {
       this.openBaseTestPage();
       this.openFormByIndex(17);
+    },
+
+    /**
+     *  Opens the USSG-FHT horizontal layout form
+     */
+    openUSSGFHTHorizontal: function () {
+      this.openBaseTestPage();
+      this.openFormByIndex(2);
+    },
+
+    /**
+     *  Opens the USSG-FHT horizontal layout form
+     */
+    openTwoTotalScoreForm: function () {
+      this.openBaseTestPage();
+      this.openFormByIndex(20);
     }
+
   }
 };
 

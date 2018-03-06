@@ -515,6 +515,44 @@ if (typeof LForms === 'undefined')
 
 
     /**
+     * Search upwards along the tree structure to find the item with answer scores
+     * @param item the item to start with
+     * @returns {}
+     * @private
+     */
+    _findItemsWithScoreUpwardsAlongAncestorTree: function(item) {
+
+      var itemsWithScore = [];
+
+      // check siblings
+      var itemToCheck = item;
+      while (itemToCheck) {
+        // check siblings
+        if (itemToCheck._parentItem && Array.isArray(itemToCheck._parentItem.items)) {
+          for (var i= 0, iLen= itemToCheck._parentItem.items.length; i<iLen; i++) {
+            var sourceItem = itemToCheck._parentItem.items[i];
+            // it has an answer list
+            if ((sourceItem.dataType === 'CNE' || sourceItem.dataType === 'CWE') &&
+                sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
+              // check if any one of the answers has a score
+              for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
+                if (sourceItem.answers[j] && sourceItem.answers[j].score >= 0) {
+                  itemsWithScore.push(sourceItem.questionCode);
+                  break;
+                }
+              } // end of answers loop
+            } // end if there's an answer list
+          }
+        }
+
+        // check ancestors and each ancestors siblings
+        itemToCheck = itemToCheck._parentItem;
+      }
+      return itemsWithScore;
+    },
+
+
+    /**
      * Convert the score rule definition to the standard formula definition
      * @param itemList the reference list of the items in the tree
      * @private
@@ -529,24 +567,8 @@ if (typeof LForms === 'undefined')
           // TBD, if the parameters values are already supplied,
           totalScoreItem.calculationMethod = {"name": this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE, "value": []};
 
-          for (var j = 0, jLen = itemList.length; j < jLen; j++) {
-            var item = itemList[j];
-            // it has an answer list
-            if (item.answers) {
-              var answers = [];
-              if (Array.isArray(item.answers)) {
-                answers = item.answers;
-              }
-              // check if any one of the answers has a score
-              for (var k = 0, kLen = item.answers.length; k < kLen; k++) {
-                if (item.answers[k] && item.answers[k].score >= 0) {
-                  totalScoreItem.calculationMethod.value.push(item.questionCode);
-                  break;
-                }
-              } // end of answers loop
-            } // end if there's an answer list
-          } // end of items loop
-          break;
+          var itemsWithScore = this._findItemsWithScoreUpwardsAlongAncestorTree(totalScoreItem);
+          totalScoreItem.calculationMethod.value = itemsWithScore;
         }
       }
     },
@@ -2199,7 +2221,7 @@ if (typeof LForms === 'undefined')
 
           // If there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
-          if (!options.defaultAnswer && options.listItems.length === 1)
+          if (!options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
         }
         item._autocompOptions = options;

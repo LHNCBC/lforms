@@ -4136,7 +4136,7 @@ var newGenetic = {
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
       ],
-      "value": [
+      "defaultAnswer": [
         {"code": "C01", "text": "Discrete variants"},
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
@@ -4151,7 +4151,7 @@ var newGenetic = {
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ],
-      "value": [
+      "defaultAnswer": [
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ]
@@ -6312,3 +6312,724 @@ var defaultAnswerForm = {
     }]
   }
 };
+
+var twoTotalScore =
+    {
+      "type": "LOINC",
+      "code": "two-totalscore",
+      "name": "A Form with 2 TOTALSCORE fields",
+      "items": [
+        {
+          "question": "PHQ-9 quick depression assessment panel",
+          "questionCodeSystem": "LOINC",
+          "questionCode": "44249-1",
+          "codingInstructions": "Over the last 2 weeks, how often have you been bothered by any of the following problems?\r\n\r\nThe Patient Health Questionnaire is a self-administered version of the PRIME-MD diagnostic instrument for common mental disorders. The PHQ-9 is the depression module, which scores each of the 9 DSM-IV criteria as \"0\" (not at all) to \"3\" (nearly every day).\r\nFor initial diagnosis:\r\n1. Patient completes PHQ-9 Quick Depression Assessment on accompanying tear-off pad.\r\n2. If there are at least 4 checks in the blue highlighted section (including Questions #1 and #2), consider a depressive disorder. Add score to determine severity.\r\n3a. Consider Major Depressive Disorder: if there are at least 5 checks in the blue highlighted section (one of which corresponds to Question #1 or #2).\r\n3b. Consider Other Depressive Disorder: if there are 2 to 4 checks in the blue highlighted section (one of which corresponds to Question #1 or #2)\r\n\r\nNote: Since the questionnaire relies on patient self-report, all responses should be verified by the clinician and a definitive diagnosis made on clinical grounds, taking into account how well the patient understood the questionnaire, as well as other relevant information from the patient. Diagnoses of Major Depressive Disorder or Other Depressive Disorder also require impairment of social, occupational, or other important areas of functioning (Question #10) and ruling out normal bereavement, a history of a Manic Episode (Bipolar Disorder), and a physical disorder, medication, or other drug as the biological cause of the depressive symptoms.\r\n\r\nTo monitor severity over time for newly diagnosed patients or patients in current treatment for depression:\r\n\r\n1. Patients may complete questionnaires at baseline and at regular intervals (eg, every 2 weeks) at home and bring them in at their next appointment for scoring or they may complete the questionnaire during each scheduled appointment.\r\n2. Add up the checks by column. For every check: Several days = 1 More than half the days = 2 Nearly every day = 3\r\n3. Add together column scores to get a TOTAL score.\r\n4. Refer to the accompanying PHQ-9 Scoring Card to interpret the TOTAL score.\r\n5. Results may be included in patients' files to assist you in setting up a treatment goal, determining degree of response, as well as guiding treatment intervention.\r\n\r\nPHQ-9 is adapted from PRIME MD TODAY, developed by Drs Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke, and colleagues, with an educational grant from Pfizer Inc. For research information, contact Dr Spitzer at rls8@columbia.edu.",
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "header": true,
+          "editable": "1",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "dataType": "ST",
+          "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute.",
+          "items": [
+            {
+              "question": "Little interest or pleasure in doing things?",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44250-9",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Feeling down, depressed, or hopeless?",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44255-8",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Trouble falling or staying asleep, or sleeping too much",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44259-0",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Feeling tired or having little energy",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44254-1",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Poor appetite or overeating",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44251-7",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Feeling bad about yourself-or that you are a failure or have let yourself or your family down",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44258-2",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Trouble concentrating on things, such as reading the newspaper or watching television",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44252-5",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Moving or speaking so slowly that other people could have noticed. Or the opposite-being so fidgety or restless that you have been moving around a lot more than usual",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44253-3",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Thoughts that you would be better off dead, or of hurting yourself in some way",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44260-8",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not at all",
+                  "code": "LA6568-5",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Several days",
+                  "code": "LA6569-3",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "More than half the days",
+                  "code": "LA6570-1",
+                  "label": "2",
+                  "score": 2
+                },
+                {
+                  "text": "Nearly every day",
+                  "code": "LA6571-9",
+                  "label": "3",
+                  "score": 3
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "Patient health questionnaire 9 item total score",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "44261-6",
+              "codingInstructions": "The PHQ-9 is the standard (and most commonly used) depression measure, and it ranges from 0-27 Scoring: Add up all checked boxes on PHQ-9. For every check: Not at all = 0; Several days = 1; More than half the days = 2; Nearly every day = 3 (the scores are the codes that appear in the answer list for each of the PHQ-9 problem panel terms). Interpretation: 1-4 = Minimal depression; 5-9 = Mild depression; 10-14 = Moderate depression; 15-19 = Moderately severe depression; 20-27 = Severed depression.",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "REAL",
+              "units": [
+                {
+                  "name": "{score}"
+                }
+              ],
+              "calculationMethod": {
+                "name": "TOTALSCORE"
+              },
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            },
+            {
+              "question": "How difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "69722-7",
+              "codingInstructions": "If you checked off any problems on this questionnaire",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Not difficult at all",
+                  "code": "LA6572-7",
+                  "label": null,
+                  "score": null
+                },
+                {
+                  "text": "Somewhat difficult",
+                  "code": "LA6573-5",
+                  "label": null,
+                  "score": null
+                },
+                {
+                  "text": "Very difficult",
+                  "code": "LA6575-0",
+                  "label": null,
+                  "score": null
+                },
+                {
+                  "text": "Extremely difficult",
+                  "code": "LA6574-3",
+                  "label": null,
+                  "score": null
+                }
+              ],
+              "copyrightNotice": "Copyright © Pfizer Inc. All rights reserved. Developed by Drs. Robert L. Spitzer, Janet B.W. Williams, Kurt Kroenke and colleagues, with an educational grant from Pfizer Inc. No permission required to reproduce, translate, display or distribute."
+            }
+          ]
+        },
+        {
+          "question": "FLACC pain assessment panel",
+          "questionCodeSystem": "LOINC",
+          "questionCode": "38213-5",
+          "codingInstructions": "The Faces, Legs, Activity, Cry, and Consolability (FLACC) scale is a behavioral pain assessment scale that can be used with non/pre-verbal patients (young children). Zero, one or two points is assigned to each of the five categories; total score ranges from zero to ten.",
+          "questionCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "header": true,
+          "editable": "1",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "dataType": "ST",
+          "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan",
+          "items": [
+            {
+              "question": "Pain severity Face FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38216-8",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "No particular expression or smile",
+                  "code": "LA9588-0",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Occasional grimace or frown, withdrawn, disinterested",
+                  "code": "LA9589-8",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "Frequent to constant frown, clenched jaw, quivering chin",
+                  "code": "LA9590-6",
+                  "label": "2",
+                  "score": 2
+                }
+              ],
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            },
+            {
+              "question": "Pain severity Legs FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38217-6",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Normal position or relaxed",
+                  "code": "LA9591-4",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Uneasy, restless, tense",
+                  "code": "LA9592-2",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "Kicking, or legs drawn up",
+                  "code": "LA9593-0",
+                  "label": "2",
+                  "score": 2
+                }
+              ],
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            },
+            {
+              "question": "Pain severity Activity FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38218-4",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Lying quietly, normal position, moves easily",
+                  "code": "LA9594-8",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Squirming, shifting back and forth, tense",
+                  "code": "LA9595-5",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "Arched, rigid, or jerking",
+                  "code": "LA9596-3",
+                  "label": "2",
+                  "score": 2
+                }
+              ],
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            },
+            {
+              "question": "Pain severity Cry FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38219-2",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "No cry (awake or asleep)",
+                  "code": "LA9597-1",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Moans or whimpers, occasional complaint",
+                  "code": "LA9598-9",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "Crying steadily, screams or sobs, frequent complaints",
+                  "code": "LA9599-7",
+                  "label": "2",
+                  "score": 2
+                }
+              ],
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            },
+            {
+              "question": "Pain severity Consolability FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38220-0",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "CNE",
+              "answers": [
+                {
+                  "text": "Content, relaxed",
+                  "code": "LA9600-3",
+                  "label": "0",
+                  "score": 0
+                },
+                {
+                  "text": "Reassured by occasional touching, hugging, or being talked to, distractable",
+                  "code": "LA9601-1",
+                  "label": "1",
+                  "score": 1
+                },
+                {
+                  "text": "Difficult to console or comfort",
+                  "code": "LA9602-9",
+                  "label": "2",
+                  "score": 2
+                }
+              ],
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            },
+            {
+              "question": "Pain severity total Score FLACC",
+              "questionCodeSystem": "LOINC",
+              "questionCode": "38215-0",
+              "questionCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "header": false,
+              "editable": "1",
+              "answerCardinality": {
+                "min": "0",
+                "max": "1"
+              },
+              "dataType": "REAL",
+              "units": [
+                {
+                  "name": "{score}"
+                }
+              ],
+              "calculationMethod": {
+                "name": "TOTALSCORE"
+              },
+              "copyrightNotice": "Copyright © 2002 The Regents of the University of Michigan Include the following when printing the FLACC on documentation records, etc: Printed with permission © 2002, The Regents of the University of Michigan"
+            }
+          ]
+        }
+      ],
+      "templateOptions": {
+        "showFormHeader": false,
+        "hideFormControls": true,
+        "viewMode": "md"
+      }
+    };

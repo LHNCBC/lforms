@@ -22,7 +22,7 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, true);
-      assert.equal(out.linkId, "/54126-8/54125-0/1/1");
+      assert.equal(out.linkId, "/54126-8/54125-0");
       assert.equal(out.text, "Name");
       assert.equal(out.type, "string");
       assert.equal(out.code[0].system,"http://loinc.org");
@@ -49,7 +49,7 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, undefined);
-      assert.equal(out.linkId, "/54126-8/54131-8/1/1");
+      assert.equal(out.linkId, "/54126-8/54131-8");
       assert.equal(out.text, "Gender");
       assert.equal(out.type, "choice");
       assert.equal(out.code[0].system,"http://loinc.org");
@@ -97,19 +97,19 @@ describe('FHIR SDC library', function() {
       var out = LForms.FHIR_SDC._processItem(item, {});
       assert.equal(out.required, undefined);
       assert.equal(out.repeats, true);
-      assert.equal(out.linkId, "/54126-8/54137-5X/1/1");
+      assert.equal(out.linkId, "/54126-8/54137-5X");
       assert.equal(out.text, "Mock-up section: Shown when Height = 15");
       assert.equal(out.type, "group");
 
       assert.equal(out.item.length, 2);
       assert.equal(out.item[0].required, undefined);
       assert.equal(out.item[0].repeats, undefined);
-      assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X/1/1/1");
+      assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X");
       assert.equal(out.item[0].text,"Mock-up sub item #1");
       assert.equal(out.item[0].type,"integer");
       assert.equal(out.item[1].required, undefined);
       assert.equal(out.item[1].repeats, undefined);
-      assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X/1/1/1");
+      assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X");
       assert.equal(out.item[1].text,"Mock-up sub item #2");
       assert.equal(out.item[1].type,"decimal");
 
@@ -119,8 +119,9 @@ describe('FHIR SDC library', function() {
 
   describe('Questionnaire to lforms item conversion', function () {
     it('should convert FHTData to lforms', function () {
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(FHTData));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
+
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
       assert.equal(convertedLfData.code, '54127-6N');
@@ -167,8 +168,8 @@ describe('FHIR SDC library', function() {
       assert.equal(convertedLfData.items[0].items[6].units[1].name, "centimeters");
 
       // Display control
-      fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(displayControlsDemo));
-      convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(displayControlsDemo));
+      convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       // TODO -
       // unsupported fields: viewMode, css, colCSS, listColHeaders, answerLayout.columns
@@ -180,8 +181,8 @@ describe('FHIR SDC library', function() {
     });
 
     it('should convert restrictions', function () {
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.items.length, 33);
       // TODO - min/max exclusive is not supported
@@ -193,11 +194,35 @@ describe('FHIR SDC library', function() {
 
     it('should convert externally defined', function () {
       var optionsRes = validationTestForm.items[23].externallyDefined;
-      var fhirQ = LForms.FHIR_SDC.convert2Questionnaire(new LForms.LFormsData(validationTestForm));
-      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaire2Lforms(fhirQ);
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
+      var convertedLfData = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
 
       assert.equal(convertedLfData.items.length, 33);
       assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
+    });
+  });
+
+
+
+  describe('LForms data to Questionnaire conversion', function() {
+
+    it('should convert to SDC Questionnaire with extensions', function() {
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
+
+      assert.equal(fhirQ.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire");
+      assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs");
+      assert.equal(fhirQ.item[0].item[1].extension[1].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+
+    });
+
+    it('should convert to standard Questionnaire without any extensions', function() {
+      var fhirQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)), true);
+
+      assert.equal(fhirQ.meta, undefined);
+      assert.equal(fhirQ.item[0].item[1].extension, undefined);
+
+      assert.equal(fhirQ.toString().match(/extension/), undefined);
+
     });
 
   });
