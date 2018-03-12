@@ -2,11 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-
-## [12.8.3]
+## [12.9.1]
 ### Fixed
 - Several accessibility issues were fixed, including the reading of inline help
   and questions and answers for radio buttons and checkboxes.
+
+## [12.9.0]
+### Changed
+- Added an option to export LForms data in a standard FHIR QuestionnaireResponse resource
+  without any extensions.
+- Changed related functions definitions in LForms.Util
 
 ## [12.8.2]
 ### Changed
