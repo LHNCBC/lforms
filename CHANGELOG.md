@@ -3,27 +3,32 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [12.8.3]
+### Fixed
+- Several accessibility issues were fixed, including the reading of inline help
+  and questions and answers for radio buttons and checkboxes.
+
 ## [12.8.2]
 ### Changed
-- Modified the TOTALSCORE function to support multiple TOTALSCORE rules on one form. 
+- Modified the TOTALSCORE function to support multiple TOTALSCORE rules on one form.
 
 ## [12.8.1]
 ### Changed
-- Added an option to export LForms data in a standard FHIR Questionnaire resource without 
+- Added an option to export LForms data in a standard FHIR Questionnaire resource without
   any extensions.
-  
+
 ## [12.8.0]
 ### Added
 - Added an option to export LForms data in a FHIR Bundle with a DiagnosticReport resource and
   associated Observation resources.
 - Added supporting functions for FHIR Bundle.
-- Added new functions under LForms.Util for exporting/importing to/from FHIR resources. 
+- Added new functions under LForms.Util for exporting/importing to/from FHIR resources.
 - Added documentations for LForms.Util functions in form_definition.md.
 
 ## [12.7.1]
 ### Fixed
 - Added an FHIR Questionnaire extension for externallyDefined.
- 
+
 ## [12.7.0]
 ### Changed
 - Changed the linkId of FHIR Questionnaire item to be the _codePath of LForms' item, and updated
@@ -37,7 +42,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [12.6.0]
 ### Added
-- Added conversion of externallyDefined field in LForms to store it in FHIR questionnaire resource. 
+- Added conversion of externallyDefined field in LForms to store it in FHIR questionnaire resource.
 
 ## [12.5.3]
 ### Changed
