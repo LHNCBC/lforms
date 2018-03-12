@@ -1,6 +1,8 @@
 <div class="lf-field-answers" ng-switch on="item.displayControl.answerLayout.type">
   <!--list style-->
-  <div ng-switch-when="RADIO_CHECKBOX" class="lf-answer-type-list">
+  <div ng-switch-when="RADIO_CHECKBOX" class="lf-answer-type-list"
+   role="radiogroup" aria-labeledby="label-{{ item._elementId }}"
+   aria-describedby="help-{{ item._elementId }}">
     <span ng-repeat="answer in item._modifiedAnswers track by $index" class="lf-answer {{getAnswerLayoutColumnClass(item)}}">
       <!--checkboxes for multiple selections-->
       <div ng-if="item._multipleAnswers">
