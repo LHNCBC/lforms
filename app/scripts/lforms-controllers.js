@@ -26,7 +26,7 @@ angular.module('lformsWidget')
           showOtherMonths: true,
           selectOtherMonths: true,
           showMonthAfterYear: true,
-          buttonText: ""
+          buttonText: "Show date picker"
         };
 
 
