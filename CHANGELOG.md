@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.9.3]
+### Fixed
+- Accessibility issue with the announcing of validation errors by a screen
+  reader.
+
 ## [12.9.2]
 ### Fixed
 - Accessibility issue with the announcing of date picker buttons by a screen
