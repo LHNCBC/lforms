@@ -4,8 +4,8 @@ jQuery('.showSource').each(function(i, e) {
   jqE.after(
     '<div style="display:none"> \
        <iframe style="width: 100%; height: 400px" \
-        src="http://jsfiddle.net/'+jqE.attr("_src")+
-        '/embedded/result,js,html/dark"> \
+        src="https://jsfiddle.net/'+jqE.attr("_src")+
+        '/embedded/result,js,html/dark/"> \
        </iframe> \
        <a class="hideSource">[Hide Demo]</a> \
      </div>'
