@@ -651,48 +651,27 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   _getValueKeyByDataType: function(prefix, dataType) {
 
-    var valueKey;
     // prefix could be 'value', 'initial', 'answer'
     if (!prefix) {
       prefix = "value"
     }
-    switch (dataType) {
-      case "INT":
-        valueKey = "Integer";
-        break;
-      case "REAL":
-        valueKey = "Decimal";
-        break;
-      case "DT":
-        //valueKey = "Date";
-        valueKey = "DateTime";
-        break;
-      case "DTM":
-        valueKey = "DateTime";
-        break;
-      case "TM":
-        valueKey = "Time";
-        break;
-      case "ST":
-        valueKey = 'String';
-        break;
-      case "TX": // TODO: Remove TX
-        valueKey = 'String';
-        break;
-      case "BL":
-        valueKey = 'Boolean';
-        break;
-      case "URL":
-        valueKey = 'Url';
-        break;
-      case "CNE":
-      case "CWE":
-        valueKey = 'Coding';
-        break;
-      case "QTY":
-        valueKey = 'Quantity';
-        break;
-    }
+
+    var dataTypeMapping = {
+      "INT": 'Integer',
+      "REAL": 'Decimal',
+      "DT": 'DateTime',
+      "DTM": 'DateTime',
+      "TM": 'Time',
+      "ST": 'String',
+      "TX": 'String', // TODO: Remove TX
+      "BL": 'Boolean',
+      "URL": 'Url',
+      "CNE": 'Coding',
+      "CWE": 'Coding',
+      "QTY": 'Quantity'
+    };
+    var valueKey = dataTypeMapping[dataType];
+
     return prefix + valueKey;
   },
 
@@ -762,57 +741,28 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @private
    */
   _handleDataType: function(item) {
-    var dataType = "";
-    switch (item.dataType) {
-      case "SECTION":
-        dataType = 'group';
-        break;
-      case "TITLE":
-        dataType = 'display';
-        break;
-      case "ST":
-        dataType = 'string';
-        break;
-      case "BL":
-        dataType = 'boolean';
-        break;
-      case "REAL":
-        dataType = 'decimal';
-        break;
-      case "INT":
-        dataType = 'integer';
-        break;
-      case "DT":
-        //dataType = 'date';
-        dataType = 'dateTime';
-        break;
-      case "DTM": // not supported yet
-        dataType = 'dateTime';
-        break;
-      case "TM":
-        dataType = 'time';
-        break;
-      case "ST":
-        dataType = 'string';
-        break;
-      case "TX":  // TODO: Remove TX
-        dataType = 'string';
-        break;
-      case "URL":
-        dataType = 'url';
-        break;
-      case "CNE":
-        dataType = 'choice';
-        break;
-      case "CWE":
-        dataType = 'open-choice';
-        break;
-      case "QTY":
-        dataType = 'quantity';
-        break;
-      default:
-        dataType = 'string';
-        break;
+
+    var dataTypeMapping = {
+      "SECTION": 'group',
+      "TITLE": 'display',
+      "ST": 'string',
+      "BL": 'boolean',
+      "REAL": 'decimal',
+      "INT": 'integer',
+      "DT": 'dateTime',
+      "DTM": 'dateTime', // not supported yet
+      "TM": 'time',
+      "TX": 'string', // TODO: Remove TX
+      "URL": 'url',
+      "CNE": 'choice',
+      "CWE": 'open-choice',
+      "QTY": 'quantity'
+    };
+
+    var dataType = dataTypeMapping[item.dataType];
+    // default is string
+    if (!dataType) {
+      dataType = 'string';
     }
     return dataType;
   },
