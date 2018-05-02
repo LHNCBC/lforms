@@ -72,10 +72,14 @@
                  ng-disabled="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
           <textarea ng-switch-when="TX" name="{{item.question}}"
-                 ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
-                 id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="autoExpand($event)" rows="1"
-                 ng-focus="setActiveRow(item)"
-                 ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
+                    ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
+                    id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="activeRowOnBlur(item);autoExpand($event)" rows="1"
+                    ng-focus="setActiveRow(item)" aria-describedby="help-{{ item._elementId }}">
+          </textarea>
+          <textarea ng-switch-when="ST" name="{{item.question}}" type="text"
+                    ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
+                    id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="activeRowOnBlur(item);autoExpand($event)" rows="1"
+                    ng-focus="setActiveRow(item)" aria-describedby="help-{{ item._elementId }}">
           </textarea>
           <input ng-switch-default name="{{item.question}}" type="text"
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"

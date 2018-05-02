@@ -34,7 +34,8 @@ describe('508', function() {
       tp.heightField.sendKeys(protractor.Key.BACK_SPACE);
       expect(tp.readerLogEntries.getText()).toEqual(
         ['Showing Mock-up item: Shown when Height >= 10',
-         'Hiding Mock-up item: Shown when Height >= 10']);
+         'Hiding Mock-up item: Shown when Height >= 10',
+         '"Height"requires a value']);
     });
     it('should add an entry when a section is added or removed', function () {
       // Reset the reader log

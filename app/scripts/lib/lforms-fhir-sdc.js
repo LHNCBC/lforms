@@ -676,6 +676,9 @@ jQuery.extend(LForms.FHIR_SDC, {
       case "ST":
         valueKey = 'String';
         break;
+      case "TX": // TODO: Remove TX
+        valueKey = 'String';
+        break;
       case "BL":
         valueKey = 'Boolean';
         break;
@@ -792,8 +795,8 @@ jQuery.extend(LForms.FHIR_SDC, {
       case "ST":
         dataType = 'string';
         break;
-      case "TX":
-        dataType = 'text';
+      case "TX":  // TODO: Remove TX
+        dataType = 'string';
         break;
       case "URL":
         dataType = 'url';
