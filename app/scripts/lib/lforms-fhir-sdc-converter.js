@@ -231,7 +231,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @private
    */
   function _processEditable(lfItem, qItem) {
-    if (qItem.readonly) {
+    if (qItem.readOnly) {
       lfItem.editable = '0';
     }
   }

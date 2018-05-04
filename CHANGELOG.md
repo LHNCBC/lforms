@@ -2,37 +2,42 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [12.9.3]
+## [12.10.0] 2018-05-02
+### Changed
+- Treated data type TX same as ST. 
+- Used TEXTAREA for items with ST data type instead of INPUT.
+
+## [12.9.3] 2018-03-22
 ### Fixed
 - Accessibility issue with the announcing of validation errors by a screen
   reader.
 
-## [12.9.2]
+## [12.9.2] 2018-03-16
 ### Fixed
 - Accessibility issue with the announcing of date picker buttons by a screen
   reader.
 
-## [12.9.1]
+## [12.9.1] 2018-03-12
 ### Fixed
 - Several accessibility issues were fixed, including the reading of inline help
   and questions and answers for radio buttons and checkboxes.
 
-## [12.9.0]
+## [12.9.0] 2018-02-22
 ### Changed
 - Added an option to export LForms data in a standard FHIR QuestionnaireResponse resource
   without any extensions.
 - Changed related functions definitions in LForms.Util
 
-## [12.8.2]
+## [12.8.2] 2018-02-09
 ### Changed
 - Modified the TOTALSCORE function to support multiple TOTALSCORE rules on one form.
 
-## [12.8.1]
+## [12.8.1] 2018-01-30
 ### Changed
 - Added an option to export LForms data in a standard FHIR Questionnaire resource without
   any extensions.
-
-## [12.8.0]
+  
+## [12.8.0] 2018-01-24
 ### Added
 - Added an option to export LForms data in a FHIR Bundle with a DiagnosticReport resource and
   associated Observation resources.
@@ -40,11 +45,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added new functions under LForms.Util for exporting/importing to/from FHIR resources.
 - Added documentations for LForms.Util functions in form_definition.md.
 
-## [12.7.1]
+## [12.7.1] 2018-01-02
 ### Fixed
 - Added an FHIR Questionnaire extension for externallyDefined.
-
-## [12.7.0]
+ 
+## [12.7.0] 2017-12-20
 ### Changed
 - Changed the linkId of FHIR Questionnaire item to be the _codePath of LForms' item, and updated
   related conversion functions between FHIR data and LForms data.
@@ -55,39 +60,39 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed z-index of icon in date input field to go behind any calendar widget coming on the top.
 
-## [12.6.0]
+## [12.6.0] 2017-10-23
 ### Added
 - Added conversion of externallyDefined field in LForms to store it in FHIR questionnaire resource.
 
-## [12.5.3]
+## [12.5.3] 2017-10-19
 ### Changed
 - Changed our internal development environment shell from tcsh to bash.
 
-## [12.5.2]
+## [12.5.2] 2017-09-29
 ### Fixed
 - Fixed an accessibility issue with plain-text popups.  Popups with HTML (e.g.
   HTML-encoded help) are still not completely read.
 
-## [12.5.1]
+## [12.5.1] 2017-08-25
 ### Fixed
 - Fixed a bug in FHIR QuestionnaireResponse convert function to handle cases where
   items with units could have data types as "ST"
 
-## [12.5.0]
+## [12.5.0] 2017-08-25
 ### Added
 - Added support to convert a FHIR Questionnaire resource to LForms format.
 
-## [12.4.2]
+## [12.4.2] 2017-08-17
 ### Changed
 - Moved themeList.js, which is just for demos, out of the test directory and
   into app/scripts, so that other applications (e.g. our demo site) can make use
   of it.
 
-## [12.4.1]
+## [12.4.1] 2017-08-14
 ### Fixed
 - Fixed the calendar next/previous buttons under themes for IE.
 
-## [12.4.0]
+## [12.4.0] 2017-07-31
 ### Added
 - Added cyan and teal color themes.
 - Added color theme coffee.

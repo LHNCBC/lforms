@@ -24,6 +24,42 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 jQuery.extend(LForms.FHIR_SDC, {
 
+
+  // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
+  _itemTypeMapping: {
+    "SECTION": 'group',
+    "TITLE": 'display',
+    "ST": 'string',
+    "BL": 'boolean',
+    "REAL": 'decimal',
+    "INT": 'integer',
+    "DT": 'dateTime',
+    "DTM": 'dateTime', // not supported yet
+    "TM": 'time',
+    "TX": 'string', // TODO: Remove TX
+    "URL": 'url',
+    "CNE": 'choice',
+    "CWE": 'open-choice',
+    "QTY": 'quantity'
+  },
+
+  // A mapping from LHC-Forms data types to the partial field names of the value fields
+  // and initial value fields in FHIR Questionnaire
+  _dataTypeMapping: {
+    "INT": 'Integer',
+    "REAL": 'Decimal',
+    "DT": 'DateTime',
+    "DTM": 'DateTime',
+    "TM": 'Time',
+    "ST": 'String',
+    "TX": 'String', // TODO: Remove TX
+    "BL": 'Boolean',
+    "URL": 'Url',
+    "CNE": 'Coding',
+    "CWE": 'Coding',
+    "QTY": 'Quantity'
+  },
+
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -265,7 +301,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     // repeats, handled above
     // readonly, (editable)
     if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
-      targetItem.readonly = true;
+      targetItem.readOnly = true;
     }
 
     // an extension for the search url of the auto-complete field.
@@ -651,45 +687,13 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   _getValueKeyByDataType: function(prefix, dataType) {
 
-    var valueKey;
     // prefix could be 'value', 'initial', 'answer'
     if (!prefix) {
       prefix = "value"
     }
-    switch (dataType) {
-      case "INT":
-        valueKey = "Integer";
-        break;
-      case "REAL":
-        valueKey = "Decimal";
-        break;
-      case "DT":
-        //valueKey = "Date";
-        valueKey = "DateTime";
-        break;
-      case "DTM":
-        valueKey = "DateTime";
-        break;
-      case "TM":
-        valueKey = "Time";
-        break;
-      case "ST":
-        valueKey = 'String';
-        break;
-      case "BL":
-        valueKey = 'Boolean';
-        break;
-      case "URL":
-        valueKey = 'Url';
-        break;
-      case "CNE":
-      case "CWE":
-        valueKey = 'Coding';
-        break;
-      case "QTY":
-        valueKey = 'Quantity';
-        break;
-    }
+
+    var valueKey = this._dataTypeMapping[dataType];
+
     return prefix + valueKey;
   },
 
@@ -759,57 +763,11 @@ jQuery.extend(LForms.FHIR_SDC, {
    * @private
    */
   _handleDataType: function(item) {
-    var dataType = "";
-    switch (item.dataType) {
-      case "SECTION":
-        dataType = 'group';
-        break;
-      case "TITLE":
-        dataType = 'display';
-        break;
-      case "ST":
-        dataType = 'string';
-        break;
-      case "BL":
-        dataType = 'boolean';
-        break;
-      case "REAL":
-        dataType = 'decimal';
-        break;
-      case "INT":
-        dataType = 'integer';
-        break;
-      case "DT":
-        //dataType = 'date';
-        dataType = 'dateTime';
-        break;
-      case "DTM": // not supported yet
-        dataType = 'dateTime';
-        break;
-      case "TM":
-        dataType = 'time';
-        break;
-      case "ST":
-        dataType = 'string';
-        break;
-      case "TX":
-        dataType = 'text';
-        break;
-      case "URL":
-        dataType = 'url';
-        break;
-      case "CNE":
-        dataType = 'choice';
-        break;
-      case "CWE":
-        dataType = 'open-choice';
-        break;
-      case "QTY":
-        dataType = 'quantity';
-        break;
-      default:
-        dataType = 'string';
-        break;
+
+    var dataType = this._itemTypeMapping[item.dataType];
+    // default is string
+    if (!dataType) {
+      dataType = 'string';
     }
     return dataType;
   },

@@ -230,7 +230,6 @@ about the meaning of each key:
         * DT - a date (displayed with a calendar widget)
         * TM - a string in the time format
         * ST - a normal free-text string
-        * TX - a string for a long free-text
         * YEAR - a string in the format of one to four digits that represents a year
         * MONTH - a string in the format of one or two digits that represents a month
         * DAY - a string in the format of one or two digits that represents a day
