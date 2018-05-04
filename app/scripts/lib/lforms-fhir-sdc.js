@@ -298,7 +298,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     // repeats, handled above
     // readonly, (editable)
     if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
-      targetItem.readonly = true;
+      targetItem.readOnly = true;
     }
 
     // an extension for the search url of the auto-complete field.
