@@ -25,6 +25,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 jQuery.extend(LForms.FHIR_SDC, {
 
 
+  // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
     "SECTION": 'group',
     "TITLE": 'display',
@@ -42,6 +43,8 @@ jQuery.extend(LForms.FHIR_SDC, {
     "QTY": 'quantity'
   },
 
+  // A mapping from LHC-Forms data types to the partial field names of the value fields
+  // and initial value fields in FHIR Questionnaire
   _dataTypeMapping: {
     "INT": 'Integer',
     "REAL": 'Decimal',
