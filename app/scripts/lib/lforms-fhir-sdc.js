@@ -24,6 +24,39 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
 jQuery.extend(LForms.FHIR_SDC, {
 
+
+  _itemTypeMapping: {
+    "SECTION": 'group',
+    "TITLE": 'display',
+    "ST": 'string',
+    "BL": 'boolean',
+    "REAL": 'decimal',
+    "INT": 'integer',
+    "DT": 'dateTime',
+    "DTM": 'dateTime', // not supported yet
+    "TM": 'time',
+    "TX": 'string', // TODO: Remove TX
+    "URL": 'url',
+    "CNE": 'choice',
+    "CWE": 'open-choice',
+    "QTY": 'quantity'
+  },
+
+  _dataTypeMapping: {
+    "INT": 'Integer',
+    "REAL": 'Decimal',
+    "DT": 'DateTime',
+    "DTM": 'DateTime',
+    "TM": 'Time',
+    "ST": 'String',
+    "TX": 'String', // TODO: Remove TX
+    "BL": 'Boolean',
+    "URL": 'Url',
+    "CNE": 'Coding',
+    "CWE": 'Coding',
+    "QTY": 'Quantity'
+  },
+
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -656,21 +689,7 @@ jQuery.extend(LForms.FHIR_SDC, {
       prefix = "value"
     }
 
-    var dataTypeMapping = {
-      "INT": 'Integer',
-      "REAL": 'Decimal',
-      "DT": 'DateTime',
-      "DTM": 'DateTime',
-      "TM": 'Time',
-      "ST": 'String',
-      "TX": 'String', // TODO: Remove TX
-      "BL": 'Boolean',
-      "URL": 'Url',
-      "CNE": 'Coding',
-      "CWE": 'Coding',
-      "QTY": 'Quantity'
-    };
-    var valueKey = dataTypeMapping[dataType];
+    var valueKey = this._dataTypeMapping[dataType];
 
     return prefix + valueKey;
   },
@@ -742,24 +761,7 @@ jQuery.extend(LForms.FHIR_SDC, {
    */
   _handleDataType: function(item) {
 
-    var dataTypeMapping = {
-      "SECTION": 'group',
-      "TITLE": 'display',
-      "ST": 'string',
-      "BL": 'boolean',
-      "REAL": 'decimal',
-      "INT": 'integer',
-      "DT": 'dateTime',
-      "DTM": 'dateTime', // not supported yet
-      "TM": 'time',
-      "TX": 'string', // TODO: Remove TX
-      "URL": 'url',
-      "CNE": 'choice',
-      "CWE": 'open-choice',
-      "QTY": 'quantity'
-    };
-
-    var dataType = dataTypeMapping[item.dataType];
+    var dataType = this._itemTypeMapping[item.dataType];
     // default is string
     if (!dataType) {
       dataType = 'string';
