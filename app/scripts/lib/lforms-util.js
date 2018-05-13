@@ -354,6 +354,30 @@ LForms.Util = {
         }
       }
     }
+  },
+
+
+  /**
+   * Utility to walkthrough recurively through each element in a collection
+   *
+   * @param collectionObj
+   * @param callback - Callback function to passes parent colle
+   */
+  iterate: function (collectionObj, callback) {
+    if (typeof collectionObj === 'object') {
+      var keys = Object.keys(collectionObj);
+      keys.forEach(function (key) {
+        callback(collectionObj, key, collectionObj[key]);
+        if (typeof collectionObj[key] === 'object') {
+          LForms.Util.iterate(collectionObj[key], callback);
+        }
+      });
+    }
+    else if (typeof collectionObj === 'Array') {
+      collectionObj.forEach(function (el, index) {
+        callback(collectionObj, index, collectionObj[index]);
+      });
+    }
   }
 
-};
+  };
