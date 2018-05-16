@@ -6,7 +6,7 @@ if (typeof LForms === 'undefined')
 
 LForms.Util = {
 
- /**
+  /**
    *  Adds an LForms form to the page.
    * @param formDataVar The name of a global-scope variable containing the
    *  form's LForms definition.  The variable should be accessible as a property
@@ -361,21 +361,27 @@ LForms.Util = {
    * Utility to walkthrough recurively through each element in a collection
    *
    * @param collectionObj
-   * @param callback - Callback function to passes parent colle
    */
-  iterate: function (collectionObj, callback) {
-    if (typeof collectionObj === 'object') {
+  pruneNulls: function (collectionObj) {
+    if (Array.isArray(collectionObj)) {
+      for(var i = collectionObj.length - 1; i >= 0; i--) {
+        if(collectionObj[i] === null || collectionObj[i] === undefined ) {
+          collectionObj.splice(i, 1);
+        }
+        else if(typeof collectionObj[i] === 'Array') {
+          LForms.Util.pruneNulls(collectionObj[key]);
+        }
+      }
+    }
+    else if (collectionObj && typeof collectionObj === 'object') {
       var keys = Object.keys(collectionObj);
       keys.forEach(function (key) {
-        callback(collectionObj, key, collectionObj[key]);
-        if (typeof collectionObj[key] === 'object') {
-          LForms.Util.iterate(collectionObj[key], callback);
+        if(collectionObj[key] === null || collectionObj[key] === undefined) {
+          delete collectionObj[key];
         }
-      });
-    }
-    else if (typeof collectionObj === 'Array') {
-      collectionObj.forEach(function (el, index) {
-        callback(collectionObj, index, collectionObj[index]);
+        else if (typeof collectionObj[key] === 'object') {
+          LForms.Util.pruneNulls(collectionObj[key]);
+        }
       });
     }
   }
