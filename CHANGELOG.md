@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.10.1] 2018-05-16
+### Fixed
+- Fixed problem with validity of FHIR output by stripping nulls from the resource.
+
 ## [12.10.0] 2018-05-02
 ### Changed
 - Treated data type TX same as ST. 
