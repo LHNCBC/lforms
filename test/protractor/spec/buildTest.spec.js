@@ -1,4 +1,5 @@
 var po = require('./buildTest.po');
+var tp = require('./lforms_testpage.po');
 describe('build test page', function() {
   it('should have a drug name field that autocompletes', function() {
     po.openPage();
@@ -6,6 +7,6 @@ describe('build test page', function() {
     po.drugNameField.sendKeys('ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
   });
 });

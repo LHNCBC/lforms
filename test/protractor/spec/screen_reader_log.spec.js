@@ -70,7 +70,7 @@ describe('508', function() {
         'Add another "Name"'));
       browser.wait(function() {
         return addNameButton.isPresent();
-      }, 10000);
+      }, tp.WAIT_TIMEOUT_2);
       // Reset the reader log
       tp.resetReaderLog();
       expect(tp.readerLogEntries.getText()).toEqual([]);

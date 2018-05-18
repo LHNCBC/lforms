@@ -12,8 +12,8 @@ describe('autocomp list', function() {
     ff.listField.click();
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
-    }, 10000);
-    //browser.sleep(5000);
+    }, tp.WAIT_TIMEOUT_2);
+    //browser.sleep(tp.WAIT_TIMEOUT_1);
     expect(ff.searchResults.isDisplayed()).toBeTruthy();
   });
 
@@ -29,11 +29,11 @@ describe('autocomp list', function() {
 
     browser.wait(function() {
       return ff.eyeField.isDisplayed();
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     ff.eyeField.click();
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     // Check pre-condition
     expect(ff.scoreField.getAttribute('value')).toEqual('0');
     // Click first item in list, and then the score field to send the change
@@ -73,7 +73,7 @@ describe('autocomp list', function() {
     var kindField = tp.HL7GeneticPanel.kindOfMutations;
     browser.wait(function() {
       return kindField.isDisplayed();
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     kindField.click();
     kindField.sendKeys(protractor.Key.ARROW_DOWN);
     kindField.sendKeys(protractor.Key.TAB);
@@ -82,7 +82,7 @@ describe('autocomp list', function() {
     var varIDField = tp.HL7GeneticPanel.variantID;
     browser.wait(function() {
       return varIDField.isDisplayed();
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     varIDField.click();
     varIDField.sendKeys('ar');
 
@@ -92,7 +92,7 @@ describe('autocomp list', function() {
     var EC = protractor.ExpectedConditions;
     browser.wait(function() {
       return searchRes.isDisplayed();
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     // This test also checks the escaping of HTML tags
     expect($('#searchResults th:first-child').getText()).toBe('Variant ID <a>');
   });
@@ -100,7 +100,7 @@ describe('autocomp list', function() {
 
   it('should autofill lists when there is just one item', function() {
     tp.openRxTerms();
-    let rxterms = require('./rxterms.fo');
+    var rxterms = require('./rxterms.fo');
     tp.Autocomp.helpers.autocompPickFirst(rxterms.drugName, 'AZELEX');
     expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
   });

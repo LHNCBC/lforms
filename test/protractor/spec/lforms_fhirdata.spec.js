@@ -566,7 +566,7 @@ describe('get FHIR data from LForms forms', function() {
     var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
     drugNameField.sendKeys('aspercreme');
-    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
 
@@ -601,7 +601,7 @@ describe('merge FHIR data into form', function() {
 
     browser.wait(function() {
       return ff.name.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(ff.name.getAttribute('value')).toBe("name 1");
     expect(ff.name2.getAttribute('value')).toBe("name 2");
@@ -629,7 +629,7 @@ describe('merge FHIR data into form', function() {
 
     browser.wait(function() {
       return ff.name.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(ff.name.getAttribute('value')).toBe("12");
     expect(ff.gender.getAttribute('value')).toBe("Male");
@@ -650,7 +650,7 @@ describe('merge FHIR data into form', function() {
 
     browser.wait(function() {
       return ff.name.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(ff.name.getAttribute('value')).toBe("name 1");
     expect(ff.name2.getAttribute('value')).toBe("name 2");

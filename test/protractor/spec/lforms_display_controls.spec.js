@@ -9,7 +9,7 @@ describe('display controls demo', function() {
     var item1Answer3 = element(by.id('/q1a/1c3'))
     browser.wait(function () {
       return item1Answer2.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(item1Answer2.isSelected()).not.toBe(true);
     expect(item1Answer3.isSelected()).toBe(true);
@@ -38,7 +38,7 @@ describe('display controls demo', function() {
 
     browser.wait(function () {
       return item1answer1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(item1answer1.isDisplayed()).toBe(true);
     expect(item4answer1.isDisplayed()).toBe(true);
@@ -195,7 +195,7 @@ describe('display controls demo', function() {
 
     browser.wait(function () {
       return btnAdd1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(q11.isDisplayed()).toBe(true);
     expect(q21.isDisplayed()).toBe(true);
@@ -231,7 +231,7 @@ describe('display controls demo', function() {
 
     browser.wait(function () {
       return item1answer1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     // first row in matrix
     item1answer1.evaluate("subItem.value").then(function (value) {
@@ -297,7 +297,7 @@ describe('display controls demo', function() {
     var item5c4 = element(by.id('/readonlyCWE-mb/1c4'));
     browser.wait(function () {
       return item1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     expect(item1.isEnabled()).toBe(false);
     expect(item2.isEnabled()).toBe(false);
     expect(item3.isEnabled()).toBe(false);
@@ -319,7 +319,7 @@ describe('display controls demo', function() {
 
     browser.wait(function () {
       return label1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     expect(label1.getCssValue('color')).toBe('rgba(255, 0, 0, 1)'); // red
 
   });

@@ -63,7 +63,7 @@ describe('Links on question codes', function() {
     tp.openFullFeaturedForm();
     browser.wait(function() {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     var codeCheckbox = tp.checkboxesFinder.get(0);
     codeCheckbox.click();
@@ -91,7 +91,7 @@ describe('Question/section in question', function() {
     tp.openQuestionInQuestionForm();
     browser.wait(function() {
       return element(by.id('/q1/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(element(by.id('/q1/1')).isDisplayed()).toBe(true);
     expect(element(by.id('/q1/q11/1/1')).isDisplayed()).toBe(true);
@@ -125,7 +125,7 @@ describe('Responsive display layout', function() {
     tp.openFullFeaturedForm();
     browser.wait(function() {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
 
     // break points, 800
@@ -210,7 +210,7 @@ describe('displayControl.colCSS in formHeaderItems', function() {
     tp.openFullFeaturedForm();
     browser.wait(function () {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     // break points, 800
     browser.executeScript('jQuery(".lf-form-view").width(801)').then(function () {
@@ -229,7 +229,7 @@ describe('displayControl.colCSS in formHeaderItems', function() {
     tp.openFullFeaturedForm();
     browser.wait(function () {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     // break points, 800
     browser.executeScript('jQuery(".lf-form-view").width(799)').then(function () {
@@ -264,7 +264,7 @@ describe('displayControl.colCSS in horizontal table', function() {
     tp.openFullFeaturedForm();
     browser.wait(function () {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(element.all(by.css(".lf-form-horizontal-table col")).first().getAttribute("style")).toBe("width: 25%; min-width: 10%;");
     expect(element.all(by.css(".lf-form-horizontal-table col")).get(1).getAttribute("style")).toBe("width: 25%; min-width: 15%;");

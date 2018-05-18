@@ -12,7 +12,7 @@ describe('Form level Matrix layout', function() {
 
     browser.wait(function() {
       return item1answer1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(item1answer1.isDisplayed()).toBe(true);
     expect(item4answer4.isDisplayed()).toBe(true);
@@ -71,7 +71,7 @@ describe('Form level Matrix layout', function() {
 
     browser.wait(function() {
       return item1answer1.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
 
     expect(item1answer1.isDisplayed()).toBe(true);
     expect(item4answer4.isDisplayed()).toBe(true);

@@ -8,7 +8,7 @@ describe('data control', function() {
     ff.dcSource.sendKeys('Haloperidol');
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcSource.sendKeys(protractor.Key.TAB);
     expect(ff.dcSource.getAttribute('value')).toBe("Haloperidol (Oral Pill)");
@@ -28,7 +28,7 @@ describe('data control', function() {
     ff.dcSource.sendKeys('Haloperidol');
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcSource.sendKeys(protractor.Key.ARROW_DOWN);
     ff.dcSource.sendKeys(protractor.Key.TAB);
