@@ -3,13 +3,13 @@ var tp = require('./lforms_testpage.po.js');
 function waitForDisplayed(ele) {
   browser.wait(function() {
     return ele.isDisplayed();
-  }, 5000);
+  }, tp.WAIT_TIMEOUT_1);
 }
 
 function waitForNotPresent(ele) {
   browser.wait(function() {
     return ele.isPresent().then(function(result){return !result});
-  }, 5000);
+  }, tp.WAIT_TIMEOUT_1);
 }
 
 // copyright
@@ -22,7 +22,7 @@ describe('Copyright popover message', function() {
     tp.openFullFeaturedForm();
     browser.wait(function() {
       return element(by.id('/type0/1')).isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     element(by.id("copyright-all-in-one")).click();
     expect(formCopyright.isDisplayed()).toBe(true);
   });
@@ -31,7 +31,7 @@ describe('Copyright popover message', function() {
     element(by.id("copyright-/type0/1")).click();
     browser.wait(function() {
       return itemCopyright.isPresent();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
     expect(itemCopyright.isDisplayed()).toBe(true);
   });
 });

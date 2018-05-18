@@ -52,7 +52,7 @@ describe('horizontal table', function() {
     var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
     drugNameField.sendKeys('aspercreme');
-    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);
     browser.waitForAngular();
@@ -64,7 +64,7 @@ describe('horizontal table', function() {
     // There was a bug where this did not happen when the strength value was
     // padded.
     // Continuing from the previous test...
-    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
+    browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
     var strengthField = rxtermsForm.strengthAndForm;
     strengthField.sendKeys(protractor.Key.ARROW_DOWN);
     strengthField.sendKeys(protractor.Key.TAB);

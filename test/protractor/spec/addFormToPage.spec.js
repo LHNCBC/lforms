@@ -1,4 +1,5 @@
 var po = require('./addFormToPageTest.po');
+var tp = require('./lforms_testpage.po');
 describe('addFormToPage test page', function() {
   it('should have two forms on the page', function() {
     po.openPage();
@@ -12,7 +13,7 @@ describe('addFormToPage test page', function() {
     po.rxDrugNameField.sendKeys('ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
   });
 
 
@@ -23,7 +24,7 @@ describe('addFormToPage test page', function() {
     po.ffDrugNameField.sendKeys('ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
-    }, 5000);
+    }, tp.WAIT_TIMEOUT_1);
   });
 });
 
@@ -36,7 +37,7 @@ describe('addFormToPage', function () {
     browser.wait(function() {
       return browser.driver.executeScript(
         'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
     // Now put form USSG-FHT on the page
     browser.driver.executeScript(
       'LForms.Util.addFormToPage("FHTData", "formContainer")');
@@ -44,6 +45,6 @@ describe('addFormToPage', function () {
     browser.wait(function() {
       return browser.driver.executeScript(
         'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
-    }, 10000);
+    }, tp.WAIT_TIMEOUT_2);
   });
 });

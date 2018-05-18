@@ -34,6 +34,8 @@ var TestPage = function() {
   var autoCompBasePage = require("../../../bower_components/autocomplete-lhc/test/protractor/basePage").BasePage;
   var autoCompHelpers = new autoCompBasePage();
   return {
+    WAIT_TIMEOUT_1: 20000,
+    WAIT_TIMEOUT_2: 40000,
     checkboxesFinder: element.all(by.css('div.lf-form-control > label > input[type="checkbox"]')),
     headerEl: $('div[ng-if="!lfData.templateOptions.hideFormControls"]'),
     heightFieldID: heightFieldID,

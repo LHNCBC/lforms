@@ -70,11 +70,11 @@ describe('horizontal table', function() {
       var listField = element(by.id(listFieldID));
       browser.wait(function() {
         return listField.isDisplayed();
-      }, 10000);
+      }, tp.WAIT_TIMEOUT_2);
       listField.click();
       browser.wait(function() {
         return searchResults.isDisplayed();
-      }, 10000);
+      }, tp.WAIT_TIMEOUT_2);
       expect(searchResults.isDisplayed()).toBeTruthy();
     });
   });

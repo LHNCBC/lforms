@@ -11,19 +11,19 @@ function shortenValidationMsgShowTime() {
 function waitForDisplayed(errorMsg) {
   browser.wait(function() {
     return errorMsg.isDisplayed();
-  }, 5000);
+  }, tp.WAIT_TIMEOUT_1);
 }
 
 function waitForNotDisplayed(errorMsg) {
   browser.wait(function() {
     return errorMsg.isDisplayed().then(function(result){return !result});
-  }, 5000);
+  }, tp.WAIT_TIMEOUT_1);
 }
 
 function waitForNotPresent(errorMsg) {
   browser.wait(function() {
     return errorMsg.isPresent().then(function(result){return !result});
-  }, 5000);
+  }, tp.WAIT_TIMEOUT_1);
 }
 
 function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
@@ -152,14 +152,16 @@ describe('Validations:', function() {
 
   describe('data type validations (table)', function () {
 
-    it('should validate INT type', function () {
+    beforeAll(function () {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
-      }, 5000);
+      }, tp.WAIT_TIMEOUT_1);
 
       shortenValidationMsgShowTime();
+    });
 
+    it('should validate INT type', function () {
       testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
 
@@ -190,11 +192,11 @@ describe('Validations:', function() {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
-      }, 5000);
+      }, tp.WAIT_TIMEOUT_1);
+      shortenValidationMsgShowTime();
     });
 
     it('should validate minInclusive on INT', function () {
-      shortenValidationMsgShowTime();
       testOneType(int1, lblurl, errorMinInclusive, "2", "5");
     });
 
@@ -211,12 +213,6 @@ describe('Validations:', function() {
     });
 
     it('should validate minInclusive on REAL', function () {
-      tp.openValidationTest();
-      browser.wait(function () {
-        return int.isPresent();
-      }, 5000);
-
-      shortenValidationMsgShowTime();
       testOneType(real1, lblint4, errorMinInclusive, "4.9", "5.0");
     });
 
@@ -638,27 +634,27 @@ describe('Validations:', function() {
     var weight1 = element(by.id("/54114-4/54117-7/29463-7/1/1/1"));
     var height2 = element(by.id("/54114-4/54117-7/8302-2/1/2/1"));
     var weight2 = element(by.id("/54114-4/54117-7/29463-7/1/2/1"));
-    var age1 = element(by.id("/54114-4/54117-7/54115-1/1/1/1"));
     var heightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Height" must be a decimal number'));
     var weightError = element(by.cssContainingText("div.validation-error", '"Mock-up item: Weight" must be a decimal number'));
+    var clickAwayElem = element(by.id("/54114-4/54138-3/1/1"));
 
     it('should validate REAL type in horizontal table', function () {
       tp.openUSSGFHTHorizontal();
       browser.wait(function () {
         return height1.isPresent();
-      }, 5000);
+      }, tp.WAIT_TIMEOUT_1);
 
       shortenValidationMsgShowTime();
 
-      testOneType(height1, age1, heightError, "not a number", "123.45");
-      testOneType(weight1, age1, weightError, "not a number", "123.45");
+      testOneType(height1, clickAwayElem, heightError, "not a number", "123.45");
+      testOneType(weight1, clickAwayElem, weightError, "not a number", "123.45");
 
       //add a new row
       var button1 = element(by.id("add-/54114-4/54117-7/1/1"));
       button1.click();
 
-      testOneType(height2, age1, heightError, "not a number", "123.45");
-      testOneType(weight2, age1, weightError, "not a number", "123.45");
+      testOneType(height2, clickAwayElem, heightError, "not a number", "123.45");
+      testOneType(weight2, clickAwayElem, weightError, "not a number", "123.45");
 
     });
 

@@ -68,10 +68,10 @@ exports.config = {
     // try to load the page first
     //browser.get('http://0.0.0.0:9001/');
 
-  }
+  },
 
-  //jasmineNodeOpts: {
-  //  // Default time to wait in ms before a test fails.
-  //  defaultTimeoutInterval: 20000
-  //}
+  jasmineNodeOpts: {
+    // Default time to wait in ms before a test fails.
+    defaultTimeoutInterval: 200000
+  }
 };
