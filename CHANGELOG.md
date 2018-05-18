@@ -3,12 +3,14 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [12.10.1] 2018-05-16
+### Changed
+- Upgraded autocomplete-lhc package to 16.0.0.
 ### Fixed
 - Fixed problem with validity of FHIR output by stripping nulls from the resource.
 
 ## [12.10.0] 2018-05-02
 ### Changed
-- Treated data type TX same as ST. 
+- Treated data type TX same as ST.
 - Used TEXTAREA for items with ST data type instead of INPUT.
 
 ## [12.9.3] 2018-03-22
@@ -40,7 +42,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Added an option to export LForms data in a standard FHIR Questionnaire resource without
   any extensions.
-  
+
 ## [12.8.0] 2018-01-24
 ### Added
 - Added an option to export LForms data in a FHIR Bundle with a DiagnosticReport resource and
@@ -52,7 +54,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [12.7.1] 2018-01-02
 ### Fixed
 - Added an FHIR Questionnaire extension for externallyDefined.
- 
+
 ## [12.7.0] 2017-12-20
 ### Changed
 - Changed the linkId of FHIR Questionnaire item to be the _codePath of LForms' item, and updated
