@@ -541,6 +541,8 @@ jQuery.extend(LForms.FHIR_SDC, {
         }
       }
     }
+    // FHIR doesn't allow null values, strip them out.
+    LForms.Util.pruneNulls(target);
     return target;
   },
 

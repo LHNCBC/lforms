@@ -409,8 +409,9 @@ LForms.FHIR = {
       dr["issued"] = this._getFormattedDate(new Date());
     }
 
-    return inBundle ? this._convertFromContainedToBundle(dr, bundleType) : dr;
-
+    var ret = inBundle ? this._convertFromContainedToBundle(dr, bundleType) : dr;
+    LForms.Util.pruneNulls(ret);
+    return ret;
   },
 
 
