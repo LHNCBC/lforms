@@ -203,7 +203,7 @@ module.exports = function (grunt) {
       all: {
         options: {
           args: {
-            browser: 'firefox'
+//            browser: 'firefox'
           }
         }
       }

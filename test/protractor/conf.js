@@ -1,12 +1,12 @@
 var port = 9001;
 exports.config = {
   port: port,
-  baseUrl: 'http://localhost:' + (process.env.PORT || port),
+  baseUrl: 'http://localhost.nlm.nih.gov:' + (process.env.PORT || port),
 
   //directConnect: true,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'firefox'
+    'browserName': 'chrome'
   },
   specs: 'spec/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
