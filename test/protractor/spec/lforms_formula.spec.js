@@ -63,13 +63,13 @@ describe('formula', function() {
     answer1.click();
     answer1.sendKeys(protractor.Key.ARROW_DOWN);
     answer1.sendKeys(protractor.Key.ARROW_DOWN);
-    answer1.sendKeys(protractor.Key.TAB);
+    answer1.sendKeys(protractor.Key.ENTER);
     expect(score1.getAttribute('value')).toBe("1");
     expect(score2.getAttribute('value')).toBe("0");
     answer2.click();
     answer2.sendKeys(protractor.Key.ARROW_DOWN);
     answer2.sendKeys(protractor.Key.ARROW_DOWN);
-    answer2.sendKeys(protractor.Key.TAB);
+    answer2.sendKeys(protractor.Key.ENTER);
     expect(score1.getAttribute('value')).toBe("2");
     expect(score2.getAttribute('value')).toBe("0");
 
@@ -78,14 +78,14 @@ describe('formula', function() {
     answer3.sendKeys(protractor.Key.ARROW_DOWN);
     answer3.sendKeys(protractor.Key.ARROW_DOWN);
     answer3.sendKeys(protractor.Key.ARROW_DOWN);
-    answer3.sendKeys(protractor.Key.TAB);
+    answer3.sendKeys(protractor.Key.ENTER);
     expect(score1.getAttribute('value')).toBe("2");
     expect(score2.getAttribute('value')).toBe("2");
     answer4.click();
     answer4.sendKeys(protractor.Key.ARROW_DOWN);
     answer4.sendKeys(protractor.Key.ARROW_DOWN);
     answer4.sendKeys(protractor.Key.ARROW_DOWN);
-    answer4.sendKeys(protractor.Key.TAB);
+    answer4.sendKeys(protractor.Key.ENTER);
     expect(score1.getAttribute('value')).toBe("2");
     expect(score2.getAttribute('value')).toBe("4");
 

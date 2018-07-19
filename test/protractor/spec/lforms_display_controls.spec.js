@@ -1,7 +1,7 @@
 var tp = require('./lforms_testpage.po.js');
+var util = require('./util.js');
 
 describe('display controls demo', function() {
-
   it('should show values as selected radio buttons/checkboxes', function() {
     tp.openDisplayControlsDemo();
 
@@ -79,8 +79,8 @@ describe('display controls demo', function() {
     });
     item2Other.click();
     item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe(null);
-      expect(value.text).toBe(null);
+      expect(value.code == null).toBeTruthy(); // allow undefined (Chrome)
+      expect(value.text == null).toBeTruthy(); // allow undefined (Chrome)
     });
     item2OtherValue.sendKeys('other values');
     item2answer1.evaluate("item.value").then(function (value) {
@@ -131,8 +131,8 @@ describe('display controls demo', function() {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
       expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe(null);
-      expect(value[1].text).toBe(null);
+      expect(value[1].code == null).toBeTruthy(); // allow undefined (Chrome)
+      expect(value[1].text == null).toBeTruthy(); // allow undefined (Chrome)
     });
 
     item4OtherValue.sendKeys('other values');
@@ -204,20 +204,24 @@ describe('display controls demo', function() {
     expect(q22.isPresent()).toBe(false);
     expect(q32.isPresent()).toBe(false);
 
-    btnAdd1.click();
+    util.clickAddRemoveButton(btnAdd1);
     expect(q12.isDisplayed()).toBe(true);
-    btnDel1.click();
+    util.clickAddRemoveButton(btnDel1);
     expect(q12.isPresent()).toBe(false);
 
-    btnAdd2.click();
+    util.clickAddRemoveButton(btnAdd2);
+    util.waitForElementPresent(q22);
     expect(q22.isDisplayed()).toBe(true);
-    btnDel2.click();
+    util.clickAddRemoveButton(btnDel2);
+    util.waitForElementNotPresent(q22);
     expect(q22.isPresent()).toBe(false);
 
-    btnAdd3.click();
+
+    util.clickAddRemoveButton(btnAdd3);
     expect(q32.isDisplayed()).toBe(true);
-    btnDel3.click();
-    expect(q32.isPresent()).toBe(false);
+    util.clickAddRemoveButton(btnDel3);
+    expect(browser.isElementPresent(q32)).toBe(false);
+    //expect(q32.isPresent()).toBe(false);
 
   });
 

@@ -102,8 +102,8 @@ describe('Form level Matrix layout', function() {
       expect(value[0].text).toBe('Answer 1');
       expect(value[1].code).toBe('c2');
       expect(value[1].text).toBe('Answer 2');
-      expect(value[2].code).toBe(null);
-      expect(value[2].text).toBe(null);
+      expect(value[2].code == null).toBeTruthy(); // allow undefined
+      expect(value[2].text == null).toBeTruthy(); // allow undefined
     });
 
     item1OtherValue.sendKeys('other values');

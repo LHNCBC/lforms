@@ -148,7 +148,7 @@ describe('Responsive display layout', function() {
 
     browser.executeScript('jQuery(".lf-form-view").width(799)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
+        console.log('element size: '+JSON.stringify(eleSize));
         expect(eleSize.width).toEqual(799);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
@@ -167,7 +167,7 @@ describe('Responsive display layout', function() {
     // break points, 480
     browser.executeScript('jQuery(".lf-form-view").width(479)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
+        console.log('element size: '+JSON.stringify(eleSize));
         expect(eleSize.width).toEqual(479);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
@@ -185,7 +185,7 @@ describe('Responsive display layout', function() {
 
     browser.executeScript('jQuery(".lf-form-view").width(481)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
+        console.log('element size: '+JSON.stringify(eleSize));
         expect(eleSize.width).toEqual(481);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
@@ -237,7 +237,7 @@ describe('displayControl.colCSS in formHeaderItems', function() {
         expect(eleSize.width).toEqual(799);
       });
       expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
-      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
       expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
@@ -249,7 +249,7 @@ describe('displayControl.colCSS in formHeaderItems', function() {
         expect(eleSize.width).toEqual(479);
       });
       expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
-      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
       expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");

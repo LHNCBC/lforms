@@ -1,5 +1,7 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
+var util = require('./util.js');
+
 describe('data control', function() {
 
   it('data change on source field should update target fields', function() {
@@ -86,7 +88,7 @@ describe('data control', function() {
 
     // 'del' button works
     ff.dcSource.sendKeys('Haloperidol');
-    btnDel1.click();
+    util.clickAddRemoveButton(btnDel1);
     expect(btnAdd1.isPresent()).toBe(false);
     expect(btnAdd2.isDisplayed()).toBe(true);
     expect(btnDel1.isPresent()).toBe(false);

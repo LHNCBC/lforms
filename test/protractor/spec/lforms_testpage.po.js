@@ -1,3 +1,5 @@
+let util = require('./util.js');
+
 var TestPage = function() {
 
   var attrTestUrl = 'http://0.0.0.0:9001/test/directiveAttrTest.html';
@@ -232,7 +234,9 @@ var TestPage = function() {
     openBaseTestPage: function () {
       browser.get(testPageUrl);
       browser.waitForAngular();
-    },
+      browser.executeScript(util.disableAutocompleterScroll);
+      browser.executeScript(util.disableCssAnimate);
+     },
 
     /**
      *  Open the directive test page.
@@ -240,6 +244,8 @@ var TestPage = function() {
     openDirectiveTest: function () {
       browser.get(directiveTestUrl);
       browser.waitForAngular();
+      browser.executeScript(util.disableAutocompleterScroll);
+      browser.executeScript(util.disableCssAnimate);
     },
 
     /**
@@ -249,6 +255,8 @@ var TestPage = function() {
     openDirectiveAttrTest: function (urlPart) {
       browser.get(attrTestUrl + urlPart);
       browser.waitForAngular();
+      browser.executeScript(util.disableAutocompleterScroll);
+      browser.executeScript(util.disableCssAnimate);
     },
 
     /**
