@@ -1,5 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
+var util = require('./util.js');
 var ff = tp.USSGFHTVertical;
 
 describe('HL7 data', function() {
@@ -22,51 +23,50 @@ describe('HL7 data', function() {
     ff.gender.click();
     // pick the 1st item
     ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.gender.sendKeys(protractor.Key.TAB);
+    ff.gender.sendKeys(protractor.Key.ENTER);
     // CWE, multiple answers
     ff.race.click();
     // pick the first 2 items
     ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.race.sendKeys(protractor.Key.TAB);
-    ff.race.click();
-    ff.race.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.race.sendKeys(protractor.Key.TAB);
+    ff.race.sendKeys(protractor.Key.ENTER);
+    ff.race.sendKeys(protractor.Key.ENTER);
     // REAL
     ff.height.sendKeys("70");
     ff.weight.sendKeys("170");
     // repeating sub panel
     ff.disease.click();
     ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.disease.sendKeys(protractor.Key.TAB);
+    ff.disease.sendKeys(protractor.Key.ENTER);
     ff.ageAtDiag.click();
     ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.ageAtDiag.sendKeys(protractor.Key.TAB);
-    ff.btnDiseasesHist.click();
+    ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
+    util.clickAddRemoveButton(ff.btnDiseasesHist);
 
+    util.waitForElementDisplayed(ff.disease2);
     ff.disease2.click();
     ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.disease2.sendKeys(protractor.Key.TAB);
+    ff.disease2.sendKeys(protractor.Key.ENTER);
     ff.ageAtDiag2.click();
     ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
-    ff.btnDiseasesHist2.click();
+    ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
+    util.clickAddRemoveButton(ff.btnDiseasesHist2);
 
     ff.disease3.click();
     ff.disease3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.disease3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.disease3.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.disease3.sendKeys(protractor.Key.TAB);
+    ff.disease3.sendKeys(protractor.Key.ENTER);
     ff.ageAtDiag3.click();
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.ageAtDiag3.sendKeys(protractor.Key.TAB);
-    ff.btnDiseasesHist3.click();
+    ff.ageAtDiag3.sendKeys(protractor.Key.ENTER);
+    util.clickAddRemoveButton(ff.btnDiseasesHist3);
 
     // clear up the first instance
     ff.disease.clear();
@@ -75,17 +75,18 @@ describe('HL7 data', function() {
     // family member
     ff.fmName.sendKeys("member name1");
     ff.fmDisease.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.fmDisease.sendKeys(protractor.Key.TAB);
-    ff.btnAnotherDiseasesHist.click();
+    ff.fmDisease.sendKeys(protractor.Key.ENTER);
+    util.clickAddRemoveButton(ff.btnAnotherDiseasesHist);
 
-    ff.btnAnotherFamily.click();
+    util.clickAddRemoveButton(ff.btnAnotherFamily);
+    util.waitForElementDisplayed(ff.fmName2);
     ff.fmName2.sendKeys("member name2");
     ff.fmDisease2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.fmDisease2.sendKeys(protractor.Key.ARROW_DOWN);
-    ff.fmDisease2.sendKeys(protractor.Key.TAB);
-    ff.btnAnotherDiseasesHist2.click();
+    ff.fmDisease2.sendKeys(protractor.Key.ENTER);
+    util.clickAddRemoveButton(ff.btnAnotherDiseasesHist2);
 
-    ff.btnAnotherFamily2.click();
+    util.clickAddRemoveButton(ff.btnAnotherFamily2);
 
     browser.driver.executeAsyncScript(function () {
       var callback = arguments[arguments.length - 1];

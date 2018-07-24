@@ -1,12 +1,12 @@
 var port = 9001;
 exports.config = {
   port: port,
-  baseUrl: 'http://localhost:' + (process.env.PORT || port),
+  baseUrl: 'http://localhost.nlm.nih.gov:' + (process.env.PORT || port),
 
   //directConnect: true,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'firefox'
+    'browserName': 'chrome'
   },
   specs: 'spec/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
@@ -31,23 +31,6 @@ exports.config = {
         }]);
     };
 
-    var disableCssAnimate = function() {
-      angular
-        .module('disableCssAnimate', [])
-        .run(function() {
-          var style = document.createElement('style');
-          style.type = 'text/css';
-          style.innerHTML = '* {' +
-            '-webkit-transition: none !important;' +
-            '-moz-transition: none !important' +
-            '-o-transition: none !important' +
-            '-ms-transition: none !important' +
-            'transition: none !important' +
-            '}';
-          document.getElementsByTagName('head')[0].appendChild(style);
-        });
-    };
-
     var setTestFlag = function() {
       angular
           .module('setTestFlag', [])
@@ -62,8 +45,24 @@ exports.config = {
 
     // disable ng-animate during the testing
     browser.addMockModule('disableNgAnimate', disableNgAnimate);
-    browser.addMockModule('disableCssAnimate', disableCssAnimate);
     browser.addMockModule('setTestFlag', setTestFlag);
+
+    // Disable smoothScroll during testing
+    browser.addMockModule('smoothScroll', function() {
+      var smooth = angular.module('smoothScroll', []);
+      smooth.factory('smoothScroll', function() {
+        return function(element){
+          element.scrollIntoView({behavior: "instant"});
+        };
+      });
+      smooth.directive('smoothScroll', ['smoothScroll', function(smoothScroll) {
+        return {
+           link: function($scope, $elem) {
+             $elem.scrollIntoView({behavior: "instant"});
+           }
+        }
+      }]);
+    });
 
     // try to load the page first
     //browser.get('http://0.0.0.0:9001/');

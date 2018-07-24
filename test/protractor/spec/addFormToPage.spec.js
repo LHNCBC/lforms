@@ -26,25 +26,25 @@ describe('addFormToPage test page', function() {
       return po.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
   });
-});
 
 
-describe('addFormToPage', function () {
-  it('should be able to called a second time with a new form for the same form '+
-     'container', function() {
-    po.openPage();
-    // Pre-condition -- Form USSG-FHT should not be in formContainer
-    browser.wait(function() {
-      return browser.driver.executeScript(
-        'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
-    }, tp.WAIT_TIMEOUT_2);
-    // Now put form USSG-FHT on the page
-    browser.driver.executeScript(
-      'LForms.Util.addFormToPage("FHTData", "formContainer")');
-    // Confirm it is there
-    browser.wait(function() {
-      return browser.driver.executeScript(
-        'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
-    }, tp.WAIT_TIMEOUT_2);
+  describe('addFormToPage', function () {
+    it('should be able to called a second time with a new form for the same form '+
+       'container', function() {
+      po.openPage();
+      // Pre-condition -- Form USSG-FHT should not be in formContainer
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
+      }, tp.WAIT_TIMEOUT_2);
+      // Now put form USSG-FHT on the page
+      browser.driver.executeScript(
+        'LForms.Util.addFormToPage("FHTData", "formContainer")');
+      // Confirm it is there
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
+      }, tp.WAIT_TIMEOUT_2);
+    });
   });
 });

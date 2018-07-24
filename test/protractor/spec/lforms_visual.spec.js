@@ -146,10 +146,10 @@ describe('Responsive display layout', function() {
     });
 
 
-    browser.executeScript('jQuery(".lf-form-view").width(799)').then(function(){
+    browser.executeScript('jQuery(".lf-form-view").width(798)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
-        expect(eleSize.width).toEqual(799);
+        console.log('element size: '+JSON.stringify(eleSize));
+        expect(eleSize.width).toEqual(798);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
       expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(true);
@@ -165,10 +165,10 @@ describe('Responsive display layout', function() {
     });
 
     // break points, 480
-    browser.executeScript('jQuery(".lf-form-view").width(479)').then(function(){
+    browser.executeScript('jQuery(".lf-form-view").width(478)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
-        expect(eleSize.width).toEqual(479);
+        console.log('element size: '+JSON.stringify(eleSize));
+        expect(eleSize.width).toEqual(478);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
       expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(false);
@@ -185,7 +185,7 @@ describe('Responsive display layout', function() {
 
     browser.executeScript('jQuery(".lf-form-view").width(481)').then(function(){
       element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-        console.log('element size: '+eleSize);
+        console.log('element size: '+JSON.stringify(eleSize));
         expect(eleSize.width).toEqual(481);
       });
       expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
@@ -232,24 +232,24 @@ describe('displayControl.colCSS in formHeaderItems', function() {
     }, tp.WAIT_TIMEOUT_1);
 
     // break points, 800
-    browser.executeScript('jQuery(".lf-form-view").width(799)').then(function () {
+    browser.executeScript('jQuery(".lf-form-view").width(798)').then(function () {
       element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
-        expect(eleSize.width).toEqual(799);
+        expect(eleSize.width).toEqual(798);
       });
       expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
-      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
       expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
     });
 
     // break points, 480
-    browser.executeScript('jQuery(".lf-form-view").width(479)').then(function () {
+    browser.executeScript('jQuery(".lf-form-view").width(478)').then(function () {
       element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
-        expect(eleSize.width).toEqual(479);
+        expect(eleSize.width).toEqual(478);
       });
       expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
-      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("0px");
+      expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
       expect(element.all(by.css(".lf-header-de")).get(1).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(2).getAttribute("style")).toBe("");
       expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
