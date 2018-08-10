@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.10.3] 2018-08-07
+### Fixed
+- The background color for textarea based fields.
+
 ## [12.10.2] 2018-07-19
 ### Fixed
 - The protractor tests stopped running in Firefox, and a fix is not yet

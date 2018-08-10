@@ -88,7 +88,7 @@
   resize: vertical; /* not allow user to change width */
 
 }
-.lf-form input:focus {
+.lf-form input:focus,.lf-form textarea:focus {
   background-color: #FFF8C6
 }
 
