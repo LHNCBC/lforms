@@ -284,11 +284,15 @@ jQuery.extend(LForms.FHIR_SDC, {
     var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 
     // code
-    targetItem.code = [{
-      "system": codeSystem,
-      "code": item.questionCode,
-      "display": item.question
-    }];
+    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+    // don't create a 'code' when converting it back to Questionnaire.
+    if (codeSystem !== 'LinkId') {
+      targetItem.code = [{
+        "system": codeSystem,
+        "code": item.questionCode,
+        "display": item.question
+      }];
+    }
 
     // text
     targetItem.text = item.question;
@@ -584,8 +588,12 @@ jQuery.extend(LForms.FHIR_SDC, {
         codeSystem = "http://loinc.org";
         break;
       case "CDE": // TBD
-      default:
+      case undefined:
         codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+        break;
+      default:
+        codeSystem = codeSystemInLForms;
+
     }
 
     return codeSystem;

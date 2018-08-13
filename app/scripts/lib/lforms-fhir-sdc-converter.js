@@ -370,6 +370,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           code.system = 'LOINC';
           break;
         default:
+          code.system = questionnaireItemOrResource.code[0].system;
           break;
       }
 
@@ -385,6 +386,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           code.system = 'LOINC';
           break;
         default:
+          code.system = questionnaireItemOrResource.identifier[0].system;
           break;
       }
       code.code = questionnaireItemOrResource.identifier[0].value;
@@ -606,7 +608,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @private
    */
   function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-    
+
     if(topLevelItem.linkId === questionLinkId) {
       if (topLevelItem.code) {
         return {
