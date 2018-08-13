@@ -606,13 +606,21 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @private
    */
   function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-
-
+    
     if(topLevelItem.linkId === questionLinkId) {
-      return {
-        questionCode: topLevelItem.code[0].code,
-        dataType: _getDataType(topLevelItem)
-      };
+      if (topLevelItem.code) {
+        return {
+          questionCode: topLevelItem.code[0].code,
+          dataType: _getDataType(topLevelItem)
+        };
+      }
+      else {
+        return {
+          questionCode: topLevelItem.linkId,
+          dataType: _getDataType(topLevelItem)
+        };
+
+      }
     }
 
     var ret = null;
