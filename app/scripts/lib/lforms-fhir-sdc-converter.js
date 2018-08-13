@@ -98,7 +98,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     _processDataType(targetItem, qItem);
-    _processCode(targetItem, qItem);
+    _processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
     _processQuestionCardinality(targetItem, qItem);
@@ -337,12 +337,19 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processCode(lfItem, qItem) {
+  function _processCodeAndLinkId(lfItem, qItem) {
     var code = _getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;
       lfItem.questionCodeSystem = code.system;
     }
+    // use linkId as questionCode, which should not be exported as code
+    else {
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId"
+    }
+
+    lfItem.linkId = qItem.linkId;
   }
 
 

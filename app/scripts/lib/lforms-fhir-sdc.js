@@ -279,7 +279,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     }
 
     // linkId
-    targetItem.linkId = item._codePath;
+    targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
     var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 

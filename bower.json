@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "12.10.3",
+  "version": "12.11.0",
   "dependencies": {
     "jquery-ui": "~1.11.4",
     "angular": "^1.4.7",
