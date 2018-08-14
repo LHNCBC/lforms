@@ -672,5 +672,14 @@ describe('FHIR Data: ', function () {
 
     });
   });
+
+  describe('Converted Questionnaire', function () {
+    it('should be able to show a converted questionnaire', function() {
+       tp.openQuestionnaire();
+       // Check to see that the last question has rendered
+       expect(element(by.id('label-/4/TBD3/TBD19/TBD20/1/1/1/1')).getText()).toBe(
+         "Rezidiv/Progress aufgetreten");
+    });
+  });
 });
 
