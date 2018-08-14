@@ -134,7 +134,7 @@
           "code": [
             {
               "system": "http://uni-koeln-de/CodeSystem/TBD",
-              "code": "TBD"
+              "code": "TBD1"
             }
           ],
           "text": "ECOG Performance Status",
@@ -149,7 +149,7 @@
           "code": [
             {
               "system": "http://uni-koeln-de/CodeSystem/TBD",
-              "code": "TBD"
+              "code": "TBD2"
             }
           ],
           "text": "Histologie (bitte unbedingt pathologischen Befund beifügen)",
@@ -164,7 +164,7 @@
           "code": [
             {
               "system": "http://uni-koeln-de/CodeSystem/TBD",
-              "code": "TBD"
+              "code": "TBD3"
             }
           ],
           "text": "Angaben zum Tumorstadium",
@@ -182,7 +182,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD4"
                     }
                   ],
                   "text": "ED am",
@@ -194,7 +194,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD5"
                     }
                   ],
                   "text": "ED histopathologisch gesichert",
@@ -206,7 +206,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD6"
                     }
                   ],
                   "text": "TNM-Status bei ED",
@@ -218,7 +218,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD7"
                         }
                       ],
                       "text": "T",
@@ -233,7 +233,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD8"
                         }
                       ],
                       "text": "N",
@@ -248,7 +248,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD9"
                         }
                       ],
                       "text": "M",
@@ -265,7 +265,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD10"
                     }
                   ],
                   "text": "UICC bei ED",
@@ -282,7 +282,7 @@
               "code": [
                 {
                   "system": "http://uni-koeln-de/CodeSystem/TBD",
-                  "code": "TBD"
+                  "code": "TBD11"
                 }
               ],
               "text": "Aktuelles Tumorstadium (sofern abweichend von der ED)",
@@ -294,7 +294,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD12"
                     }
                   ],
                   "text": "Aktuelles Tumorstadium seit",
@@ -306,7 +306,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD13"
                     }
                   ],
                   "text": "Aktueller TNM-Status",
@@ -318,7 +318,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD14"
                         }
                       ],
                       "text": "T",
@@ -333,7 +333,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD15"
                         }
                       ],
                       "text": "N",
@@ -348,7 +348,7 @@
                       "code": [
                         {
                           "system": "http://uni-koeln-de/CodeSystem/TBD",
-                          "code": "TBD"
+                          "code": "TBD16"
                         }
                       ],
                       "text": "M",
@@ -365,7 +365,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD17"
                     }
                   ],
                   "text": "UICC aktuell",
@@ -380,7 +380,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD18"
                     }
                   ],
                   "text": "Kurativ-operabel",
@@ -394,7 +394,7 @@
               "code": [
                 {
                   "system": "http://uni-koeln-de/CodeSystem/TBD",
-                  "code": "TBD"
+                  "code": "TBD19"
                 }
               ],
               "text": "Rezidiv/Progress",
@@ -406,7 +406,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD20"
                     }
                   ],
                   "text": "Rezidiv/Progress aufgetreten",
@@ -418,7 +418,7 @@
                   "code": [
                     {
                       "system": "http://uni-koeln-de/CodeSystem/TBD",
-                      "code": "TBD"
+                      "code": "TBD21"
                     }
                   ],
                   "text": "Zeitpunkt",

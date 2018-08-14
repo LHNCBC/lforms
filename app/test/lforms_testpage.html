@@ -125,7 +125,8 @@
               {text: "Fields with default answers", id: "defaultAnswerTest"},
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
-              {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"}
+              {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
+              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"}
             ];
 
             // indirect testing of the events emitted from within the LForms widget
@@ -366,7 +367,7 @@
                   break;
                 case 'matrix-layout2':
                   //'matrix layout 2'
-                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout2));
+                  lfData1 = new LForms.LFormsData(angular.copy(matrixLayout2));
                   break;
                 case 'question-in-question':
                   //'question/section in question'
@@ -409,6 +410,22 @@
                       }
                   );
                   break;
+                case 'questCodeIssues':
+                  $.getJSON('/data/4712701.json', function(data) {
+                    try {
+                      var lformsFormat = LForms.FHIR_SDC.convertQuestionnaireToLForms(data);
+                      $scope.lfData2 = new LForms.LFormsData(lformsFormat);
+                      $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
+                      $scope.$apply();
+                    }
+                    catch(e) {
+                      window.alert(e);
+                      console.error(e);
+                    }
+                  }).fail(function() {
+                    window.alert('Unable to load form');
+                  });
+                  break;
               }
 
               $scope.lfData2 = lfData2;
@@ -440,7 +457,7 @@
           <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
-          <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
+          <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR1LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
           <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
 
