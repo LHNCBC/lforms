@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.10.4] 2018-08-14
+### Fixed
+- The BL (boolean) data type now works correctly, and is displayed as a
+  checkbox.
+
 ## [12.10.3] 2018-08-07
 ### Fixed
 - The background color for textarea based fields.

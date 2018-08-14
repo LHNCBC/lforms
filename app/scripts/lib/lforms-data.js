@@ -46,8 +46,8 @@ if (typeof LForms === 'undefined')
         EMAIL:  "EMAIL",
         PHONE:  "PHONE",
         SECTION:"SECTION",
-        TITLE:  "TITLE"
-        // BL:     "BL",    // not fully supported yet
+        TITLE:  "TITLE",
+        BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
         // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
@@ -1093,7 +1093,7 @@ if (typeof LForms === 'undefined')
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
         if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
-            noEmptyValue && !item.value && !item.header) {
+            noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
           continue;
         }
         // include only the code and the value (and unit, other value) if no form definition data is needed
@@ -1101,7 +1101,7 @@ if (typeof LForms === 'undefined')
           itemData.questionCode = item.questionCode;
           // not a header
           if (!item.header) {
-            if (item.value) itemData.value = this._getOriginalValue(item.value, item.dataType);
+            if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
             if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
             if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
           }
@@ -1214,7 +1214,7 @@ if (typeof LForms === 'undefined')
      */
     _getOriginalValue: function(value, dataType) {
       var retValue;
-      if (value) {
+      if (value !== undefined && value !== null) {
         // has a data type
         if (dataType) {
           switch (dataType) {
@@ -1230,6 +1230,9 @@ if (typeof LForms === 'undefined')
             case this._CONSTANTS.DATA_TYPE.CNE:
             case this._CONSTANTS.DATA_TYPE.CWE:
               retValue = this._getObjectValue(value, true);
+              break;
+            case this._CONSTANTS.DATA_TYPE.BL:
+              retValue = value ? true : false;
               break;
             default:
               retValue = value;
