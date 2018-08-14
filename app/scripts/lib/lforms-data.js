@@ -1093,7 +1093,7 @@ if (typeof LForms === 'undefined')
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
         if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
-            noEmptyValue && item.value === undefined && !item.header) {
+            noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
           continue;
         }
         // include only the code and the value (and unit, other value) if no form definition data is needed
@@ -1214,7 +1214,7 @@ if (typeof LForms === 'undefined')
      */
     _getOriginalValue: function(value, dataType) {
       var retValue;
-      if (value !== undefined) {
+      if (value !== undefined && value !== null) {
         // has a data type
         if (dataType) {
           switch (dataType) {
