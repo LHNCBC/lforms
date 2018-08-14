@@ -35,7 +35,38 @@ var TestPage = function() {
   var heightFieldID= '/54126-8/8302-2/1/1';
   var autoCompBasePage = require("../../../bower_components/autocomplete-lhc/test/protractor/basePage").BasePage;
   var autoCompHelpers = new autoCompBasePage();
-  return {
+  var rtnObj = {};
+  // Define functions for opening forms, via a hash from at form name (short)
+  // to its index. Functions will be named open[Form name].
+  let formToIndex = {
+    USSGFHTVertical: 1,
+    USSGFHTHorizontal: 2,
+    GlasgowForm: 3,
+    FullFeaturedForm: 4,
+    FormBuilder: 5,
+    MDS3: 6,
+    FormWithUserData: 7,
+    RxTerms: 9,
+    DisplayControlsDemo: 10,
+    MatrixLayout1: 11,
+    MatrixLayout2: 12,
+    ValidationTest: 13,
+    QuestionInQuestionForm: 14,
+    HL7GeneticPanel: 15,
+    DefaultAnswerForm: 17,
+    TwoTotalScoreForm: 20,
+    Questionnaire: 21
+  };
+  for (let f of Object.keys(formToIndex)) {
+    rtnObj['open'+f] = (function(index) {
+      return function() {
+        this.openBaseTestPage();
+        this.openFormByIndex(index);
+      }
+    })(formToIndex[f]);
+  }
+
+  Object.assign(rtnObj, {
     WAIT_TIMEOUT_1: 20000,
     WAIT_TIMEOUT_2: 40000,
     checkboxesFinder: element.all(by.css('div.lf-form-control > label > input[type="checkbox"]')),
@@ -257,150 +288,10 @@ var TestPage = function() {
       browser.waitForAngular();
       browser.executeScript(util.disableAutocompleterScroll);
       browser.executeScript(util.disableCssAnimate);
-    },
-
-    /**
-     *  Opens the USSG-FHT vertical layout form
-     */
-    openUSSGFHTVertical: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(1);
-    },
-
-    /**
-     *  Opens the USSG-FHT horizontal layout form
-     */
-    openUSSGFHTHorizontal: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(2);
-    },
-
-    /**
-     *  Open the glasgow form
-     */
-    openGlasgowForm: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(3);
-    },
-
-    /**
-     *  Open the "full featured" form.
-     */
-    openFullFeaturedForm: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(4);
-    },
-
-    /**
-     *  Open the form-builder form
-     */
-    openFormBuilder: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(5);
-    },
-
-    /**
-     *  Open the MDS3 form
-     */
-    openMDS3: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(6);
-    },
-
-    /**
-     *  Open the form with user data
-     */
-    openFormWithUserData: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(7);
-    },
-
-
-    /**
-     *  Opens the RxTerms form.
-     */
-    openRxTerms: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(9);
-    },
-
-
-    /**
-     *  Opens the List Layout form
-     */
-    openDisplayControlsDemo: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(10);
-    },
-
-
-    /**
-     *  Opens the Matrix form #1.
-     */
-    openMatrixLayout1: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(11);
-    },
-
-
-    /**
-     *  Opens the Matrix form #2.
-     */
-    openMatrixLayout2: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(12);
-    },
-
-
-    /**
-     *  Opens the Validation Test form.
-     */
-    openValidationTest: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(13);
-    },
-
-    /**
-     *  Opens the question-in-question form.
-     */
-    openQuestionInQuestionForm: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(14);
-    },
-
-    /**
-     *  Opens the HL7 Genetic Test Panel.
-     */
-    openHL7GeneticPanel: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(15);
-    },
-
-    /**
-     *  Opens the defaultAnswer form.
-     */
-    openDefaultAnswerForm: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(17);
-    },
-
-    /**
-     *  Opens the USSG-FHT horizontal layout form
-     */
-    openUSSGFHTHorizontal: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(2);
-    },
-
-    /**
-     *  Opens the USSG-FHT horizontal layout form
-     */
-    openTwoTotalScoreForm: function () {
-      this.openBaseTestPage();
-      this.openFormByIndex(20);
     }
-
-  }
+  });
+  return rtnObj;
+  console.log(rtnObj);
 };
 
 module.exports = TestPage();
