@@ -381,6 +381,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" +
     "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          </textarea>\n" +
+    "          <input ng-switch-when=\"BL\" name=\"{{item.question}}\" type=\"checkbox\"\n" +
+    "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
+    "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
