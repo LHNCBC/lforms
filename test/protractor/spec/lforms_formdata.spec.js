@@ -111,6 +111,26 @@ describe('formdata: ', function() {
       });
     });
 
+    it('should assign a boolean value for type BL fields', function (done) {
+      tp.openFullFeaturedForm();
+      function checkBoolFieldVal(val, done) {
+        browser.driver.executeScript(function() {
+           return LForms.Util.getUserData();
+        }).then(function(lfData) {
+          let boolQuestion = lfData.itemsData[5];
+          expect(boolQuestion.dataType).toBe('BL');
+          expect(boolQuestion.value).toBe(val);
+          if (done)
+            done();
+        });
+      }
+      checkBoolFieldVal(undefined);
+      tp.FullFeaturedForm.booleanField.click();
+      checkBoolFieldVal(true);
+      tp.FullFeaturedForm.booleanField.click();
+      checkBoolFieldVal(false, done);
+    });
+
 
     it('should be able to get the complete form definition data and reset the form with the retrieved data', function() {
       tp.openUSSGFHTVertical();

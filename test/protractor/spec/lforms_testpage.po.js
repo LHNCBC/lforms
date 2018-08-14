@@ -138,6 +138,7 @@ var TestPage = function() {
 
     FullFeaturedForm: {
       cneField: element(by.id('/type9/1')),
+      booleanField: element(by.id('/type1/1')),
       src: element(by.id('/slSource1/1')),
       t1: element(by.id('/slTargetItem1/1')),
       t2: element(by.id('/slTargetItem2/1')),
