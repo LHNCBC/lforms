@@ -672,5 +672,37 @@ describe('FHIR Data: ', function () {
 
     });
   });
+
+  describe('Converted Questionnaire', function () {
+    beforeEach(function() {
+      tp.openQuestionnaire();
+    });
+
+    it('should be able to show a converted questionnaire', function() {
+       // Check to see that the last question has rendered
+       expect(element(by.id('label-/4/TBD3/TBD19/TBD20/1/1/1/1')).getText()).toBe(
+         "Rezidiv/Progress aufgetreten");
+    });
+
+    it('should have functioning skiplogic', function() {
+      let packungenField = element(by.id('/1/1.5/1.5.4/1/1/1'));
+      expect(packungenField.isPresent()).toBe(false);
+      let raucherField = element(by.id('/1/1.5/1.5.1/1/1/1'));
+      raucherField.click();
+      expect(packungenField.isPresent()).toBe(true);
+      raucherField.click();
+      expect(packungenField.isPresent()).toBe(false);
+    });
+
+    it('should have functioning skiplogic when the codes are absent', function() {
+      let progressNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.3/1/1/1/1'));
+      let zeitpunktNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.4/1/1/1/1'));
+      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
+      progressNonCodeField.click();
+      expect(zeitpunktNonCodeField.isPresent()).toBe(true);
+      progressNonCodeField.click();
+      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
+    });
+  });
 });
 

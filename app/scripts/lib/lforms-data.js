@@ -814,6 +814,10 @@ if (typeof LForms === 'undefined')
         item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
         item._elementId = item._codePath + item._idPath;
         item._displayLevel = parentItem._displayLevel + 1;
+        // linkId for Questionnaire
+        if (!item.linkId) {
+          item.linkId = item._codePath;
+        }
 
         // set last sibling status
         item._lastSibling = i === lastSiblingIndex;
@@ -938,8 +942,11 @@ if (typeof LForms === 'undefined')
         item._elementId = item._codePath + item._idPath;
         item._displayLevel = parentItem._displayLevel + 1;
         item._parentItem = parentItem;
-
         item._repeatingSectionList = null;
+        // linkId for Questionnaire
+        if (!item.linkId) {
+          item.linkId = item._codePath;
+        }
 
         // set default values on the item
         // questionCardinality

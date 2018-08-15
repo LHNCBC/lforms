@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.11.0] - 2018-08-13
+### Added
+- Added a 'linkId' field in items.
+
 ## [12.10.4] 2018-08-14
 ### Fixed
 - The BL (boolean) data type now works correctly, and is displayed as a

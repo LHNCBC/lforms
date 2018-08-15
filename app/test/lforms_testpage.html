@@ -125,7 +125,8 @@
               {text: "Fields with default answers", id: "defaultAnswerTest"},
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
-              {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"}
+              {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
+              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"}
             ];
 
             // indirect testing of the events emitted from within the LForms widget
@@ -408,6 +409,22 @@
                         console.log(err);
                       }
                   );
+                  break;
+                case 'questCodeIssues':
+                  $.getJSON('/data/4712701.json', function(data) {
+                    try {
+                      var lformsFormat = LForms.FHIR_SDC.convertQuestionnaireToLForms(data);
+                      $scope.lfData2 = new LForms.LFormsData(lformsFormat);
+                      $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
+                      $scope.$apply();
+                    }
+                    catch(e) {
+                      window.alert(e);
+                      console.error(e);
+                    }
+                  }).fail(function() {
+                    window.alert('Unable to load form');
+                  });
                   break;
               }
 

@@ -98,7 +98,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     _processDataType(targetItem, qItem);
-    _processCode(targetItem, qItem);
+    _processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
     _processQuestionCardinality(targetItem, qItem);
@@ -337,12 +337,19 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processCode(lfItem, qItem) {
+  function _processCodeAndLinkId(lfItem, qItem) {
     var code = _getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;
       lfItem.questionCodeSystem = code.system;
     }
+    // use linkId as questionCode, which should not be exported as code
+    else {
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId"
+    }
+
+    lfItem.linkId = qItem.linkId;
   }
 
 
@@ -363,6 +370,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           code.system = 'LOINC';
           break;
         default:
+          code.system = questionnaireItemOrResource.code[0].system;
           break;
       }
 
@@ -378,6 +386,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           code.system = 'LOINC';
           break;
         default:
+          code.system = questionnaireItemOrResource.identifier[0].system;
           break;
       }
       code.code = questionnaireItemOrResource.identifier[0].value;
@@ -600,12 +609,20 @@ if (typeof LForms.FHIR_SDC === 'undefined')
    */
   function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
 
-
     if(topLevelItem.linkId === questionLinkId) {
-      return {
-        questionCode: topLevelItem.code[0].code,
-        dataType: _getDataType(topLevelItem)
-      };
+      if (topLevelItem.code) {
+        return {
+          questionCode: topLevelItem.code[0].code,
+          dataType: _getDataType(topLevelItem)
+        };
+      }
+      else {
+        return {
+          questionCode: topLevelItem.linkId,
+          dataType: _getDataType(topLevelItem)
+        };
+
+      }
     }
 
     var ret = null;

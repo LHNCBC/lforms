@@ -3466,7 +3466,7 @@ var matrixLayout =
   "name": "A form with matrix layout, multiple selections",
   "copyrightNotice": "This question is not copyrighted",
   "codingInstructions": "Choose answer 1 for best results",
-  "template": "list",
+  "template": "table",
   "templateOptions": {
     "displayControl": {"questionLayout":"matrix"},
   },
@@ -3525,7 +3525,7 @@ var matrixLayout2 =
   "type": "LOINC",
   "code": "matrix-layout2",
   "name": "Another form with matrix layout, single selection",
-  "template": "list",
+  "template": "table",
   "templateOptions": {
     "displayControl": {"questionLayout":"matrix"},
   },
