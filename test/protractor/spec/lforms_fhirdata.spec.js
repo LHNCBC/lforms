@@ -693,6 +693,16 @@ describe('FHIR Data: ', function () {
       raucherField.click();
       expect(packungenField.isPresent()).toBe(false);
     });
+
+    it('should have functioning skiplogic when the codes are absent', function() {
+      let progressNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.3/1/1/1/1'));
+      let zeitpunktNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.4/1/1/1/1'));
+      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
+      progressNonCodeField.click();
+      expect(zeitpunktNonCodeField.isPresent()).toBe(true);
+      progressNonCodeField.click();
+      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
+    });
   });
 });
 
