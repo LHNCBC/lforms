@@ -36,7 +36,7 @@ var TestPage = function() {
   var autoCompBasePage = require("../../../bower_components/autocomplete-lhc/test/protractor/basePage").BasePage;
   var autoCompHelpers = new autoCompBasePage();
   var rtnObj = {};
-  // Define functions for opening forms, via a hash from at form name (short)
+  // Define functions for opening forms, via a hashmap from form name (short)
   // to its index. Functions will be named open[Form name].
   let formToIndex = {
     USSGFHTVertical: 1,
