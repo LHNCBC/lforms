@@ -684,7 +684,7 @@ describe('FHIR Data: ', function () {
          "Rezidiv/Progress aufgetreten");
     });
 
-    it('should have functioning skiplogic', function() {
+    it('should have functioning skiplogic when codes are not present', function() {
       let packungenField = element(by.id('/1/1.5/1.5.4/1/1/1'));
       expect(packungenField.isPresent()).toBe(false);
       let raucherField = element(by.id('/1/1.5/1.5.1/1/1/1'));
@@ -694,14 +694,14 @@ describe('FHIR Data: ', function () {
       expect(packungenField.isPresent()).toBe(false);
     });
 
-    it('should have functioning skiplogic when the codes are absent', function() {
-      let progressNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.3/1/1/1/1'));
-      let zeitpunktNonCodeField = element(by.id('/4/TBD3/TBD19/4.3.3.4/1/1/1/1'));
-      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
-      progressNonCodeField.click();
-      expect(zeitpunktNonCodeField.isPresent()).toBe(true);
-      progressNonCodeField.click();
-      expect(zeitpunktNonCodeField.isPresent()).toBe(false);
+    it('should have functioning skiplogic when the codes are present', function() {
+      let progressField = element(by.id('/4/TBD3/TBD19/TBD20/1/1/1/1'));
+      let zeitpunktField = element(by.id('/4/TBD3/TBD19/TBD21/1/1/1/1'));
+      expect(zeitpunktField.isPresent()).toBe(false);
+      progressField.click();
+      expect(zeitpunktField.isPresent()).toBe(true);
+      progressField.click();
+      expect(zeitpunktField.isPresent()).toBe(false);
     });
   });
 });
