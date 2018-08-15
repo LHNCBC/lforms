@@ -430,24 +430,6 @@
                     }
                   ],
                   "required": false
-                },
-                {
-                  "linkId": "4.3.3.3",
-                  "text": "Rezidiv/Progress aufgetreten - without code",
-                  "type": "boolean",
-                  "required": true
-                },
-                {
-                  "linkId": "4.3.3.4",
-                  "text": "Zeitpunkt - without code",
-                  "type": "date",
-                  "enableWhen": [
-                    {
-                      "question": "4.3.3.3",
-                      "answerBoolean": true
-                    }
-                  ],
-                  "required": false
                 }
               ]
             }
