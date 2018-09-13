@@ -111,6 +111,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, qResource);
+    _processCalculatedValue(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
@@ -122,6 +123,19 @@ if (typeof LForms.FHIR_SDC === 'undefined')
 
     return targetItem;
   };
+
+
+  /**
+   *  Copies the calculated value expression from qItem to lfItem if it exists,
+   *  and if it is a FHIRPath expression, which is the only type we support.
+   */
+  function _processCalculatedValue(lfItem, qItem) {
+    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url',
+      "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
+    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
+      lfItem._calculatedExprExt = calcExt;
+    }
+  }
 
 
   /**

@@ -4398,9 +4398,9 @@
       }
     },
     "fhirpath": {
-      "version": "0.5.0",
-      "resolved": "https://registry.npmjs.org/fhirpath/-/fhirpath-0.5.0.tgz",
-      "integrity": "sha512-RIezdsjq0ra3K3OwqhueQPbnrzJQZcZZxWZ6Y8VFPs2KckmkhTgTCVdACpbFsQdF7B7xCW+JvotFd82g+zuS6A==",
+      "version": "0.6.0",
+      "resolved": "https://registry.npmjs.org/fhirpath/-/fhirpath-0.6.0.tgz",
+      "integrity": "sha512-ClTIldCow17nM+yXV/VIcJRmPqmJGjcZWbpVkbKrXuVd/RM/5n3Tnjr0SRF4waUBMF95PPetfTzsdxeaxq/q0g==",
       "requires": {
         "antlr4": "4.7.1"
       }

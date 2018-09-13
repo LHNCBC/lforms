@@ -516,7 +516,7 @@ angular.module('lformsWidget')
 
 
         /**
-         * Watch on form changes
+         * Watch on form changes (shallow watch on the form object)
          * Disable animation and validations before a form is loaded,
          * then re-enable animation and validations when the form is loaded
          */
@@ -534,6 +534,15 @@ angular.module('lformsWidget')
           }
         });
 
+        $scope.$watch(function() {
+          return JSON.stringify($scope.lfData, function(key, val) {
+            // Ignore changes to internal variables and $$hashKey
+            return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+          });
+        }, function() {
+          if ($scope.lfData)
+            $scope.lfData.runCalculatedExpressions();
+        });
 
         /**
          * Check skip logic, formulas and data controls when the source item changes.

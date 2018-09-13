@@ -308,6 +308,32 @@ if (typeof LForms === 'undefined')
 
 
     /**
+     *  Runs any calculated expressions.
+     */
+    runCalculatedExpressions: function() {
+      var lfData = this;
+      if (lfData.hasFHIRPath !== false) {
+        var itemHash = lfData.itemHash
+        var itemKeys = Object.keys(itemHash);
+        var questResp;
+        if (lfData.hasFHIRPath === undefined)
+          lfData.hasFHIRPath = false;
+        for (var i=0, len=itemKeys.length; i<len; ++i) {
+          var item = itemHash[itemKeys[i]];
+          if (item._calculatedExprExt &&
+              item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
+            lfData.hasFHIRPath = true;
+            if (!questResp)
+              questResp = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(lfData);
+            item.value = LForms.fhirpath.evaluate(questResp,
+              item._calculatedExprExt.valueExpression.expression);
+          }
+        }
+      }
+    },
+
+
+    /**
      * Validate user input value
      * Note: Not currently used since validations are handled in an Angular directive.
      * This might be used in the future.
@@ -732,26 +758,7 @@ if (typeof LForms === 'undefined')
           }
         }
 
-        // set default values on the item
-        // questionCardinality
-        if (!item.questionCardinality) {
-          item.questionCardinality = {"min":"1", "max":"1"};
-        }
-        // answerCardinality
-        if (!item.answerCardinality) {
-          item.answerCardinality = {"min":"0", "max":"1"};
-        }
-
-        // set up flags for question and answer cardinality
-        item._questionRepeatable = item.questionCardinality.max &&
-            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-        item._answerRequired = item.answerCardinality.min &&
-            (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
-        item._multipleAnswers = item.answerCardinality.max &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
-
-        // set up readonly flag
-        item._readOnly = (item.editable && item.editable === "0") || (item.calculationMethod);
+        this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id
         if ((angular.isString(item.answers) || angular.isNumber(item.answers)) &&
@@ -925,6 +932,36 @@ if (typeof LForms === 'undefined')
 
 
     /**
+     *  Sets some tree node attributes which need to be updated by both _setTreeNodes
+     *  and _updateTreeNodes.
+     * @param item the item whose attributes need to set or updated.
+     */
+    _updateItemAttrs: function(item) {
+        // set default values on the item
+        // questionCardinality
+        if (!item.questionCardinality) {
+          item.questionCardinality = {"min":"1", "max":"1"};
+        }
+        // answerCardinality
+        if (!item.answerCardinality) {
+          item.answerCardinality = {"min":"0", "max":"1"};
+        }
+
+        // set up flags for question and answer cardinality
+        item._questionRepeatable = item.questionCardinality.max &&
+            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+        item._answerRequired = item.answerCardinality.min &&
+            (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
+        item._multipleAnswers = item.answerCardinality.max &&
+            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+
+        // set up readonly flag
+        item._readOnly = (item.editable && item.editable === "0") ||
+           !!(item.calculationMethod || item._calculatedExprExt);
+    },
+
+
+    /**
      * Update the internal data for each item in the tree when items are added or removed or the values change
      * @param items sibling items on one level of the tree
      * @param parentItem the parent item
@@ -948,26 +985,7 @@ if (typeof LForms === 'undefined')
           item.linkId = item._codePath;
         }
 
-        // set default values on the item
-        // questionCardinality
-        if (!item.questionCardinality) {
-          item.questionCardinality = {"min":"1", "max":"1"};
-        }
-        // answerCardinality
-        if (!item.answerCardinality) {
-          item.answerCardinality = {"min":"0", "max":"1"};
-        }
-
-        // set up flags for question and answer cardinality
-        item._questionRepeatable = item.questionCardinality.max &&
-            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-        item._answerRequired = item.answerCardinality.min &&
-            (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
-        item._multipleAnswers = item.answerCardinality.max &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
-
-        // set up readonly flag
-        item._readOnly = item.editable === "0" || (item.calculationMethod);
+        this._updateItemAttrs(item);
 
         // set the last sibling status
         item._lastSibling = i === lastSiblingIndex;
