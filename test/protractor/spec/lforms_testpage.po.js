@@ -289,6 +289,19 @@ var TestPage = function() {
       browser.waitForAngular();
       browser.executeScript(util.disableAutocompleterScroll);
       browser.executeScript(util.disableCssAnimate);
+    },
+
+    /**
+     *  Loads a from from a JSON file on disk.
+     * @param filepath the path to the form definition file.
+     */
+    loadFromDisk: function(filepath) {
+      // Temporarily unhide the file input element.
+      let fileInput = $('#fileAnchor');
+      browser.executeScript("$('#fileAnchor')[0].className = ''");
+      fileInput.sendKeys(filepath);
+      // Re-hide the file input element
+      browser.executeScript("$('#fileAnchor')[0].className = 'hide'");
     }
   });
   return rtnObj;
