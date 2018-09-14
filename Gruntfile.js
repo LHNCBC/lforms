@@ -78,6 +78,9 @@ module.exports = function (grunt) {
             cwd: 'dist'
           }
         }
+      },
+      webpack: {
+        command: 'webpack',
       }
     },
 
@@ -443,6 +446,13 @@ module.exports = function (grunt) {
           src: [
             '*png'
           ]
+        }, {
+          expand: true,
+          dest: '<%= uncompressedDist %>/',
+          cwd: 'app/scripts/fhirpath',
+          src: [
+            'fhirpath.min.js'
+          ]
         }]
       },
       styles: {
@@ -535,6 +545,7 @@ module.exports = function (grunt) {
     'ngtemplates',
     'sass',
     'readBowerVersion',
+    'shell:webpack',
     'copy:dist',
     'cssmin',
     'uglify',

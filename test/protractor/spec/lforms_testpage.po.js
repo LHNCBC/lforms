@@ -2,9 +2,11 @@ let util = require('./util.js');
 
 var TestPage = function() {
 
-  var attrTestUrl = 'http://0.0.0.0:9001/test/directiveAttrTest.html';
-  var directiveTestUrl = 'http://0.0.0.0:9001/test/directiveTest.html';
-  var testPageUrl = 'http://0.0.0.0:9001/test/lforms_testpage.html';
+  var testDirURL = 'http://0.0.0.0:9001/test';
+  var attrTestUrl = testDirURL + '/directiveAttrTest.html';
+  var directiveTestUrl = testDirURL + '/directiveTest.html';
+  var testPageUrl = testDirURL + '/lforms_testpage.html';
+  var buildFHIRPathURL = testDirURL + '/build_test_fhirpath.html';
 
 
   /**
@@ -261,34 +263,43 @@ var TestPage = function() {
     },
 
     /**
-     * Open the base directive test page
+     *  Opens the given test page URL
+     * @param pageURL the URL of the test page to open.
      */
-    openBaseTestPage: function () {
-      browser.get(testPageUrl);
-      browser.waitForAngular();
-      browser.executeScript(util.disableAutocompleterScroll);
-      browser.executeScript(util.disableCssAnimate);
-     },
-
-    /**
-     *  Open the directive test page.
-     */
-    openDirectiveTest: function () {
-      browser.get(directiveTestUrl);
+    openTestPage: function(pageURL) {
+      browser.get(pageURL);
       browser.waitForAngular();
       browser.executeScript(util.disableAutocompleterScroll);
       browser.executeScript(util.disableCssAnimate);
     },
 
     /**
-     * Open directive templateOption test page
+     * Open the base directive test page
+     */
+    openBaseTestPage: function () {
+      rtnObj.openTestPage(testPageUrl);
+     },
+
+    /**
+     *  Open the directive test page.
+     */
+    openDirectiveTest: function () {
+      rtnObj.openTestPage(directiveTestUrl);
+    },
+
+    /**
+     *  Open directive templateOption test page
      * @param urlPart parameter part of URL
      */
     openDirectiveAttrTest: function (urlPart) {
-      browser.get(attrTestUrl + urlPart);
-      browser.waitForAngular();
-      browser.executeScript(util.disableAutocompleterScroll);
-      browser.executeScript(util.disableCssAnimate);
+      rtnObj.openTestPage(attrTestUrl + urlPart);
+    },
+
+    /**
+     *  Opens the build test with FHIRPath page.
+     */
+    openBuildTestFHIRPath: function() {
+      rtnObj.openTestPage(buildFHIRPathURL);
     },
 
     /**

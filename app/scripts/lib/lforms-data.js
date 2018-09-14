@@ -312,7 +312,7 @@ if (typeof LForms === 'undefined')
      */
     runCalculatedExpressions: function() {
       var lfData = this;
-      if (lfData.hasFHIRPath !== false) {
+      if (lfData.hasFHIRPath !== false && LForms.fhirpath) {
         var itemHash = lfData.itemHash
         var itemKeys = Object.keys(itemHash);
         var questResp;

@@ -3,10 +3,10 @@ module.exports = {
   node: {
     fs: "empty"
   },
-  entry: './app/fhirpath.js',
+  entry: './app/scripts/fhirpath/fhirpathRequire.js',
   mode: 'production',
   output: {
     path: __dirname,
-    filename: './app/fhirpathPacked.js',
+    filename: './app/scripts/fhirpath/fhirpath.min.js',
   }
 };
