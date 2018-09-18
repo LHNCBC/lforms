@@ -312,17 +312,14 @@ if (typeof LForms === 'undefined')
      */
     runCalculatedExpressions: function() {
       var lfData = this;
-      if (lfData.hasFHIRPath !== false && LForms.fhirpath) {
+      if (lfData.hasFHIRPath && LForms.fhirpath) {
         var itemHash = lfData.itemHash
         var itemKeys = Object.keys(itemHash);
         var questResp;
-        if (lfData.hasFHIRPath === undefined)
-          lfData.hasFHIRPath = false;
         for (var i=0, len=itemKeys.length; i<len; ++i) {
           var item = itemHash[itemKeys[i]];
           if (item._calculatedExprExt &&
               item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
-            lfData.hasFHIRPath = true;
             if (!questResp)
               questResp = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(lfData);
             item.value = LForms.fhirpath.evaluate(questResp,
@@ -958,6 +955,12 @@ if (typeof LForms === 'undefined')
         // set up readonly flag
         item._readOnly = (item.editable && item.editable === "0") ||
            !!(item.calculationMethod || item._calculatedExprExt);
+
+        var lfData = this;
+        if (LForms.fhirpath && !lfData.hasFHIRPath && item._calculatedExprExt &&
+            item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
+          lfData.hasFHIRPath = true;
+        }
     },
 
 
