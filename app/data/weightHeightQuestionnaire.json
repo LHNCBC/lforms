@@ -179,7 +179,7 @@
         }
       ],
       "text": "BMI",
-      "type": "string",
+      "type": "decimal",
       "extension": [
         {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
