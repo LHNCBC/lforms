@@ -167,6 +167,14 @@
               }
             ]
           }
+        },
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+          "valueExpression": {
+            "description": "BMI calculation",
+            "language" : "text/fhirpath",
+            "expression": "item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254"
+          }
         }
       ],
       "required": false,
@@ -179,17 +187,7 @@
         }
       ],
       "text": "BMI",
-      "type": "decimal",
-      "extension": [
-        {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
-          "valueExpression": {
-            "description": "BMI calculation",
-            "language" : "text/fhirpath",
-            "expression": "item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254"
-          }
-        }
-      ]
+      "type": "decimal"
     },
     {
       "extension": [
