@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.12.0] - 2018-09-19
+### Added
+- Support for the FHIR Questionnaire resource extension
+  questionnaire-calculatedExpression.  This requires the fhirpath.js library,
+  which is now packaged with LForms, but as a separate file,
+  app/scripts/fhirpath/fhirpath.min.js.
+
 ## [12.11.0] - 2018-08-13
 ### Added
 - Added a 'linkId' field in items.
