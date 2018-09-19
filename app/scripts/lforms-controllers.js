@@ -516,7 +516,7 @@ angular.module('lformsWidget')
 
 
         /**
-         * Watch on form changes
+         * Watch on form changes (shallow watch on the form object)
          * Disable animation and validations before a form is loaded,
          * then re-enable animation and validations when the form is loaded
          */
@@ -532,8 +532,29 @@ angular.module('lformsWidget')
               }
             }, 1);
           }
-        });
 
+          // Only when lfData changes as a whole do we check whether the new
+          // form has FHIRPath or not.  This is to avoid the expensive (for
+          // large forms) check on the whole of the form data for the need to
+          // run FHIRPath.
+          if (LForms.fhirpath) {
+            if ($scope.lfData && $scope.lfData.hasFHIRPath && !$scope.unwatchFHIRPath) {
+              $scope.unwatchFHIRPath = $scope.$watch(function() {
+                return JSON.stringify($scope.lfData, function(key, val) {
+                  // Ignore changes to internal variables and $$hashKey
+                  return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+                });
+              }, function() {
+                if ($scope.lfData)
+                  $scope.lfData.runCalculatedExpressions();
+              });
+            }
+            else if (!($scope.lfData && $scope.lfData.hasFHIRPath) && $scope.unwatchFHIRPath) {
+              $scope.unwatchFHIRPath(); // stop watching because it is no longer needed
+              $scope.unwatchFHIRPath = null;
+            }
+          }
+        });
 
         /**
          * Check skip logic, formulas and data controls when the source item changes.

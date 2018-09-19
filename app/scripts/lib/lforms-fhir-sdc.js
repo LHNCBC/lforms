@@ -235,6 +235,10 @@ jQuery.extend(LForms.FHIR_SDC, {
       }
     }
 
+    // calcuatedValue
+    if (item._calculatedExprExt)
+      targetItem.exenstion.push(item._calculatedExprExt);
+
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
 

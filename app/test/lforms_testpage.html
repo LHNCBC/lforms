@@ -78,6 +78,8 @@
     <script src="scripts/lib/lforms-data.js"></script>
     <script src="lforms.tpl.js"></script>
     <!-- endbower -->
+    <script src="scripts/fhirpath/fhirpath.min.js"></script>
+    <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 
     <!-- test data files -->
     <script src="data/sample-data.js"></script>
@@ -98,9 +100,11 @@
     <!-- lforms test controller -->
     <script type="text/javascript">
 
-      angular.module('lformsTestApp', ['lformsWidget'])
-          .controller('lformsTestController', ['$scope', '$timeout', 'lformsConfig', 'LF_CONSTANTS', '$q', '$http',
-              function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http) {
+      angular.module('lformsTestApp', ['lformsWidget', 'angularFileUpload'])
+          .controller('lformsTestController', ['$scope', '$timeout',
+            'lformsConfig', 'LF_CONSTANTS', '$q', '$http', 'FileUploader',
+            function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http,
+              FileUploader) {
 
             $scope.themeList = themeList; // see themeList.js
 
@@ -291,6 +295,39 @@
             };
 
 
+            // See https://github.com/nervgh/angular-file-upload/wiki/Introduction on
+            // usage of angular-file-upload.
+            $scope.uploader = new FileUploader({removeAfterUpload: true});
+
+            /**
+             * Callback after the item is selected in the file dialog.
+             *
+             * @param {Object} item - Refer to angular-file-upload for object definition.
+             *   Apart from others, it has selected file reference.
+             */
+            $scope.uploader.onAfterAddingFile = function(item) {
+              // clean up the form before assigning a new one for performance reasons related to AngularJS watches
+              $scope.lfData2 = null;
+
+              var reader = new FileReader(); // Read from local file system.
+              reader.onload = function(event) {
+                var importedData = JSON.parse(event.target.result);
+                // if the imported data is in FHIR Questionnaire format
+                if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
+                  var questionnaire = LForms.FHIR_SDC.convertQuestionnaireToLForms(importedData);
+                  $scope.lfData2 = new LFormsData(questionnaire);
+                }
+                // in the internal LForms format
+                else {
+                  $scope.lfData2 = new LFormsData(importedData);
+                }
+                $scope.$apply();
+              };
+              reader.readAsText(item._file);
+            };
+
+
+
             $scope.useForm = function() {
               var useAnimation = !window._INTESTING_;
 
@@ -460,7 +497,8 @@
           <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
           <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
-
+          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
 
         </div>
       </div>
