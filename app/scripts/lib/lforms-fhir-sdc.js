@@ -1244,7 +1244,7 @@ jQuery.extend(LForms.FHIR_SDC, {
                 var newQRItemInfo = angular.copy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
-                parentQRItemInfo.qrItemsInfo.splice(j, 0, newQRItemInfo);
+                parentQRItemInfo.qrItemsInfo.splice(i+1, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
