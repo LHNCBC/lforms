@@ -111,6 +111,7 @@ var TestPage = function() {
 
       name2: element(by.id('/54126-8/54125-0/1/2')),
       name3: element(by.id('/54126-8/54125-0/1/3')),
+      name4: element(by.id('/54126-8/54125-0/1/4')),
       btnName: element(by.id('add-/54126-8/54125-0/1/1')),
       btnName2: element(by.id('add-/54126-8/54125-0/1/2')),
       btnName3: element(by.id('add-/54126-8/54125-0/1/3')),
@@ -128,6 +129,9 @@ var TestPage = function() {
       mockSubItem2: element(by.id('/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1')),
 
       fmName: element(by.id('/54114-4/54138-3/1/1')),
+      fmNameB: element(by.id('/54114-4/54138-3/1/2')),
+      fmNameC: element(by.id('/54114-4/54138-3/1/3')),
+      fmNameD: element(by.id('/54114-4/54138-3/1/4')),
       fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
       btnAnotherFamily: element(by.id('add-/54114-4/1')),
       btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
