@@ -225,6 +225,55 @@ describe('FHIR SDC library', function() {
 
     });
 
+    it('should handle the calculatedExpression extension', function() {
+      // Load the Weight & Height questionnaire, and convert it to LForms.
+      // Then, we'll try converting it back.
+      var fhirQ = {
+        "resourceType": "Questionnaire",
+        "identifier": [
+          {
+            "system": "http://loinc.org",
+            "value": "55418-8"
+          }
+        ],
+        "code": [
+          {
+            "system": "http://loinc.org",
+            "code": "55418-8"
+          }
+        ],
+        "item": [
+          {
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+                "valueExpression": {
+                  "description": "BMI calculation",
+                  "language" : "text/fhirpath",
+                  "expression": "item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254"
+                }
+              }
+            ],
+            "linkId": "/39156-5",
+            "code": [
+              {
+                "system": "http://loinc.org",
+                "code": "39156-5",
+                "display": "BMI"
+              }
+            ],
+            "text": "BMI",
+            "type": "decimal"
+          }
+        ]
+      }
+      var lformsQ = LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirQ);
+      var convertedFHIRQ = LForms.FHIR_SDC.convertLFormsToQuestionnaire(lformsQ);
+      // Confirm that we got the exension back.
+      assert.equal(convertedFHIRQ.item[0].extension[0].url,
+        fhirQ.item[0].extension[0].url);
+    });
+
   });
 
   describe('LForms data to QuestionnaireResponse conversion', function() {

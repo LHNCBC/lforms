@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.12.1] 2018-09-21
+## Fixed
+- Fixed a bug that answers of repeating items in QuestionnaireResponse are
+  not handled correctly.
+
 ## [12.12.0] - 2018-09-19
 ### Added
 - Support for the FHIR Questionnaire resource extension
@@ -9,7 +14,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   which is now packaged with LForms, but as a separate file,
   app/scripts/fhirpath/fhirpath.min.js.
 
-## [12.11.0] - 2018-08-13
+## [12.11.0] 2018-08-13
 ### Added
 - Added a 'linkId' field in items.
 

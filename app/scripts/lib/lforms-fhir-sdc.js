@@ -237,7 +237,7 @@ jQuery.extend(LForms.FHIR_SDC, {
 
     // calcuatedValue
     if (item._calculatedExprExt)
-      targetItem.exenstion.push(item._calculatedExprExt);
+      targetItem.extension.push(item._calculatedExprExt);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
@@ -1244,7 +1244,7 @@ jQuery.extend(LForms.FHIR_SDC, {
                 var newQRItemInfo = angular.copy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
-                parentQRItemInfo.qrItemsInfo.splice(j, 0, newQRItemInfo);
+                parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]

@@ -130,7 +130,8 @@
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
               {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
-              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"}
+              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"},
+              {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"}
             ];
 
             // indirect testing of the events emitted from within the LForms widget
@@ -429,6 +430,9 @@
                   break;
                 case '76806-9':
                   lfData2 = new LForms.LFormsData(angular.copy(promis));
+                  break;
+                case '74728-7':
+                  lfData2 = new LForms.LFormsData(angular.copy(vitalSign));
                   break;
                 case 'cde1':
                   //'CDE Sample form'

@@ -655,6 +655,8 @@ describe('FHIR Data: ', function () {
 
       expect(ff.name.getAttribute('value')).toBe("name 1");
       expect(ff.name2.getAttribute('value')).toBe("name 2");
+      expect(ff.name3.getAttribute('value')).toBe("name 3");
+      expect(ff.name4.getAttribute('value')).toBe("name 4");
       expect(ff.gender.getAttribute('value')).toBe("Male");
       expect(ff.dob.getAttribute('value')).toBe("10/27/2016");
       expect(ff.height.getAttribute('value')).toBe("70");
@@ -669,6 +671,11 @@ describe('FHIR Data: ', function () {
       expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
       expect(ff.disease2.getAttribute('value')).toBe("-- Blood Clot in Leg");
       expect(ff.ageAtDiag2.getAttribute('value')).toBe("Infancy");
+
+      expect(ff.fmName.getAttribute('value')).toBe("another name 1");
+      expect(ff.fmNameB.getAttribute('value')).toBe("another name 2");
+      expect(ff.fmNameC.getAttribute('value')).toBe("another name 3");
+      expect(ff.fmNameD.getAttribute('value')).toBe("another name 4");
 
     });
   });
