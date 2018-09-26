@@ -2,7 +2,7 @@
   "name": "lforms",
   "version": "0.0.0",
   "dependencies": {
-    "fhirpath": "^0.6.0"
+    "fhirpath": "^0.8.0"
   },
   "devDependencies": {
     "bower": "^1.7.9",

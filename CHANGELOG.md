@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.12.2] 2018-09-26
+## Fixed
+- Updated FHIRPath to 0.8.0.
+
 ## [12.12.1] 2018-09-21
 ## Fixed
 - Fixed a bug that answers of repeating items in QuestionnaireResponse are

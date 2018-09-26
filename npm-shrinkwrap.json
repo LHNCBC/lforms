@@ -4398,11 +4398,19 @@
       }
     },
     "fhirpath": {
-      "version": "0.6.0",
-      "resolved": "https://registry.npmjs.org/fhirpath/-/fhirpath-0.6.0.tgz",
-      "integrity": "sha512-ClTIldCow17nM+yXV/VIcJRmPqmJGjcZWbpVkbKrXuVd/RM/5n3Tnjr0SRF4waUBMF95PPetfTzsdxeaxq/q0g==",
+      "version": "0.8.0",
+      "resolved": "https://registry.npmjs.org/fhirpath/-/fhirpath-0.8.0.tgz",
+      "integrity": "sha512-0UfqrjctUzzm52OWbCT5Zr8DtB051JzpAOE+22TzpyPckoANkiOoZt24us7FBB7a6yJIbiTN2asqW02Rw4vphw==",
       "requires": {
-        "antlr4": "4.7.1"
+        "antlr4": "4.7.1",
+        "commander": "2.18.0"
+      },
+      "dependencies": {
+        "commander": {
+          "version": "2.18.0",
+          "resolved": "https://registry.npmjs.org/commander/-/commander-2.18.0.tgz",
+          "integrity": "sha512-6CYPa+JP2ftfRU2qkDK+UTVeQYosOg/2GbcjIcKPHfinyOLPVGXu/ovN86RP49Re5ndJK1N0kuiidFFuepc4ZQ=="
+        }
       }
     },
     "figures": {
