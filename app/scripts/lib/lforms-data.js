@@ -725,7 +725,7 @@ if (typeof LForms === 'undefined')
         }
         else {
           // set data type for items with units (for unified display styles)
-          if (item.units) {
+          if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
           }
           // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
