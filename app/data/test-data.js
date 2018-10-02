@@ -7335,7 +7335,7 @@ var vitalSign = {
     {
       "questionCode": "3140-1",
       "localQuestionCode": null,
-      "dataType": null,
+      "dataType": "INT",
       "header": false,
       "units": [
         {

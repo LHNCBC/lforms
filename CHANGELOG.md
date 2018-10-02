@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [12.12.3] 2018-10-02
+## Fixed
+- Fixed data type for items with units.
+
 ## [12.12.2] 2018-09-26
 ## Fixed
 - Updated FHIRPath to 0.8.0.
