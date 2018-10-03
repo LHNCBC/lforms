@@ -1,6 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 
-fdescribe('Data Type', function() {
+describe('Data Type', function() {
 
   var typeTitle = element(by.css("label[for='/titleHeader/1']"));
 
