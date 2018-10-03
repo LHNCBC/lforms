@@ -728,7 +728,7 @@ if (typeof LForms === 'undefined')
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
           }
-          // Make it a "ST" if it has a formula tp avoid amy mismatches of the data type in the model.
+          // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
           // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
           // An error will be thrown in this case and an empty value will be set instead.
           else if(!item.dataType || item.calculationMethod !== undefined &&
