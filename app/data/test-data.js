@@ -24,7 +24,7 @@ var FHTData = {
     {"questionCode": "54126-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Your health information", "answers": "", "dataType": "", "units": "", "header": true,
       // level 2
       "items": [
-        {"questionCode": "54125-0", "questionCardinality": {"min": "1", "max": "*"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
+        {"questionCode": "54125-0", "questionCardinality": {"min": "1", "max": "*"}, "question": "Name", "answers": "", "dataType": "TX", "units": "", "header": false},
         {"questionCode": "54131-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},

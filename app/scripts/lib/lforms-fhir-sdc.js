@@ -36,7 +36,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     "DT": 'dateTime',
     "DTM": 'dateTime', // not supported yet
     "TM": 'time',
-    "TX": 'string', // TODO: Remove TX
+    "TX": 'text',
     "URL": 'url',
     "CNE": 'choice',
     "CWE": 'open-choice',
@@ -52,7 +52,7 @@ jQuery.extend(LForms.FHIR_SDC, {
     "DTM": 'DateTime',
     "TM": 'Time',
     "ST": 'String',
-    "TX": 'String', // TODO: Remove TX
+    "TX": 'String',
     "BL": 'Boolean',
     "URL": 'Url',
     "CNE": 'Coding',
@@ -1420,6 +1420,7 @@ jQuery.extend(LForms.FHIR_SDC, {
           }
           break;
         case "ST":
+        case "TX":
           item.value = qrValue.valueString;
           break;
         case "SECTION":
