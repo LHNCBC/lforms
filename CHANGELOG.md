@@ -2,9 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [12.12.3] 2018-10-02
+## [12.13.0] 2018-10-02
 ## Fixed
 - Fixed data type for items with units.
+## Added
+- Added support for TX data type and "text" item type in Questionnaire.
 
 ## [12.12.2] 2018-09-26
 ## Fixed
