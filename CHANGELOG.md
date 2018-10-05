@@ -3,17 +3,17 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [12.13.0] 2018-10-02
-## Fixed
+### Fixed
 - Fixed data type for items with units.
-## Added
+### Added
 - Added support for TX data type and "text" item type in Questionnaire.
 
 ## [12.12.2] 2018-09-26
-## Fixed
+### Fixed
 - Updated FHIRPath to 0.8.0.
 
 ## [12.12.1] 2018-09-21
-## Fixed
+### Fixed
 - Fixed a bug that answers of repeating items in QuestionnaireResponse are
   not handled correctly.
 
