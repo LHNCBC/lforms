@@ -25,4 +25,28 @@ describe('Data Type', function() {
     });
 
   });
+
+  describe("Items with units", function() {
+    
+    it("should have the REAL data type", function() {
+      tp.openVitalSign();
+      var field1 = element(by.id('/3140-1/1')),
+          field2 = element(by.id('/9279-1/1')),
+          field3 = element(by.id('/8310-5/1'));
+
+      expect(field1.getAttribute('type')).toBe("text");
+      field1.evaluate("item.dataType").then(function (value) {
+        expect(value).toBe('INT');
+      });
+      expect(field2.getAttribute('type')).toBe("text");
+      field2.evaluate("item.dataType").then(function (value) {
+        expect(value).toBe('REAL');
+      });
+      expect(field3.getAttribute('type')).toBe("text");
+      field3.evaluate("item.dataType").then(function (value) {
+        expect(value).toBe('REAL');
+      });
+
+    });
+  });
 });

@@ -165,7 +165,7 @@ describe('formdata: ', function() {
         expect(formData.items[0].questionCode).toBe("54126-8");
         expect(formData.items[0].header).toBe(true);
         expect(formData.items[0].items.length).toBe(13);
-        expect(formData.items[0].items[0].dataType).toBe("ST");
+        expect(formData.items[0].items[0].dataType).toBe("TX");
         expect(formData.items[0].items[0].question).toBe("Name");
         expect(formData.items[0].items[0].questionCode).toBe("54125-0");
         expect(formData.items[0].items[0].value).toBe("Not Empty");
@@ -206,7 +206,7 @@ describe('formdata: ', function() {
         expect(formData.items[0].questionCode).toBe("54126-8");
         expect(formData.items[0].header).toBe(true);
         expect(formData.items[0].items.length).toBe(13);
-        expect(formData.items[0].items[0].dataType).toBe("ST");
+        expect(formData.items[0].items[0].dataType).toBe("TX");
         expect(formData.items[0].items[0].question).toBe("Name");
         expect(formData.items[0].items[0].questionCode).toBe("54125-0");
         expect(formData.items[0].items[0].value).toBe("after reset");
