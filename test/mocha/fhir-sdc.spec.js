@@ -1,6 +1,4 @@
 // Tests for FHIR SDC library
-console.log("%%% hello");
-
 var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
