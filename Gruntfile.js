@@ -512,6 +512,7 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('test:server', [
+    'build',
     'karma'
   ]);
 
@@ -527,7 +528,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'karma',
-    'build',
     'test:e2e',
     'nsp'
   ]);
