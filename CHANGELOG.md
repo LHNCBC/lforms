@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.0.0] 2018-10-15
+## Changed
+- Reorganized the FHIR functions to facilitate support for multiple versions of
+  FHIR.  (This should not be a breaking change if you are not using FHIR).
+
 ## [12.12.2] 2018-09-26
 ## Fixed
 - Updated FHIRPath to 0.8.0.
