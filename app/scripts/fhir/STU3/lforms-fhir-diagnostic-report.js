@@ -8,15 +8,12 @@
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
-
-LForms.FHIR = {
+var dr = {
 
   // a prefix for references to Observation resources
   _OBX_REF_PREFIX: "Observation/",
 
-  
+
   /**
    * Functions for creating a DiagnosticReport instance from an LFormsData object
    */
@@ -785,3 +782,5 @@ LForms.FHIR = {
   }
 
 };
+
+export default dr;

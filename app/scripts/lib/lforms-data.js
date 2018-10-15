@@ -177,6 +177,7 @@ if (typeof LForms === 'undefined')
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
       this.answerLists = data.answerLists;
       this.copyrightNotice = data.copyrightNotice;
+      this.fhirVersion = data.fhirVersion;
 
       // when the skip logic rule says the form is done
       this._formDone = false;
@@ -312,7 +313,8 @@ if (typeof LForms === 'undefined')
      */
     runCalculatedExpressions: function() {
       var lfData = this;
-      if (lfData.hasFHIRPath && LForms.fhirpath) {
+      if (lfData.hasFHIRPath && LForms.FHIR) {
+        var fhir = LForms.FHIR[lfData.fhirVersion];
         var itemHash = lfData.itemHash
         var itemKeys = Object.keys(itemHash);
         var questResp;
@@ -321,8 +323,8 @@ if (typeof LForms === 'undefined')
           if (item._calculatedExprExt &&
               item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
             if (!questResp)
-              questResp = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(lfData);
-            item.value = LForms.fhirpath.evaluate(questResp,
+              questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
+            item.value = fhir.fhirpath.evaluate(questResp,
               item._calculatedExprExt.valueExpression.expression);
           }
         }
@@ -957,7 +959,7 @@ if (typeof LForms === 'undefined')
            !!(item.calculationMethod || item._calculatedExprExt);
 
         var lfData = this;
-        if (LForms.fhirpath && !lfData.hasFHIRPath && item._calculatedExprExt &&
+        if (LForms.FHIR && !lfData.hasFHIRPath && lfData.fhirVersion && item._calculatedExprExt &&
             item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
           lfData.hasFHIRPath = true;
         }

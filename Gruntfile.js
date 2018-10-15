@@ -545,12 +545,12 @@ module.exports = function (grunt) {
     'ngtemplates',
     'sass',
     'readBowerVersion',
-    'shell:webpack',
     'copy:dist',
     'cssmin',
     'uglify',
     'compress',
-    'shell:dist_dir_link'
+    'shell:dist_dir_link',
+    'shell:webpack'
   ]);
 
   grunt.registerTask('default', [

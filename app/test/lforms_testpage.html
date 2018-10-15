@@ -29,6 +29,48 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
+    <div id="lforms-form">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Directive Test Page</div>
+        <div class="panel-body">
+          <p><small>Select a form from the list and click the button to display the form</small></p>
+            <select id="form-list" ng-model="selectedForm" class="form-control">
+              <option value="">--- Please Select ---</option>
+              <option ng-repeat="form in testForms" value="{{form.id}}">{{form.text}}</option>
+            </select>
+          <p></p>
+          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form</button>
+          <input type="text" placeholder="FHIR Version" id="fhirVersion" />
+          <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
+          <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
+          <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
+          <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
+          <button id="get-fhir-bundle1" class="btn btn-primary" ng-click="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle</button>
+          <button id="get-fhir-bundle2" class="btn btn-primary" ng-click="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle</button>
+          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-questionnaire" class="btn btn-primary" ng-click="showFHIRQuestionnaire()">Show FHIR Questionnaire</button>
+          <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
+          <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
+          <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
+          <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
+          <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
+          <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
+          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+
+        </div>
+      </div>
+
+      <div id="themeList"
+       ng-attr-style="margin-left: 1em; display: {{lfData2 ? 'block': 'none'}}">
+        <label for="theme" id="themeLabel">Theme:</label>
+        <input id="theme" autocomplete-lhc="themeList" ng-model="theme">
+      </div>
+
+      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
+    </div>
+
     <!-- bower:js -->
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/jquery-ui/ui/core.js"></script>
@@ -71,14 +113,12 @@
     <script src="scripts/lib/lforms-util.js"></script>
     <script src="scripts/lib/polyfill.js"></script>
     <script src="scripts/lib/lforms-hl7.js"></script>
-    <script src="scripts/lib/lforms-fhir-diagnostic-report.js"></script>
-    <script src="scripts/lib/lforms-fhir-sdc.js"></script>
-    <script src="scripts/lib/lforms-fhir-sdc-converter.js"></script>
     <script src="scripts/lib/lforms-validate.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
+    <script src="scripts/fhir/versions.js"></script>
     <script src="lforms.tpl.js"></script>
     <!-- endbower -->
-    <script src="scripts/fhirpath/fhirpath.min.js"></script>
+    <script src="scripts/fhir/STU3/lformsFHIR.js"></script>
     <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 
     <!-- test data files -->
@@ -186,23 +226,32 @@
               }
             };
 
+            function getFHIR() {
+              var version = $('#fhirVersion')[0].value;
+              if (!version)
+                throw 'Please select a FHIR version';
+              return LForms.FHIR[version];
+            }
+
             $scope.showFHIRResource = function () {
               if ($scope.lfData2) {
-                var dr = LForms.FHIR.createDiagnosticReport($scope.lfData2);
+                var dr = getFHIR().DiagnosticReport.createDiagnosticReport($scope.lfData2);
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle1 = function () {
               if ($scope.lfData2) {
-                var dr = LForms.FHIR.createDiagnosticReport($scope.lfData2, null, true, "transaction");
+                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
+                  $scope.lfData2, null, true, "transaction");
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle2 = function () {
               if ($scope.lfData2) {
-                var dr = LForms.FHIR.createDiagnosticReport($scope.lfData2, null, true, "collection");
+                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
+                  $scope.lfData2, null, true, "collection");
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
@@ -210,10 +259,11 @@
 
             $scope.showFHIRSDCQuestionnaire = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaire($scope.lfData2);
+                var fhir = getFHIR();
+                var sdc = fhir.SDC.convertLFormsToQuestionnaire($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
-                var convertedLforms = LForms.FHIR_SDC.convertQuestionnaireToLForms(sdc);
+                var convertedLforms = fhir.SDC.convertQuestionnaireToLForms(sdc);
                 convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
                 $scope.lfData2 = new LForms.LFormsData(convertedLforms);
                 $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
@@ -222,7 +272,7 @@
 
             $scope.showFHIRQuestionnaire = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaire($scope.lfData2, true);
+                var sdc = getFHIR().SDC.convertLFormsToQuestionnaire($scope.lfData2, true);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
@@ -230,7 +280,7 @@
 
             $scope.showFHIRSDCResponse = function () {
               if ($scope.lfData2) {
-                var sdc = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse($scope.lfData2);
+                var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse($scope.lfData2);
                 var fhirString = JSON.stringify(sdc, null, 4);
                 console.log(fhirString);
               }
@@ -240,7 +290,8 @@
               // use the first form
               var fhirData = containedDr;
 
-              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToLForms(angular.copy(FHTData), fhirData);
+              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
+                angular.copy(FHTData), fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;
@@ -253,7 +304,8 @@
               // use the first form
               var fhirData = searchsetBundleDr;
 
-              var mergedFormData = LForms.FHIR.mergeDiagnosticReportToLForms(angular.copy(FHTData), fhirData);
+              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
+                angular.copy(FHTData), fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;
@@ -267,7 +319,7 @@
               var fhirData = qr;
               var formData = angular.copy(FHTData);
 
-              var mergedFormData = LForms.FHIR_SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+              var mergedFormData = getFHIR().SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
               var newFormData = new LFormsData(mergedFormData);
 
               $scope.lfData2 = newFormData;
@@ -315,7 +367,7 @@
                 var importedData = JSON.parse(event.target.result);
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
-                  var questionnaire = LForms.FHIR_SDC.convertQuestionnaireToLForms(importedData);
+                  var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
                   $scope.lfData2 = new LFormsData(questionnaire);
                 }
                 // in the internal LForms format
@@ -454,7 +506,7 @@
                 case 'questCodeIssues':
                   $.getJSON('/data/4712701.json', function(data) {
                     try {
-                      var lformsFormat = LForms.FHIR_SDC.convertQuestionnaireToLForms(data);
+                      var lformsFormat = getFHIR().SDC.convertQuestionnaireToLForms(data);
                       $scope.lfData2 = new LForms.LFormsData(lformsFormat);
                       $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
                       $scope.$apply();
@@ -473,48 +525,12 @@
               $scope.lfOption2 = lfOption2;
             };
           }]);
+
+       // Set up FHIR version list
+       var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
+       new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+         {matchListValue: true});
+       $('#fhirVersion')[0].value = fhirVersions[0];
     </script>
-
-    <div id="lforms-form">
-      <div class="panel panel-default">
-        <div class="panel-heading">LForms Directive Test Page</div>
-        <div class="panel-body">
-          <p><small>Select a form from the list and click the button to display the form</small></p>
-            <select id="form-list" ng-model="selectedForm" class="form-control">
-              <option value="">--- Please Select ---</option>
-              <option ng-repeat="form in testForms" value="{{form.id}}">{{form.text}}</option>
-            </select>
-          <p></p>
-          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form</button>
-          <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
-          <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
-          <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
-          <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
-          <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
-          <button id="get-fhir-bundle1" class="btn btn-primary" ng-click="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle</button>
-          <button id="get-fhir-bundle2" class="btn btn-primary" ng-click="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle</button>
-          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
-          <button id="get-questionnaire" class="btn btn-primary" ng-click="showFHIRQuestionnaire()">Show FHIR Questionnaire</button>
-          <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
-          <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
-          <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
-          <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
-          <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
-          <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
-          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
-          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
-
-        </div>
-      </div>
-
-      <div id="themeList"
-       ng-attr-style="margin-left: 1em; display: {{lfData2 ? 'block': 'none'}}">
-        <label for="theme" id="themeLabel">Theme:</label>
-        <input id="theme" autocomplete-lhc="themeList" ng-model="theme">
-      </div>
-
-      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
-    </div>
-
   </body>
 </html>

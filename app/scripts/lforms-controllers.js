@@ -537,7 +537,7 @@ angular.module('lformsWidget')
           // form has FHIRPath or not.  This is to avoid the expensive (for
           // large forms) check on the whole of the form data for the need to
           // run FHIRPath.
-          if (LForms.fhirpath) {
+          if (LForms.FHIR) {
             if ($scope.lfData && $scope.lfData.hasFHIRPath && !$scope.unwatchFHIRPath) {
               $scope.unwatchFHIRPath = $scope.$watch(function() {
                 return JSON.stringify($scope.lfData, function(key, val) {
