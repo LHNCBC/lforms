@@ -57,7 +57,8 @@ var TestPage = function() {
     HL7GeneticPanel: 15,
     DefaultAnswerForm: 17,
     TwoTotalScoreForm: 20,
-    Questionnaire: 21
+    Questionnaire: 21,
+    VitalSign: 22
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {
@@ -84,7 +85,7 @@ var TestPage = function() {
       listField: element(by.id('/54126-8/54132-6/1/1')),
       raceField: element(by.id('/54126-8/54134-2/1/1')),
       eyeField: element(by.id('/9267-6/1')),
-      scoreField: element(by.css('textarea[name="GCS total"]')),
+      scoreField: element(by.css('input[name="GCS total"]')),
       searchResults: autoCompHelpers.searchResults,
       searchResult: autoCompHelpers.searchResult,
       helpers: autoCompHelpers

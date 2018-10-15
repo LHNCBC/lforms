@@ -146,7 +146,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.max, "*");
             assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, "LOINC");
-            assert.equal(convertedLfData.items[0].items[0].dataType, 'ST');
+            assert.equal(convertedLfData.items[0].items[0].dataType, 'TX');
 
             assert.equal(convertedLfData.items[0].items[1].answers.length, 3);
             assert.equal(convertedLfData.items[0].items[1].answers[0].text, "Male");

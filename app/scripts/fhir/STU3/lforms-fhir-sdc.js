@@ -30,7 +30,7 @@ var sdcExport = {
     "DT": 'dateTime',
     "DTM": 'dateTime', // not supported yet
     "TM": 'time',
-    "TX": 'string', // TODO: Remove TX
+    "TX": 'text',
     "URL": 'url',
     "CNE": 'choice',
     "CWE": 'open-choice',
@@ -46,7 +46,7 @@ var sdcExport = {
     "DTM": 'DateTime',
     "TM": 'Time',
     "ST": 'String',
-    "TX": 'String', // TODO: Remove TX
+    "TX": 'String',
     "BL": 'Boolean',
     "URL": 'Url',
     "CNE": 'Coding',
@@ -1414,6 +1414,7 @@ var sdcExport = {
           }
           break;
         case "ST":
+        case "TX":
           item.value = qrValue.valueString;
           break;
         case "SECTION":

@@ -381,7 +381,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item.length).toBe(13);
 
               expect(fhirData.item[0].item[0].text).toBe("Name");
-              expect(fhirData.item[0].item[0].type).toBe("string");
+              expect(fhirData.item[0].item[0].type).toBe("text");
               expect(fhirData.item[0].item[0].required).toBe(false);
               expect(fhirData.item[0].item[0].repeats).toBe(true);
               expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0");
