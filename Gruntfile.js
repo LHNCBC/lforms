@@ -527,7 +527,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test', [
-    'karma',
+    'test:server',
     'test:e2e',
     'nsp'
   ]);

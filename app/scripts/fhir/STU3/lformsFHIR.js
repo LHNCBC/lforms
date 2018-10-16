@@ -105,13 +105,6 @@ fhir.SDC = _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
 Object(_lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
-//LForms.FHIR = import('./lforms-fhir-diagnostic-report.js');
-
-/*LForms.FHIR = await import('./lforms-fhir-diagnostic-report.js');
-LForms.FHIR_SDC = await import('./lforms-fhir-sdc.js');
-var addSDCImportFns = await import('./lforms-fhir-sdc-converter.js');
-addSDCImportFns(LForms.FHIR_SDC);
-*/
 
 /***/ }),
 /* 1 */
