@@ -1,7 +1,7 @@
 // Contains information about the supported FHIR versions.
 var FHIRSupport =  {
   'STU3': 'partial',
-//  'R4': 'WIP' // will add this in next pull request
+  'R4': 'WIP'
 };
 
 // Also for loading either in browser or on the server side.

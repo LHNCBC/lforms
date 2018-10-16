@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.1.0] 2018-10-16
+### Added
+- The start of support for FHIR R4, in the form of copy of STU3 (so no real R4
+  support yet, except for questionnaire-calculatedExpression support which we
+  added in 12.12.0).
+
 ## [13.0.1] 2018-10-16
 ### Fixed
 - An issue with the "grunt test" task introduced in 13.0.0.  (The build was not
