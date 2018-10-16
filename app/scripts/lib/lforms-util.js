@@ -5,7 +5,6 @@ if (typeof LForms === 'undefined')
   LForms = {};
 
 LForms.Util = {
-
   /**
    *  Adds an LForms form to the page.
    * @param formDataVar The name of a global-scope variable containing the
@@ -72,7 +71,7 @@ LForms.Util = {
 
 
   /**
-   * Get HL7 OBR and OBX segment data from the form.
+   * Get HL7 v2 OBR and OBX segment data from the form.
    * Empty or hidden questions are not included.
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id
@@ -85,24 +84,22 @@ LForms.Util = {
 
 
   /**
-   * Get FHIR data from the form.
-   * Empty or hidden questions are not included.
+   *  Get FHIR data from the form.
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
-   * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   * and "QuestionnaireResponse" (SDC profile)
+   *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   *  and "QuestionnaireResponse" (SDC profile)
+   * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *        It could either be the DOM element or its id
-   * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
-   *        are included in a FHIR Bundle. The default is false.
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions,
-   *        when resourceType is Questionnaire. The default is false.
-   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
-
-   * @returns {*} a FHIR resource
+   *  It could either be the DOM element or its id
+   * @param options A hash of other options.  See convertLFormsToFHIRData for
+   *  the allowed values.
+   * @returns {*} the requesteed FHIR resource.  For Questionnaire, the full form definition
+   *  will be returned, but or DiagnosticReport and QuestionnaireResponse, empty
+   *  or hidden questions will not be included.
    */
-  getFormFHIRData: function(resourceType, element, inBundle, bundleType, noExtensions) {
+  getFormFHIRData: function(resourceType, fhirVersion, element, options) {
     var formObj = this._getFormObjectInScope(element);
-    return this.convertLFormsToFHIRData(resourceType, formObj, inBundle, bundleType, noExtensions);
+    return this.convertLFormsToFHIRData(resourceType, fhirVersion, formObj, options);
   },
 
 
@@ -110,27 +107,36 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
    * @param formData a LForms data object
-   * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
-   *        are included in a FHIR Bundle. The default is false.
-   * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
-   *        Only "transaction" and "collection" types are allowed.
-   * @param noExtensions a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+   * @param options A hash of other options, with the following optional keys:
+   *  * bundleType, optional, maybe be either "transaction" or "collection".
+   *    This is used when resourceType is set to "DiagnosticReport", and requests
+   *    that the DiagnosticReport and associated Observation resources be placed
+   *    together in a bundle.  When this is not present, a bundle will not be
+   *    used.
+   *  * noExtensions a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *        without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *        The default is false.
    * @returns {*} a FHIR resource
    */
-  convertLFormsToFHIRData: function(resourceType, formData, inBundle, bundleType, noExtensions) {
+  convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+    var version = this._validateFHIRVersion(fhirVersion);
+    var fhir = LForms.FHIR[version];
+    var fhirData = null;
     if (formData) {
       switch (resourceType) {
         case "DiagnosticReport":
-          fhirData = LForms.FHIR.createDiagnosticReport(formData, null, inBundle, bundleType);
+          var bundleType = options ? options.bundleType : undefined;
+          var inBundle = bundleType != undefined;
+          var noExtensions = options ? options.noExtensions : undefined;
+          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaire(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
           break;
         case "QuestionnaireResponse":
-          fhirData = LForms.FHIR_SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions);
           break;
       }
     }
@@ -143,10 +149,21 @@ LForms.Util = {
    *
    * @param fhirData - a FHIR Questionnaire resource, which should be generated through
    * the function "getFormFHIRData('Questionnaire', ...)"
+   * @param fhirVersion - the version of FHIR in which the Questionnaire is
+   *  written.  This maybe be omitted if the Questionnaire resource (in
+   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  (See http://build.fhir.org/versioning.html#mp-version)
+   *  If both are provided, this takes precedence.
    * @returns {*} - a LForms json object
    */
-  convertFHIRQuestionnaireToLForms: function(fhirData) {
-    return fhirData ? LForms.FHIR_SDC.convertQuestionnaireToLForms(fhirData) : null;
+  convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
+    var rtn = null;
+    if (fhirData) {
+      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      var fhir = LForms.FHIR[fhirVersion];
+      rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+    }
+    return fhirData;
   },
 
 
@@ -157,20 +174,78 @@ LForms.Util = {
    * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" Observation
    * resources,or a Bundle with DiagnosticReport and Observation resources
    * @param formData an LForms form object
+   * @param fhirVersion - the version of FHIR in which the fhirData is
+   *  written.  This maybe be omitted if the Questionnaire resource (in
+   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  (See http://build.fhir.org/versioning.html#mp-version)
+   *  If both are provided, this takes precedence.
    * @returns {*} an updated LForms form object
    */
-  mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData) {
+  mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
+      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
-          LForms.FHIR.mergeDiagnosticReportToLForms(formData, fhirData);
+          fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
           break;
         case "QuestionnaireResponse":
-          LForms.FHIR_SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
           break;
       }
     }
     return formData;
+  },
+
+
+  /**
+   *  Checks to see if the given value is a valid FHIR version.  If the
+   *  version is unsupported, an exception is thrown.  Also, if the version is
+   *  supported but the support file is not loaded, an exception will be thrown.
+   * @version the version of FHIR that was requested
+   * @return the version passed in
+   */
+  _validateFHIRVersion: function(version) {
+    if (LForms.Util.FHIRSupport[version]) {
+      if (!LForms.FHIR[version])
+        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded';
+    }
+    else
+      throw 'Version '+version+' of FHIR is not supported';
+    return version;
+  },
+
+
+  /**
+   *  Attempts to detect the version of FHIR specified in the given resource.
+   *  Throws an error if it is not found or if it is not a supported version.
+   * @param fhirData a FHIR resource
+   * @return the FHIR version, if found and supported
+   */
+  _detectFHIRVersion: function(fhirData) {
+    var fhirVersion;
+    if (fhirData.meta && fhirData.meta.profile) {
+      var profiles = fhirData.meta.profile;
+      var pattern = new RegExp('http://hl7.org/fhir/(\\d+)[\\.\\d]+)/StructureDefinition/');
+      for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
+        var match = profiles[i].match(pattern);
+        if (match)
+          fhirVersion = match(1);
+      }
+    }
+    if (fhirVersion) {
+      // See http://build.fhir.org/versioning.html#mp-version
+      if (fhirVersion == '3')
+        fhirVersion = 'STU3';
+      else
+        fhirVersion = 'R'+fhirVersion;
+    }
+    else {
+      throw 'Could not determine the FHIR version for this resource.  '+
+        'Please make sure it is specified via meta.profile (see '+
+        'http://build.fhir.org/versioning.html#mp-version';
+    }
+    return this._validateFHIRVersion(fhirVersion);
   },
 
 

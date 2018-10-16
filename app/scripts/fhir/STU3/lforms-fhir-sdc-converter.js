@@ -8,13 +8,7 @@
  * convertQuestionnaireToLForms()
  * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
-
-if (typeof LForms.FHIR_SDC === 'undefined')
-  LForms.FHIR_SDC = {};
-
-(function(ns) {
+function addSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
@@ -58,6 +52,7 @@ if (typeof LForms.FHIR_SDC === 'undefined')
           target.items.push(item);
         }
       }
+      target.fhirVersion = self.fhirVersion;
     }
 
     return target;
@@ -649,4 +644,6 @@ if (typeof LForms.FHIR_SDC === 'undefined')
     return ret;
   }
 
-})(LForms.FHIR_SDC);
+}
+
+export default addSDCImportFns;

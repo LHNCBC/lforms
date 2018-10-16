@@ -512,6 +512,7 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('test:server', [
+    'build',
     'karma'
   ]);
 
@@ -527,7 +528,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'karma',
-    'build',
     'test:e2e',
     'nsp'
   ]);
@@ -545,12 +545,12 @@ module.exports = function (grunt) {
     'ngtemplates',
     'sass',
     'readBowerVersion',
-    'shell:webpack',
     'copy:dist',
     'cssmin',
     'uglify',
     'compress',
-    'shell:dist_dir_link'
+    'shell:dist_dir_link',
+    'shell:webpack'
   ]);
 
   grunt.registerTask('default', [

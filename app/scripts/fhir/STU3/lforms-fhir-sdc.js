@@ -16,13 +16,7 @@
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
-
-if (typeof LForms.FHIR_SDC === 'undefined')
-  LForms.FHIR_SDC = {};
-
-jQuery.extend(LForms.FHIR_SDC, {
+var sdcExport = {
 
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
@@ -1433,4 +1427,6 @@ jQuery.extend(LForms.FHIR_SDC, {
       }
     }
   }
-});
+};
+
+export default sdcExport;

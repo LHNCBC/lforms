@@ -72,5 +72,21 @@ exports.config = {
   jasmineNodeOpts: {
     // Default time to wait in ms before a test fails.
     defaultTimeoutInterval: 200000
+  },
+
+  onComplete: () => {
+    // Print the browser's console messages
+    /* Not sure if they actually gets everything.  I could not see my debugging
+       messages.  Disabling for now.
+    browser.manage().logs().get('browser').then(function(browserLogs) {
+      if (browserLogs.length > 0) {
+        console.log("Messages from browser's console");
+        browserLogs.forEach(function(log){
+          console.log(log.message);
+        });
+        console.log("End of messages from browser's console");
+      }
+    });
+    */
   }
 };

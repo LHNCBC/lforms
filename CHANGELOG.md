@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.0.0] 2018-10-15
+### Changed
+- Reorganized the FHIR functions to facilitate support for multiple versions of
+  FHIR.  (This should not be a breaking change if you are not using FHIR).
+
 ## [12.13.0] 2018-10-02
 ### Fixed
 - Fixed data type for items with units.

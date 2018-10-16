@@ -10,8 +10,21 @@
   </head>
   <!-- Theme class needs to be on "body" for the jQuery datepicker -->
   <body ng-app="lformsTestApp" ng-class="theme.code ? 'theme-'+theme.code : ''" ng-controller="lformsTestController">
+    <div id="lforms-form">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Build Test Page with FHIRPath</div>
+        <div class="panel-body">
+          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+          <input type="text" placeholder="FHIR Version" id="fhirVersion" />
+        </div>
+      </div>
+
+      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
+    </div>
+
     <script src="latestBuild/lforms.min.js"></script>
-    <script src="latestBuild/fhirpath.min.js"></script>
+    <script src="latestBuild/fhir/STU3/lformsFHIR.min.js"></script>
     <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 
     <!-- lforms test controller -->
@@ -22,6 +35,13 @@
           'lformsConfig', 'LF_CONSTANTS', '$q', '$http', 'FileUploader',
           function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http,
             FileUploader) {
+
+            function getFHIR() {
+              var version = $('#fhirVersion')[0].value;
+              if (!version)
+                throw 'Please select a FHIR version';
+              return LForms.FHIR[version];
+            }
 
             // See https://github.com/nervgh/angular-file-upload/wiki/Introduction on
             // usage of angular-file-upload.
@@ -42,7 +62,7 @@
                 var importedData = JSON.parse(event.target.result);
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
-                  var questionnaire = LForms.FHIR_SDC.convertQuestionnaireToLForms(importedData);
+                  var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
                   $scope.lfData2 = new LFormsData(questionnaire);
                 }
                 // in the internal LForms format
@@ -55,19 +75,13 @@
             };
 
           }]);
+
+      // Set up FHIR version list
+      var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
+      new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+       {matchListValue: true});
+      $('#fhirVersion')[0].value = fhirVersions[0];
     </script>
-
-    <div id="lforms-form">
-      <div class="panel panel-default">
-        <div class="panel-heading">LForms Build Test Page with FHIRPath</div>
-        <div class="panel-body">
-          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
-          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
-        </div>
-      </div>
-
-      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
-    </div>
 
   </body>
 </html>
