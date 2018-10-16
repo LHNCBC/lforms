@@ -153,6 +153,7 @@ LForms.Util = {
    *  written.  This maybe be omitted if the Questionnaire resource (in
    *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
+   *  If both are provided, this takes precedence.
    * @returns {*} - a LForms json object
    */
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
@@ -177,6 +178,7 @@ LForms.Util = {
    *  written.  This maybe be omitted if the Questionnaire resource (in
    *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
+   *  If both are provided, this takes precedence.
    * @returns {*} an updated LForms form object
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
