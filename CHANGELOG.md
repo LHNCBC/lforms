@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.0.1] 2018-10-16
+### Fixed
+- An issue with the "grunt test" task introduced in 13.0.0.  (The build was not
+  run prior to the tests.)
+
 ## [13.0.0] 2018-10-15
 ### Changed
 - Reorganized the FHIR functions to facilitate support for multiple versions of
