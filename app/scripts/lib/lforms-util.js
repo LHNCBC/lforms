@@ -88,7 +88,7 @@ LForms.Util = {
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    *  and "QuestionnaireResponse" (SDC profile)
-   * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
+   * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *  It could either be the DOM element or its id
    * @param options A hash of other options.  See convertLFormsToFHIRData for
