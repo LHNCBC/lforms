@@ -321,8 +321,9 @@ user to save the form so it can be redisplayed later for completion or editing.<
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Retrieving User-Entered Data as FHIR Resources
   </h3>
-  <p>The user-entered data, along with some form definition data, can be retrieved as FHIR resources.
-    To retrieve that data, LForms provides the following utility method:</p>
+  <p>The user-entered data, along with some form definition data, can be
+    retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> resources, using
+    the following utility method:</p>
   <pre>
     <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, element, options)</code></pre>
 
@@ -343,34 +344,39 @@ user to save the form so it can be redisplayed later for completion or editing.<
           used.</li>
         <li>noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
           without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
-          The default is false.
-        <li>
+          The default is false.</li>
       </ul>
-    <li>
+    </li>
   </ol>
 
   <h3>
     <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Converting FHIR Questionnaire Resource to LForms Data (version >= 12.8)
+    Converting FHIR Questionnaire Resource to LForms Data
   </h3>
   <p>The FHIR Questionnaire resource retrieved from LForms form can be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
     To convert FHIR Questionnaire resources to LForms data, LForms provides the following utility method:</p>
   <pre>
-    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData)</code></pre>
+    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData, fhirVersion)</code></pre>
 
-  <p>The parameter is:</p>
+  <p>The parameters are:</p>
   <ol>
     <li>fhirData - a FHIR Questionnaire resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+    <li>fhirVersion - the version of FHIR in which the Questionnaire is
+     written.  This maybe be omitted if the Questionnaire resource (in
+     fhirData) conains a <a href=
+     "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
+     attibute specifying the FHIR versions.  If both are provided, this takes
+     precedence.</li>
   </ol>
 
   <h3>
     <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Merging FHIR Resources into LForms Data (version >= 12.8)
+    Merging FHIR Resources into LForms Data
   </h3>
   <p>The FHIR resource retrieved from LForms form can be merged back into LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
     To merge FHIR resources into LForms data, LForms provides the following utility method:</p>
   <pre>
-    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData)</code></pre>
+    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData, fhirVersion)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
@@ -379,6 +385,12 @@ user to save the form so it can be redisplayed later for completion or editing.<
       associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.</li>
     <li>fhirData - a FHIR resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
     <li>formData - an LForms form data object.</li>
+    <li>fhirVersion - the version of FHIR in which the Questionnaire is
+     written.  This maybe be omitted if the Questionnaire resource (in
+     fhirData) conains a <a href=
+     "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
+     attibute specifying the FHIR versions.  If both are provided, this takes
+     precedence.</li>
   </ol>
 
 
