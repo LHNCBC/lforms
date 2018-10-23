@@ -319,22 +319,34 @@ user to save the form so it can be redisplayed later for completion or editing.<
 
   <h3>
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Retrieving User-Entered Data as FHIR Resources (version >= 12.8)
+    Retrieving User-Entered Data as FHIR Resources
   </h3>
-  <p>The user entered data, along with some form definition data, can be retrieved as FHIR resources.
+  <p>The user-entered data, along with some form definition data, can be retrieved as FHIR resources.
     To retrieve that data, LForms provides the following utility method:</p>
   <pre>
-    <code>LForms.Util.getFormFHIRData(resourceType, element, inBundle, bundleType)</code></pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, element, options)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
     <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
       and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>fhirVersion - the version of FHIR being used.  Currently this should
+     just be set to "STU3", though we are working on "R4".</li>
     <li>element - optional if there is only one LForms widget on the page. The containing HTML element that includes
       the LForms rendered form. It could be the DOM element or its id.</li>
-    <li>inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
-      are included in a FHIR Bundle. The default is false.</li>
-    <li>bundleType - optional, the FHIR Bundle type if inBundle is true.</li>
+    <li>options - An optional hash of other options, with the following optional keys:
+      <ul>
+        <li>bundleType - optional maybe be either "transaction" or "collection".
+          This is used when resourceType is set to "DiagnosticReport", and requests
+          that the DiagnosticReport and associated Observation resources be placed
+          together in a bundle.  When this is not present, a bundle will not be
+          used.</li>
+        <li>noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+          without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
+          The default is false.
+        <li>
+      </ul>
+    <li>
   </ol>
 
   <h3>
