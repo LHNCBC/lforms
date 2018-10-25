@@ -18814,12 +18814,12 @@ var dr = {
   },
 
   /**
-   * Merge a DiagnosticReport instance into an LFormsData object
-   * @param formData an LFormsData object
+   * Merge a DiagnosticReport instance into an LForms form definition or LFormsData object
+   * @param formData an LForms form definition or LFormsData object.
    * @param diagnosticReport a DiagnosticReport resource with contained Observation resources,
    * or a Bundle that includes a DiagnosticReport resource and associated Observation resources
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
-   * @returns {{}} an updated LFormsData object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeDiagnosticReportToLForms: function mergeDiagnosticReportToLForms(formData, diagnosticReport) {
     // get the default settings in case they are missing in the form data
@@ -18828,7 +18828,6 @@ var dr = {
     // as a base data structure for converting
 
     var dr = inBundle ? this._convertFromBundleToContained(diagnosticReport) : diagnosticReport;
-    console.log(dr);
 
     var reportStructure = this._getReportStructure(dr);
 
@@ -19883,19 +19882,13 @@ var sdcExport = {
    * Merge a QuestionnaireResponse instance into an LForms form object
    * @param formData an LForms form definition or LFormsData object.
    * @param qr a QuestionnaireResponse instance
-   * @returns {{}} an updated LForms form object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeQuestionnaireResponseToLForms: function mergeQuestionnaireResponseToLForms(formData, qr) {
-    console.log("%%% In STU3 merge");
-    console.log(JSON.stringify(formData, null, 2)); // get the default settings in case they are missing in the form data
-
+    // get the default settings in case they are missing in the form data
     var newFormData = new LForms.LFormsData(formData).getFormData();
-    console.log("%%% calling _getQRStructure");
 
     var qrInfo = this._getQRStructure(qr);
-
-    console.log("%%qrInfo=");
-    console.log(JSON.stringify(qrInfo, null, 2));
 
     this._processQRItemAndLFormsItem(qrInfo, newFormData);
 
@@ -20168,7 +20161,7 @@ var sdcExport = {
       // dataType conversion should be handled when panel data are added to lforms-service.
 
       if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
-        dataType = "REAL";
+        item.dataType = dataType = "REAL";
       }
 
       var qrValue = answer[0];
