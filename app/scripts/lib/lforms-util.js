@@ -175,13 +175,13 @@ LForms.Util = {
    * "QuestionnaireResponse" (SDC profile)
    * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" Observation
    * resources,or a Bundle with DiagnosticReport and Observation resources
-   * @param formData an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
    *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
-   * @returns {*} an updated LForms form object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
@@ -189,11 +189,10 @@ LForms.Util = {
       var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
-          fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
           break;
         case "QuestionnaireResponse":
-          console.log("%%% calling merge for "+fhirVersion);
-          fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
           break;
       }
     }

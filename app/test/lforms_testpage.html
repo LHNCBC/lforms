@@ -232,7 +232,6 @@
               if (!version)
                 throw 'Please select a FHIR version';
               return version;
-              return LForms.FHIR[version];
             }
 
             function getFHIR() {
@@ -297,11 +296,12 @@
               // use the first form
               var fhirData = containedDr;
 
-              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
-                angular.copy(FHTData), fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'DiagnosticReport', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };
@@ -311,11 +311,12 @@
               // use the first form
               var fhirData = searchsetBundleDr;
 
-              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
-                angular.copy(FHTData), fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'DiagnosticReport', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };
@@ -326,10 +327,12 @@
               var fhirData = qr;
               var formData = angular.copy(FHTData);
 
-              var mergedFormData = getFHIR().SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'QuestionnaireResponse', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };
