@@ -227,32 +227,38 @@
               }
             };
 
-            function getFHIR() {
+            function getFHIRVersion() {
               var version = $('#fhirVersion')[0].value;
               if (!version)
                 throw 'Please select a FHIR version';
+              return version;
               return LForms.FHIR[version];
+            }
+
+            function getFHIR() {
+              return LForms.FHIR[getFHIRVersion()];
             }
 
             $scope.showFHIRResource = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport($scope.lfData2);
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion());
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle1 = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
-                  $scope.lfData2, null, true, "transaction");
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "transaction"});
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle2 = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
-                  $scope.lfData2, null, true, "collection");
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "collection"});
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }

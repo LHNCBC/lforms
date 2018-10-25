@@ -108,7 +108,7 @@ LForms.Util = {
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
-   * @param formData a LForms data object
+   * @param formData an LFormsData object or an LForms form definition
    * @param options A hash of other options, with the following optional keys:
    *  * bundleType, optional, maybe be either "transaction" or "collection".
    *    This is used when resourceType is set to "DiagnosticReport", and requests
@@ -121,15 +121,17 @@ LForms.Util = {
    * @returns {*} a FHIR resource
    */
   convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+    if (!(formData instanceof LForms.LFormsData))
+      formData = new LForms.LFormsData(formData);
     var version = this._validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
+      var noExtensions = options ? options.noExtensions : undefined;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
-          var noExtensions = options ? options.noExtensions : undefined;
           fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
@@ -145,7 +147,7 @@ LForms.Util = {
 
 
   /**
-   * Convert FHIR SQC Questionnaire to LForms definition
+   * Convert FHIR SQC Questionnaire to the LForms internal definition
    *
    * @param fhirData - a FHIR Questionnaire resource, which should be generated through
    * the function "getFormFHIRData('Questionnaire', ...)"
@@ -154,7 +156,7 @@ LForms.Util = {
    *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
-   * @returns {*} - a LForms json object
+   * @returns {*} - an LForms json object
    */
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
     var rtn = null;
@@ -163,7 +165,7 @@ LForms.Util = {
       var fhir = LForms.FHIR[fhirVersion];
       rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
     }
-    return fhirData;
+    return rtn;
   },
 
 
@@ -190,6 +192,7 @@ LForms.Util = {
           fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
           break;
         case "QuestionnaireResponse":
+          console.log("%%% calling merge for "+fhirVersion);
           fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
           break;
       }

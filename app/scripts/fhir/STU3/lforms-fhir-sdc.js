@@ -1096,15 +1096,18 @@ var sdcExport = {
 
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
-   * @param formData an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
    * @param qr a QuestionnaireResponse instance
    * @returns {{}} an updated LForms form object
    */
   mergeQuestionnaireResponseToLForms : function(formData, qr) {
-
+  console.log("%%% In STU3 merge");
+console.log(JSON.stringify(formData, null, 2));
     // get the default settings in case they are missing in the form data
     var newFormData = (new LForms.LFormsData(formData)).getFormData();
+  console.log("%%% calling _getQRStructure");
     var qrInfo = this._getQRStructure(qr);
+   console.log("%%qrInfo=");  console.log(JSON.stringify(qrInfo, null, 2));
     this._processQRItemAndLFormsItem(qrInfo, newFormData);
     return newFormData;
   },
