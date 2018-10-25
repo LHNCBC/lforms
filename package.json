@@ -2,8 +2,7 @@
   "name": "lforms",
   "version": "0.0.0",
   "dependencies": {
-    "fhirpath": "^0.8.0",
-    "phantomjs-prebuilt": "^2.1.16"
+    "fhirpath": "^0.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -51,6 +50,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "^1.1.0",
     "mocha": "^2.5.3",
+    "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
     "time-grunt": "^1.0.0",
     "webpack": "^4.17.2",
