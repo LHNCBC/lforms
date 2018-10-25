@@ -7,21 +7,29 @@ if (typeof LForms === 'undefined')
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
-   * @param formDataVar The name of a global-scope variable containing the
-   *  form's LForms definition.  The variable should be accessible as a property
-   *  of the window object.
+   * @param formDataDef A form definiton object (i.e., a parsed version of a
+   *  JSON LForms form definition).  Also , for backward compatibility, this can
+   *  be the name of a global-scope variable (on "window") containing that form
+   *  definition object.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
    */
-  addFormToPage: function(formDataVar, formContainer) {
+  addFormToPage: function(formDataDef, formContainer) {
     var formContainer = typeof formContainer === 'string' ?
       $('#'+formContainer) : $(formContainer);
+    if (typeof formDataDef === 'string')
+      formDataDef = window[formDataDef];
+
     if (!this.pageFormID_)
       this.pageFormID_ = 0;
     var appName = 'LFormsApp' + ++this.pageFormID_;
     var controller = 'LFormsAppController'+ this.pageFormID_;
+    if (!LForms.addedFormDefs)
+      LForms.addedFormDefs = [];
+    var formIndex = LForms.addedFormDefs.length;
+    LForms.addedFormDefs.push(formDataDef);
     formContainer.html(
       '<div ng-controller="'+controller+'">'+
         '<lforms lf-data="myFormData"></lforms>'+
@@ -29,7 +37,7 @@ LForms.Util = {
       '<script>'+
         'angular.module("'+appName+'", ["lformsWidget"])'+
         '.controller("'+controller+'", ["$scope", function ($scope) {'+
-        '  $scope.myFormData = new LForms.LFormsData('+formDataVar+');'+
+        '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs['+formIndex+']);'+
         '}]);'+
       '</'+'script>'
     );
