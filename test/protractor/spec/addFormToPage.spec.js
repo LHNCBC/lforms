@@ -28,7 +28,7 @@ describe('addFormToPage test page', function() {
   });
 
 
-  describe('addFormToPage', function () {
+  fdescribe('addFormToPage', function () {
     it('should be able to called a second time with a new form for the same form '+
        'container', function() {
       po.openPage();
@@ -37,9 +37,44 @@ describe('addFormToPage test page', function() {
         return browser.driver.executeScript(
           'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
       }, tp.WAIT_TIMEOUT_2);
-      // Now put form USSG-FHT on the page
+      // Now put form USSG-FHT on the page, using the variable name method
+      // (FHTData).
       browser.driver.executeScript(
         'LForms.Util.addFormToPage("FHTData", "formContainer")');
+      // Confirm it is there
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
+      }, tp.WAIT_TIMEOUT_2);
+    });
+
+    it('should be able to take a form object',  function() {
+      po.openPage();
+      // Pre-condition -- Form USSG-FHT should not be in formContainer
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
+      }, tp.WAIT_TIMEOUT_2);
+      // Now put form USSG-FHT on the page, using the form object method
+      browser.driver.executeScript(
+        'LForms.Util.addFormToPage(FHTData, "formContainer")');
+      // Confirm it is there
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
+      }, tp.WAIT_TIMEOUT_2);
+    });
+
+    it('should be able to take a JSON form definition',  function() {
+      po.openPage();
+      // Pre-condition -- Form USSG-FHT should not be in formContainer
+      browser.wait(function() {
+        return browser.driver.executeScript(
+          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
+      }, tp.WAIT_TIMEOUT_2);
+      // Now put form USSG-FHT on the page, using the form object method
+      browser.driver.executeScript(
+        'LForms.Util.addFormToPage(JSON.stringify(FHTData), "formContainer")');
       // Confirm it is there
       browser.wait(function() {
         return browser.driver.executeScript(

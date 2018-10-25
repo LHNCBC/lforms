@@ -7,10 +7,9 @@ if (typeof LForms === 'undefined')
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
-   * @param formDataDef A form definiton object (i.e., a parsed version of a
-   *  JSON LForms form definition).  Also , for backward compatibility, this can
-   *  be the name of a global-scope variable (on "window") containing that form
-   *  definition object.
+   * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
+   *  for backward compatibility, this can be the name of a global-scope variable
+   *  (on "window") containing that form definition object.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
@@ -19,8 +18,12 @@ LForms.Util = {
   addFormToPage: function(formDataDef, formContainer) {
     var formContainer = typeof formContainer === 'string' ?
       $('#'+formContainer) : $(formContainer);
-    if (typeof formDataDef === 'string')
-      formDataDef = window[formDataDef];
+    if (typeof formDataDef === 'string') {
+      if (formDataDef.indexOf('{') >= 0) // test for JSON
+        formDataDef = JSON.parse(formDataDef);
+      else // backward compatibility
+        formDataDef = window[formDataDef];
+    }
 
     if (!this.pageFormID_)
       this.pageFormID_ = 0;
