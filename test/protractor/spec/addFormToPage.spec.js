@@ -28,7 +28,7 @@ describe('addFormToPage test page', function() {
   });
 
 
-  fdescribe('addFormToPage', function () {
+  describe('addFormToPage', function () {
     it('should be able to called a second time with a new form for the same form '+
        'container', function() {
       po.openPage();
