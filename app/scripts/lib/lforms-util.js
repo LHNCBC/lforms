@@ -164,7 +164,7 @@ LForms.Util = {
    * the function "getFormFHIRData('Questionnaire', ...)"
    * @param fhirVersion - the version of FHIR in which the Questionnaire is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
    * @returns {*} - an LForms json object
@@ -189,7 +189,7 @@ LForms.Util = {
    * @param formData an LForms form definition or LFormsData object.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
    * @returns {{}} an updated LForms form definition, with answer data
