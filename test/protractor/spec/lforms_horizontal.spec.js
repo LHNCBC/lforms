@@ -11,7 +11,6 @@ describe('horizontal table', function() {
   function waitForButtonCount(numButtons) {
     browser.wait(function() {
        return addRemoveButtons.count().then(function(n) {
-         console.log("%%% Button count = "+n);
          return numButtons==n;
        })
     }, 3000);
