@@ -61,8 +61,9 @@
     <div id=versionList>
       <p>Documentation by version:</p>
       <ul>
-        <li>Current (>=11.x)</li>
-        <li><a href="versions/7.x/index.html">7.x</a></li>
+        <li>Current (>=13.x)</li>
+        <li><a href="versions/11.x/index.html">11-12</a></li>
+        <li><a href="versions/7.x/index.html">7-10</a></li>
         <li><a href="versions/6.x/index.html">6.x</a></li>
         <li><a href="versions/5.5/index.html">5.5</a></li>
       </ul>
@@ -128,11 +129,11 @@ clinicaltables.nlm.nih.gov.  The
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
-  <dt>JavaScript</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/11.2.0/lforms.min.js</dd>
-  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/11.2.0/styles/lforms.min.css</dd>
+  <dt>JavaScript</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/13.2.0/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/13.2.0/styles/lforms.min.css</dd>
 </dl>
 
-<p>(Note that the URLs contain a release version number, 11.2.0, for which you
+<p>(Note that the URLs contain a release version number, 13.2.0, for which you
 can substitute any of the other prebuilt versions available at
 https://clinicaltables.nlm.nih.gov/lforms-versions).</p>
 
@@ -156,29 +157,29 @@ header:</p>
 
 <pre><code>
 &lt;link
- href="https://clinicaltables.nlm.nih.gov/lforms-versions/11.2.0/styles/lforms.min.css"
+ href="https://clinicaltables.nlm.nih.gov/lforms-versions/13.2.0/styles/lforms.min.css"
  media="screen" rel="stylesheet" /&gt;
 </code></pre>
 
 And with your other JavaScript:
 
 <pre><code>&lt;script
- src="https://clinicaltables.nlm.nih.gov/lforms-versions/11.2.0/lforms.min.js"
+ src="https://clinicaltables.nlm.nih.gov/lforms-versions/13.2.0/lforms.min.js"
  &gt;&lt;/script&gt;
 </code></pre>
 
 <h4>JavaScript (without AngularJS)</h4>
 
-Your <a href="#formdef">form definition</a> should be loaded into a variable on
-the window object, e.g.:
-<pre><code>window.myFormDefinition = {...}
+<pre><code>LForms.Util.addFormToPage(formDefinition, 'myFormContainer');
 </code></pre>
 
-Pass that variable name and the form container element to a utility function
-which will render the form:
-
-<pre><code>LForms.Util.addFormToPage('myFormDefinition', 'myFormContainer');
-</code></pre>
+Parameters:
+<ol>
+  <li>formDefinition - A <a href="#formdef">form definition</a> (either JSON or
+   a parsed object)</li>
+  <li>formContainer - An element (or its ID, as in this example) into which the
+   form should be placed</li>
+</ol>
 
 <h3>Rendering a Form (AngularJS Method)</h3>
 
@@ -318,46 +319,75 @@ user to save the form so it can be redisplayed later for completion or editing.<
 
   <h3>
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Retrieving User-Entered Data as FHIR Resources (version >= 12.8)
+    Retrieving User-Entered Data as FHIR Resources
   </h3>
-  <p>The user entered data, along with some form definition data, can be retrieved as FHIR resources.
-    To retrieve that data, LForms provides the following utility method:</p>
+  <p>The user-entered data, along with some form definition data, can be
+    retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> resources, using
+    the following utility method:</p>
   <pre>
-    <code>LForms.Util.getFormFHIRData(resourceType, element, inBundle, bundleType)</code></pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, element, options)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
     <li>resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
       and "QuestionnaireResponse" (SDC profile) are supported.</li>
+    <li>fhirVersion - the version of FHIR being used.  Currently this should
+     just be set to "STU3", though we are working on "R4".</li>
     <li>element - optional if there is only one LForms widget on the page. The containing HTML element that includes
       the LForms rendered form. It could be the DOM element or its id.</li>
-    <li>inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
-      are included in a FHIR Bundle. The default is false.</li>
-    <li>bundleType - optional, the FHIR Bundle type if inBundle is true.</li>
+    <li>options - An optional hash of other options, with the following optional keys:
+      <ul>
+        <li>bundleType - optional maybe be either "transaction" or "collection".
+          This is used when resourceType is set to "DiagnosticReport", and requests
+          that the DiagnosticReport and associated Observation resources be placed
+          together in a bundle.  When this is not present, a bundle will not be
+          used.</li>
+        <li>noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+          without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
+          The default is false.</li>
+      </ul>
+    </li>
   </ol>
 
   <h3>
     <a id="convert-fhir-data" class="anchor" href="#convert-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Converting FHIR Questionnaire Resource to LForms Data (version >= 12.8)
+    Converting FHIR Questionnaire Resource to the LForms Format
   </h3>
-  <p>The FHIR Questionnaire resource retrieved from LForms form can be converted back to LForms data, which can then be loaded into the LForms widget to show the form.
-    To convert FHIR Questionnaire resources to LForms data, LForms provides the following utility method:</p>
+  <p>FHIR Questionnaire resource can be converted back to the LForms format,
+    which can then be loaded into the LForms widget to show the form.  To do
+    that conversion, LForms provides the following
+    utility method:</p>
   <pre>
-    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData)</code></pre>
+    <code>LForms.Util.convertFHIRQuestionnaireToLForms(fhirData, fhirVersion)</code></pre>
 
-  <p>The parameter is:</p>
+  <p>The parameters are:</p>
   <ol>
-    <li>fhirData - a FHIR Questionnaire resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
+    <li>fhirData - a FHIR Questionnaire resource (parsed).  Note that our support for
+      Questionnaire is incomplete but in progress.  If you run into a problem,
+      please open an issue on the <a href="https://github.com/lhncbc/lforms"
+      >LForms</a> repository.</li>
+    <li>fhirVersion - the version of FHIR in which the Questionnaire is
+     written.  This maybe be omitted if the Questionnaire resource (in
+     fhirData) conains a <a href=
+     "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
+     attibute specifying the FHIR versions.  If both are provided, this takes
+     precedence.</li>
   </ol>
+
+  <p>The return value is a form definition in the <a
+   href="https://github.com/lhncbc/lforms">LForms format</a>.</p>
 
   <h3>
     <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Merging FHIR Resources into LForms Data (version >= 12.8)
+    Merging FHIR Resources into an LForms Form
   </h3>
-  <p>The FHIR resource retrieved from LForms form can be merged back into LForms data, which can then be loaded into the LForms widget to show the form along with the user data.
-    To merge FHIR resources into LForms data, LForms provides the following utility method:</p>
+  <p>FHIR DiagnosticReports (if generated by LForms) and FHIR QuestionnaireResponses
+   can be loaded into an LForms form definition to produce a structure that can be
+   loaded into the LForms widget (using the same methods as for JSON form
+   defintions described above) to show the form along with the user data.
+   To merge FHIR resources into LForms data, LForms provides the following utility method:</p>
   <pre>
-    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData)</code></pre>
+    <code>LForms.Util.mergeFHIRDataIntoLForms(resourceType, fhirData, formData, fhirVersion)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
@@ -366,8 +396,16 @@ user to save the form so it can be redisplayed later for completion or editing.<
       associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.</li>
     <li>fhirData - a FHIR resource, which should be generated through the LForms.Util.getFormFHIRData() function</li>
     <li>formData - an LForms form data object.</li>
+    <li>fhirVersion - the version of FHIR in which the Questionnaire is
+     written.  This maybe be omitted if the Questionnaire resource (in
+     fhirData) conains a <a href=
+     "http://build.fhir.org/versioning.html#mp-version">meta.profile</a>
+     attibute specifying the FHIR versions.  If both are provided, this takes
+     precedence.</li>
   </ol>
 
+  <p>The return value is a form definition object but with the user data merged
+   in.  It can be displayed using LForms.Util.addFormToPage described above.</p>
 
   <h2>
 <a id="form-definition-format" class="anchor" href="#form-definition-format" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="formdef"></a>Form Definition Format</h2>
