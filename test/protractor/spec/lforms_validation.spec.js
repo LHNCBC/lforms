@@ -16,7 +16,13 @@ function waitForDisplayed(errorMsg) {
 
 function waitForNotDisplayed(errorMsg) {
   browser.wait(function() {
-    return errorMsg.isDisplayed().then(function(result){return !result});
+    // Avoid reporting an error if the element is not even present.
+    return errorMsg.isPresent().then(function(result) {
+      if (!result)
+        return true;
+      else
+        return errorMsg.isDisplayed().then(function(result){return !result});
+    });
   }, tp.WAIT_TIMEOUT_1);
 }
 
@@ -55,7 +61,7 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   waitForDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(true);
   // valid value no messages
-  eleInput.clear();
+  tp.clearField(eleInput);
   eleInput.sendKeys(value2);
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
@@ -152,7 +158,7 @@ describe('Validations:', function() {
 
   describe('data type validations (table)', function () {
 
-    beforeAll(function () {
+    beforeEach(function () {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
@@ -251,7 +257,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       st0.sendKeys("abc");
-      st0.clear();
+      tp.clearField(st0);
       waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
@@ -268,7 +274,7 @@ describe('Validations:', function() {
       waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      st0.clear();
+      tp.clearField(st0);
       st0.sendKeys("abcde");
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
@@ -289,7 +295,7 @@ describe('Validations:', function() {
       expect(errorRequire.isPresent()).toBe(false);
       // no error messages on first visit
       dt.sendKeys("t");
-      dt.clear();
+      tp.clearField(dt);
       waitForNotDisplayed(errorRequire);
       expect(errorRequire.isPresent()).toBe(true);
       expect(errorRequire.isDisplayed()).toBe(false);
@@ -306,7 +312,7 @@ describe('Validations:', function() {
       waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      dt.clear();
+      tp.clearField(dt);
       dt.sendKeys("t");
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
@@ -328,10 +334,8 @@ describe('Validations:', function() {
       // no error messages on first visit
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
-      cne1.clear();
+      tp.clearField(cne1);
       waitForNotDisplayed(errorRequire);
-      expect(errorRequire.isPresent()).toBe(true);
-      expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
       lbldt.click();
       waitForDisplayed(errorRequire);
@@ -345,7 +349,7 @@ describe('Validations:', function() {
       waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      cne1.clear();
+      tp.clearField(cne1);
       cne1.click();
       cne1.sendKeys(protractor.Key.ARROW_DOWN);
       cne1.sendKeys(protractor.Key.ENTER);
@@ -368,12 +372,10 @@ describe('Validations:', function() {
       // no error messages on first visit
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
-      cwe1.clear();
+      tp.clearField(cwe1);
       waitForNotDisplayed(errorRequire);
-      expect(errorRequire.isPresent()).toBe(true);
-      expect(errorRequire.isDisplayed()).toBe(false);
       // show message when the focus is gone
-      lblcne1.click();
+      lblcne1.click(); // focuses other field
       waitForDisplayed(errorRequire);
       //expect(errorRequire.isDisplayed()).toBe(true);
       // wait for 200 ms and the message should disappear after 200 ms
@@ -385,7 +387,7 @@ describe('Validations:', function() {
       waitForDisplayed(errorRequire);
       expect(errorRequire.isDisplayed()).toBe(true);
       // valid value no messages
-      cwe1.clear();
+      tp.clearField(cwe1);
       cwe1.click();
       cwe1.sendKeys(protractor.Key.ARROW_DOWN);
       cwe1.sendKeys(protractor.Key.ENTER);
@@ -396,7 +398,7 @@ describe('Validations:', function() {
       waitForNotPresent(errorRequire);
       expect(errorRequire.isPresent()).toBe(false);
       // valid user input no message
-      cwe1.clear();
+      tp.clearField(cwe1);
       cwe1.sendKeys("user input");
       cwe1.sendKeys(protractor.Key.TAB);
       waitForNotPresent(errorRequire);
@@ -439,7 +441,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
-      inta.clear();
+      tp.clearField(inta);
       inta.sendKeys("10");
       waitForNotPresent(errorMinInclusive);
       waitForDisplayed(errorMaxExclusive);
@@ -458,7 +460,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
-      inta.clear();
+      tp.clearField(inta);
       inta.sendKeys("9");
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
@@ -504,7 +506,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isDisplayed()).toBe(true);
       expect(errorMaxExclusive.isPresent()).toBe(false);
       // try again, message shown since it is not the first visit
-      reala.clear();
+      tp.clearField(reala);
       reala.sendKeys("10.0");
       waitForNotPresent(errorMinInclusive);
       waitForDisplayed(errorMaxExclusive);
@@ -523,7 +525,7 @@ describe('Validations:', function() {
       expect(errorMinInclusive.isPresent()).toBe(false);
       expect(errorMaxExclusive.isDisplayed()).toBe(true);
       // valid value no messages
-      reala.clear();
+      tp.clearField(reala);
       reala.sendKeys("9.999");
       waitForNotPresent(errorMinInclusive);
       waitForNotPresent(errorMaxExclusive);
@@ -581,7 +583,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isDisplayed()).toBe(true);
       expect(errorPattern.isDisplayed()).toBe(true);
       // try again, message shown since it is not the first visit
-      sta.clear();
+      tp.clearField(sta);
       sta.sendKeys("abcde678901");
       waitForDisplayed(errorMaxLength);
       waitForNotPresent(errorMinLength);
@@ -606,7 +608,7 @@ describe('Validations:', function() {
       expect(errorMinLength.isPresent()).toBe(false);
       expect(errorPattern.isDisplayed()).toBe(true);
       // valid value no messages
-      sta.clear();
+      tp.clearField(sta);
       sta.sendKeys("abcde");
       waitForNotPresent(errorMaxLength);
       waitForNotPresent(errorMinLength);

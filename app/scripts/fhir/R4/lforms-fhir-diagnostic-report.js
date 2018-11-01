@@ -747,12 +747,12 @@ var dr = {
 
 
   /**
-   * Merge a DiagnosticReport instance into an LFormsData object
-   * @param formData an LFormsData object
+   * Merge a DiagnosticReport instance into an LForms form definition or LFormsData object
+   * @param formData an LForms form definition or LFormsData object.
    * @param diagnosticReport a DiagnosticReport resource with contained Observation resources,
    * or a Bundle that includes a DiagnosticReport resource and associated Observation resources
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
-   * @returns {{}} an updated LFormsData object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeDiagnosticReportToLForms : function(formData, diagnosticReport) {
 
@@ -764,8 +764,6 @@ var dr = {
     // move Observation resources in Bundle to be in "contained" in DiagnosticReport resource
     // as a base data structure for converting
     var dr = inBundle ? this._convertFromBundleToContained(diagnosticReport) : diagnosticReport;
-
-    console.log(dr);
 
     var reportStructure = this._getReportStructure(dr);
 

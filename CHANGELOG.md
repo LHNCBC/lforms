@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.2.0] 2018-10-24
+### Added
+- LForms.Util.addFormToPage can now accept a form defintion object as its first
+  argument rather than just a variable name that holds that object.
+### Fixed
+- There were several problems with the FHIR APIs in LForms.Util.  Tests were
+  testing lower-level methods rather than the public APIs, which is how that
+  escaped notice.
+
 ## [13.1.0] 2018-10-16
 ### Added
 - The start of support for FHIR R4, in the form of copy of STU3 (so no real R4

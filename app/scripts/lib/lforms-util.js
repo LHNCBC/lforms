@@ -7,21 +7,32 @@ if (typeof LForms === 'undefined')
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
-   * @param formDataVar The name of a global-scope variable containing the
-   *  form's LForms definition.  The variable should be accessible as a property
-   *  of the window object.
+   * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
+   *  for backward compatibility, this can be the name of a global-scope variable
+   *  (on "window") containing that form definition object.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
    */
-  addFormToPage: function(formDataVar, formContainer) {
+  addFormToPage: function(formDataDef, formContainer) {
     var formContainer = typeof formContainer === 'string' ?
       $('#'+formContainer) : $(formContainer);
+    if (typeof formDataDef === 'string') {
+      if (formDataDef.indexOf('{') >= 0) // test for JSON
+        formDataDef = JSON.parse(formDataDef);
+      else // backward compatibility
+        formDataDef = window[formDataDef];
+    }
+
     if (!this.pageFormID_)
       this.pageFormID_ = 0;
     var appName = 'LFormsApp' + ++this.pageFormID_;
     var controller = 'LFormsAppController'+ this.pageFormID_;
+    if (!LForms.addedFormDefs)
+      LForms.addedFormDefs = [];
+    var formIndex = LForms.addedFormDefs.length;
+    LForms.addedFormDefs.push(formDataDef);
     formContainer.html(
       '<div ng-controller="'+controller+'">'+
         '<lforms lf-data="myFormData"></lforms>'+
@@ -29,7 +40,7 @@ LForms.Util = {
       '<script>'+
         'angular.module("'+appName+'", ["lformsWidget"])'+
         '.controller("'+controller+'", ["$scope", function ($scope) {'+
-        '  $scope.myFormData = new LForms.LFormsData('+formDataVar+');'+
+        '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs['+formIndex+']);'+
         '}]);'+
       '</'+'script>'
     );
@@ -108,7 +119,7 @@ LForms.Util = {
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
-   * @param formData a LForms data object
+   * @param formData an LFormsData object or an LForms form definition
    * @param options A hash of other options, with the following optional keys:
    *  * bundleType, optional, maybe be either "transaction" or "collection".
    *    This is used when resourceType is set to "DiagnosticReport", and requests
@@ -121,15 +132,17 @@ LForms.Util = {
    * @returns {*} a FHIR resource
    */
   convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+    if (!(formData instanceof LForms.LFormsData))
+      formData = new LForms.LFormsData(formData);
     var version = this._validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
+      var noExtensions = options ? options.noExtensions : undefined;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
-          var noExtensions = options ? options.noExtensions : undefined;
           fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, null, inBundle, bundleType);
           break;
         case "Questionnaire":
@@ -145,16 +158,16 @@ LForms.Util = {
 
 
   /**
-   * Convert FHIR SQC Questionnaire to LForms definition
+   * Convert FHIR SQC Questionnaire to the LForms internal definition
    *
    * @param fhirData - a FHIR Questionnaire resource, which should be generated through
    * the function "getFormFHIRData('Questionnaire', ...)"
    * @param fhirVersion - the version of FHIR in which the Questionnaire is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
-   * @returns {*} - a LForms json object
+   * @returns {*} - an LForms json object
    */
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
     var rtn = null;
@@ -163,7 +176,7 @@ LForms.Util = {
       var fhir = LForms.FHIR[fhirVersion];
       rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
     }
-    return fhirData;
+    return rtn;
   },
 
 
@@ -173,13 +186,13 @@ LForms.Util = {
    * "QuestionnaireResponse" (SDC profile)
    * @param fhirData a QuestionnaireResponse resource, a DiagnosticReport resource with "contained" Observation
    * resources,or a Bundle with DiagnosticReport and Observation resources
-   * @param formData an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) conains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
-   * @returns {*} an updated LForms form object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
@@ -187,10 +200,10 @@ LForms.Util = {
       var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
-          fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
           break;
         case "QuestionnaireResponse":
-          fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
           break;
       }
     }
