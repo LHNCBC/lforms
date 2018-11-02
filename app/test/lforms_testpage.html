@@ -227,32 +227,37 @@
               }
             };
 
-            function getFHIR() {
+            function getFHIRVersion() {
               var version = $('#fhirVersion')[0].value;
               if (!version)
                 throw 'Please select a FHIR version';
-              return LForms.FHIR[version];
+              return version;
+            }
+
+            function getFHIR() {
+              return LForms.FHIR[getFHIRVersion()];
             }
 
             $scope.showFHIRResource = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport($scope.lfData2);
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion());
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle1 = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
-                  $scope.lfData2, null, true, "transaction");
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "transaction"});
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
             };
             $scope.showFHIRResourceBundle2 = function () {
               if ($scope.lfData2) {
-                var dr = getFHIR().DiagnosticReport.createDiagnosticReport(
-                  $scope.lfData2, null, true, "collection");
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "collection"});
                 var fhirString = JSON.stringify(dr, null, 4);
                 console.log(fhirString);
               }
@@ -291,11 +296,12 @@
               // use the first form
               var fhirData = containedDr;
 
-              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
-                angular.copy(FHTData), fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'DiagnosticReport', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };
@@ -305,11 +311,12 @@
               // use the first form
               var fhirData = searchsetBundleDr;
 
-              var mergedFormData = getFHIR().DiagnosticReport.mergeDiagnosticReportToLForms(
-                angular.copy(FHTData), fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'DiagnosticReport', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };
@@ -320,10 +327,12 @@
               var fhirData = qr;
               var formData = angular.copy(FHTData);
 
-              var mergedFormData = getFHIR().SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-              var newFormData = new LFormsData(mergedFormData);
+              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                'QuestionnaireResponse', fhirData, angular.copy(FHTData),
+                getFHIRVersion());
+              mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = newFormData;
+              $scope.lfData2 = mergedFormData;
               $scope.lfOption2 = {
                 useAnimation: !window._INTESTING_
               };

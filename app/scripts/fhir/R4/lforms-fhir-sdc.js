@@ -1096,12 +1096,11 @@ var sdcExport = {
 
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
-   * @param formData an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
    * @param qr a QuestionnaireResponse instance
-   * @returns {{}} an updated LForms form object
+   * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeQuestionnaireResponseToLForms : function(formData, qr) {
-
     // get the default settings in case they are missing in the form data
     var newFormData = (new LForms.LFormsData(formData)).getFormData();
     var qrInfo = this._getQRStructure(qr);
@@ -1363,10 +1362,11 @@ var sdcExport = {
 
     if (item && code === item.questionCode && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
       var dataType = item.dataType;
+
       // any one has a unit must be a numerical type, let use REAL for now.
       // dataType conversion should be handled when panel data are added to lforms-service.
       if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
-        dataType = "REAL";
+        item.dataType = dataType = "REAL";
       }
 
       var qrValue = answer[0];
