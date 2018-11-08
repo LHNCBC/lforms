@@ -359,7 +359,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               let [error, fhirData] = callbackData;
 
               expect(error).toBeNull();
-              var assertFHTQuestionnaire = require('../../data/'+fhirVersion+'/assert-sdc-questionnaire').assertFHTQuestionnaire;
+              var assertFHTQuestionnaire = require('./'+fhirVersion+'/assert-sdc-questionnaire').assertFHTQuestionnaire;
               assertFHTQuestionnaire(fhirData);
             });
           });

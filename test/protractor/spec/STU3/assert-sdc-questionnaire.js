@@ -51,11 +51,9 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item[0].item[12].item[0].option.length).toBe(66);
   expect(fhirData.item[0].item[12].item[0].option[0].valueCoding.code).toBe("LA10533-0");
   expect(fhirData.item[0].item[12].item[0].option[0].valueCoding.display).toBe("Blood Clots");
-  expect(fhirData.item[0].item[12].item[0].option[0].valueCoding.system).toBe("http://loinc.org");
   expect(fhirData.item[0].item[12].item[0].option[65].valueCoding.code).toBe("LA10530-6");
   expect(fhirData.item[0].item[12].item[0].option[65].valueCoding.display).toBe("Sudden Infant Death Syndrome");
-  expect(fhirData.item[0].item[12].item[0].option[65].valueCoding.system).toBe("http://loinc.org");
-  
+
   expect(fhirData.item[1].item.length).toBe(9);
   expect(fhirData.item[1].code[0].code).toBe("54114-4");
   expect(fhirData.item[1].code[0].display).toBe("Family member health information");

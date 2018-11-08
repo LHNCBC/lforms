@@ -30,14 +30,14 @@ var STU3_cneDataTypeFixture = {
     ],
     option: [
       {
-        valueCoding: {system: 'http://loinc.org', code: "LA2-8",display: "Male"}
+        valueCoding: {code: "LA2-8",display: "Male"}
       },
       {
-        valueCoding: {system: 'http://loinc.org', code: "LA3-6",display: "Female"}
+        valueCoding: {code: "LA3-6",display: "Female"}
         
       },
       {
-        valueCoding: {system: 'http://loinc.org', code: "LA46-8",display: "Other"}
+        valueCoding: {code: "LA46-8",display: "Other"}
       }
     ]
     
