@@ -315,7 +315,7 @@ var sdcExport = {
     }
     // option, for answer list
     else if (item.answers) {
-      targetItem.option = this._handleAnswers(item, noExtensions);
+      targetItem.answerOption = this._handleAnswers(item, noExtensions);
     }
 
     // initialValue, for default values
@@ -757,10 +757,14 @@ var sdcExport = {
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
       option.valueCoding = {
-          "system": "http://loinc.org",
           "code": answer.code,
           "display": answer.text
       };
+  
+      if(item.answerCodeSystem) {
+        option.valueCoding.system = item.answerCodeSystem
+      }
+    
       optionArray.push(option);
     }
     return optionArray;
