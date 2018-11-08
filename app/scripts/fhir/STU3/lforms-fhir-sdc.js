@@ -762,7 +762,7 @@ var sdcExport = {
       };
 
       if(item.answerCodeSystem) {
-        option.valueCoding.system = item.answerCodeSystem
+        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);

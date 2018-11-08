@@ -35,15 +35,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should covert an item with CNE data type', function () {
-  
+          it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
-            //var cneFixture = require('../data/'+fhirVersion+'/cne-datatype-fixture');
             var out = fhir.SDC._processItem(cneFixture.input, {});
             assert.deepEqual(out, cneFixture.output);
           });
 
-          it('should covert an item with SECTION data type, with skip logic and sub items', function () {
+          it('should covert an item with answerCodeSystem', function () {
+            var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
+            var out = fhir.SDC._processItem(alFixture.input, {});
+            assert.deepEqual(out, alFixture.output);
+          });
+
+          it('should convert an item with SECTION data type, with skip logic and sub items', function () {
             var item = {
               "questionCode": "54137-5X",
               "questionCardinality": {"min": "1", "max": "*"},
