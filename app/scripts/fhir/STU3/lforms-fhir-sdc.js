@@ -757,10 +757,14 @@ var sdcExport = {
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
       option.valueCoding = {
-          "system": "http://loinc.org",
           "code": answer.code,
           "display": answer.text
       };
+
+      if(item.answerCodeSystem) {
+        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+      }
+
       optionArray.push(option);
     }
     return optionArray;

@@ -126,8 +126,6 @@
     <script src="data/sample-data.js"></script>
     <script src="data/test-data.js"></script>
     <script src="data/ri-data.js"></script>
-    <script src="data/fhir-test-data.js"></script>
-    <script src="data/fhir-sdc-response-ussgfht.js"></script>
     <script src="../scripts/themeList.js"></script>
     <!-- end of test data files -->
 
@@ -147,6 +145,7 @@
             function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http,
               FileUploader) {
 
+            $scope.fhirResCache = {};
             $scope.themeList = themeList; // see themeList.js
 
             $scope.selectedForm = null;
@@ -294,48 +293,57 @@
 
             $scope.testMergeDR2LForms = function() {
               // use the first form
-              var fhirData = containedDr;
+              $scope.getFhirResource(getFHIRVersion(),'contained-dr.json').then(function (fhirData) {
 
-              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                'DiagnosticReport', fhirData, angular.copy(FHTData),
-                getFHIRVersion());
-              mergedFormData = new LForms.LFormsData(mergedFormData);
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'DiagnosticReport', fhirData, angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = mergedFormData;
-              $scope.lfOption2 = {
-                useAnimation: !window._INTESTING_
-              };
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': contained-dr.json');
+              });
             };
 
             $scope.testMergeBundleDR2LForms = function() {
               // use the first form
-              var fhirData = searchsetBundleDr;
+              $scope.getFhirResource(getFHIRVersion(),'searchset-bundle-dr.json').then(function (fhirData) {
 
-              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                'DiagnosticReport', fhirData, angular.copy(FHTData),
-                getFHIRVersion());
-              mergedFormData = new LForms.LFormsData(mergedFormData);
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'DiagnosticReport',fhirData,angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = mergedFormData;
-              $scope.lfOption2 = {
-                useAnimation: !window._INTESTING_
-              };
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': searchset-bundle-dr.json');
+              });
             };
 
             $scope.testMergeQR2LForms = function() {
               // use the first form
-              var fhirData = qr;
-              var formData = angular.copy(FHTData);
+              $scope.getFhirResource(getFHIRVersion(), 'fhir-sdc-response-ussgfht.json').then(function (fhirData) {
+                var formData = angular.copy(FHTData);
 
-              var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                'QuestionnaireResponse', fhirData, angular.copy(FHTData),
-                getFHIRVersion());
-              mergedFormData = new LForms.LFormsData(mergedFormData);
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'QuestionnaireResponse', fhirData, angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
 
-              $scope.lfData2 = mergedFormData;
-              $scope.lfOption2 = {
-                useAnimation: !window._INTESTING_
-              };
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': fhir-sdc-response-ussgfht.json');
+              });
             };
 
             $scope.testSearchOnFHIRServer = function() {
@@ -514,18 +522,18 @@
                   );
                   break;
                 case 'questCodeIssues':
-                  $.getJSON('/data/4712701.json', function(data) {
+                  $scope.getFhirResource(getFHIRVersion(), '4712701.json').then(function (data) {
                     try {
                       var lformsFormat = getFHIR().SDC.convertQuestionnaireToLForms(data);
                       $scope.lfData2 = new LForms.LFormsData(lformsFormat);
                       $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
-                      $scope.$apply();
+                      //$scope.$apply();
                     }
                     catch(e) {
                       window.alert(e);
                       console.error(e);
                     }
-                  }).fail(function() {
+                  }, function (err) {
                     window.alert('Unable to load form');
                   });
                   break;
@@ -533,6 +541,24 @@
 
               $scope.lfData2 = lfData2;
               $scope.lfOption2 = lfOption2;
+            };
+
+
+            $scope.getFhirResource = function(version, name) {
+              var deferred = $q.defer();
+              if(!$scope.fhirResCache[version+name]) {
+                $http.get('fhir-data/'+version+'/'+name).then(function (resp) {
+                  $scope.fhirResCache[version+name] = resp.data;
+                  deferred.resolve(resp.data);
+                }, function (err) {
+                  console.error(err);
+                  deferred.reject(err);
+                })
+              }
+              else {
+                deferred.resolve($scope.fhirResCache[version+name]);
+              }
+              return deferred.promise;
             };
           }]);
 

@@ -24,6 +24,8 @@ module.exports = function(config) {
       'app/scripts/fhir/versions.js',
       'app/scripts/fhir/*/lformsFHIR.js',
       'test/mocha/*.js',
+      'test/data/R4/*.js',
+      'test/data/STU3/*.js',
       'app/data/test-data.js'
     ],
 
