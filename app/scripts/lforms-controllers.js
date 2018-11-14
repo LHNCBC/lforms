@@ -558,7 +558,6 @@ angular.module('lformsWidget')
               // Set up a watch on _asyncLoadCounter, so we can run FHIRPath
               // expressions when needed resources have finished loading.
               $scope.$watch("lfData._asyncLoadCounter", function() {
-  console.log("%%% In watch on _asyncLoadCounter");
                 if ($scope.lfData._asyncLoadCounter === 0) {
                   $scope.lfData.runCalculatedExpressions();
                 }

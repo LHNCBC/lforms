@@ -350,7 +350,6 @@ if (typeof LForms === 'undefined')
      *  Runs any calculated expressions.
      */
     runCalculatedExpressions: function() {
-      console.trace();
       var lfData = this;
       if (lfData.hasFHIRPath && LForms.FHIR) {
         var fhir = LForms.FHIR[lfData.fhirVersion];
@@ -363,12 +362,8 @@ if (typeof LForms === 'undefined')
               item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
             if (!questResp)
               questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-console.log("%%%% lfData._fhirpathVars=");
-console.log(lfData._fhirpathVars);
             var fhirPathVal = fhir.fhirpath.evaluate(questResp,
               item._calculatedExprExt.valueExpression.expression, lfData._fhirpathVars);
-console.log("%%% for " +item._calculatedExprExt.valueExpression.expression+" got ");
-console.log(fhirPathVal)
             this._setItemValueFromFHIRPath(item, fhirPathVal);
           }
         }

@@ -189,7 +189,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert to SDC Questionnaire with extensions', function() {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
 
-            assert.equal(fhirQ.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire");
+            assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
             assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs");
             assert.equal(fhirQ.item[0].item[1].extension[1].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
 
@@ -261,7 +261,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert to SDC Questionnaire with extensions', function() {
             var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
 
-            assert.equal(fhirQR.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse");
+            assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
 
           });
 

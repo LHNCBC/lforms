@@ -18955,7 +18955,11 @@ __webpack_require__.r(__webpack_exports__);
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
+var sdcVersion = '2.0';
 var sdcExport = {
+  SDCVersion: sdcVersion,
+  QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|' + sdcVersion,
+  QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|' + sdcVersion,
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
     "SECTION": 'group',
@@ -19065,7 +19069,7 @@ var sdcExport = {
 
     if (!noExtensions) {
       target.meta = {
-        "profile": ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"]
+        "profile": [this.QProfile]
       };
     } // title
 
@@ -19536,7 +19540,7 @@ var sdcExport = {
 
     if (!noExtensions) {
       target.meta = {
-        "profile": ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse"]
+        "profile": [this.QRProfile]
       };
     }
   },

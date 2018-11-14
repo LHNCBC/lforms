@@ -1,4 +1,6 @@
-var tp = require('./lforms_testpage.po.js');
+var fhirVersion = 'R4';
+
+var tp = require('../lforms_testpage.po.js');
 describe('Form pre-population', function() {
   it('should be possible to pull in data from a FHIR context', function() {
     tp.openBaseTestPage();
@@ -19,9 +21,18 @@ describe('Form pre-population', function() {
       }});
     });
     tp.loadFromTestData('ussg-fhp.json', 'R4');
-    browser.sleep(30000);
     expect(tp.USSGFHTVertical.name.getAttribute('value')).toBe("John Smith");
     expect(tp.USSGFHTVertical.dob.getAttribute('value')).toBe("12/10/1990");
     // expect(tp.USSGFHTVertical.gender.getAttribute('value')).toBe("Male"); // TBD
+  });
+
+  it('should be possible to get a Questionnaire back with launchContext', function() {
+    var launchContextExt = browser.executeScript(function(fhirVersion) {
+      var q2Data = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion);
+      return LForms.Util.findObjectInArray(q2Data.extension, 'url',
+        "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
+        0);
+    }, fhirVersion);
+    expect(launchContextExt).not.toBeNull();
   });
 });

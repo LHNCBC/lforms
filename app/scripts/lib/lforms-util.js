@@ -273,17 +273,20 @@ LForms.Util = {
           fhirVersion = match[1];
         else {
           match = profiles[i].match(sdcPattern);
-          if (match)
+          if (match) {
             fhirVersion = match[1];
+            if (fhirVersion == '2.0')
+              fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+          }
         }
       }
     }
     if (fhirVersion) {
       fhirVersion = parseFloat(fhirVersion);
       // See http://build.fhir.org/versioning.html#mp-version
-      if (fhirVersion == 3.0)
+      if (fhirVersion == '3.0')
         fhirVersion = 'STU3';
-      else if (3.2 <= fhirVersion && fhirVersion < '4.1')
+      else if (3.2 <= fhirVersion && fhirVersion < 4.1)
         fhirVersion = 'R4';
     }
     else {
