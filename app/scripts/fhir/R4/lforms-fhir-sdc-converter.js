@@ -212,20 +212,23 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processAnswers(lfItem, qItem) {
-    if(qItem.option) {
+    if(qItem.answerOption) {
       lfItem.answers = [];
-      for(var i = 0; i < qItem.option.length; i++) {
+      for(var i = 0; i < qItem.answerOption.length; i++) {
         var answer = {};
-        var label = LForms.Util.findObjectInArray(qItem.option[i].extension, 'url', self.fhirExtUrlOptionPrefix);
+        var label = LForms.Util.findObjectInArray(qItem.answerOption[i].extension, 'url', self.fhirExtUrlOptionPrefix);
         if(label) {
           answer.label = label.valueString;
         }
-        var score = LForms.Util.findObjectInArray(qItem.option[i].modifierExtension, 'url', self.fhirExtUrlOptionScore);
+        var score = LForms.Util.findObjectInArray(qItem.answerOption[i].modifierExtension, 'url', self.fhirExtUrlOptionScore);
         if(score) {
           answer.score = score.valueInteger.toString();
         }
-        answer.code = qItem.option[i].valueCoding.code;
-        answer.text = qItem.option[i].valueCoding.display;
+        if(qItem.answerOption[i].valueCoding.system) {
+          qItem.answerCodeSystem = qItem.answerOption[i].valueCoding.system;
+        }
+        answer.code = qItem.answerOption[i].valueCoding.code;
+        answer.text = qItem.answerOption[i].valueCoding.display;
         lfItem.answers.push(answer);
       }
     }

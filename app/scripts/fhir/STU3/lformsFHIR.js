@@ -19655,10 +19655,14 @@ var sdcExport = {
 
 
       option.valueCoding = {
-        "system": "http://loinc.org",
         "code": answer.code,
         "display": answer.text
       };
+
+      if (item.answerCodeSystem) {
+        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+      }
+
       optionArray.push(option);
     }
 

@@ -1,6 +1,3 @@
-// USSG-FHT user data in FHIR SDC QuestionnaireResponse format
-// Used for a test that merges it back to the USSG-FHT LForms form
-var qr =
     {
       "resourceType": "QuestionnaireResponse",
       "identifier": {
@@ -209,4 +206,4 @@ var qr =
           ]
         }
       ]
-    };
+    }

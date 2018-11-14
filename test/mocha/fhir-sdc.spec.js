@@ -35,43 +35,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should covert an item with CNE data type', function () {
-            var item = {
-              "questionCode": "54131-8",
-              "questionCardinality": {"min": "1", "max": "1"},
-              "question": "Gender",
-              "answers": [
-                {"text": "Male", "code": "LA2-8"},
-                {"text": "Female", "code": "LA3-6"},
-                {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
-              ],
-              "answerCardinality": {"min": "1", "max": "1"},
-              "dataType": "CNE",
-              "questionCodeSystem":"LOINC",
-              "_codePath": "/54126-8/54131-8",
-              "_idPath": "/1/1"
-            };
-            var out = fhir.SDC._processItem(item, {});
-            assert.equal(out.required, undefined);
-            assert.equal(out.repeats, undefined);
-            assert.equal(out.linkId, "/54126-8/54131-8");
-            assert.equal(out.text, "Gender");
-            assert.equal(out.type, "choice");
-            assert.equal(out.code[0].system,"http://loinc.org");
-            assert.equal(out.code[0].code,"54131-8");
-            assert.equal(out.option.length, 3);
-            assert.equal(out.option[0].valueCoding.system,"http://loinc.org");
-            assert.equal(out.option[0].valueCoding.code,"LA2-8");
-            assert.equal(out.option[0].valueCoding.display,"Male");
-            assert.equal(out.option[1].valueCoding.system,"http://loinc.org");
-            assert.equal(out.option[1].valueCoding.code,"LA3-6");
-            assert.equal(out.option[1].valueCoding.display,"Female");
-            assert.equal(out.option[2].valueCoding.system,"http://loinc.org");
-            assert.equal(out.option[2].valueCoding.code,"LA46-8");
-            assert.equal(out.option[2].valueCoding.display,"Other");
+          it('should convert an item with CNE data type without answerCodeSystem', function () {
+            var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
+            var out = fhir.SDC._processItem(cneFixture.input, {});
+            assert.deepEqual(out, cneFixture.output);
           });
 
-          it('should covert an item with SECTION data type, with skip logic and sub items', function () {
+          it('should covert an item with answerCodeSystem', function () {
+            var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
+            var out = fhir.SDC._processItem(alFixture.input, {});
+            assert.deepEqual(out, alFixture.output);
+          });
+
+          it('should convert an item with SECTION data type, with skip logic and sub items', function () {
             var item = {
               "questionCode": "54137-5X",
               "questionCardinality": {"min": "1", "max": "*"},

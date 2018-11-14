@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.3.0] 2018-11-08
+### Added.
+- Added support for answerValueSet and answerOption in R4. 
+### Changed
+- Separated test suites and fixtures for R4 and STU3 versions.
+### Fixed.
+- Removed hard coding of loinc code system in answerOption/option valueCoding 
+object.
+
 ## [13.2.0] 2018-10-24
 ### Added
 - LForms.Util.addFormToPage can now accept a form defintion object as its first
