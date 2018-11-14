@@ -124,7 +124,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         describe('Questionnaire to lforms item conversion', function () {
           it('should convert FHTData to lforms', function () {
-            var fhirQ = LForms.Util.convertLFormsToFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
@@ -185,7 +185,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert restrictions', function () {
-            var fhirQ = LForms.Util.convertLFormsToFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
             assert.equal(convertedLfData.items.length, 33);
@@ -283,14 +283,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         describe('LForms data to QuestionnaireResponse conversion', function() {
 
           it('should convert to SDC Questionnaire with extensions', function() {
-            var fhirQR = LForms.Util.convertLFormsToFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+            var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
 
             assert.equal(fhirQR.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse");
 
           });
 
           it('should convert to standard QuestionnaireResponse without any extensions', function() {
-            var fhirQR = LForms.Util.convertLFormsToFHIRData(
+            var fhirQR = LForms.Util.getFormFHIRData(
               'QuestionnaireResponse', fhirVersion, angular.copy(FHTData),
               {noExtensions: true});
 

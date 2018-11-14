@@ -320,14 +320,43 @@ var TestPage = function() {
 
 
     /**
-     *  Loads a from from a JSON file on disk.
-     * @param filepath the path to the form definition file.
+     *  Selects a FHIR version.
+     * @param version the FHIR version to use.
      */
-    loadFromDisk: function(filepath) {
+    setFHIRVersion: function(version) {
+      let fhirVersionField = $('#fhirVersion');
+      this.clearField(fhirVersionField);
+      fhirVersionField.click();
+      fhirVersionField.sendKeys(version);
+      fhirVersionField.sendKeys(protractor.Key.TAB);
+    },
+
+
+    /**
+     *  Loads a
+
+
+    /**
+     *  Loads a from from a JSON form definition file from the test/data
+     *  directory, and displays the form.
+     * @param filepath the path to the form definition file, relative to
+     *  test/data/fhirVersion (or just test/data if fhirVersion is not
+     *  provided.)
+     * @param fhirVersion (optional) the version of FHIR to use.
+     */
+    loadFromTestData: function(filepath, fhirVersion) {
+      let pathParts = [__dirname, '../../data/']
+      if (fhirVersion) {
+        this.setFHIRVersion(fhirVersion);
+        pathParts.push(fhirVersion);
+      }
+      pathParts.push(filepath);
+
       // Temporarily unhide the file input element.
       let fileInput = $('#fileAnchor');
+      let testFile = require('path').join(...pathParts);
       browser.executeScript("$('#fileAnchor')[0].className = ''");
-      fileInput.sendKeys(filepath);
+      fileInput.sendKeys(testFile);
       // Re-hide the file input element
       browser.executeScript("$('#fileAnchor')[0].className = 'hide'");
     }

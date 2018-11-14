@@ -1,8 +1,5 @@
 /**
- * A package to handle conversion from FHIR SDC (STU2) Questionnaire to LForms
- * STU2 Ballot:
- * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
- * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
+ * A package to handle conversion from FHIR SDC Questionnaire to LForms
  *
  * It provides the following functions:
  * convertQuestionnaireToLForms()
@@ -77,6 +74,9 @@ function addSDCImportFns(ns) {
     if(questionnaire.id) {
       lfData.id = questionnaire.id;
     }
+
+    // These FHIR Extensions will just store as is on the LFormsData object.
+    lfData.fhirExtensions = questionnaire.extension;
   }
 
 

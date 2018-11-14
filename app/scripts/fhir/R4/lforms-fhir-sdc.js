@@ -139,6 +139,7 @@ var sdcExport = {
           "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
         ]
       };
+     // target.extension = lfData.fhirExtensions;
     }
 
     // title

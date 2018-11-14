@@ -177,15 +177,53 @@ if (typeof LForms === 'undefined')
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
       this.answerLists = data.answerLists;
       this.copyrightNotice = data.copyrightNotice;
-      this.fhirVersion = data.fhirVersion;
 
       // when the skip logic rule says the form is done
       this._formDone = false;
+
+      if (LForms.FHIR)
+        this._initializeFormFHIRData(data);
 
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
       this._initializeInternalData();
 
+    },
+
+    /**
+     *  Initializes form-level FHIR data.
+     * @param an LForms form definition object (or LFormsData).
+     */
+    _initializeFormFHIRData: function(data) {
+      var lfData = this;
+      this._asyncLoadCounter = 0;
+      this.fhirVersion = data.fhirVersion;
+      this._fhirpathVars = {};
+      this.fhirExtensions = data.fhirExtensions;
+      if (LForms.fhirContext) {
+        var contextItems = LForms.Util.findObjectInArray(this.fhirExtensions, 'url',
+          "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
+        for (var i=0, len=contextItems.length; i<len; ++i) {
+          var contextItemExt = contextItems[i].extension;
+          var name;
+          var typeList = [];
+          for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
+            var fieldExt = contextItemExt[j];
+            if (!name && fieldExt.url === 'name')
+              name = fieldExt.valueId;
+            else if (fieldExt.url === 'type')
+              typeList.push(fieldExt.valueCode)
+          }
+          if (name && typeList.length > 0) {
+            this._asyncLoadCounter++;
+            LForms.fhirContext.getCurrent(typeList, function(resource) {
+              lfData._asyncLoadCounter--;
+              if (resource)
+                lfData._fhirpathVars[name] = resource;
+            });
+          }
+        }
+      }
     },
 
 
@@ -312,6 +350,7 @@ if (typeof LForms === 'undefined')
      *  Runs any calculated expressions.
      */
     runCalculatedExpressions: function() {
+      console.trace();
       var lfData = this;
       if (lfData.hasFHIRPath && LForms.FHIR) {
         var fhir = LForms.FHIR[lfData.fhirVersion];
@@ -324,10 +363,38 @@ if (typeof LForms === 'undefined')
               item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
             if (!questResp)
               questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-            item.value = fhir.fhirpath.evaluate(questResp,
-              item._calculatedExprExt.valueExpression.expression);
+console.log("%%%% lfData._fhirpathVars=");
+console.log(lfData._fhirpathVars);
+            var fhirPathVal = fhir.fhirpath.evaluate(questResp,
+              item._calculatedExprExt.valueExpression.expression, lfData._fhirpathVars);
+console.log("%%% for " +item._calculatedExprExt.valueExpression.expression+" got ");
+console.log(fhirPathVal)
+            this._setItemValueFromFHIRPath(item, fhirPathVal);
           }
         }
+      }
+    },
+
+
+    /**
+     *  Assigns the given FHIRPath result to the given item.
+     * @param item the item from the LFormsData object that is receiving the new
+     *  value.
+     * @param fhirPathRes the result of a FHIRPath evaluation.
+     */
+    _setItemValueFromFHIRPath: function(item, fhirPathRes) {
+      var fhirPathVal = fhirPathRes[0];
+      if (!fhirPathVal)
+        item.value = undefined;
+      else {
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+          var d = new Date(fhirPathRes);
+          // Convert to local time, so the date does not get shifted for negative
+          // local timezones.
+          item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        }
+        else
+          item.value = fhirPathRes; // TBD: handle other types - Coding, etc.
       }
     },
 

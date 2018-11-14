@@ -28,7 +28,7 @@
     "Person"
   ],
   "extension": [{
-    "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-context",
+    "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
     "extension" : [{
       "url" : "name",
       "valueId" : "patient"
@@ -1181,6 +1181,14 @@
                   }
                 ],
                 "text": "Combo-box"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "Gender from patient resource",
+                "language" : "text/fhirpath",
+                "expression": "%patient.gender"
               }
             }
           ],
