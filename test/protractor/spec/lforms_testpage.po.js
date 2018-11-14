@@ -333,10 +333,6 @@ var TestPage = function() {
 
 
     /**
-     *  Loads a
-
-
-    /**
      *  Loads a from from a JSON form definition file from the test/data
      *  directory, and displays the form.
      * @param filepath the path to the form definition file, relative to
