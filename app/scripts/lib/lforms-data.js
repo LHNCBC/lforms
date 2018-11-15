@@ -164,7 +164,7 @@ if (typeof LForms === 'undefined')
      * Constructor
      * @param data the lforms form definition data
      */
-    init: function(data) {
+    init: function(data, asyncChangeListener) {
 
       this.items = data.items;
       this.code = data.code;
@@ -189,6 +189,31 @@ if (typeof LForms === 'undefined')
       this._initializeInternalData();
 
     },
+
+
+    /**
+     *  Registers a callback for use if the rendering of the form
+     *  requires the asynchronous operations (e.g. the loading of external
+     *  resources) which could affect the content.  Potentially, the function could
+     *  be called more than once, or after a related group of resources have
+     *  completed loading.
+     */
+    addAsyncChangeListener: function(listener) {
+      if (!this._asyncChangeListeners)
+        this._asyncChangeListeners = [];
+      this._asyncChangeListeners.push(listener);
+    },
+
+    /**
+     *  Calls the listeners registered via addAsyncChangeListener.
+     */
+    _notifyAsyncChangeListeners: function() {
+      if (this._asyncChangeListeners) {
+        for (var i=0, len=this._asyncChangeListeners.length; i<len; ++i)
+          this._asyncChangeListeners[i]();
+      }
+    },
+
 
     /**
      *  Initializes form-level FHIR data.
@@ -220,6 +245,8 @@ if (typeof LForms === 'undefined')
               lfData._asyncLoadCounter--;
               if (resource)
                 lfData._fhirpathVars[name] = resource;
+              if (lfData._asyncLoadCounter === 0)
+                lfData._notifyAsyncChangeListeners()
             });
           }
         }

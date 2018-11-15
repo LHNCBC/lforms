@@ -521,13 +521,15 @@ angular.module('lformsWidget')
          * then re-enable animation and validations when the form is loaded
          */
         $scope.$watch("lfData", function() { // or watch on function() {return $scope.lfData;}
+          var lfData = $scope.lfData;
+
           // disable animation
           lformsConfig.disableAnimate();
           // re-enable animation after the form is loaded
-          if ($scope.lfData && $scope.lfData.templateOptions && $scope.lfData.templateOptions.useAnimation) {
+          if (lfData && lfData.templateOptions && lfData.templateOptions.useAnimation) {
             $timeout(function () {
               // the templateOptions might be changed again after the $timeout was set
-              if ($scope.lfData && $scope.lfData.templateOptions && $scope.lfData.templateOptions.useAnimation) {
+              if (lfData && lfData.templateOptions && lfData.templateOptions.useAnimation) {
                 lformsConfig.enableAnimate();
               }
             }, 1);
@@ -538,33 +540,56 @@ angular.module('lformsWidget')
           // large forms) check on the whole of the form data for the need to
           // run FHIRPath.
           if (LForms.FHIR) {
-            if ($scope.lfData && $scope.lfData.hasFHIRPath && !$scope.unwatchFHIRPath) {
+            if (lfData && lfData.hasFHIRPath) {
+
+              // Watch for changes that require FHIRPath to run
+              if ($scope.unwatchFHIRPath)
+                $scope.unwatchFHIRPath();
               $scope.unwatchFHIRPath = $scope.$watch(function() {
-                return JSON.stringify($scope.lfData, function(key, val) {
+                return JSON.stringify(lfData, function(key, val) {
                   // Ignore changes to internal variables and $$hashKey
                   return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
                 });
               }, function() {
-                if ($scope.lfData)
-                  $scope.lfData.runCalculatedExpressions();
+                if (lfData)
+                  lfData.runCalculatedExpressions();
               });
-            }
-            else if (!($scope.lfData && $scope.lfData.hasFHIRPath) && $scope.unwatchFHIRPath) {
-              $scope.unwatchFHIRPath(); // stop watching because it is no longer needed
-              $scope.unwatchFHIRPath = null;
-            }
 
-            if ($scope.lfData) {
+              // Set up a listener for asynchronous change events (triggered by
+              // lfData itself).
+              if (!lfData._controllerInit) {
+                lfData.addAsyncChangeListener(function() {
+                  $scope.$digest(); // forces watches to run again
+                });
+              }
+
               // Set up a watch on _asyncLoadCounter, so we can run FHIRPath
               // expressions when needed resources have finished loading.
-              $scope.$watch("lfData._asyncLoadCounter", function() {
-                if ($scope.lfData._asyncLoadCounter === 0) {
-                  $scope.lfData.runCalculatedExpressions();
+              if ($scope.unwatchAsync)
+                $scope.unwatchAsync();
+              $scope.unwatchAsync = $scope.$watch("lfData._asyncLoadCounter", function() {
+                if (lfData._asyncLoadCounter === 0) {
+                  lfData.runCalculatedExpressions();
                 }
               });
+
+              // Angular calls this twice for the same lfData.  Set a flag.
+              // Note:  For some reason the watches still need to be set up both times.
+              lfData._controllerInit = true;
+            }
+            else { // !(lfData && $scope.lfData.hasFHIRPath)
+              if ($scope.unwatchFHIRPath) {
+                $scope.unwatchFHIRPath(); // stop watching because it is no longer needed
+                $scope.unwatchFHIRPath = null;
+              }
+              if ($scope.unwatchAsync) {
+                $scope.unwatchAsync();
+                $scope.unwatchAsync = null;
+              }
             }
           }
         });
+
 
         /**
          * Check skip logic, formulas and data controls when the source item changes.
