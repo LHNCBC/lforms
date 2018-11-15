@@ -282,9 +282,9 @@ LForms.Util = {
       }
     }
     if (fhirVersion) {
-      fhirVersion = parseFloat(fhirVersion);
+      fhirVersion = parseFloat(fhirVersion); // converts '3.0.1' to 3.0
       // See http://build.fhir.org/versioning.html#mp-version
-      if (fhirVersion == '3.0')
+      if (fhirVersion == 3.0)
         fhirVersion = 'STU3';
       else if (3.2 <= fhirVersion && fhirVersion < 4.1)
         fhirVersion = 'R4';
@@ -428,7 +428,7 @@ LForms.Util = {
    * @param all - If true, then an array will be returned containing all
    *  matches.
    *
-   * @returns {*} - If "all" is false (default), then this returns the matched
+   * @returns {*} - If "all" is false (default), then this returns the first matched
    *  object, or null if none matched.  If "all" is true, then this will return
    *  an array containing any matched objects.
    */
