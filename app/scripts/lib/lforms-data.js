@@ -164,7 +164,7 @@ if (typeof LForms === 'undefined')
      * Constructor
      * @param data the lforms form definition data
      */
-    init: function(data, asyncChangeListener) {
+    init: function(data) {
 
       this.items = data.items;
       this.code = data.code;
@@ -410,13 +410,13 @@ if (typeof LForms === 'undefined')
         item.value = undefined;
       else {
         if (item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathRes);
+          var d = new Date(fhirPathVal);
           // Convert to local time, so the date does not get shifted for negative
           // local timezones.
           item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
         }
         else
-          item.value = fhirPathRes; // TBD: handle other types - Coding, etc.
+          item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
       }
     },
 
