@@ -168,7 +168,7 @@ var datetime = __webpack_require__(65);
 var logic = __webpack_require__(66); // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
-//   function accepts value of this type or empty value {} 
+//   function accepts value of this type or empty value {}
 // * nullable - means propagate empty result, i.e. instead
 //   calling function if one of params is  empty return empty
 
@@ -522,6 +522,14 @@ engine.TermExpression = function (ctx, parentData, node) {
   return engine.doEval(ctx, parentData, node.children[0]);
 };
 
+engine.ExternalConstantTerm = function (ctx, parentData, node) {
+  var extConstant = node.children[0];
+  var identifier = extConstant.children[0];
+  var varName = engine.Identifier(ctx, parentData, identifier)[0];
+  var value = ctx.vars[varName];
+  return value === undefined ? [] : [value];
+};
+
 engine.LiteralTerm = function (ctx, parentData, node) {
   var term = node.children[0];
 
@@ -842,6 +850,7 @@ engine.ParenthesizedTerm = function (ctx, parentData, node) {
 };
 
 engine.evalTable = {
+  // not every evaluator is listed if they are defined on engine
   BooleanLiteral: engine.BooleanLiteral,
   EqualityExpression: engine.OpExpression,
   FunctionInvocation: engine.FunctionInvocation,
@@ -874,7 +883,7 @@ engine.evalTable = {
 };
 
 engine.doEval = function (ctx, parentData, node) {
-  var evaluator = engine.evalTable[node.type];
+  var evaluator = engine.evalTable[node.type] || engine[node.type];
 
   if (evaluator) {
     return evaluator.call(engine, ctx, parentData, node);
@@ -889,24 +898,40 @@ var parse = function parse(path) {
 /**
  *  Applies the given parsed FHIRPath expression to the given resource,
  *  returning the result of doEval.
+ * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
+ * @param {string} parsedPath - fhirpath expression, sample 'Patient.name.given'
+ * @param {object} context - a hash of variable name/value pairs.
  */
 
 
-function applyParsedPath(resource, parsedPath) {
-  var dataRoot = util.arraify(resource);
-  return engine.doEval({
-    dataRoot: dataRoot
-  }, dataRoot, parsedPath.children[0]);
+function applyParsedPath(resource, parsedPath, context) {
+  var dataRoot = util.arraify(resource); // doEval takes a "ctx" object, and we store things in that as we parse, so we
+  // need to put user-provided variable data in a sub-object, ctx.vars.
+  // Set up default standard variables, and allow override from the variables.
+  // However, we'll keep our own copy of dataRoot for internal processing.
+
+  var vars = {
+    context: resource,
+    ucum: 'http://unitsofmeasure.org'
+  };
+  var ctx = {
+    dataRoot: dataRoot,
+    vars: Object.assign(vars, context)
+  };
+  return engine.doEval(ctx, dataRoot, parsedPath.children[0]);
 }
 /**
+ *  Evaluates the "path" FHIRPath expression on the given resource, using data
+ *  from "context" for variables mentioned in the "path" expression.
  * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
  * @param {string} path - fhirpath expression, sample 'Patient.name.given'
+ * @param {object} context - a hash of variable name/value pairs.
  */
 
 
-var evaluate = function evaluate(resource, path) {
+var evaluate = function evaluate(resource, path, context) {
   var node = parser.parse(path);
-  return applyParsedPath(resource, node);
+  return applyParsedPath(resource, node, context);
 };
 /**
  *  Returns a function that takes a resource and returns the result of
@@ -914,13 +939,14 @@ var evaluate = function evaluate(resource, path) {
  *  of this function over "evaluate" is that if you have multiple resources,
  *  the given FHIRPath expression will only be parsed once.
  * @param path the FHIRPath expression to be parsed.
+ * @param {object} context - a hash of variable name/value pairs.
  */
 
 
-var compile = function compile(path) {
+var compile = function compile(path, context) {
   var node = parse(path);
   return function (resource) {
-    return applyParsedPath(resource, node);
+    return applyParsedPath(resource, node, context);
   };
 };
 
@@ -17601,10 +17627,56 @@ function isNumber(n) {
 
 function normalizeStr(x) {
   return x.toUpperCase().replace(/\s+/, ' ');
-}
+} // Returns the number of digits in the number after the decimal point, ignoring
+// trailing zeros.
 
-function getPrecision(x) {
-  return (x.toString().split(".")[1] || "").length;
+
+function decimalPlaces(x) {
+  // Based on https://stackoverflow.com/a/9539746/360782
+  // Make sure it is a number and use the builtin number -> string.
+  var s = "" + +x;
+  var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
+  // We arbitrarily decide that Infinity is integral.
+
+  if (!match) {
+    return 0;
+  } // Count the number of digits in the fraction and subtract the
+  // exponent to simulate moving the decimal point left by exponent places.
+  // 1.234e+2 has 1 fraction digit and '234'.length -  2 == 1
+  // 1.234e-2 has 5 fraction digit and '234'.length - -2 == 5
+  //var wholeNum = match[1];
+
+
+  var fraction = match[2];
+  var exponent = match[3];
+  return Math.max(0, // lower limit.
+  (fraction == '0' ? 0 : (fraction || '').length) - ( // fraction length
+  exponent || 0)); // exponent
+}
+/**
+ *  The smallest representable number in FHIRPath.
+ */
+
+
+var PRECISION_STEP = 1e-8;
+/**
+ *  Rounds a number to the nearest multiple of PRECISION_STEP.
+ */
+
+function roundToMaxPrecision(x) {
+  return Math.round(x / PRECISION_STEP) * PRECISION_STEP;
+}
+/**
+ *  Rounds a number to the specified number of decimal places.
+ * @param x the decimal number to be rounded
+ * @param n the (maximum) number of decimal places to preserve.  (The result
+ *  could contain fewer if the decimal digits in x contain zeros).
+ */
+
+
+function roundToDecimalPlaces(x, n) {
+  var scale = Math.pow(10, n);
+  return Math.round(x * scale) / scale;
 }
 
 var deepEqual = function deepEqual(actual, expected, opts) {
@@ -17614,21 +17686,33 @@ var deepEqual = function deepEqual(actual, expected, opts) {
     return true;
   }
 
-  if (opts.fuzzy && isString(actual) && isString(expected)) {
-    return normalizeStr(actual) == normalizeStr(expected);
-  }
+  if (opts.fuzzy) {
+    if (isString(actual) && isString(expected)) {
+      return normalizeStr(actual) == normalizeStr(expected);
+    }
 
-  if (opts.fuzzy && Number.isInteger(actual) && Number.isInteger(expected)) {
-    return actual === expected;
-  }
+    if (Number.isInteger(actual) && Number.isInteger(expected)) {
+      return actual === expected;
+    }
 
-  if (opts.fuzzy && isNumber(actual) && isNumber(expected)) {
-    var prec = Math.min(getPrecision(actual), getPrecision(expected));
+    if (isNumber(actual) && isNumber(expected)) {
+      var prec = Math.min(decimalPlaces(actual), decimalPlaces(expected));
 
-    if (prec === 0) {
-      return Math.round(actual) === Math.round(expected);
-    } else {
-      return Number.parseFloat(actual).toPrecision(prec) === Number.parseFloat(expected).toPrecision(prec);
+      if (prec === 0) {
+        return Math.round(actual) === Math.round(expected);
+      } else {
+        // Note: Number.parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
+        // It does # of significant digits, not decimal places.
+        return roundToDecimalPlaces(actual, prec) === roundToDecimalPlaces(expected, prec);
+      }
+    }
+  } else {
+    // !opts.fuzzy
+    // If these are numbers, they need to be rounded to the maximum supported
+    // precision to remove floating point arithmetic errors (e.g. 0.1+0.1+0.1 should
+    // equal 0.3) before comparing.
+    if (typeof actual === 'number' && typeof expected === 'number') {
+      return roundToMaxPrecision(actual) === roundToMaxPrecision(expected);
     }
   }
 
@@ -18871,7 +18955,11 @@ __webpack_require__.r(__webpack_exports__);
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
+var sdcVersion = '2.0';
 var sdcExport = {
+  SDCVersion: sdcVersion,
+  QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|' + sdcVersion,
+  QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|' + sdcVersion,
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
     "SECTION": 'group',
@@ -18981,7 +19069,7 @@ var sdcExport = {
 
     if (!noExtensions) {
       target.meta = {
-        "profile": ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"]
+        "profile": [this.QProfile]
       };
     } // title
 
@@ -19452,7 +19540,7 @@ var sdcExport = {
 
     if (!noExtensions) {
       target.meta = {
-        "profile": ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse"]
+        "profile": [this.QRProfile]
       };
     }
   },

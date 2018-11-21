@@ -2,13 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.4.0] 2018-11-14
+### Added.
+- Added support for the FHIR questionnaire-launchContext extension in R4.
+
 ## [13.3.0] 2018-11-08
 ### Added.
-- Added support for answerValueSet and answerOption in R4. 
+- Added support for answerValueSet and answerOption in R4.
 ### Changed
 - Separated test suites and fixtures for R4 and STU3 versions.
 ### Fixed.
-- Removed hard coding of loinc code system in answerOption/option valueCoding 
+- Removed hard coding of loinc code system in answerOption/option valueCoding
 object.
 
 ## [13.2.0] 2018-10-24
