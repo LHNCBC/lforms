@@ -325,7 +325,7 @@ user to save the form so it can be redisplayed later for completion or editing.<
     retrieved as <a href="https://www.hl7.org/fhir/">FHIR</a> resources, using
     the following utility method:</p>
   <pre>
-    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, element, options)</code></pre>
+    <code>LForms.Util.getFormFHIRData(resourceType, fhirVersion, formDataSource, options)</code></pre>
 
   <p>The parameters are:</p>
   <ol>
@@ -333,8 +333,10 @@ user to save the form so it can be redisplayed later for completion or editing.<
       and "QuestionnaireResponse" (SDC profile) are supported.</li>
     <li>fhirVersion - the version of FHIR being used.  Currently this should
      just be set to "STU3", though we are working on "R4".</li>
-    <li>element - optional if there is only one LForms widget on the page. The containing HTML element that includes
-      the LForms rendered form. It could be the DOM element or its id.</li>
+    <li>formDataSource - Optional.  Either the containing HTML element that
+      includes the rendered form, a CSS selector for that element, an
+      LFormsData object, or an LForms form definition (parsed).  If not
+      provided, the first LForms form found in the page will be used.</li>
     <li>options - An optional hash of other options, with the following optional keys:
       <ul>
         <li>bundleType - optional maybe be either "transaction" or "collection".
