@@ -297,18 +297,17 @@ angular.module('lformsWidget')
          */
         $scope.getItemStyle = function(item) {
           var ret = {};
-          if(item.isHidden) {
-            ret.display = 'none';
-          }
-          else {
-            if (item.displayControl && angular.isArray(item.displayControl.css)) {
-              for (var i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
-                var css = item.displayControl.css[i];
-                ret[ css.name ] = css.value;
-              }
+          if (item.displayControl && angular.isArray(item.displayControl.css)) {
+            for (var i= 0, iLen= item.displayControl.css.length; i<iLen; i++) {
+              var css = item.displayControl.css[i];
+              ret[ css.name ] = css.value;
             }
           }
 
+          if(item.isHidden) {
+            ret.display = 'none';
+          }
+// console.log('%s ======== display: %s', item.linkId, ret.display);
           return ret;
         };
 
