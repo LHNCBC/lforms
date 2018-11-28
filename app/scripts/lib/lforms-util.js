@@ -255,11 +255,12 @@ LForms.Util = {
 
   /**
    *  Attempts to detect the version of FHIR specified in the given resource.
-   *  Throws an error if it is not found or if it is not a supported version.
-   * @param fhirData a FHIR resource
-   * @return the FHIR version, if found and supported
+   * @param fhirData a FHIR resource.  Supported resource types are currently
+   *  just Questionnaire and QuestionnaireResponse.
+   * @return the FHIR version, or null if the FHIR version was not explicity
+   *  specified in the resource.
    */
-  _detectFHIRVersion: function(fhirData) {
+  detectFHIRVersion: function(fhirData) {
     var fhirVersion;
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile;
@@ -281,7 +282,9 @@ LForms.Util = {
         }
       }
     }
+    var method;
     if (fhirVersion) {
+      method = 'meta.profile';
       fhirVersion = parseFloat(fhirVersion); // converts '3.0.1' to 3.0
       // See http://build.fhir.org/versioning.html#mp-version
       if (fhirVersion == 3.0)
@@ -289,6 +292,50 @@ LForms.Util = {
       else if (3.2 <= fhirVersion && fhirVersion < 4.1)
         fhirVersion = 'R4';
     }
+    return fhirVersion;
+  },
+
+
+  /**
+   *  Looks at the structure of the given FHIR resource to determine the version
+   *  of FHIR, if possible.
+   * @param fhirData a FHIR resource.  Supported resource types are currently
+   *  just Questionnaire and QuestionnaireResponse.
+   * @return the FHIR version number (e.g. STU3), or null if the type cannot be
+   *  determined.
+   */
+  guessFHIRVersion: function(fhirData) {
+    var version = null;
+    if (fhirData.resourceType == 'Questionnaire') {
+      // See if any items have a property deleted from R4.
+      var items = [];
+      this._collectValues(fhirData, 'item', items);
+      var foundSTU3 = false;
+      for (var i=0, len=items.length; !foundSTU3 && i<len; ++i) {
+        var item = items[i];
+        foundSTU3 = item.option || item.options ||
+          (item.enableWhen && item.enableWhen.hasAnswer);
+      }
+      version = foundSTU3 ? 'STU3' : 'R4';
+    }
+    else if (fhirData.resourceType == 'QuestionnaireResponse') {
+      if (fhirData.parent)
+        version = 'STU3';
+      else {
+        // See if any items have a property deleted from R4.
+        var items = [];
+        this._collectValues(fhirData, 'item', items);
+        var foundSTU3 = false;
+        for (var i=0, len=items.length; !foundSTU3 && i<len; ++i) {
+          var item = items[i];
+          foundSTU3 = item.option || item.options ||
+            (item.enableWhen && item.enableWhen.hasAnswer);
+        }
+        version = foundSTU3 ? 'STU3' : 'R4';
+      }
+    }
+    return version;
+  },
     else {
       throw 'Could not determine the FHIR version for this resource.  '+
         'Please make sure it is specified via meta.profile (see '+
@@ -301,6 +348,35 @@ LForms.Util = {
     }
     return this._validateFHIRVersion(fhirVersion);
   },
+
+
+
+  /**
+   *  Searches the properties and sub-properties of "obj" for the given property
+   *  name, adding their values to the collectedVals array.
+   * @param obj the object to be searched.  This can be an array.
+   * @param property the property name to look for
+   * @param collectedVals an array into which to put the values found for
+   *  "property".
+   */
+  _collectValues: function(obj, property, collectedVals) {
+    if (obj instanceof array) {
+      for (var j=0, jLen=obj.length; j<jLen; ++j) {
+        this._collectValues(obj[j], property, collectedVals);
+      }
+    }
+    else if (typeof obj === "object") {
+      var keys = Object.keys(obj);
+      for (var i=0, len=keys.length; i<len; ++i) {
+        var key = keys[i];
+        var val = obj[key];
+        if (key === property)
+          collectedVals.push(val);
+        }
+        _collectValues(val, property, collectedVals);
+      }
+    }
+  }
 
 
   /**
