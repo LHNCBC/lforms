@@ -89,7 +89,7 @@
       ],
       "text": "Clothing worn during measure",
       "type": "choice",
-      "option": [
+      "answerOption": [
         {
           "valueCoding": {
             "system": "http://loinc.org",
@@ -216,7 +216,7 @@
       ],
       "text": "Bdy position with respect to gravity",
       "type": "choice",
-      "option": [
+      "answerOption": [
         {
           "valueCoding": {
             "system": "http://loinc.org",

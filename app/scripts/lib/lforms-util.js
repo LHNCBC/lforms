@@ -121,7 +121,7 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
+   * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
    * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
    *  * bundleType: optional, maybe be either "transaction" or "collection".
@@ -137,7 +137,7 @@ LForms.Util = {
   _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
     if (!(formData instanceof LForms.LFormsData))
       formData = new LForms.LFormsData(formData);
-    var version = this._validateFHIRVersion(fhirVersion);
+    var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
@@ -175,7 +175,7 @@ LForms.Util = {
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
     var rtn = null;
     if (fhirData) {
-      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      fhirVersion = this.requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
     }
@@ -199,7 +199,7 @@ LForms.Util = {
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
-      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      fhirVersion = this.requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
@@ -211,6 +211,29 @@ LForms.Util = {
       }
     }
     return formData;
+  },
+
+
+  /**
+   *  Ensures that either the given FHIR version is valid and supported, or
+   *  that a valid version can be determined from the given FHIR resource.
+   */
+  requireValidFHIRVersion: function(fhirVersion, fhirResource) {
+    if (!fhirVersion)
+      fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
+    if (!fhirVersion) {
+      throw 'Could not determine the FHIR version for this resource.  '+
+        'Please make sure it is specified via meta.profile (see '+
+        'http://build.fhir.org/versioning.html#mp-version and '+
+        'https://www.hl7.org/fhir/references.html#canonical).  '+
+        'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
+        ' (for Questionnaire version 3.5).'+
+        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
+        ' (for SDC Questionnaire version 3.5).'
+    }
+    else
+      fhirVersion =  this.validateFHIRVersion(fhirVersion);
+    return fhirVersion;
   },
 
 
@@ -242,13 +265,13 @@ LForms.Util = {
    * @version the version of FHIR that was requested
    * @return the version passed in
    */
-  _validateFHIRVersion: function(version) {
+  validateFHIRVersion: function(version) {
     if (LForms.Util.FHIRSupport[version]) {
       if (!LForms.FHIR[version])
-        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded';
+        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded.';
     }
     else
-      throw 'Version '+version+' of FHIR is not supported';
+      throw 'Version '+version+' of FHIR is not supported.';
     return version;
   },
 
@@ -309,13 +332,10 @@ LForms.Util = {
     if (fhirData.resourceType == 'Questionnaire') {
       // See if any items have a property deleted from R4.
       var items = [];
-      this._collectValues(fhirData, 'item', items);
-      var foundSTU3 = false;
-      for (var i=0, len=items.length; !foundSTU3 && i<len; ++i) {
-        var item = items[i];
-        foundSTU3 = item.option || item.options ||
-          (item.enableWhen && item.enableWhen.hasAnswer);
-      }
+      var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
+        return !!(item.option || item.options ||
+          (item.enableWhen && 'hasAnswer' in item.enableWhen));
+      });
       version = foundSTU3 ? 'STU3' : 'R4';
     }
     else if (fhirData.resourceType == 'QuestionnaireResponse') {
@@ -323,60 +343,51 @@ LForms.Util = {
         version = 'STU3';
       else {
         // See if any items have a property deleted from R4.
-        var items = [];
-        this._collectValues(fhirData, 'item', items);
-        var foundSTU3 = false;
-        for (var i=0, len=items.length; !foundSTU3 && i<len; ++i) {
-          var item = items[i];
-          foundSTU3 = item.option || item.options ||
-            (item.enableWhen && item.enableWhen.hasAnswer);
-        }
+        var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
+          return !!item.subject;
+        });
         version = foundSTU3 ? 'STU3' : 'R4';
       }
     }
     return version;
   },
-    else {
-      throw 'Could not determine the FHIR version for this resource.  '+
-        'Please make sure it is specified via meta.profile (see '+
-        'http://build.fhir.org/versioning.html#mp-version and '+
-        'https://www.hl7.org/fhir/references.html#canonical).  '+
-        'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
-        ' (for Questionnaire version 3.5).'+
-        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
-        ' (for SDC Questionnaire version 3.5).'
-    }
-    return this._validateFHIRVersion(fhirVersion);
-  },
-
 
 
   /**
    *  Searches the properties and sub-properties of "obj" for the given property
-   *  name, adding their values to the collectedVals array.
+   *  name, testing their values to see if valTest returns true.
    * @param obj the object to be searched.  This can be an array.
    * @param property the property name to look for
-   * @param collectedVals an array into which to put the values found for
-   *  "property".
+   * @param testVal the function to use to test the property values.  This
+   *  should return true if the value passes the test.
+   * @return true if at least one value was found found whose key was "property"
+   *  and for which testVal returned true.
    */
-  _collectValues: function(obj, property, collectedVals) {
-    if (obj instanceof array) {
-      for (var j=0, jLen=obj.length; j<jLen; ++j) {
-        this._collectValues(obj[j], property, collectedVals);
-      }
+  _testValues: function(obj, property, valTest) {
+    var rtn = false;
+    if (obj instanceof Array) {
+      for (var j=0, jLen=obj.length; !rtn && j<jLen; ++j)
+        rtn = this._testValues(obj[j], property, valTest);
     }
     else if (typeof obj === "object") {
       var keys = Object.keys(obj);
-      for (var i=0, len=keys.length; i<len; ++i) {
+      for (var i=0, len=keys.length; !rtn && i<len; ++i) {
         var key = keys[i];
         var val = obj[key];
-        if (key === property)
-          collectedVals.push(val);
+        if (key === property) {
+          if (val instanceof Array) {
+            for (var k=0, kLen=val.length; !rtn && k<kLen; ++k)
+              rtn = valTest(val[k]);
+          }
+          else
+            rtn = valTest(val);
         }
-        _collectValues(val, property, collectedVals);
+        if (!rtn)
+          this._testValues(val, property, valTest); // search sub-objects
       }
     }
-  }
+    return rtn;
+  },
 
 
   /**

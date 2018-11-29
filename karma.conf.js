@@ -8,6 +8,11 @@ module.exports = function(config) {
     basePath: '',
 
 
+    proxies: {
+      '/test/': '/base/test/'
+    },
+
+
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'chai'],
@@ -15,6 +20,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'test/data/**/*.json', included: false, served: true},
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
