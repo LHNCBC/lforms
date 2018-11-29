@@ -175,7 +175,7 @@ LForms.Util = {
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
     var rtn = null;
     if (fhirData) {
-      fhirVersion = this.requireValidFHIRVersion(fhirVersion, fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
     }
@@ -199,7 +199,7 @@ LForms.Util = {
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
-      fhirVersion = this.requireValidFHIRVersion(fhirVersion, fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
@@ -218,7 +218,7 @@ LForms.Util = {
    *  Ensures that either the given FHIR version is valid and supported, or
    *  that a valid version can be determined from the given FHIR resource.
    */
-  requireValidFHIRVersion: function(fhirVersion, fhirResource) {
+  _requireValidFHIRVersion: function(fhirVersion, fhirResource) {
     if (!fhirVersion)
       fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
     if (!fhirVersion) {

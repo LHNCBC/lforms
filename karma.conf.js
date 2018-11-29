@@ -7,7 +7,7 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
+    // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
     proxies: {
       '/test/': '/base/test/'
     },
