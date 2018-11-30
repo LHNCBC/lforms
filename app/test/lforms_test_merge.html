@@ -1,0 +1,599 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="/">
+
+    <title>lforms Directive Test</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- bower:css -->
+    <link rel="stylesheet" href="../bower_components/jquery-ui/themes/start/jquery-ui.min.css" />
+    <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
+    <!-- endbower -->
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
+
+    <!-- lforms directive css files -->
+    <link rel="stylesheet" href="styles/lforms.css">
+    <link rel="stylesheet" href="styles/themes.css">
+    <!-- end of lforms directive css files -->
+
+  </head>
+  <!-- Theme class needs to be on "body" for the jQuery datepicker -->
+  <body ng-app="lformsTestApp" ng-class="theme.code ? 'theme-'+theme.code : ''" ng-controller="lformsTestController">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div id="lforms-form">
+      <div class="panel panel-default">
+        <div class="panel-heading">LForms Directive Test Page</div>
+        <div class="panel-body">
+          <p><small>Select a form from the list and click the button to display the form</small></p>
+            <select id="form-list" ng-model="selectedForm" class="form-control">
+              <option value="">--- Please Select ---</option>
+              <option ng-repeat="form in testForms" value="{{form.id}}">{{form.text}}</option>
+            </select>
+          <p></p>
+          <button id="load-form-data" class="btn btn-primary" ng-click="useForm()">Load Form</button>
+          <input type="text" placeholder="FHIR Version" id="fhirVersion" />
+          <button id="change-option" class="btn btn-primary" ng-click="toggleCodingInstructionFormat()">Toggle Coding Instructions Format</button>
+          <button id="toggle-units-col" class="btn btn-primary" ng-click="toggleUnitsCol()">Hide/Show Units Column</button>
+          <button id="reset-form-with-same-data" class="btn btn-primary" ng-click="getFormDefDataAndResetForm()">Reset Form(using form data retrieved from form)</button>
+          <button id="get-hl7" class="btn btn-primary" ng-click="showHL7Segments()">Show HL7 OBR/OBX Segments</button>
+          <button id="get-fhir" class="btn btn-primary" ng-click="showFHIRResource()">Show FHIR DiagnosticReport Content</button>
+          <button id="get-fhir-bundle1" class="btn btn-primary" ng-click="showFHIRResourceBundle1()">Show FHIR DiagnosticReport in "transaction" Bundle</button>
+          <button id="get-fhir-bundle2" class="btn btn-primary" ng-click="showFHIRResourceBundle2()">Show FHIR DiagnosticReport in "collection" Bundle</button>
+          <button id="get-sdc-questionnaire" class="btn btn-primary" ng-click="showFHIRSDCQuestionnaire()">Show FHIR SDC Questionnaire</button>
+          <button id="get-questionnaire" class="btn btn-primary" ng-click="showFHIRQuestionnaire()">Show FHIR Questionnaire</button>
+          <button id="get-sdc-response" class="btn btn-primary" ng-click="showFHIRSDCResponse()">Show FHIR SDC Questionnaire Response</button>
+          <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
+          <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
+          <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
+          <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
+          <button id="merge-qn-qr" class="btn btn-primary" ng-click="testMergeQnQr2LForms()">Merge (Questionnaire, QuestionnaireResponse) to LForms (USSGFH)</button>
+          <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
+          <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
+          <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+
+        </div>
+      </div>
+
+      <div id="themeList"
+       ng-attr-style="margin-left: 1em; display: {{lfData2 ? 'block': 'none'}}">
+        <label for="theme" id="themeLabel">Theme:</label>
+        <input id="theme" autocomplete-lhc="themeList" ng-model="theme">
+      </div>
+
+      <lforms lf-data="lfData2" lf-options="lfOption2"></lforms>
+    </div>
+
+    <!-- bower:js -->
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/jquery-ui/ui/core.js"></script>
+    <script src="../bower_components/jquery-ui/ui/widget.js"></script>
+    <script src="../bower_components/jquery-ui/ui/button.js"></script>
+    <script src="../bower_components/jquery-ui/ui/dialog.js"></script>
+    <script src="../bower_components/jquery-ui/ui/datepicker.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.js"></script>
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/polyfill.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/prototype_api.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effects.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effectScroll.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/event.simulate.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/observable.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
+    <script src="../bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/dialog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/suggestionDialog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
+    <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
+    <script src="lforms.js"></script>
+    <script src="scripts/lforms-constants.js"></script>
+    <script src="scripts/lforms-config.js"></script>
+    <script src="scripts/lforms-controllers.js"></script>
+    <script src="scripts/lforms-directives.js"></script>
+    <script src="scripts/bootstrap-decorators.js"></script>
+    <script src="scripts/lib/date.js"></script>
+    <script src="scripts/lib/js-class.js"></script>
+    <script src="scripts/lib/cross_browser.js"></script>
+    <script src="scripts/lib/lforms-util.js"></script>
+    <script src="scripts/lib/polyfill.js"></script>
+    <script src="scripts/lib/lforms-hl7.js"></script>
+    <script src="scripts/lib/lforms-validate.js"></script>
+    <script src="scripts/lib/lforms-data.js"></script>
+    <script src="scripts/fhir/versions.js"></script>
+    <script src="lforms.tpl.js"></script>
+    <!-- endbower -->
+    <script src="scripts/fhir/STU3/lformsFHIR.js"></script>
+    <script src="scripts/fhir/R4/lformsFHIR.js"></script>
+    <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
+
+    <!-- test data files -->
+    <script src="data/sample-data.js"></script>
+    <script src="data/test-data.js"></script>
+    <script src="data/ri-data.js"></script>
+    <script src="../scripts/themeList.js"></script>
+    <!-- end of test data files -->
+
+    <!-- lforms-converter files -->
+    <script src="../bower_components/oboe/dist/oboe-browser.js"></script>
+    <script src="../bower_components/traverse/traverse.js"></script>
+    <script src="../bower_components/lodash/lodash.js"></script>
+    <script src="../bower_components/lforms-converter/lforms-converter.js"></script>
+    <!-- end of lforms-converter files -->
+
+    <!-- lforms test controller -->
+    <script type="text/javascript">
+
+      angular.module('lformsTestApp', ['lformsWidget', 'angularFileUpload'])
+          .controller('lformsTestController', ['$scope', '$timeout',
+            'lformsConfig', 'LF_CONSTANTS', '$q', '$http', 'FileUploader',
+            function ($scope, $timeout, lformsConfig, LF_CONSTANTS, $q, $http,
+              FileUploader) {
+
+            $scope.fhirResCache = {};
+            $scope.themeList = themeList; // see themeList.js
+
+            $scope.selectedForm = null;
+            $scope.testForms = [
+              {text: 'USSG-FHT, (with mock-up items for skip logic demo)', id: '54127-6N'},
+              {text: 'USSG-FHT, (with mock-up items for horizontal layout demo)', id: '54127-6H'},
+              {text: 'Glasgow Coma Score (with score rules)', id: '35088-4B'},
+              {text: 'Full-Featured Demo', id: 'all-in-one'},
+              {text: 'Form Builder created test form', id: 'formC'},
+              {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
+              {text: 'Form With User Data', id: 'form-with-user-data'},
+              {text: 'CDE sample form #1', id: 'cde1'},
+              {text: 'RxTerms Demo', id: 'X-001'},
+              {text: 'displayControls (answerLayout and questionLayout)', id: 'display-controls'},
+              {text: 'Matrix Layout, single selection', id: 'matrix-layout2'},
+              {text: 'Matrix Layout, multiple selections', id: 'matrix-layout'},
+              {text: "Validation Test", id: "validationTest"},
+              {text: "A form that has a question contains a question or a section", id: "question-in-question"},
+              {text: "HL7 Genetic Test Panel for Simple Variants", id: "X1000-0"},
+              {text: "HL7 Genetic Test Panel for Simple Variants (table version)", id: "X2000-0"},
+              {text: "Fields with default answers", id: "defaultAnswerTest"},
+              {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
+              {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
+              {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
+              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"},
+              {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"}
+            ];
+
+            // indirect testing of the events emitted from within the LForms widget
+            $scope.$on(LF_CONSTANTS.EVENT_REPEATING_ITEM_ADDED, function(event, eventAttr) {
+              window._emittedEvent = eventAttr;
+              console.log(eventAttr);
+            });
+
+            $scope.$on(LF_CONSTANTS.EVENT_REPEATING_ITEM_DELETED, function(event, eventAttr) {
+              window._emittedEvent = eventAttr;
+              console.log(eventAttr);
+            });
+
+            $scope.toggleCodingInstructionFormat = function() {
+              $scope.lfOption2 = {
+                allowHTMLInInstructions: !$scope.lfOption2.allowHTMLInInstructions
+              };
+            };
+
+            $scope.changeObxObr = function() {
+
+              $scope.lfOption2 = {
+
+                // obx display control has limited controls in the new design
+                columnHeaders: [
+                  null,
+                  {"name":"Values"},
+                  {"name": "Units"}
+                ],
+                formHeaderItems: [
+                  {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},
+                  {"question":"Where Done", "questionCode":"where_done", "dataType":"CWE", "answers":[{"text":"Home","code":"1"},{"text":"Hospital","code":"2"},{"text":"MD Office","code":"3"},{"text":"Lab","code":"4"},{"text":"Other","code":"5"}]}
+                ]
+              }
+            };
+
+            $scope.toggleUnitsCol = function() {
+              $scope.lfData2.templateOptions.hideUnits = !$scope.lfData2.templateOptions.hideUnits;
+            };
+
+            $scope.getFormDefDataAndResetForm = function() {
+              var formDefData = $scope.lfData2.getFormData();
+              // change a value
+              formDefData.items[0].items[0].value= 'after reset';
+              $scope.lfData2 = new LForms.LFormsData(formDefData);
+            };
+
+            $scope.showHL7Segments = function() {
+              if ($scope.lfData2) {
+                var hl7Seg = LForms.HL7.toHL7Segments($scope.lfData2);
+                console.log(hl7Seg.replace(/\r/g,'\r\n'));
+              }
+            };
+
+            function getFHIRVersion() {
+              var version = $('#fhirVersion')[0].value;
+              if (!version)
+                throw 'Please select a FHIR version';
+              return version;
+            }
+
+            function getFHIR() {
+              return LForms.FHIR[getFHIRVersion()];
+            }
+
+            $scope.showFHIRResource = function () {
+              if ($scope.lfData2) {
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion());
+                var fhirString = JSON.stringify(dr, null, 4);
+                console.log(fhirString);
+              }
+            };
+            $scope.showFHIRResourceBundle1 = function () {
+              if ($scope.lfData2) {
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "transaction"});
+                var fhirString = JSON.stringify(dr, null, 4);
+                console.log(fhirString);
+              }
+            };
+            $scope.showFHIRResourceBundle2 = function () {
+              if ($scope.lfData2) {
+                var dr = LForms.Util.getFormFHIRData('DiagnosticReport',
+                 getFHIRVersion(), null, {bundleType: "collection"});
+                var fhirString = JSON.stringify(dr, null, 4);
+                console.log(fhirString);
+              }
+            };
+
+            $scope.showFHIRSDCQuestionnaire = function () {
+              if ($scope.lfData2) {
+                var fhir = getFHIR();
+                var sdc = fhir.SDC.convertLFormsToQuestionnaire($scope.lfData2);
+                var fhirString = JSON.stringify(sdc, null, 4);
+                console.log(fhirString);
+                var convertedLforms = fhir.SDC.convertQuestionnaireToLForms(sdc);
+                convertedLforms.name = convertedLforms.name + ' (converted from FHIR Questionnaire) ';
+                $scope.lfData2 = new LForms.LFormsData(convertedLforms);
+                $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: !window._INTESTING_};
+              }
+            };
+
+            $scope.showFHIRQuestionnaire = function () {
+              if ($scope.lfData2) {
+                var sdc = getFHIR().SDC.convertLFormsToQuestionnaire($scope.lfData2, true);
+                var fhirString = JSON.stringify(sdc, null, 4);
+                console.log(fhirString);
+              }
+            };
+
+            $scope.showFHIRSDCResponse = function () {
+              if ($scope.lfData2) {
+                var sdc = getFHIR().SDC.convertLFormsToQuestionnaireResponse($scope.lfData2);
+                var fhirString = JSON.stringify(sdc, null, 4);
+                console.log(fhirString);
+              }
+            };
+
+            $scope.testMergeDR2LForms = function() {
+              // use the first form
+              $scope.getFhirResource(getFHIRVersion(),'contained-dr.json').then(function (fhirData) {
+
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'DiagnosticReport', fhirData, angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
+
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': contained-dr.json');
+              });
+            };
+
+            $scope.testMergeBundleDR2LForms = function() {
+              // use the first form
+              $scope.getFhirResource(getFHIRVersion(),'searchset-bundle-dr.json').then(function (fhirData) {
+
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'DiagnosticReport',fhirData,angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
+
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': searchset-bundle-dr.json');
+              });
+            };
+
+            $scope.testMergeQR2LForms = function() {
+              // use the first form
+              $scope.getFhirResource(getFHIRVersion(), 'fhir-sdc-response-ussgfht.json').then(function (fhirData) {
+                var formData = angular.copy(FHTData);
+
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'QuestionnaireResponse', fhirData, angular.copy(FHTData),
+                  getFHIRVersion());
+                mergedFormData = new LForms.LFormsData(mergedFormData);
+
+                $scope.lfData2 = mergedFormData;
+                $scope.lfOption2 = {
+                  useAnimation: !window._INTESTING_
+                };
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': fhir-sdc-response-ussgfht.json');
+              });
+            };
+
+            // Test loading questionnaire and a response for it, merge into a lforms.
+            $scope.testMergeQnQr2LForms = function() {
+              console.log('loading fhir-qn');
+              // first, load the questionnaire json
+              $scope.getFhirResource(getFHIRVersion(), 'fhir-valueQuantity-questionnaire.json').then(function (fhirQnData) {
+                console.log('loaded fhir-qn, loading fhir-qr');
+                // second, load the questionnaire response json
+                $scope.getFhirResource(getFHIRVersion(), 'fhir-valueQuantity-qn-response.json').then(function (fhirQnRespData) {
+                  console.log('loaded fhir-qn and fhir-qr');
+                  var xlForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, getFHIRVersion());
+                  console.log('converted fhir-qn');
+                  var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                      'QuestionnaireResponse', fhirQnRespData, xlForm, getFHIRVersion());
+                  console.log('merged in fhir-qn');
+                  mergedFormData = new LForms.LFormsData(mergedFormData);
+                  console.log('new lforms data');
+
+                  $scope.lfData2 = mergedFormData;
+                  $scope.lfOption2 = {
+                    useAnimation: !window._INTESTING_
+                  };
+                });
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': fhir-valueQuantity-questionnaire.json');
+              });
+            };
+
+            $scope.testSearchOnFHIRServer = function() {
+//              var dataURL = "http://fhirtest.uhn.ca/baseDstu3/DiagnosticReport?_id=663968&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
+              var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
+
+              $http({
+                url: dataURL,
+                method: "GET"
+              }).then(function success(response) {
+                    console.log('Succeeded');
+                    console.log(response);
+                    var fhirString = JSON.stringify(response.data, null, 4);
+                    console.log(fhirString);
+                  },
+                  function error(response) {
+                    console.log('Failed');
+                    console.log(response);
+                  });
+            };
+
+
+            // See https://github.com/nervgh/angular-file-upload/wiki/Introduction on
+            // usage of angular-file-upload.
+            $scope.uploader = new FileUploader({removeAfterUpload: true});
+
+            /**
+             * Callback after the item is selected in the file dialog.
+             *
+             * @param {Object} item - Refer to angular-file-upload for object definition.
+             *   Apart from others, it has selected file reference.
+             */
+            $scope.uploader.onAfterAddingFile = function(item) {
+              // clean up the form before assigning a new one for performance reasons related to AngularJS watches
+              $scope.lfData2 = null;
+
+              var reader = new FileReader(); // Read from local file system.
+              reader.onload = function(event) {
+                var importedData = JSON.parse(event.target.result);
+                // if the imported data is in FHIR Questionnaire format
+                if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
+                  var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
+                  $scope.lfData2 = new LFormsData(questionnaire);
+                }
+                // in the internal LForms format
+                else {
+                  $scope.lfData2 = new LFormsData(importedData);
+                }
+                $scope.$apply();
+              };
+              reader.readAsText(item._file);
+            };
+
+
+            $scope.useForm = function() {
+              var useAnimation = !window._INTESTING_;
+
+              var lfData2,
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: true,
+                    useAnimation: useAnimation
+                  };
+
+              switch ($scope.selectedForm) {
+                case '54127-6N':
+                  //'USSG-FHT, (with mock-up items for skip logic demo)'
+                  lfData2 = new LForms.LFormsData(angular.copy(FHTData));
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: false,
+                    useAnimation: useAnimation,
+                    showFormOptionPanel: true
+                  };
+                  break;
+                case 'two-totalscore':
+                  //'A Form with two TOTALSCORE fields'
+                  lfData2 = new LForms.LFormsData(angular.copy(twoTotalScore));
+                  break;
+                case '54127-6H':
+                  //'USSG-FHT, (with mock-up items for horizontal layout demo)'
+                  lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+                  break;
+                case '35088-4B':
+                  //'Glasgow Coma Score (with score rules)'
+                  lfData2 = new LForms.LFormsData(angular.copy(glasgow));
+                  break;
+                case 'validationTest':
+                  //validation test
+                  lfData2 = new LForms.LFormsData(angular.copy(validationTestForm));
+                  break;
+                case 'all-in-one':
+                  //'Full-Featured Demo'
+                  lfOption2 = {
+                    allowHTMLInInstructions: true,
+                    useAnimation: useAnimation,
+                    allowMultipleEmptyRepeatingItems: true
+                  };
+
+                  lfData2 = new LForms.LFormsData(angular.copy(allInOne));
+                  break;
+                case 'formC':
+                  //'Form Builder created test form'
+                  lfData2 = new LForms.LFormsData(angular.copy(formBuilder));
+                  break;
+                case '54580-6NEW':
+                  //'Minimum Data Set - version 3.0'
+                  lfData2 = new LForms.LFormsData(angular.copy(MDS3));
+                  break;
+                case 'form-with-user-data':
+                  //'Form With User Data'
+                  lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
+                  break;
+                case 'X-001':
+                  //'RxTerms'
+                  lfData2 = new LForms.LFormsData(angular.copy(rxTerms));
+                  break;
+                case 'display-controls':
+                  //'displayControls (answerLayout and questionLayout)'
+                  lfOption2 = {
+                    showFormOptionPanelButton: true,
+                    showItemOptionPanelButton: true,
+                    allowMultipleEmptyRepeatingItems: true
+                  };
+                  lfData2 = new LForms.LFormsData(angular.copy(displayControlsDemo));
+                  break;
+                case 'matrix-layout':
+                  //'matrix layout'
+                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout));
+                  break;
+                case 'matrix-layout2':
+                  //'matrix layout 2'
+                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout2));
+                  break;
+                case 'question-in-question':
+                  //'question/section in question'
+                  lfData2 = new LForms.LFormsData(angular.copy(questionInQuestion));
+                  break;
+                case 'X1000-0':
+                  lfOption2 = {
+                    showFormOptionPanelButton: true,
+                    showItemOptionPanelButton: true,
+                    allowMultipleEmptyRepeatingItems: true
+                  };
+                  lfData2 = new LForms.LFormsData(angular.copy(genetic));
+                  break;
+                case 'X2000-0':
+                  lfData2 = new LForms.LFormsData(angular.copy(genetic2));
+                  break;
+                case '81247-9':
+                  lfData2 = new LForms.LFormsData(angular.copy(newGenetic));
+                  break;
+                case 'defaultAnswerTest':
+                  lfData2 = new LForms.LFormsData(angular.copy(defaultAnswerForm));
+                  break;
+                case '76806-9':
+                  lfData2 = new LForms.LFormsData(angular.copy(promis));
+                  break;
+                case '74728-7':
+                  lfData2 = new LForms.LFormsData(angular.copy(vitalSign));
+                  break;
+                case 'cde1':
+                  //'CDE Sample form'
+                  var converter = new LFormsConverter();
+                  //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
+                  converter.convert("/data/cde-data.json",
+                      function(data) {
+                        $scope.lfData2 = new LForms.LFormsData(data);
+                        // hide checkboxes (and show question codes for testing)
+                        $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: useAnimation};
+                        // Or:   $scope.lfData2.setTemplateOptions({hideFormControls: true, showQuestionCode: true});
+                        $scope.$apply();
+                      },
+                      function(err) {
+                        console.log(err);
+                      }
+                  );
+                  break;
+                case 'questCodeIssues':
+                  $scope.getFhirResource(getFHIRVersion(), '4712701.json').then(function (data) {
+                    try {
+                      var lformsFormat = getFHIR().SDC.convertQuestionnaireToLForms(data);
+                      $scope.lfData2 = new LForms.LFormsData(lformsFormat);
+                      $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
+                      //$scope.$apply();
+                    }
+                    catch(e) {
+                      window.alert(e);
+                      console.error(e);
+                    }
+                  }, function (err) {
+                    window.alert('Unable to load form');
+                  });
+                  break;
+              }
+
+              $scope.lfData2 = lfData2;
+              $scope.lfOption2 = lfOption2;
+            };
+
+
+            $scope.getFhirResource = function(version, name) {
+              var deferred = $q.defer();
+              if(!$scope.fhirResCache[version+name]) {
+                $http.get('fhir-data/'+version+'/'+name).then(function (resp) {
+                  $scope.fhirResCache[version+name] = resp.data;
+                  deferred.resolve(resp.data);
+                }, function (err) {
+                  console.error(err);
+                  deferred.reject(err);
+                })
+              }
+              else {
+                deferred.resolve($scope.fhirResCache[version+name]);
+              }
+              return deferred.promise;
+            };
+          }]);
+
+       // Set up FHIR version list
+       var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
+       new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+         {matchListValue: true});
+       $('#fhirVersion')[0].value = fhirVersions[0];
+    </script>
+  </body>
+</html>

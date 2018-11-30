@@ -1,0 +1,23 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "identifier": {
+    "system": "http://loinc.org"
+  },
+  "status": "completed",
+  "authored": "2018-11-28T17:34:14-05:00",
+  "questionnaire": {
+    "reference": "Questionnaire/{{questionnaireId}}"
+  },
+  "item": [
+    {
+      "linkId": "/height",
+      "text": "Measure the patients height in m.",
+      "answer": [{"valueQuantity": {"value": 333.0}}]
+    },
+    {
+      "linkId": "/weight",
+      "text": "Measure the patients height in kg.",
+      "answer": [{"valueDecimal": 444.0}]
+    }
+  ]
+}

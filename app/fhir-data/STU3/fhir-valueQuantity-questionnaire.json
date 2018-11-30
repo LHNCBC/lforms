@@ -1,0 +1,57 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "217830",
+  "meta": {
+    "versionId": "1",
+    "lastUpdated": "2018-11-28T13:24:23.696-05:00",
+    "profile": [
+      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+    ]
+  },
+  "identifier": [
+    {
+      "system": "http://loinc.org"
+    }
+  ],
+  "version": "2.56",
+  "name": "Height and Weight for BMI",
+  "title": "Height and Weight for BMI",
+  "status": "draft",
+  "date": "2018-11-28T13:24:23-05:00",
+  "code": [
+    {
+      "system": "http://loinc.org",
+      "display": "Height and Weight for BMI"
+    }
+  ],
+  "subjectType": [
+    "Patient",
+    "Person"
+  ],
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+          "valueInteger": 1
+        }
+      ],
+      "linkId": "height",
+      "text": "Measure the patients height in m.",
+      "type": "quantity",
+      "required": true
+    },
+    {
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+          "valueInteger": 1
+        }
+      ],
+      "linkId": "weight",
+      "text": "Measure the patients height in kg.",
+      "type": "quantity",
+      "required": true
+    }
+  ]
+}
