@@ -236,6 +236,8 @@ var sdcExport = {
     // calcuatedValue
     if (item._calculatedExprExt)
       targetItem.extension.push(item._calculatedExprExt);
+    if (item._initialExprExt)
+      targetItem.extension.push(item._initialExprExt);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);

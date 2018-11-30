@@ -19152,7 +19152,8 @@ var sdcExport = {
     } // calcuatedValue
 
 
-    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
+    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
     this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
     // check restrictions
@@ -20459,7 +20460,7 @@ function addSDCImportFns(ns) {
 
     _processSkipLogic(targetItem, qItem, qResource);
 
-    _processCalculatedValue(targetItem, qItem);
+    _processCopiedItemExtensions(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
@@ -20472,18 +20473,28 @@ function addSDCImportFns(ns) {
     }
 
     return targetItem;
+  }; // A map of FHIR extensions involving Expressions to the property names on
+  // which they will be stored in LFormsData.
+
+
+  var expressionExtensions = {
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": "_calculatedExprExt",
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": "_initialExprExt"
   };
+  var expressionExtURLs = Object.keys(expressionExtensions);
   /**
-   *  Copies the calculated value expression from qItem to lfItem if it exists,
-   *  and if it is a FHIRPath expression, which is the only type we support.
+   *  Some extensions are simply copied over to the LForms data structure.
+   *  This copies those extensions from qItem to lfItem if they exist, and
+   *  LForms can support them.
+   * @param qItem an item from the Questionnaire resource
+   * @param lfItem an item from the LFormsData structure
    */
 
-
-  function _processCalculatedValue(lfItem, qItem) {
-    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
-
-    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
-      lfItem._calculatedExprExt = calcExt;
+  function _processCopiedItemExtensions(lfItem, qItem) {
+    for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
+      var url = expressionExtURLs[i];
+      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
+      if (ext && ext.valueExpression.language == "text/fhirpath") lfItem[expressionExtensions[url]] = ext;
     }
   }
   /**
