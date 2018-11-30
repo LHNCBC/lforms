@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.5.0] 2018-11-30
+### Added.
+- Added support for the questionnaire-hidden extension
+    http://hl7.org/fhir/StructureDefinition/questionnaire-hidden
+  A good test example is:
+    https://argonautproject.github.io/questionnaire/Questionnaire-questionnaire-example-asq3.html
+
 ## [13.4.0] 2018-11-14
 ### Added.
 - Added support for the FHIR questionnaire-launchContext extension in R4.
