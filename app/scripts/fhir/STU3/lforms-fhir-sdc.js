@@ -906,7 +906,21 @@ var sdcExport = {
         //   "code" : "<code>" // Coded form of the unit
         // }]
         else if (item.dataType === "QTY") {
-          // NOTE: QTY data type in LForms does not have unit. Cannot support it.
+          let floatValue = parseFloat(values[i]);
+          if(! isNaN(floatValue)) {
+            let fhirQuantity = {
+              value: floatValue
+            };
+            if(item.unit) {
+              fhirQuantity.unit = item.unit.name;
+              fhirQuantity.code = item.unit.name;
+              fhirQuantity.system = 'http://unitsofmeasure.org';
+            }
+            answer.push({valueQuantity: fhirQuantity});
+          }
+          else {
+            answer.push(null); // using null as placeholder
+          }
         }
         // make a Quantity type if numeric values has a unit value
         else if (item.unit && typeof values[i] !== 'undefined' &&
@@ -999,6 +1013,7 @@ var sdcExport = {
           item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
         targetItem[valueKey] = item.value;
       }
+      //TODO luanx2: when item.unit, should INT, REAL, ST be valueQuantity, as with _handleAnswerValues?
       // no support for reference
     }
   },
@@ -1228,10 +1243,13 @@ var sdcExport = {
 
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
+console.log('qrItemInfo: %s', JSON.stringify(qrItemInfo));
       if (qrItem) {
+console.log('Looking at qrItem: %s', JSON.stringify(qrItem));
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
           var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
+console.log('defItem: %s', JSON.stringify(defItem));
           // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
           if (this._questionRepeats(defItem)) {

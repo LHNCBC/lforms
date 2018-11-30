@@ -19796,8 +19796,27 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (item.dataType === "QTY") {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-          // make a Quantity type if numeric values has a unit value
+        else if (item.dataType === "QTY") {
+            var floatValue = parseFloat(values[i]);
+
+            if (!isNaN(floatValue)) {
+              var fhirQuantity = {
+                value: floatValue
+              };
+
+              if (item.unit) {
+                fhirQuantity.unit = item.unit.name;
+                fhirQuantity.code = item.unit.name;
+                fhirQuantity.system = 'http://unitsofmeasure.org';
+              }
+
+              answer.push({
+                valueQuantity: fhirQuantity
+              });
+            } else {
+              answer.push(null); // using null as placeholder
+            }
+          } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
               answer.push({
                 "valueQuantity": {
@@ -19876,7 +19895,8 @@ var sdcExport = {
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
             targetItem[valueKey] = item.value;
-          } // no support for reference
+          } //TODO luanx2: when item.unit, should INT, REAL, ST be valueQuantity, as with _handleAnswerValues?
+      // no support for reference
 
     }
   },
@@ -20105,13 +20125,16 @@ var sdcExport = {
     for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
+      console.log('qrItemInfo: %s', JSON.stringify(qrItemInfo));
 
       if (qrItem) {
-        // first repeating qrItem
-        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
-          // if it is a case of repeating questions, not repeating answers
+        console.log('Looking at qrItem: %s', JSON.stringify(qrItem)); // first repeating qrItem
 
+        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
+          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
+
+          console.log('defItem: %s', JSON.stringify(defItem)); // add repeating items in form data
+          // if it is a case of repeating questions, not repeating answers
 
           if (this._questionRepeats(defItem)) {
             this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
