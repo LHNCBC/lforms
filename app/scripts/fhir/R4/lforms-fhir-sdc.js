@@ -233,7 +233,7 @@ var sdcExport = {
       }
     }
 
-    // calcuatedValue
+    // Copied item extensions
     if (item._calculatedExprExt)
       targetItem.extension.push(item._calculatedExprExt);
     if (item._initialExprExt)
