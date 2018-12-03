@@ -53,7 +53,10 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
-
+  
+  sdcQProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|3.5',
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
+  
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -133,13 +136,10 @@ var sdcExport = {
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
-    if (!noExtensions) {
-      target.meta = {
-        "profile": [
-          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
-        ]
-      };
-    }
+    var profile = noExtensions ? this.stdQProfile : this.sdcQProfile;
+  
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
     // title
     target.title = source.name;

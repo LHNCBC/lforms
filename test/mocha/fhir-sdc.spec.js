@@ -41,7 +41,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(out, cneFixture.output);
           });
 
-          it('should covert an item with answerCodeSystem', function () {
+          it('should convert an item with answerCodeSystem', function () {
             var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
             var out = fhir.SDC._processItem(alFixture.input, {});
             assert.deepEqual(out, alFixture.output);
@@ -133,12 +133,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
             // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
-            // Skip logic action and logic is not supported.
-            // Only code/value triggers are supported.
-            assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].source, "54125-0");
-            assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].trigger.value, "Alex");
-            assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].source, "54130-0");
-            assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].trigger.code, "LA10402-8");
+            //console.log(JSON.stringify(fhirQ.item[0].item[6].item[2], null, 2));
+            //console.log(JSON.stringify(FHTData.items[0].items[6].items[2].skipLogic, null, 2));
+            //console.log(JSON.stringify(convertedLfData.items[0].items[6].items[2].skipLogic, null, 2));
+            // Only skip logic value works in STU3
+            assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
+            assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
+            if(fhirVersion !== 'STU3') {
+              assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, FHTData.items[0].items[6].items[1].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, FHTData.items[0].items[6].items[2].skipLogic);
+            }
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
@@ -189,7 +193,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert to SDC Questionnaire with extensions', function() {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
 
-            assert.equal(fhirQ.meta.profile[0], "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire");
+            assert.equal(fhirQ.meta.profile[0], fhir.SDC.sdcQProfile);
             assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs");
             assert.equal(fhirQ.item[0].item[1].extension[1].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
 
@@ -198,7 +202,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert to standard Questionnaire without any extensions', function() {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)), true);
 
-            assert.equal(fhirQ.meta, undefined);
+            assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
             assert.equal(fhirQ.item[0].item[1].extension, undefined);
 
             assert.equal(fhirQ.toString().match(/extension/), undefined);
@@ -246,7 +250,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "type": "decimal"
                 }
               ]
-            }
+            };
             var lformsQ = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
             var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);
             // Confirm that we got the exension back.

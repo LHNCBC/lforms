@@ -18906,6 +18906,22 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
+  _operatorMapping: {
+    'minExclusive': '>',
+    'maxExclusive': '<',
+    'minInclusive': '>=',
+    'maxInclusive': '<=',
+    'value': '=',
+    'not': '!=',
+    '>': 'minExclusive',
+    '<': 'maxExclusive',
+    '>=': 'minInclusive',
+    '<=': 'maxInclusive',
+    '=': 'value',
+    '!=': 'not'
+  },
+  sdcQProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|3.5',
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
 
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -18967,24 +18983,14 @@ var sdcExport = {
    * @private
    */
   _setFormLevelFields: function _setFormLevelFields(target, source, noExtensions) {
-    // resourceType
-    target.resourceType = "Questionnaire"; // status
+    this.copyFields(source, target, this.formLevelIgnoredFields); // resourceType
 
-    target.status = "draft"; // date
+    target.resourceType = "Questionnaire";
+    target.status = target.status ? target.status : "draft"; // meta
 
-    target.date = LForms.Util.dateToString(new Date()); // version, assuming questionnaires are from LOINC forms
-
-    target.version = "2.56"; // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
-    // meta
-
-    if (!noExtensions) {
-      target.meta = {
-        "profile": ["http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"]
-      };
-    } // title
-
+    var profile = noExtensions ? this.stdQProfile : this.sdcQProfile;
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // title
 
     target.title = source.name; // name
 
@@ -19047,9 +19053,9 @@ var sdcExport = {
           "valueInteger": parseInt(item.questionCardinality.max)
         });
       }
-    } else {
-      targetItem.repeats = false;
-    } // answer repeats
+    } else {} // No default in R4
+    // targetItem.repeats = false;
+    // answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
 
 
@@ -19162,6 +19168,7 @@ var sdcExport = {
 
 
     if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
+    this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem;
   },
 
@@ -19743,37 +19750,47 @@ var sdcExport = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
     if (item.defaultAnswer) {
-      var valueKey = this._getValueKeyByDataType("initial", item.dataType); // for Coding
+      var valueKey = this._getValueKeyByDataType("value", item.dataType); // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
 
 
       if (item.dataType === 'CWE' || item.dataType === 'CNE') {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = null,
+            coding = null;
+
+        if (item.answerCodeSystem) {
+          codeSystem = this._getCodeSystem(item.answerCodeSystem);
+        }
+
+        targetItem.initial = [];
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
-          // targetItem[valueKey] = [];
-          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-          //   targetItem[valueKey].push({
-          //     "system": codeSystem,
-          //     "code": item.defaultAnswer[i].code,
-          //     "display": item.defaultAnswer[i].text
-          //   })
-          // };
-          // pick the first one only
-          targetItem[valueKey] = {
-            "system": codeSystem,
-            "code": item.defaultAnswer[0].code,
-            "display": item.defaultAnswer[0].text
-          };
+          for (var i = 0, iLen = item.defaultAnswer.length; i < iLen; i++) {
+            coding = {
+              "code": item.defaultAnswer[i].code,
+              "display": item.defaultAnswer[i].text
+            };
+
+            if (codeSystem) {
+              coding.system = codeSystem;
+            }
+
+            targetItem.initial[valueKey].push(coding);
+          }
         } // single selection, item.defaultAnswer is an object
         else {
-            targetItem[valueKey] = {
-              "system": codeSystem,
+            coding = {
               "code": item.defaultAnswer.code,
               "display": item.defaultAnswer.text
             };
+
+            if (codeSystem) {
+              coding.system = codeSystem;
+            }
+
+            targetItem.initial[valueKey].push(coding);
           }
       } // for Quantity,
       // [{
@@ -19787,7 +19804,7 @@ var sdcExport = {
       else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-            targetItem[valueKey] = item.value;
+            targetItem.initial[valueKey].push = item.defaultAnswer;
           } // no support for reference
 
     }
@@ -19830,7 +19847,8 @@ var sdcExport = {
    */
   _handleSkipLogic: function _handleSkipLogic(targetItem, item, source) {
     if (item.skipLogic) {
-      var enableWhen = []; // ignore "ANY", "ALL" on item.skipLogic.logic
+      var enableWhen = [];
+      var rangeFound = false; // ignore "ANY", "ALL" on item.skipLogic.logic
       // ignore "show" on item.skipLogic.action
 
       for (var i = 0, iLen = item.skipLogic.conditions.length; i < iLen; i++) {
@@ -19838,9 +19856,9 @@ var sdcExport = {
 
         var sourceItem = source._getSkipLogicSourceItem(item, condition.source);
 
-        var enableWhenRule = {
+        var enableWhenRules = [{
           "question": sourceItem._codePath
-        }; // dataTypes:
+        }]; // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
         // Attachment, Coding, Quantity, Reference(Resource)
 
@@ -19851,11 +19869,11 @@ var sdcExport = {
 
         if (sourceItem.dataType === 'CWE' || sourceItem.dataType === 'CNE') {
           if (condition.trigger.code) {
-            enableWhenRule[valueKey] = {
+            enableWhenRules[0][valueKey] = {
               "code": condition.trigger.code
             };
           } else {
-            enableWhenRule[valueKey] = {
+            enableWhenRules[0][valueKey] = {
               "code": "only 'code' attribute is supported"
             };
           }
@@ -19870,16 +19888,59 @@ var sdcExport = {
         // }]
         else if (sourceItem.dataType === 'QTY') {} // TBD
           // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-          else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
-              enableWhenRule[valueKey] = condition.trigger.value;
-            } // add a rule to enableWhen
+          else if (sourceItem.dataType === "BL") {
+              enableWhenRules[0].operator = 'exists'; // Spec says exists implies answer is boolean, then 'exists' is redundant, isn't it?
+
+              enableWhenRules[0][valueKey] = condition.trigger.value;
+            } else if (sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
+              enableWhenRules = this._createEnableWhenRulesForRangeAndValue(valueKey, condition, sourceItem);
+
+              if (enableWhenRules.length > 1) {
+                rangeFound = true;
+              }
+            } // add rule(s) to enableWhen
 
 
-        enableWhen.push(enableWhenRule);
+        enableWhen = enableWhen.concat(enableWhenRules);
+      }
+
+      if (rangeFound && item.skipLogic.conditions.length > 1) {
+        // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
+        // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
+        // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
+        return;
       }
 
       targetItem.enableWhen = enableWhen;
+
+      if (item.skipLogic.logic === 'ALL' || rangeFound) {
+        targetItem.enableBehavior = 'all';
+      } else if (enableWhen.length > 1) {
+        targetItem.enableBehavior = 'any';
+      }
     }
+  },
+
+  /**
+   * A single condition in lforms translates to two enableWhen rules in core FHIR.
+   *
+   * @param answerKey - The answer[x] string
+   * @param skipLogicCondition - Lforms skip logic condition object
+   * @param sourceItem - Skip logic source item in lforms.
+   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @private
+   */
+  _createEnableWhenRulesForRangeAndValue: function _createEnableWhenRulesForRangeAndValue(answerKey, skipLogicCondition, sourceItem) {
+    var ret = [];
+    Object.keys(skipLogicCondition.trigger).forEach(function (key) {
+      var rule = {
+        question: sourceItem.linkId,
+        operator: sdcExport._operatorMapping[key]
+      };
+      rule[answerKey] = skipLogicCondition.trigger[key];
+      ret.push(rule);
+    });
+    return ret;
   },
 
   /**
@@ -20275,6 +20336,12 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.formLevelIgnoredFields = [// Resource
+  'id', 'meta', 'implicitRules', 'language', // Domain Resource
+  'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
+  'date', 'version', //'derivedFrom', // This is R4 specific, all others are common to R4 and R3
+  'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
+  self.itemLevelIgnoredFields = ['definition', 'prefix'];
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -20324,10 +20391,18 @@ function addSDCImportFns(ns) {
       lfData.codeSystem = code.system;
     }
 
-    if (questionnaire.id) {
-      lfData.id = questionnaire.id;
-    }
+    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
   }
+
+  self.copyFields = function (source, target, fieldList) {
+    if (source && target && fieldList && fieldList.length > 0) {
+      fieldList.forEach(function (field) {
+        if (source[field]) {
+          target[field] = source[field];
+        }
+      });
+    }
+  };
   /**
    * Process questionnaire item recursively
    *
@@ -20371,6 +20446,8 @@ function addSDCImportFns(ns) {
     _processSkipLogic(targetItem, qItem, qResource);
 
     _processCalculatedValue(targetItem, qItem);
+
+    self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
@@ -20417,9 +20494,7 @@ function addSDCImportFns(ns) {
       };
     }
 
-    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-
-    if (answerRepeats && answerRepeats.valueBoolean) {
+    if (_hasMultipleAnswers(qItem)) {
       lfItem.answerCardinality.max = '*';
     } else {
       lfItem.answerCardinality.max = '1';
@@ -20439,35 +20514,85 @@ function addSDCImportFns(ns) {
   function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
     if (qItem.enableWhen) {
       lfItem.skipLogic = {
-        conditions: []
-      };
+        conditions: [],
+        action: 'show'
+      }; // See if it satisfies range. Range in lforms is a single condition, in FHIR it is done with two conditions
 
-      for (var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = null;
+      var rangeCondition = _potentialRange(qItem, sourceQuestionnaire);
 
-        for (var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
+      if (rangeCondition) {
+        lfItem.skipLogic.conditions.push(rangeCondition);
+      } else {
+        for (var i = 0; i < qItem.enableWhen.length; i++) {
+          var source = null;
+
+          for (var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
+            source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
+          }
+
+          var condition = {
+            source: source.questionCode
+          };
+
+          var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+
+          if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger = {
+              code: answer.code
+            };
+          } else {
+            var tr = null;
+            var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+
+            if (opMapping) {
+              tr = {};
+              tr[opMapping] = answer;
+            }
+
+            if (tr) {
+              condition.trigger = tr;
+            }
+          }
+
+          lfItem.skipLogic.conditions.push(condition);
         }
 
-        var condition = {
-          source: source.questionCode
-        };
-
-        var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-
-        if (source.dataType === 'CWE' || source.dataType === 'CNE') {
-          condition.trigger = {
-            code: answer.code
-          };
-        } else {
-          condition.trigger = {
-            value: answer
-          };
+        if (qItem.enableBehavior) {
+          lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
         }
-
-        lfItem.skipLogic.conditions.push(condition);
       }
     }
+  }
+  /**
+   * See if the skip logic condition belongs to range. If yes, returns a lforms condition, otherwise null;
+   *
+   * @param qItem - Questionnaire item
+   * @param sourceQuestionnaire - Questionnaire resource to look for skip logic source item.
+   * @returns {*} - Lforms skip logic condition object.
+   * @private
+   */
+
+
+  function _potentialRange(qItem, sourceQuestionnaire) {
+    var ret = null; // Two conditions based on same source with enableBehavior of all implies range.
+
+    if (qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' && qItem.enableWhen[0].question === qItem.enableWhen[1].question && (qItem.type === 'decimal' || qItem.type === 'integer' || qItem.type === 'date' || qItem.type === 'dateTime')) {
+      var source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[0].question);
+
+      ret = {
+        source: source.questionCode
+      };
+      ret.trigger = {};
+
+      var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
+
+      var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
+
+      ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
+      ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
+    }
+
+    return ret;
   }
   /**
    * Parse Questionnaire item for externallyDefined url
@@ -20546,35 +20671,42 @@ function addSDCImportFns(ns) {
 
 
   function _processDefaultAnswer(lfItem, qItem) {
-    var val = _getValueWithPrefixKey(qItem, /^initial/);
+    if (!qItem.initial) {
+      return;
+    }
 
-    if (val) {
+    var isMultiple = _hasMultipleAnswers(qItem);
+
+    var defaultAnswer = null;
+    foreach(qItem.initial, function (elem) {
+      var val = _getValueWithPrefixKey(elem, /^value/);
+
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE') {
-        if (qItem.repeats) {
-          lfItem.value = [{
+        if (isMultiple) {
+          if (!defaultAnswer) defaultAnswer = [];
+          defaultAnswer.push({
             code: val.code,
             text: val.display
-          }];
-          lfItem.defaultAnswer = [{
-            code: val.code,
-            text: val.display
-          }];
+          });
         } // single selection
         else {
-            lfItem.value = {
-              code: val.code,
-              text: val.display
-            };
-            lfItem.defaultAnswer = {
+            defaultAnswer = {
               code: val.code,
               text: val.display
             };
           }
       } else {
-        lfItem.value = val;
-        lfItem.defaultAnswer = val;
+        if (isMultiple) {
+          if (!defaultAnswer) defaultAnswer = [];
+          defaultAnswer.push(val);
+        } else {
+          defaultAnswer = val;
+        }
       }
-    }
+    });
+    lfItem.value = defaultAnswer; // TODO - Is this necessary?
+
+    lfItem.defaultAnswer = defaultAnswer;
   }
   /**
    * Parse questionnaire item for units list
@@ -20959,26 +21091,42 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-    if (topLevelItem.linkId === questionLinkId) {
-      if (topLevelItem.code) {
-        return {
-          questionCode: topLevelItem.code[0].code,
-          dataType: _getDataType(topLevelItem)
-        };
+  function _getSourceCodeUsingLinkId(topLevelItems, questionLinkId) {
+    var ret = null;
+
+    for (var i = 0; topLevelItems && !ret && i < topLevelItems.length; i++) {
+      var item = topLevelItems[i];
+
+      if (item.linkId === questionLinkId) {
+        if (item.code) {
+          ret = {
+            questionCode: item.code[0].code,
+            dataType: _getDataType(item)
+          };
+        } else {
+          ret = {
+            questionCode: item.linkId,
+            dataType: _getDataType(item)
+          };
+        }
+
+        break;
       } else {
-        return {
-          questionCode: topLevelItem.linkId,
-          dataType: _getDataType(topLevelItem)
-        };
+        ret = _getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
       }
     }
 
-    var ret = null;
+    return ret;
+  }
 
-    if (Array.isArray(topLevelItem.item)) {
-      for (var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
+  function _hasMultipleAnswers(qItem) {
+    var ret = false;
+
+    if (qItem) {
+      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+
+      if (answerRepeats && answerRepeats.valueBoolean) {
+        ret = true;
       }
     }
 

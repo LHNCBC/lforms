@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.4.0] 2018-12-03
+### Added.
+- Added support for enableWhen and initial(x) in R4. 
+
 ## [13.3.0] 2018-11-08
 ### Added.
 - Added support for answerValueSet and answerOption in R4. 

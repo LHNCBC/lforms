@@ -169,7 +169,7 @@ function addSDCImportFns(ns) {
    */
   function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
     if(qItem.enableWhen) {
-      lfItem.skipLogic = {conditions: []};
+      lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = null;
         for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {

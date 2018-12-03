@@ -2526,7 +2526,9 @@ if (typeof LForms === 'undefined')
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger)[0] ; // trigger should have only one key
+            var field = Object.keys(trigger).filter(function(key) {
+              return key !== 'not';
+            })[0] ; // trigger should have only one key, other than 'not'
             // if the field accepts multiple values from the answer list
             if (Array.isArray(currentValue)) {
               for (var m= 0, mLen = currentValue.length; m<mLen; m++) {
@@ -2575,6 +2577,10 @@ if (typeof LForms === 'undefined')
             }
             break;
         } // end case
+        
+        if(trigger.not) {
+          action = !action;
+        }
       }
 
       return action;
