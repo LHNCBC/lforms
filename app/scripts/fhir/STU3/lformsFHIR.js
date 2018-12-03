@@ -20582,7 +20582,7 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for "hidden" extension
    *
-   * @param lfItem {object} - LForms item object to be assigned the isHidden flag if the item is to be hidden.
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
    * @param qItem {object} - Questionnaire item object
    * @param ancestorIsHidden optional default false, whether this item's accesstor is hidden.
    * @private
@@ -20592,16 +20592,16 @@ function addSDCImportFns(ns) {
 
   function _processHiddenItems(lfItem, qItem, ancestorIsHidden) {
     if (ancestorIsHidden) {
-      lfItem.isHidden = true;
+      lfItem._isHidden = true;
     } else {
       var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
 
       if (ci) {
-        lfItem.isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
+        lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
       }
     }
 
-    return lfItem.isHidden;
+    return lfItem._isHidden;
   }
   /**
    * Parse questionnaire item for answers list

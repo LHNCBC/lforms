@@ -104,7 +104,7 @@ function addSDCImportFns(ns) {
     _processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
-    ancestorIsHidden = _processHiddenItems(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
+    ancestorIsHidden = _processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
     _processUnitList(targetItem, qItem);
     _processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
@@ -211,23 +211,23 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for "hidden" extension
    *
-   * @param lfItem {object} - LForms item object to be assigned the isHidden flag if the item is to be hidden.
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
    * @param qItem {object} - Questionnaire item object
    * @param ancestorIsHidden optional default false, whether this item's accesstor is hidden.
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
    */
-  function _processHiddenItems(lfItem, qItem, ancestorIsHidden) {
+  function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
     if(ancestorIsHidden) {
-      lfItem.isHidden = true;
+      lfItem._isHidden = true;
     }
     else {
       var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
       if(ci) {
-        lfItem.isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
+        lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
       }
     }
-    return lfItem.isHidden;
+    return lfItem._isHidden;
   }
 
 

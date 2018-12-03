@@ -304,10 +304,9 @@ angular.module('lformsWidget')
             }
           }
 
-          if(item.isHidden) {
+          if(item._isHidden) {
             ret.display = 'none';
           }
-// console.log('%s ======== display: %s', item.linkId, ret.display);
           return ret;
         };
 
