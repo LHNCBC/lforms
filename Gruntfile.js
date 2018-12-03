@@ -541,9 +541,9 @@ module.exports = function (grunt) {
     'copy:dist',
     'cssmin',
     'uglify',
-    'compress',
     'shell:dist_dir_link',
-    'shell:webpack'
+    'shell:webpack',
+    'compress'
   ]);
 
   grunt.registerTask('default', [
