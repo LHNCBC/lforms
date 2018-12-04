@@ -20475,9 +20475,7 @@ function addSDCImportFns(ns) {
       lfData.codeSystem = code.system;
     }
 
-    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields); // These FHIR Extensions will just store as is on the LFormsData object.
-
-    lfData.fhirExtensions = questionnaire.extension;
+    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
   }
 
   self.copyFields = function (source, target, fieldList) {

@@ -224,9 +224,9 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhirpathVars = {};
-      this.fhirExtensions = data.fhirExtensions;
+      this.extension = data.extension;
       if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.fhirExtensions, 'url',
+        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
         for (var i=0, len=contextItems.length; i<len; ++i) {
           var contextItemExt = contextItems[i].extension;

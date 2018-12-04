@@ -111,9 +111,6 @@ function addSDCImportFns(ns) {
     }
 
     self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
-
-    // These FHIR Extensions will just store as is on the LFormsData object.
-    lfData.fhirExtensions = questionnaire.extension;
   }
 
 
