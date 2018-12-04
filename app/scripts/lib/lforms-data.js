@@ -1073,8 +1073,7 @@ console.log("%%% In runValueExpressions for "+expressionProperty);
 
         // set up readonly flag
         item._readOnly = (item.editable && item.editable === "0") ||
-           !!item.calculationMethod;
- //!!(item.calculationMethod || item._calculatedExprExt);
+           !!(item.calculationMethod || item._calculatedExprExt);
 
         var lfData = this;
         if (LForms.FHIR && lfData.fhirVersion) {
