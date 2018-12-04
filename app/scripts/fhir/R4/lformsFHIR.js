@@ -19149,7 +19149,7 @@ var sdcExport = {
           "valueBoolean": true
         });
       }
-    } // calcuatedValue
+    } // Copied item extensions
 
 
     if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);

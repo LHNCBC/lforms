@@ -1,7 +1,7 @@
 var fhirVersion = 'R4';
 
 var tp = require('../lforms_testpage.po.js');
-fdescribe('Form pre-population', function() {
+describe('Form pre-population', function() {
   it('should be possible to pull in data from a FHIR context', function() {
     tp.openBaseTestPage();
     browser.executeScript(function() {
