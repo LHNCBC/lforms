@@ -16,8 +16,14 @@
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
+var sdcVersion = '2.0';
+
 var sdcExport = {
 
+  SDCVersion: sdcVersion,
+  QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
+  QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
@@ -54,8 +60,6 @@ var sdcExport = {
     "QTY": 'Quantity'
   },
   
-  sdcQProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|3.5',
-  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
   
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -136,7 +140,7 @@ var sdcExport = {
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
-    var profile = noExtensions ? this.stdQProfile : this.sdcQProfile;
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
   
     target.meta = target.meta ? target.meta : {};
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
@@ -634,9 +638,7 @@ var sdcExport = {
     // meta
     if (!noExtensions) {
       target.meta = {
-        "profile": [
-          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse"
-        ]
+        "profile": [this.QRProfile]
       };
     }
   },

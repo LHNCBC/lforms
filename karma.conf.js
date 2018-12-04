@@ -7,6 +7,11 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
+    // Set a "proxy" so that the JSON test data files can be retrieved via AJAX.
+    proxies: {
+      '/test/': '/base/test/'
+    },
+
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -15,6 +20,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'test/data/**/*.json', included: false, served: true},
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
@@ -23,7 +29,7 @@ module.exports = function(config) {
       'app/scripts/*.js',
       'app/scripts/fhir/versions.js',
       'app/scripts/fhir/*/lformsFHIR.js',
-      'test/mocha/*.js',
+      'test/karma/*.js',
       'test/data/R4/*.js',
       'test/data/STU3/*.js',
       'app/data/test-data.js'

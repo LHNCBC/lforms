@@ -2,17 +2,36 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [13.4.0] 2018-12-03
+## [13.6.0] 2018-12-03
 ### Added.
 - Added support for enableWhen and initial(x) in R4. 
+## [13.5.0] 2018-11-26
+### Added
+- A new function LForms.Util.guessFHIRVersion(fhirResource) which looks at the
+  structure of the resource to guess the version of FHIR being used.
+- Made a previously internal function,
+  LForms.Util.detectFHIRVersion(fhirResource), public.  This function looks at
+  the meta.profile field to determine the FHIR version of the resource.
+- Made a previously internal function,
+  LForms.Util.validateFHIRVersion(version), public.  This function checks to see
+  if the given version is supported by LForms and if the needed auxiliarly
+  lformsFHIR.min.js file has been loaded.
+### Fixed
+- In the pre-built files placed on
+  https://clinicaltables.nlm.nih.gov/lforms-versions/, the FHIR auxiliary files
+  were missing from 13.4.0 and possibly earlier.
+
+## [13.4.0] 2018-11-14
+### Added
+- Added support for the FHIR questionnaire-launchContext extension in R4.
 
 ## [13.3.0] 2018-11-08
-### Added.
-- Added support for answerValueSet and answerOption in R4. 
+### Added
+- Added support for answerValueSet and answerOption in R4.
 ### Changed
 - Separated test suites and fixtures for R4 and STU3 versions.
 ### Fixed.
-- Removed hard coding of loinc code system in answerOption/option valueCoding 
+- Removed hard coding of loinc code system in answerOption/option valueCoding
 object.
 
 ## [13.2.0] 2018-10-24

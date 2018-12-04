@@ -4,9 +4,9 @@
  * FHIR Questionnaire:
  * https://www.hl7.org/fhir/questionnaire.html
  *
- * STU2 Ballot:
- * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
- * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
+ * R4 Ballot (3.5) for comment:
+ * http://hl7.org/fhir/uv/sdc/2018Sep/sdc-questionnaire.html
+ * http://hl7.org/fhir/uv/sdc/2018Sep/sdc-questionnaireresponse.html
  *
  * It provides the following functions:
  * convertLFormsToQuestionnaire()
@@ -16,8 +16,14 @@
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
+var sdcVersion = '3.5.0';
+
 var sdcExport = {
 
+  SDCVersion: sdcVersion,
+  QProfile: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
+  QRProfile: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
@@ -70,8 +76,6 @@ var sdcExport = {
   },
 
 
-  sdcQProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|3.5',
-  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
   
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -141,7 +145,7 @@ var sdcExport = {
     target.status = target.status ? target.status : "draft";
 
     // meta
-    var profile = noExtensions ? this.stdQProfile : this.sdcQProfile;
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
   
     target.meta = target.meta ? target.meta : {};
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
@@ -641,9 +645,7 @@ var sdcExport = {
     // meta
     if (!noExtensions) {
       target.meta = {
-        "profile": [
-          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse"
-        ]
+        "profile": [this.QRProfile]
       };
     }
   },
@@ -767,11 +769,11 @@ var sdcExport = {
           "code": answer.code,
           "display": answer.text
       };
-  
+
       if(item.answerCodeSystem) {
         option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
       }
-    
+
       optionArray.push(option);
     }
     return optionArray;

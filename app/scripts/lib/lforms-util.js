@@ -100,17 +100,20 @@ LForms.Util = {
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
    *  and "QuestionnaireResponse" (SDC profile)
    * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
-   * @param element optional, the containing HTML element that includes the LForm's rendered form.
-   *  It could either be the DOM element or its id
+   * @param formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.
    * @param options A hash of other options.  See convertLFormsToFHIRData for
    *  the allowed values.
-   * @returns {*} the requesteed FHIR resource.  For Questionnaire, the full form definition
+   * @returns {*} the requested FHIR resource.  For Questionnaire, the full form definition
    *  will be returned, but or DiagnosticReport and QuestionnaireResponse, empty
    *  or hidden questions will not be included.
    */
-  getFormFHIRData: function(resourceType, fhirVersion, element, options) {
-    var formObj = this._getFormObjectInScope(element);
-    return this.convertLFormsToFHIRData(resourceType, fhirVersion, formObj, options);
+  getFormFHIRData: function(resourceType, fhirVersion, formDataSource, options) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
+      formDataSource = this._getFormObjectInScope(formDataSource);
+    return this._convertLFormsToFHIRData(resourceType, fhirVersion, formDataSource, options);
   },
 
 
@@ -118,23 +121,23 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   * @param fhirVersion the version of FHIR being used to be used (e.g., 'STU3')
-   * @param formData an LFormsData object or an LForms form definition
+   * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
+   * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
-   *  * bundleType, optional, maybe be either "transaction" or "collection".
+   *  * bundleType: optional, maybe be either "transaction" or "collection".
    *    This is used when resourceType is set to "DiagnosticReport", and requests
    *    that the DiagnosticReport and associated Observation resources be placed
    *    together in a bundle.  When this is not present, a bundle will not be
    *    used.
-   *  * noExtensions a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
+   *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *        without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *        The default is false.
    * @returns {*} a FHIR resource
    */
-  convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+  _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
     if (!(formData instanceof LForms.LFormsData))
       formData = new LForms.LFormsData(formData);
-    var version = this._validateFHIRVersion(fhirVersion);
+    var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
@@ -164,7 +167,7 @@ LForms.Util = {
    * the function "getFormFHIRData('Questionnaire', ...)"
    * @param fhirVersion - the version of FHIR in which the Questionnaire is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR version.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
    * @returns {*} - an LForms json object
@@ -172,7 +175,7 @@ LForms.Util = {
   convertFHIRQuestionnaireToLForms: function(fhirData, fhirVersion) {
     var rtn = null;
     if (fhirData) {
-      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       rtn = fhir.SDC.convertQuestionnaireToLForms(fhirData);
     }
@@ -189,14 +192,14 @@ LForms.Util = {
    * @param formData an LForms form definition or LFormsData object.
    * @param fhirVersion - the version of FHIR in which the fhirData is
    *  written.  This maybe be omitted if the Questionnaire resource (in
-   *  fhirData) contains a meta.profile attibute specifying the FHIR versions.
+   *  fhirData) contains a meta.profile attibute specifying the FHIR version.
    *  (See http://build.fhir.org/versioning.html#mp-version)
    *  If both are provided, this takes precedence.
    * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
     if (fhirData) {
-      fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
+      fhirVersion = this._requireValidFHIRVersion(fhirVersion, fhirData);
       var fhir = LForms.FHIR[fhirVersion];
       switch (resourceType) {
         case "DiagnosticReport":
@@ -212,53 +215,178 @@ LForms.Util = {
 
 
   /**
+   *  Ensures that either the given FHIR version is valid and supported, or
+   *  that a valid version can be determined from the given FHIR resource.
+   */
+  _requireValidFHIRVersion: function(fhirVersion, fhirResource) {
+    if (!fhirVersion)
+      fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
+    if (!fhirVersion) {
+      throw 'Could not determine the FHIR version for this resource.  '+
+        'Please make sure it is specified via meta.profile (see '+
+        'http://build.fhir.org/versioning.html#mp-version and '+
+        'https://www.hl7.org/fhir/references.html#canonical).  '+
+        'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
+        ' (for Questionnaire version 3.5).'+
+        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
+        ' (for SDC Questionnaire version 3.5).'
+    }
+    else
+      fhirVersion =  this.validateFHIRVersion(fhirVersion);
+    return fhirVersion;
+  },
+
+
+  /**
+   *  For FHIR applications, provides FHIR context information that might be
+   *  needed in rendering a Quesitonnaire.
+   * @param fhirContext an optional object for accessing a FHIR context and
+   *  FHIR API.  It should define the following operations:
+   *  - getCurrent(typeList, callback):  "typeList" should be a list of desired
+   *    FHIR resource types for which there is conceptually a "current" on in
+   *    the FHIR context (e.g., Patient, or Practitioner).  Only one resource
+   *    from the requested list will be returned, and the result will be null if
+   *    none of the requested resource types are available.  Because retrieving
+   *    the resource will generally be an asynchronous operation, the resource
+   *    will be returned via the first argument to the provided "callback"
+   *    function.
+   *  - getFHIRAPI():  Should return an instance of fhir.js for interacting with
+   *    the FHIR server.
+   */
+  setFHIRContext: function(fhirContext) {
+    LForms.fhirContext = fhirContext;
+  },
+
+
+  /**
    *  Checks to see if the given value is a valid FHIR version.  If the
    *  version is unsupported, an exception is thrown.  Also, if the version is
    *  supported but the support file is not loaded, an exception will be thrown.
    * @version the version of FHIR that was requested
    * @return the version passed in
    */
-  _validateFHIRVersion: function(version) {
+  validateFHIRVersion: function(version) {
     if (LForms.Util.FHIRSupport[version]) {
       if (!LForms.FHIR[version])
-        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded';
+        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded.';
     }
     else
-      throw 'Version '+version+' of FHIR is not supported';
+      throw 'Version '+version+' of FHIR is not supported.';
     return version;
   },
 
 
   /**
    *  Attempts to detect the version of FHIR specified in the given resource.
-   *  Throws an error if it is not found or if it is not a supported version.
-   * @param fhirData a FHIR resource
-   * @return the FHIR version, if found and supported
+   * @param fhirData a FHIR resource.  Supported resource types are currently
+   *  just Questionnaire and QuestionnaireResponse.
+   * @return the FHIR version, or null if the FHIR version was not explicity
+   *  specified in the resource.
    */
-  _detectFHIRVersion: function(fhirData) {
+  detectFHIRVersion: function(fhirData) {
     var fhirVersion;
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile;
-      var pattern = new RegExp('http://hl7.org/fhir/(\\d+)[\\.\\d]+)/StructureDefinition/');
+      var questionnairePattern =
+        new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
+      var sdcPattern =
+        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
-        var match = profiles[i].match(pattern);
+        var match = profiles[i].match(questionnairePattern);
         if (match)
-          fhirVersion = match(1);
+          fhirVersion = match[1];
+        else {
+          match = profiles[i].match(sdcPattern);
+          if (match) {
+            fhirVersion = match[1];
+            if (fhirVersion == '2.0')
+              fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+          }
+        }
       }
     }
+    var method;
     if (fhirVersion) {
+      method = 'meta.profile';
+      fhirVersion = parseFloat(fhirVersion); // converts '3.0.1' to 3.0
       // See http://build.fhir.org/versioning.html#mp-version
-      if (fhirVersion == '3')
+      if (fhirVersion == 3.0)
         fhirVersion = 'STU3';
-      else
-        fhirVersion = 'R'+fhirVersion;
+      else if (3.2 <= fhirVersion && fhirVersion < 4.1)
+        fhirVersion = 'R4';
     }
-    else {
-      throw 'Could not determine the FHIR version for this resource.  '+
-        'Please make sure it is specified via meta.profile (see '+
-        'http://build.fhir.org/versioning.html#mp-version';
+    return fhirVersion;
+  },
+
+
+  /**
+   *  Looks at the structure of the given FHIR resource to determine the version
+   *  of FHIR, if possible.
+   * @param fhirData a FHIR resource.  Supported resource types are currently
+   *  just Questionnaire and QuestionnaireResponse.
+   * @return the FHIR version number (e.g. STU3), or null if the type cannot be
+   *  determined.
+   */
+  guessFHIRVersion: function(fhirData) {
+    var version = null;
+    if (fhirData.resourceType == 'Questionnaire') {
+      // See if any items have a property deleted from R4.
+      var items = [];
+      var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
+        return !!(item.option || item.options ||
+          (item.enableWhen && 'hasAnswer' in item.enableWhen));
+      });
+      version = foundSTU3 ? 'STU3' : 'R4';
     }
-    return this._validateFHIRVersion(fhirVersion);
+    else if (fhirData.resourceType == 'QuestionnaireResponse') {
+      if (fhirData.parent)
+        version = 'STU3';
+      else {
+        // See if any items have a property deleted from R4.
+        var foundSTU3 = this._testValues(fhirData, 'item', function(item) {
+          return !!item.subject;
+        });
+        version = foundSTU3 ? 'STU3' : 'R4';
+      }
+    }
+    return version;
+  },
+
+
+  /**
+   *  Searches the properties and sub-properties of "obj" for the given property
+   *  name, testing their values to see if valTest returns true.
+   * @param obj the object to be searched.  This can be an array.
+   * @param property the property name to look for
+   * @param testVal the function to use to test the property values.  This
+   *  should return true if the value passes the test.
+   * @return true if at least one value was found found whose key was "property"
+   *  and for which testVal returned true.
+   */
+  _testValues: function(obj, property, valTest) {
+    var rtn = false;
+    if (obj instanceof Array) {
+      for (var j=0, jLen=obj.length; !rtn && j<jLen; ++j)
+        rtn = this._testValues(obj[j], property, valTest);
+    }
+    else if (typeof obj === "object") {
+      var keys = Object.keys(obj);
+      for (var i=0, len=keys.length; !rtn && i<len; ++i) {
+        var key = keys[i];
+        var val = obj[key];
+        if (key === property) {
+          if (val instanceof Array) {
+            for (var k=0, kLen=val.length; !rtn && k<kLen; ++k)
+              rtn = valTest(val[k]);
+          }
+          else
+            rtn = valTest(val);
+        }
+        if (!rtn)
+          this._testValues(val, property, valTest); // search sub-objects
+      }
+    }
+    return rtn;
   },
 
 
@@ -384,11 +512,15 @@ LForms.Util = {
    * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
    *   The absolute value should be less than the length of items in the array. If not
    *   the starting index is assumed to be 0.
+   * @param all - If true, then an array will be returned containing all
+   *  matches.
    *
-   * @returns {*} - Matched object, otherwise null;
+   * @returns {*} - If "all" is false (default), then this returns the first matched
+   *  object, or null if none matched.  If "all" is true, then this will return
+   *  an array containing any matched objects.
    */
-  findObjectInArray: function(targetObjects, key, matchingValue, starting_index) {
-    var ret = null;
+  findObjectInArray: function(targetObjects, key, matchingValue, starting_index, all) {
+    var ret = all ? [] : null;
     if(Array.isArray(targetObjects)) {
       var start = 0;
       // Figure out start index.
@@ -403,8 +535,13 @@ LForms.Util = {
       var len = targetObjects.length;
       for(var i = start; i < len; i++) {
         if(targetObjects[i][key] === matchingValue) {
-          ret = targetObjects[i];
-          break;
+          var match = targetObjects[i];
+          if (all)
+            ret.push(match);
+          else {
+            ret = match;
+            break;
+          }
         }
       }
     }

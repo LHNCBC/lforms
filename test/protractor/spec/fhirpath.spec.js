@@ -8,9 +8,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('FHIRPath functionality', function() {
         describe('FHIRPath calculated-expression', function() {
           function testBMIFormula() {
-            let path = require('path');
-            let testFile = path.join(__dirname, '../../data/', fhirVersion, 'weightHeightQuestionnaire.json');
-            tp.loadFromDisk(testFile);
+            tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
             let weightField = element(by.id('/29463-7/1'));
             weightField.click();
             weightField.sendKeys('70');
