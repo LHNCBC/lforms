@@ -391,7 +391,6 @@ if (typeof LForms === 'undefined')
      *  name, and assigns the result to item's value.
      */
     runValueExpressions: function(expressionProperty) {
-console.log("%%% In runValueExpressions for "+expressionProperty);
       var lfData = this;
       if (LForms.FHIR) {
         var fhir = LForms.FHIR[lfData.fhirVersion];
