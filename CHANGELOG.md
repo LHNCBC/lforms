@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.6.0] 2018-12-04
+### Added
+- Support the FHIR extension "questionnaire-initialExpression".
+
 ## [13.5.0] 2018-11-26
 ### Added
 - A new function LForms.Util.guessFHIRVersion(fhirResource) which looks at the
