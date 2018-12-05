@@ -20452,7 +20452,7 @@ function addSDCImportFns(ns) {
 
     _processCodingInstructions(targetItem, qItem);
 
-    ancestorIsHidden = _processHiddenItems(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
+    ancestorIsHidden = _processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
 
     _processUnitList(targetItem, qItem);
 
@@ -20590,7 +20590,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processHiddenItems(lfItem, qItem, ancestorIsHidden) {
+  function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
     if (ancestorIsHidden) {
       lfItem._isHidden = true;
     } else {
