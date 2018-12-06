@@ -950,12 +950,14 @@ var sdcExport = {
    * @private
    */
   _handleInitialValues: function(targetItem, item) {
+    var answer = null;
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer) {
-
+  
+      targetItem.initial = [];
       var valueKey = this._getValueKeyByDataType("value", item.dataType);
       // for Coding
       // multiple selections, item.value is an array
@@ -966,30 +968,34 @@ var sdcExport = {
           codeSystem = this._getCodeSystem(item.answerCodeSystem);
         }
   
-        targetItem.initial = [];
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-            coding = {
-              "code": item.defaultAnswer[i].code,
-              "display": item.defaultAnswer[i].text
-            };
+            coding = {"code": item.defaultAnswer[i].code};
+            if(item.defaultAnswer[i].text !== undefined) {
+              coding.display = item.defaultAnswer[i].text;
+            }
+            
             if(codeSystem) {
               coding.system = codeSystem;
             }
-            targetItem.initial[valueKey].push(coding);
+            answer = {};
+            answer[valueKey] = coding;
+            targetItem.initial.push(answer);
           }
         }
         // single selection, item.defaultAnswer is an object
         else {
-          coding = {
-            "code": item.defaultAnswer.code,
-            "display": item.defaultAnswer.text
-          };
+          coding = {"code": item.defaultAnswer.code};
+          if(item.defaultAnswer.text !== undefined) {
+            coding.display = item.defaultAnswer.text;
+          }
           if(codeSystem) {
             coding.system = codeSystem;
           }
-          targetItem.initial[valueKey].push(coding);
+          answer = {};
+          answer[valueKey] = coding;
+          targetItem.initial.push(answer);
         }
       }
       // for Quantity,
@@ -1008,7 +1014,18 @@ var sdcExport = {
       else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
           item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-        targetItem.initial[valueKey].push = item.defaultAnswer;
+        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+          for(var k = 0; k < item.defaultAnswer.length; k++) {
+            answer = {};
+            answer[valueKey] = item.defaultAnswer[k];
+            targetItem.initial.push(answer);
+          }
+        }
+        else {
+          answer = {};
+          answer[valueKey] = item.defaultAnswer;
+          targetItem.initial.push(answer);
+        }
       }
       // no support for reference
     }

@@ -92,7 +92,7 @@ function addSDCImportFns(ns) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
-    _processDataType(targetItem, qItem);
+    self._processDataType(targetItem, qItem);
     _processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
@@ -102,7 +102,7 @@ function addSDCImportFns(ns) {
     _processRestrictions(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
     _processUnitList(targetItem, qItem);
-    _processDefaultAnswer(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, qResource);
@@ -253,7 +253,7 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processDefaultAnswer(lfItem, qItem) {
+  self._processDefaultAnswer = function (lfItem, qItem) {
 
     var val = _getValueWithPrefixKey(qItem, /^initial/);
     if (val) {
@@ -273,7 +273,7 @@ function addSDCImportFns(ns) {
         lfItem.defaultAnswer = val;
       }
     }
-  }
+  };
 
 
   /**
@@ -470,13 +470,13 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processDataType (lfItem, qItem) {
+  self._processDataType = function (lfItem, qItem) {
     var type = _getDataType(qItem);
     if(type === 'SECTION' || type === 'TITLE') {
       lfItem.header = true;
     }
     lfItem.dataType = type;
-  }
+  };
 
 
   /**
