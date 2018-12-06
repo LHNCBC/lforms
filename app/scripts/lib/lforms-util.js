@@ -198,7 +198,6 @@ LForms.Util = {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeFHIRDataIntoLForms: function(resourceType, fhirData, formData, fhirVersion) {
-console.log(JSON.stringify(fhirData));
     if (fhirData) {
       fhirVersion = fhirVersion ? this._validateFHIRVersion(fhirVersion) : this._detectFHIRVersion(fhirData);
       var fhir = LForms.FHIR[fhirVersion];

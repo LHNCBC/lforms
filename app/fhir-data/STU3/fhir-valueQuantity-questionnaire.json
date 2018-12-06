@@ -1,9 +1,6 @@
 {
   "resourceType": "Questionnaire",
-  "id": "217830",
   "meta": {
-    "versionId": "1",
-    "lastUpdated": "2018-11-28T13:24:23.696-05:00",
     "profile": [
       "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
     ]
@@ -13,15 +10,14 @@
       "system": "http://loinc.org"
     }
   ],
-  "version": "2.56",
-  "name": "Height and Weight for BMI",
-  "title": "Height and Weight for BMI",
+  "version": "2.64",
+  "name": "Height and Weight test",
+  "title": "Height and Weight test",
   "status": "draft",
-  "date": "2018-11-28T13:24:23-05:00",
   "code": [
     {
       "system": "http://loinc.org",
-      "display": "Height and Weight for BMI"
+      "display": "Height and Weight test"
     }
   ],
   "subjectType": [
@@ -37,7 +33,7 @@
         }
       ],
       "linkId": "height",
-      "text": "Measure the patients height in m.",
+      "text": "Patient's height in meters",
       "type": "quantity",
       "required": true
     },
@@ -49,9 +45,15 @@
         }
       ],
       "linkId": "weight",
-      "text": "Measure the patients height in kg.",
+      "text": "Patient's height in kg.",
       "type": "quantity",
       "required": true
+    },
+    {
+      "linkId": "clothes",
+      "text": "Weight of clothes/shoes in kg.",
+      "type": "quantity",
+      "required": false
     }
   ]
 }

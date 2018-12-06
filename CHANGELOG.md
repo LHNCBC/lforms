@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.4.1] 2018-12-06
+### Fixed
+- FHIR value quantity import/export
+- Misc fixes.
+### Added
+- Added a test entry (button) "Merge (Questionnaire, QuestionnaireResponse) to LForms"
+  to the test page, which loads a FHIR Questionnaire, a (partially) failed QuestionnaireResponse
+  for that questionnaire, and then convert to lform and display.
+
 ## [13.4.0] 2018-11-14
 ### Added.
 - Added support for the FHIR questionnaire-launchContext extension in R4.

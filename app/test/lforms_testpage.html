@@ -55,6 +55,7 @@
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
           <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
+          <button id="merge-qn-qr" class="btn btn-primary" ng-click="testMergeQnQr2LForms()">Merge (Questionnaire, QuestionnaireResponse) to LForms</button>
           <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
           <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
@@ -343,6 +344,27 @@
                 };
               }, function (err) {
                 window.alert('Unable to load '+getFHIRVersion()+': fhir-sdc-response-ussgfht.json');
+              });
+            };
+
+            // Test loading FHIR Questionnaire QuestionnaireResponse for it, then merge into an lforms.
+            $scope.testMergeQnQr2LForms = function() {
+              // first, load the questionnaire json
+              $scope.getFhirResource(getFHIRVersion(), 'fhir-valueQuantity-questionnaire.json').then(function (fhirQnData) {
+                // second, load the questionnaire response json
+                $scope.getFhirResource(getFHIRVersion(), 'fhir-valueQuantity-qn-response.json').then(function (fhirQnRespData) {
+                  var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, getFHIRVersion());
+                  var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                      'QuestionnaireResponse', fhirQnRespData, qnForm, getFHIRVersion());
+                  mergedFormData = new LForms.LFormsData(mergedFormData);
+
+                  $scope.lfData2 = mergedFormData;
+                  $scope.lfOption2 = {
+                    useAnimation: !window._INTESTING_
+                  };
+                });
+              }, function (err) {
+                window.alert('Unable to load '+getFHIRVersion()+': fhir-valueQuantity-questionnaire.json');
               });
             };
 

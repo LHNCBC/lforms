@@ -19554,7 +19554,7 @@ var sdcExport = {
    */
   _processResponseItem: function _processResponseItem(item, parentItem) {
     var targetItem = {};
-    var linkId = item._codePath; // if it is a section
+    var linkId = item.linkId ? item.linkId : item._codePath; // if it is a section
 
     if (item.dataType === "SECTION") {
       // linkId
@@ -19723,6 +19723,33 @@ var sdcExport = {
   },
 
   /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  _makeValueQuantity: function _makeValueQuantity(value, itemUnit, unitSystem) {
+    var fhirQuantity = null;
+    var floatValue = parseFloat(value);
+
+    if (!isNaN(floatValue)) {
+      fhirQuantity = {
+        value: floatValue
+      };
+
+      if (itemUnit && itemUnit.name) {
+        fhirQuantity.unit = itemUnit.name;
+        fhirQuantity.code = itemUnit.name;
+        fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
+      }
+    }
+
+    return fhirQuantity;
+  },
+
+  /**
    * Process capture user data
    * @param targetItem an item in FHIR SDC QuestionnaireResponse object
    * @param item an item in LForms form object
@@ -19797,24 +19824,13 @@ var sdcExport = {
         //   "code" : "<code>" // Coded form of the unit
         // }]
         else if (item.dataType === "QTY") {
-            var floatValue = parseFloat(values[i]);
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
 
-            if (!isNaN(floatValue)) {
-              var fhirQuantity = {
-                value: floatValue
-              };
-
-              if (item.unit) {
-                fhirQuantity.unit = item.unit.name;
-                fhirQuantity.code = item.unit.name;
-                fhirQuantity.system = 'http://unitsofmeasure.org';
-              }
-
+            if (fhirQuantity) {
               answer.push({
                 valueQuantity: fhirQuantity
-              });
-            } else {
-              answer.push(null); // using null as placeholder
+              }); // TODO check if need placeholder (null)
             }
           } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
@@ -19891,11 +19907,17 @@ var sdcExport = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+      else if (item.dataType === 'QTY') {
+          // for now, handling only simple quantities without the comparators.
+          var fhirQuantity = this._makeValueQuantity(item.value, item.unit);
+
+          if (fhirQuantity) {
+            targetItem[valueKey] = fhirQuantity;
+          }
+        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
             targetItem[valueKey] = item.value;
-          } //TODO luanx2: when item.unit, should INT, REAL, ST be valueQuantity, as with _handleAnswerValues?
+          } //TODO luanx2: when item.unit, shouldn't INT, REAL be valueQuantity? Otherwise item.unit is lost? Leave as is for now.
       // no support for reference
 
     }
@@ -19976,10 +19998,16 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (sourceItem.dataType === 'QTY') {} // TBD
-          // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+        else if (sourceItem.dataType === 'QTY') {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(condition.trigger.value, sourceItem.unit);
+
+            if (fhirQuantity) {
+              enableWhenRule[valueKey] = fhirQuantity;
+            }
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
           else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
-              enableWhenRule[valueKey] = condition.trigger.value;
+              enableWhenRule[valueKey] = condition.trigger.value; // TODO luanx2: similarly, REAL, INT with unit should be valueQuantity? Leave as is for now.
             } // add a rule to enableWhen
 
 
@@ -20125,16 +20153,13 @@ var sdcExport = {
     for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
       var qrItem = qrItemInfo.item;
-      console.log('qrItemInfo: %s', JSON.stringify(qrItemInfo));
 
       if (qrItem) {
-        console.log('Looking at qrItem: %s', JSON.stringify(qrItem)); // first repeating qrItem
-
+        // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
-
-          console.log('defItem: %s', JSON.stringify(defItem)); // add repeating items in form data
+          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
+
 
           if (this._questionRepeats(defItem)) {
             this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
@@ -20295,6 +20320,7 @@ var sdcExport = {
           break;
 
         case "REAL":
+        case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
             item.unit = {
