@@ -24,6 +24,8 @@ describe('Form pre-population', function() {
     expect(tp.USSGFHTVertical.name.getAttribute('value')).toBe("John Smith");
     expect(tp.USSGFHTVertical.dob.getAttribute('value')).toBe("12/10/1990");
     // expect(tp.USSGFHTVertical.gender.getAttribute('value')).toBe("Male"); // TBD
+    // initialExpression fields should not be read-only.
+    expect(tp.USSGFHTVertical.name.getAttribute('disabled')).toBe(null);
   });
 
   it('should be possible to get a Questionnaire back with launchContext', function() {
@@ -36,3 +38,4 @@ describe('Form pre-population', function() {
     expect(launchContextExt).not.toBeNull();
   });
 });
+
