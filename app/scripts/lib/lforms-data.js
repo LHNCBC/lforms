@@ -387,7 +387,7 @@ if (typeof LForms === 'undefined')
 
 
     /**
-     *  Runs any expressions stored stored in an item under the given property
+     *  Runs any expressions stored in an item under the given property
      *  name, and assigns the result to item's value.
      */
     runValueExpressions: function(expressionProperty) {
