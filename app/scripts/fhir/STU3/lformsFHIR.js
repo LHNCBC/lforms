@@ -19873,7 +19873,7 @@ var sdcExport = {
       else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-            targetItem[valueKey] = item.value;
+            targetItem[valueKey] = item.defaultAnswer;
           } // no support for reference
 
     }
@@ -20428,7 +20428,7 @@ function addSDCImportFns(ns) {
     var targetItem = {};
     targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
-    _processDataType(targetItem, qItem);
+    self._processDataType(targetItem, qItem);
 
     _processCodeAndLinkId(targetItem, qItem);
 
@@ -20448,7 +20448,7 @@ function addSDCImportFns(ns) {
 
     _processUnitList(targetItem, qItem);
 
-    _processDefaultAnswer(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
 
     _processExternallyDefined(targetItem, qItem);
 
@@ -20628,7 +20628,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDefaultAnswer(lfItem, qItem) {
+  self._processDefaultAnswer = function (lfItem, qItem) {
     var val = _getValueWithPrefixKey(qItem, /^initial/);
 
     if (val) {
@@ -20658,7 +20658,7 @@ function addSDCImportFns(ns) {
         lfItem.defaultAnswer = val;
       }
     }
-  }
+  };
   /**
    * Parse questionnaire item for units list
    *
@@ -20868,7 +20868,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDataType(lfItem, qItem) {
+  self._processDataType = function (lfItem, qItem) {
     var type = _getDataType(qItem);
 
     if (type === 'SECTION' || type === 'TITLE') {
@@ -20876,7 +20876,7 @@ function addSDCImportFns(ns) {
     }
 
     lfItem.dataType = type;
-  }
+  };
   /**
    * Get LForms data type from questionnaire item
    *

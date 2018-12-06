@@ -99,6 +99,32 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         describe('Questionnaire to lforms item conversion', function () {
+          it('should convert defaultAnswers',function () {
+            var fixtures = window['defaultAnswers'];
+            for (var i = 0; i < fixtures.length; i++) {
+              var fixture = angular.copy(fixtures[i]);
+              // STU3 does not support multiple default answers.
+              if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
+                var qItem = {};
+        
+                qItem.type = LForms.FHIR[fhirVersion].SDC._handleDataType(fixture);
+                LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
+                // Default processing depends on the answer repeat.
+                if (fixture.answerCardinality && fixture.answerCardinality.max === "*") {
+                  qItem.extension = [];
+                  qItem.extension.push({
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+                    "valueBoolean": true
+                  });
+                }
+                var lfItem = {};
+                LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
+                LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
+                assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
+              }
+            }
+          });
+          
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -133,10 +159,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
             // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
-            //console.log(JSON.stringify(fhirQ.item[0].item[6].item[2], null, 2));
-            //console.log(JSON.stringify(FHTData.items[0].items[6].items[2].skipLogic, null, 2));
-            //console.log(JSON.stringify(convertedLfData.items[0].items[6].items[2].skipLogic, null, 2));
-            // Only skip logic value works in STU3
+            // Only skip logic 'value' works in STU3
             assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
             assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
             if(fhirVersion !== 'STU3') {

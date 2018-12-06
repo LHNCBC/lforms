@@ -998,7 +998,7 @@ var sdcExport = {
       else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
           item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-        targetItem[valueKey] = item.value;
+        targetItem[valueKey] = item.defaultAnswer;
       }
       // no support for reference
     }

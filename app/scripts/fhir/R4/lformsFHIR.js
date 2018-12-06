@@ -19833,10 +19833,13 @@ var sdcExport = {
    * @private
    */
   _handleInitialValues: function _handleInitialValues(targetItem, item) {
-    // dataType:
+    var answer = null; // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
+
     if (item.defaultAnswer) {
+      targetItem.initial = [];
+
       var valueKey = this._getValueKeyByDataType("value", item.dataType); // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
@@ -19850,34 +19853,42 @@ var sdcExport = {
           codeSystem = this._getCodeSystem(item.answerCodeSystem);
         }
 
-        targetItem.initial = [];
-
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           for (var i = 0, iLen = item.defaultAnswer.length; i < iLen; i++) {
             coding = {
-              "code": item.defaultAnswer[i].code,
-              "display": item.defaultAnswer[i].text
+              "code": item.defaultAnswer[i].code
             };
+
+            if (item.defaultAnswer[i].text !== undefined) {
+              coding.display = item.defaultAnswer[i].text;
+            }
 
             if (codeSystem) {
               coding.system = codeSystem;
             }
 
-            targetItem.initial[valueKey].push(coding);
+            answer = {};
+            answer[valueKey] = coding;
+            targetItem.initial.push(answer);
           }
         } // single selection, item.defaultAnswer is an object
         else {
             coding = {
-              "code": item.defaultAnswer.code,
-              "display": item.defaultAnswer.text
+              "code": item.defaultAnswer.code
             };
+
+            if (item.defaultAnswer.text !== undefined) {
+              coding.display = item.defaultAnswer.text;
+            }
 
             if (codeSystem) {
               coding.system = codeSystem;
             }
 
-            targetItem.initial[valueKey].push(coding);
+            answer = {};
+            answer[valueKey] = coding;
+            targetItem.initial.push(answer);
           }
       } // for Quantity,
       // [{
@@ -19891,7 +19902,17 @@ var sdcExport = {
       else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-            targetItem.initial[valueKey].push = item.defaultAnswer;
+            if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+              for (var k = 0; k < item.defaultAnswer.length; k++) {
+                answer = {};
+                answer[valueKey] = item.defaultAnswer[k];
+                targetItem.initial.push(answer);
+              }
+            } else {
+              answer = {};
+              answer[valueKey] = item.defaultAnswer;
+              targetItem.initial.push(answer);
+            }
           } // no support for reference
 
     }
@@ -20419,11 +20440,12 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined"; // This is R4 specific, all others are common to R4 and R3
+
   self.formLevelIgnoredFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
-  'date', 'version', //'derivedFrom', // This is R4 specific, all others are common to R4 and R3
+  'date', 'version', //'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
   self.itemLevelIgnoredFields = ['definition', 'prefix'];
   /**
@@ -20439,7 +20461,7 @@ function addSDCImportFns(ns) {
     if (fhirData) {
       target = {};
 
-      _processFormLevelFields(target, fhirData);
+      self._processFormLevelFields(target, fhirData);
 
       if (fhirData.item && fhirData.item.length > 0) {
         target.items = [];
@@ -20465,7 +20487,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processFormLevelFields(lfData, questionnaire) {
+  self._processFormLevelFields = function (lfData, questionnaire) {
     lfData.name = questionnaire.title;
 
     var code = _getCode(questionnaire);
@@ -20476,12 +20498,12 @@ function addSDCImportFns(ns) {
     }
 
     self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
-  }
+  };
 
   self.copyFields = function (source, target, fieldList) {
     if (source && target && fieldList && fieldList.length > 0) {
       fieldList.forEach(function (field) {
-        if (source[field]) {
+        if (source[field] !== undefined) {
           target[field] = source[field];
         }
       });
@@ -20501,35 +20523,35 @@ function addSDCImportFns(ns) {
     var targetItem = {};
     targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
-    _processDataType(targetItem, qItem);
+    self._processDataType(targetItem, qItem);
 
-    _processCodeAndLinkId(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
 
-    _processDisplayItemCode(targetItem, qItem);
+    self._processDisplayItemCode(targetItem, qItem);
 
-    _processEditable(targetItem, qItem);
+    self._processEditable(targetItem, qItem);
 
-    _processQuestionCardinality(targetItem, qItem);
+    self._processQuestionCardinality(targetItem, qItem);
 
-    _processAnswerCardinality(targetItem, qItem);
+    self._processAnswerCardinality(targetItem, qItem);
 
-    _processDisplayControl(targetItem, qItem);
+    self._processDisplayControl(targetItem, qItem);
 
-    _processRestrictions(targetItem, qItem);
+    self._processRestrictions(targetItem, qItem);
 
-    _processCodingInstructions(targetItem, qItem);
+    self._processCodingInstructions(targetItem, qItem);
 
-    _processUnitList(targetItem, qItem);
+    self._processUnitList(targetItem, qItem);
 
-    _processDefaultAnswer(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
 
-    _processExternallyDefined(targetItem, qItem);
+    self._processExternallyDefined(targetItem, qItem);
 
-    _processAnswers(targetItem, qItem);
+    self._processAnswers(targetItem, qItem);
 
-    _processSkipLogic(targetItem, qItem, qResource);
+    self._processSkipLogic(targetItem, qItem, qResource);
 
-    _processCalculatedValue(targetItem, qItem);
+    self._processCalculatedValue(targetItem, qItem);
 
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
 
@@ -20551,13 +20573,13 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processCalculatedValue(lfItem, qItem) {
+  self._processCalculatedValue = function (lfItem, qItem) {
     var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
 
     if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
       lfItem._calculatedExprExt = calcExt;
     }
-  }
+  };
   /**
    * Parse questionnaire object for answer cardinality
    *
@@ -20567,7 +20589,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processAnswerCardinality(lfItem, qItem) {
+  self._processAnswerCardinality = function (lfItem, qItem) {
     if (qItem.required) {
       lfItem.answerCardinality = {
         min: '1'
@@ -20583,7 +20605,7 @@ function addSDCImportFns(ns) {
     } else {
       lfItem.answerCardinality.max = '1';
     }
-  }
+  };
   /**
    * Parse questionnaire object for skip logic information
    *
@@ -20595,7 +20617,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
+  self._processSkipLogic = function (lfItem, qItem, sourceQuestionnaire) {
     if (qItem.enableWhen) {
       lfItem.skipLogic = {
         conditions: [],
@@ -20629,12 +20651,8 @@ function addSDCImportFns(ns) {
             var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
 
             if (opMapping) {
-              tr = {};
-              tr[opMapping] = answer;
-            }
-
-            if (tr) {
-              condition.trigger = tr;
+              condition.trigger = {};
+              condition.trigger[opMapping] = answer;
             }
           }
 
@@ -20646,7 +20664,7 @@ function addSDCImportFns(ns) {
         }
       }
     }
-  }
+  };
   /**
    * See if the skip logic condition belongs to range. If yes, returns a lforms condition, otherwise null;
    *
@@ -20687,13 +20705,13 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processExternallyDefined(lfItem, qItem) {
+  self._processExternallyDefined = function (lfItem, qItem) {
     var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
 
     if (externallyDefined && externallyDefined.valueUri) {
       lfItem.externallyDefined = externallyDefined.valueUri;
     }
-  }
+  };
   /**
    * Parse questionnaire item for answers list
    *
@@ -20703,7 +20721,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processAnswers(lfItem, qItem) {
+  self._processAnswers = function (lfItem, qItem) {
     if (qItem.answerOption) {
       lfItem.answers = [];
 
@@ -20730,7 +20748,7 @@ function addSDCImportFns(ns) {
         lfItem.answers.push(answer);
       }
     }
-  }
+  };
   /**
    * Parse questionnaire item for editable
    *
@@ -20740,11 +20758,11 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processEditable(lfItem, qItem) {
+  self._processEditable = function (lfItem, qItem) {
     if (qItem.readOnly) {
       lfItem.editable = '0';
     }
-  }
+  };
   /**
    * Parse questionnaire item for default answer
    *
@@ -20754,7 +20772,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDefaultAnswer(lfItem, qItem) {
+  self._processDefaultAnswer = function (lfItem, qItem) {
     if (!qItem.initial) {
       return;
     }
@@ -20762,22 +20780,24 @@ function addSDCImportFns(ns) {
     var isMultiple = _hasMultipleAnswers(qItem);
 
     var defaultAnswer = null;
-    foreach(qItem.initial, function (elem) {
+    qItem.initial.forEach(function (elem) {
+      var answer = null;
+
       var val = _getValueWithPrefixKey(elem, /^value/);
 
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE') {
         if (isMultiple) {
           if (!defaultAnswer) defaultAnswer = [];
-          defaultAnswer.push({
-            code: val.code,
-            text: val.display
-          });
+          answer = {};
+          if (val.code !== undefined) answer.code = val.code;
+          if (val.display !== undefined) answer.text = val.display;
+          defaultAnswer.push(answer);
         } // single selection
         else {
-            defaultAnswer = {
-              code: val.code,
-              text: val.display
-            };
+            answer = {};
+            if (val.code !== undefined) answer.code = val.code;
+            if (val.display !== undefined) answer.text = val.display;
+            defaultAnswer = answer;
           }
       } else {
         if (isMultiple) {
@@ -20791,7 +20811,7 @@ function addSDCImportFns(ns) {
     lfItem.value = defaultAnswer; // TODO - Is this necessary?
 
     lfItem.defaultAnswer = defaultAnswer;
-  }
+  };
   /**
    * Parse questionnaire item for units list
    *
@@ -20801,7 +20821,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processUnitList(lfItem, qItem) {
+  self._processUnitList = function (lfItem, qItem) {
     var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
 
     if (units && units.valueCodeableConcept && Array.isArray(units.valueCodeableConcept.coding)) {
@@ -20814,7 +20834,7 @@ function addSDCImportFns(ns) {
         });
       }
     }
-  }
+  };
   /**
    * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
    *
@@ -20824,7 +20844,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDisplayItemCode(lfItem, qItem) {
+  self._processDisplayItemCode = function (lfItem, qItem) {
     if (qItem.type === "display" && qItem.linkId) {
       var codes = qItem.linkId.split("/");
 
@@ -20832,7 +20852,7 @@ function addSDCImportFns(ns) {
         lfItem.questionCode = codes[codes.length - 1];
       }
     }
-  }
+  };
   /**
    * Parse questionnaire item for question cardinality
    *
@@ -20842,7 +20862,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processQuestionCardinality(lfItem, qItem) {
+  self._processQuestionCardinality = function (lfItem, qItem) {
     var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
 
     if (min) {
@@ -20867,7 +20887,7 @@ function addSDCImportFns(ns) {
         max: "1"
       };
     }
-  }
+  };
   /**
    * Parse questionnaire item for code and code system
    * @param lfItem {object} - LForms item object to assign question code
@@ -20876,7 +20896,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processCodeAndLinkId(lfItem, qItem) {
+  self._processCodeAndLinkId = function (lfItem, qItem) {
     var code = _getCode(qItem);
 
     if (code) {
@@ -20889,7 +20909,7 @@ function addSDCImportFns(ns) {
       }
 
     lfItem.linkId = qItem.linkId;
-  }
+  };
   /**
    * Get an object with code and code system
    *
@@ -20943,14 +20963,14 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processCodingInstructions(lfItem, qItem) {
+  self._processCodingInstructions = function (lfItem, qItem) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
 
     if (ci) {
       lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
       lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
     }
-  }
+  };
   /**
    * Parse questionnaire item for restrictions
    *
@@ -20960,7 +20980,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processRestrictions(lfItem, qItem) {
+  self._processRestrictions = function (lfItem, qItem) {
     var restrictions = {};
 
     if (typeof qItem.maxLength !== 'undefined') {
@@ -20991,7 +21011,7 @@ function addSDCImportFns(ns) {
     if (!jQuery.isEmptyObject(restrictions)) {
       lfItem.restrictions = restrictions;
     }
-  }
+  };
   /**
    * Parse questionnaire item for data type
    *
@@ -21001,7 +21021,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDataType(lfItem, qItem) {
+  self._processDataType = function (lfItem, qItem) {
     var type = _getDataType(qItem);
 
     if (type === 'SECTION' || type === 'TITLE') {
@@ -21009,7 +21029,7 @@ function addSDCImportFns(ns) {
     }
 
     lfItem.dataType = type;
-  }
+  };
   /**
    * Get LForms data type from questionnaire item
    *
@@ -21087,7 +21107,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processDisplayControl(lfItem, qItem) {
+  self._processDisplayControl = function (lfItem, qItem) {
     var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
 
     if (itemControlType) {
@@ -21136,7 +21156,7 @@ function addSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  }
+  };
   /**
    * Get value from an object given a partial string of hash key.
    * Use it where at most only one key matches.
@@ -21178,25 +21198,27 @@ function addSDCImportFns(ns) {
   function _getSourceCodeUsingLinkId(topLevelItems, questionLinkId) {
     var ret = null;
 
-    for (var i = 0; topLevelItems && !ret && i < topLevelItems.length; i++) {
-      var item = topLevelItems[i];
+    if (topLevelItems) {
+      for (var i = 0; !ret && i < topLevelItems.length; i++) {
+        var item = topLevelItems[i];
 
-      if (item.linkId === questionLinkId) {
-        if (item.code) {
-          ret = {
-            questionCode: item.code[0].code,
-            dataType: _getDataType(item)
-          };
+        if (item.linkId === questionLinkId) {
+          if (item.code) {
+            ret = {
+              questionCode: item.code[0].code,
+              dataType: _getDataType(item)
+            };
+          } else {
+            ret = {
+              questionCode: item.linkId,
+              dataType: _getDataType(item)
+            };
+          }
+
+          break;
         } else {
-          ret = {
-            questionCode: item.linkId,
-            dataType: _getDataType(item)
-          };
+          ret = _getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
         }
-
-        break;
-      } else {
-        ret = _getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
       }
     }
 
