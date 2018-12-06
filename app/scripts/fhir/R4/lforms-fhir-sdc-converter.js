@@ -141,7 +141,7 @@ function addSDCImportFns(ns) {
     for (var i=0, len=expressionExtURLs.length; i<len; ++i) {
       var url = expressionExtURLs[i];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression.language == "text/fhirpath")
+      if (ext && ext.valueExpression && ext.valueExpression.language == "text/fhirpath")
         lfItem[expressionExtensions[url]] = ext;
     }
   }
