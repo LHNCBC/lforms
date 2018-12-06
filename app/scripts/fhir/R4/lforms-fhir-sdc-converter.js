@@ -29,7 +29,6 @@ function addSDCImportFns(ns) {
 
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   
-  // This is R4 specific, all others are common to R4 and R3
   self.formLevelIgnoredFields = [
     // Resource
     'id',
@@ -49,7 +48,7 @@ function addSDCImportFns(ns) {
     // Questionnaire
     'date',
     'version',
-   //'derivedFrom', // New in R4
+    'derivedFrom', // New in R4
     'status',
     'experimental',
     'publisher',
