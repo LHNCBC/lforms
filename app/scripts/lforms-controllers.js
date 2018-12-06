@@ -540,38 +540,35 @@ angular.module('lformsWidget')
           // large forms) check on the whole of the form data for the need to
           // run FHIRPath.
           if (LForms.FHIR) {
-            if (lfData && lfData.hasFHIRPath) {
+            if (lfData && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
 
               // Watch for changes that require FHIRPath to run
-              if ($scope.unwatchFHIRPath)
-                $scope.unwatchFHIRPath();
-              $scope.unwatchFHIRPath = $scope.$watch(function() {
-                return JSON.stringify(lfData, function(key, val) {
-                  // Ignore changes to internal variables and $$hashKey
-                  return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+              if (lfData.hasFHIRPath) {
+                if ($scope.unwatchFHIRPath)
+                  $scope.unwatchFHIRPath();
+                $scope.unwatchFHIRPath = $scope.$watch(function() {
+                  return JSON.stringify(lfData, function(key, val) {
+                    // Ignore changes to internal variables and $$hashKey
+                    return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+                  });
+                }, function() {
+                  if (lfData)
+                    lfData.runCalculatedExpressions();
                 });
-              }, function() {
-                if (lfData)
-                  lfData.runCalculatedExpressions();
-              });
+              }
 
               // Set up a listener for asynchronous change events (triggered by
               // lfData itself).
               if (!lfData._controllerInit) {
                 lfData.addAsyncChangeListener(function() {
-                  $scope.$digest(); // forces watches to run again
+                  $scope.$apply(function() {
+                    if (lfData._hasInitialExpr)
+                      lfData.runValueExpressions('_initialExprExt');
+                    if (lfData.hasFHIRPath)
+                      lfData.runCalculatedExpressions();
+                  });
                 });
               }
-
-              // Set up a watch on _asyncLoadCounter, so we can run FHIRPath
-              // expressions when needed resources have finished loading.
-              if ($scope.unwatchAsync)
-                $scope.unwatchAsync();
-              $scope.unwatchAsync = $scope.$watch("lfData._asyncLoadCounter", function() {
-                if (lfData._asyncLoadCounter === 0) {
-                  lfData.runCalculatedExpressions();
-                }
-              });
 
               // Angular calls this twice for the same lfData.  Set a flag.
               // Note:  For some reason the watches still need to be set up both times.
