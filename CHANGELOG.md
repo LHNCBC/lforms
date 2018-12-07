@@ -2,9 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.7.1] 2018-12-07
+### Fixed
+- FHIRPath intialization has been corrected, so that the context passed in is
+  now the item on which the expression is attached, and %resource is set to the
+  QustionnaireResponse object.
+
 ## [13.7.0] 2018-12-06
 ### Added.
-- Added support for enableWhen and initial(x) in R4. 
+- Added support for enableWhen and initial(x) in R4.
 
 ## [13.6.0] 2018-12-04
 ### Added
