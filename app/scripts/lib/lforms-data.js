@@ -224,9 +224,9 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhirpathVars = {};
-      this.fhirExtensions = data.fhirExtensions;
+      this.extension = data.extension;
       if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.fhirExtensions, 'url',
+        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
         for (var i=0, len=contextItems.length; i<len; ++i) {
           var contextItemExt = contextItems[i].extension;
@@ -2639,7 +2639,9 @@ if (typeof LForms === 'undefined')
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger)[0] ; // trigger should have only one key
+            var field = Object.keys(trigger).filter(function(key) {
+              return key !== 'not';
+            })[0] ; // trigger should have only one key, other than 'not'
             // if the field accepts multiple values from the answer list
             if (Array.isArray(currentValue)) {
               for (var m= 0, mLen = currentValue.length; m<mLen; m++) {
@@ -2688,6 +2690,10 @@ if (typeof LForms === 'undefined')
             }
             break;
         } // end case
+        
+        if(trigger.not) {
+          action = !action;
+        }
       }
 
       return action;

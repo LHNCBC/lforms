@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.7.0] 2018-12-06
+### Added.
+- Added support for enableWhen and initial(x) in R4. 
+
 ## [13.6.0] 2018-12-04
 ### Added
 - Support the FHIR extension "questionnaire-initialExpression".

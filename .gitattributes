@@ -1,3 +1,5 @@
 * text=auto
 npm-shrinkwrap.json -diff
 themes.css -diff
+app/scripts/fhir/R4/lformsFHIR.js -diff
+app/scripts/fhir/STU3/lformsFHIR.js -diff
