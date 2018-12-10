@@ -213,6 +213,26 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(lfItem.dataType, 'QTY');
           });
 
+          it('should convert FHIR Questionnaire initial quantity value to LForms QTY item value', function () {
+            var fhirData = {
+              item: [{
+                text: 'fill in weight',
+                linkId: '12345',
+                type: 'quantity'
+              }]
+            }
+            if(fhirVersion === 'R4') {
+              fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
+            }
+            else { // STU3
+              fhirData.item[0].initialQuantity = {value: 222};
+            }
+
+            var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
+            assert.equal(lfItem.dataType, 'QTY');
+            assert.equal(lfItem.defaultAnswer, 222);
+          });
+
           it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {
             var lfItem = {
               "questionCodeSystem":"ad-hoc",

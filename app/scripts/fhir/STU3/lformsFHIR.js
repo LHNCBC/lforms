@@ -20702,6 +20702,21 @@ function addSDCImportFns(ns) {
               text: val.display
             };
           }
+      } else if (lfItem.dataType === 'QTY') {
+        if (val.value !== undefined) {
+          lfItem.value = val.value;
+          lfItem.defaultAnswer = val.value;
+        }
+
+        var unit = val.code ? val.code : val.unit;
+
+        if (unit) {
+          lfItem.units = lfItem.units ? lfItem.units : [];
+
+          if (!lfItem.units.includes(unit)) {
+            lfItem.units.push(unit);
+          }
+        }
       } else {
         lfItem.value = val;
         lfItem.defaultAnswer = val;

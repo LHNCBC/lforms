@@ -365,36 +365,39 @@ function addSDCImportFns(ns) {
   
     var isMultiple = _hasMultipleAnswers(qItem);
     var defaultAnswer = null;
+
     qItem.initial.forEach(function(elem) {
       var answer = null;
       var val = _getValueWithPrefixKey(elem, /^value/);
+
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
-        if (isMultiple) {
-          if(!defaultAnswer) defaultAnswer = [];
-          answer = {};
-          if(val.code !== undefined) answer.code = val.code;
-          if(val.display !== undefined) answer.text = val.display;
-          defaultAnswer.push(answer);
-        }
-        // single selection
-        else {
-          answer = {};
-          if(val.code !== undefined) answer.code = val.code;
-          if(val.display !== undefined) answer.text = val.display;
-          defaultAnswer = answer;
+        answer = {};
+        if(val.code !== undefined) answer.code = val.code;
+        if(val.display !== undefined) answer.text = val.display;
+      }
+      else if(lfItem.dataType === 'QTY') {
+        answer = val.value;
+        let unit = val.code? val.code: val.unit;
+        if (unit) {
+          lfItem.units = lfItem.units? lfItem.units: [];
+          if(! lfItem.units.includes(unit)) {
+            lfItem.units.push(unit);
+          }
         }
       }
       else {
-        if (isMultiple) {
-          if(!defaultAnswer) defaultAnswer = [];
-          defaultAnswer.push(val);
-        }
-        else {
-          defaultAnswer = val;
-        }
+        answer = val;
+      }
+
+      if (isMultiple) {
+        if(!defaultAnswer) defaultAnswer = [];
+        defaultAnswer.push(answer);
+      }
+      else {     // single selection
+        defaultAnswer = answer;
       }
     });
-    
+
     lfItem.value = defaultAnswer; // TODO - Is this necessary?
     lfItem.defaultAnswer = defaultAnswer;
   };
