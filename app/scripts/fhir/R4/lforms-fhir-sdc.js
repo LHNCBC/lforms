@@ -16,13 +16,14 @@
  * mergeQuestionnaireResponseToLForms()
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
-var sdcVersion = '3.5.0'
+var sdcVersion = '3.5.0';
 
 var sdcExport = {
 
   SDCVersion: sdcVersion,
   QProfile: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
   QRProfile: 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
@@ -58,7 +59,24 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
+  
+  _operatorMapping: {
+    'minExclusive': '>',
+    'maxExclusive': '<',
+    'minInclusive': '>=',
+    'maxInclusive': '<=',
+    'value': '=',
+    'not': '!=',
+    '>': 'minExclusive',
+    '<': 'maxExclusive',
+    '>=': 'minInclusive',
+    '<=': 'maxInclusive',
+    '=': 'value',
+    '!=': 'not'
+  },
 
+
+  
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -120,30 +138,17 @@ var sdcExport = {
    * @private
    */
   _setFormLevelFields: function(target, source, noExtensions) {
-
+  
+    this.copyFields(source, target, this.formLevelIgnoredFields);
     // resourceType
     target.resourceType = "Questionnaire";
-
-    // status
-    target.status = "draft";
-
-    // date
-    target.date = LForms.Util.dateToString(new Date());
-
-    // version, assuming questionnaires are from LOINC forms
-    target.version = "2.56";
-
-    // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
+    target.status = target.status ? target.status : "draft";
 
     // meta
-    if (!noExtensions) {
-      target.meta = {
-        "profile": [this.QProfile]
-      };
-      target.extension = source.fhirExtensions;
-    }
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+  
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
     // title
     target.title = source.name;
@@ -219,7 +224,8 @@ var sdcExport = {
       }
     }
     else {
-      targetItem.repeats = false;
+      // No default in R4
+      // targetItem.repeats = false;
     }
 
     // answer repeats
@@ -342,6 +348,7 @@ var sdcExport = {
     if (noExtensions || targetItem.extension.length === 0)
       delete targetItem.extension;
 
+    this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem
   },
 
@@ -975,43 +982,52 @@ var sdcExport = {
    * @private
    */
   _handleInitialValues: function(targetItem, item) {
+    var answer = null;
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer) {
-
-      var valueKey = this._getValueKeyByDataType("initial", item.dataType);
+  
+      targetItem.initial = [];
+      var valueKey = this._getValueKeyByDataType("value", item.dataType);
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (item.dataType === 'CWE' || item.dataType === 'CNE' ) {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = null, coding = null;
+        if(item.answerCodeSystem) {
+          codeSystem = this._getCodeSystem(item.answerCodeSystem);
+        }
+  
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
-          // targetItem[valueKey] = [];
-          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-          //   targetItem[valueKey].push({
-          //     "system": codeSystem,
-          //     "code": item.defaultAnswer[i].code,
-          //     "display": item.defaultAnswer[i].text
-          //   })
-          // };
-
-          // pick the first one only
-          targetItem[valueKey] = {
-            "system": codeSystem,
-            "code": item.defaultAnswer[0].code,
-            "display": item.defaultAnswer[0].text
-          };
+          for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
+            coding = {"code": item.defaultAnswer[i].code};
+            if(item.defaultAnswer[i].text !== undefined) {
+              coding.display = item.defaultAnswer[i].text;
+            }
+            
+            if(codeSystem) {
+              coding.system = codeSystem;
+            }
+            answer = {};
+            answer[valueKey] = coding;
+            targetItem.initial.push(answer);
+          }
         }
         // single selection, item.defaultAnswer is an object
         else {
-          targetItem[valueKey] = {
-            "system": codeSystem,
-            "code": item.defaultAnswer.code,
-            "display": item.defaultAnswer.text
-          };
+          coding = {"code": item.defaultAnswer.code};
+          if(item.defaultAnswer.text !== undefined) {
+            coding.display = item.defaultAnswer.text;
+          }
+          if(codeSystem) {
+            coding.system = codeSystem;
+          }
+          answer = {};
+          answer[valueKey] = coding;
+          targetItem.initial.push(answer);
         }
       }
       // for Quantity,
@@ -1033,7 +1049,18 @@ var sdcExport = {
       else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
           item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-        targetItem[valueKey] = item.value;
+        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+          for(var k = 0; k < item.defaultAnswer.length; k++) {
+            answer = {};
+            answer[valueKey] = item.defaultAnswer[k];
+            targetItem.initial.push(answer);
+          }
+        }
+        else {
+          answer = {};
+          answer[valueKey] = item.defaultAnswer;
+          targetItem.initial.push(answer);
+        }
       }
       // no support for reference
     }
@@ -1078,6 +1105,7 @@ var sdcExport = {
   _handleSkipLogic: function(targetItem, item, source) {
     if (item.skipLogic) {
       var enableWhen = [];
+      var rangeFound = false;
 
       // ignore "ANY", "ALL" on item.skipLogic.logic
       // ignore "show" on item.skipLogic.action
@@ -1086,9 +1114,9 @@ var sdcExport = {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
 
-        var enableWhenRule = {
+        var enableWhenRules = [{
           "question": sourceItem._codePath
-        };
+        }];
         // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
         // Attachment, Coding, Quantity, Reference(Resource)
@@ -1099,12 +1127,12 @@ var sdcExport = {
         // NO support of multiple selections in FHIR SDC, just pick one
         if (sourceItem.dataType === 'CWE' || sourceItem.dataType === 'CNE' ) {
           if (condition.trigger.code) {
-            enableWhenRule[valueKey] = {
+            enableWhenRules[0][valueKey] = {
               "code": condition.trigger.code
             }
           }
           else {
-            enableWhenRule[valueKey] = {
+            enableWhenRules[0][valueKey] = {
               "code": "only 'code' attribute is supported"
             }
           }
@@ -1125,19 +1153,62 @@ var sdcExport = {
           }
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" ||
+        else if(sourceItem.dataType === "BL") {
+          enableWhenRules[0].operator = 'exists';
+          // Spec says exists implies answer is boolean, then 'exists' is redundant, isn't it?
+          enableWhenRules[0][valueKey] = condition.trigger.value;
+        }
+        else if (sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" ||
             sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" ||
             sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
-          enableWhenRule[valueKey] = condition.trigger.value;
+          enableWhenRules = this._createEnableWhenRulesForRangeAndValue(valueKey, condition, sourceItem);
+          if(enableWhenRules.length > 1) {
+            rangeFound = true;
+          }
         }
-        // add a rule to enableWhen
-        enableWhen.push(enableWhenRule)
+        // add rule(s) to enableWhen
+        enableWhen = enableWhen.concat(enableWhenRules);
+      }
+      
+      if(rangeFound && item.skipLogic.conditions.length > 1) {
+        // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
+        // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
+        // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
+        return;
       }
       targetItem.enableWhen = enableWhen;
+      if(item.skipLogic.logic === 'ALL' || rangeFound) {
+        targetItem.enableBehavior = 'all';
+      }
+      else if(enableWhen.length > 1) {
+        targetItem.enableBehavior = 'any';
+      }
     }
   },
-
-
+  
+  /**
+   * A single condition in lforms translates to two enableWhen rules in core FHIR.
+   *
+   * @param answerKey - The answer[x] string
+   * @param skipLogicCondition - Lforms skip logic condition object
+   * @param sourceItem - Skip logic source item in lforms.
+   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @private
+   */
+  _createEnableWhenRulesForRangeAndValue: function(answerKey, skipLogicCondition, sourceItem) {
+    var ret = [];
+    Object.keys(skipLogicCondition.trigger).forEach(function(key) {
+      var rule = {
+        question: sourceItem.linkId,
+        operator: sdcExport._operatorMapping[key]
+      };
+      rule[answerKey] = skipLogicCondition.trigger[key];
+      ret.push(rule);
+    });
+    
+    return ret;
+  },
+  
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
    * @param formData an LForms form definition or LFormsData object.

@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [13.6.1] 2018-12-06
+## [13.7.1] 2018-12-06
 ### Fixed
 - FHIR value quantity import/export
 - Misc fixes.
@@ -10,6 +10,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added a test entry (button) "Merge (Questionnaire, QuestionnaireResponse) to LForms"
   to the test page, which loads a FHIR Questionnaire, a filled (or partially filled) QuestionnaireResponse
   for that questionnaire, and then convert to lform and display.
+
+## [13.7.0] 2018-12-06
+### Added.
+- Added support for enableWhen and initial(x) in R4. 
 
 ## [13.6.0] 2018-12-04
 ### Added

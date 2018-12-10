@@ -55,7 +55,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(out, cneFixture.output);
           });
 
-          it('should covert an item with answerCodeSystem', function () {
+          it('should convert an item with answerCodeSystem', function () {
             var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
             var out = fhir.SDC._processItem(alFixture.input, {});
             assert.deepEqual(out, alFixture.output);
@@ -113,6 +113,32 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         describe('Questionnaire to lforms item conversion', function () {
+          it('should convert defaultAnswers',function () {
+            var fixtures = window['defaultAnswers'];
+            for (var i = 0; i < fixtures.length; i++) {
+              var fixture = angular.copy(fixtures[i]);
+              // STU3 does not support multiple default answers.
+              if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
+                var qItem = {};
+        
+                qItem.type = LForms.FHIR[fhirVersion].SDC._handleDataType(fixture);
+                LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
+                // Default processing depends on the answer repeat.
+                if (fixture.answerCardinality && fixture.answerCardinality.max === "*") {
+                  qItem.extension = [];
+                  qItem.extension.push({
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+                    "valueBoolean": true
+                  });
+                }
+                var lfItem = {};
+                LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
+                LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
+                assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
+              }
+            }
+          });
+          
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -147,12 +173,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
             // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
-            // Skip logic action and logic is not supported.
-            // Only code/value triggers are supported.
-            assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].source, "54125-0");
-            assert.equal(convertedLfData.items[0].items[4].skipLogic.conditions[0].trigger.value, "Alex");
-            assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].source, "54130-0");
-            assert.equal(convertedLfData.items[0].items[12].items[2].skipLogic.conditions[0].trigger.code, "LA10402-8");
+            // Only skip logic 'value' works in STU3
+            assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
+            assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
+            if(fhirVersion !== 'STU3') {
+              assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, FHTData.items[0].items[6].items[1].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, FHTData.items[0].items[6].items[2].skipLogic);
+            }
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
@@ -238,7 +265,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert to standard Questionnaire without any extensions', function() {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)), true);
 
-            assert.equal(fhirQ.meta, undefined);
+            assert.equal(fhirQ.meta.profile[0], fhir.SDC.stdQProfile);
             assert.equal(fhirQ.item[0].item[1].extension, undefined);
 
             assert.equal(fhirQ.toString().match(/extension/), undefined);
@@ -286,7 +313,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "type": "decimal"
                 }
               ]
-            }
+            };
             var lformsQ = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
             var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);
             // Confirm that we got the exension back.
