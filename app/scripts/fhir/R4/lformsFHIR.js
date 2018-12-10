@@ -20442,16 +20442,13 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
-<<<<<<< HEAD
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-=======
   self.formLevelIgnoredFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
   'date', 'version', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
   self.itemLevelIgnoredFields = ['definition', 'prefix'];
->>>>>>> master
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -20548,15 +20545,11 @@ function addSDCImportFns(ns) {
 
     self._processCodingInstructions(targetItem, qItem);
 
+    ancestorIsHidden = self._processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
+
     self._processUnitList(targetItem, qItem);
 
-<<<<<<< HEAD
-    ancestorIsHidden = _processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
-
-    _processUnitList(targetItem, qItem);
-=======
     self._processDefaultAnswer(targetItem, qItem);
->>>>>>> master
 
     self._processExternallyDefined(targetItem, qItem);
 
