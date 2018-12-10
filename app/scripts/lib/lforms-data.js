@@ -224,9 +224,9 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhirpathVars = {};
-      this.fhirExtensions = data.fhirExtensions;
+      this.extension = data.extension;
       if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.fhirExtensions, 'url',
+        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
         for (var i=0, len=contextItems.length; i<len; ++i) {
           var contextItemExt = contextItems[i].extension;
@@ -241,13 +241,18 @@ if (typeof LForms === 'undefined')
           }
           if (name && typeList.length > 0) {
             this._asyncLoadCounter++;
-            LForms.fhirContext.getCurrent(typeList, function(resource) {
-              lfData._asyncLoadCounter--;
-              if (resource)
-                lfData._fhirpathVars[name] = resource;
-              if (lfData._asyncLoadCounter === 0)
-                lfData._notifyAsyncChangeListeners()
-            });
+            // Enforce that this is truly asynchronous with setTimeout.
+            // Some implementations of getCurrent (e.g in testing) might be
+            // synchronous.
+            setTimeout(function() {
+              LForms.fhirContext.getCurrent(typeList, function(resource) {
+                lfData._asyncLoadCounter--;
+                if (resource)
+                  lfData._fhirpathVars[name] = resource;
+                if (lfData._asyncLoadCounter === 0)
+                  lfData._notifyAsyncChangeListeners()
+              });
+            }, 1);
           }
         }
       }
@@ -377,20 +382,36 @@ if (typeof LForms === 'undefined')
      *  Runs any calculated expressions.
      */
     runCalculatedExpressions: function() {
+      this.runValueExpressions('_calculatedExprExt');
+    },
+
+
+    /**
+     *  Runs any expressions stored in an item under the given property
+     *  name, and assigns the result to item's value.
+     */
+    runValueExpressions: function(expressionProperty) {
       var lfData = this;
-      if (lfData.hasFHIRPath && LForms.FHIR) {
+      if (LForms.FHIR) {
         var fhir = LForms.FHIR[lfData.fhirVersion];
-        var itemHash = lfData.itemHash
-        var itemKeys = Object.keys(itemHash);
+        var itemList = lfData.itemList;
         var questResp;
-        for (var i=0, len=itemKeys.length; i<len; ++i) {
-          var item = itemHash[itemKeys[i]];
-          if (item._calculatedExprExt &&
-              item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
-            if (!questResp)
-              questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-            var fhirPathVal = fhir.fhirpath.evaluate(questResp,
-              item._calculatedExprExt.valueExpression.expression, lfData._fhirpathVars);
+        for (var i=0, len=itemList.length; i<len; ++i) {
+          var item = itemList[i];
+          if (item !== this._activeItem && item[expressionProperty] &&
+              item[expressionProperty].valueExpression.language=="text/fhirpath") {
+            // If there are many FHIRPath expressions, regenerating the
+            // complete QuestionnaireReponse each time would be slower than
+            // updating it.  But, generating a structure to that update fast
+            // would not be trivial either.
+            questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
+            try {
+              var fhirPathVal = fhir.fhirpath.evaluate(questResp,
+                item[expressionProperty].valueExpression.expression, lfData._fhirpathVars);
+            }
+            catch (e) {
+              console.log(e);
+            }
             this._setItemValueFromFHIRPath(item, fhirPathVal);
           }
         }
@@ -405,7 +426,8 @@ if (typeof LForms === 'undefined')
      * @param fhirPathRes the result of a FHIRPath evaluation.
      */
     _setItemValueFromFHIRPath: function(item, fhirPathRes) {
-      var fhirPathVal = fhirPathRes[0];
+      if (fhirPathRes !== undefined)
+        var fhirPathVal = fhirPathRes[0];
       if (!fhirPathVal)
         item.value = undefined;
       else {
@@ -1053,9 +1075,11 @@ if (typeof LForms === 'undefined')
            !!(item.calculationMethod || item._calculatedExprExt);
 
         var lfData = this;
-        if (LForms.FHIR && !lfData.hasFHIRPath && lfData.fhirVersion && item._calculatedExprExt &&
-            item._calculatedExprExt.valueExpression.language=="text/fhirpath") {
-          lfData.hasFHIRPath = true;
+        if (LForms.FHIR && lfData.fhirVersion) {
+          lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
+               item._calculatedExprExt.valueExpression.language=="text/fhirpath");
+          lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
+             item._initialExprExt.valueExpression.language=="text/fhirpath");
         }
     },
 
@@ -2615,7 +2639,9 @@ if (typeof LForms === 'undefined')
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger)[0] ; // trigger should have only one key
+            var field = Object.keys(trigger).filter(function(key) {
+              return key !== 'not';
+            })[0] ; // trigger should have only one key, other than 'not'
             // if the field accepts multiple values from the answer list
             if (Array.isArray(currentValue)) {
               for (var m= 0, mLen = currentValue.length; m<mLen; m++) {
@@ -2664,6 +2690,10 @@ if (typeof LForms === 'undefined')
             }
             break;
         } // end case
+        
+        if(trigger.not) {
+          action = !action;
+        }
       }
 
       return action;

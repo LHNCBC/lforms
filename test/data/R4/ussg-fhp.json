@@ -70,11 +70,11 @@
           "type": "string",
           "extension": [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Name from patient resource",
                 "language" : "text/fhirpath",
-                "expression": "%patient.name.given.first() + ' ' +  %patient.name.family"
+                "expression": "%patient.name[0].select(given.first() + ' ' +  family)"
               }
             }
           ]
@@ -106,7 +106,7 @@
           ],
           "text": "Gender",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -152,7 +152,7 @@
               }
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Birth date from patient resource",
                 "language" : "text/fhirpath",
@@ -199,7 +199,7 @@
           ],
           "text": "Twin",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -250,7 +250,7 @@
           ],
           "text": "Adopted",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -294,7 +294,7 @@
           ],
           "text": "Parents related",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -410,7 +410,7 @@
           ],
           "text": "Race",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -570,7 +570,7 @@
           ],
           "text": "Ethnicity",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -730,7 +730,7 @@
               ],
               "text": "Age range at onset of disease",
               "type": "choice",
-              "option": [
+              "answerOption": [
                 {
                   "valueCoding": {
                     "system": "http://loinc.org",
@@ -866,7 +866,7 @@
           ],
           "text": "Relationship to patient",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "extension": [
                 {
@@ -1184,7 +1184,7 @@
               }
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Gender from patient resource",
                 "language" : "text/fhirpath",
@@ -1203,7 +1203,7 @@
           ],
           "text": "Gender",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -1254,7 +1254,7 @@
           ],
           "text": "Living?",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -1383,7 +1383,7 @@
                   }
                 }
               ],
-              "option": [
+              "answerOption": [
                 {
                   "valueCoding": {
                     "system": "http://loinc.org",
@@ -1911,7 +1911,7 @@
                   }
                 }
               ],
-              "option": [
+              "answerOption": [
                 {
                   "valueCoding": {
                     "system": "http://loinc.org",
@@ -2020,7 +2020,7 @@
           ],
           "text": "Twin",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -2071,7 +2071,7 @@
           ],
           "text": "Adopted",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -2119,7 +2119,7 @@
           ],
           "text": "Race",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -2279,7 +2279,7 @@
           ],
           "text": "Ethnicity",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -2393,7 +2393,7 @@
           ],
           "text": "Parents related",
           "type": "choice",
-          "option": [
+          "answerOption": [
             {
               "valueCoding": {
                 "system": "http://loinc.org",
@@ -2483,7 +2483,7 @@
               ],
               "text": "Age range at onset of disease",
               "type": "choice",
-              "option": [
+              "answerOption": [
                 {
                   "valueCoding": {
                     "system": "http://loinc.org",

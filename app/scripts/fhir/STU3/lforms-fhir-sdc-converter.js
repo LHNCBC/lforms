@@ -95,7 +95,7 @@ function addSDCImportFns(ns) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
-    _processDataType(targetItem, qItem);
+    self._processDataType(targetItem, qItem);
     _processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
@@ -106,7 +106,7 @@ function addSDCImportFns(ns) {
     _processCodingInstructions(targetItem, qItem);
     ancestorIsHidden = _processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
     _processUnitList(targetItem, qItem);
-    _processDefaultAnswer(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, qResource);
@@ -173,7 +173,7 @@ function addSDCImportFns(ns) {
    */
   function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
     if(qItem.enableWhen) {
-      lfItem.skipLogic = {conditions: []};
+      lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = null;
         for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
@@ -280,7 +280,7 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processDefaultAnswer(lfItem, qItem) {
+  self._processDefaultAnswer = function (lfItem, qItem) {
 
     var val = _getValueWithPrefixKey(qItem, /^initial/);
     if (val) {
@@ -300,7 +300,7 @@ function addSDCImportFns(ns) {
         lfItem.defaultAnswer = val;
       }
     }
-  }
+  };
 
 
   /**
@@ -497,13 +497,13 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processDataType (lfItem, qItem) {
+  self._processDataType = function (lfItem, qItem) {
     var type = _getDataType(qItem);
     if(type === 'SECTION' || type === 'TITLE') {
       lfItem.header = true;
     }
     lfItem.dataType = type;
-  }
+  };
 
 
   /**

@@ -23,6 +23,7 @@ var sdcExport = {
   SDCVersion: sdcVersion,
   QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|'+sdcVersion,
   QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|'+sdcVersion,
+  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
 
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   _itemTypeMapping: {
@@ -58,7 +59,8 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
-
+  
+  
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -138,11 +140,10 @@ var sdcExport = {
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
 
     // meta
-    if (!noExtensions) {
-      target.meta = {
-        "profile": [this.QProfile]
-      };
-    }
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+  
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
     // title
     target.title = source.name;
@@ -997,7 +998,7 @@ var sdcExport = {
       else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
           item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" ||
           item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
-        targetItem[valueKey] = item.value;
+        targetItem[valueKey] = item.defaultAnswer;
       }
       // no support for reference
     }
