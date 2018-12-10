@@ -8,7 +8,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Misc fixes.
 ### Added
 - Added a test entry (button) "Merge (Questionnaire, QuestionnaireResponse) to LForms"
-  to the test page, which loads a FHIR Questionnaire, a (partially) failed QuestionnaireResponse
+  to the test page, which loads a FHIR Questionnaire, a filled (or partially filled) QuestionnaireResponse
   for that questionnaire, and then convert to lform and display.
 
 ## [13.6.0] 2018-12-04

@@ -35,6 +35,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should covert an item with QTY data type to type quantity in FHIR Questionnaire', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "fill in weight",
+              "dataType": "QTY",
+              "_codePath": "/weight"
+            };
+            var out = fhir.SDC._processItem(item, {});
+            assert.equal(out.linkId, "/weight");
+            assert.equal(out.type, "quantity");
+          });
+
           it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
             var out = fhir.SDC._processItem(cneFixture.input, {});
@@ -160,6 +174,32 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
           });
 
+          it('should convert FHIR Questionnaire quantity item to LForms QTY item', function () {
+            var fhirData = {
+              item: [{
+                text: 'fill in weight',
+                linkId: '12345',
+                type: 'quantity'
+              }]
+            }
+            var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
+            assert.equal(lfItem.dataType, 'QTY');
+          });
+
+          it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {
+            var lfItem = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "question": "fill in weight",
+              "dataType": "QTY"
+            };
+            var fhirAnswer = [{
+              valueQuantity: { value: 128}
+            }];
+            fhir.SDC._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
+            assert.equal(lfItem.value, 128);
+          });
+
           it('should convert restrictions', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -276,6 +316,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should covert an item of QTY to valueQuantity in FHIR QuestionnaireResponse', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "fill in weight",
+              "dataType": "QTY",
+              "_codePath": "/weight",
+              "value": 128
+            };
+            var out = fhir.SDC._processResponseItem(item, {});
+            assert.equal(out.linkId, "/weight");
+            assert.equal(out.answer[0].valueQuantity.value, 128);
+          });
         });
       });
     });

@@ -849,6 +849,7 @@ var sdcExport = {
     return fhirQuantity;
   },
 
+
   /**
    * Process capture user data
    * @param targetItem an item in FHIR SDC QuestionnaireResponse object
@@ -934,7 +935,7 @@ var sdcExport = {
         else if (item.dataType === "QTY") { // for now, handling only simple quantities without the comparators.
           let fhirQuantity = this._makeValueQuantity(values[i], item.unit);
           if(fhirQuantity) {
-            answer.push({valueQuantity: fhirQuantity}); // TODO check if need placeholder (null)
+            answer.push({valueQuantity: fhirQuantity});
           }
         }
         // make a Quantity type if numeric values has a unit value

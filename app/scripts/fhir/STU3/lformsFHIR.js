@@ -19830,7 +19830,7 @@ var sdcExport = {
             if (fhirQuantity) {
               answer.push({
                 valueQuantity: fhirQuantity
-              }); // TODO check if need placeholder (null)
+              });
             }
           } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {

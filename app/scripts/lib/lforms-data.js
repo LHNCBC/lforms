@@ -47,11 +47,11 @@ if (typeof LForms === 'undefined')
         PHONE:  "PHONE",
         SECTION:"SECTION",
         TITLE:  "TITLE",
+        QTY:    "QTY",
         BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
         // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
-        // QTY:    "QTY",   // not supported yet
       },
       DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
     },
@@ -975,6 +975,7 @@ if (typeof LForms === 'undefined')
               break;
             case this._CONSTANTS.DATA_TYPE.INT:
             case this._CONSTANTS.DATA_TYPE.REAL:
+            case this._CONSTANTS.DATA_TYPE.QTY:
               item._toolTip = "Type a number";
               // internally all numeric values are of string type
               if (typeof item.value === "number")
@@ -1370,6 +1371,7 @@ if (typeof LForms === 'undefined')
               retValue = parseInt(value);
               break;
             case this._CONSTANTS.DATA_TYPE.REAL:
+            case this._CONSTANTS.DATA_TYPE.QTY:
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
@@ -2661,6 +2663,7 @@ if (typeof LForms === 'undefined')
           // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
           case this._CONSTANTS.DATA_TYPE.INT:
           case this._CONSTANTS.DATA_TYPE.REAL:
+          case this._CONSTANTS.DATA_TYPE.QTY:
             var numCurrentValue = parseFloat(currentValue);
             // the skip logic rule has a "value" key
             if (trigger.hasOwnProperty("value")) {

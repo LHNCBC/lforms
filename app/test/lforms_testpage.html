@@ -362,6 +362,8 @@
                   $scope.lfOption2 = {
                     useAnimation: !window._INTESTING_
                   };
+                }, function (err) {
+                  window.alert('Unable to load '+getFHIRVersion()+': fhir-valueQuantity-qn-response.json');
                 });
               }, function (err) {
                 window.alert('Unable to load '+getFHIRVersion()+': fhir-valueQuantity-questionnaire.json');

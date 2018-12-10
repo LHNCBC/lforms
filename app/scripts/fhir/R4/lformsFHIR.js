@@ -19556,7 +19556,7 @@ var sdcExport = {
    */
   _processResponseItem: function _processResponseItem(item, parentItem) {
     var targetItem = {};
-    var linkId = item._codePath; // if it is a section
+    var linkId = item.linkId ? item.linkId : item._codePath; // if it is a section
 
     if (item.dataType === "SECTION") {
       // linkId
@@ -19625,6 +19625,33 @@ var sdcExport = {
         "valueUri": item.externallyDefined
       });
     }
+  },
+
+  /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  _makeValueQuantity: function _makeValueQuantity(value, itemUnit, unitSystem) {
+    var fhirQuantity = null;
+    var floatValue = parseFloat(value);
+
+    if (!isNaN(floatValue)) {
+      fhirQuantity = {
+        value: floatValue
+      };
+
+      if (itemUnit && itemUnit.name) {
+        fhirQuantity.unit = itemUnit.name;
+        fhirQuantity.code = itemUnit.name;
+        fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
+      }
+    }
+
+    return fhirQuantity;
   },
 
   /**
@@ -19798,8 +19825,16 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (item.dataType === "QTY") {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-          // make a Quantity type if numeric values has a unit value
+        else if (item.dataType === "QTY") {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
+
+            if (fhirQuantity) {
+              answer.push({
+                valueQuantity: fhirQuantity
+              });
+            }
+          } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
               answer.push({
                 "valueQuantity": {
@@ -19874,8 +19909,14 @@ var sdcExport = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+      else if (item.dataType === 'QTY') {
+          // for now, handling only simple quantities without the comparators.
+          var fhirQuantity = this._makeValueQuantity(item.value, item.unit);
+
+          if (fhirQuantity) {
+            targetItem[valueKey] = fhirQuantity;
+          }
+        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
             targetItem[valueKey] = item.value;
           } // no support for reference
@@ -19958,8 +19999,14 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (sourceItem.dataType === 'QTY') {} // TBD
-          // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+        else if (sourceItem.dataType === 'QTY') {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(condition.trigger.value, sourceItem.unit);
+
+            if (fhirQuantity) {
+              enableWhenRule[valueKey] = fhirQuantity;
+            }
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
           else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
               enableWhenRule[valueKey] = condition.trigger.value;
             } // add a rule to enableWhen
@@ -20274,6 +20321,7 @@ var sdcExport = {
           break;
 
         case "REAL":
+        case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
             item.unit = {
@@ -20494,7 +20542,7 @@ function addSDCImportFns(ns) {
     for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
       var url = expressionExtURLs[i];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression.language == "text/fhirpath") lfItem[expressionExtensions[url]] = ext;
+      if (ext && ext.valueExpression && ext.valueExpression.language == "text/fhirpath") lfItem[expressionExtensions[url]] = ext;
     }
   }
   /**
