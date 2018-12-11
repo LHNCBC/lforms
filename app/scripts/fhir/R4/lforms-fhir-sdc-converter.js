@@ -28,15 +28,15 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
 
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
-  
+
   self.formLevelIgnoredFields = [
     // Resource
     'id',
     'meta',
     'implicitRules',
     'language',
-  
-  
+
+
     // Domain Resource
     'text',
     'contained',
@@ -44,7 +44,7 @@ function addSDCImportFns(ns) {
     'contained',
     'extension',
     'modifiedExtension',
-  
+
     // Questionnaire
     'date',
     'version',
@@ -68,8 +68,8 @@ function addSDCImportFns(ns) {
     'definition',
     'prefix'
   ];
-  
-  
+
+
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -166,12 +166,15 @@ function addSDCImportFns(ns) {
   };
 
   // A map of FHIR extensions involving Expressions to the property names on
-  // which they will be stored in LFormsData.
+  // which they will be stored in LFormsData, and a boolean indicating whether
+  // more than one extension of the type is permitted.
   var expressionExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
-      "_calculatedExprExt",
+      ["_calculatedExprExt", false],
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
-      "_initialExprExt"
+      ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/variable":
+      ["_variableExt", true]
   };
 
   var expressionExtURLs = Object.keys(expressionExtensions);
@@ -186,9 +189,10 @@ function addSDCImportFns(ns) {
   self._processCopiedItemExtensions = function (lfItem, qItem) {
     for (var i=0, len=expressionExtURLs.length; i<len; ++i) {
       var url = expressionExtURLs[i];
-      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression && ext.valueExpression.language === "text/fhirpath")
-        lfItem[expressionExtensions[url]] = ext;
+      var extInfo = expressionExtensions[url];
+      var prop = extInfo[0], multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
+      lfItem[prop] = ext;
     }
   };
 
@@ -261,8 +265,8 @@ function addSDCImportFns(ns) {
       }
     }
   };
-  
-  
+
+
   /**
    * See if the skip logic condition belongs to range. If yes, returns a lforms condition, otherwise null;
    *
@@ -282,14 +286,14 @@ function addSDCImportFns(ns) {
       ret.trigger = {};
       var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
       var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-  
+
       ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
       ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
     }
     return ret;
   }
-  
-  
+
+
   /**
    * Parse Questionnaire item for externallyDefined url
    *
@@ -362,7 +366,7 @@ function addSDCImportFns(ns) {
     if(!qItem.initial) {
       return;
     }
-  
+
     var isMultiple = _hasMultipleAnswers(qItem);
     var defaultAnswer = null;
     qItem.initial.forEach(function(elem) {
@@ -394,7 +398,7 @@ function addSDCImportFns(ns) {
         }
       }
     });
-    
+
     lfItem.value = defaultAnswer; // TODO - Is this necessary?
     lfItem.defaultAnswer = defaultAnswer;
   };
@@ -765,10 +769,10 @@ function addSDCImportFns(ns) {
         }
       }
     }
-    
+
     return ret;
   }
-  
+
   function _hasMultipleAnswers(qItem) {
     var ret = false;
     if(qItem) {

@@ -396,15 +396,17 @@ if (typeof LForms === 'undefined')
      *  Runs any calculated expressions.
      */
     runCalculatedExpressions: function() {
-      this.runValueExpressions('_calculatedExprExt');
+      this.runValueExpressions(['_calculatedExprExt']);
     },
 
 
     /**
      *  Runs any expressions stored in an item under the given property
-     *  name, and assigns the result to item's value.
+     *  names, and assigns the result to item's value.
+     * @param expressionProperties the properties for which an expression should
+     *  be run.
      */
-    runValueExpressions: function(expressionProperty) {
+    runValueExpressions: function(expressionProperties) {
       var lfData = this;
       if (LForms.FHIR) {
         var fhir = LForms.FHIR[lfData.fhirVersion];
@@ -413,25 +415,30 @@ if (typeof LForms === 'undefined')
         var linkIDToQRItem;
         for (var i=0, len=itemList.length; i<len; ++i) {
           var item = itemList[i];
-          if (item !== this._activeItem && item[expressionProperty] &&
-              item[expressionProperty].valueExpression.language=="text/fhirpath") {
-            // If there are many FHIRPath expressions, regenerating the
-            // complete QuestionnaireReponse each time would be slower than
-            // updating it.  But, generating a structure to that update fast
-            // would not be trivial either. (Now that we have _getIDtoQRItemMap,
-            // we are closer to being able to do that.)
-            questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-            if (!linkIDToQRItem)
-              linkIDToQRItem = this._getIDtoQRItemMap(questResp);
-            lfData._fhirpathVars.resource = questResp;
-            try {
-              var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
-                item[expressionProperty].valueExpression.expression, lfData._fhirpathVars);
+          if (item !== this._activeItem) {
+            for (var j=0, jLen=expressionProperties.length; j<jLen; ++j) {
+              var prop = expressionProperties[j];
+              var exprExt = item[prop];
+              if (exprExt && exprExt.valueExpression.language=="text/fhirpath") {
+                // If there are many FHIRPath expressions, regenerating the
+                // complete QuestionnaireReponse each time would be slower than
+                // updating it.  But, generating a structure to that update fast
+                // would not be trivial either. (Now that we have _getIDtoQRItemMap,
+                // we are closer to being able to do that.)
+                questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
+                if (!linkIDToQRItem)
+                  linkIDToQRItem = this._getIDtoQRItemMap(questResp);
+                lfData._fhirpathVars.resource = questResp;
+                try {
+                  var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
+                    exprExt.valueExpression.expression, lfData._fhirpathVars);
+                }
+                catch (e) {
+                  console.log(e);
+                }
+                this._setItemValueFromFHIRPath(item, fhirPathVal);
+              }
             }
-            catch (e) {
-              console.log(e);
-            }
-            this._setItemValueFromFHIRPath(item, fhirPathVal);
           }
         }
       }
@@ -1091,35 +1098,35 @@ if (typeof LForms === 'undefined')
      * @param item the item whose attributes need to set or updated.
      */
     _updateItemAttrs: function(item) {
-        // set default values on the item
-        // questionCardinality
-        if (!item.questionCardinality) {
-          item.questionCardinality = {"min":"1", "max":"1"};
-        }
-        // answerCardinality
-        if (!item.answerCardinality) {
-          item.answerCardinality = {"min":"0", "max":"1"};
-        }
+      // set default values on the item
+      // questionCardinality
+      if (!item.questionCardinality) {
+        item.questionCardinality = {"min":"1", "max":"1"};
+      }
+      // answerCardinality
+      if (!item.answerCardinality) {
+        item.answerCardinality = {"min":"0", "max":"1"};
+      }
 
-        // set up flags for question and answer cardinality
-        item._questionRepeatable = item.questionCardinality.max &&
-            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-        item._answerRequired = item.answerCardinality.min &&
-            (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
-        item._multipleAnswers = item.answerCardinality.max &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+      // set up flags for question and answer cardinality
+      item._questionRepeatable = item.questionCardinality.max &&
+          (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+      item._answerRequired = item.answerCardinality.min &&
+          (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
+      item._multipleAnswers = item.answerCardinality.max &&
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-        // set up readonly flag
-        item._readOnly = (item.editable && item.editable === "0") ||
-           !!(item.calculationMethod || item._calculatedExprExt);
+      // set up readonly flag
+      item._readOnly = (item.editable && item.editable === "0") ||
+         !!(item.calculationMethod || item._calculatedExprExt);
 
-        var lfData = this;
-        if (LForms.FHIR && lfData.fhirVersion) {
-          lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
-               item._calculatedExprExt.valueExpression.language=="text/fhirpath");
-          lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
-             item._initialExprExt.valueExpression.language=="text/fhirpath");
-        }
+      var lfData = this;
+      if (LForms.FHIR && lfData.fhirVersion) {
+        lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
+             item._calculatedExprExt.valueExpression.language=="text/fhirpath");
+        lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
+           item._initialExprExt.valueExpression.language=="text/fhirpath");
+      }
     },
 
 
@@ -1246,7 +1253,6 @@ if (typeof LForms === 'undefined')
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
     getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
-
       var ret = {};
       ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem,
           keepIdPath, keepCodePath);

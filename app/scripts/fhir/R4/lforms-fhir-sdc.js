@@ -59,7 +59,7 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
-  
+
   _operatorMapping: {
     'minExclusive': '>',
     'maxExclusive': '<',
@@ -76,7 +76,7 @@ var sdcExport = {
   },
 
 
-  
+
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -138,7 +138,7 @@ var sdcExport = {
    * @private
    */
   _setFormLevelFields: function(target, source, noExtensions) {
-  
+
     this.copyFields(source, target, this.formLevelIgnoredFields);
     // resourceType
     target.resourceType = "Questionnaire";
@@ -146,7 +146,7 @@ var sdcExport = {
 
     // meta
     var profile = noExtensions ? this.stdQProfile : this.QProfile;
-  
+
     target.meta = target.meta ? target.meta : {};
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
@@ -240,10 +240,12 @@ var sdcExport = {
     }
 
     // Copied item extensions
-    if (item._calculatedExprExt)
-      targetItem.extension.push(item._calculatedExprExt);
     if (item._initialExprExt)
       targetItem.extension.push(item._initialExprExt);
+    if (item._calculatedExprExt)
+      targetItem.extension.push(item._calculatedExprExt);
+    if (item._variableExt)
+      Array.prototype.push.apply(targetItem.extension, item._variableExt);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
@@ -958,7 +960,7 @@ var sdcExport = {
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer) {
-  
+
       targetItem.initial = [];
       var valueKey = this._getValueKeyByDataType("value", item.dataType);
       // for Coding
@@ -969,7 +971,7 @@ var sdcExport = {
         if(item.answerCodeSystem) {
           codeSystem = this._getCodeSystem(item.answerCodeSystem);
         }
-  
+
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
@@ -977,7 +979,7 @@ var sdcExport = {
             if(item.defaultAnswer[i].text !== undefined) {
               coding.display = item.defaultAnswer[i].text;
             }
-            
+
             if(codeSystem) {
               coding.system = codeSystem;
             }
@@ -1133,7 +1135,7 @@ var sdcExport = {
         // add rule(s) to enableWhen
         enableWhen = enableWhen.concat(enableWhenRules);
       }
-      
+
       if(rangeFound && item.skipLogic.conditions.length > 1) {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
@@ -1149,7 +1151,7 @@ var sdcExport = {
       }
     }
   },
-  
+
   /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
@@ -1169,10 +1171,10 @@ var sdcExport = {
       rule[answerKey] = skipLogicCondition.trigger[key];
       ret.push(rule);
     });
-    
+
     return ret;
   },
-  
+
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
    * @param formData an LForms form definition or LFormsData object.

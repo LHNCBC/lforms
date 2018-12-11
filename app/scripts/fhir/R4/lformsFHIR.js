@@ -19161,8 +19161,9 @@ var sdcExport = {
     } // Copied item extensions
 
 
+    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
-    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
     this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
     // check restrictions
@@ -20572,12 +20573,14 @@ function addSDCImportFns(ns) {
 
     return targetItem;
   }; // A map of FHIR extensions involving Expressions to the property names on
-  // which they will be stored in LFormsData.
+  // which they will be stored in LFormsData, and a boolean indicating whether
+  // more than one extension of the type is permitted.
 
 
   var expressionExtensions = {
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": "_calculatedExprExt",
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": "_initialExprExt"
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
   };
   var expressionExtURLs = Object.keys(expressionExtensions);
   /**
@@ -20591,8 +20594,11 @@ function addSDCImportFns(ns) {
   self._processCopiedItemExtensions = function (lfItem, qItem) {
     for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
       var url = expressionExtURLs[i];
-      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression && ext.valueExpression.language === "text/fhirpath") lfItem[expressionExtensions[url]] = ext;
+      var extInfo = expressionExtensions[url];
+      var prop = extInfo[0],
+          multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
+      lfItem[prop] = ext;
     }
   };
   /**
