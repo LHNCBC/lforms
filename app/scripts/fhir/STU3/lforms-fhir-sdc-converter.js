@@ -86,12 +86,10 @@ function addSDCImportFns(ns) {
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
-   * @param ancestorIsHidden optional default false, whether the ancestor is hidden
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource, ancestorIsHidden) {
-    ancestorIsHidden = !!ancestorIsHidden; // convert undefined to false
+  self._processQuestionnaireItem = function (qItem, qResource) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -104,7 +102,7 @@ function addSDCImportFns(ns) {
     _processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
-    ancestorIsHidden = _processHiddenItem(targetItem, qItem, ancestorIsHidden) || ancestorIsHidden;
+    _processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
@@ -115,7 +113,7 @@ function addSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, ancestorIsHidden);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource);
         targetItem.items.push(newItem);
       }
     }
@@ -213,21 +211,14 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
    * @param qItem {object} - Questionnaire item object
-   * @param ancestorIsHidden optional default false, whether this item's accesstor is hidden.
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
    */
-  function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
-    if(ancestorIsHidden) {
-      // lfItem._isHidden = true;
+  function _processHiddenItem(lfItem, qItem) {
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
+    if(ci) {
+      lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
     }
-    else {
-      var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
-      if(ci) {
-        lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
-      }
-    }
-    // console.log('%s ---- HIDDEN linkId = %s', lfItem._isHidden, lfItem.linkId);
     return lfItem._isHidden;
   }
 

@@ -303,10 +303,6 @@ angular.module('lformsWidget')
               ret[ css.name ] = css.value;
             }
           }
-
-          //if(item._isHidden) {
-          //  ret.display = 'none';
-          //}
           return ret;
         };
 

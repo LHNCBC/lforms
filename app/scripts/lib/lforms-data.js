@@ -1238,7 +1238,6 @@ if (typeof LForms === 'undefined')
      * @private
      */
     _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
-      console.log('######## _processDataInItem called');
       var itemsData = [];
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
@@ -1249,10 +1248,8 @@ if (typeof LForms === 'undefined')
         if (item._isHidden || // e.g., when specified via questionnaire-hidden extension in FHIR Questionnaire
             noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
             noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
-          console.log('------------- skipping hidden %s', item.linkId);
           continue;
         }
-        console.log('------------- keeping/showing %s', item.linkId);
         // include only the code and the value (and unit, other value) if no form definition data is needed
         if (noFormDefData) {
           itemData.questionCode = item.questionCode;
