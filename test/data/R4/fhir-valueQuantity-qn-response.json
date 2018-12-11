@@ -8,7 +8,12 @@
     {
       "linkId": "height",
       "text": "Patient's height in meters",
-      "answer": [{"valueQuantity": {"value": 333.0}}]
+      "answer": [{"valueQuantity": {
+        "value": 333.0,
+        "unit": "m",
+        "code": "m",
+        "system": "http://unitsofmeasure.org"
+      }}]
     },
     {
       "linkId": "weight",

@@ -378,6 +378,24 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.answer[0].valueQuantity.value, 128);
           });
         });
+
+        describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
+          it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function () {
+            var qFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-questionnaire.json';
+            var qrFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-qn-response.json';
+
+            // Test loading FHIR Questionnaire QuestionnaireResponse for it, then merge into an lforms.
+            $.get(qFile, function(fhirQnData) { // load the questionnaire json
+              $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
+                var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                    'QuestionnaireResponse', fhirQnRespData, qnForm, fhirVersion);
+                assert.equal(mergedFormData.items[0].value, 333.0);
+                assert.equal(mergedFormData.items[0].dataType, 'QTY');
+              }).done().fail(function(err){console.log('Unable to load ' + qFile);});
+            }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+          });
+        });
       });
     });
   })(fhirVersions[i]);
