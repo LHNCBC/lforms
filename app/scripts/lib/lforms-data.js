@@ -471,17 +471,22 @@ if (typeof LForms === 'undefined')
       for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
         var item = this.itemList[i];
 
-        // run formula
-        if (item.calculationMethod) {
-          this._processItemFormula(item);
+        if (item._isHidden) {
+          this._updateItemSkipLogicStatus(item, true);
         }
-        // run data control
-        if (item.dataControl) {
-          this._processItemDataControl(item);
-        }
-        // run skip logic
-        if (item.skipLogic) {
-          this._updateItemSkipLogicStatus(item, null);
+        else {
+          // run formula
+          if (item.calculationMethod) {
+            this._processItemFormula(item);
+          }
+          // run data control
+          if (item.dataControl) {
+            this._processItemDataControl(item);
+          }
+          // run skip logic
+          if (item.skipLogic) {
+            this._updateItemSkipLogicStatus(item, null);
+          }
         }
       }
 
@@ -1233,6 +1238,7 @@ if (typeof LForms === 'undefined')
      * @private
      */
     _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+      console.log('######## _processDataInItem called');
       var itemsData = [];
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
@@ -1240,10 +1246,13 @@ if (typeof LForms === 'undefined')
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
-        if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
+        if (item._isHidden || // e.g., when specified via questionnaire-hidden extension in FHIR Questionnaire
+            noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
             noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
+          console.log('------------- skipping hidden %s', item.linkId);
           continue;
         }
+        console.log('------------- keeping/showing %s', item.linkId);
         // include only the code and the value (and unit, other value) if no form definition data is needed
         if (noFormDefData) {
           itemData.questionCode = item.questionCode;

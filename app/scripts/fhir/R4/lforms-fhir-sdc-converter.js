@@ -318,9 +318,9 @@ function addSDCImportFns(ns) {
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
    */
-  function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
+  self._processHiddenItem = function(lfItem, qItem, ancestorIsHidden) {
     if(ancestorIsHidden) {
-      lfItem._isHidden = true;
+      // lfItem._isHidden = true;
     }
     else {
       var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);

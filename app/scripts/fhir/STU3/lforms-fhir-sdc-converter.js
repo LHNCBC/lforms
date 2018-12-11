@@ -219,7 +219,7 @@ function addSDCImportFns(ns) {
    */
   function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
     if(ancestorIsHidden) {
-      lfItem._isHidden = true;
+      // lfItem._isHidden = true;
     }
     else {
       var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
@@ -227,6 +227,7 @@ function addSDCImportFns(ns) {
         lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
       }
     }
+    // console.log('%s ---- HIDDEN linkId = %s', lfItem._isHidden, lfItem.linkId);
     return lfItem._isHidden;
   }
 

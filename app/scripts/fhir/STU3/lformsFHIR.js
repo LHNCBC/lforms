@@ -19189,6 +19189,13 @@ var sdcExport = {
           }]
         }
       });
+    }
+
+    if (item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
     } // linkId
 
 
@@ -20590,15 +20597,15 @@ function addSDCImportFns(ns) {
 
 
   function _processHiddenItem(lfItem, qItem, ancestorIsHidden) {
-    if (ancestorIsHidden) {
-      lfItem._isHidden = true;
+    if (ancestorIsHidden) {// lfItem._isHidden = true;
     } else {
       var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
 
       if (ci) {
         lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
       }
-    }
+    } // console.log('%s ---- HIDDEN linkId = %s', lfItem._isHidden, lfItem.linkId);
+
 
     return lfItem._isHidden;
   }

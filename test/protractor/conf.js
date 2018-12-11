@@ -8,7 +8,7 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome'
   },
-  specs: 'spec/**/*.spec.js',
+  specs: 'spec/**/lforms_fhir*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
   rootElement: 'body',
   framework: 'jasmine2',
