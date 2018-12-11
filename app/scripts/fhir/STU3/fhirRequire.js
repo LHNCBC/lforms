@@ -11,3 +11,9 @@ fhir.SDC = fhir_sdc;
 import addSDCImportFns from './lforms-fhir-sdc-converter.js';
 addSDCImportFns(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
+
+fhir.reservedVarNames = {};
+['context', 'resource'].forEach(function(name) {
+  fhir.reservedVarNames[name] = true;
+});
+
