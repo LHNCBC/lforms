@@ -106,6 +106,11 @@ fhir.SDC = _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 Object(_lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
+fhir.reservedVarNames = {};
+['context', 'resource'].forEach(function (name) {
+  fhir.reservedVarNames[name] = true;
+});
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
