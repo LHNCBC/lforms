@@ -245,7 +245,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }];
             fhir.SDC._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
             assert.equal(lfItem.value, 128);
-            assert.equal(lfItem.units[0].name, "kg");
+            assert.equal(lfItem.unit.name, "kg");
           });
 
           it('should convert restrictions', function () {

@@ -1420,9 +1420,8 @@ var sdcExport = {
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
             if(qrValue.valueQuantity.code) {
-              item.units = [{name: qrValue.valueQuantity.code}];
+              item.unit = {name: qrValue.valueQuantity.code};
             }
-            item.unit = {name: qrValue.valueQuantity.code};
           }
           else if (qrValue.valueInteger) {
             item.value = qrValue.valueInteger;
@@ -1433,7 +1432,7 @@ var sdcExport = {
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
             if(qrValue.valueQuantity.code) {
-              item.units = [{name: qrValue.valueQuantity.code}];
+              item.unit = {name: qrValue.valueQuantity.code};
             }
           }
           else if (qrValue.valueDecimal) {

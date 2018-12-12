@@ -379,10 +379,7 @@ function addSDCImportFns(ns) {
         answer = val.value;
         let unit = val.code? val.code: val.unit;
         if (unit) {
-          lfItem.units = lfItem.units? lfItem.units: [];
-          if(! lfItem.units.reduce((foundInList, u)=>(foundInList || u.name === unit), false)) {
-            lfItem.units.push({name: unit});
-          }
+          lfItem.unit = {name: unit};
         }
       }
       else {

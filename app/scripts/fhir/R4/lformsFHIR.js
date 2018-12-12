@@ -20398,9 +20398,9 @@ var sdcExport = {
             item.value = qrValue.valueQuantity.value;
 
             if (qrValue.valueQuantity.code) {
-              item.units = [{
+              item.unit = {
                 name: qrValue.valueQuantity.code
-              }];
+              };
             }
           } else if (qrValue.valueInteger) {
             item.value = qrValue.valueInteger;
@@ -20414,9 +20414,9 @@ var sdcExport = {
             item.value = qrValue.valueQuantity.value;
 
             if (qrValue.valueQuantity.code) {
-              item.units = [{
+              item.unit = {
                 name: qrValue.valueQuantity.code
-              }];
+              };
             }
           } else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;
@@ -20863,15 +20863,9 @@ function addSDCImportFns(ns) {
         var unit = val.code ? val.code : val.unit;
 
         if (unit) {
-          lfItem.units = lfItem.units ? lfItem.units : [];
-
-          if (!lfItem.units.reduce(function (foundInList, u) {
-            return foundInList || u.name === unit;
-          }, false)) {
-            lfItem.units.push({
-              name: unit
-            });
-          }
+          lfItem.unit = {
+            name: unit
+          };
         }
       } else {
         answer = val;
