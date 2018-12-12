@@ -471,22 +471,21 @@ if (typeof LForms === 'undefined')
       for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
         var item = this.itemList[i];
 
+        // run formula
+        if (item.calculationMethod) {
+          this._processItemFormula(item);
+        }
+        // run data control
+        if (item.dataControl) {
+          this._processItemDataControl(item);
+        }
+        // run skip logic
+        if (item.skipLogic) {
+          this._updateItemSkipLogicStatus(item, null);
+        }
+        // set hidden status if it's a "statically" hidden item, e.g., via questionnaire-hidden extension.
         if (item._isHidden) {
           this._updateItemSkipLogicStatus(item, true);
-        }
-        else {
-          // run formula
-          if (item.calculationMethod) {
-            this._processItemFormula(item);
-          }
-          // run data control
-          if (item.dataControl) {
-            this._processItemDataControl(item);
-          }
-          // run skip logic
-          if (item.skipLogic) {
-            this._updateItemSkipLogicStatus(item, null);
-          }
         }
       }
 
@@ -1245,8 +1244,7 @@ if (typeof LForms === 'undefined')
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
-        if (item._isHidden || // e.g., when specified via questionnaire-hidden extension in FHIR Questionnaire
-            noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
+        if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) ||
             noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
           continue;
         }
