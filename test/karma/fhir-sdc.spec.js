@@ -241,10 +241,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "dataType": "QTY"
             };
             var fhirAnswer = [{
-              valueQuantity: { value: 128}
+              valueQuantity: { value: 128, code: "kg"}
             }];
             fhir.SDC._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
             assert.equal(lfItem.value, 128);
+            assert.equal(lfItem.units[0].name, "kg");
           });
 
           it('should convert restrictions', function () {

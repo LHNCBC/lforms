@@ -1419,6 +1419,9 @@ var sdcExport = {
         case "INT":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
+            if(qrValue.valueQuantity.code) {
+              item.units = [{name: qrValue.valueQuantity.code}];
+            }
             item.unit = {name: qrValue.valueQuantity.code};
           }
           else if (qrValue.valueInteger) {
@@ -1429,7 +1432,9 @@ var sdcExport = {
         case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {name: qrValue.valueQuantity.code};
+            if(qrValue.valueQuantity.code) {
+              item.units = [{name: qrValue.valueQuantity.code}];
+            }
           }
           else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;

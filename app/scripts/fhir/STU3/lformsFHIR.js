@@ -20313,6 +20313,13 @@ var sdcExport = {
         case "INT":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
+
+            if (qrValue.valueQuantity.code) {
+              item.units = [{
+                name: qrValue.valueQuantity.code
+              }];
+            }
+
             item.unit = {
               name: qrValue.valueQuantity.code
             };
@@ -20326,9 +20333,12 @@ var sdcExport = {
         case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {
-              name: qrValue.valueQuantity.code
-            };
+
+            if (qrValue.valueQuantity.code) {
+              item.units = [{
+                name: qrValue.valueQuantity.code
+              }];
+            }
           } else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;
           }
@@ -20718,8 +20728,12 @@ function addSDCImportFns(ns) {
         if (unit) {
           lfItem.units = lfItem.units ? lfItem.units : [];
 
-          if (!lfItem.units.includes(unit)) {
-            lfItem.units.push(unit);
+          if (!lfItem.units.reduce(function (foundInList, u) {
+            return foundInList || u.name === unit;
+          }, false)) {
+            lfItem.units.push({
+              name: unit
+            });
           }
         }
       } else {
