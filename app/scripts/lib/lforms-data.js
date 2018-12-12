@@ -223,6 +223,7 @@ if (typeof LForms === 'undefined')
       var lfData = this;
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
+      this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._fhirpathVars = {};
       this.extension = data.extension;
       if (LForms.fhirContext) {
@@ -234,8 +235,10 @@ if (typeof LForms === 'undefined')
           var typeList = [];
           for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
             var fieldExt = contextItemExt[j];
-            if (!name && fieldExt.url === 'name')
+            if (!name && fieldExt.url === 'name') {
               name = fieldExt.valueId;
+              this._checkFHIRVarName(name); // might throw
+            }
             else if (fieldExt.url === 'type')
               typeList.push(fieldExt.valueCode)
           }
@@ -255,6 +258,17 @@ if (typeof LForms === 'undefined')
             }, 1);
           }
         }
+      }
+    },
+
+    /**
+     *  Checks that the given variable name is allowed in FHIR and throws an
+     *  exception if it is not.
+     */
+    _checkFHIRVarName: function(name) {
+      if (this._fhir.reservedVarNames[name]) {
+        throw 'The "'+name+'" variable name is reserved; Questionnaires may not '+
+          'assign a value to it.';
       }
     },
 
@@ -396,6 +410,7 @@ if (typeof LForms === 'undefined')
         var fhir = LForms.FHIR[lfData.fhirVersion];
         var itemList = lfData.itemList;
         var questResp;
+        var linkIDToQRItem;
         for (var i=0, len=itemList.length; i<len; ++i) {
           var item = itemList[i];
           if (item !== this._activeItem && item[expressionProperty] &&
@@ -403,10 +418,14 @@ if (typeof LForms === 'undefined')
             // If there are many FHIRPath expressions, regenerating the
             // complete QuestionnaireReponse each time would be slower than
             // updating it.  But, generating a structure to that update fast
-            // would not be trivial either.
+            // would not be trivial either. (Now that we have _getIDtoQRItemMap,
+            // we are closer to being able to do that.)
             questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
+            if (!linkIDToQRItem)
+              linkIDToQRItem = this._getIDtoQRItemMap(questResp);
+            lfData._fhirpathVars.resource = questResp;
             try {
-              var fhirPathVal = fhir.fhirpath.evaluate(questResp,
+              var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
                 item[expressionProperty].valueExpression.expression, lfData._fhirpathVars);
             }
             catch (e) {
@@ -416,6 +435,26 @@ if (typeof LForms === 'undefined')
           }
         }
       }
+    },
+
+
+    /**
+     *  Returns a hash from the linkIds in a QuestionnaireReponse to the items
+     *  in the QuestionnaireResponse with those linkIDs.
+     * @param qr the QuestionnaireResponse
+     * @param map (optional) the map to which entries will be added.  If
+     *  provided, this will also be the return value.
+     */
+    _getIDtoQRItemMap: function(qr, map) {
+      if (!map)
+        map = {};
+      if (qr.linkId)
+        map[linkId] = qr;
+      if (qr.items) {
+        for (var i=0, len=qr.items.length; i<len; ++i)
+          this._getIDtoQRItemMap(qr.items[i], map);
+      }
+      return map;
     },
 
 
@@ -2694,7 +2733,7 @@ if (typeof LForms === 'undefined')
             }
             break;
         } // end case
-        
+
         if(trigger.not) {
           action = !action;
         }
