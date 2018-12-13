@@ -268,6 +268,16 @@ function addSDCImportFns(ns) {
           lfItem.defaultAnswer = {code: val.code, text: val.display};
         }
       }
+      else if(lfItem.dataType === 'QTY') {
+        if (val.value !== undefined) {
+          lfItem.value = val.value;
+          lfItem.defaultAnswer = val.value;
+        }
+        let unit = val.code? val.code: val.unit;
+        if (unit) {
+          lfItem.unit = {name: unit};
+        }
+      }
       else {
         lfItem.value = val;
         lfItem.defaultAnswer = val;
