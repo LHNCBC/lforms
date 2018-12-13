@@ -44,11 +44,12 @@ function addSDCImportFns(ns) {
     if(fhirData) {
       target = {};
       _processFormLevelFields(target, fhirData);
+      var containedVS = _extractContainedVS(fhirData);
 
       if(fhirData.item && fhirData.item.length > 0) {
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData);
+          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
           target.items.push(item);
         }
       }
@@ -79,16 +80,57 @@ function addSDCImportFns(ns) {
     }
   }
 
+  /**
+   * Extract contained VS (if any) from the given questionnaire resource object.
+   * @param questionnaire the FHIR questionnaire resource object
+   * @return when there are contained value sets, return a hash from #<vs-id> to the answers options object,
+   *         which, in term, is a hash with 3 entries:
+   *         "answers" is the list of LF answers converted from the value set.
+   *         "systems" is the list of code systems for each answer item; and
+   *         "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
+   *         return undefined if no contained value set is present.
+   * @private
+   */
+  function _extractContainedVS(questionnaire) {
+    var answersVS;
+
+    if(questionnaire.contained && questionnaire.contained.length > 0) {
+      answersVS = {};
+      questionnaire.contained.forEach(vs => {
+        if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
+          var lfVS = answersVS['#' + vs.id] = {answers: [], systems:[]};
+          vs.expansion.contains.forEach(vsItem => {
+            var answer = {code: vsItem.code, text: vsItem.display};
+            var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+              "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+            if(ordExt) {
+              answer.score = ordExt.valueDecimal;
+            }
+            lfVS.answers.push(answer);
+            lfVS.systems.push(vsItem.system);
+          });
+
+          // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
+          if(lfVS.systems[0] && lfVS.systems.reduce((isSame, cs)=>isSame && cs===lfVS.systems[0], true)) {
+            lfVS.isSameCodeSystem = true;
+          }
+        }
+      });
+    }
+
+    return answersVS;
+  }
 
   /**
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param containedVS - contained value set info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource) {
+  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -104,14 +146,14 @@ function addSDCImportFns(ns) {
     _processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
-    _processAnswers(targetItem, qItem);
+    _processAnswers(targetItem, qItem, containedVS);
     _processSkipLogic(targetItem, qItem, qResource);
     _processCalculatedValue(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
         targetItem.items.push(newItem);
       }
     }
@@ -209,9 +251,10 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
+   * @param containedVS - contained value set info, see _extractContainedVS() for data format details
    * @private
    */
-  function _processAnswers(lfItem, qItem) {
+  function _processAnswers(lfItem, qItem, containedVS) {
     if(qItem.option) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
@@ -229,7 +272,17 @@ function addSDCImportFns(ns) {
         lfItem.answers.push(answer);
       }
     }
+    else if(qItem.options && containedVS) {
+      var vs = containedVS? containedVS[qItem.options.reference]: undefined;
+      if(vs) {
+        lfItem.answers = vs.answers; // copy? normally these answers should be fixed.
+        if(vs.isSameCodeSystem) {
+          lfItem.answerCodeSystem = vs.systems[0];
+        }
+      }
+    }
   }
+
 
 
   /**
