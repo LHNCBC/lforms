@@ -20496,7 +20496,7 @@ function addSDCImportFns(ns) {
       answersVS = {};
       questionnaire.contained.forEach(function (vs) {
         if (vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = answersVS['#' + vs.id] = {
+          var lfVS = {
             answers: [],
             systems: []
           };
@@ -20519,6 +20519,15 @@ function addSDCImportFns(ns) {
             return isSame && cs === lfVS.systems[0];
           }, true)) {
             lfVS.isSameCodeSystem = true;
+          } // support both id and url based lookup. STU3 reference is quite vague.
+
+
+          if (vs.id !== undefined) {
+            answersVS['#' + vs.id] = lfVS;
+          }
+
+          if (vs.url !== undefined) {
+            answersVS[vs.url] = lfVS;
           }
         }
       });
@@ -20696,7 +20705,6 @@ function addSDCImportFns(ns) {
 
 
   function _processAnswers(lfItem, qItem, containedVS) {
-    //console.log('==== qItems=%s', JSON.stringify(qItem, null, 2));
     if (qItem.option) {
       lfItem.answers = [];
 
@@ -20719,16 +20727,14 @@ function addSDCImportFns(ns) {
         lfItem.answers.push(answer);
       }
     } else if (qItem.options && containedVS) {
-      // console.log('==== options seen');
-      var vs = containedVS ? containedVS[qItem.options.reference] : undefined;
+      var vs = containedVS[qItem.options.reference];
 
       if (vs) {
         lfItem.answers = vs.answers; // copy? normally these answers should be fixed.
 
         if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = vs.systems[0];
-        } // console.log('answers: %s', lfItem.answers);
-
+          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+        }
       }
     }
   }
@@ -20898,6 +20904,25 @@ function addSDCImportFns(ns) {
     lfItem.linkId = qItem.linkId;
   }
   /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+
+
+  function _toLfCodeSystem(codeSystem) {
+    var ret = codeSystem;
+
+    switch (codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
+    }
+
+    return ret;
+  }
+  /**
    * Get an object with code and code system
    *
    * @param questionnaireItemOrResource {object} - question
@@ -20909,34 +20934,16 @@ function addSDCImportFns(ns) {
     var code = null;
 
     if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
-      code = {};
-
-      switch (questionnaireItemOrResource.code[0].system) {
-        case 'http://loinc.org':
-          code.system = 'LOINC';
-          break;
-
-        default:
-          code.system = questionnaireItemOrResource.code[0].system;
-          break;
-      }
-
-      code.code = questionnaireItemOrResource.code[0].code;
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
     } // If code is missing look for identifier.
     else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
-        code = {};
-
-        switch (questionnaireItemOrResource.identifier[0].system) {
-          case 'http://loinc.org':
-            code.system = 'LOINC';
-            break;
-
-          default:
-            code.system = questionnaireItemOrResource.identifier[0].system;
-            break;
-        }
-
-        code.code = questionnaireItemOrResource.identifier[0].value;
+        code = {
+          code: questionnaireItemOrResource.identifier[0].value,
+          system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+        };
       }
 
     return code;

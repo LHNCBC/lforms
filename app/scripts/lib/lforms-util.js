@@ -549,6 +549,31 @@ LForms.Util = {
     return ret;
   },
 
+  /**
+   * Recursively find the first occurrence of an item, depth first, that matches the
+   * given field value for the given field
+   * @param items an array of LForms items, where an item may have its own sub-items.
+   * @param key
+   * @param matchingValue
+   * @return {*}
+   */
+  findItem: function(items, key, matchingValue) {
+    var ret = null;
+    if(Array.isArray(items)) {
+      for(var i=0; i < items.length; ++i) {
+        var item = items[i];
+        if(item[key] === matchingValue) {
+          ret = item;
+        }
+        else if(Array.isArray(item.items)) {
+          ret = this.findItem(item.items, key, matchingValue);
+        }
+        if(ret) break;
+      }
+    }
+
+    return ret;
+  },
 
   /**
    * Remove key/values from an object based on a regular expression of key.

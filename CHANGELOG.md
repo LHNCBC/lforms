@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.8.0] 2018-12-15
+### Added
+- FHIR Questionnaire contained valueset support.
+
 ## [13.7.2] 2018-12-12
 ### Fixed
 - FHIR value quantity import/export
