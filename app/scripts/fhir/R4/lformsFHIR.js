@@ -20445,6 +20445,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
@@ -20503,7 +20504,10 @@ function addSDCImportFns(ns) {
       lfData.codeSystem = code.system;
     }
 
-    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
+    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields); // form-level variables
+
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url', self.fhirExtVariable, 0, true);
+    if (ext.length > 0) lfData._variableExt = ext;
   };
 
   self.copyFields = function (source, target, fieldList) {
@@ -20579,9 +20583,9 @@ function addSDCImportFns(ns) {
 
   var expressionExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false]
   };
+  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
   var expressionExtURLs = Object.keys(expressionExtensions);
   /**
    *  Some extensions are simply copied over to the LForms data structure.
@@ -20598,7 +20602,7 @@ function addSDCImportFns(ns) {
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      lfItem[prop] = ext;
+      if (!multiple || ext.length > 0) lfItem[prop] = ext;
     }
   };
   /**

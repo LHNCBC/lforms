@@ -216,7 +216,8 @@ if (typeof LForms === 'undefined')
 
 
     /**
-     *  Initializes form-level FHIR data.
+     *  Initializes form-level FHIR data.  This should be called before item
+     *  properties are set up.
      * @param an LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
@@ -224,8 +225,9 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhir = LForms.FHIR[lfData.fhirVersion];
-      this._fhirpathVars = {};
+      this._fhirVariables = {};
       this.extension = data.extension;
+      this._variableExt = data._variableExt; // FHIR "variable" extensions
       if (LForms.fhirContext) {
         var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
@@ -251,7 +253,7 @@ if (typeof LForms === 'undefined')
               LForms.fhirContext.getCurrent(typeList, function(resource) {
                 lfData._asyncLoadCounter--;
                 if (resource)
-                  lfData._fhirpathVars[name] = resource;
+                  lfData._fhirVariables[name] = resource;
                 if (lfData._asyncLoadCounter === 0)
                   lfData._notifyAsyncChangeListeners()
               });
@@ -389,103 +391,6 @@ if (typeof LForms === 'undefined')
       this._updateLastRepeatingItemsStatus(this.items);
       this._resetHorizontalTableInfo();
       this._adjustLastSiblingListForHorizontalLayout();
-    },
-
-
-    /**
-     *  Runs any calculated expressions.
-     */
-    runCalculatedExpressions: function() {
-      this.runValueExpressions(['_calculatedExprExt']);
-    },
-
-
-    /**
-     *  Runs any expressions stored in an item under the given property
-     *  names, and assigns the result to item's value.
-     * @param expressionProperties the properties for which an expression should
-     *  be run.
-     */
-    runValueExpressions: function(expressionProperties) {
-      var lfData = this;
-      if (LForms.FHIR) {
-        var fhir = LForms.FHIR[lfData.fhirVersion];
-        var itemList = lfData.itemList;
-        var questResp;
-        var linkIDToQRItem;
-        for (var i=0, len=itemList.length; i<len; ++i) {
-          var item = itemList[i];
-          if (item !== this._activeItem) {
-            for (var j=0, jLen=expressionProperties.length; j<jLen; ++j) {
-              var prop = expressionProperties[j];
-              var exprExt = item[prop];
-              if (exprExt && exprExt.valueExpression.language=="text/fhirpath") {
-                // If there are many FHIRPath expressions, regenerating the
-                // complete QuestionnaireReponse each time would be slower than
-                // updating it.  But, generating a structure to that update fast
-                // would not be trivial either. (Now that we have _getIDtoQRItemMap,
-                // we are closer to being able to do that.)
-                questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-                if (!linkIDToQRItem)
-                  linkIDToQRItem = this._getIDtoQRItemMap(questResp);
-                lfData._fhirpathVars.resource = questResp;
-                try {
-                  var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
-                    exprExt.valueExpression.expression, lfData._fhirpathVars);
-                }
-                catch (e) {
-                  console.log(e);
-                }
-                this._setItemValueFromFHIRPath(item, fhirPathVal);
-              }
-            }
-          }
-        }
-      }
-    },
-
-
-    /**
-     *  Returns a hash from the linkIds in a QuestionnaireReponse to the items
-     *  in the QuestionnaireResponse with those linkIDs.
-     * @param qr the QuestionnaireResponse
-     * @param map (optional) the map to which entries will be added.  If
-     *  provided, this will also be the return value.
-     */
-    _getIDtoQRItemMap: function(qr, map) {
-      if (!map)
-        map = {};
-      if (qr.linkId)
-        map[linkId] = qr;
-      if (qr.items) {
-        for (var i=0, len=qr.items.length; i<len; ++i)
-          this._getIDtoQRItemMap(qr.items[i], map);
-      }
-      return map;
-    },
-
-
-    /**
-     *  Assigns the given FHIRPath result to the given item.
-     * @param item the item from the LFormsData object that is receiving the new
-     *  value.
-     * @param fhirPathRes the result of a FHIRPath evaluation.
-     */
-    _setItemValueFromFHIRPath: function(item, fhirPathRes) {
-      if (fhirPathRes !== undefined)
-        var fhirPathVal = fhirPathRes[0];
-      if (!fhirPathVal)
-        item.value = undefined;
-      else {
-        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathVal);
-          // Convert to local time, so the date does not get shifted for negative
-          // local timezones.
-          item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        }
-        else
-          item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
-      }
     },
 
 

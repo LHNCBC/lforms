@@ -553,7 +553,7 @@ angular.module('lformsWidget')
                   });
                 }, function() {
                   if (lfData)
-                    lfData.runCalculatedExpressions();
+                    lfData._ExpressionProcessor.runCalculations(lfData, false);
                 });
               }
 
@@ -562,10 +562,8 @@ angular.module('lformsWidget')
               if (!lfData._controllerInit) {
                 lfData.addAsyncChangeListener(function() {
                   $scope.$apply(function() {
-                    if (lfData._hasInitialExpr)
-                      lfData.runValueExpressions('_initialExprExt');
-                    if (lfData.hasFHIRPath)
-                      lfData.runCalculatedExpressions();
+                    if (lfData.hasFHIRPath || lfData._hasInitialExpr)
+                      lfData._ExpressionProcessor.runCalculations(lfData, true);
                   });
                 });
               }

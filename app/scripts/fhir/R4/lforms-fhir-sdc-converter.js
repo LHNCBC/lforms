@@ -18,6 +18,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
     "http://hl7.org/fhir/StructureDefinition/minValue",
     "http://hl7.org/fhir/StructureDefinition/maxValue",
@@ -113,6 +114,12 @@ function addSDCImportFns(ns) {
     }
 
     self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
+
+    // form-level variables
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
+      self.fhirExtVariable, 0, true);
+    if (ext.length > 0)
+      lfData._variableExt = ext;
   };
 
 
@@ -125,6 +132,8 @@ function addSDCImportFns(ns) {
       });
     }
   };
+
+
   /**
    * Process questionnaire item recursively
    *
@@ -173,10 +182,8 @@ function addSDCImportFns(ns) {
       ["_calculatedExprExt", false],
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
       ["_initialExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/variable":
-      ["_variableExt", true]
   };
-
+  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
   var expressionExtURLs = Object.keys(expressionExtensions);
 
   /**
@@ -192,7 +199,8 @@ function addSDCImportFns(ns) {
       var extInfo = expressionExtensions[url];
       var prop = extInfo[0], multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      lfItem[prop] = ext;
+      if (!multiple || ext.length > 0)
+        lfItem[prop] = ext;
     }
   };
 

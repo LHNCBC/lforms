@@ -27,6 +27,24 @@
     "Patient",
     "Person"
   ],
+  "extension" : [
+	  {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+          "name": "weight",
+           "language": "text/fhirpath",
+           "expression": "%resource.item.where(linkId='/29463-7').answer.valueQuantity.value"
+        }
+    },
+	  {
+      "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+      "valueExpression" : {
+          "name": "height",
+           "language": "text/fhirpath",
+           "expression": "%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254"
+        }
+    }
+  ],
   "item": [
     {
       "extension": [
@@ -173,7 +191,7 @@
           "valueExpression": {
             "description": "BMI calculation",
             "language" : "text/fhirpath",
-            "expression": "((%resource.item.where(linkId='/29463-7').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254*10) div 1)/10"
+            "expression": "((%weight/%height/%height*10) div 1)/10"
           }
         }
       ],

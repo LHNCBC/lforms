@@ -377,6 +377,7 @@
              *   Apart from others, it has selected file reference.
              */
             $scope.uploader.onAfterAddingFile = function(item) {
+console.log("%%% in onAfterAddingFile");
               // clean up the form before assigning a new one for performance reasons related to AngularJS watches
               $scope.lfData2 = null;
 
@@ -391,6 +392,7 @@
                 // in the internal LForms format
                 else {
                   $scope.lfData2 = new LFormsData(importedData);
+                  $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
               };
@@ -565,7 +567,7 @@
        var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
        new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
          {matchListValue: true});
-       $('#fhirVersion')[0].value = fhirVersions[0];
+       $('#fhirVersion')[0].value = fhirVersions[1];
     </script>
   </body>
 </html>
