@@ -559,8 +559,8 @@ LForms.Util = {
    */
   findItem: function(items, key, matchingValue) {
     var ret = null;
-    if(Array.isArray(items)) {
-      for(var i=0; i < items.length; ++i) {
+    if(items) {
+      for(var i=0; !ret && i < items.length; ++i) {
         var item = items[i];
         if(item[key] === matchingValue) {
           ret = item;
@@ -568,7 +568,6 @@ LForms.Util = {
         else if(Array.isArray(item.items)) {
           ret = this.findItem(item.items, key, matchingValue);
         }
-        if(ret) break;
       }
     }
 

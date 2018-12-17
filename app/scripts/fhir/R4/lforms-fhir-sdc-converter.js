@@ -131,8 +131,8 @@ function addSDCImportFns(ns) {
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
-   * @return when there are contained value sets, return a hash from #<vs-id> to the answers options object,
-   *         which, in term, is a hash with 3 entries:
+   * @return when there are contained value sets, return a hash from "#<ValueSet.id>" to the answers options object,
+   *         which, in turn, is a hash with 3 entries:
    *         "answers" is the list of LF answers converted from the value set.
    *         "systems" is the list of code systems for each answer item; and
    *         "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
@@ -147,6 +147,7 @@ function addSDCImportFns(ns) {
       questionnaire.contained.forEach(vs => {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var lfVS = answersVS[vs.url] = {answers: [], systems:[]};
+          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
           vs.expansion.contains.forEach(vsItem => {
             var answer = {code: vsItem.code, text: vsItem.display};
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
@@ -156,10 +157,17 @@ function addSDCImportFns(ns) {
             }
             lfVS.answers.push(answer);
             lfVS.systems.push(vsItem.system);
+
+            if(theCodeSystem === '#placeholder#') {
+              theCodeSystem = vsItem.system;
+            }
+            else if(theCodeSystem !== vsItem.system) {
+              theCodeSystem = null;
+            }
           });
 
           // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-          if(lfVS.systems[0] && lfVS.systems.reduce((isSame, cs)=>isSame && cs===lfVS.systems[0], true)) {
+          if(theCodeSystem && theCodeSystem !== '#placeholder#' ) {
             lfVS.isSameCodeSystem = true;
           }
         }
@@ -175,6 +183,7 @@ function addSDCImportFns(ns) {
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
@@ -355,6 +364,7 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @private
    */
   self._processAnswers = function (lfItem, qItem, containedVS) {
@@ -381,7 +391,7 @@ function addSDCImportFns(ns) {
     else if(qItem.answerValueSet && containedVS) {
       var vs = containedVS[qItem.answerValueSet];
       if(vs) {
-        lfItem.answers = vs.answers; // copy? normally these answers should be fixed.
+        lfItem.answers = vs.answers;
         if(vs.isSameCodeSystem) {
           lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
         }
