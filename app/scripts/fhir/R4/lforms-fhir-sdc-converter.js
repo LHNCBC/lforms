@@ -396,7 +396,7 @@ function addSDCImportFns(ns) {
           lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
         }
         else {
-          console.log('WARNING: unable to handle per-answer code system, ignored');
+          console.log('WARNING: unable to handle different answer code systems within a question, ignored');
         }
       }
     }
