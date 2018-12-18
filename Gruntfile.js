@@ -190,12 +190,6 @@ module.exports = function (grunt) {
     },
 
 
-    nsp: {
-      package: grunt.file.readJSON('./package.json'),
-      shrinkwrap: grunt.file.readJSON('./npm-shrinkwrap.json')
-    },
-
-
     protractor: {
       options: {
         configFile: "test/protractor/conf.js", // Default config file
@@ -521,8 +515,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'test:server',
-    'test:e2e',
-    'nsp'
+    'test:e2e'
   ]);
 
   grunt.registerTask('readBowerVersion', function () {

@@ -9,6 +9,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   A good test example is:
     https://argonautproject.github.io/questionnaire/Questionnaire-questionnaire-example-asq3.html
 
+## [13.7.2] 2018-12-12
+### Fixed
+- FHIR value quantity import/export
+- Misc fixes.
+
 ## [13.7.1] 2018-12-07
 ### Fixed
 - FHIRPath intialization has been corrected, so that the context passed in is
