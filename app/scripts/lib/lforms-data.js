@@ -522,6 +522,11 @@ if (typeof LForms === 'undefined')
         if (item.skipLogic) {
           this._updateItemSkipLogicStatus(item, null);
         }
+        // Hide the item via the skip logic mechanism if _isHidden flag is true. As of 2018-12-19, the _isHidden flag
+        // is set to true if the item is converted from a FHIR Questionnaire with questionnaire-hidden extension.
+        if (item._isHidden) {
+          this._updateItemSkipLogicStatus(item, true);
+        }
       }
 
       // update internal status
@@ -1280,7 +1285,7 @@ if (typeof LForms === 'undefined')
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
-        if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
+        if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) ||
             noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
           continue;
         }

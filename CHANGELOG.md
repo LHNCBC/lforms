@@ -2,9 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [13.8.0] 2018-12-15
+## [13.9.0] 2018-12-15
 ### Added
 - FHIR Questionnaire contained ValueSet support.
+
+## [13.8.0] 2018-11-30
+### Added.
+- Added support for the questionnaire-hidden extension
+    http://hl7.org/fhir/StructureDefinition/questionnaire-hidden
+  A good test example is:
+    https://argonautproject.github.io/questionnaire/Questionnaire-questionnaire-example-asq3.html
 
 ## [13.7.2] 2018-12-12
 ### Fixed
