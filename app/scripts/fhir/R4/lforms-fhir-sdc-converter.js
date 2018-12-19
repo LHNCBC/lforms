@@ -131,12 +131,13 @@ function addSDCImportFns(ns) {
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
-   * @return when there are contained value sets, return a hash from "#<ValueSet.id>" to the answers options object,
-   *         which, in turn, is a hash with 3 entries:
-   *         "answers" is the list of LF answers converted from the value set.
-   *         "systems" is the list of code systems for each answer item; and
-   *         "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         return undefined if no contained value set is present.
+   * @return when there are contained value sets, returns a hash from the ValueSet url to the answers
+   *         options object, which, in turn, is a hash with 4 entries:
+   *         - "answers" is the list of LF answers converted from the value set.
+   *         - "systems" is the list of code systems for each answer item; and
+   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
+   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
+   *         returns undefined if no contained value set is present.
    * @private
    */
   function _extractContainedVS(questionnaire) {
@@ -163,6 +164,9 @@ function addSDCImportFns(ns) {
             }
             else if(theCodeSystem !== vsItem.system) {
               theCodeSystem = null;
+            }
+            if(vsItem.system) {
+              lfVS.hasAnswerCodeSystems = true;
             }
           });
 
@@ -395,8 +399,9 @@ function addSDCImportFns(ns) {
         if(vs.isSameCodeSystem) {
           lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
         }
-        else {
-          console.log('WARNING: unable to handle different answer code systems within a question, ignored');
+        else if(vs.hasAnswerCodeSystems) {
+          console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s',
+                      vs.systems.join(', '));
         }
       }
     }
