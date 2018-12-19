@@ -181,8 +181,9 @@ if (typeof LForms === 'undefined')
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR)
+      if (LForms.FHIR) {
         this._initializeFormFHIRData(data);
+      }
 
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
@@ -225,6 +226,7 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhir = LForms.FHIR[lfData.fhirVersion];
+      this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
@@ -262,6 +264,7 @@ if (typeof LForms === 'undefined')
         }
       }
     },
+
 
     /**
      *  Checks that the given variable name is allowed in FHIR and throws an

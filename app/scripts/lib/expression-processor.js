@@ -1,8 +1,15 @@
 // Processes FHIR Expression Extensions
 (function() {
   "use strict";
-// TBD - this should be a property of an LFormsData instance
-  LForms.LFormsData._ExpressionProcessor = {
+  // A class whose instances handle the running of FHIR expressions.
+
+  LForms.ExpressionProcessor = function(lfData) {
+    this._lfData = lfData;
+    this._fhir = LForms.FHIR[lfData.fhirVersion];
+    console.log("%%% fhirVersion="+lfData.fhirVersion);
+  }
+
+  LForms.ExpressionProcessor.prototype = {
 
     /**
      *  Runs any calculated expressions, and also the variable expressions,
@@ -14,22 +21,21 @@
     },
     */
 
-    runCalculations(lfData, includeInitialExpr) {
+    runCalculations: function(includeInitialExpr) {
 // TBD - don't take inclueInitialExpr; store whether or not the initalExpr have
 // completed running at least once.
-      this.lfData = lfData;
       var firstRun = true;
       var changed = true;
       while (changed) {
         if (changed || firstRun) {
-          this.regenerateQuestionnaireResp();
-          changed = this._evaluateVariables(lfData, !firstRun);
+          this._regenerateQuestionnaireResp();
+          changed = this._evaluateVariables(this._lfData, !firstRun);
         }
         if (changed || firstRun)
-          changed = this._evalulateFieldExpressions(lfData, includeInitialExpr, !firstRun);
+          changed = this._evaluateFieldExpressions(this._lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
-    }
+    },
 
     _evaluateVariables: function(item, changesOnly) {
       var rtn = false;
@@ -39,18 +45,18 @@
       // expression, then neither do its children.
       if (!changesOnly || item._exprChanged) {
         item._exprChanged = false; // clear flag for possible next run
-        var variablesExts = item._variableExt;
-        if (variablesExts) {
+        var variableExts = item._variableExt;
+        if (variableExts) {
           for (var i=0, len=variableExts.length; i<len; ++i) {
             var ext = variableExts[i];
             if (ext && ext.valueExpression.language=="text/fhirpath") {
-              var varName = ext.name;
+              var varName = ext.valueExpression.name;
               var oldVal;
               if (item._fhirVariables)
                 oldVal = item._fhirVariables[varName];
-              var newVal = evaluateFHIRPath(item, ext.valueExpression.expression);
+              var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
               if (newVal !== undefined)
-                item._fhirPathVariables[varName] = newVal;
+                item._fhirVariables[varName] = newVal;
               var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
               if (varChanged) {
                 changed = true;
@@ -62,7 +68,7 @@
         }
         if (item.items) {
           for (var i=0, len=item.items.length; i<len; ++i) {
-            var changed = evaluateVariables(item.items[i], changesOnly);
+            var changed = this._evaluateVariables(item.items[i], changesOnly);
             if (!rtn)
               rtn = changed;
           }
@@ -71,7 +77,7 @@
       return rtn;
     },
 
-    _evalulateFieldExpressions: function(item, includeInitialExpr, changesOnly) {
+    _evaluateFieldExpressions: function(item, includeInitialExpr, changesOnly) {
       var rtn = false;
       // If changesOnly, for any item that has _varChanged set, we run any field
       // expressions that are within that group.  (If it is not a group, there
@@ -94,8 +100,8 @@
           var ext = exts[i];
           if (ext && ext.valueExpression.language=="text/fhirpath") {
             var varName = ext.name;
-            var newVal = evaluateFHIRPath(item, ext.valueExpression.expression);
-            var exprChanged = this._setItemValueFromFHIRPath(newVal);
+            var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+            var exprChanged = this._setItemValueFromFHIRPath(item, newVal);
             if (!changed)
               changed = exprChanged;
           }
@@ -123,25 +129,29 @@
     },
 
 
-    regenerateQuestionnaireResp: function() {
-      questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-      lfData._fhirVariables.resource = questResp;
+    _regenerateQuestionnaireResp: function() {
+      var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+      this._lfData._fhirVariables.resource = questResp;
       this._linkIDToQRItem = this._getIDtoQRItemMap(questResp);
-    }
+    },
 
 
-    evaluateFHIRPath(item, expression) {
+    _evaluateFHIRPath: function(item, expression) {
       var fhirPathVal;
       // Find the item-level fhirpathVars
       var itemWithVars = item;
       while (!itemWithVars._fhirVariables)
         itemWithVars = itemWithVars._parentItem; // should terminate at lfData
-      var fhir = LForms.FHIR[lfData.fhirVersion];
       try {
-        fhirPathVal = fhir.fhirpath.evaluate(this._linkIDToQRItem[item.linkId],
-          exprExt.valueExpression.expression, itemWithVars._fhirVariables);
+console.log("%%% evaluating " +expression);
+console.log(itemWithVars._fhirVariables);
+console.log(this._linkIDToQRItem[item.linkId]);
+        fhirPathVal = this._fhir.fhirpath.evaluate(this._linkIDToQRItem[item.linkId],
+          expression, itemWithVars._fhirVariables);
       }
       catch (e) {
+        // Sometimes an expression will rely on data that hasn't been filled in
+        // yet.
         console.log(e);
       }
       return fhirPathVal
@@ -195,12 +205,14 @@
     },
 
 
+
     /**
      *  Runs any expressions stored in an item under the given property
      *  names, and assigns the result to item's value.
      * @param expressionProperties the properties for which an expression should
      *  be run.
      */
+    /*
     runValueExpressions: function(expressionProperties) {
       var lfData = this;
       if (LForms.FHIR) {
@@ -219,10 +231,9 @@
         // runs only run the expressions on marked items.
         var firstRun = true;
         while (rerunNeeded) {
-          var rerunNeeded = false; // we hope
+          var rerunNeeded = false; // will be reset if needed
           for (var i=0, len=itemList.length; i<len; ++i) {
             var item = itemList[i];
-            if (
             for (var j=0, jLen=expressionProperties.length; j<jLen; ++j) {
               var prop = expressionProperties[j];
               var isVariable = prop === '_variableExt';
@@ -281,7 +292,7 @@
         }
       }
     },
-
+*/
 
 
   };
