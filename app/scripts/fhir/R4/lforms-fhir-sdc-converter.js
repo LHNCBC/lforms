@@ -419,8 +419,8 @@ function addSDCImportFns(ns) {
           lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
         }
         else if(vs.hasAnswerCodeSystems) {
-          console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s',
-                      vs.systems.join(', '));
+          console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s',
+                      lfItem.linkId, vs.systems.join(', '));
         }
       }
     }
