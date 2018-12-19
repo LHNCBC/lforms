@@ -522,7 +522,8 @@ if (typeof LForms === 'undefined')
         if (item.skipLogic) {
           this._updateItemSkipLogicStatus(item, null);
         }
-        // set hidden status if it's a "statically" hidden item, e.g., via questionnaire-hidden extension.
+        // Hide the item via the skip logic mechanism if _isHidden flag is true. As of 2018-12-19, the _isHidden flag
+        // is set to true if the item is converted from a FHIR Questionnaire with questionnaire-hidden extension.
         if (item._isHidden) {
           this._updateItemSkipLogicStatus(item, true);
         }
