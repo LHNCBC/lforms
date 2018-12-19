@@ -280,6 +280,13 @@ var sdcExport = {
       });
     }
 
+    if(item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
+    }
+
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 

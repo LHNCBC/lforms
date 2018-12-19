@@ -28,6 +28,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
 
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   
   self.formLevelIgnoredFields = [
     // Resource
@@ -146,6 +147,7 @@ function addSDCImportFns(ns) {
     self._processDisplayControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
     self._processCodingInstructions(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
@@ -303,6 +305,23 @@ function addSDCImportFns(ns) {
       lfItem.externallyDefined = externallyDefined.valueUri;
     }
   };
+
+
+  /**
+   * Parse questionnaire item for "hidden" extension
+   *
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   * @return true if the item is hidden or if its ancestor is hidden, false otherwise
+   */
+  self._processHiddenItem = function(lfItem, qItem) {
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
+    if(ci) {
+      lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
+    }
+    return lfItem._isHidden;
+  }
 
 
   /**

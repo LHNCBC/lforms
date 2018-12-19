@@ -19194,6 +19194,13 @@ var sdcExport = {
           }]
         }
       });
+    }
+
+    if (item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
     } // linkId
 
 
@@ -20421,6 +20428,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -20505,6 +20513,8 @@ function addSDCImportFns(ns) {
     _processRestrictions(targetItem, qItem);
 
     _processCodingInstructions(targetItem, qItem);
+
+    _processHiddenItem(targetItem, qItem);
 
     _processUnitList(targetItem, qItem);
 
@@ -20631,6 +20641,25 @@ function addSDCImportFns(ns) {
     if (externallyDefined && externallyDefined.valueUri) {
       lfItem.externallyDefined = externallyDefined.valueUri;
     }
+  }
+  /**
+   * Parse questionnaire item for "hidden" extension
+   *
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   * @return true if the item is hidden or if its ancestor is hidden, false otherwise
+   */
+
+
+  function _processHiddenItem(lfItem, qItem) {
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
+
+    if (ci) {
+      lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
+    }
+
+    return lfItem._isHidden;
   }
   /**
    * Parse questionnaire item for answers list
