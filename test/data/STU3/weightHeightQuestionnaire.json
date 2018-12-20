@@ -173,7 +173,7 @@
           "valueExpression": {
             "description": "BMI calculation",
             "language" : "text/fhirpath",
-            "expression": "((item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254*10) div 1)/10"
+            "expression": "((%resource.item.where(linkId='/29463-7').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254*10) div 1)/10"
           }
         }
       ],

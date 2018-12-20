@@ -106,6 +106,11 @@ fhir.SDC = _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 Object(_lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
+fhir.reservedVarNames = {};
+['context', 'resource'].forEach(function (name) {
+  fhir.reservedVarNames[name] = true;
+});
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -19189,6 +19194,13 @@ var sdcExport = {
           }]
         }
       });
+    }
+
+    if (item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
     } // linkId
 
 
@@ -19552,7 +19564,7 @@ var sdcExport = {
    */
   _processResponseItem: function _processResponseItem(item, parentItem) {
     var targetItem = {};
-    var linkId = item._codePath; // if it is a section
+    var linkId = item.linkId ? item.linkId : item._codePath; // if it is a section
 
     if (item.dataType === "SECTION") {
       // linkId
@@ -19727,6 +19739,33 @@ var sdcExport = {
   },
 
   /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  _makeValueQuantity: function _makeValueQuantity(value, itemUnit, unitSystem) {
+    var fhirQuantity = null;
+    var floatValue = parseFloat(value);
+
+    if (!isNaN(floatValue)) {
+      fhirQuantity = {
+        value: floatValue
+      };
+
+      if (itemUnit && itemUnit.name) {
+        fhirQuantity.unit = itemUnit.name;
+        fhirQuantity.code = itemUnit.name;
+        fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
+      }
+    }
+
+    return fhirQuantity;
+  },
+
+  /**
    * Process capture user data
    * @param targetItem an item in FHIR SDC QuestionnaireResponse object
    * @param item an item in LForms form object
@@ -19800,8 +19839,16 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (item.dataType === "QTY") {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-          // make a Quantity type if numeric values has a unit value
+        else if (item.dataType === "QTY") {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
+
+            if (fhirQuantity) {
+              answer.push({
+                valueQuantity: fhirQuantity
+              });
+            }
+          } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
               answer.push({
                 "valueQuantity": {
@@ -19876,11 +19923,18 @@ var sdcExport = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (item.dataType === 'QTY') {} // NOTE: QTY data type in LForms does not have unit. Cannot support it.
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+      else if (item.dataType === 'QTY') {
+          // for now, handling only simple quantities without the comparators.
+          var fhirQuantity = this._makeValueQuantity(item.value, item.unit);
+
+          if (fhirQuantity) {
+            targetItem[valueKey] = fhirQuantity;
+          }
+        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
             targetItem[valueKey] = item.defaultAnswer;
-          } // no support for reference
+          } //TODO luanx2: when item.unit, shouldn't INT, REAL be valueQuantity? Otherwise item.unit is lost? Leave as is for now.
+      // no support for reference
 
     }
   },
@@ -19960,10 +20014,16 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (sourceItem.dataType === 'QTY') {} // TBD
-          // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+        else if (sourceItem.dataType === 'QTY') {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(condition.trigger.value, sourceItem.unit);
+
+            if (fhirQuantity) {
+              enableWhenRule[valueKey] = fhirQuantity;
+            }
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
           else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
-              enableWhenRule[valueKey] = condition.trigger.value;
+              enableWhenRule[valueKey] = condition.trigger.value; // TODO luanx2: similarly, REAL, INT with unit should be valueQuantity? Leave as is for now.
             } // add a rule to enableWhen
 
 
@@ -20266,9 +20326,12 @@ var sdcExport = {
         case "INT":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {
-              name: qrValue.valueQuantity.code
-            };
+
+            if (qrValue.valueQuantity.code) {
+              item.unit = {
+                name: qrValue.valueQuantity.code
+              };
+            }
           } else if (qrValue.valueInteger) {
             item.value = qrValue.valueInteger;
           }
@@ -20276,11 +20339,15 @@ var sdcExport = {
           break;
 
         case "REAL":
+        case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {
-              name: qrValue.valueQuantity.code
-            };
+
+            if (qrValue.valueQuantity.code) {
+              item.unit = {
+                name: qrValue.valueQuantity.code
+              };
+            }
           } else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;
           }
@@ -20367,7 +20434,11 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+<<<<<<< HEAD
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
+=======
+  self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+>>>>>>> master
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -20452,6 +20523,8 @@ function addSDCImportFns(ns) {
     _processRestrictions(targetItem, qItem);
 
     _processCodingInstructions(targetItem, qItem);
+
+    _processHiddenItem(targetItem, qItem);
 
     _processUnitList(targetItem, qItem);
 
@@ -20580,6 +20653,25 @@ function addSDCImportFns(ns) {
     }
   }
   /**
+   * Parse questionnaire item for "hidden" extension
+   *
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   * @return true if the item is hidden or if its ancestor is hidden, false otherwise
+   */
+
+
+  function _processHiddenItem(lfItem, qItem) {
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
+
+    if (ci) {
+      lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
+    }
+
+    return lfItem._isHidden;
+  }
+  /**
    * Parse questionnaire item for answers list
    *
    * @param lfItem {object} - LForms item object to assign answer list
@@ -20677,6 +20769,19 @@ function addSDCImportFns(ns) {
               text: val.display
             };
           }
+      } else if (lfItem.dataType === 'QTY') {
+        if (val.value !== undefined) {
+          lfItem.value = val.value;
+          lfItem.defaultAnswer = val.value;
+        }
+
+        var unit = val.code ? val.code : val.unit;
+
+        if (unit) {
+          lfItem.unit = {
+            name: unit
+          };
+        }
       } else {
         lfItem.value = val;
         lfItem.defaultAnswer = val;

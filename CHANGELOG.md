@@ -2,13 +2,31 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [13.7.1] 2018-12-07
+## [13.8.1] 2018-12-07
 ### Fixed.
 - Fixed errors in parsing argonaut questionnaire extensions. 
 
+## [13.8.0] 2018-11-30
+### Added.
+- Added support for the questionnaire-hidden extension
+    http://hl7.org/fhir/StructureDefinition/questionnaire-hidden
+  A good test example is:
+    https://argonautproject.github.io/questionnaire/Questionnaire-questionnaire-example-asq3.html
+
+## [13.7.2] 2018-12-12
+### Fixed
+- FHIR value quantity import/export
+- Misc fixes.
+
+## [13.7.1] 2018-12-07
+### Fixed
+- FHIRPath intialization has been corrected, so that the context passed in is
+  now the item on which the expression is attached, and %resource is set to the
+  QustionnaireResponse object.
+
 ## [13.7.0] 2018-12-06
 ### Added.
-- Added support for enableWhen and initial(x) in R4. 
+- Added support for enableWhen and initial(x) in R4.
 
 ## [13.6.0] 2018-12-04
 ### Added

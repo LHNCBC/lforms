@@ -30,6 +30,8 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
 
+  self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+  
   self.formLevelIgnoredFields = [
     // Resource
     'id',
@@ -147,6 +149,7 @@ function addSDCImportFns(ns) {
     self._processDisplayControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
     self._processCodingInstructions(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
@@ -307,6 +310,23 @@ function addSDCImportFns(ns) {
 
 
   /**
+   * Parse questionnaire item for "hidden" extension
+   *
+   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   * @return true if the item is hidden or if its ancestor is hidden, false otherwise
+   */
+  self._processHiddenItem = function(lfItem, qItem) {
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
+    if(ci) {
+      lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
+    }
+    return lfItem._isHidden;
+  }
+
+
+  /**
    * Parse questionnaire item for answers list
    *
    * @param lfItem {object} - LForms item object to assign answer list
@@ -377,36 +397,36 @@ function addSDCImportFns(ns) {
   
     var isMultiple = _hasMultipleAnswers(qItem);
     var defaultAnswer = null;
+
     qItem.initial.forEach(function(elem) {
       var answer = null;
       var val = _getValueWithPrefixKey(elem, /^value/);
+
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
-        if (isMultiple) {
-          if(!defaultAnswer) defaultAnswer = [];
-          answer = {};
-          if(val.code !== undefined) answer.code = val.code;
-          if(val.display !== undefined) answer.text = val.display;
-          defaultAnswer.push(answer);
-        }
-        // single selection
-        else {
-          answer = {};
-          if(val.code !== undefined) answer.code = val.code;
-          if(val.display !== undefined) answer.text = val.display;
-          defaultAnswer = answer;
+        answer = {};
+        if(val.code !== undefined) answer.code = val.code;
+        if(val.display !== undefined) answer.text = val.display;
+      }
+      else if(lfItem.dataType === 'QTY') {
+        answer = val.value;
+        let unit = val.code? val.code: val.unit;
+        if (unit) {
+          lfItem.unit = {name: unit};
         }
       }
       else {
-        if (isMultiple) {
-          if(!defaultAnswer) defaultAnswer = [];
-          defaultAnswer.push(val);
-        }
-        else {
-          defaultAnswer = val;
-        }
+        answer = val;
+      }
+
+      if (isMultiple) {
+        if(!defaultAnswer) defaultAnswer = [];
+        defaultAnswer.push(answer);
+      }
+      else {     // single selection
+        defaultAnswer = answer;
       }
     });
-    
+
     lfItem.value = defaultAnswer; // TODO - Is this necessary?
     lfItem.defaultAnswer = defaultAnswer;
   };
