@@ -344,7 +344,7 @@ function addSDCImportFns(ns) {
           answer.label = label.valueString;
         }
         var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
-        // See for argonaut extension.
+        // Look for argonaut extension.
         score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
         if(score) {
           answer.score = score.valueDecimal.toString();

@@ -20514,11 +20514,8 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
-<<<<<<< HEAD
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
-=======
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
->>>>>>> master
   self.formLevelIgnoredFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
@@ -20842,7 +20839,7 @@ function addSDCImportFns(ns) {
           answer.label = label.valueString;
         }
 
-        var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore); // See for argonaut extension.
+        var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore); // Look for argonaut extension.
 
         score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
 
