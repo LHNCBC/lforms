@@ -796,7 +796,7 @@ var sdcExport = {
           });
         }
 
-        if(answer.scope) {
+        if(answer.score) {
           ext.push({
             "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal" : parseFloat(answer.score)

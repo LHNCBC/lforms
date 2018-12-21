@@ -19696,7 +19696,7 @@ var sdcExport = {
           });
         }
 
-        if (answer.scope) {
+        if (answer.score) {
           ext.push({
             "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal": parseFloat(answer.score)
@@ -20854,12 +20854,12 @@ function addSDCImportFns(ns) {
         if (optionKey && optionKey.length > 0) {
           if (optionKey[0] === 'valueCoding') {
             // Only one value[x] is expected
-            if (option[optionKey].code !== undefined) answer.code = option[optionKey].code;
-            if (option[optionKey].display !== undefined) answer.text = option[optionKey].display; //Lforms has answer code system at item level, expects all options to have one code system!
+            if (option[optionKey[0]].code !== undefined) answer.code = option[optionKey[0]].code;
+            if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; //Lforms has answer code system at item level, expects all options to have one code system!
 
-            if (option[optionKey].system !== undefined) lfItem.answerCodeSystem = option[optionKey].system;
+            if (option[optionKey[0]].system !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
           } else {
-            answer.text = option[optionKey].toString();
+            answer.text = option[optionKey[0]].toString();
           }
         }
 

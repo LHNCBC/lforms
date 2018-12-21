@@ -343,7 +343,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           if(fhirVersion === 'STU3') {
-            describe.only('argonaut samples', function () {
+            describe('argonaut samples', function () {
               it('should parse housing', function (done) {
                 var file = 'test/data/STU3/argonaut-examples/housing.json';
                 $.get(file, function(json) {
@@ -362,7 +362,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 });
               });
 
-              it.only('should parse sampler', function (done) {
+              it('should parse sampler', function (done) {
                 var file = 'test/data/STU3/argonaut-examples/sampler.json';
                 $.get(file, function(json) {
                   var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);

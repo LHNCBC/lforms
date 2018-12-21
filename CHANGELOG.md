@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [13.8.1] 2018-12-07
 ### Fixed.
-- Fixed errors in parsing argonaut questionnaire extensions. 
+- Fixed errors in parsing argonaut questionnaire extensions with support for item.option.extension-score.
 
 ## [13.8.0] 2018-11-30
 ### Added.
