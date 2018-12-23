@@ -1,0 +1,287 @@
+/**
+ * auto-completion.css - AutoCompletion-specific style specifications
+ *
+ * Colors (mostly) selected from palette generated at
+ * http://www.perbang.dk/color+scheme/,
+ * Using a base of D1E1F0, with color scheme "Monochromatic".
+ */
+
+/**
+ *  Style for the section containing the search count and the results list.
+ */
+#searchResults {
+  visibility: hidden;
+  color: black;
+  font-size: 100%;
+  z-index: 1000;
+}
+
+#searchCount {
+  display: none;
+  font-size: 90%;
+  background-color: #E3E7EA;
+  padding-left: 3px;
+  padding-right: 3px;
+  overflow: hidden;
+}
+
+#searchHint {
+  display: none;
+  font-weight: normal;
+  font-style: italic;
+  font-size: 90%;
+  background-color: #E3E7EA;
+  padding-left: 3px;
+  padding-right: 3px;
+  overflow: hidden;
+}
+
+#moreResults {
+  display: none;
+  font-size: 90%;
+  background-color: #FFF;
+  color: #00F;
+  padding-left: 3px;
+  padding-right: 3px;
+  border: 2px solid #225599;
+  border-top-width: 0px;
+  cursor: pointer;
+}
+
+#moreResults:hover {
+  text-decoration: underline;
+}
+
+
+.ansList:focus, .search_field:focus {
+  background-color: #FFF8C6;
+}
+
+
+/* Class "auto_complete" is the completion options div */
+.auto_complete  {
+  width: auto;
+  /* border is reset in javascript splitAutoComp.js */
+  /* for pre-fetched list only */
+  /*border: 2px solid #4074A1; */ /* this might be better */
+  background-color: White ;
+  position: relative;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.auto_complete > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auto_complete > ul > li{
+  border-bottom: 1px solid #DFDFDF;
+  font-size: 90%;
+  padding: 3px 10px 3px 10px;
+  /* Prevent wrapping of padding and border in IE */
+  break-inside: avoid;
+  /* Prevent wrapping of padding and border in Chrome */
+  /* This happened for multi-column lists with an odd number of items */
+  -webkit-column-break-inside: avoid;
+}
+/* We don't need a border on the last item */
+.auto_complete > ul > li:last-child {
+  border: 0;
+}
+/* ...except that the list balances better in 2 columns if we do */
+.auto_complete.multi_col > ul > li:last-child {
+  border-bottom: 1px solid #DFDFDF;
+}
+
+
+.form_auto_complete {
+  position: absolute;
+  font-weight: normal;
+  overflow: hidden;
+}
+
+
+.suggestion {
+  color: #001A33;
+}
+
+
+.auto_complete .selected {
+  background-color: #BBCCDD;
+}
+
+.auto_complete li:hover,  .auto_complete tr:hover {
+  background-color: #d1e1f0;
+}
+
+.auto_complete > ul > li.heading:hover {
+  background-color: #001A33;
+}
+
+.heading {
+  background-color: #001A33;
+  color: white;
+}
+
+.listNum {
+  color: #368325;
+}
+
+
+/**
+ * The style for autocompletion input fields whose input does not match
+ * any value in the list.  (The redundancy here is for overriding another
+ * background setting on input[type='text'].)
+ */
+.ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
+  background-color: #F8DA74;
+  color: black;
+  font-style: italic;
+}
+
+.ansList.invalid, .search_field.invalid {
+  border: 2px solid #F00;
+}
+
+
+/**
+ *  The style for multi-column lists.
+ */
+.multi_col {
+  /* For now, just two columns.
+   * This uses the CSS3 columns spec which as of 2010/7/29 is still
+   * a candidate recomendation
+   */
+  -moz-column-count: 2;
+  -webkit-column-count: 2;
+  column-count: 2;
+  /* Set the gap to zero to make it easier to estimate the container width */
+  -moz-column-gap: 0;
+  -webkit-column-gap: 0;
+  column-gap: 0;
+}
+
+/**
+ *  Style settings for scrolling the completion options.  This is needed
+ *  for the CSS multi-column lists, which only want to scroll horizontally.
+ */
+#completionOptionsScroller {
+  background: none repeat scroll 0 0 #FFFFFF;
+  border: 1px solid #838383;
+  border-top-color: #DFDFDF;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/**
+ *  The class for the autocompleter search button.
+ */
+.searchButton {
+  margin-left: 1.2em;
+  border: 0;
+  vertical-align: middle;
+}
+
+
+/* Background images in list fields with items */
+input.search_field, textarea.search_field {
+  background-image: url("./magnifying_glass.png");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  padding-right: 14px;
+}
+
+.ansList.ac_multiple, .ansList.ac_multiple:focus {
+  background-image: url("./down_arrow_gray_10_10.png");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  padding-right: 14px;
+}
+
+@media print {
+  .ansList.ac_multiple, .ansList.ac_multiple:focus,
+  input.search_field, textarea.search_field {
+    background-image: none;
+  }
+}
+
+
+/* The element showing selected items for multi-select lists */
+.autocomp_selected {
+  border: 1px solid gray;
+  padding: 1px;
+  display: inline-block;
+}
+.autocomp_selected input, .autocomp_selected textarea {
+  border-width: 1px;
+  width: 100%;
+  box-sizing: border-box; /* include the padding w/ icon in the width */
+}
+.autocomp_selected ul {
+  list-style-type: none;
+  margin: 0.5em 0 0.25em 0.25em;
+  padding-left: 0;
+}
+.autocomp_selected li {
+  display: inline-block;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #D7DADD;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  margin-right: 0.25em;
+  margin-bottom: 0.25em;
+  white-space: nowrap;
+}
+.autocomp_selected li > button {
+  border: 0;
+  background-color: #D7DADD;
+  font-weight: 800;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  /* keep the button from having the full height of the containing item */
+  line-height: 0.9em;
+  padding-bottom: 0.1em;
+}
+.autocomp_selected li > button:hover {
+  background-color: #999;
+}
+
+/* For the screen reader log, which should not be visible */
+.screen_reader_only {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  position: fixed;
+  left: -1000px;
+  top: -1000px;
+}
+
+/* Table format */
+#completionOptionsScroller table {
+  border-collapse: collapse;
+  border-style: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+#completionOptionsScroller tbody {
+  font-size: 90%;
+}
+#completionOptionsScroller td {
+  border: 1px solid #DFDFDF;
+  margin: 0;
+  padding: 0;
+  padding-left: 0.25em;
+  padding-right: 0.75em;
+}
+
+#completionOptionsScroller th {
+  border-right: 1px solid gray;
+  font-size: 85%;
+  background-color: #D7DADD;
+  padding-left: 0.25em;
+  padding-right: 0.75em;
+}
