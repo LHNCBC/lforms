@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.9.0] 2018-12-15
+### Added
+- FHIR Questionnaire contained ValueSet support.
+
 ## [13.8.0] 2018-11-30
 ### Added.
 - Added support for the questionnaire-hidden extension

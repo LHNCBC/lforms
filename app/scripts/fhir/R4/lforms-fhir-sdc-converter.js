@@ -83,11 +83,12 @@ function addSDCImportFns(ns) {
     if(fhirData) {
       target = {};
       self._processFormLevelFields(target, fhirData);
+      var containedVS = _extractContainedVS(fhirData);
 
       if(fhirData.item && fhirData.item.length > 0) {
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData);
+          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
           target.items.push(item);
         }
       }
@@ -126,15 +127,72 @@ function addSDCImportFns(ns) {
       });
     }
   };
+
+
+  /**
+   * Extract contained VS (if any) from the given questionnaire resource object.
+   * @param questionnaire the FHIR questionnaire resource object
+   * @return when there are contained value sets, returns a hash from the ValueSet url to the answers
+   *         options object, which, in turn, is a hash with 4 entries:
+   *         - "answers" is the list of LF answers converted from the value set.
+   *         - "systems" is the list of code systems for each answer item; and
+   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
+   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
+   *         returns undefined if no contained value set is present.
+   * @private
+   */
+  function _extractContainedVS(questionnaire) {
+    var answersVS;
+
+    if(questionnaire.contained && questionnaire.contained.length > 0) {
+      answersVS = {};
+      questionnaire.contained.forEach(vs => {
+        if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
+          var lfVS = answersVS[vs.url] = {answers: [], systems:[]};
+          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
+          vs.expansion.contains.forEach(vsItem => {
+            var answer = {code: vsItem.code, text: vsItem.display};
+            var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+              "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+            if(ordExt) {
+              answer.score = ordExt.valueDecimal;
+            }
+            lfVS.answers.push(answer);
+            lfVS.systems.push(vsItem.system);
+
+            if(theCodeSystem === '#placeholder#') {
+              theCodeSystem = vsItem.system;
+            }
+            else if(theCodeSystem !== vsItem.system) {
+              theCodeSystem = null;
+            }
+            if(vsItem.system) {
+              lfVS.hasAnswerCodeSystems = true;
+            }
+          });
+
+          // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
+          if(theCodeSystem && theCodeSystem !== '#placeholder#' ) {
+            lfVS.isSameCodeSystem = true;
+          }
+        }
+      });
+    }
+
+    return answersVS;
+  }
+
+
   /**
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource) {
+  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -151,7 +209,7 @@ function addSDCImportFns(ns) {
     self._processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
-    self._processAnswers(targetItem, qItem);
+    self._processAnswers(targetItem, qItem, containedVS);
     self._processSkipLogic(targetItem, qItem, qResource);
     self._processCopiedItemExtensions(targetItem, qItem);
 
@@ -159,7 +217,7 @@ function addSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
         targetItem.items.push(newItem);
       }
     }
@@ -329,9 +387,10 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to assign answer list
    * @param qItem {object} - Questionnaire item object
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @private
    */
-  self._processAnswers = function (lfItem, qItem) {
+  self._processAnswers = function (lfItem, qItem, containedVS) {
     if(qItem.answerOption) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.answerOption.length; i++) {
@@ -350,6 +409,19 @@ function addSDCImportFns(ns) {
         answer.code = qItem.answerOption[i].valueCoding.code;
         answer.text = qItem.answerOption[i].valueCoding.display;
         lfItem.answers.push(answer);
+      }
+    }
+    else if(qItem.answerValueSet && containedVS) {
+      var vs = containedVS[qItem.answerValueSet];
+      if(vs) {
+        lfItem.answers = vs.answers;
+        if(vs.isSameCodeSystem) {
+          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+        }
+        else if(vs.hasAnswerCodeSystems) {
+          console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s',
+                      lfItem.linkId, vs.systems.join(', '));
+        }
       }
     }
   };
@@ -506,6 +578,24 @@ function addSDCImportFns(ns) {
 
 
   /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+  function _toLfCodeSystem(codeSystem) {
+    var ret = codeSystem;
+    switch(codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
+    }
+
+    return ret;
+  }
+
+
+  /**
    * Get an object with code and code system
    *
    * @param questionnaireItemOrResource {object} - question
@@ -516,32 +606,19 @@ function addSDCImportFns(ns) {
     if(questionnaireItemOrResource &&
          Array.isArray(questionnaireItemOrResource.code) &&
          questionnaireItemOrResource.code.length) {
-      code = {};
-      switch(questionnaireItemOrResource.code[0].system) {
-        case 'http://loinc.org':
-          code.system = 'LOINC';
-          break;
-        default:
-          code.system = questionnaireItemOrResource.code[0].system;
-          break;
-      }
-
-      code.code = questionnaireItemOrResource.code[0].code;
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
     }
     // If code is missing look for identifier.
     else if(questionnaireItemOrResource &&
       Array.isArray(questionnaireItemOrResource.identifier) &&
       questionnaireItemOrResource.identifier.length) {
-      code = {};
-      switch(questionnaireItemOrResource.identifier[0].system) {
-        case 'http://loinc.org':
-          code.system = 'LOINC';
-          break;
-        default:
-          code.system = questionnaireItemOrResource.identifier[0].system;
-          break;
-      }
-      code.code = questionnaireItemOrResource.identifier[0].value;
+      code = {
+        code: questionnaireItemOrResource.identifier[0].value,
+        system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+      };
     }
 
     return code;

@@ -393,9 +393,25 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                     'QuestionnaireResponse', fhirQnRespData, qnForm, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
-              }).done().fail(function(err){console.log('Unable to load ' + qFile);});
-            }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+              }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+            }).done().fail(function(err){console.log('Unable to load ' + qFile);});
           });
+        });
+
+        describe('Questionnaire contained ValueSet', function() {
+          var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
+          $.get(qFile, function(fhirQnData) { // load the questionnaire json
+            var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+
+            it('should properly convert to LForms answers', function () {
+              var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
+              assert.equal(item.questionCode, '44255-8');
+              assert.equal(item.dataType, 'CNE');
+              assert.equal(item.answers[1].code, 'LA6569-3');
+              assert.equal(item.answers[1].text, 'Several days');
+              assert.equal(item.answers[1].score, 1);
+            });
+          }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
         });
       });
     });
