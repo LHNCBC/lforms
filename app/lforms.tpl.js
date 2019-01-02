@@ -209,7 +209,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" +
     "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\">{{lfData.name}}</span>\n" +
     "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\">[{{ lfData.code }}]</a>\n" +
+    "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
     "      </span>\n" +
     "  <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" +
@@ -308,7 +308,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" +
     "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
     "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
     "      </span>\n" +
     "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
@@ -414,7 +414,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
     "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
     "      </span>\n" +
     "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
@@ -556,7 +556,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "       class=\"lf-form-matrix-table-title lf-de-label\">\n" +
     "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\">[{{ item.questionCode }}]</a>\n" +
+    "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
     "    </span>\n" +
     "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" +
@@ -616,7 +616,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
     "             for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" +
     "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
-    "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\">[{{ subItem.questionCode }}]</a>\n" +
+    "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" +
     "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" +
     "            </span>\n" +
     "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" +

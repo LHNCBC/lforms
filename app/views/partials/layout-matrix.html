@@ -4,7 +4,7 @@
        class="lf-form-matrix-table-title lf-de-label">
     <span class="lf-question"><label id="label-{{ item._elementId }}">{{item.question}}</label></span>
     <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
-      <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+      <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
     </span>
     <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">
@@ -64,7 +64,7 @@
             <span class="lf-question"><label id="label-{{ subItem._elementId }}"
              for="{{subItem._elementId}}">{{subItem.question}}</label></span>
             <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
-              <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank">[{{ subItem.questionCode }}]</a>
+              <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ subItem.questionCode }}]</a>
               <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
             </span>
             <span ng-switch on="getCodingInstructionsDisplayType(subItem)" ng-if="subItem.codingInstructions">

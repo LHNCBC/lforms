@@ -62,5 +62,17 @@ describe('Util library', function() {
       assert.deepEqual(target, expected);
     });
   });
+
+  describe('findItem', function() {
+    var items = [{linkId: 'aa'}, {linkId: 'bb', items:[{linkId: 'bb1'}, {linkId:'bb2'}]}, {linkId:'ccc'}];
+    it('should find item by linkId', function () {
+      var item = LForms.Util.findItem(items, 'linkId', 'aa');
+      assert.equal(item.linkId, 'aa');
+    });
+    it('should find item by linkId recursively', function () {
+      var item = LForms.Util.findItem(items, 'linkId', 'bb1');
+      assert.equal(item.linkId, 'bb1');
+    });
+  });
 });
 
