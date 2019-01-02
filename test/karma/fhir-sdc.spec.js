@@ -348,7 +348,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var file = 'test/data/STU3/argonaut-examples/housing.json';
                 $.get(file, function(json) {
                   var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
-                  var convertedQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
                   assert.equal(convertedQ.item[0].item[1].option.length, json.item[0].item[1].option.length);
                   assert.equal(convertedQ.item[0].item[2].option.length, json.item[0].item[2].option.length);
 
@@ -366,7 +366,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var file = 'test/data/STU3/argonaut-examples/sampler.json';
                 $.get(file, function(json) {
                   var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
-                  var convertedQ = LForms.Util._convertLFormsToFHIRData('Questionnaire', fhirVersion, lfData);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
 
                   assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
                   // The score is changed from argonaut extension to FHIR extension.
