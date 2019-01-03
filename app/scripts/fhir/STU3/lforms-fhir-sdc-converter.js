@@ -20,7 +20,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlAllowedUnits = "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits";
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
   self.fhirExtUrlRestrictionArray = [
     "http://hl7.org/fhir/StructureDefinition/minValue",
     "http://hl7.org/fhir/StructureDefinition/maxValue",
@@ -31,6 +31,8 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
 
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
+  self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
+
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
 
   /**
@@ -298,16 +300,30 @@ function addSDCImportFns(ns) {
       lfItem.answers = [];
       for(var i = 0; i < qItem.option.length; i++) {
         var answer = {};
-        var label = LForms.Util.findObjectInArray(qItem.option[i].extension, 'url', self.fhirExtUrlOptionPrefix);
+        var option = qItem.option[i];
+        var label = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionPrefix);
         if(label) {
           answer.label = label.valueString;
         }
-        var score = LForms.Util.findObjectInArray(qItem.option[i].modifierExtension, 'url', self.fhirExtUrlOptionScore);
+        var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore);
+        // Look for argonaut extension.
+        score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
         if(score) {
-          answer.score = score.valueInteger.toString();
+          answer.score = score.valueDecimal.toString();
         }
-        answer.code = qItem.option[i].valueCoding.code;
-        answer.text = qItem.option[i].valueCoding.display;
+        var optionKey = Object.keys(option).filter(function(key) {return (key.indexOf('value') === 0);});
+        if(optionKey && optionKey.length > 0) {
+          if(optionKey[0] === 'valueCoding') { // Only one value[x] is expected
+            if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
+            if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
+            //Lforms has answer code system at item level, expects all options to have one code system!
+            if(option[optionKey[0]].system  !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
+          }
+          else {
+            answer.text = option[optionKey[0]].toString();
+          }
+        }
+
         lfItem.answers.push(answer);
       }
     }

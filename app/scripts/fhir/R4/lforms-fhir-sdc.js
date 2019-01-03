@@ -787,18 +787,24 @@ var sdcExport = {
       var option = {};
 
       // needs an extension for label
-      if (!noExtensions && answer.label) {
-        option.extension = [{
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
-          "valueString" : answer.label
-        }];
-      }
-      // needs a modifierExtension for score and others (default, other?)
-      if (!noExtensions && answer.score) {
-        option.modifierExtension = [{
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore",  // LForms Extension
-          "valueInteger" : parseInt(answer.score)
-        }];
+      if (!noExtensions) {
+        var ext = [];
+        if(answer.label) {
+          ext.push({
+            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+            "valueString" : answer.label
+          });
+        }
+
+        if(answer.score) {
+          ext.push({
+            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+            "valueDecimal" : parseFloat(answer.score)
+          });
+        }
+        if(ext.length > 0) {
+          option.extension = ext;
+        }
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
