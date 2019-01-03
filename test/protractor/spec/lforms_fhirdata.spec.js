@@ -31,7 +31,7 @@ function getFHIRResource(resourceType, fhirVersion, options) {
 
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
-    describe(fhirVersion, function() {
+    fdescribe(fhirVersion, function() {
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
 

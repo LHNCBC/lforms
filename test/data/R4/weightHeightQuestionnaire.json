@@ -41,7 +41,7 @@
       "valueExpression" : {
           "name": "height",
            "language": "text/fhirpath",
-           "expression": "%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254"
+           "expression": "%resource.item.where(linkId='/8302-2').answer.valueQuantity.value*0.0254"
         }
     }
   ],

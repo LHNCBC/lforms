@@ -1,4 +1,7 @@
 // Processes FHIR Expression Extensions
+if (typeof LForms === 'undefined')
+  LForms = {};
+
 (function() {
   "use strict";
   // A class whose instances handle the running of FHIR expressions.
@@ -7,6 +10,7 @@
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
     console.log("%%% fhirVersion="+lfData.fhirVersion);
+console.trace();
   }
 
   LForms.ExpressionProcessor.prototype = {
@@ -24,6 +28,8 @@
     runCalculations: function(includeInitialExpr) {
 // TBD - don't take inclueInitialExpr; store whether or not the initalExpr have
 // completed running at least once.
+      console.log("%%% in runCalculations");
+      console.trace();
       var firstRun = true;
       var changed = true;
       while (changed) {
@@ -35,6 +41,7 @@
           changed = this._evaluateFieldExpressions(this._lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
+      console.log("%%% end of runCalculations");
     },
 
     _evaluateVariables: function(item, changesOnly) {
@@ -64,6 +71,7 @@
                   item._varChanged = true; // flag for re-running expressions.
               }
             }
+            // else maybe x-fhir-query, asynchronous (TBD)
           }
         }
         if (item.items) {
@@ -148,6 +156,7 @@ console.log(itemWithVars._fhirVariables);
 console.log(this._linkIDToQRItem[item.linkId]);
         fhirPathVal = this._fhir.fhirpath.evaluate(this._linkIDToQRItem[item.linkId],
           expression, itemWithVars._fhirVariables);
+console.log(fhirPathVal);
       }
       catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
@@ -192,7 +201,7 @@ console.log(this._linkIDToQRItem[item.linkId]);
       if (!fhirPathVal)
         item.value = undefined;
       else {
-        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
           var d = new Date(fhirPathVal);
           // Convert to local time, so the date does not get shifted for negative
           // local timezones.

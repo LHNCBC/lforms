@@ -358,7 +358,6 @@ var TestPage = function() {
     }
   });
   return rtnObj;
-  console.log(rtnObj);
 };
 
 module.exports = TestPage();
