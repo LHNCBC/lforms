@@ -97,6 +97,7 @@
               "enableWhen": [
                 {
                   "question": "1.5.1",
+                  "operator": "=",
                   "answerBoolean": true
                 }
               ],
@@ -109,6 +110,7 @@
               "enableWhen": [
                 {
                   "question": "1.5.2",
+                  "operator": "=",
                   "answerBoolean": true
                 }
               ],
@@ -401,6 +403,7 @@
                   "enableWhen": [
                     {
                       "question": "4.3.3.1",
+                      "operator": "=",
                       "answerBoolean": true
                     }
                   ],

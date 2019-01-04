@@ -171,7 +171,6 @@
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
               {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
-              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"},
               {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"}
             ];
 
@@ -522,22 +521,6 @@ console.log("%%% in onAfterAddingFile");
                         console.log(err);
                       }
                   );
-                  break;
-                case 'questCodeIssues':
-                  $scope.getFhirResource(getFHIRVersion(), '4712701.json').then(function (data) {
-                    try {
-                      var lformsFormat = getFHIR().SDC.convertQuestionnaireToLForms(data);
-                      $scope.lfData2 = new LForms.LFormsData(lformsFormat);
-                      $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
-                      //$scope.$apply();
-                    }
-                    catch(e) {
-                      window.alert(e);
-                      console.error(e);
-                    }
-                  }, function (err) {
-                    window.alert('Unable to load form');
-                  });
                   break;
               }
 
