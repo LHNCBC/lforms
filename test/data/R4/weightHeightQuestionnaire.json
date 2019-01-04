@@ -28,21 +28,20 @@
     "Person"
   ],
   "extension" : [
-	  {
+    {
       "url" : "http://hl7.org/fhir/StructureDefinition/variable",
       "valueExpression" : {
-          "name": "weight",
-           "language": "text/fhirpath",
-           "expression": "%resource.item.where(linkId='/29463-7').answer.valueQuantity.value"
-        }
-    },
-	  {
+        "name": "weight",
+        "language": "text/fhirpath",
+        "expression": "%resource.item.where(linkId='/29463-7').answer.valueQuantity.value"
+      }
+    }, {
       "url" : "http://hl7.org/fhir/StructureDefinition/variable",
       "valueExpression" : {
-          "name": "height",
-           "language": "text/fhirpath",
-           "expression": "%resource.item.where(linkId='/8302-2').answer.valueQuantity.value*0.0254"
-        }
+        "name": "height",
+        "language": "text/fhirpath",
+        "expression": "%resource.item.where(linkId='/8302-2').answer.valueQuantity.value*0.0254"
+      }
     }
   ],
   "item": [
