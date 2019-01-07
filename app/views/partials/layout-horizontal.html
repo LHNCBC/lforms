@@ -4,7 +4,7 @@
        class="lf-form-horizontal-table-title lf-de-label">
     <span class="lf-question"><label id="label-{{ item._elementId }}">{{item.question}}</label></span>
     <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
-        <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank">[{{ item.questionCode }}]</a>
+        <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
         <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
       </span>
     <span ng-switch on="getCodingInstructionsDisplayType(item)" ng-if="item.codingInstructions">

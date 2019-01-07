@@ -342,6 +342,48 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               fhirQ.item[0].extension[0].url);
           });
 
+          if(fhirVersion === 'STU3') {
+            describe('argonaut samples', function () {
+              it('should parse housing', function (done) {
+                var file = 'test/data/STU3/argonaut-examples/housing.json';
+                $.get(file, function(json) {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
+                  assert.equal(convertedQ.item[0].item[1].option.length, json.item[0].item[1].option.length);
+                  assert.equal(convertedQ.item[0].item[2].option.length, json.item[0].item[2].option.length);
+
+                  // valueString is changed to valueCoding.display
+                  assert.equal(convertedQ.item[0].item[1].option[0].valueCoding.display, json.item[0].item[1].option[0].valueString);
+
+                }).done(function () {
+                  done();
+                }).fail(function (err) {
+                  done(err);
+                });
+              });
+
+              it('should parse sampler', function (done) {
+                var file = 'test/data/STU3/argonaut-examples/sampler.json';
+                $.get(file, function(json) {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
+
+                  assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
+                  // The score is changed from argonaut extension to FHIR extension.
+                  assert.equal(convertedQ.item[11].item[0].option[0].extension[0].url,
+                    'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
+                  assert.equal(convertedQ.item[11].item[0].option[0].extension[0].valueDecimal,
+                    json.item[11].item[0].option[0].extension[0].valueDecimal);
+                }).done(function () {
+                  done();
+                }).fail(function (err) {
+                  done(err);
+                });
+              });
+            });
+          }
+
+
         });
 
         describe('LForms data to QuestionnaireResponse conversion', function() {
@@ -393,9 +435,25 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                     'QuestionnaireResponse', fhirQnRespData, qnForm, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
-              }).done().fail(function(err){console.log('Unable to load ' + qFile);});
-            }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+              }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+            }).done().fail(function(err){console.log('Unable to load ' + qFile);});
           });
+        });
+
+        describe('Questionnaire contained ValueSet', function() {
+          var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
+          $.get(qFile, function(fhirQnData) { // load the questionnaire json
+            var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+
+            it('should properly convert to LForms answers', function () {
+              var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
+              assert.equal(item.questionCode, '44255-8');
+              assert.equal(item.dataType, 'CNE');
+              assert.equal(item.answers[1].code, 'LA6569-3');
+              assert.equal(item.answers[1].text, 'Several days');
+              assert.equal(item.answers[1].score, 1);
+            });
+          }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
         });
       });
     });

@@ -11,6 +11,14 @@ This project follows [Semantic Versioning](http://semver.org/).
   change for someone, and is the reason for the major-version increase.)
 - The autocomplete-lhc package is now being pull in via npm.
 
+## [13.9.1] 2019-01-02
+### Fixed.
+- Fixed errors in parsing argonaut questionnaire extensions with support for item.option.extension-score.
+
+## [13.9.0] 2018-12-15
+### Added
+- FHIR Questionnaire contained ValueSet support.
+
 ## [13.8.0] 2018-11-30
 ### Added.
 - Added support for the questionnaire-hidden extension
