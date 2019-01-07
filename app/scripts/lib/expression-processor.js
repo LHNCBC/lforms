@@ -61,6 +61,12 @@ console.trace();
               var oldVal;
               if (item._fhirVariables)
                 oldVal = item._fhirVariables[varName];
+              else {
+                // Create a hash for variables that will have access to
+                // variables defined higher up in the tree.
+                item._fhirVariables = Object.create(
+                  this._itemWithVars(item)._fhirVariables);
+              }
               var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
               if (newVal !== undefined)
                 item._fhirVariables[varName] = newVal;
@@ -143,19 +149,33 @@ console.trace();
       this._linkIDToQRItem = this._getIDtoQRItemMap(questResp);
     },
 
+   /**
+    *  Returns the nearest ancestor of item (or item itelf) that has
+    *  _fhirVariables defined.
+    */
+   _itemWithVars: function(item) {
+      var itemWithVars = item;
+      while (!itemWithVars._fhirVariables)
+        itemWithVars = itemWithVars._parentItem; // should terminate at lfData
+      return itemWithVars;
+   },
+
 
     _evaluateFHIRPath: function(item, expression) {
       var fhirPathVal;
       // Find the item-level fhirpathVars
-      var itemWithVars = item;
-      while (!itemWithVars._fhirVariables)
-        itemWithVars = itemWithVars._parentItem; // should terminate at lfData
+      var itemVars = this._itemWithVars(item)._fhirVariables;
       try {
 console.log("%%% evaluating " +expression);
-console.log(itemWithVars._fhirVariables);
-console.log(this._linkIDToQRItem[item.linkId]);
+console.log(this._linkIDToQRItem);
+        // We need to flatten the fhirVariables chain into a simple hash of key/
+        // value pairs.
+        var fVars = {};
+        for (var k in itemVars)
+          fVars[k] = itemVars[k];
         fhirPathVal = this._fhir.fhirpath.evaluate(this._linkIDToQRItem[item.linkId],
-          expression, itemWithVars._fhirVariables);
+          expression, fVars);
+console.log(fVars);
 console.log(fhirPathVal);
       }
       catch (e) {
@@ -178,10 +198,10 @@ console.log(fhirPathVal);
       if (!map)
         map = {};
       if (qr.linkId)
-        map[linkId] = qr;
-      if (qr.items) {
-        for (var i=0, len=qr.items.length; i<len; ++i)
-          this._getIDtoQRItemMap(qr.items[i], map);
+        map[qr.linkId] = qr;
+      if (qr.item) {
+        for (var i=0, len=qr.item.length; i<len; ++i)
+          this._getIDtoQRItemMap(qr.item[i], map);
       }
       return map;
     },

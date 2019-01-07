@@ -90,9 +90,9 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(68);
-/* harmony import */ var _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(69);
-/* harmony import */ var _lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(70);
+/* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
+/* harmony import */ var _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -160,27 +160,23 @@ var misc = __webpack_require__(58);
 
 var equality = __webpack_require__(59);
 
-var collections = __webpack_require__(62);
+var collections = __webpack_require__(61);
 
-var math = __webpack_require__(63);
+var math = __webpack_require__(62);
 
-var strings = __webpack_require__(64);
+var strings = __webpack_require__(63);
 
-var navigation = __webpack_require__(65);
+var navigation = __webpack_require__(64);
 
-var datetime = __webpack_require__(66);
+var datetime = __webpack_require__(65);
 
-var logic = __webpack_require__(67);
-
-var types = __webpack_require__(61);
-
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time; // * fn: handler
+var logic = __webpack_require__(66); // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
 //   function accepts value of this type or empty value {}
 // * nullable - means propagate empty result, i.e. instead
 //   calling function if one of params is  empty return empty
+
 
 engine.invocationTable = {
   empty: {
@@ -563,18 +559,6 @@ engine.BooleanLiteral = function (ctx, parentData, node) {
   }
 };
 
-engine.DateTimeLiteral = function (ctx, parentData, node) {
-  var dateStr = node.text.slice(1); // Remove the @
-
-  return [new FP_DateTime(dateStr)];
-};
-
-engine.TimeLiteral = function (ctx, parentData, node) {
-  var timeStr = node.text.slice(1); // Remove the @
-
-  return [new FP_Time(timeStr)];
-};
-
 engine.NumberLiteral = function (ctx, parentData, node) {
   return [Number(node.text)];
 };
@@ -922,14 +906,12 @@ var parse = function parse(path) {
  *  Applies the given parsed FHIRPath expression to the given resource,
  *  returning the result of doEval.
  * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
- *  This resource will be modified by this function to add type information.
  * @param {string} parsedPath - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
  */
 
 
 function applyParsedPath(resource, parsedPath, context) {
-  resource = types.addTypes(resource);
   var dataRoot = util.arraify(resource); // doEval takes a "ctx" object, and we store things in that as we parse, so we
   // need to put user-provided variable data in a sub-object, ctx.vars.
   // Set up default standard variables, and allow override from the variables.
@@ -943,13 +925,14 @@ function applyParsedPath(resource, parsedPath, context) {
     dataRoot: dataRoot,
     vars: Object.assign(vars, context)
   };
+  console.log("%%% vars from fhirpath.js");
+  console.log(vars);
   return engine.doEval(ctx, dataRoot, parsedPath.children[0]);
 }
 /**
  *  Evaluates the "path" FHIRPath expression on the given resource, using data
  *  from "context" for variables mentioned in the "path" expression.
  * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
- *  This resource will be modified by this function to add type information.
  * @param {string} path - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
  */
@@ -17546,8 +17529,6 @@ var util = __webpack_require__(54);
 
 var deepEqual = __webpack_require__(60);
 
-var FP_Type = __webpack_require__(61).FP_Type;
-
 var engine = {};
 
 function equality(x, y) {
@@ -17577,8 +17558,7 @@ engine.equal = function (a, b) {
 };
 
 engine.unequal = function (a, b) {
-  var eq = equality(a, b);
-  return eq === undefined ? undefined : !eq;
+  return !equality(a, b);
 };
 
 engine.equival = function (a, b) {
@@ -17599,7 +17579,7 @@ function typecheck(a, b) {
 
   var rType = _typeof(b);
 
-  if (lType != rType || Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) {
+  if (lType != rType) {
     util.raiseError('Type of "' + a + '" did not match type of "' + b + '"', 'InequalityExpression');
   }
 }
@@ -17607,43 +17587,38 @@ function typecheck(a, b) {
 engine.lt = function (a, b) {
   if (!a.length || !b.length) return [];
   typecheck(a, b);
-  return a[0] instanceof FP_Type ? a[0].compare(b[0]) == -1 : a[0] < b[0];
+  return a[0] < b[0];
 };
 
 engine.gt = function (a, b) {
   if (!a.length || !b.length) return [];
   typecheck(a, b);
-  return a[0] instanceof FP_Type ? a[0].compare(b[0]) == 1 : a[0] > b[0];
+  return a[0] > b[0];
 };
 
 engine.lte = function (a, b) {
   if (!a.length || !b.length) return [];
   typecheck(a, b);
-  return a[0] instanceof FP_Type ? a[0].compare(b[0]) <= 0 : a[0] <= b[0];
+  return a[0] <= b[0];
 };
 
 engine.gte = function (a, b) {
   if (!a.length || !b.length) return [];
   typecheck(a, b);
-  return a[0] instanceof FP_Type ? a[0].compare(b[0]) >= 0 : a[0] >= b[0];
+  return a[0] >= b[0];
 };
 
 module.exports = engine;
 
 /***/ }),
 /* 60 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
-var types = __webpack_require__(61);
-
-var FP_Type = types.FP_Type;
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time;
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
 
@@ -17754,29 +17729,13 @@ var deepEqual = function deepEqual(actual, expected, opts) {
     return actual.getTime() === expected.getTime(); // 7.3. Other pairs that do not both pass typeof value == 'object',
     // equivalence is determined by ==.
   } else if (!actual || !expected || _typeof(actual) != 'object' && _typeof(expected) != 'object') {
-    return opts.strict ? actual === expected : actual == expected;
-  } else {
-    var actualIsFPT = actual instanceof FP_Type;
-    var expectedIsFPT = expected instanceof FP_Type;
-
-    if (actualIsFPT && expectedIsFPT) {
-      // if both are FP_Type
-      var rtn = actual.equals(expected); // May return undefined
-
-      if (opts.fuzzy && rtn === undefined && (actual instanceof FP_DateTime || actual instanceof FP_Time)) {
-        rtn = false; // per rule about comparison
-      }
-
-      return rtn;
-    } else if (actualIsFPT || expectedIsFPT) // if only one is an FP_Type
-      return false; // 7.4. For all other Object pairs, including Array objects, equivalence is
+    return opts.strict ? actual === expected : actual == expected; // 7.4. For all other Object pairs, including Array objects, equivalence is
     // determined by having the same number of owned properties (as verified
     // with Object.prototype.hasOwnProperty.call), the same set of keys
     // (although not necessarily the same order), equivalent values for every
     // corresponding key, and an identical 'prototype' property. Note: this
     // accounts for both named and indexed properties on Arrays.
-
-
+  } else {
     return objEquiv(actual, expected, opts);
   }
 };
@@ -17817,14 +17776,7 @@ function objEquiv(a, b, opts) {
     if (ka[i] != kb[i]) return false;
   } //equivalent values for every corresponding key, and
   //~~~possibly expensive deep test
-  // If the length of the array is one, return the value of deepEqual (which can
-  // be "undefined".
 
-
-  if (ka.length === 1) {
-    key = ka[0];
-    return deepEqual(a[key], b[key], opts);
-  }
 
   for (i = ka.length - 1; i >= 0; i--) {
     key = ka[i];
@@ -17858,465 +17810,6 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 
 /***/ }),
 /* 61 */
-/***/ (function(module, exports) {
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
-var timeRE = new RegExp('^T?' + timeFormat + '$');
-var dateTimeRE = new RegExp('^[0-9][0-9][0-9][0-9](-[0-9][0-9](-[0-9][0-9](T' + timeFormat + ')?)?)?Z?$');
-var fhirTimeRE = /([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?/;
-var fhirDateTimeRE = /([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?/; // testEnvironment: node in jest config
-// --runInBand
-
-var FP_Type =
-/*#__PURE__*/
-function () {
-  function FP_Type() {
-    _classCallCheck(this, FP_Type);
-  }
-
-  _createClass(FP_Type, [{
-    key: "equals",
-
-    /**
-     *  Tests whether this object is equal to another.  Returns either true,
-     *  false, or undefined (where in the FHIRPath specification empty would be
-     *  returned).
-     */
-    value: function equals()
-    /* otherObj */
-    {
-      return false;
-    }
-  }, {
-    key: "toString",
-    value: function toString() {
-      return this.asStr ? this.asStr : _get(_getPrototypeOf(FP_Type.prototype), "toString", this).call(this);
-    }
-  }, {
-    key: "toJSON",
-    value: function toJSON() {
-      return this.toString();
-    }
-    /**
-     *  Returns -1, 0, or 1 if this object is less then, equal to, or greater
-     *  than otherObj.
-     */
-
-  }, {
-    key: "compare",
-    value: function compare()
-    /* otherObj */
-    {
-      throw 'Not implemented';
-    }
-  }]);
-
-  return FP_Type;
-}();
-
-var TimeBase =
-/*#__PURE__*/
-function (_FP_Type) {
-  _inherits(TimeBase, _FP_Type);
-
-  function TimeBase(timeStr) {
-    var _this;
-
-    _classCallCheck(this, TimeBase);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TimeBase).call(this));
-    _this.asStr = timeStr;
-    return _this;
-  }
-  /**
-   *  Returns -1, 0, or 1 if this (date) time is less then, equal to, or greater
-   *  than otherTime.  Comparisons are made at the lesser of the two time
-   *  precisions.
-   */
-
-
-  _createClass(TimeBase, [{
-    key: "compare",
-    value: function compare(otherTime) {
-      var thisPrecision = this._getPrecision();
-
-      var otherPrecision = otherTime._getPrecision();
-
-      var thisTimeInt = thisPrecision <= otherPrecision ? this._getDateObj().getTime() : this._dateAtPrecision(otherPrecision).getTime();
-      var otherTimeInt = otherPrecision <= thisPrecision ? otherTime._getDateObj().getTime() : otherTime._dateAtPrecision(thisPrecision).getTime();
-      return thisTimeInt < otherTimeInt ? -1 : thisTimeInt === otherTimeInt ? 0 : 1;
-    }
-    /**
-     *  Returns a number representing the precision of the time string given to
-     *  the constructor.  (Higher means more precise).  The number is the number
-     *  of components of the time string (ignoring the time zone) produced by
-     *  matching against the time regular expression.
-     */
-
-  }, {
-    key: "_getPrecision",
-    value: function _getPrecision() {
-      if (this.precision === undefined) this._getMatchData();
-      return this.precision;
-    }
-    /**
-     *  Returns the match data from matching the given RegExp against the
-     *  date/time string given to the constructor.
-     *  Also sets this.precision.
-     * @param regEx The regular expression to match against the date/time string.
-     * @param maxPrecision the maximum precision possible for the type
-     */
-
-  }, {
-    key: "_getMatchData",
-    value: function _getMatchData(regEx, maxPrecision) {
-      if (!this.timeMatchData) {
-        this.timeMatchData = this.asStr.match(regEx);
-
-        for (var i = maxPrecision; i >= 0 && this.precision === undefined; --i) {
-          if (this.timeMatchData[i]) this.precision = i;
-        }
-      }
-
-      return this.timeMatchData;
-    }
-    /**
-     *  Returns an array of the pieces of the given time string, for use in
-     *  constructing lower precision versions of the time. The returned array will
-     *  contain separate elements for the hour, minutes, seconds, and milliseconds
-     *  (or as many of those are as present).  The length of the returned array
-     *  will therefore be an indication of the precision.
-     *  It will not include the timezone.
-     * @timeMatchData the result of matching the time portion of the string passed
-     *  into the constructor against the "timeRE" regular expression.
-     */
-
-  }, {
-    key: "_getTimeParts",
-    value: function _getTimeParts(timeMatchData) {
-      var timeParts = []; // Finish parsing the data into pieces, for later use in building
-      // lower-precision versions of the date if needed.
-
-      timeParts = [timeMatchData[0]];
-      var timeZone = timeMatchData[4];
-
-      if (timeZone) {
-        // remove time zone from hours
-        var hours = timeParts[0];
-        timeParts[0] = hours.slice(0, hours.length - timeZone.length);
-      }
-
-      var min = timeMatchData[1];
-
-      if (min) {
-        // remove minutes from hours
-        var _hours = timeParts[0];
-        timeParts[0] = _hours.slice(0, _hours.length - min.length);
-        timeParts[1] = min;
-        var sec = timeMatchData[2];
-
-        if (sec) {
-          // remove seconds from minutes
-          timeParts[1] = min.slice(0, min.length - sec.length);
-          timeParts[2] = sec;
-          var ms = timeMatchData[3];
-
-          if (ms) {
-            // remove milliseconds from seconds
-            timeParts[2] = sec.slice(0, sec.length - ms.length);
-            timeParts[3] = ms;
-          }
-        }
-      }
-
-      return timeParts;
-    }
-    /**
-     *  Returns a date object representing this time on a certain date.
-     */
-
-  }, {
-    key: "_getDateObj",
-    value: function _getDateObj() {
-      if (!this.dateObj) {
-        var precision = this._getPrecision(); // We cannot directly pass the string into the date constructor because
-        // (1) we don't want to introduce a time-dependent system date and (2) the
-        // time string might not have contained minutes, which are required by the
-        // Date constructor.
-
-
-        this.dateObj = this._dateAtPrecision(precision);
-      }
-
-      return this.dateObj;
-    }
-  }]);
-
-  return TimeBase;
-}(FP_Type);
-
-var FP_DateTime =
-/*#__PURE__*/
-function (_TimeBase) {
-  _inherits(FP_DateTime, _TimeBase);
-
-  function FP_DateTime(dateStr) {
-    _classCallCheck(this, FP_DateTime);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(FP_DateTime).call(this, dateStr));
-  }
-
-  _createClass(FP_DateTime, [{
-    key: "equals",
-    value: function equals(otherDateTime) {
-      var rtn;
-      if (!(otherDateTime instanceof FP_DateTime)) rtn = false;else if (this._getPrecision() == otherDateTime._getPrecision()) rtn = this._getDateObj().getTime() == otherDateTime._getDateObj().getTime();
-      return rtn;
-    }
-    /**
-     *  Returns -1, 0, or 1 if this date time is less then, equal to, or greater
-     *  than otherDateTime.  Comparisons are made at the lesser of the two date time
-     *  precisions.
-     */
-
-  }, {
-    key: "compare",
-    value: function compare(otherDateTime) {
-      if (!(otherDateTime instanceof FP_DateTime)) throw 'Invalid comparison of a DateTime with something else';
-      return _get(_getPrototypeOf(FP_DateTime.prototype), "compare", this).call(this, otherDateTime);
-    }
-    /**
-     *  Returns the match data from matching timeRE against the time string.
-     *  Also sets this.precision.
-     */
-
-  }, {
-    key: "_getMatchData",
-    value: function _getMatchData() {
-      return _get(_getPrototypeOf(FP_DateTime.prototype), "_getMatchData", this).call(this, dateTimeRE, 6);
-    }
-    /**
-     *  Returns an array of the pieces of the date time string passed into the
-     *  constructor, for use in constructing lower precision versions of the
-     *  date time. The returned array will contain separate elements for the year,
-     *  month, day, hour, minutes, seconds, and milliseconds (or as many of those
-     *  are as present).  The length of the returned array will therefore be an
-     *  indication of the precision.  It will not include the timezone.
-     */
-
-  }, {
-    key: "_getTimeParts",
-    value: function _getTimeParts() {
-      if (!this.timeParts) {
-        var timeMatchData = this._getMatchData();
-
-        var year = timeMatchData[0];
-        this.timeParts = [year];
-        var month = timeMatchData[1];
-
-        if (month) {
-          // Remove other information from year
-          this.timeParts[0] = year.slice(0, year.length - month.length);
-          this.timeParts[1] = month;
-          var day = timeMatchData[2];
-
-          if (day) {
-            // Remove day information from month
-            this.timeParts[1] = month.slice(0, month.length - day.length);
-            this.timeParts[2] = day;
-            var time = timeMatchData[3];
-
-            if (time) {
-              // Remove time from day
-              this.timeParts[2] = day.slice(0, day.length - time.length);
-              if (time[0] === 'T') // remove T from hour
-                timeMatchData[3] = time.slice(1);
-              this.timeParts = this.timeParts.concat(_get(_getPrototypeOf(FP_DateTime.prototype), "_getTimeParts", this).call(this, timeMatchData.slice(3)));
-            }
-          }
-        }
-      }
-
-      return this.timeParts;
-    }
-    /**
-     *  Returns a new Date object for a time equal to what this time would be if
-     *  the string passed into the constructor had the given precision.
-     * @param precision the new precision, which is assumed to be less than the
-     *  or equal to the current precision.
-     */
-
-  }, {
-    key: "_dateAtPrecision",
-    value: function _dateAtPrecision(precision) {
-      var timeParts = this._getTimeParts().slice(0, precision + 1);
-
-      if (timeParts.length > 3) {
-        timeParts[3] = 'T' + timeParts[3]; // restore the T removed before
-
-        if (timeParts.length === 4) timeParts[4] = ':00'; // Date constructor requires minutes if hour is present
-      }
-
-      var timeStr = timeParts.join('');
-
-      if (timeParts.length > 3) {
-        // has a time part
-        var timeZone = this._getMatchData()[7];
-
-        if (timeZone) timeStr += timeZone;
-      }
-
-      return new Date(timeStr);
-    }
-  }]);
-
-  return FP_DateTime;
-}(TimeBase);
-
-var FP_Time =
-/*#__PURE__*/
-function (_TimeBase2) {
-  _inherits(FP_Time, _TimeBase2);
-
-  function FP_Time(timeStr) {
-    _classCallCheck(this, FP_Time);
-
-    if (timeStr[0] == 'T') timeStr = timeStr.slice(1);
-    return _possibleConstructorReturn(this, _getPrototypeOf(FP_Time).call(this, timeStr));
-  }
-
-  _createClass(FP_Time, [{
-    key: "equals",
-    value: function equals(otherTime) {
-      var rtn;
-      if (!(otherTime instanceof FP_Time)) rtn = false;else if (this._getPrecision() == otherTime._getPrecision()) rtn = this._getDateObj().getTime() == otherTime._getDateObj().getTime();
-      return rtn;
-    }
-    /**
-     *  Returns -1, 0, or 1 if this time is less then, equal to, or greater
-     *  than otherTime.  Comparisons are made at the lesser of the two time
-     *  precisions.
-     */
-
-  }, {
-    key: "compare",
-    value: function compare(otherTime) {
-      if (!(otherTime instanceof FP_Time)) throw 'Invalid comparison of a time with something else';
-      return _get(_getPrototypeOf(FP_Time.prototype), "compare", this).call(this, otherTime);
-    }
-    /**
-     *  Returns a new Date object for a time equal to what this time would be if
-     *  the string passed into the constructor had the given precision.
-     * @param precision the new precision, which is assumed to be less than the
-     *  or equal to the current precision.
-     */
-
-  }, {
-    key: "_dateAtPrecision",
-    value: function _dateAtPrecision(precision) {
-      var timeParts = this._getTimeParts().slice(0, precision + 1);
-
-      if (timeParts.length === 1) timeParts[1] = ':00'; // Date constructor requires minutes
-
-      var timeStr = '2010T' + timeParts.join('');
-
-      var timeZone = this._getMatchData()[4];
-
-      if (timeZone) timeStr += timeZone;
-      return new Date(timeStr);
-    }
-    /**
-     *  Returns the match data from matching timeRE against the time string.
-     *  Also sets this.precision.
-     */
-
-  }, {
-    key: "_getMatchData",
-    value: function _getMatchData() {
-      return _get(_getPrototypeOf(FP_Time.prototype), "_getMatchData", this).call(this, timeRE, 3);
-    }
-    /**
-     *  Returns an array of the pieces of the time string passed into the
-     *  constructor, for use in constructing lower precision versions of the
-     *  time. The returned array will contain separate elements for the hour,
-     *  minutes, seconds, and milliseconds (or as many of those are as present).
-     *  The length of the returned array will therefore be an indication of the
-     *  precision.  It will not include the timezone.
-     */
-
-  }, {
-    key: "_getTimeParts",
-    value: function _getTimeParts() {
-      if (!this.timeParts) {
-        this.timeParts = _get(_getPrototypeOf(FP_Time.prototype), "_getTimeParts", this).call(this, this._getMatchData());
-      }
-
-      return this.timeParts;
-    }
-  }]);
-
-  return FP_Time;
-}(TimeBase);
-/**
- *  Adds types to a FHIR resource that was parsed from JSON.  Some types such as
- *  times are just represented as strings in the JSON format.
- * @param resource a FHIR resource.  This will be modified by this function.
- * @return the modified resource
- */
-
-
-function addTypes(resource) {
-  var rtn = resource; // Eventually this might take a second optional parameter that would provide type
-  // information pulled from a specific version of FHIR.  In the absence of such
-  // information we will just guess based on what the strings look like.
-
-  if (resource instanceof Object && !(resource instanceof FP_Type)) {
-    var keys = Object.keys(resource);
-
-    for (var i = 0, len = keys.length; i < len; ++i) {
-      var key = keys[i];
-      resource[key] = addTypes(resource[key]);
-    }
-  } else if (typeof resource == "string") {
-    if (resource.match(fhirDateTimeRE)) rtn = new FP_DateTime(resource);else if (resource.match(fhirTimeRE)) rtn = new FP_Time(resource);
-  }
-
-  return rtn;
-}
-
-module.exports = {
-  addTypes: addTypes,
-  FP_Type: FP_Type,
-  FP_DateTime: FP_DateTime,
-  FP_Time: FP_Time,
-  timeRE: timeRE,
-  dateTimeRE: dateTimeRE
-};
-
-/***/ }),
-/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
@@ -18373,7 +17866,7 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports) {
 
 // This file holds code to hande the FHIRPath Math functions.
@@ -18428,7 +17921,7 @@ engine.mod = function (x, y) {
 module.exports = engine;
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18491,7 +17984,7 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -18535,7 +18028,7 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18547,7 +18040,7 @@ engine.today = function () {};
 module.exports = engine;
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18647,7 +18140,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19448,7 +18941,7 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20929,7 +20422,7 @@ var sdcExport = {
 /* harmony default export */ __webpack_exports__["default"] = (sdcExport);
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
