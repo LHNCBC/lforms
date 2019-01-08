@@ -23,13 +23,14 @@
       ],
       "text": "Group A",
       "type": "group",
+      "repeats": true,
       "extension" : [
         {
           "url" : "http://hl7.org/fhir/StructureDefinition/variable",
           "valueExpression" : {
             "name": "X",
             "language": "text/fhirpath",
-            "expression": "item.where(linkId='/groupA/fieldB').answer.valueInteger"
+            "expression": "item.where(linkId='/groupA/fieldB').answer[0].valueInteger"
           }
         }, {
           "url" : "http://hl7.org/fhir/StructureDefinition/variable",
@@ -44,6 +45,7 @@
       "item": [
         {
           "required": false,
+          "repeats": true,
           "linkId": "/groupA/fieldB",
           "code": [
             {

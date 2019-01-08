@@ -146,7 +146,7 @@ console.trace();
     _regenerateQuestionnaireResp: function() {
       var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
       this._lfData._fhirVariables.resource = questResp;
-      this._linkIDToQRItem = this._getIDtoQRItemMap(questResp);
+      this._elemIDToQRItem = this._createIDtoQRItemMap(questResp);
     },
 
    /**
@@ -160,20 +160,21 @@ console.trace();
       return itemWithVars;
    },
 
-
+// TBD -- add tests with a repeating element
     _evaluateFHIRPath: function(item, expression) {
       var fhirPathVal;
       // Find the item-level fhirpathVars
       var itemVars = this._itemWithVars(item)._fhirVariables;
       try {
 console.log("%%% evaluating " +expression);
-console.log(this._linkIDToQRItem);
+console.log(this._elemIDToQRItem);
+console.log(item._elementId);
         // We need to flatten the fhirVariables chain into a simple hash of key/
         // value pairs.
         var fVars = {};
         for (var k in itemVars)
           fVars[k] = itemVars[k];
-        fhirPathVal = this._fhir.fhirpath.evaluate(this._linkIDToQRItem[item.linkId],
+        fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId],
           expression, fVars);
 console.log(fVars);
 console.log(fhirPathVal);
@@ -194,7 +195,9 @@ console.log(fhirPathVal);
      * @param map (optional) the map to which entries will be added.  If
      *  provided, this will also be the return value.
      */
+    /*
     _getIDtoQRItemMap: function(qr, map) {
+    // TBD -- This is wrong.  linkIds are not unique across repeats.
       if (!map)
         map = {};
       if (qr.linkId)
@@ -204,6 +207,70 @@ console.log(fhirPathVal);
           this._getIDtoQRItemMap(qr.item[i], map);
       }
       return map;
+    },
+*/
+
+    /**
+     *  Returns a hash from the LForms _elementId of each item to the
+     *  corresponding QuestionnaireResponse item.
+     * @param qr the QuestionnaireResponse corresponding to the current
+     * LFormsData.
+     */
+    _createIDtoQRItemMap: function(qr) {
+      var map = {};
+      this._addToIDtoQRItemMap(this._lfData, qr, map);
+      return map;
+    },
+
+
+    /**
+     *  Adds to the map from LFormsData items to QuestionnaireResponse items and
+     *  returns the number of items added.
+     * @param lfItem an LFormsData, or an item within it.
+     * @param qrItem the corresponding QuestionnaireResponse or an item within
+     * it.
+     * @param map the map to which entries will be added.
+     * @return the number of items added to the map.
+     */
+    _addToIDtoQRItemMap: function(lfItem, qrItem, map) {
+      var added = 0;
+      if (lfItem.items) {
+        if (qrItem && qrItem.item && qrItem.item.length > 0) {
+          var lfItems = lfItem.items, qrItems = qrItem.item;
+          var numLFItems = lfItems.length;
+          for (var i=0, qrI=0, len=qrItems.length; qrI<len; ++qrI) {
+            // Answers are repeated in QR, but items are repeated in LForms
+            var numAnswers = qrItems[qrI].answer ? qrItems[qrI].answer.length : 1;
+            for (var a=0; a<numAnswers; ++a, ++i) {
+              if (i > numLFItems)
+                throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+              var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrItems[qrI], map);
+              if (newlyAdded === 0) { // blank; try next lfItem
+                --a;
+              }
+              else {
+                added += newlyAdded;
+              }
+            }
+          }
+          if (added && lfItem._elementId) {
+            // Since the children were not empty, also add the entry for the
+            // parent node.
+            map[lfItem._elementId] = qrItem;
+            added += 1;
+          }
+        }
+      }
+      else if (!this._lfData.isEmpty(lfItem)) {
+        if (!qrItem) { // if there is data in lfItem, there should be a qrItem
+          throw new Error('Logic error in _addToIDtoQRItemMap');
+        }
+        else {
+          map[lfItem._elementId] = qrItem;
+          added += 1;
+        }
+      }
+      return added;
     },
 
 
