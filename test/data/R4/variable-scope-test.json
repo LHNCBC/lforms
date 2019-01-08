@@ -99,7 +99,7 @@
           "valueExpression" : {
             "name": "X",
             "language": "text/fhirpath",
-            "expression": "%resource.item.where(linkId='/groupA/fieldC').answer.valueInteger",
+            "expression": "%resource.repeat(item).where(linkId='/groupA/fieldC').answer.valueInteger",
             "comment":  "Pulls value from outside of this group's scope, and re-uses name 'X'"
           }
         }

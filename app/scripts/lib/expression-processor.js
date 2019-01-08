@@ -44,48 +44,49 @@ console.trace();
       console.log("%%% end of runCalculations");
     },
 
-    _evaluateVariables: function(item, changesOnly) {
+    /**
+     *  Evaluates variables on the given item.
+     */
+    _evaluateVariables: function(item) {
+console.log("%%% in variables");
+console.log(item);
       var rtn = false;
-      var changed;
-      // if changesOnly, then we only evaluate variables for which a contained
-      // expression has changed.  Also, if this item does not contain a changed
-      // expression, then neither do its children.
-      if (!changesOnly || item._exprChanged) {
-        item._exprChanged = false; // clear flag for possible next run
-        var variableExts = item._variableExt;
-        if (variableExts) {
-          for (var i=0, len=variableExts.length; i<len; ++i) {
-            var ext = variableExts[i];
-            if (ext && ext.valueExpression.language=="text/fhirpath") {
-              var varName = ext.valueExpression.name;
-              var oldVal;
-              if (item._fhirVariables)
-                oldVal = item._fhirVariables[varName];
-              else {
-                // Create a hash for variables that will have access to
-                // variables defined higher up in the tree.
-                item._fhirVariables = Object.create(
-                  this._itemWithVars(item)._fhirVariables);
-              }
-              var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-              if (newVal !== undefined)
-                item._fhirVariables[varName] = newVal;
-              var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
-              if (varChanged) {
-                changed = true;
-                if (changesOnly)
-                  item._varChanged = true; // flag for re-running expressions.
-              }
+      var variableExts = item._variableExt;
+      if (variableExts) {
+console.log("%%% found variableExts");
+        for (var i=0, len=variableExts.length; i<len; ++i) {
+          var ext = variableExts[i];
+          if (ext && ext.valueExpression.language=="text/fhirpath") {
+            var varName = ext.valueExpression.name;
+            var oldVal;
+            if (item._fhirVariables)
+              oldVal = item._fhirVariables[varName];
+            else {
+              // Create a hash for variables that will have access to
+              // variables defined higher up in the tree.
+              item._fhirVariables = Object.create(
+                this._itemWithVars(item)._fhirVariables);
             }
-            // else maybe x-fhir-query, asynchronous (TBD)
+            // Delete the old value, so we don't have circular references.
+            delete item._fhirVariables[varName];
+console.log("%%% evaluating variable "+varName+" = "+ext.valueExpression.expression);
+            var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+console.log(newVal);
+            if (newVal !== undefined)
+              item._fhirVariables[varName] = newVal;
+            var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
+            if (varChanged) {
+              item._varChanged = true; // flag for re-running expressions.
+            }
           }
+          // else maybe x-fhir-query, asynchronous (TBD)
         }
-        if (item.items) {
-          for (var i=0, len=item.items.length; i<len; ++i) {
-            var changed = this._evaluateVariables(item.items[i], changesOnly);
-            if (!rtn)
-              rtn = changed;
-          }
+      }
+      if (item.items) {
+        for (var i=0, len=item.items.length; i<len; ++i) {
+          var changed = this._evaluateVariables(item.items[i]);
+          if (!rtn)
+            rtn = changed;
         }
       }
       return rtn;
@@ -120,15 +121,7 @@ console.trace();
               changed = exprChanged;
           }
         }
-        if (changed) {
-          // Set flags on this and all acestors
-          var next = item;
-          while (next && !next._exprChanged) {
-            next._exprChanged = true;
-            next = next._parentItem;
-          }
-          rtn = true;
-        }
+        rtn = changed;
       }
 
       // Process child items
