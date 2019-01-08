@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.8.0] 2018-01-08
+### Added
+- Support for the FHIR extension "variable" has been added, but as with the
+  "questionnaire-initialExpression" and "questionnaire-calculatedExpression"
+  support is currently limited to FHIRPath-based expresions.
+
 ## [13.7.1] 2018-12-07
 ### Fixed
 - FHIRPath intialization has been corrected, so that the context passed in is
