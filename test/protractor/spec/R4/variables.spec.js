@@ -2,7 +2,7 @@
 var fhirVersion = 'R4';
 
 var tp = require('../lforms_testpage.po.js');
-fdescribe('FHIR variables', function() {
+describe('FHIR variables', function() {
   function elID(id) {return element(by.id(id));}
   let addGroupA = elID('add-/groupA/1');
   let fieldB1 = elID('/groupA/fieldB/1/1');

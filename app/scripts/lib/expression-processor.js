@@ -9,27 +9,17 @@ if (typeof LForms === 'undefined')
   LForms.ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
-    console.log("%%% fhirVersion="+lfData.fhirVersion);
-console.trace();
   }
 
   LForms.ExpressionProcessor.prototype = {
 
     /**
-     *  Runs any calculated expressions, and also the variable expressions,
-     *  since those can be referenced by the calculated expressions.
+     *   Runs the FHIR expressions in the form.
+     *  @param includeInitialExpr whether to include the "initialExpression"
+     *   expressions (which should only be run once, after asynchronous loads
+     *   from questionnaire-launchContext have been completed).
      */
-    /*
-    runCalculatedExpressions: function() {
-      this.runValueExpressions(['_variableExt', '_calculatedExprExt']);
-    },
-    */
-
     runCalculations: function(includeInitialExpr) {
-// TBD - don't take inclueInitialExpr; store whether or not the initalExpr have
-// completed running at least once.
-      console.log("%%% in runCalculations");
-      console.trace();
       var firstRun = true;
       var changed = true;
       while (changed) {
@@ -41,19 +31,16 @@ console.trace();
           changed = this._evaluateFieldExpressions(this._lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
-      console.log("%%% end of runCalculations");
     },
+
 
     /**
      *  Evaluates variables on the given item.
      */
     _evaluateVariables: function(item) {
-console.log("%%% in variables");
-console.log(item);
       var rtn = false;
       var variableExts = item._variableExt;
       if (variableExts) {
-console.log("%%% found variableExts");
         for (var i=0, len=variableExts.length; i<len; ++i) {
           var ext = variableExts[i];
           if (ext && ext.valueExpression.language=="text/fhirpath") {
@@ -69,9 +56,7 @@ console.log("%%% found variableExts");
             }
             // Delete the old value, so we don't have circular references.
             delete item._fhirVariables[varName];
-console.log("%%% evaluating variable "+varName+" = "+ext.valueExpression.expression);
             var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-console.log(newVal);
             if (newVal !== undefined)
               item._fhirVariables[varName] = newVal;
             var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
@@ -142,26 +127,29 @@ console.log(newVal);
       this._elemIDToQRItem = this._createIDtoQRItemMap(questResp);
     },
 
-   /**
-    *  Returns the nearest ancestor of item (or item itelf) that has
-    *  _fhirVariables defined.
-    */
-   _itemWithVars: function(item) {
+
+    /**
+     *  Returns the nearest ancestor of item (or item itelf) that has
+     *  _fhirVariables defined.
+     */
+    _itemWithVars: function(item) {
       var itemWithVars = item;
       while (!itemWithVars._fhirVariables)
         itemWithVars = itemWithVars._parentItem; // should terminate at lfData
       return itemWithVars;
-   },
+    },
 
-// TBD -- add tests with a repeating element
+
+    /**
+     *  Evaluates the given FHIRPath expression defined in an extension on the
+     *  given item.
+     * @returns the result of the expression.
+     */
     _evaluateFHIRPath: function(item, expression) {
       var fhirPathVal;
       // Find the item-level fhirpathVars
       var itemVars = this._itemWithVars(item)._fhirVariables;
       try {
-console.log("%%% evaluating " +expression);
-console.log(this._elemIDToQRItem);
-console.log(item._elementId);
         // We need to flatten the fhirVariables chain into a simple hash of key/
         // value pairs.
         var fVars = {};
@@ -169,8 +157,6 @@ console.log(item._elementId);
           fVars[k] = itemVars[k];
         fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId],
           expression, fVars);
-console.log(fVars);
-console.log(fhirPathVal);
       }
       catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
@@ -180,28 +166,6 @@ console.log(fhirPathVal);
       return fhirPathVal
     },
 
-
-    /**
-     *  Returns a hash from the linkIds in a QuestionnaireReponse to the items
-     *  in the QuestionnaireResponse with those linkIDs.
-     * @param qr the QuestionnaireResponse
-     * @param map (optional) the map to which entries will be added.  If
-     *  provided, this will also be the return value.
-     */
-    /*
-    _getIDtoQRItemMap: function(qr, map) {
-    // TBD -- This is wrong.  linkIds are not unique across repeats.
-      if (!map)
-        map = {};
-      if (qr.linkId)
-        map[qr.linkId] = qr;
-      if (qr.item) {
-        for (var i=0, len=qr.item.length; i<len; ++i)
-          this._getIDtoQRItemMap(qr.item[i], map);
-      }
-      return map;
-    },
-*/
 
     /**
      *  Returns a hash from the LForms _elementId of each item to the
@@ -291,98 +255,6 @@ console.log(fhirPathVal);
           item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
       }
       return oldVal != item.value;
-    },
-
-
-
-    /**
-     *  Runs any expressions stored in an item under the given property
-     *  names, and assigns the result to item's value.
-     * @param expressionProperties the properties for which an expression should
-     *  be run.
-     */
-    /*
-    runValueExpressions: function(expressionProperties) {
-      var lfData = this;
-      if (LForms.FHIR) {
-        var fhir = LForms.FHIR[lfData.fhirVersion];
-        var itemList = lfData.itemList;
-        var questResp;
-        // Handle form-level expressions -- variables
-        if (expressionProperties.indexOf('_variableExt')) {
-          // TBD - potential problem - calculatedExpressions can affect
-          // variables, which can affect other calculatedExpressions
-        }
-        // Now process item-level expressions
-        var linkIDToQRItem;
-        var rerunNeeded = true;
-        // On the first run, run the expressions on all items.  On subsequent
-        // runs only run the expressions on marked items.
-        var firstRun = true;
-        while (rerunNeeded) {
-          var rerunNeeded = false; // will be reset if needed
-          for (var i=0, len=itemList.length; i<len; ++i) {
-            var item = itemList[i];
-            for (var j=0, jLen=expressionProperties.length; j<jLen; ++j) {
-              var prop = expressionProperties[j];
-              var isVariable = prop === '_variableExt';
-              if (isVariable || item !== this._activeItem) {
-                var exprExt = item[prop];
-                if (exprExt && exprExt.valueExpression.language=="text/fhirpath") {
-                  // If there are many FHIRPath expressions, regenerating the
-                  // complete QuestionnaireReponse each time would be slower than
-                  // updating it.  But, generating a structure to that update fast
-                  // would not be trivial either. (Now that we have _getIDtoQRItemMap,
-                  // we are closer to being able to do that.)
-                  // We do not need to regenerate questResp between "variable"
-                  // expressions.
-                  if (!questResp)
-                    questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-                  if (!linkIDToQRItem)
-                    linkIDToQRItem = this._getIDtoQRItemMap(questResp);
-                  lfData._fhirVariables.resource = questResp;
-                  // Find the item-level fhirpathVars
-                  var itemWithVars = item;
-                  while (!itemWithVars._fhirVariables)
-                    itemWithVars = itemWithVars._parentItem; // should terminate at lfData
-                  try {
-                    var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
-                      exprExt.valueExpression.expression, itemWithVars._fhirVariables);
-                  }
-                  catch (e) {
-                    console.log(e);
-                  }
-                  var valChanged;
-                  if (isVariable) {
-                    var varName = exprExt.name;
-                    if (name) {
-                      var itemVars = item._fhirVariables ||
-                        (item._fhirVariables = Object.create(itemWithVars._fhirVariables));
-                      varChanged = JSON.stringify(itemVars[name]) != JSON.stringify(fhirPathVal);
-                      itemVars[name] = fhirPathVal;
-                    }
-                    if (valChanged) {
-                      :w
-                    }
-                  }
-                  else {
-                    valChanged = this._setItemValueFromFHIRPath(item, fhirPathVal);
-                    if (valChanged) {
-                      questResp = null; // force a regeneration because the value changed
-                    }
-                  }
-                }
-                if (valChanged)
-                  rerunNeeded = true;
-              }
-            }
-          }
-          firstRun = false;
-        }
-      }
-    },
-*/
-
-
+    }
   };
 })();
