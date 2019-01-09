@@ -71,10 +71,18 @@
           "type": "integer",
           "extension" : [
             {
+              "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+              "valueExpression" : {
+                "name": "Z",
+                "language": "text/fhirpath",
+                "expression": "1",
+                "comment": "A variable defined on the field where it is used"
+              }
+            }, {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
               "valueExpression" : {
                 "language": "text/fhirpath",
-                "expression": "%Y + 5"
+                "expression": "%Y + 4 + %Z"
               }
             }
           ]
