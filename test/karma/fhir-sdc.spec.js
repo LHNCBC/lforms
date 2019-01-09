@@ -120,7 +120,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               // STU3 does not support multiple default answers.
               if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
                 var qItem = {};
-        
+
                 qItem.type = LForms.FHIR[fhirVersion].SDC._handleDataType(fixture);
                 LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 // Default processing depends on the answer repeat.
@@ -138,7 +138,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }
             }
           });
-          
+
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -293,55 +293,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should handle the calculatedExpression extension', function() {
-            // Load the Weight & Height questionnaire, and convert it to LForms.
-            // Then, we'll try converting it back.
-            var fhirQ = {
-              "resourceType": "Questionnaire",
-              "identifier": [
-                {
-                  "system": "http://loinc.org",
-                  "value": "55418-8"
-                }
-              ],
-              "code": [
-                {
-                  "system": "http://loinc.org",
-                  "code": "55418-8"
-                }
-              ],
-              "item": [
-                {
-                  "extension": [
-                    {
-                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
-                      "valueExpression": {
-                        "description": "BMI calculation",
-                        "language" : "text/fhirpath",
-                        "expression": "item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254"
-                      }
-                    }
-                  ],
-                  "linkId": "/39156-5",
-                  "code": [
-                    {
-                      "system": "http://loinc.org",
-                      "code": "39156-5",
-                      "display": "BMI"
-                    }
-                  ],
-                  "text": "BMI",
-                  "type": "decimal"
-                }
-              ]
-            };
-            var lformsQ = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
-            var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);
-            // Confirm that we got the exension back.
-            assert.equal(convertedFHIRQ.item[0].extension[0].url,
-              fhirQ.item[0].extension[0].url);
-          });
-
           if(fhirVersion === 'STU3') {
             describe('argonaut samples', function () {
               it('should parse housing', function (done) {
@@ -382,8 +333,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               });
             });
           }
-
-
         });
 
         describe('LForms data to QuestionnaireResponse conversion', function() {
@@ -455,8 +404,91 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
         });
+
       });
     });
   })(fhirVersions[i]);
 }
+
+var nonSTU3FHIRVersions = fhirVersions.slice();
+nonSTU3FHIRVersions.splice(nonSTU3FHIRVersions.indexOf('STU3'), 1);
+for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
+  (function (fhirVersion) {
+    var fhir = LForms.FHIR[fhirVersion];
+    describe(fhirVersion, function() {
+      describe('FHIR SDC library', function() {
+        describe('LForms data to Questionnaire conversion', function() {
+          it('should handle FHIRPath extensions', function() {
+            // Try converting a questionnaire to LForms and then convert it
+            // back.
+            var fhirQ = {
+              "resourceType": "Questionnaire",
+              "item": [
+                {
+                  "extension": [
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+                      "valueExpression": {
+                        "description": "initial BMI",
+                        "language" : "text/fhirpath",
+                        "expression": "1"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+                      "valueExpression": {
+                        "description": "BMI calculation",
+                        "language" : "text/fhirpath",
+                        "expression": "item.where(linkId='/29463-7').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/variable",
+                      "valueExpression": {
+                        "name": "var1",
+                        "language" : "text/fhirpath",
+                        "expression": "-5"
+                      }
+                    },
+                    {
+                      "url": "http://hl7.org/fhir/StructureDefinition/variable",
+                      "valueExpression": {
+                        "name": "var2",
+                        "language" : "text/fhirpath",
+                        "expression": "-4"
+                      }
+                    }
+                  ],
+                  "linkId": "/39156-5",
+                  "code": [
+                    {
+                      "system": "http://loinc.org",
+                      "code": "39156-5",
+                      "display": "BMI"
+                    }
+                  ],
+                  "text": "BMI",
+                  "type": "decimal"
+                }
+              ]
+            };
+            var lformsQ = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
+            assert.isOk(lformsQ.items[0]._variableExt);
+            assert.equal(lformsQ.items[0]._variableExt.length, 2);
+            var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);
+            // Confirm that we got the exension back.
+            var fhirQExts = fhirQ.item[0].extension
+            var convertedExts = convertedFHIRQ.item[0].extension;
+            assert.equal(convertedExts.length, fhirQExts.length);
+            for (var i=0, len=convertedExts.length; i<len; ++i) {
+              assert.equal(convertedExts[i].url, fhirQExts[i].url);
+              assert.equal(convertedExts[i].name, fhirQExts[i].name);
+            }
+          });
+        });
+      });
+    });
+  })(nonSTU3FHIRVersions[i]);
+}
+
 

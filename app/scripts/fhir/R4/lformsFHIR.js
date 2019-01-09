@@ -531,8 +531,10 @@ engine.ExternalConstantTerm = function (ctx, parentData, node) {
   var extConstant = node.children[0];
   var identifier = extConstant.children[0];
   var varName = engine.Identifier(ctx, parentData, identifier)[0];
-  var value = ctx.vars[varName];
-  return value === undefined ? [] : [value];
+  var value = ctx.vars[varName]; // For convenience, we all variable values to be passed in without their array
+  // wrapper.  However, when evaluating, we need to put the array back in.
+
+  return value === undefined ? [] : value instanceof Array ? value : [value];
 };
 
 engine.LiteralTerm = function (ctx, parentData, node) {
@@ -705,7 +707,7 @@ function makeParam(ctx, parentData, type, param) {
   var maker = paramTable[type];
 
   if (res.length > 1) {
-    throw new Error("Unexpected collection" + JSON.stringify(res) + "; expected singleton of type" + type);
+    throw new Error("Unexpected collection" + JSON.stringify(res) + "; expected singleton of type " + type);
   }
 
   if (res.length == 0) {
@@ -4737,7 +4739,11 @@ ParseTreeVisitor.prototype.visit = function (ctx) {
 };
 
 ParseTreeVisitor.prototype.visitChildren = function (ctx) {
-  return this.visit(ctx.children);
+  if (ctx.children) {
+    return this.visit(ctx.children);
+  } else {
+    return null;
+  }
 };
 
 ParseTreeVisitor.prototype.visitTerminal = function (node) {};
@@ -7654,7 +7660,7 @@ Recognizer.tokenTypeMapCache = {};
 Recognizer.ruleIndexMapCache = {};
 
 Recognizer.prototype.checkVersion = function (toolVersion) {
-  var runtimeVersion = "4.7.1";
+  var runtimeVersion = "4.7.2";
 
   if (runtimeVersion !== toolVersion) {
     console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
@@ -10215,11 +10221,6 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
     var c = this.getEpsilonTarget(config, t, continueCollecting, depth === 0, fullCtx, treatEofAsEpsilon);
 
     if (c !== null) {
-      if (!t.isEpsilon && closureBusy.add(c) !== c) {
-        // avoid infinite recursion for EOF* and EOF+
-        continue;
-      }
-
       var newDepth = depth;
 
       if (config.state instanceof RuleStopState) {
@@ -10228,11 +10229,6 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         // track how far we dip into outer context.  Might
         // come in handy and we avoid evaluating context dependent
         // preds if this is > 0.
-        if (closureBusy.add(c) !== c) {
-          // avoid infinite recursion for right-recursive rules
-          continue;
-        }
-
         if (this._dfa !== null && this._dfa.precedenceDfa) {
           if (t.outermostPrecedenceReturn === this._dfa.atnStartState.ruleIndex) {
             c.precedenceFilterSuppressed = true;
@@ -10240,6 +10236,12 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         }
 
         c.reachesIntoOuterContext += 1;
+
+        if (closureBusy.add(c) !== c) {
+          // avoid infinite recursion for right-recursive rules
+          continue;
+        }
+
         configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
 
         newDepth -= 1;
@@ -10247,10 +10249,17 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         if (this.debug) {
           console.log("dips into outer ctx: " + c);
         }
-      } else if (t instanceof RuleTransition) {
-        // latch when newDepth goes negative - once we step out of the entry context we can't return
-        if (newDepth >= 0) {
-          newDepth += 1;
+      } else {
+        if (!t.isEpsilon && closureBusy.add(c) !== c) {
+          // avoid infinite recursion for EOF* and EOF+
+          continue;
+        }
+
+        if (t instanceof RuleTransition) {
+          // latch when newDepth goes negative - once we step out of the entry context we can't return
+          if (newDepth >= 0) {
+            newDepth += 1;
+          }
         }
       }
 
@@ -12778,7 +12787,7 @@ __webpack_require__(35);
 __webpack_require__(39); // Vacuum all input from a string and then treat it like a buffer.
 
 
-function _loadString(stream, decodeToUnicodeCodePoints) {
+function _loadString(stream) {
   stream._index = 0;
   stream.data = [];
 
@@ -19161,8 +19170,9 @@ var sdcExport = {
     } // Copied item extensions
 
 
+    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
-    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
     this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
     // check restrictions
@@ -20511,6 +20521,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
@@ -20573,7 +20584,10 @@ function addSDCImportFns(ns) {
       lfData.codeSystem = code.system;
     }
 
-    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
+    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields); // form-level variables
+
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url', self.fhirExtVariable, 0, true);
+    if (ext.length > 0) lfData._variableExt = ext;
   };
 
   self.copyFields = function (source, target, fieldList) {
@@ -20707,13 +20721,15 @@ function addSDCImportFns(ns) {
 
     return targetItem;
   }; // A map of FHIR extensions involving Expressions to the property names on
-  // which they will be stored in LFormsData.
+  // which they will be stored in LFormsData, and a boolean indicating whether
+  // more than one extension of the type is permitted.
 
 
   var expressionExtensions = {
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": "_calculatedExprExt",
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": "_initialExprExt"
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false]
   };
+  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
   var expressionExtURLs = Object.keys(expressionExtensions);
   /**
    *  Some extensions are simply copied over to the LForms data structure.
@@ -20726,8 +20742,11 @@ function addSDCImportFns(ns) {
   self._processCopiedItemExtensions = function (lfItem, qItem) {
     for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
       var url = expressionExtURLs[i];
-      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression && ext.valueExpression.language === "text/fhirpath") lfItem[expressionExtensions[url]] = ext;
+      var extInfo = expressionExtensions[url];
+      var prop = extInfo[0],
+          multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
+      if (!multiple || ext.length > 0) lfItem[prop] = ext;
     }
   };
   /**

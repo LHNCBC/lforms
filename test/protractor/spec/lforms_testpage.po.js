@@ -57,8 +57,7 @@ var TestPage = function() {
     HL7GeneticPanel: 15,
     DefaultAnswerForm: 17,
     TwoTotalScoreForm: 20,
-    Questionnaire: 21,
-    VitalSign: 22
+    VitalSign: 21
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {
@@ -283,7 +282,7 @@ var TestPage = function() {
      */
     openBaseTestPage: function () {
       rtnObj.openTestPage(testPageUrl);
-     },
+    },
 
     /**
      *  Open the directive test page.
@@ -358,7 +357,6 @@ var TestPage = function() {
     }
   });
   return rtnObj;
-  console.log(rtnObj);
 };
 
 module.exports = TestPage();

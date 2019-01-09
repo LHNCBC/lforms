@@ -115,6 +115,7 @@
     <script src="scripts/lib/lforms-hl7.js"></script>
     <script src="scripts/lib/lforms-validate.js"></script>
     <script src="scripts/lib/lforms-data.js"></script>
+    <script src="scripts/lib/expression-processor.js"></script>
     <script src="scripts/fhir/versions.js"></script>
     <script src="lforms.tpl.js"></script>
     <!-- endbower -->
@@ -170,7 +171,6 @@
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
               {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
-              {text: "A Questionnaire with missing and/or duplicate codes", id: "questCodeIssues"},
               {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"}
             ];
 
@@ -377,6 +377,7 @@
              *   Apart from others, it has selected file reference.
              */
             $scope.uploader.onAfterAddingFile = function(item) {
+console.log("%%% in onAfterAddingFile");
               // clean up the form before assigning a new one for performance reasons related to AngularJS watches
               $scope.lfData2 = null;
 
@@ -391,6 +392,7 @@
                 // in the internal LForms format
                 else {
                   $scope.lfData2 = new LFormsData(importedData);
+                  $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
               };
@@ -520,22 +522,6 @@
                       }
                   );
                   break;
-                case 'questCodeIssues':
-                  $scope.getFhirResource(getFHIRVersion(), '4712701.json').then(function (data) {
-                    try {
-                      var lformsFormat = getFHIR().SDC.convertQuestionnaireToLForms(data);
-                      $scope.lfData2 = new LForms.LFormsData(lformsFormat);
-                      $scope.lfOption2 = {hideFormControls: true, showFormHeader: false};
-                      //$scope.$apply();
-                    }
-                    catch(e) {
-                      window.alert(e);
-                      console.error(e);
-                    }
-                  }, function (err) {
-                    window.alert('Unable to load form');
-                  });
-                  break;
               }
 
               $scope.lfData2 = lfData2;
@@ -565,7 +551,7 @@
        var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
        new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
          {matchListValue: true});
-       $('#fhirVersion')[0].value = fhirVersions[0];
+       $('#fhirVersion')[0].value = fhirVersions[1];
     </script>
   </body>
 </html>

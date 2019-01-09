@@ -1,5 +1,6 @@
 {
   "name": "lforms",
+  "version": "13.10.0",
   "version": "13.9.1",
   "dependencies": {
     "jquery-ui": "~1.11.4",
@@ -50,6 +51,7 @@
     "app/scripts/lib/lforms-hl7.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
+    "app/scripts/lib/expression-processor.js",
     "app/scripts/fhir/versions.js",
     "app/styles/lforms.css",
     "app/styles/themes.css",

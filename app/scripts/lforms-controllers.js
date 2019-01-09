@@ -553,19 +553,21 @@ angular.module('lformsWidget')
                   });
                 }, function() {
                   if (lfData)
-                    lfData.runCalculatedExpressions();
+                    lfData._expressionProcessor.runCalculations(false);
                 });
               }
 
               // Set up a listener for asynchronous change events (triggered by
               // lfData itself).
               if (!lfData._controllerInit) {
+                // TBD: I think there is a race-condition here (though I
+                // have not seen it happen).  Potentially the lfData could
+                // have already notified regarding async changes before
+                // this listener is added.
                 lfData.addAsyncChangeListener(function() {
                   $scope.$apply(function() {
-                    if (lfData._hasInitialExpr)
-                      lfData.runValueExpressions('_initialExprExt');
-                    if (lfData.hasFHIRPath)
-                      lfData.runCalculatedExpressions();
+                    if (lfData.hasFHIRPath || lfData._hasInitialExpr)
+                      lfData._expressionProcessor.runCalculations(true);
                   });
                 });
               }

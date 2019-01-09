@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.10.0] 2018-01-08
+### Added
+- Support for the FHIR extension "variable" has been added, but as with the
+  "questionnaire-initialExpression" and "questionnaire-calculatedExpression"
+  support is currently limited to FHIRPath-based expresions.
+
 ## [13.9.1] 2019-01-02
 ### Fixed.
 - Fixed errors in parsing argonaut questionnaire extensions with support for item.option.extension-score.
