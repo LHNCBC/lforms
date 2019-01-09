@@ -36,6 +36,7 @@ if (typeof LForms === 'undefined')
 
     /**
      *  Evaluates variables on the given item.
+     * @param item an LFormsData or item from LFormsData.
      */
     _evaluateVariables: function(item) {
       var rtn = false;
@@ -77,11 +78,20 @@ if (typeof LForms === 'undefined')
       return rtn;
     },
 
+
+    /**
+     *  Evaluates the expressions that set field values for the given item.
+     * @param item an LFormsData or item from LFormsData.
+     * @param invludeInitialExpr whether or not to run expressions from
+     *  initialExpression extensions (which should only be run when the form is
+     *  loaded).
+     * @param changesOnly whether to run all field expressions, or just the ones
+     *  that are likely to have been affected by changes from variable expressions.
+     */
     _evaluateFieldExpressions: function(item, includeInitialExpr, changesOnly) {
       var rtn = false;
       // If changesOnly, for any item that has _varChanged set, we run any field
-      // expressions that are within that group.  (If it is not a group, there
-      // is no point to the variable.)
+      // expressions that are within that group (or item).
       if (changesOnly) {
         if (item.items && item._varChanged) {
           item._varChanged = false; // clear flag
@@ -121,6 +131,10 @@ if (typeof LForms === 'undefined')
     },
 
 
+    /**
+     *  Regenerates the QuestionnaireResponse resource and the map from
+     *  LFormsData _elementIDs to items in the QuestionnaireResponse.
+     */
     _regenerateQuestionnaireResp: function() {
       var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
       this._lfData._fhirVariables.resource = questResp;
@@ -131,6 +145,7 @@ if (typeof LForms === 'undefined')
     /**
      *  Returns the nearest ancestor of item (or item itelf) that has
      *  _fhirVariables defined.
+     * @param item either an LFormsData or an item from an LFormsData.
      */
     _itemWithVars: function(item) {
       var itemWithVars = item;
