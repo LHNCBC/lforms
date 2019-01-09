@@ -290,6 +290,14 @@ var sdcExport = {
       });
     }
 
+    if(item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
+    }
+
+
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
@@ -664,7 +672,7 @@ var sdcExport = {
    */
   _processResponseItem: function(item, parentItem) {
     var targetItem = {};
-    var linkId = item._codePath;
+    var linkId = item.linkId ? item.linkId : item._codePath;
 
     // if it is a section
     if (item.dataType === "SECTION") {
@@ -740,6 +748,33 @@ var sdcExport = {
 
 
   /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  _makeValueQuantity: function(value, itemUnit, unitSystem) {
+    let fhirQuantity = null;
+    let floatValue = parseFloat(value);
+
+    if(! isNaN(floatValue)) {
+      fhirQuantity = {
+        value: floatValue
+      };
+      if(itemUnit && itemUnit.name) {
+        fhirQuantity.unit = itemUnit.name;
+        fhirQuantity.code = itemUnit.name;
+        fhirQuantity.system = unitSystem? unitSystem: 'http://unitsofmeasure.org';
+      }
+    }
+
+    return fhirQuantity;
+  },
+
+
+  /**
    * Process an item's answer list
    * @param item an item in the LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
@@ -754,18 +789,24 @@ var sdcExport = {
       var option = {};
 
       // needs an extension for label
-      if (!noExtensions && answer.label) {
-        option.extension = [{
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
-          "valueString" : answer.label
-        }];
-      }
-      // needs a modifierExtension for score and others (default, other?)
-      if (!noExtensions && answer.score) {
-        option.modifierExtension = [{
-          "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore",  // LForms Extension
-          "valueInteger" : parseInt(answer.score)
-        }];
+      if (!noExtensions) {
+        var ext = [];
+        if(answer.label) {
+          ext.push({
+            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix",
+            "valueString" : answer.label
+          });
+        }
+
+        if(answer.score) {
+          ext.push({
+            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+            "valueDecimal" : parseFloat(answer.score)
+          });
+        }
+        if(ext.length > 0) {
+          option.extension = ext;
+        }
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
@@ -917,8 +958,11 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (item.dataType === "QTY") {
-          // NOTE: QTY data type in LForms does not have unit. Cannot support it.
+        else if (item.dataType === "QTY") { // for now, handling only simple quantities without the comparators.
+          let fhirQuantity = this._makeValueQuantity(values[i], item.unit);
+          if(fhirQuantity) {
+            answer.push({valueQuantity: fhirQuantity});
+          }
         }
         // make a Quantity type if numeric values has a unit value
         else if (item.unit && typeof values[i] !== 'undefined' &&
@@ -1011,8 +1055,11 @@ var sdcExport = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (item.dataType === 'QTY') {
-        // NOTE: QTY data type in LForms does not have unit. Cannot support it.
+      else if (item.dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
+        let fhirQuantity = this._makeValueQuantity(item.value, item.unit);
+        if(fhirQuantity) {
+          targetItem[valueKey] = fhirQuantity;
+        }
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" ||
@@ -1115,8 +1162,11 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (sourceItem.dataType === 'QTY') {
-          // TBD
+        else if (sourceItem.dataType === 'QTY') { // for now, handling only simple quantities without the comparators.
+          let fhirQuantity = this._makeValueQuantity(condition.trigger.value, sourceItem.unit);
+          if(fhirQuantity) {
+            enableWhenRule[valueKey] = fhirQuantity;
+          }
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if(sourceItem.dataType === "BL") {
@@ -1456,16 +1506,21 @@ var sdcExport = {
         case "INT":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {name: qrValue.valueQuantity.code};
+            if(qrValue.valueQuantity.code) {
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
           }
           else if (qrValue.valueInteger) {
             item.value = qrValue.valueInteger;
           }
           break;
         case "REAL":
+        case "QTY":
           if (qrValue.valueQuantity) {
             item.value = qrValue.valueQuantity.value;
-            item.unit = {name: qrValue.valueQuantity.code};
+            if(qrValue.valueQuantity.code) {
+              item.unit = {name: qrValue.valueQuantity.code};
+            }
           }
           else if (qrValue.valueDecimal) {
             item.value = qrValue.valueDecimal;

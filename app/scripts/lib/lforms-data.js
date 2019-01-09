@@ -47,11 +47,11 @@ if (typeof LForms === 'undefined')
         PHONE:  "PHONE",
         SECTION:"SECTION",
         TITLE:  "TITLE",
+        QTY:    "QTY",
         BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
         // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
-        // QTY:    "QTY",   // not supported yet
       },
       DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
     },
@@ -436,6 +436,11 @@ if (typeof LForms === 'undefined')
         // run skip logic
         if (item.skipLogic) {
           this._updateItemSkipLogicStatus(item, null);
+        }
+        // Hide the item via the skip logic mechanism if _isHidden flag is true. As of 2018-12-19, the _isHidden flag
+        // is set to true if the item is converted from a FHIR Questionnaire with questionnaire-hidden extension.
+        if (item._isHidden) {
+          this._updateItemSkipLogicStatus(item, true);
         }
       }
 
@@ -929,6 +934,7 @@ if (typeof LForms === 'undefined')
               break;
             case this._CONSTANTS.DATA_TYPE.INT:
             case this._CONSTANTS.DATA_TYPE.REAL:
+            case this._CONSTANTS.DATA_TYPE.QTY:
               item._toolTip = "Type a number";
               // internally all numeric values are of string type
               if (typeof item.value === "number")
@@ -1202,7 +1208,7 @@ if (typeof LForms === 'undefined')
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
-        if (noHiddenItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ||
+        if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) ||
             noEmptyValue && this.isEmpty(item) && !item.header) {
           continue;
         }
@@ -1332,6 +1338,7 @@ if (typeof LForms === 'undefined')
               retValue = parseInt(value);
               break;
             case this._CONSTANTS.DATA_TYPE.REAL:
+            case this._CONSTANTS.DATA_TYPE.QTY:
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
@@ -2625,6 +2632,7 @@ if (typeof LForms === 'undefined')
           // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
           case this._CONSTANTS.DATA_TYPE.INT:
           case this._CONSTANTS.DATA_TYPE.REAL:
+          case this._CONSTANTS.DATA_TYPE.QTY:
             var numCurrentValue = parseFloat(currentValue);
             // the skip logic rule has a "value" key
             if (trigger.hasOwnProperty("value")) {

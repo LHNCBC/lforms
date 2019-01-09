@@ -1,0 +1,24 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "status": "completed",
+  "questionnaire": {
+    "reference": "Questionnaire/{{questionnaireId}}"
+  },
+  "item": [
+    {
+      "linkId": "height",
+      "text": "Patient's height in meters",
+      "answer": [{"valueQuantity": {
+        "value": 333.0,
+        "unit": "m",
+        "code": "m",
+        "system": "http://unitsofmeasure.org"
+      }}]
+    },
+    {
+      "linkId": "weight",
+      "text": "Patient's height in kg.",
+      "answer": [{"valueDecimal": 444.0}]
+    }
+  ]
+}

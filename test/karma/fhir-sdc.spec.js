@@ -35,6 +35,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should covert an item with QTY data type to type quantity in FHIR Questionnaire', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "fill in weight",
+              "dataType": "QTY",
+              "_codePath": "/weight"
+            };
+            var out = fhir.SDC._processItem(item, {});
+            assert.equal(out.linkId, "/weight");
+            assert.equal(out.type, "quantity");
+          });
+
           it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
             var out = fhir.SDC._processItem(cneFixture.input, {});
@@ -187,6 +201,53 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
           });
 
+          it('should convert FHIR Questionnaire quantity item to LForms QTY item', function () {
+            var fhirData = {
+              item: [{
+                text: 'fill in weight',
+                linkId: '12345',
+                type: 'quantity'
+              }]
+            }
+            var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
+            assert.equal(lfItem.dataType, 'QTY');
+          });
+
+          it('should convert FHIR Questionnaire initial quantity value to LForms QTY item value', function () {
+            var fhirData = {
+              item: [{
+                text: 'fill in weight',
+                linkId: '12345',
+                type: 'quantity'
+              }]
+            }
+            if(fhirVersion === 'R4') {
+              fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
+            }
+            else { // STU3
+              fhirData.item[0].initialQuantity = {value: 222};
+            }
+
+            var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
+            assert.equal(lfItem.dataType, 'QTY');
+            assert.equal(lfItem.defaultAnswer, 222);
+          });
+
+          it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {
+            var lfItem = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "question": "fill in weight",
+              "dataType": "QTY"
+            };
+            var fhirAnswer = [{
+              valueQuantity: { value: 128, code: "kg"}
+            }];
+            fhir.SDC._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
+            assert.equal(lfItem.value, 128);
+            assert.equal(lfItem.unit.name, "kg");
+          });
+
           it('should convert restrictions', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -335,6 +396,118 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
               assert.equal(convertedExts[i].name, fhirQExts[i].name);
             }
           });
+
+          if(fhirVersion === 'STU3') {
+            describe('argonaut samples', function () {
+              it('should parse housing', function (done) {
+                var file = 'test/data/STU3/argonaut-examples/housing.json';
+                $.get(file, function(json) {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
+                  assert.equal(convertedQ.item[0].item[1].option.length, json.item[0].item[1].option.length);
+                  assert.equal(convertedQ.item[0].item[2].option.length, json.item[0].item[2].option.length);
+
+                  // valueString is changed to valueCoding.display
+                  assert.equal(convertedQ.item[0].item[1].option[0].valueCoding.display, json.item[0].item[1].option[0].valueString);
+
+                }).done(function () {
+                  done();
+                }).fail(function (err) {
+                  done(err);
+                });
+              });
+
+              it('should parse sampler', function (done) {
+                var file = 'test/data/STU3/argonaut-examples/sampler.json';
+                $.get(file, function(json) {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                  var convertedQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
+
+                  assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
+                  // The score is changed from argonaut extension to FHIR extension.
+                  assert.equal(convertedQ.item[11].item[0].option[0].extension[0].url,
+                    'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
+                  assert.equal(convertedQ.item[11].item[0].option[0].extension[0].valueDecimal,
+                    json.item[11].item[0].option[0].extension[0].valueDecimal);
+                }).done(function () {
+                  done();
+                }).fail(function (err) {
+                  done(err);
+                });
+              });
+            });
+          }
+        });
+
+
+        describe('LForms data to QuestionnaireResponse conversion', function() {
+
+          it('should convert to SDC Questionnaire with extensions', function() {
+            var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+
+            assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+
+          });
+
+          it('should convert to standard QuestionnaireResponse without any extensions', function() {
+            var fhirQR = LForms.Util.getFormFHIRData(
+              'QuestionnaireResponse', fhirVersion, angular.copy(FHTData),
+              {noExtensions: true});
+
+            assert.equal(fhirQR.meta, undefined);
+
+            assert.equal(fhirQR.toString().match(/extension/), undefined);
+
+          });
+
+          it('should covert an item of QTY to valueQuantity in FHIR QuestionnaireResponse', function () {
+            var item = {
+              "questionCodeSystem":"ad-hoc",
+              "questionCode": "12345",
+              "questionCardinality": {"min": "1", "max": "1"},
+              "question": "fill in weight",
+              "dataType": "QTY",
+              "_codePath": "/weight",
+              "value": 128
+            };
+            var out = fhir.SDC._processResponseItem(item, {});
+            assert.equal(out.linkId, "/weight");
+            assert.equal(out.answer[0].valueQuantity.value, 128);
+          });
+        });
+
+        describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
+          it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function () {
+            var qFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-questionnaire.json';
+            var qrFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-qn-response.json';
+
+            // Test loading FHIR Questionnaire QuestionnaireResponse for it, then merge into an lforms.
+            $.get(qFile, function(fhirQnData) { // load the questionnaire json
+              $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
+                var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                    'QuestionnaireResponse', fhirQnRespData, qnForm, fhirVersion);
+                assert.equal(mergedFormData.items[0].value, 333.0);
+                assert.equal(mergedFormData.items[0].dataType, 'QTY');
+              }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
+            }).done().fail(function(err){console.log('Unable to load ' + qFile);});
+          });
+        });
+
+        describe('Questionnaire contained ValueSet', function() {
+          var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
+          $.get(qFile, function(fhirQnData) { // load the questionnaire json
+            var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+
+            it('should properly convert to LForms answers', function () {
+              var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
+              assert.equal(item.questionCode, '44255-8');
+              assert.equal(item.dataType, 'CNE');
+              assert.equal(item.answers[1].code, 'LA6569-3');
+              assert.equal(item.answers[1].text, 'Several days');
+              assert.equal(item.answers[1].score, 1);
+            });
+          }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
         });
       });
     });

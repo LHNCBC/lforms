@@ -2,11 +2,31 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [13.8.0] 2018-01-08
+## [13.10.0] 2018-01-08
 ### Added
 - Support for the FHIR extension "variable" has been added, but as with the
   "questionnaire-initialExpression" and "questionnaire-calculatedExpression"
   support is currently limited to FHIRPath-based expresions.
+
+## [13.9.1] 2019-01-02
+### Fixed.
+- Fixed errors in parsing argonaut questionnaire extensions with support for item.option.extension-score.
+
+## [13.9.0] 2018-12-15
+### Added
+- FHIR Questionnaire contained ValueSet support.
+
+## [13.8.0] 2018-11-30
+### Added.
+- Added support for the questionnaire-hidden extension
+    http://hl7.org/fhir/StructureDefinition/questionnaire-hidden
+  A good test example is:
+    https://argonautproject.github.io/questionnaire/Questionnaire-questionnaire-example-asq3.html
+
+## [13.7.2] 2018-12-12
+### Fixed
+- FHIR value quantity import/export
+- Misc fixes.
 
 ## [13.7.1] 2018-12-07
 ### Fixed
