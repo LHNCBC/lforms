@@ -355,28 +355,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-        });
-
-        describe('LForms data to QuestionnaireResponse conversion', function() {
-
-          it('should convert to SDC Questionnaire with extensions', function() {
-            var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
-
-            assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
-
-          });
-
-          it('should convert to standard QuestionnaireResponse without any extensions', function() {
-            var fhirQR = LForms.Util.getFormFHIRData(
-              'QuestionnaireResponse', fhirVersion, angular.copy(FHTData),
-              {noExtensions: true});
-
-            assert.equal(fhirQR.meta, undefined);
-
-            assert.equal(fhirQR.toString().match(/extension/), undefined);
-
-          });
-
           it('should covert an item of QTY to valueQuantity in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
