@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.10.1] 2018-01-09
+### Fixed
+- Corrected version number in bower.json.
+
 ## [13.10.0] 2018-01-08
 ### Added
 - Support for the FHIR extension "variable" has been added, but as with the
