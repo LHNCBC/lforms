@@ -248,19 +248,6 @@ var sdcExport = {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
-    // this is for a single unit, where is the units list??
-    // for user selected unit, not item.units! Not using here
-    if (item.unit) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
-        "valueCoding" : {
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit.name
-        }
-      });
-    }
-
     // add LForms Extension to units list
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
@@ -1061,21 +1048,30 @@ var sdcExport = {
   _handleLFormsUnits: function(targetItem, item) {
 
     if (item.units) {
-      var unitsArray = [];
       for (var i=0, iLen=item.units.length; i<iLen; i++) {
         var unit = item.units[i];
-        unitsArray.push({
-          "system": "http://unitsofmeasure.org",
-          "code": unit.name,
-          "display": unit.name
-        });
-      }
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-        "valueCodeableConcept": {
-          "coding": unitsArray
+        var fhirUnitExt = {
+          "url": this.fhirExtUrlUnitOption,
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": unit.name,
+            "display": unit.name
+          }
+        };
+        targetItem.extension.push(fhirUnitExt);
+
+        // Default goes into questionnaire-unit
+        if(unit.default) {
+          targetItem.extension.push({
+            "url": this.fhirExtUrlUnit,
+            "valueCoding" : {
+              "system": "http://unitsofmeasure.org",
+              "code": unit.name,
+              "display": unit.name
+            }
+          });
         }
-      });
+      }
     }
   },
 

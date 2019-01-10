@@ -17,7 +17,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
-  self.fhirExtUrlAllowedUnits = "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits";
+  self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit-option";
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
@@ -406,13 +406,29 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processUnitList(lfItem, qItem) {
-    var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
-    if(units && units.valueCodeableConcept && Array.isArray(units.valueCodeableConcept.coding)) {
-      lfItem.units = [];
-      for(var i = 0; i < units.valueCodeableConcept.coding.length; i++) {
-        var unit = units.valueCodeableConcept.coding[i];
-        lfItem.units.push({name: unit.code});
+    
+    var lformsUnits = [];
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+    if(unitOption && unitOption.length > 0) {
+      for(var i = 0; i < unitOption.length; i++) {
+        lformsUnits.push({name: unitOption[i].valueCoding.code});
       }
+    }
+    
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+    if(unit) {
+      var lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
+      // If this unit is already in the list, set its default flag, otherwise create new
+      if(lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      }
+      else {
+        lformsUnits.push({name: unit.valueCoding.code, default: true});
+      }
+    }
+    
+    if(lformsUnits.length > 0) {
+      lfItem.units = lformsUnits;
     }
   }
 

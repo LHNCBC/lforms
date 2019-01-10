@@ -183,10 +183,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
-            // TODO units[x].default is not supported. units[x].code is not supported.
-            assert.equal(convertedLfData.items[0].items[6].units.length, 2);
-            assert.equal(convertedLfData.items[0].items[6].units[0].name, "inches");
-            assert.equal(convertedLfData.items[0].items[6].units[1].name, "centimeters");
+            // TODO units[x].code is not supported.
+            assert.equal(convertedLfData.items[0].items[6].units.length, FHTData.items[0].items[6].units.length);
+            assert.equal(convertedLfData.items[0].items[6].units[0].default, FHTData.items[0].items[6].units[0].default);
+            assert.equal(convertedLfData.items[0].items[6].units[0].name, FHTData.items[0].items[6].units[0].name);
+            assert.equal(convertedLfData.items[0].items[6].units[1].name, FHTData.items[0].items[6].units[1].name);
 
             // Display control
             fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(displayControlsDemo));

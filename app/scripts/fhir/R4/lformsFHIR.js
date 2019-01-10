@@ -19170,20 +19170,7 @@ var sdcExport = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
-    // this is for a single unit, where is the units list??
-    // for user selected unit, not item.units! Not using here
-
-
-    if (item.unit) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
-        "valueCoding": {
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit.name
-        }
-      });
-    } // add LForms Extension to units list
+    // add LForms Extension to units list
 
 
     if (item.units) {
@@ -19986,23 +19973,29 @@ var sdcExport = {
    */
   _handleLFormsUnits: function _handleLFormsUnits(targetItem, item) {
     if (item.units) {
-      var unitsArray = [];
-
       for (var i = 0, iLen = item.units.length; i < iLen; i++) {
         var unit = item.units[i];
-        unitsArray.push({
-          "system": "http://unitsofmeasure.org",
-          "code": unit.name,
-          "display": unit.name
-        });
-      }
+        var fhirUnitExt = {
+          "url": this.fhirExtUrlUnitOption,
+          "valueCoding": {
+            "system": "http://unitsofmeasure.org",
+            "code": unit.name,
+            "display": unit.name
+          }
+        };
+        targetItem.extension.push(fhirUnitExt); // Default goes into questionnaire-unit
 
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-        "valueCodeableConcept": {
-          "coding": unitsArray
+        if (unit.default) {
+          targetItem.extension.push({
+            "url": this.fhirExtUrlUnit,
+            "valueCoding": {
+              "system": "http://unitsofmeasure.org",
+              "code": unit.name,
+              "display": unit.name
+            }
+          });
         }
-      });
+      }
     }
   },
 
@@ -20507,7 +20500,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
-  self.fhirExtUrlAllowedUnits = "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits";
+  self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit-option";
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
@@ -21019,17 +21012,34 @@ function addSDCImportFns(ns) {
 
 
   self._processUnitList = function (lfItem, qItem) {
-    var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
+    var lformsUnits = [];
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
 
-    if (units && units.valueCodeableConcept && Array.isArray(units.valueCodeableConcept.coding)) {
-      lfItem.units = [];
-
-      for (var i = 0; i < units.valueCodeableConcept.coding.length; i++) {
-        var unit = units.valueCodeableConcept.coding[i];
-        lfItem.units.push({
-          name: unit.code
+    if (unitOption && unitOption.length > 0) {
+      for (var i = 0; i < unitOption.length; i++) {
+        lformsUnits.push({
+          name: unitOption[i].valueCoding.code
         });
       }
+    }
+
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+
+    if (unit) {
+      var lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code); // If this unit is already in the list, set its default flag, otherwise create new
+
+      if (lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      } else {
+        lformsUnits.push({
+          name: unit.valueCoding.code,
+          default: true
+        });
+      }
+    }
+
+    if (lformsUnits.length > 0) {
+      lfItem.units = lformsUnits;
     }
   };
   /**
