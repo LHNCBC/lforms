@@ -88,6 +88,11 @@
               ]
             },
             {
+              "linkId": "/54126-8/54128-4",
+              "text": "Adopted",
+              "comment": "A test that we don't blow up if there is no answer"
+            },
+            {
               "linkId": "/54126-8/39156-5",
               "text": "Mock-up item: Body mass index (BMI) [Ratio]",
               "answer": [

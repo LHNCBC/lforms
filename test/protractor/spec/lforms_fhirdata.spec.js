@@ -7,7 +7,7 @@ var fhirVersions = Object.keys(fhirSupport);
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
  *  of which will be an error message (if any), and the second of which will be
- *  the requested diagnostic report for the given fhirVersion (if there was no
+ *  the requested FHIR resource for the given fhirVersion (if there was no
  *  error).
  * @param resourceType the type of the requested FHIR resource
  * @param fhirVersion the FHIR version for which the resource is to be
@@ -412,8 +412,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
 
 
-            getFHIRResource("QuestionnaireResponse", fhirVersion,
-                ).then(function(callbackData) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).
+                then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");

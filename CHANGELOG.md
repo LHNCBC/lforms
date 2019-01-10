@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [13.10.2] 2018-01-10
+### Fixed
+- Now handles FHIR QuestionnaireResponse items that do not have answers.
+
 ## [13.10.1] 2018-01-09
 ### Fixed
 - Corrected version number in bower.json.
