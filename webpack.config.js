@@ -45,6 +45,13 @@ for (let version of fhirVersions) {
   minConfig.output.filename = './dist/latest/fhir/'+version+'/lformsFHIR.min.js',
   minConfig.mode = 'production';
   configs.push(minConfig);
+
+  // autocomplete-lhc
+  let acConfig = commonConfig();
+  acConfig.entry = './node_modules/autocomplete-lhc/source/index.js';
+  acConfig.output.filename = './app/generated/scripts/autocomplete-lhc.js';
+  acConfig.mode = 'none';
+  configs.push(acConfig);
 }
 
 module.exports = configs;

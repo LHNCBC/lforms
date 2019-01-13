@@ -2,6 +2,7 @@
   "name": "lforms",
   "version": "0.0.0",
   "dependencies": {
+    "autocomplete-lhc": "^17.0.3",
     "fhirpath": "^0.10.1"
   },
   "devDependencies": {
@@ -52,7 +53,7 @@
     "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
     "time-grunt": "^1.0.0",
-    "webpack": "^4.27.1",
+    "webpack": "^4.28.3",
     "webpack-cli": "^3.1.0",
     "wiredep": "^3.0.0"
   },

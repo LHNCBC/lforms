@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.0.0] 2018-12-22
+### Changed.
+- The "themes" css file is now in a separate file from the lforms.min.css file
+  in the distribution, to avoid making that larger than necessary.  It has also
+  been removed from bower.json, so that themes.css will no longer be
+  automatically pulled in with things like wiredep.  (This is possibly a breaking
+  change for someone, and is the reason for the major-version increase.)
+- The autocomplete-lhc package is now being pull in via npm.
+
 ## [13.10.2] 2018-01-10
 ### Fixed
 - Now handles FHIR QuestionnaireResponse items that do not have answers.
