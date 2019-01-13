@@ -59,7 +59,7 @@ var sdcExport = {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   },
-  
+
   _operatorMapping: {
     'minExclusive': '>',
     'maxExclusive': '<',
@@ -76,7 +76,7 @@ var sdcExport = {
   },
 
 
-  
+
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -138,7 +138,7 @@ var sdcExport = {
    * @private
    */
   _setFormLevelFields: function(target, source, noExtensions) {
-  
+
     this.copyFields(source, target, this.formLevelIgnoredFields);
     // resourceType
     target.resourceType = "Questionnaire";
@@ -146,7 +146,7 @@ var sdcExport = {
 
     // meta
     var profile = noExtensions ? this.stdQProfile : this.QProfile;
-  
+
     target.meta = target.meta ? target.meta : {};
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
@@ -240,10 +240,12 @@ var sdcExport = {
     }
 
     // Copied item extensions
-    if (item._calculatedExprExt)
-      targetItem.extension.push(item._calculatedExprExt);
     if (item._initialExprExt)
       targetItem.extension.push(item._initialExprExt);
+    if (item._calculatedExprExt)
+      targetItem.extension.push(item._calculatedExprExt);
+    if (item._variableExt)
+      Array.prototype.push.apply(targetItem.extension, item._variableExt);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
@@ -1002,7 +1004,7 @@ var sdcExport = {
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer) {
-  
+
       targetItem.initial = [];
       var valueKey = this._getValueKeyByDataType("value", item.dataType);
       // for Coding
@@ -1013,7 +1015,7 @@ var sdcExport = {
         if(item.answerCodeSystem) {
           codeSystem = this._getCodeSystem(item.answerCodeSystem);
         }
-  
+
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
@@ -1021,7 +1023,7 @@ var sdcExport = {
             if(item.defaultAnswer[i].text !== undefined) {
               coding.display = item.defaultAnswer[i].text;
             }
-            
+
             if(codeSystem) {
               coding.system = codeSystem;
             }
@@ -1183,7 +1185,7 @@ var sdcExport = {
         // add rule(s) to enableWhen
         enableWhen = enableWhen.concat(enableWhenRules);
       }
-      
+
       if(rangeFound && item.skipLogic.conditions.length > 1) {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
@@ -1199,7 +1201,7 @@ var sdcExport = {
       }
     }
   },
-  
+
   /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
@@ -1219,10 +1221,10 @@ var sdcExport = {
       rule[answerKey] = skipLogicCondition.trigger[key];
       ret.push(rule);
     });
-    
+
     return ret;
   },
-  
+
   /**
    * Merge a QuestionnaireResponse instance into an LForms form object
    * @param formData an LForms form definition or LFormsData object.
@@ -1337,61 +1339,6 @@ var sdcExport = {
       total: total,
       repeatingItems: repeatingItems
     };
-  },
-
-  /**
-   * Merge data into items on the same level
-   * @param parentQRItemInfo structural information of a parent item
-   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
-   * @private
-   */
-  _processQRItemAndLFormsItem : function(parentQRItemInfo, parentLFormsItem) {
-
-    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
-    for(var i=0; i<parentQRItemInfo.qrItemsInfo.length; i++) {
-
-      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
-      var qrItem = qrItemInfo.item;
-      if (qrItem) {
-        // first repeating qrItem
-        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
-          // add repeating items in form data
-          // if it is a case of repeating questions, not repeating answers
-          if (this._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total);
-            // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
-            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
-              for (var j=1; j<qrItemInfo.total; j++) {
-                var newQRItemInfo = angular.copy(qrItemInfo);
-                newQRItemInfo.index = j;
-                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
-                parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
-              }
-              // change the first qr item's answer too
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
-            }
-          }
-          // reset the total number of questions when it is the answers that repeats
-          else if (this._answerRepeats(defItem)) {
-            qrItemInfo.total = 1;
-          }
-        }
-        // find the matching LForms item
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index);
-
-        // set up value and units if it is a question
-        if ((item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
-          var code = this._getItemCodeFromLinkId(qrItem.linkId);
-          this._setupItemValueAndUnit(code, qrItem.answer, item);
-        }
-
-        // process items on the sub-level
-        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length>0) {
-          this._processQRItemAndLFormsItem(qrItemInfo, item);
-        }
-      }
-    }
   },
 
 

@@ -11,6 +11,20 @@ This project follows [Semantic Versioning](http://semver.org/).
   change for someone, and is the reason for the major-version increase.)
 - The autocomplete-lhc package is now being pull in via npm.
 
+## [13.10.2] 2018-01-10
+### Fixed
+- Now handles FHIR QuestionnaireResponse items that do not have answers.
+
+## [13.10.1] 2018-01-09
+### Fixed
+- Corrected version number in bower.json.
+
+## [13.10.0] 2018-01-08
+### Added
+- Support for the FHIR extension "variable" has been added, but as with the
+  "questionnaire-initialExpression" and "questionnaire-calculatedExpression"
+  support is currently limited to FHIRPath-based expresions.
+
 ## [13.9.1] 2019-01-02
 ### Fixed.
 - Fixed errors in parsing argonaut questionnaire extensions with support for item.option.extension-score.

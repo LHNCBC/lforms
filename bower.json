@@ -51,6 +51,7 @@
     "app/scripts/lib/lforms-hl7.js",
     "app/scripts/lib/lforms-validate.js",
     "app/scripts/lib/lforms-data.js",
+    "app/scripts/lib/expression-processor.js",
     "app/scripts/fhir/versions.js",
     "app/styles/lforms.css",
     "app/lforms.tpl.js"

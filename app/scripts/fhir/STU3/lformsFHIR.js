@@ -93,6 +93,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
 /* harmony import */ var _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 /* harmony import */ var _lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -104,6 +105,8 @@ fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODU
 fhir.SDC = _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
 Object(_lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
+
+Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -531,8 +534,10 @@ engine.ExternalConstantTerm = function (ctx, parentData, node) {
   var extConstant = node.children[0];
   var identifier = extConstant.children[0];
   var varName = engine.Identifier(ctx, parentData, identifier)[0];
-  var value = ctx.vars[varName];
-  return value === undefined ? [] : [value];
+  var value = ctx.vars[varName]; // For convenience, we all variable values to be passed in without their array
+  // wrapper.  However, when evaluating, we need to put the array back in.
+
+  return value === undefined ? [] : value instanceof Array ? value : [value];
 };
 
 engine.LiteralTerm = function (ctx, parentData, node) {
@@ -705,7 +710,7 @@ function makeParam(ctx, parentData, type, param) {
   var maker = paramTable[type];
 
   if (res.length > 1) {
-    throw new Error("Unexpected collection" + JSON.stringify(res) + "; expected singleton of type" + type);
+    throw new Error("Unexpected collection" + JSON.stringify(res) + "; expected singleton of type " + type);
   }
 
   if (res.length == 0) {
@@ -4737,7 +4742,11 @@ ParseTreeVisitor.prototype.visit = function (ctx) {
 };
 
 ParseTreeVisitor.prototype.visitChildren = function (ctx) {
-  return this.visit(ctx.children);
+  if (ctx.children) {
+    return this.visit(ctx.children);
+  } else {
+    return null;
+  }
 };
 
 ParseTreeVisitor.prototype.visitTerminal = function (node) {};
@@ -7654,7 +7663,7 @@ Recognizer.tokenTypeMapCache = {};
 Recognizer.ruleIndexMapCache = {};
 
 Recognizer.prototype.checkVersion = function (toolVersion) {
-  var runtimeVersion = "4.7.1";
+  var runtimeVersion = "4.7.2";
 
   if (runtimeVersion !== toolVersion) {
     console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
@@ -10215,11 +10224,6 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
     var c = this.getEpsilonTarget(config, t, continueCollecting, depth === 0, fullCtx, treatEofAsEpsilon);
 
     if (c !== null) {
-      if (!t.isEpsilon && closureBusy.add(c) !== c) {
-        // avoid infinite recursion for EOF* and EOF+
-        continue;
-      }
-
       var newDepth = depth;
 
       if (config.state instanceof RuleStopState) {
@@ -10228,11 +10232,6 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         // track how far we dip into outer context.  Might
         // come in handy and we avoid evaluating context dependent
         // preds if this is > 0.
-        if (closureBusy.add(c) !== c) {
-          // avoid infinite recursion for right-recursive rules
-          continue;
-        }
-
         if (this._dfa !== null && this._dfa.precedenceDfa) {
           if (t.outermostPrecedenceReturn === this._dfa.atnStartState.ruleIndex) {
             c.precedenceFilterSuppressed = true;
@@ -10240,6 +10239,12 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         }
 
         c.reachesIntoOuterContext += 1;
+
+        if (closureBusy.add(c) !== c) {
+          // avoid infinite recursion for right-recursive rules
+          continue;
+        }
+
         configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
 
         newDepth -= 1;
@@ -10247,10 +10252,17 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         if (this.debug) {
           console.log("dips into outer ctx: " + c);
         }
-      } else if (t instanceof RuleTransition) {
-        // latch when newDepth goes negative - once we step out of the entry context we can't return
-        if (newDepth >= 0) {
-          newDepth += 1;
+      } else {
+        if (!t.isEpsilon && closureBusy.add(c) !== c) {
+          // avoid infinite recursion for EOF* and EOF+
+          continue;
+        }
+
+        if (t instanceof RuleTransition) {
+          // latch when newDepth goes negative - once we step out of the entry context we can't return
+          if (newDepth >= 0) {
+            newDepth += 1;
+          }
         }
       }
 
@@ -12778,7 +12790,7 @@ __webpack_require__(35);
 __webpack_require__(39); // Vacuum all input from a string and then treat it like a buffer.
 
 
-function _loadString(stream, decodeToUnicodeCodePoints) {
+function _loadString(stream) {
   stream._index = 0;
   stream.data = [];
 
@@ -20159,64 +20171,6 @@ var sdcExport = {
   },
 
   /**
-   * Merge data into items on the same level
-   * @param parentQRItemInfo structural information of a parent item
-   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
-   * @private
-   */
-  _processQRItemAndLFormsItem: function _processQRItemAndLFormsItem(parentQRItemInfo, parentLFormsItem) {
-    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
-    for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
-      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
-      var qrItem = qrItemInfo.item;
-
-      if (qrItem) {
-        // first repeating qrItem
-        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
-          // if it is a case of repeating questions, not repeating answers
-
-
-          if (this._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
-
-
-            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
-              for (var j = 1; j < qrItemInfo.total; j++) {
-                var newQRItemInfo = angular.copy(qrItemInfo);
-                newQRItemInfo.index = j;
-                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
-                parentQRItemInfo.qrItemsInfo.splice(i + j, 0, newQRItemInfo);
-              } // change the first qr item's answer too
-
-
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
-            }
-          } // reset the total number of questions when it is the answers that repeats
-          else if (this._answerRepeats(defItem)) {
-              qrItemInfo.total = 1;
-            }
-        } // find the matching LForms item
-
-
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
-
-
-        if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
-          var code = this._getItemCodeFromLinkId(qrItem.linkId);
-
-          this._setupItemValueAndUnit(code, qrItem.answer, item);
-        } // process items on the sub-level
-
-
-        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length > 0) {
-          this._processQRItemAndLFormsItem(qrItemInfo, item);
-        }
-      }
-    }
-  },
-
-  /**
    * Add repeating items into LForms definition data object
    * @param parentItem a parent item
    * @param itemCode code of a repeating item
@@ -21283,6 +21237,87 @@ function addSDCImportFns(ns) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
+
+/***/ }),
+/* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ *  Defines SDC import functions that are the same across the different FHIR
+ *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  code, and adds additional functions to it.
+ */
+function addCommonSDCImportFns(ns) {
+  "use strict";
+
+  var self = ns;
+  /**
+   * Merge data into items on the same level
+   * @param parentQRItemInfo structural information of a parent item
+   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
+   * @private
+   */
+
+  self._processQRItemAndLFormsItem = function (parentQRItemInfo, parentLFormsItem) {
+    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
+    for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
+      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
+      var qrItem = qrItemInfo.item;
+
+      if (qrItem) {
+        // first repeating qrItem
+        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
+          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
+          // if it is a case of repeating questions, not repeating answers
+
+
+          if (this._questionRepeats(defItem)) {
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
+
+
+            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
+              for (var j = 1; j < qrItemInfo.total; j++) {
+                var newQRItemInfo = angular.copy(qrItemInfo);
+                newQRItemInfo.index = j;
+                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+                parentQRItemInfo.qrItemsInfo.splice(i + j, 0, newQRItemInfo);
+              } // change the first qr item's answer too
+
+
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
+            }
+          } // reset the total number of questions when it is the answers that repeats
+          else if (this._answerRepeats(defItem)) {
+              qrItemInfo.total = 1;
+            }
+        } // find the matching LForms item
+
+
+        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
+
+
+        if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
+          var qrAnswer = qrItem.answer;
+
+          if (qrAnswer && qrAnswer.length > 0) {
+            var code = this._getItemCodeFromLinkId(qrItem.linkId);
+
+            this._setupItemValueAndUnit(code, qrAnswer, item);
+          }
+        } // process items on the sub-level
+
+
+        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length > 0) {
+          this._processQRItemAndLFormsItem(qrItemInfo, item);
+        }
+      }
+    }
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ })
 /******/ ]);

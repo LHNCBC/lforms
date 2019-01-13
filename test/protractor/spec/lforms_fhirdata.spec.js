@@ -7,7 +7,7 @@ var fhirVersions = Object.keys(fhirSupport);
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
  *  of which will be an error message (if any), and the second of which will be
- *  the requested diagnostic report for the given fhirVersion (if there was no
+ *  the requested FHIR resource for the given fhirVersion (if there was no
  *  error).
  * @param resourceType the type of the requested FHIR resource
  * @param fhirVersion the FHIR version for which the resource is to be
@@ -412,8 +412,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
 
 
-            getFHIRResource("QuestionnaireResponse", fhirVersion,
-                ).then(function(callbackData) {
+            getFHIRResource("QuestionnaireResponse", fhirVersion).
+                then(function(callbackData) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
@@ -601,6 +601,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
             tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-qr")).click();
 
@@ -637,13 +638,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         describe('Converted Questionnaire', function () {
           beforeEach(function() {
-            tp.openQuestionnaire();
+            tp.openBaseTestPage();
+            tp.setFHIRVersion(fhirVersion);
+            tp.loadFromTestData('4712701.json', fhirVersion);
           });
 
           it('should be able to show a converted questionnaire', function() {
-             // Check to see that the last question has rendered
-             expect(element(by.id('label-/4/TBD3/TBD19/TBD20/1/1/1/1')).getText()).toBe(
-               "Rezidiv/Progress aufgetreten");
+            // Check to see that the last question has rendered
+            expect(element(by.id('label-/4/TBD3/TBD19/TBD20/1/1/1/1')).getText()).toBe(
+              "Rezidiv/Progress aufgetreten");
           });
 
           it('should have functioning skiplogic when codes are not present', function() {

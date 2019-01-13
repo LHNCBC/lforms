@@ -18,6 +18,7 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
     "http://hl7.org/fhir/StructureDefinition/minValue",
     "http://hl7.org/fhir/StructureDefinition/maxValue",
@@ -31,15 +32,15 @@ function addSDCImportFns(ns) {
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
 
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-  
+
   self.formLevelIgnoredFields = [
     // Resource
     'id',
     'meta',
     'implicitRules',
     'language',
-  
-  
+
+
     // Domain Resource
     'text',
     'contained',
@@ -47,7 +48,7 @@ function addSDCImportFns(ns) {
     'contained',
     'extension',
     'modifiedExtension',
-  
+
     // Questionnaire
     'date',
     'version',
@@ -71,8 +72,8 @@ function addSDCImportFns(ns) {
     'definition',
     'prefix'
   ];
-  
-  
+
+
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -117,6 +118,12 @@ function addSDCImportFns(ns) {
     }
 
     self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
+
+    // form-level variables
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
+      self.fhirExtVariable, 0, true);
+    if (ext.length > 0)
+      lfData._variableExt = ext;
   };
 
 
@@ -228,14 +235,15 @@ function addSDCImportFns(ns) {
   };
 
   // A map of FHIR extensions involving Expressions to the property names on
-  // which they will be stored in LFormsData.
+  // which they will be stored in LFormsData, and a boolean indicating whether
+  // more than one extension of the type is permitted.
   var expressionExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
-      "_calculatedExprExt",
+      ["_calculatedExprExt", false],
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
-      "_initialExprExt"
+      ["_initialExprExt", false],
   };
-
+  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
   var expressionExtURLs = Object.keys(expressionExtensions);
 
   /**
@@ -248,9 +256,11 @@ function addSDCImportFns(ns) {
   self._processCopiedItemExtensions = function (lfItem, qItem) {
     for (var i=0, len=expressionExtURLs.length; i<len; ++i) {
       var url = expressionExtURLs[i];
-      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url);
-      if (ext && ext.valueExpression && ext.valueExpression.language === "text/fhirpath")
-        lfItem[expressionExtensions[url]] = ext;
+      var extInfo = expressionExtensions[url];
+      var prop = extInfo[0], multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
+      if (!multiple || ext.length > 0)
+        lfItem[prop] = ext;
     }
   };
 
@@ -323,8 +333,8 @@ function addSDCImportFns(ns) {
       }
     }
   };
-  
-  
+
+
   /**
    * See if the skip logic condition belongs to range. If yes, returns a lforms condition, otherwise null;
    *
@@ -344,14 +354,14 @@ function addSDCImportFns(ns) {
       ret.trigger = {};
       var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
       var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-  
+
       ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
       ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
     }
     return ret;
   }
-  
-  
+
+
   /**
    * Parse Questionnaire item for externallyDefined url
    *
@@ -466,7 +476,7 @@ function addSDCImportFns(ns) {
     if(!qItem.initial) {
       return;
     }
-  
+
     var isMultiple = _hasMultipleAnswers(qItem);
     var defaultAnswer = null;
 
@@ -874,10 +884,10 @@ function addSDCImportFns(ns) {
         }
       }
     }
-    
+
     return ret;
   }
-  
+
   function _hasMultipleAnswers(qItem) {
     var ret = false;
     if(qItem) {

@@ -181,8 +181,9 @@ if (typeof LForms === 'undefined')
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR)
+      if (LForms.FHIR) {
         this._initializeFormFHIRData(data);
+      }
 
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
@@ -216,7 +217,8 @@ if (typeof LForms === 'undefined')
 
 
     /**
-     *  Initializes form-level FHIR data.
+     *  Initializes form-level FHIR data.  This should be called before item
+     *  properties are set up.
      * @param an LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
@@ -224,8 +226,10 @@ if (typeof LForms === 'undefined')
       this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhir = LForms.FHIR[lfData.fhirVersion];
-      this._fhirpathVars = {};
+      this._expressionProcessor = new LForms.ExpressionProcessor(this);
+      this._fhirVariables = {};
       this.extension = data.extension;
+      this._variableExt = data._variableExt; // FHIR "variable" extensions
       if (LForms.fhirContext) {
         var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
@@ -251,7 +255,7 @@ if (typeof LForms === 'undefined')
               LForms.fhirContext.getCurrent(typeList, function(resource) {
                 lfData._asyncLoadCounter--;
                 if (resource)
-                  lfData._fhirpathVars[name] = resource;
+                  lfData._fhirVariables[name] = resource;
                 if (lfData._asyncLoadCounter === 0)
                   lfData._notifyAsyncChangeListeners()
               });
@@ -260,6 +264,7 @@ if (typeof LForms === 'undefined')
         }
       }
     },
+
 
     /**
      *  Checks that the given variable name is allowed in FHIR and throws an
@@ -389,96 +394,6 @@ if (typeof LForms === 'undefined')
       this._updateLastRepeatingItemsStatus(this.items);
       this._resetHorizontalTableInfo();
       this._adjustLastSiblingListForHorizontalLayout();
-    },
-
-
-    /**
-     *  Runs any calculated expressions.
-     */
-    runCalculatedExpressions: function() {
-      this.runValueExpressions('_calculatedExprExt');
-    },
-
-
-    /**
-     *  Runs any expressions stored in an item under the given property
-     *  name, and assigns the result to item's value.
-     */
-    runValueExpressions: function(expressionProperty) {
-      var lfData = this;
-      if (LForms.FHIR) {
-        var fhir = LForms.FHIR[lfData.fhirVersion];
-        var itemList = lfData.itemList;
-        var questResp;
-        var linkIDToQRItem;
-        for (var i=0, len=itemList.length; i<len; ++i) {
-          var item = itemList[i];
-          if (item !== this._activeItem && item[expressionProperty] &&
-              item[expressionProperty].valueExpression.language=="text/fhirpath") {
-            // If there are many FHIRPath expressions, regenerating the
-            // complete QuestionnaireReponse each time would be slower than
-            // updating it.  But, generating a structure to that update fast
-            // would not be trivial either. (Now that we have _getIDtoQRItemMap,
-            // we are closer to being able to do that.)
-            questResp = fhir.SDC.convertLFormsToQuestionnaireResponse(lfData);
-            if (!linkIDToQRItem)
-              linkIDToQRItem = this._getIDtoQRItemMap(questResp);
-            lfData._fhirpathVars.resource = questResp;
-            try {
-              var fhirPathVal = fhir.fhirpath.evaluate(linkIDToQRItem[item.linkId],
-                item[expressionProperty].valueExpression.expression, lfData._fhirpathVars);
-            }
-            catch (e) {
-              console.log(e);
-            }
-            this._setItemValueFromFHIRPath(item, fhirPathVal);
-          }
-        }
-      }
-    },
-
-
-    /**
-     *  Returns a hash from the linkIds in a QuestionnaireReponse to the items
-     *  in the QuestionnaireResponse with those linkIDs.
-     * @param qr the QuestionnaireResponse
-     * @param map (optional) the map to which entries will be added.  If
-     *  provided, this will also be the return value.
-     */
-    _getIDtoQRItemMap: function(qr, map) {
-      if (!map)
-        map = {};
-      if (qr.linkId)
-        map[linkId] = qr;
-      if (qr.items) {
-        for (var i=0, len=qr.items.length; i<len; ++i)
-          this._getIDtoQRItemMap(qr.items[i], map);
-      }
-      return map;
-    },
-
-
-    /**
-     *  Assigns the given FHIRPath result to the given item.
-     * @param item the item from the LFormsData object that is receiving the new
-     *  value.
-     * @param fhirPathRes the result of a FHIRPath evaluation.
-     */
-    _setItemValueFromFHIRPath: function(item, fhirPathRes) {
-      if (fhirPathRes !== undefined)
-        var fhirPathVal = fhirPathRes[0];
-      if (!fhirPathVal)
-        item.value = undefined;
-      else {
-        if (item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathVal);
-          // Convert to local time, so the date does not get shifted for negative
-          // local timezones.
-          item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        }
-        else
-          item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
-      }
     },
 
 
@@ -1097,35 +1012,35 @@ if (typeof LForms === 'undefined')
      * @param item the item whose attributes need to set or updated.
      */
     _updateItemAttrs: function(item) {
-        // set default values on the item
-        // questionCardinality
-        if (!item.questionCardinality) {
-          item.questionCardinality = {"min":"1", "max":"1"};
-        }
-        // answerCardinality
-        if (!item.answerCardinality) {
-          item.answerCardinality = {"min":"0", "max":"1"};
-        }
+      // set default values on the item
+      // questionCardinality
+      if (!item.questionCardinality) {
+        item.questionCardinality = {"min":"1", "max":"1"};
+      }
+      // answerCardinality
+      if (!item.answerCardinality) {
+        item.answerCardinality = {"min":"0", "max":"1"};
+      }
 
-        // set up flags for question and answer cardinality
-        item._questionRepeatable = item.questionCardinality.max &&
-            (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-        item._answerRequired = item.answerCardinality.min &&
-            (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
-        item._multipleAnswers = item.answerCardinality.max &&
-            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+      // set up flags for question and answer cardinality
+      item._questionRepeatable = item.questionCardinality.max &&
+          (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+      item._answerRequired = item.answerCardinality.min &&
+          (item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1);
+      item._multipleAnswers = item.answerCardinality.max &&
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
 
-        // set up readonly flag
-        item._readOnly = (item.editable && item.editable === "0") ||
-           !!(item.calculationMethod || item._calculatedExprExt);
+      // set up readonly flag
+      item._readOnly = (item.editable && item.editable === "0") ||
+         !!(item.calculationMethod || item._calculatedExprExt);
 
-        var lfData = this;
-        if (LForms.FHIR && lfData.fhirVersion) {
-          lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
-               item._calculatedExprExt.valueExpression.language=="text/fhirpath");
-          lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
-             item._initialExprExt.valueExpression.language=="text/fhirpath");
-        }
+      var lfData = this;
+      if (LForms.FHIR && lfData.fhirVersion) {
+        lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
+             item._calculatedExprExt.valueExpression.language=="text/fhirpath");
+        lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
+           item._initialExprExt.valueExpression.language=="text/fhirpath");
+      }
     },
 
 
@@ -1252,7 +1167,6 @@ if (typeof LForms === 'undefined')
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
     getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
-
       var ret = {};
       ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem,
           keepIdPath, keepCodePath);
@@ -1263,6 +1177,15 @@ if (typeof LForms === 'undefined')
       }
       // return a deep copy of the data
       return angular.copy(ret);
+    },
+
+
+    /**
+     *  Retuns true if the given item's value is empty.
+     * @param item an LFormsData entry from "items".
+     */
+    isEmpty: function(item) {
+      return item.value === undefined || item.value === null;
     },
 
 
@@ -1286,7 +1209,7 @@ if (typeof LForms === 'undefined')
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
         if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) ||
-            noEmptyValue && (item.value === undefined || item.value === null) && !item.header) {
+            noEmptyValue && this.isEmpty(item) && !item.header) {
           continue;
         }
         // include only the code and the value (and unit, other value) if no form definition data is needed
