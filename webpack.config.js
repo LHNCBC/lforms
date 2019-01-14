@@ -42,7 +42,8 @@ for (let version of fhirVersions) {
 
   let minConfig = commonConfig();
   minConfig.entry = entryFile;
-  minConfig.output.filename = './dist/latest/fhir/'+version+'/lformsFHIR.min.js',
+  let versionedDist = 'lforms-'+require('./bower.json').version;
+  minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
   minConfig.mode = 'production';
   configs.push(minConfig);
 
