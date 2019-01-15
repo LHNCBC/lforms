@@ -82,19 +82,19 @@ about the meaning of each key:
 * **name** - (required) the name of the form (to be shown to the user).
 * **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
-* **template** - (optional) a template name that is used for rendering the form. 
+* **template** - (optional) a template name that is used for rendering the form.
   'table' (default) is the only template supported. More supported templates would be added.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
-    * showQuestionCode - a boolean that controls whether to show question codes. 
+    * showQuestionCode - a boolean that controls whether to show question codes.
       The default is false.
-    * showCodingInstruction - a boolean that controls whether to show coding 
-      instructions inline or as popover messages (false: in popover; true: inline). 
+    * showCodingInstruction - a boolean that controls whether to show coding
+      instructions inline or as popover messages (false: in popover; true: inline).
       The default is false;
     * tabOnInputFieldsOnly - a boolean that controls whether to control TAB keys
-      to stop on the input fields only (neither buttons, nor units fields). 
+      to stop on the input fields only (neither buttons, nor units fields).
       The default is false.
-    * hideFormControls - a boolean that controls whether to hide the controls section 
+    * hideFormControls - a boolean that controls whether to hide the controls section
       on top of the form. The default is false.
     * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
@@ -104,11 +104,11 @@ about the meaning of each key:
       next to the form title that hides/shows the form options panel.
     * allowMultipleEmptyRepeatingItems - a boolean that controls whether to allow
       more than one unused repeating item/section The default is false.
-    * allowHTMLInInstructions - a boolean that controls whether to allow HTML 
+    * allowHTMLInInstructions - a boolean that controls whether to allow HTML
       content in the codingInstructions field. The default is false. If it is false,
       the **codingInstructionsFormat** field on item level is ignored, and no HTML
       formatted coding instructions will be displayed.
-    * useAnimation - a boolean that controls whether to use animation on the form. 
+    * useAnimation - a boolean that controls whether to use animation on the form.
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
       question.  For an answer list, it can be an answer label or code, using
@@ -118,33 +118,33 @@ about the meaning of each key:
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
-      `{"questionLayout": "matrix"}` 
-    * <a name="viewMode"></a>viewMode - (optional) the view mode for the form. Permitted values are 'lg', 
+      `{"questionLayout": "matrix"}`
+    * <a name="viewMode"></a>viewMode - (optional) the view mode for the form. Permitted values are 'lg',
       'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
        screen/container, medium screen/container, small screen/container and a
-       responsive layout. The default value is 'auto'. 
-    * <a name="defaultAnswerLayout"></a>defaultAnswerLayout - 
+       responsive layout. The default value is 'auto'.
+    * <a name="defaultAnswerLayout"></a>defaultAnswerLayout -
       an object that controls the answer layout for each item
       that has a dataType of CWE or CNE and has an answer list but does not specify
-      answerLayout on the item itself. It has a single key of "answerLayout", which 
-      has two keys, "type" and "columns". If "type" is set to be "COMBO_BOX", the 
-      [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget 
+      answerLayout on the item itself. It has a single key of "answerLayout", which
+      has two keys, "type" and "columns". If "type" is set to be "COMBO_BOX", the
+      [autocomplete-lhc](http://lhncbc.github.io/autocomplete-lhc/) widget
       will be used to handle the list. If "type" is set to be "RADIO_CHECKBOX", then
-      all the answers are displayed as either radio buttons or check boxes, 
+      all the answers are displayed as either radio buttons or check boxes,
       and "columns" controls how many columns are used.
       If value of "columns" is "0", there is no columns specified. The answers will fill
-      in available space one after another. If the value of "columns is "1" to "6", 
+      in available space one after another. If the value of "columns is "1" to "6",
       the specified number of columns are used to group the answers.
       "columns" is valid only when "type" is set to be "RADIO_CHECKBOX".
       Here is an example:
-      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "2"}}`      
+      `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "2"}}`
     * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
-      The default is true.      
+      The default is true.
     * formHeaderItems - an array defining fields above the form (see
       [showFormHeader](#showFormHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where
-      Done", and "Comment". If you wish to specify your own definitions, 
+      Done", and "Comment". If you wish to specify your own definitions,
       a complete array should be provided where each
       element in the array should be a hash with the following keys:
         * question - the field label
@@ -156,9 +156,9 @@ about the meaning of each key:
           data.  Each element in the array is a hash with the following keys:
           * text - the display string for the list item
           * code - (optional) a code that identifies the list item
-        * displayControl - This controls display styles of the column or the field.  
-          It is a hash with the keys of "colCSS" for columns styles and "css" for field 
-          styles. The values are an array of hashes of valid CSS styles. Here is an example: 
+        * displayControl - This controls display styles of the column or the field.
+          It is a hash with the keys of "colCSS" for columns styles and "css" for field
+          styles. The values are an array of hashes of valid CSS styles. Here is an example:
           `{"colCSS": [{"name":"width","value":"30%"},{"name":"min-width","value":"4em"}]}`
         * <a name="answerCardinality"></a>answerCardinality - For lists, this
           allows you to control whether list is multi-select or not.  It is a hash
@@ -175,7 +175,7 @@ about the meaning of each key:
   with the following keys:
 
     * questionCode - (required) A code identifying the question or section.
-      This code needs to be unique among its sibling questions. 
+      This code needs to be unique among its sibling questions.
       It should not contain '/'.
     * questionCodeSystem - (optional) the code system for the question code. The default value
       is "LOINC" when the form's **type** is "LOINC".
@@ -236,12 +236,12 @@ about the meaning of each key:
         * URL - a string in a valid URL format
         * EMAIL - a string in a valid email format
         * PHONE - a string in a valid phone number format
-        * NR - a numeric range, in the format of two values separated by "^". 
+        * NR - a numeric range, in the format of two values separated by "^".
                Having one number on either side of "^" is allowed.
-        * SECTION - a special type for sections, which contain sub items in the 
-                    <a href="#items">items</a> field       
-        * TITLE - a special type for separators that display some text.               
-               
+        * SECTION - a special type for sections, which contain sub items in the
+                    <a href="#items">items</a> field
+        * TITLE - a special type for separators that display some text.
+
     * units - For numeric answer fields, this is an optional list for the units
       for the quantity being entered.  Each hash in this array can contain the
       following keys:
@@ -249,7 +249,7 @@ about the meaning of each key:
         * default - If true, this unit will be the default unit, which means it
           will show up in the field when the question is shown and the user does
           not have to pick it.  If false, this key can be omitted.
-    * editable - (optional) If "0" the input field is readonly/disabled; any other value 
+    * editable - (optional) If "0" the input field is readonly/disabled; any other value
       makes the input field editable.
     * header - If true, then this is not a question but a section, which can
       contain its own <a href="#items">items</a> array of questions and sections.
@@ -285,10 +285,10 @@ about the meaning of each key:
       present, a help button will appear next to the question, or if the "Show
       Help/Description" checkbox is used, the text will appear next to the
       question (so it should be brief).
-    * codingInstructionsFormat - (optional) the text format of the codingInstructions, 
-      either 'html' or 'text'. If not specified, the default is 'text'. 
-      If **allowHTMLInInstructions** in **templateOptions** is set to be false, 
-      then codingInstructionsFormat is ignored and treated as if it is set to 'text'. 
+    * codingInstructionsFormat - (optional) the text format of the codingInstructions,
+      either 'html' or 'text'. If not specified, the default is 'text'.
+      If **allowHTMLInInstructions** in **templateOptions** is set to be false,
+      then codingInstructionsFormat is ignored and treated as if it is set to 'text'.
       No HTML formatted coding instructions will be displayed.
     * <a name="calculationMethod"></a>calculationMethod - For fields whose value
       is calculated from other fields, the means of calculation is specified
@@ -300,13 +300,13 @@ about the meaning of each key:
     * defaultAnswer - The same as [defaultAnswer](#defaultAnswer) in the
       templateOptions section.
     * displayControl - an object that controls the display of the item or the section.
-      Supported the fields are: 
-        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'. 
+      Supported the fields are:
+        * answerLayout - the layout of the answers when a item has a dataType of 'CNE' or 'CWE'.
           The supported values are 'COMBO_BOX' (default), and 'RADIO_CHECKBOX'. (see
           [defaultAnswerLayout](#defaultAnswerLayout))
         * css - an array of valid CSS settings that could apply to an item. (limited supports).
-        * colCSS - an array of valid CSS settings that could apply to its related column in a 
-          horizontal table. It only works when its parent item/section has a 
+        * colCSS - an array of valid CSS settings that could apply to its related column in a
+          horizontal table. It only works when its parent item/section has a
           {"questionLayout": "horizontal"} value in its "displayControl".
         * listColHeaders - For questions that are search lists (specified with a
           URL in "externallyDefined" and dataType "CNE" or "CWE") this specifies
@@ -314,52 +314,52 @@ about the meaning of each key:
           This is useful when each list item displays multiple fields.  If
           nothing is specified for this attribute, column headers will not be
           shown. Headers can contain "&nbsp;" for non-breaking spaces between
-          words, but cannot contain HTML tags. 
-        * questionLayout - the layout of the questions in the section. It works on items 
-          that are sections, i.e. they contain sub items. Supported values are: 
+          words, but cannot contain HTML tags.
+        * questionLayout - the layout of the questions in the section. It works on items
+          that are sections, i.e. they contain sub items. Supported values are:
           'vertical' (default), 'horizontal' and 'matrix'.
-        * viewMode - (optional) the view mode for the item. Permitted values are 'lg', 
+        * viewMode - (optional) the view mode for the item. Permitted values are 'lg',
           'md', 'sm', and 'auto', which determine the 4 predefined layouts for large
           screen/container, medium screen/container, small screen/container and a
           responsive layout. It has the priority over the value in the form level [viewMode](#viewMode).
-          If its value is not set, then the form level viewMode value is used for the item.          
+          If its value is not set, then the form level viewMode value is used for the item.
     * dataControl - an array of objects that control the current question's attributes when the controlling
       source question's value changes. Supported fields are:
         * source - an object identifying the controlling source question. It has the following fields:
-            * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The 
+            * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The
               default value is "INTERNAL".
-            * sourceItemCode - the questionCode of the source question in the form. The source question 
-              must be either a sibling of this question (in the tree), or or one of the questions 
+            * sourceItemCode - the questionCode of the source question in the form. The source question
+              must be either a sibling of this question (in the tree), or or one of the questions
               in the containing sections.
-        * onAttribute - optional, the attribute on this question, whose value will be updated by the newly 
+        * onAttribute - optional, the attribute on this question, whose value will be updated by the newly
           constructed value. The default value is "value".
-        * dataFormat - the format of the newly constructed value. It is a hash, such as 
+        * dataFormat - the format of the newly constructed value. It is a hash, such as
           `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, when the **construction**
-           is set to be "ARRAY" or "OBJECT". It is a string, such as `"value.STRENGTHS_AND_FORMS[0]"`, 
+           is set to be "ARRAY" or "OBJECT". It is a string, such as `"value.STRENGTHS_AND_FORMS[0]"`,
            when the **construction** is "SIMPLE". See **construction** for details on how these formats are used.
-        * construction - the method to construct a new value based on the source question's value. 
+        * construction - the method to construct a new value based on the source question's value.
           It supports three types:
-            * SIMPLE - the new value is a direct copy of what is on the controlling source question. 
-              The **dataFormat**'s value must be string. 
-              For example, if it's value is `"value.STRENGTHS_AND_FORMS[0]"`, 
+            * SIMPLE - the new value is a direct copy of what is on the controlling source question.
+              The **dataFormat**'s value must be string.
+              For example, if it's value is `"value.STRENGTHS_AND_FORMS[0]"`,
               the new value could be `"325-2.25-0.19 mg Tab"`.
             * OBJECT - the new value is a hash object. The **dataFormat**'s value must be a hash object.
-              For each key/value pair in the **dataFormat** hash object, the key is a key in the new hash object, 
+              For each key/value pair in the **dataFormat** hash object, the key is a key in the new hash object,
               and the value is from the controlling source question's value or its attributes.
-              For example, if the **dataFormat** is `{"code": "value.code", "text": "value.GeneSymbol"}`, 
+              For example, if the **dataFormat** is `{"code": "value.code", "text": "value.GeneSymbol"}`,
               the new object could be created as `{"code": "NM_004315.5", "text": "ASAH1"}`, where "NM_004315.5"
-              and "ASAH1" are values retrieved from the controlling source question for "value.code" and 
+              and "ASAH1" are values retrieved from the controlling source question for "value.code" and
               "value.GeneSymbol", respectively.
             * ARRAY - the new value is an array. The **dataFormat**'s value must be a hash object.
-              Each element object in the array is constructed according to that hash object. 
-              It is similar to the processing for "OBJECT", except that for each key/value pair in the 
-              **dataFormat** hash object, the value contains an array. 
-              If there are more than one pairs, the arrays retrieved should have the same length. 
-              Elements in the new array are constructed with the corresponding elements in these retrieved arrays.  
-              For example, if the **dataFormat** is `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`, 
-              the "value.RXCUIS" and the "value.STRENGTHS_AND_FORMS" of the controlling source question should 
+              Each element object in the array is constructed according to that hash object.
+              It is similar to the processing for "OBJECT", except that for each key/value pair in the
+              **dataFormat** hash object, the value contains an array.
+              If there are more than one pairs, the arrays retrieved should have the same length.
+              Elements in the new array are constructed with the corresponding elements in these retrieved arrays.
+              For example, if the **dataFormat** is `{"code": "value.RXCUIS", "text": "value.STRENGTHS_AND_FORMS"}`,
+              the "value.RXCUIS" and the "value.STRENGTHS_AND_FORMS" of the controlling source question should
               both contains an array and these two arrays should have the same length.
-              A sample constructed array could be               
+              A sample constructed array could be
               `[{"code": "724614", "text": "325-2.25-0.19 mg Tab"},{"code": "637540", "text": "325-4.5-0.38 mg Tab"},{"code": "848768", "text": "325-4.84 mg Tab"}]`
               where "value.RXCUIS" is `["724614", "637540", "848768"]` and "value.STRENGTHS_AND_FORMS" is
               `["325-2.25-0.19 mg Tab", "325-4.5-0.38 mg Tab", "325-4.84 mg Tab"]`.
@@ -367,64 +367,21 @@ about the meaning of each key:
 ### Emitted (angular) Events:
 
 * **LF_EVENT_REPEATING_ITEM_ADDED** - emitted when a repeatable item or section is added to the form by clicking
-  the "add" button. An event attr object is associated with the event, with the following fields: 
+  the "add" button. An event attr object is associated with the event, with the following fields:
     * event - the event name, 'LF_EVENT_REPEATING_ITEM_ADDED'
     * formId - the code of the form
-    * itemId - the _elementId of the newly added item or section 
+    * itemId - the _elementId of the newly added item or section
     * time - the time stamp when the event happens
 * **LF_EVENT_REPEATING_ITEM_DELETED** - emitted when a repeatable item or section is deleted from the form by clicking
  the "delete" button. The event attr object has the same set of the fields:
     * event - the event name, 'LF_EVENT_REPEATING_ITEM_DELETED'
     * formId - the code of the form
-    * itemId - the _elementId of the item or section that has just been deleted. 
+    * itemId - the _elementId of the item or section that has just been deleted.
     * time - the time stamp when the event happens
 
 
 ### Utility Functions:
- 
-* **LForms.Util.getFormData()** - a function to get the complete form definition data, including the user input data 
-  from the form. The returned data could be fed into a LForms widget directly to render the form. 
-  It has the following parameters:
-    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
-                the LForms rendered form. It could be the DOM element or its id.     
-* **LForms.Util.getUserData()** - a function to get user input data from the form, with or without 
-  form definition data. It has the following parameters:
-    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
-                the LForms rendered form. It could be the DOM element or its id.     
-    * noFormDefData - optional, to include form definition data, the default is false.
-    * noEmptyValue - optional, to remove items that have an empty value, the default is false.
-    * noHiddenItem - optional, to remove items that are hidden by skip logic, the default is false.
-* **LForms.Util.getFormHL7Data()** - a function to get HL7 v2 OBR and OBX segment data from the form, not including
-  empty or hidden questions.
-    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
-                the LForms rendered form. It could be the DOM element or its id.     
-* **LForms.Util.getFormFHIRData()** - a function to get FHIR resource data from the form.
-    * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
-                     and "QuestionnaireResponse" (SDC profile) are supported.
-    * element - optional if there is only one LForms widget on the page, The containing HTML element that includes 
-                the LForms rendered form. It could be the DOM element or its id.      
-    * inBundle - optional, a flag that a DiagnosticReport resources and associated Observation resources
-                 are included in a FHIR Bundle. The default is false.
-    * bundleType - optional, the FHIR Bundle type if inBundle is true.                 
-    * noExtensions - a flag that a standard FHIR Questionnaire is to be created without any extensions, 
-                    when resourceType is Questionnaire. The default is false.
+For a description of functions provided for retrieving user-entered data in
+various formats, including FHIR, and for importing and exporing FHIR resources,
+see the [documentation](https://lhncbc.github.io/lforms/) website.
 
-* **LForms.Util.convertLFormsToFHIRData()** - a function to convert a LForms form data object into a FHIR resource.
-    * resourceType - a FHIR resource type. Currently only "DiagnosticReport", "Questionnaire" (SDC profile)
-                     and "QuestionnaireResponse" (SDC profile) are supported.
-    * formData - a LForms form data object.
-    * noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created 
-                    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse. 
-                    The default is false.
-
-* **LForms.Util.convertFHIRQuestionnaireToLForms()** - a function to convert FHIR SQC Questionnaire resource to 
-  a LForms definition data object.
-    * fhirData - a FHIR Questionnaire resource, which should be generated through the above functions, 
-                 "getFormFHIRData('Questionnaire', ...)" or "convertFHIRQuestionnaireToLForms('Questionnaire',...')".
-* **LForms.Util.mergeFHIRDataIntoLForms()** a function to merge a FHIR resource into an LForms form data object.
-    * resourceType - a FHIR resource type. Currently only "DiagnosticReport" (a DiagnosticReport resource with 
-                     "contained" Observation resources or a "searchset" typed Bundle of a DiagnosticReport and 
-                     associated Observation resources), and "QuestionnaireResponse" (SDC profile) are supported.
-    * fhirData - a FHIR resource, which should be generated through the above function, "getFormFHIRData()".
-    * formData - a LForms form data object.
-     
