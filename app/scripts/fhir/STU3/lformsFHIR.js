@@ -93,7 +93,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -106,7 +107,9 @@ fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
 Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 
-Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+
+Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -21175,7 +21178,7 @@ function addSDCImportFns(ns) {
 
           case "CNE":
           case "CWE":
-            if (this._answerRepeats(item)) {
+            if (ns._answerRepeats(item)) {
               var value = [];
 
               for (var j = 0, jLen = answer.length; j < jLen; j++) {
@@ -21219,6 +21222,44 @@ function addSDCImportFns(ns) {
 
 /***/ }),
 /* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ *  Defines SDC functions (used by both import and export) that are the same
+ *  across the different FHIR versions.  The function takes SDC namespace object
+ *  defined in the sdc export code, and adds additional functions to it.
+ */
+function addCommonSDCFns(ns) {
+  "use strict";
+
+  var self = ns;
+  /**
+   * Check if a LForms item has repeating questions
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+
+  self._questionRepeats = function (item) {
+    return item && item.questionCardinality && item.questionCardinality.max && (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+  },
+  /**
+   * Check if a LForms item has repeating answers
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+  self._answerRepeats = function (item) {
+    return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
+
+/***/ }),
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21271,7 +21312,7 @@ function addCommonSDCImportFns(ns) {
           // if it is a case of repeating questions, not repeating answers
 
 
-          if (this._questionRepeats(defItem)) {
+          if (ns._questionRepeats(defItem)) {
             this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
 
 
@@ -21287,7 +21328,7 @@ function addCommonSDCImportFns(ns) {
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
             }
           } // reset the total number of questions when it is the answers that repeats
-          else if (this._answerRepeats(defItem)) {
+          else if (ns._answerRepeats(defItem)) {
               qrItemInfo.total = 1;
             }
         } // find the matching LForms item

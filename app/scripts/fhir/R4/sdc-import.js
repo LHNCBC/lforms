@@ -1133,7 +1133,7 @@ function addSDCImportFns(ns) {
             break;
           case "CNE":
           case "CWE":
-            if (this._answerRepeats(item)) {
+            if (ns._answerRepeats(item)) {
               var value = [];
               for (var j=0,jLen=answer.length; j<jLen; j++) {
                 var coding = answer[j];

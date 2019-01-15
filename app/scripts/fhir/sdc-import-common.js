@@ -47,7 +47,7 @@ function addCommonSDCImportFns(ns) {
           var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
           // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
-          if (this._questionRepeats(defItem)) {
+          if (ns._questionRepeats(defItem)) {
             this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total);
             // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
@@ -62,7 +62,7 @@ function addCommonSDCImportFns(ns) {
             }
           }
           // reset the total number of questions when it is the answers that repeats
-          else if (this._answerRepeats(defItem)) {
+          else if (ns._answerRepeats(defItem)) {
             qrItemInfo.total = 1;
           }
         }
