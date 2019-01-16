@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.0.1] 2018-01-15
+### Fixed
+- Removed some outdated documentation from form_definitions.md.
+- Reorganized some code (but not in a way the affects public APIs).
+
 ## [14.0.0] 2018-12-22
 ### Changed.
 - The "themes" css file is now in a separate file from the lforms.min.css file

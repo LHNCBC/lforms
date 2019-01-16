@@ -91,9 +91,10 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
-/* harmony import */ var _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
-/* harmony import */ var _lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -102,11 +103,13 @@ fhir.fhirpath = __webpack_require__(1);
 
 fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
 
-fhir.SDC = _lforms_fhir_sdc_js__WEBPACK_IMPORTED_MODULE_1__["default"];
+fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-Object(_lforms_fhir_sdc_converter_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
+Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 
-Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+
+Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -19497,26 +19500,6 @@ var sdcExport = {
   },
 
   /**
-   * Check if a LForms item has repeating questions
-   * @param item a LForms item
-   * @returns {*|boolean}
-   * @private
-   */
-  _questionRepeats: function _questionRepeats(item) {
-    return item && item.questionCardinality && item.questionCardinality.max && (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-  },
-
-  /**
-   * Check if a LForms item has repeating answers
-   * @param item a LForms item
-   * @returns {*|boolean}
-   * @private
-   */
-  _answerRepeats: function _answerRepeats(item) {
-    return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
-  },
-
-  /**
    * Get a code system based on the code system value used in LForms
    * @param codeSystemInLForms code system value used in LForms
    * @private
@@ -20128,312 +20111,6 @@ var sdcExport = {
       ret.push(rule);
     });
     return ret;
-  },
-
-  /**
-   * Merge a QuestionnaireResponse instance into an LForms form object
-   * @param formData an LForms form definition or LFormsData object.
-   * @param qr a QuestionnaireResponse instance
-   * @returns {{}} an updated LForms form definition, with answer data
-   */
-  mergeQuestionnaireResponseToLForms: function mergeQuestionnaireResponseToLForms(formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData();
-
-    var qrInfo = this._getQRStructure(qr);
-
-    this._processQRItemAndLFormsItem(qrInfo, newFormData);
-
-    return newFormData;
-  },
-
-  /**
-   * Get structure information of a QuestionnaireResponse instance
-   * @param qr a QuestionnaireResponse instance
-   * @returns {{}} a QuestionnaireResponse data structure object
-   * @private
-   */
-  _getQRStructure: function _getQRStructure(qr) {
-    var qrInfo = {
-      qrItemsInfo: []
-    };
-
-    if (qr) {
-      this._checkQRItems(qrInfo, qr);
-    }
-
-    return qrInfo;
-  },
-
-  /**
-   * Get the item code from a link id
-   * @param linkId a link id
-   * @returns {*}
-   * @private
-   */
-  _getItemCodeFromLinkId: function _getItemCodeFromLinkId(linkId) {
-    var parts = linkId.split("/");
-    var itemCode = parts[parts.length - 1];
-    return itemCode;
-  },
-
-  /**
-   * Get structural info of a QuestionnaireResponse by going though each level of items
-   * @param parentQRItemInfo the structural info of a parent item
-   * @param parentItem a parent item in a QuestionnaireResponse object
-   * @private
-   */
-  _checkQRItems: function _checkQRItems(parentQRItemInfo, parentQRItem) {
-    var qrItemsInfo = [];
-    var repeatingItemProcessed = {};
-
-    if (parentQRItem && parentQRItem.item) {
-      for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
-        var item = parentQRItem.item[i];
-
-        var itemCode = this._getItemCodeFromLinkId(item.linkId); // first item that has the same code, either repeating or non-repeating
-
-
-        if (!repeatingItemProcessed[itemCode]) {
-          var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem); // create structure info for the item
-
-
-          var repeatingItems = repeatingInfo.repeatingItems;
-
-          for (var j = 0, jLen = repeatingItems.length; j < jLen; j++) {
-            var qrItemInfo = {
-              code: itemCode,
-              item: repeatingItems[j],
-              index: j,
-              total: repeatingInfo.total
-            }; // check observation instances in the sub level
-
-            this._checkQRItems(qrItemInfo, repeatingItems[j]);
-
-            qrItemsInfo.push(qrItemInfo);
-          }
-
-          repeatingItemProcessed[itemCode] = true;
-        }
-      }
-
-      parentQRItemInfo.qrItemsInfo = qrItemsInfo;
-    }
-  },
-
-  /**
-   * Find the number of the repeating items that have the same code
-   * @param code an item code
-   * @param parentQRItem a parent item in a QuestionnaireResponse object
-   * @returns a structural info object for a repeating item
-   * @private
-   */
-  _findTotalRepeatingNum: function _findTotalRepeatingNum(code, parentQRItem) {
-    var total = 0;
-    var repeatingItems = [];
-
-    for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
-      var item = parentQRItem.item[i];
-
-      var itemCode = this._getItemCodeFromLinkId(item.linkId);
-
-      if (itemCode === code) {
-        repeatingItems.push(item);
-
-        if (Array.isArray(item.answer)) {
-          total += item.answer.length; // answers for repeating questions and repeating answers
-        } else {
-          total += 1;
-        }
-      }
-    }
-
-    return {
-      total: total,
-      repeatingItems: repeatingItems
-    };
-  },
-
-  /**
-   * Add repeating items into LForms definition data object
-   * @param parentItem a parent item
-   * @param itemCode code of a repeating item
-   * @param total total number of the repeating item with the same code
-   * @private
-   */
-  _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
-    // find the first (and the only one) item
-    var item = null;
-
-    if (parentItem.items) {
-      for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          item = parentItem.items[i];
-          break;
-        }
-      } // insert new items
-
-
-      if (item) {
-        while (total > 1) {
-          var newItem = angular.copy(item);
-          parentItem.items.splice(i, 0, newItem);
-          total -= 1;
-        }
-      }
-    }
-  },
-
-  /**
-   * Find a matching repeating item by item code and the index in the items array
-   * @param parentItem a parent item
-   * @param itemCode code of a repeating (or non-repeating) item
-   * @param index index of the item in the sub item array of the parent item
-   * @returns {{}} a matching item
-   * @private
-   */
-  _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, itemCode, index) {
-    var item = null;
-    var idx = 0;
-
-    if (parentItem.items) {
-      for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          if (idx === index) {
-            item = parentItem.items[i];
-            break;
-          } else {
-            idx += 1;
-          }
-        }
-      }
-    }
-
-    return item;
-  },
-
-  /**
-   * Find a matching repeating item by item code alone
-   * When used on the LForms definition data object, there is no repeating items yet.
-   * @param parentItem a parent item
-   * @param itemCode code of an item
-   * @returns {{}} a matching item
-   * @private
-   */
-  _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, itemCode) {
-    var item = null;
-
-    if (parentItem.items) {
-      for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          item = parentItem.items[i];
-          break;
-        }
-      }
-    }
-
-    return item;
-  },
-
-  /**
-   * Merge a data item instance into an form item
-   * @param qrItem a data item
-   * @param item a form item
-   * @private
-   */
-
-  /**
-   * Set value and units on a LForms item
-   * @param code an item code
-   * @param answer value for the item
-   * @param item a LForms item
-   * @private
-   */
-  _setupItemValueAndUnit: function _setupItemValueAndUnit(code, answer, item) {
-    if (item && code === item.questionCode && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
-      var dataType = item.dataType; // any one has a unit must be a numerical type, let use REAL for now.
-      // dataType conversion should be handled when panel data are added to lforms-service.
-
-      if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
-        item.dataType = dataType = "REAL";
-      }
-
-      var qrValue = answer[0];
-
-      switch (dataType) {
-        case "INT":
-          if (qrValue.valueQuantity) {
-            item.value = qrValue.valueQuantity.value;
-
-            if (qrValue.valueQuantity.code) {
-              item.unit = {
-                name: qrValue.valueQuantity.code
-              };
-            }
-          } else if (qrValue.valueInteger) {
-            item.value = qrValue.valueInteger;
-          }
-
-          break;
-
-        case "REAL":
-        case "QTY":
-          if (qrValue.valueQuantity) {
-            item.value = qrValue.valueQuantity.value;
-
-            if (qrValue.valueQuantity.code) {
-              item.unit = {
-                name: qrValue.valueQuantity.code
-              };
-            }
-          } else if (qrValue.valueDecimal) {
-            item.value = qrValue.valueDecimal;
-          }
-
-          break;
-
-        case "DT":
-          item.value = qrValue.valueDateTime;
-          break;
-
-        case "CNE":
-        case "CWE":
-          if (this._answerRepeats(item)) {
-            var value = [];
-
-            for (var j = 0, jLen = answer.length; j < jLen; j++) {
-              var coding = answer[j];
-              value.push({
-                "code": coding.valueCoding.code,
-                "text": coding.valueCoding.display
-              });
-            }
-
-            item.value = value;
-          } else {
-            item.value = {
-              "code": qrValue.valueCoding.code,
-              "text": qrValue.valueCoding.display
-            };
-          }
-
-          break;
-
-        case "ST":
-        case "TX":
-          item.value = qrValue.valueString;
-          break;
-
-        case "SECTION":
-        case "TITLE":
-        case "":
-          // do nothing
-          break;
-
-        default:
-          item.value = qrValue.valueString;
-      }
-    }
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (sdcExport);
@@ -21399,13 +21076,336 @@ function addSDCImportFns(ns) {
     }
 
     return ret;
-  }
+  } // Quesitonnaire Response Import
+
+
+  self._mergeQR = {
+    /**
+     * Get structure information of a QuestionnaireResponse instance
+     * @param qr a QuestionnaireResponse instance
+     * @returns {{}} a QuestionnaireResponse data structure object
+     * @private
+     */
+    _getQRStructure: function _getQRStructure(qr) {
+      var qrInfo = {
+        qrItemsInfo: []
+      };
+
+      if (qr) {
+        this._checkQRItems(qrInfo, qr);
+      }
+
+      return qrInfo;
+    },
+
+    /**
+     * Get the item code from a link id
+     * @param linkId a link id
+     * @returns {*}
+     * @private
+     */
+    _getItemCodeFromLinkId: function _getItemCodeFromLinkId(linkId) {
+      var parts = linkId.split("/");
+      var itemCode = parts[parts.length - 1];
+      return itemCode;
+    },
+
+    /**
+     * Get structural info of a QuestionnaireResponse by going though each level of items
+     * @param parentQRItemInfo the structural info of a parent item
+     * @param parentItem a parent item in a QuestionnaireResponse object
+     * @private
+     */
+    _checkQRItems: function _checkQRItems(parentQRItemInfo, parentQRItem) {
+      var qrItemsInfo = [];
+      var repeatingItemProcessed = {};
+
+      if (parentQRItem && parentQRItem.item) {
+        for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
+          var item = parentQRItem.item[i];
+
+          var itemCode = this._getItemCodeFromLinkId(item.linkId); // first item that has the same code, either repeating or non-repeating
+
+
+          if (!repeatingItemProcessed[itemCode]) {
+            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem); // create structure info for the item
+
+
+            var repeatingItems = repeatingInfo.repeatingItems;
+
+            for (var j = 0, jLen = repeatingItems.length; j < jLen; j++) {
+              var qrItemInfo = {
+                code: itemCode,
+                item: repeatingItems[j],
+                index: j,
+                total: repeatingInfo.total
+              }; // check observation instances in the sub level
+
+              this._checkQRItems(qrItemInfo, repeatingItems[j]);
+
+              qrItemsInfo.push(qrItemInfo);
+            }
+
+            repeatingItemProcessed[itemCode] = true;
+          }
+        }
+
+        parentQRItemInfo.qrItemsInfo = qrItemsInfo;
+      }
+    },
+
+    /**
+     * Find the number of the repeating items that have the same code
+     * @param code an item code
+     * @param parentQRItem a parent item in a QuestionnaireResponse object
+     * @returns a structural info object for a repeating item
+     * @private
+     */
+    _findTotalRepeatingNum: function _findTotalRepeatingNum(code, parentQRItem) {
+      var total = 0;
+      var repeatingItems = [];
+
+      for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
+        var item = parentQRItem.item[i];
+
+        var itemCode = this._getItemCodeFromLinkId(item.linkId);
+
+        if (itemCode === code) {
+          repeatingItems.push(item);
+
+          if (Array.isArray(item.answer)) {
+            total += item.answer.length; // answers for repeating questions and repeating answers
+          } else {
+            total += 1;
+          }
+        }
+      }
+
+      return {
+        total: total,
+        repeatingItems: repeatingItems
+      };
+    },
+
+    /**
+     * Add repeating items into LForms definition data object
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating item
+     * @param total total number of the repeating item with the same code
+     * @private
+     */
+    _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
+      // find the first (and the only one) item
+      var item = null;
+
+      if (parentItem.items) {
+        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            item = parentItem.items[i];
+            break;
+          }
+        } // insert new items
+
+
+        if (item) {
+          while (total > 1) {
+            var newItem = angular.copy(item);
+            parentItem.items.splice(i, 0, newItem);
+            total -= 1;
+          }
+        }
+      }
+    },
+
+    /**
+     * Find a matching repeating item by item code and the index in the items array
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating (or non-repeating) item
+     * @param index index of the item in the sub item array of the parent item
+     * @returns {{}} a matching item
+     * @private
+     */
+    _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, itemCode, index) {
+      var item = null;
+      var idx = 0;
+
+      if (parentItem.items) {
+        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            if (idx === index) {
+              item = parentItem.items[i];
+              break;
+            } else {
+              idx += 1;
+            }
+          }
+        }
+      }
+
+      return item;
+    },
+
+    /**
+     * Find a matching repeating item by item code alone
+     * When used on the LForms definition data object, there is no repeating items yet.
+     * @param parentItem a parent item
+     * @param itemCode code of an item
+     * @returns {{}} a matching item
+     * @private
+     */
+    _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, itemCode) {
+      var item = null;
+
+      if (parentItem.items) {
+        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            item = parentItem.items[i];
+            break;
+          }
+        }
+      }
+
+      return item;
+    },
+
+    /**
+     * Set value and units on a LForms item
+     * @param code an item code
+     * @param answer value for the item
+     * @param item a LForms item
+     * @private
+     */
+    _setupItemValueAndUnit: function _setupItemValueAndUnit(code, answer, item) {
+      if (item && code === item.questionCode && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
+        var dataType = item.dataType; // any one has a unit must be a numerical type, let use REAL for now.
+        // dataType conversion should be handled when panel data are added to lforms-service.
+
+        if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
+          item.dataType = dataType = "REAL";
+        }
+
+        var qrValue = answer[0];
+
+        switch (dataType) {
+          case "INT":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+
+              if (qrValue.valueQuantity.code) {
+                item.unit = {
+                  name: qrValue.valueQuantity.code
+                };
+              }
+            } else if (qrValue.valueInteger) {
+              item.value = qrValue.valueInteger;
+            }
+
+            break;
+
+          case "REAL":
+          case "QTY":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+
+              if (qrValue.valueQuantity.code) {
+                item.unit = {
+                  name: qrValue.valueQuantity.code
+                };
+              }
+            } else if (qrValue.valueDecimal) {
+              item.value = qrValue.valueDecimal;
+            }
+
+            break;
+
+          case "DT":
+            item.value = qrValue.valueDateTime;
+            break;
+
+          case "CNE":
+          case "CWE":
+            if (ns._answerRepeats(item)) {
+              var value = [];
+
+              for (var j = 0, jLen = answer.length; j < jLen; j++) {
+                var coding = answer[j];
+                value.push({
+                  "code": coding.valueCoding.code,
+                  "text": coding.valueCoding.display
+                });
+              }
+
+              item.value = value;
+            } else {
+              item.value = {
+                "code": qrValue.valueCoding.code,
+                "text": qrValue.valueCoding.display
+              };
+            }
+
+            break;
+
+          case "ST":
+          case "TX":
+            item.value = qrValue.valueString;
+            break;
+
+          case "SECTION":
+          case "TITLE":
+          case "":
+            // do nothing
+            break;
+
+          default:
+            item.value = qrValue.valueString;
+        }
+      }
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
 /* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ *  Defines SDC functions (used by both import and export) that are the same
+ *  across the different FHIR versions.  The function takes SDC namespace object
+ *  defined in the sdc export code, and adds additional functions to it.
+ */
+function addCommonSDCFns(ns) {
+  "use strict";
+
+  var self = ns;
+  /**
+   * Check if a LForms item has repeating questions
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+
+  self._questionRepeats = function (item) {
+    return item && item.questionCardinality && item.questionCardinality.max && (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+  },
+  /**
+   * Check if a LForms item has repeating answers
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+  self._answerRepeats = function (item) {
+    return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
+
+/***/ }),
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21418,15 +21418,34 @@ __webpack_require__.r(__webpack_exports__);
 function addCommonSDCImportFns(ns) {
   "use strict";
 
-  var self = ns;
+  var self = ns; // QuestionnaireResponse Import
+
+  var qrImport = self._mergeQR;
+  /**
+   * Merge a QuestionnaireResponse instance into an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
+   * @param qr a QuestionnaireResponse instance
+   * @returns {{}} an updated LForms form definition, with answer data
+   */
+
+  qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
+    // get the default settings in case they are missing in the form data
+    var newFormData = new LForms.LFormsData(formData).getFormData(); // The reference to _mergeQR below is here because this function gets copied to
+    // the containing object to be a part of the public API.
+
+    var qrInfo = qrImport._getQRStructure(qr);
+
+    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
+
+    return newFormData;
+  },
   /**
    * Merge data into items on the same level
    * @param parentQRItemInfo structural information of a parent item
    * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
    * @private
    */
-
-  self._processQRItemAndLFormsItem = function (parentQRItemInfo, parentLFormsItem) {
+  qrImport._processQRItemAndLFormsItem = function (parentQRItemInfo, parentLFormsItem) {
     // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
     for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
       var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
@@ -21439,7 +21458,7 @@ function addCommonSDCImportFns(ns) {
           // if it is a case of repeating questions, not repeating answers
 
 
-          if (this._questionRepeats(defItem)) {
+          if (ns._questionRepeats(defItem)) {
             this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
 
 
@@ -21455,7 +21474,7 @@ function addCommonSDCImportFns(ns) {
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
             }
           } // reset the total number of questions when it is the answers that repeats
-          else if (this._answerRepeats(defItem)) {
+          else if (ns._answerRepeats(defItem)) {
               qrItemInfo.total = 1;
             }
         } // find the matching LForms item
@@ -21480,7 +21499,9 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
-  };
+  }; // Copy the main merge function to preserve the same API usage.
+
+  self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);

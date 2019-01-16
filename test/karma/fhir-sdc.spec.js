@@ -243,7 +243,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirAnswer = [{
               valueQuantity: { value: 128, code: "kg"}
             }];
-            fhir.SDC._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
+            fhir.SDC._mergeQR._setupItemValueAndUnit('12345', fhirAnswer, lfItem);
             assert.equal(lfItem.value, 128);
             assert.equal(lfItem.unit.name, "kg");
           });
