@@ -4,6 +4,8 @@
  * It provides the following functions:
  * convertQuestionnaireToLForms()
  * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
+ * mergeQuestionnaireResponseToLForms()
+ * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 function addSDCImportFns(ns) {
 "use strict";

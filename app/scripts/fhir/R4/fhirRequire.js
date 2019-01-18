@@ -4,10 +4,12 @@ if (!LForms.FHIR)
   LForms.FHIR = {};
 var fhir = LForms.FHIR[fhirVersion] = {};
 fhir.fhirpath = require('fhirpath');
-import dr from './lforms-fhir-diagnostic-report.js';
+import dr from '../lforms-fhir-diagnostic-report.js';
 fhir.DiagnosticReport = dr;
 import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;
+import addCommonSDCExportFns from '../sdc-export-common.js';
+addCommonSDCExportFns(fhir.SDC);
 import addSDCImportFns from './sdc-import.js';
 addSDCImportFns(fhir.SDC);
 import addCommonSDCFns from '../sdc-common.js';

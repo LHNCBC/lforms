@@ -130,8 +130,11 @@ LForms.Util = {
    *    together in a bundle.  When this is not present, a bundle will not be
    *    used.
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
-   *        without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
-   *        The default is false.
+   *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
+   *    The default is false.
+   *  * subject: A local FHIR resource that is the subject of the output resource.
+   *    If provided, a reference to this resource will be added to the output FHIR
+   *    resource when applicable.
    * @returns {*} a FHIR resource
    */
   _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
@@ -142,17 +145,20 @@ LForms.Util = {
     var fhirData = null;
     if (formData) {
       var noExtensions = options ? options.noExtensions : undefined;
+      var subject = options ? options.subject : undefined;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
-          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, null, inBundle, bundleType);
+          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData,
+            subject, inBundle, bundleType);
           break;
         case "Questionnaire":
           fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
           break;
         case "QuestionnaireResponse":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
+            noExtensions, subject);
           break;
       }
     }
@@ -633,6 +639,24 @@ LForms.Util = {
         }
       });
     }
-  }
+  },
 
-  };
+
+  /**
+   *  Creates a Reference to the given FHIR resource, to be used an a subject in
+   *  another resource.
+   * @param fhirRes the FHIR resource for which to create a Reference.
+   * @return a FHIR Reference, with a local reference to fhirRes.
+   */
+  createLocalFHIRReference: function(fhirRes) {
+    var ref = {"reference": fhirRes.resourceType+"/" + fhirRes.id};
+    if (fhirRes.resourceType === "Patient") {
+      if (fhirRes.name && fhirRes.name.length > 0) {
+        ref.display = fhirRes.name[0].given[0] + " " + fhirRes.name[0].family;
+      }
+    }
+    // Not sure what to put for display for something other than patient, but it
+    // is optional, so for now I will just leave it blank.
+    return ref;
+  }
+};
