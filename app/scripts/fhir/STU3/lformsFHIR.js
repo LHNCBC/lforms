@@ -20068,7 +20068,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
  * It provides the following functions:
  * convertQuestionnaireToLForms()
  * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
- * mergeQuestionnaireResponseToLForms()
+ * mergeQuestionnaireResponseToLForms()  (defined in sdc-import-common.js)
  * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 function addSDCImportFns(ns) {

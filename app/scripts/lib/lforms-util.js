@@ -652,9 +652,21 @@ LForms.Util = {
     var ref = {"reference": fhirRes.resourceType+"/" + fhirRes.id};
     if (fhirRes.resourceType === "Patient") {
       if (fhirRes.name && fhirRes.name.length > 0) {
-        ref.display = fhirRes.name[0].given[0] + " " + fhirRes.name[0].family;
+        var name = fhirRes.name[0];
+        if (name.text)
+          ref.display = name.text;
+        else {
+          if (name.given && name.given.length > 0)
+            ref.display = name.given[0];
+          if (name.family) {
+            if (ref.display)
+              ref.display += ' ';
+            ref.display += name.family;
+          }
+        }
       }
     }
+
     // Not sure what to put for display for something other than patient, but it
     // is optional, so for now I will just leave it blank.
     return ref;
