@@ -24,7 +24,8 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'dist'
+    dist: 'dist',
+    generated: require('./bower.json').appPath + '/generated'
   };
 
   // Define the configuration for all the tasks
@@ -53,6 +54,10 @@ module.exports = function (grunt) {
           src: wiredep({includeSelf: true}).css.concat(
             'bower_components/bootstrap/dist/css/bootstrap.css'),
           dest: '<%= uncompressedDist %>/styles/lforms.min.css'
+        },
+        {
+          src: 'app/styles/themes.css',
+          dest: '<%= uncompressedDist %>/styles/themes.min.css'
         }]
       }
     },
@@ -235,7 +240,8 @@ module.exports = function (grunt) {
           src: [
             '.tmp',
             '<%= yeoman.dist %>/{,*/}*',
-            '!<%= yeoman.dist %>/.git*'
+            '!<%= yeoman.dist %>/.git*',
+            '<%= yeoman.generated %>/**/*'
           ]
         }]
       },
@@ -428,8 +434,21 @@ module.exports = function (grunt) {
           ]
         }, {
           expand: true,
+          dest: '<%= yeoman.generated %>/styles',
+          cwd: 'node_modules/autocomplete-lhc/source',
+          src: [
+            '*png'
+          ]
+        }, {
+          expand: true,
+          dest: '<%= yeoman.generated %>/styles/',
+          cwd: 'node_modules/autocomplete-lhc/source',
+          src: 'auto_completion.css',
+          rename: function() {return '<%= yeoman.generated %>/styles/autocomplete-lhc.css'}
+        }, {
+          expand: true,
           dest: '<%= uncompressedDist %>/styles',
-          cwd: 'bower_components/autocomplete-lhc/source',
+          cwd: 'node_modules/autocomplete-lhc/source',
           src: [
             '*png'
           ]
@@ -533,9 +552,9 @@ module.exports = function (grunt) {
     'readBowerVersion',
     'copy:dist',
     'cssmin',
+    'shell:dist_dir_link', // needed by webpack
+    'shell:webpack', // produces files needed by uglify
     'uglify',
-    'shell:dist_dir_link',
-    'shell:webpack',
     'compress'
   ]);
 

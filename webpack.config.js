@@ -42,9 +42,17 @@ for (let version of fhirVersions) {
 
   let minConfig = commonConfig();
   minConfig.entry = entryFile;
-  minConfig.output.filename = './dist/latest/fhir/'+version+'/lformsFHIR.min.js',
+  let versionedDist = 'lforms-'+require('./bower.json').version;
+  minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
   minConfig.mode = 'production';
   configs.push(minConfig);
+
+  // autocomplete-lhc
+  let acConfig = commonConfig();
+  acConfig.entry = './node_modules/autocomplete-lhc/source/index.js';
+  acConfig.output.filename = './app/generated/scripts/autocomplete-lhc.js';
+  acConfig.mode = 'none';
+  configs.push(acConfig);
 }
 
 module.exports = configs;

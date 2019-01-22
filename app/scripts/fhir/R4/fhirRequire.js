@@ -6,10 +6,14 @@ var fhir = LForms.FHIR[fhirVersion] = {};
 fhir.fhirpath = require('fhirpath');
 import dr from './lforms-fhir-diagnostic-report.js';
 fhir.DiagnosticReport = dr;
-import fhir_sdc from './lforms-fhir-sdc.js';
+import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;
-import addSDCImportFns from './lforms-fhir-sdc-converter.js';
+import addSDCImportFns from './sdc-import.js';
 addSDCImportFns(fhir.SDC);
+import addCommonSDCFns from '../sdc-common.js';
+addCommonSDCFns(fhir.SDC);
+import addCommonSDCImportFns from '../sdc-import-common.js';
+addCommonSDCImportFns(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};

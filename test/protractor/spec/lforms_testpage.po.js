@@ -35,7 +35,7 @@ var TestPage = function() {
   };
 
   var heightFieldID= '/54126-8/8302-2/1/1';
-  var autoCompBasePage = require("../../../bower_components/autocomplete-lhc/test/protractor/basePage").BasePage;
+  var autoCompBasePage = require("../../../node_modules/autocomplete-lhc/test/protractor/basePage").BasePage;
   var autoCompHelpers = new autoCompBasePage();
   var rtnObj = {};
   // Define functions for opening forms, via a hashmap from form name (short)

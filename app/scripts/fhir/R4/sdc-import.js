@@ -915,6 +915,274 @@ function addSDCImportFns(ns) {
     return ret;
   }
 
+
+  // Quesitonnaire Response Import
+  self._mergeQR = {
+
+    /**
+     * Get structure information of a QuestionnaireResponse instance
+     * @param qr a QuestionnaireResponse instance
+     * @returns {{}} a QuestionnaireResponse data structure object
+     * @private
+     */
+    _getQRStructure : function(qr) {
+      var qrInfo = {
+        qrItemsInfo: []
+      };
+      if (qr) {
+        this._checkQRItems(qrInfo, qr);
+      }
+      return qrInfo;
+    },
+
+
+    /**
+     * Get the item code from a link id
+     * @param linkId a link id
+     * @returns {*}
+     * @private
+     */
+    _getItemCodeFromLinkId: function(linkId) {
+      var parts = linkId.split("/");
+      var itemCode = parts[parts.length -1];
+      return itemCode;
+    },
+
+
+    /**
+     * Get structural info of a QuestionnaireResponse by going though each level of items
+     * @param parentQRItemInfo the structural info of a parent item
+     * @param parentItem a parent item in a QuestionnaireResponse object
+     * @private
+     */
+    _checkQRItems : function(parentQRItemInfo, parentQRItem) {
+
+      var qrItemsInfo = [];
+      var repeatingItemProcessed = {};
+
+      if (parentQRItem && parentQRItem.item) {
+        for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
+          var item = parentQRItem.item[i];
+          var itemCode = this._getItemCodeFromLinkId(item.linkId);
+          // first item that has the same code, either repeating or non-repeating
+          if (!repeatingItemProcessed[itemCode]) {
+            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem);
+
+            // create structure info for the item
+            var repeatingItems = repeatingInfo.repeatingItems;
+            for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
+              var qrItemInfo = {
+                code: itemCode,
+                item: repeatingItems[j],
+                index: j,
+                total: repeatingInfo.total
+              };
+              // check observation instances in the sub level
+              this._checkQRItems(qrItemInfo, repeatingItems[j]);
+              qrItemsInfo.push(qrItemInfo);
+            }
+            repeatingItemProcessed[itemCode] = true;
+          }
+        }
+        parentQRItemInfo.qrItemsInfo = qrItemsInfo;
+      }
+    },
+
+
+    /**
+     * Find the number of the repeating items that have the same code
+     * @param code an item code
+     * @param parentQRItem a parent item in a QuestionnaireResponse object
+     * @returns a structural info object for a repeating item
+     * @private
+     */
+    _findTotalRepeatingNum : function(code, parentQRItem) {
+
+      var total = 0;
+      var repeatingItems = [];
+      for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
+        var item = parentQRItem.item[i];
+        var itemCode = this._getItemCodeFromLinkId(item.linkId);
+        if (itemCode === code) {
+          repeatingItems.push(item);
+          if (Array.isArray(item.answer)) {
+            total += item.answer.length; // answers for repeating questions and repeating answers
+          }
+          else {
+            total += 1;
+          }
+        }
+      }
+
+      return {
+        total: total,
+        repeatingItems: repeatingItems
+      };
+    },
+
+
+    /**
+     * Add repeating items into LForms definition data object
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating item
+     * @param total total number of the repeating item with the same code
+     * @private
+     */
+    _addRepeatingItems : function(parentItem, itemCode, total) {
+      // find the first (and the only one) item
+      var item = null;
+      if (parentItem.items) {
+        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            item = parentItem.items[i];
+            break;
+          }
+        }
+        // insert new items
+        if (item) {
+          while(total > 1) {
+            var newItem = angular.copy(item);
+            parentItem.items.splice(i, 0, newItem);
+            total -= 1;
+          }
+        }
+      }
+    },
+
+
+    /**
+     * Find a matching repeating item by item code and the index in the items array
+     * @param parentItem a parent item
+     * @param itemCode code of a repeating (or non-repeating) item
+     * @param index index of the item in the sub item array of the parent item
+     * @returns {{}} a matching item
+     * @private
+     */
+    _findTheMatchingItemByCodeAndIndex : function(parentItem, itemCode, index) {
+      var item = null;
+      var idx = 0;
+      if (parentItem.items) {
+        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            if (idx === index) {
+              item = parentItem.items[i];
+              break;
+            }
+            else {
+              idx += 1;
+            }
+          }
+        }
+      }
+      return item;
+    },
+
+
+    /**
+     * Find a matching repeating item by item code alone
+     * When used on the LForms definition data object, there is no repeating items yet.
+     * @param parentItem a parent item
+     * @param itemCode code of an item
+     * @returns {{}} a matching item
+     * @private
+     */
+    _findTheMatchingItemByCode : function(parentItem, itemCode) {
+      var item = null;
+      if (parentItem.items) {
+        for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
+          if (itemCode === parentItem.items[i].questionCode) {
+            item = parentItem.items[i];
+            break;
+          }
+        }
+      }
+      return item;
+    },
+
+
+    /**
+     * Set value and units on a LForms item
+     * @param code an item code
+     * @param answer value for the item
+     * @param item a LForms item
+     * @private
+     */
+    _setupItemValueAndUnit : function(code, answer, item) {
+
+      if (item && code === item.questionCode && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
+        var dataType = item.dataType;
+
+        // any one has a unit must be a numerical type, let use REAL for now.
+        // dataType conversion should be handled when panel data are added to lforms-service.
+        if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
+          item.dataType = dataType = "REAL";
+        }
+
+        var qrValue = answer[0];
+
+        switch (dataType) {
+          case "INT":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+              if(qrValue.valueQuantity.code) {
+                item.unit = {name: qrValue.valueQuantity.code};
+              }
+            }
+            else if (qrValue.valueInteger) {
+              item.value = qrValue.valueInteger;
+            }
+            break;
+          case "REAL":
+          case "QTY":
+            if (qrValue.valueQuantity) {
+              item.value = qrValue.valueQuantity.value;
+              if(qrValue.valueQuantity.code) {
+                item.unit = {name: qrValue.valueQuantity.code};
+              }
+            }
+            else if (qrValue.valueDecimal) {
+              item.value = qrValue.valueDecimal;
+            }
+            break;
+          case "DT":
+            item.value = qrValue.valueDateTime;
+            break;
+          case "CNE":
+          case "CWE":
+            if (ns._answerRepeats(item)) {
+              var value = [];
+              for (var j=0,jLen=answer.length; j<jLen; j++) {
+                var coding = answer[j];
+                value.push({
+                  "code": coding.valueCoding.code,
+                  "text": coding.valueCoding.display
+                });
+              }
+              item.value = value;
+            }
+            else {
+              item.value = {
+                "code": qrValue.valueCoding.code,
+                "text": qrValue.valueCoding.display
+              };
+            }
+            break;
+          case "ST":
+          case "TX":
+            item.value = qrValue.valueString;
+            break;
+          case "SECTION":
+          case "TITLE":
+          case "":
+            // do nothing
+            break;
+          default:
+            item.value = qrValue.valueString;
+        }
+      }
+    }
+  }
+
 }
 
 export default addSDCImportFns;
