@@ -13,8 +13,6 @@
  * -- Convert existing LOINC panels/forms data in LForms format into FHIR (standard or SDC) Questionnaire data
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
- * mergeQuestionnaireResponseToLForms()
- * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 var sdcVersion = '3.5.0';
 
@@ -539,36 +537,6 @@ var sdcExport = {
             });
       }
     }
-  },
-
-
-  /**
-   * Convert LForms captured data to FHIR SDC QuestionnaireResponse
-   * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
-   */
-  convertLFormsToQuestionnaireResponse: function(lfData, noExtensions) {
-    var target = {};
-    if (lfData) {
-      var source = lfData.getFormData(true,true,true,true);
-      this._processRepeatingItemValues(source);
-      this._setResponseFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        target.item = [];
-        for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          if (!source.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(source.items[i], source);
-            target.item.push(newItem);
-          }
-        }
-      }
-    }
-    // FHIR doesn't allow null values, strip them out.
-    LForms.Util.pruneNulls(target);
-    return target;
   },
 
 

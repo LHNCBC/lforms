@@ -1,3 +1,5 @@
+// Tests FHIR output and import of FHIR resources.
+
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
@@ -668,6 +670,47 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             progressField.click();
             expect(zeitpunktField.isPresent()).toBe(false);
           });
+        });
+      });
+    });
+
+    describe('Subject option with a Patient resource', function() {
+      beforeAll(function() {
+        tp.openBaseTestPage();
+        tp.setFHIRVersion(fhirVersion);
+        tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+        var height = element(by.id('/8302-2/1'));
+        height.sendKeys('70');
+      });
+
+      var patientRes = {
+        id: 3,
+        resourceType: 'Patient',
+        name: [ {
+          family: 'Smith',
+          given: ['John']
+        }]
+      };
+
+      it('should put the patient ID into the QuestionnaireResponse', function() {
+        getFHIRResource("QuestionnaireResponse", fhirVersion, {subject: patientRes}).
+            then(function(callbackData) {
+          let [error, fhirData] = callbackData;
+          expect(error).toBeNull();
+          expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+          expect(fhirData.subject.reference).toBe('Patient/3');
+          expect(fhirData.subject.display).toBe('John Smith');
+        });
+      });
+
+      it('should put the patient ID into the DiagnosticReport', function() {
+        getFHIRResource("DiagnosticReport", fhirVersion, {subject: patientRes}).
+            then(function(callbackData) {
+          let [error, fhirData] = callbackData;
+          expect(error).toBeNull();
+          expect(fhirData.resourceType).toBe("DiagnosticReport");
+          expect(fhirData.subject.reference).toBe('Patient/3');
+          expect(fhirData.subject.display).toBe('John Smith');
         });
       });
     });

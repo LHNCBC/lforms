@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.1.0] 2018-01-22
+### Added
+- Added an option to specify the subject for an exported FHIR resource.
+
 ## [14.0.1] 2018-01-15
 ### Fixed
 - Removed some outdated documentation from form_definitions.md.
