@@ -660,8 +660,9 @@ LForms.Util = {
             ref.display = name.given[0];
           if (name.family) {
             if (ref.display)
-              ref.display += ' ';
-            ref.display += name.family;
+              ref.display = ref.display+' '+name.family;
+            else
+              ref.display = name.family;
           }
         }
       }
