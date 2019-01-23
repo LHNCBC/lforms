@@ -228,14 +228,14 @@ LForms.Util = {
     if (!fhirVersion)
       fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
     if (!fhirVersion) {
-      throw 'Could not determine the FHIR version for this resource.  '+
+      throw new Error('Could not determine the FHIR version for this resource.  '+
         'Please make sure it is specified via meta.profile (see '+
         'http://build.fhir.org/versioning.html#mp-version and '+
         'https://www.hl7.org/fhir/references.html#canonical).  '+
         'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
         ' (for Questionnaire version 3.5).'+
         'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
-        ' (for SDC Questionnaire version 3.5).'
+        ' (for SDC Questionnaire version 3.5).');
     }
     else
       fhirVersion =  this.validateFHIRVersion(fhirVersion);
@@ -273,11 +273,17 @@ LForms.Util = {
    */
   validateFHIRVersion: function(version) {
     if (LForms.Util.FHIRSupport[version]) {
-      if (!LForms.FHIR[version])
-        throw 'Version '+version+' of FHIR is supported, but the supporting code was not loaded.';
+      if (!LForms.FHIR) {
+        throw new Error('The FHIR support files for LHC-Forms do not appear to '+
+          'have been loaded.  Please consult the documentation at '+
+          'http://lhncbc.github.io/lforms/#fhirSupport.');
+      }
+      else if (!LForms.FHIR[version])
+        throw new Error('Version '+version+
+          ' of FHIR is supported, but the supporting code was not loaded.');
     }
     else
-      throw 'Version '+version+' of FHIR is not supported.';
+      throw new Error('Version '+version+' of FHIR is not supported.');
     return version;
   },
 
