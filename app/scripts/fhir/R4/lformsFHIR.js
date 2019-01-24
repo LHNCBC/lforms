@@ -92,9 +92,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(72);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -105,11 +106,13 @@ fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODU
 
 fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
+Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 
-Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
 
-Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
+Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
+
+Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_5__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -18185,24 +18188,6 @@ var dr = {
   },
 
   /**
-   * Get a patient's display name
-   * @param patient a Patient instance
-   * @returns {string} a formatted patient name
-   * @private
-   */
-  _getPatientName: function _getPatientName(patient) {
-    var name = "";
-
-    if (patient && patient.name) {
-      if (patient.name.length > 0) {
-        name = patient.name[0].given[0] + " " + patient.name[0].family[0];
-      }
-    }
-
-    return name;
-  },
-
-  /**
    * Get the additional data in a form's formHeaderItems
    * Note: For DiagnosticReport only the effectiveDateTime is needed
    * @param formData an LFormsData object
@@ -18512,14 +18497,15 @@ var dr = {
   /**
    * Generate FHIR DiagnosticReport data from an LForms form data
    * @param formData an LFormsData object
-   * @param patient optional, patient data
+   * @param subject optional, A local FHIR resource that is the subject for this
+   *  DiagnoticReport.
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        should be placed into a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Diagnostic Report instance
    */
-  createDiagnosticReport: function createDiagnosticReport(formData, patient, inBundle, bundleType) {
+  createDiagnosticReport: function createDiagnosticReport(formData, subject, inBundle, bundleType) {
     var dr = null,
         contained = [];
 
@@ -18542,15 +18528,8 @@ var dr = {
         },
         "result": drContent.result,
         "contained": contained
-      }; // patient data
-
-      if (patient) {
-        dr["subject"] = {
-          "reference": "Patient/" + patient.id,
-          "display": this._getPatientName(patient)
-        };
-      } // obr data
-
+      };
+      if (subject) dr.subject = LForms.Util.createLocalFHIRReference(subject); // obr data
 
       var extension = this._getExtensionData(formAndUserData);
 
@@ -18972,8 +18951,6 @@ __webpack_require__.r(__webpack_exports__);
  * -- Convert existing LOINC panels/forms data in LForms format into FHIR (standard or SDC) Questionnaire data
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
- * mergeQuestionnaireResponseToLForms()
- * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 var sdcVersion = '3.5.0';
 var sdcExport = {
@@ -19451,41 +19428,6 @@ var sdcExport = {
         });
       }
     }
-  },
-
-  /**
-   * Convert LForms captured data to FHIR SDC QuestionnaireResponse
-   * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
-   */
-  convertLFormsToQuestionnaireResponse: function convertLFormsToQuestionnaireResponse(lfData, noExtensions) {
-    var target = {};
-
-    if (lfData) {
-      var source = lfData.getFormData(true, true, true, true);
-
-      this._processRepeatingItemValues(source);
-
-      this._setResponseFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        target.item = [];
-
-        for (var i = 0, iLen = source.items.length; i < iLen; i++) {
-          if (!source.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(source.items[i], source);
-
-            target.item.push(newItem);
-          }
-        }
-      }
-    } // FHIR doesn't allow null values, strip them out.
-
-
-    LForms.Util.pruneNulls(target);
-    return target;
   },
 
   /**
@@ -20205,6 +20147,64 @@ var sdcExport = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/**
+ *  Defines SDC export functions that are the same across the different FHIR
+ *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  code, and adds additional functions to it.
+ */
+function addCommonSDCExportFns(ns) {
+  "use strict";
+
+  var self = ns;
+  /**
+   * Convert LForms captured data to FHIR SDC QuestionnaireResponse
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns {{}}
+   */
+
+  self.convertLFormsToQuestionnaireResponse = function (lfData, noExtensions, subject) {
+    var target = {};
+
+    if (lfData) {
+      var source = lfData.getFormData(true, true, true, true);
+
+      this._processRepeatingItemValues(source);
+
+      this._setResponseFormLevelFields(target, source, noExtensions);
+
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+
+        for (var i = 0, iLen = source.items.length; i < iLen; i++) {
+          if (!source.items[i]._repeatingItem) {
+            var newItem = this._processResponseItem(source.items[i], source);
+
+            target.item.push(newItem);
+          }
+        }
+      }
+    } // FHIR doesn't allow null values, strip them out.
+
+
+    LForms.Util.pruneNulls(target);
+    if (subject) target["subject"] = LForms.Util.createLocalFHIRReference(subject);
+    return target;
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
+
+/***/ }),
+/* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -20213,6 +20213,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
  * It provides the following functions:
  * convertQuestionnaireToLForms()
  * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
+ * mergeQuestionnaireResponseToLForms()  (defined in sdc-import-common.js)
+ * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
  */
 function addSDCImportFns(ns) {
   "use strict";
@@ -21488,7 +21490,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21528,7 +21530,7 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

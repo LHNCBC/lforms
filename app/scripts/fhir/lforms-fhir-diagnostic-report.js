@@ -30,23 +30,6 @@ var dr = {
 
 
   /**
-   * Get a patient's display name
-   * @param patient a Patient instance
-   * @returns {string} a formatted patient name
-   * @private
-   */
-  _getPatientName : function(patient) {
-    var name = "";
-    if (patient && patient.name) {
-      if (patient.name.length > 0) {
-        name = patient.name[0].given[0] + " " + patient.name[0].family[0];
-      }
-    }
-    return name;
-  },
-
-
-  /**
    * Get the additional data in a form's formHeaderItems
    * Note: For DiagnosticReport only the effectiveDateTime is needed
    * @param formData an LFormsData object
@@ -357,14 +340,15 @@ var dr = {
   /**
    * Generate FHIR DiagnosticReport data from an LForms form data
    * @param formData an LFormsData object
-   * @param patient optional, patient data
+   * @param subject optional, A local FHIR resource that is the subject for this
+   *  DiagnoticReport.
    * @param inBundle optional, a flag that a DiagnosticReport resources and associated Observation resources
    *        should be placed into a FHIR Bundle. The default is false.
    * @param bundleType, optional, the FHIR Bundle type if inBundle is true.
    *        Only "transaction" and "collection" types are allowed.
    * @returns {{}} a Diagnostic Report instance
    */
-  createDiagnosticReport : function(formData, patient, inBundle, bundleType) {
+  createDiagnosticReport : function(formData, subject, inBundle, bundleType) {
     var dr = null, contained =[];
     if (formData) {
 
@@ -390,13 +374,9 @@ var dr = {
         "contained": contained
       };
 
-      // patient data
-      if (patient) {
-        dr["subject"] = {
-          "reference": "Patient/" + patient.id,
-          "display": this._getPatientName(patient)
-        }
-      }
+      if (subject)
+        dr.subject = LForms.Util.createLocalFHIRReference(subject);
+
       // obr data
       var extension = this._getExtensionData(formAndUserData);
       if (extension["lforms_dateDone"]) {
