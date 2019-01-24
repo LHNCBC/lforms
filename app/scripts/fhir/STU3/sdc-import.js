@@ -166,7 +166,7 @@ function addSDCImportFns(ns) {
     _processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
-    _processHiddenItem(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
@@ -237,14 +237,14 @@ function addSDCImportFns(ns) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = null;
-        for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
-        }
+        var source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
         var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
         if(source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {code: answer.code};
+        }
+        else if(source.dataType === 'QTY') {
+            condition.trigger = {value: answer.value};
         }
         else {
           condition.trigger = {value: answer};
@@ -278,13 +278,13 @@ function addSDCImportFns(ns) {
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
    */
-  function _processHiddenItem(lfItem, qItem) {
+  self._processHiddenItem = function (lfItem, qItem) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
     if(ci) {
       lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
     }
     return lfItem._isHidden;
-  }
+  };
 
 
   /**
@@ -369,31 +369,25 @@ function addSDCImportFns(ns) {
 
     var val = _getValueWithPrefixKey(qItem, /^initial/);
     if (val) {
+      var answer = null;
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
         if (qItem.repeats) {
-          lfItem.value = [{code: val.code, text: val.display}];
-          lfItem.defaultAnswer = [{code: val.code, text: val.display}];
+          answer = [{code: val.code, text: val.display}];
         }
         // single selection
         else {
-          lfItem.value = {code: val.code, text: val.display};
-          lfItem.defaultAnswer = {code: val.code, text: val.display};
+          answer = {code: val.code, text: val.display};
         }
       }
       else if(lfItem.dataType === 'QTY') {
         if (val.value !== undefined) {
-          lfItem.value = val.value;
-          lfItem.defaultAnswer = val.value;
-        }
-        let unit = val.code? val.code: val.unit;
-        if (unit) {
-          lfItem.unit = {name: unit};
+          answer = val.value;
         }
       }
       else {
-        lfItem.value = val;
-        lfItem.defaultAnswer = val;
+        answer = val;
       }
+      lfItem.defaultAnswer = answer;
     }
   };
 
@@ -408,6 +402,7 @@ function addSDCImportFns(ns) {
   function _processUnitList(lfItem, qItem) {
     
     var lformsUnits = [];
+    var lformsDefaultUnit = null;
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
     if(unitOption && unitOption.length > 0) {
       for(var i = 0; i < unitOption.length; i++) {
@@ -417,17 +412,31 @@ function addSDCImportFns(ns) {
     
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if(unit) {
-      var lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
       // If this unit is already in the list, set its default flag, otherwise create new
       if(lformsDefaultUnit) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsUnits.push({name: unit.valueCoding.code, default: true});
+        lformsDefaultUnit = {name: unit.valueCoding.code, default: true};
+        lformsUnits.push(lformsDefaultUnit);
+      }
+    }
+    else if(qItem.initialQuantity && qItem.initialQuantity.unit) {
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initialQuantity.unit);
+      if(lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      }
+      else {
+        lformsDefaultUnit = {name: qItem.initialQuantity.unit, default: true};
+        lformsUnits.push(lformsDefaultUnit);
       }
     }
     
     if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
       lfItem.units = lformsUnits;
     }
   }
@@ -753,37 +762,39 @@ function addSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param topLevelItem - Top level item object to traverse the path searching for
+   * @param topLevelItems - Top level item object to traverse the path searching for
    * enableWhen.question text in linkId .
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
-  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-
-    if(topLevelItem.linkId === questionLinkId) {
-      if (topLevelItem.code) {
-        return {
-          questionCode: topLevelItem.code[0].code,
-          dataType: _getDataType(topLevelItem)
-        };
-      }
-      else {
-        return {
-          questionCode: topLevelItem.linkId,
-          dataType: _getDataType(topLevelItem)
-        };
-
-      }
-    }
-
+  function _getSourceCodeUsingLinkId(topLevelItems, questionLinkId) {
+  
     var ret = null;
-    if(Array.isArray(topLevelItem.item)) {
-      for(var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
+    if(topLevelItems) {
+      for(var i = 0; !ret && i < topLevelItems.length; i++) {
+        var item = topLevelItems[i];
+        if(item.linkId === questionLinkId) {
+          if (item.code) {
+            ret = {
+              questionCode: item.code[0].code,
+              dataType: _getDataType(item)
+            };
+          }
+          else {
+            ret = {
+              questionCode: item.linkId,
+              dataType: _getDataType(item)
+            };
+          }
+          break;
+        }
+        else {
+          ret = _getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
+        }
       }
     }
-
+  
     return ret;
   }
 

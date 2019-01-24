@@ -308,18 +308,22 @@ function addSDCImportFns(ns) {
       }
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
-          var source = null;
-          for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-            source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
-          }
+          var source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
           var condition = {source: source.questionCode};
           var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          var opMapping = null;
           if(source.dataType === 'CWE' || source.dataType === 'CNE') {
             condition.trigger = {code: answer.code};
           }
+          else if(source.dataType === 'QTY') {
+            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+            if(opMapping) {
+              condition.trigger = {};
+              condition.trigger[opMapping] = answer.value;
+            }
+          }
           else {
-            var tr = null;
-            var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
             if(opMapping) {
               condition.trigger = {};
               condition.trigger[opMapping] = answer;
@@ -347,16 +351,24 @@ function addSDCImportFns(ns) {
     var ret = null;
     // Two conditions based on same source with enableBehavior of all implies range.
     if(qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' &&
-       qItem.enableWhen[0].question === qItem.enableWhen[1].question &&
-       (qItem.type === 'decimal' || qItem.type === 'integer' || qItem.type === 'date' || qItem.type === 'dateTime' )) {
+       qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
       var source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[0].question);
-      ret = {source: source.questionCode};
-      ret.trigger = {};
-      var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
-      var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-
-      ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
-      ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
+      if (source.dataType === 'REAL' || source.dataType === 'INT' || source.dataType === 'DT' ||
+        source.dataType === 'DTM' || source.dataType === 'QTY') {
+        ret = {source: source.questionCode};
+        ret.trigger = {};
+        var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
+        var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
+    
+        if(source.dataType === 'QTY') {
+          ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
+          ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
+        }
+        else {
+          ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
+          ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
+        }
+      }
     }
     return ret;
   }
@@ -391,7 +403,7 @@ function addSDCImportFns(ns) {
       lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
     }
     return lfItem._isHidden;
-  }
+  };
 
 
   /**
@@ -490,11 +502,7 @@ function addSDCImportFns(ns) {
         if(val.display !== undefined) answer.text = val.display;
       }
       else if(lfItem.dataType === 'QTY') {
-        answer = val.value;
-        let unit = val.code? val.code: val.unit;
-        if (unit) {
-          lfItem.unit = {name: unit};
-        }
+        answer = val.value; // Associated unit is parsed in _processUnitLists
       }
       else {
         answer = val;
@@ -509,7 +517,6 @@ function addSDCImportFns(ns) {
       }
     });
 
-    lfItem.value = defaultAnswer; // TODO - Is this necessary?
     lfItem.defaultAnswer = defaultAnswer;
   };
 
@@ -524,6 +531,7 @@ function addSDCImportFns(ns) {
   self._processUnitList = function (lfItem, qItem) {
  
     var lformsUnits = [];
+    var lformsDefaultUnit = null;
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
     if(unitOption && unitOption.length > 0) {
       for(var i = 0; i < unitOption.length; i++) {
@@ -533,17 +541,31 @@ function addSDCImportFns(ns) {
   
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if(unit) {
-      var lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
       // If this unit is already in the list, set its default flag, otherwise create new
       if(lformsDefaultUnit) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsUnits.push({name: unit.valueCoding.code, default: true});
+        lformsDefaultUnit = {name: unit.valueCoding.code, default: true};
+        lformsUnits.push(lformsDefaultUnit);
+      }
+    }
+    else if(qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
+      if(lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      }
+      else {
+        lformsDefaultUnit = {name: qItem.initial[0].valueQuantity.unit, default: true};
+        lformsUnits.push(lformsDefaultUnit);
       }
     }
   
     if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
       lfItem.units = lformsUnits;
     }
   };
@@ -869,7 +891,7 @@ function addSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param topLevelItem - Top level item object to traverse the path searching for
+   * @param topLevelItems - Top level item object to traverse the path searching for
    * enableWhen.question text in linkId .
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.

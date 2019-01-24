@@ -121,7 +121,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               if (!Array.isArray(fixture.defaultAnswer) || fhirVersion === 'R4') {
                 var qItem = {};
 
-                qItem.type = LForms.FHIR[fhirVersion].SDC._handleDataType(fixture);
+                qItem.type = LForms.FHIR[fhirVersion].SDC._getFhirDataType(fixture);
                 LForms.FHIR[fhirVersion].SDC._handleInitialValues(qItem,fixture);
                 // Default processing depends on the answer repeat.
                 if (fixture.answerCardinality && fixture.answerCardinality.max === "*") {
@@ -209,7 +209,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 linkId: '12345',
                 type: 'quantity'
               }]
-            }
+            };
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
             assert.equal(lfItem.dataType, 'QTY');
           });
@@ -221,7 +221,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 linkId: '12345',
                 type: 'quantity'
               }]
-            }
+            };
             if(fhirVersion === 'R4') {
               fhirData.item[0].initial = [{valueQuantity: {value: 222}}];
             }
@@ -478,7 +478,7 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
             assert.equal(lformsQ.items[0]._variableExt.length, 2);
             var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);
             // Confirm that we got the exension back.
-            var fhirQExts = fhirQ.item[0].extension
+            var fhirQExts = fhirQ.item[0].extension;
             var convertedExts = convertedFHIRQ.item[0].extension;
             assert.equal(convertedExts.length, fhirQExts.length);
             for (var i=0, len=convertedExts.length; i<len; ++i) {

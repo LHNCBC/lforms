@@ -25,7 +25,7 @@ function addCommonSDCImportFns(ns) {
     var qrInfo = qrImport._getQRStructure(qr);
     qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
     return newFormData;
-  },
+  };
 
 
   /**
@@ -84,7 +84,7 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
-  }
+  };
 
   // Copy the main merge function to preserve the same API usage.
   self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
