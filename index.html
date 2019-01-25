@@ -12,7 +12,7 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>LForms: A Form-Rendering Wigdet</title>
+    <title>LHC-Forms: A Form-Rendering Wigdet</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -87,8 +87,9 @@
           <p>A widget for rendering feature-rich forms defined in JSON definition files</p>
           <hr>
         </div>
-        <h2>
-<a id="what-is-lforms" class="anchor" href="#what-is-lforms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is LForms?</h2>
+        <h2><a id="what-is-lforms" class="anchor" href="#what-is-lforms"
+          aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"
+          ></span></a>What is LHC-Forms?</h2>
 
 <p><a href="https://lhncbc.nlm.nih.gov/project/lhc-forms">LHC-Forms</a> (a.k.a.
 LForms) is a
@@ -375,6 +376,9 @@ user to save the form so it can be redisplayed later for completion or editing.<
         <li>noExtensions - a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
           without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
           The default is false.</li>
+        <li>subject: A local FHIR resource that is the subject of the output
+          resource.  If provided, a reference to this resource
+          will be added to the output FHIR resource when applicable.</li>
       </ul>
     </li>
   </ol>
