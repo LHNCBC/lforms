@@ -201,6 +201,97 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[5].displayControl, undefined);
             assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
           });
+          
+          describe('Units', function () {
+            var lforms = null;
+            var ucumUrl = "http://unitsofmeasure.org";
+            beforeEach(function(){
+              lforms = angular.copy(window['units_example']);
+            });
+            
+            it('should convert units to unitOption extension', function () {
+              // Export
+              var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              var unitOptions = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnitOption, 0, true);
+              var qty = null;
+              if(fhirVersion === 'STU3') {
+                qty = fhirQ.item[0].initialQuantity;
+              }
+              else {
+                qty = fhirQ.item[0].initial[0].valueQuantity;
+              }
+  
+              assert.equal(qty.unit, lforms.items[0].units[0].name);
+              assert.equal(qty.code, lforms.items[0].units[0].name);
+              assert.equal(qty.system, ucumUrl);
+              assert.equal(fhirQ.item[0].type, 'quantity');
+              assert.equal(unitOptions.length, lforms.items[0].units.length);
+              assert.equal(unitOptions[0].valueCoding.code, lforms.items[0].units[0].name);
+              assert.equal(unitOptions[0].valueCoding.display, lforms.items[0].units[0].name);
+              assert.equal(unitOptions[0].valueCoding.system, ucumUrl);
+              
+              // Import
+              var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+
+              assert.equal(convertedLfData.items[0].dataType, 'QTY');
+              assert.equal(convertedLfData.items[0].units.length, lforms.items[0].units.length);
+              assert.equal(convertedLfData.items[0].units[0].name, lforms.items[0].units[0].name);
+              assert.equal(convertedLfData.items[0].units[1].name, lforms.items[0].units[1].name);
+              assert.equal(convertedLfData.items[0].units[2].name, lforms.items[0].units[2].name);
+              assert.equal(convertedLfData.items[0].units[3].name, lforms.items[0].units[3].name);
+              assert.equal(convertedLfData.items[0].units[4].name, lforms.items[0].units[4].name);
+              assert.isOk(convertedLfData.items[0].units[0].default);
+            });
+            
+            it('should convert default unit to initial quantity unit', function () {
+              lforms.items[0].units[2].default = true;
+              // Export
+              var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              var qty = null;
+              if(fhirVersion === 'STU3') {
+                qty = fhirQ.item[0].initialQuantity;
+              }
+              else {
+                qty = fhirQ.item[0].initial[0].valueQuantity;
+              }
+              
+              assert.equal(qty.unit, lforms.items[0].units[2].name);
+              assert.equal(qty.code, lforms.items[0].units[2].name);
+              assert.equal(qty.system, ucumUrl);
+  
+              // Import
+              var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+  
+              assert.equal(convertedLfData.items[0].units.length, lforms.items[0].units.length);
+              assert.isOk(convertedLfData.items[0].units[2].default);
+            });
+            
+            it('should convert a single unit to questionnaire unit extention', function() {
+              lforms.items[0].units.splice(1);
+              // Export
+              var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              
+              var unitOption = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnitOption);
+
+              assert.isNotOk(unitOption);
+              if(fhirVersion === 'STU3') assert.isUndefined(fhirQ.item[0].initialQuantity);
+              if(fhirVersion === 'R4') assert.isUndefined(fhirQ.item[0].initial);
+              
+              var qUnit = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnit);
+              
+              assert.equal(qUnit.valueCoding.code, lforms.items[0].units[0].name);
+              assert.equal(qUnit.valueCoding.display, lforms.items[0].units[0].name);
+              assert.equal(qUnit.valueCoding.system, ucumUrl);
+  
+              // Import
+              var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+  
+              assert.equal(convertedLfData.items[0].dataType, lforms.items[0].dataType);
+              assert.equal(convertedLfData.items[0].units.length, 1);
+              assert.equal(convertedLfData.items[0].units[0].name, lforms.items[0].units[0].name);
+              assert.isOk(convertedLfData.items[0].units[0].default);
+            });
+          });
 
           it('should convert FHIR Questionnaire quantity item to LForms QTY item', function () {
             var fhirData = {
