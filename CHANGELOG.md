@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.1.1] 2018-01-22
+### Changed
+- Fixed unit conversions to store the unit lists in unitOption extensions and 
+  change the data type to quantity. Used initial.valueQuantity.unit to store the
+  lforms default value. If no default is found, the first unit in the list is set to 
+  default.
+- Refactored the code to reduce some duplication in STU3 and R4.  
+  
+
 ## [14.1.0] 2018-01-22
 ### Added
 - Added an option to specify the subject for an exported FHIR resource.
