@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.1.2] 2018-01-25
+### Fixed
+- The BMI "calculationMethod" can now handle "[in_i]" as a unit.
+
 ## [14.1.1] 2018-01-23
 ### Changed
 - Standard Questionnaire exports for R4 now contain '4.0' (instead of '3.5') as
