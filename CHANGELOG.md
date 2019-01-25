@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [14.1.1] 2018-01-22
+## [14.1.2] 2018-01-25
 ### Changed
 - Fixed unit conversions to store the unit lists in unitOption extensions and 
   change the data type to quantity. Used initial.valueQuantity.unit to store the
@@ -10,6 +10,13 @@ This project follows [Semantic Versioning](http://semver.org/).
   default.
 - Refactored the code to reduce some duplication in STU3 and R4.  
   
+## [14.1.1] 2018-01-23
+### Changed
+- Standard Questionnaire exports for R4 now contain '4.0' (instead of '3.5') as
+  the FHIR version.
+- Standard QuestionnaireResponse exports now include meta.profile.
+- Exceptions raised for problems with detecting the version of a FHIR resource
+  are now Error objects instead of strings.
 
 ## [14.1.0] 2018-01-22
 ### Added

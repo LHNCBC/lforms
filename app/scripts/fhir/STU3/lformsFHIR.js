@@ -18953,11 +18953,13 @@ __webpack_require__.r(__webpack_exports__);
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
 var sdcVersion = '2.0';
+var fhirVersionNum = '3.0';
 var self = {
   SDCVersion: sdcVersion,
   QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|' + sdcVersion,
   QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|' + sdcVersion,
-  stdQProfile: 'http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire',
+  stdQProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/Questionnaire',
+  stdQRProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/QuestionnaireResponse',
 
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -19368,40 +19370,6 @@ var self = {
     }
 
     return codeSystem;
-  },
-
-  /**
-   * Set form level attribute
-   * @param target a QuestionnaireResponse object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @param source a LForms form object
-    * @private
-   */
-  _setResponseFormLevelFields: function _setResponseFormLevelFields(target, source, noExtensions) {
-    // resourceType
-    target.resourceType = "QuestionnaireResponse"; // "identifier":
-
-    target.identifier = {
-      "system": this._getCodeSystem(source.codeSystem),
-      "value": source.code
-    }; // status, required
-    // "in-progress", "completed", "amended"
-
-    target.status = "completed"; // authored, required
-
-    target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
-
-    target.questionnaire = {
-      // questionnaireId should be an id of a related existing questionnaire resource stored in the server
-      "reference": "Questionnaire/{{questionnaireId}}"
-    }; // meta
-
-    if (!noExtensions) {
-      target.meta = {
-        "profile": [this.QRProfile]
-      };
-    }
   },
 
   /**
@@ -20136,6 +20104,39 @@ function addCommonSDCExportFns(ns) {
       }
     });
     return ret;
+  };
+  /**
+   * Set form level attribute
+   * @param target a QuestionnaireResponse object
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @param source a LForms form object
+    * @private
+   */
+
+
+  self._setResponseFormLevelFields = function (target, source, noExtensions) {
+    // resourceType
+    target.resourceType = "QuestionnaireResponse"; // meta
+
+    var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
+
+    target.identifier = {
+      "system": this._getCodeSystem(source.codeSystem),
+      "value": source.code
+    }; // status, required
+    // "in-progress", "completed", "amended"
+
+    target.status = "completed"; // authored, required
+
+    target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
+
+    target.questionnaire = {
+      // questionnaireId should be an id of a related existing questionnaire resource stored in the server
+      "reference": "Questionnaire/{{questionnaireId}}"
+    };
   };
 }
 

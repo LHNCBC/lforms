@@ -441,7 +441,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               'QuestionnaireResponse', fhirVersion, angular.copy(FHTData),
               {noExtensions: true});
 
-            assert.equal(fhirQR.meta, undefined);
+            assert.equal(fhirQR.meta.profile[0], fhir.SDC.stdQRProfile);
 
             assert.equal(fhirQR.toString().match(/extension/), undefined);
 
