@@ -7,7 +7,57 @@ function addCommonSDCFns(ns) {
 "use strict";
 
   var self = ns;
-
+  
+  // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
+  self._itemTypeMapping = {
+    "SECTION": 'group',
+    "TITLE": 'display',
+    "ST": 'string',
+    "BL": 'boolean',
+    "REAL": 'decimal',
+    "INT": 'integer',
+    "DT": 'dateTime',
+    "DTM": 'dateTime', // not supported yet
+    "TM": 'time',
+    "TX": 'text',
+    "URL": 'url',
+    "CNE": 'choice',
+    "CWE": 'open-choice',
+    "QTY": 'quantity'
+  };
+  
+  // A mapping from LHC-Forms data types to the partial field names of the value fields
+  // and initial value fields in FHIR Questionnaire
+  self._dataTypeMapping = {
+    "INT": 'Integer',
+    "REAL": 'Decimal',
+    "DT": 'DateTime',
+    "DTM": 'DateTime',
+    "TM": 'Time',
+    "ST": 'String',
+    "TX": 'String',
+    "BL": 'Boolean',
+    "URL": 'Url',
+    "CNE": 'Coding',
+    "CWE": 'Coding',
+    "QTY": 'Quantity'
+  };
+  
+  self._operatorMapping = {
+    'minExclusive': '>',
+    'maxExclusive': '<',
+    'minInclusive': '>=',
+    'maxInclusive': '<=',
+    'value': '=',
+    'not': '!=',
+    '>': 'minExclusive',
+    '<': 'maxExclusive',
+    '>=': 'minInclusive',
+    '<=': 'maxInclusive',
+    '=': 'value',
+    '!=': 'not'
+  };
+  
   /**
    * Check if a LForms item has repeating questions
    * @param item a LForms item
@@ -30,6 +80,25 @@ function addCommonSDCFns(ns) {
     return item && item.answerCardinality && item.answerCardinality.max &&
         (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)
   };
+  
+  
+  /**
+   * Find out if multiple answers extension is true.
+   * @param qItem - FHIR Questionnaire item.
+   * @returns {boolean}
+   */
+  self._hasMultipleAnswers = function (qItem) {
+    var ret = false;
+    if(qItem) {
+      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+      if(answerRepeats && answerRepeats.valueBoolean) {
+        ret = true;
+      }
+    }
+    return ret;
+  };
+  
+  
 }
 
 export default addCommonSDCFns;
