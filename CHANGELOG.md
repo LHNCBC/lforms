@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.1.1] 2018-01-23
+### Changed
+- Standard Questionnaire exports for R4 now contain '4.0' (instead of '3.5') as
+  the FHIR version.
+- Standard QuestionnaireResponse exports now include meta.profile.
+- Exceptions raised for problems with detecting the version of a FHIR resource
+  are now Error objects instead of strings.
+
 ## [14.1.0] 2018-01-22
 ### Added
 - Added an option to specify the subject for an exported FHIR resource.
