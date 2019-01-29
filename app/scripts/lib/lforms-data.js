@@ -2377,6 +2377,7 @@ if (typeof LForms === 'undefined')
         'feet' : 30.48,
         'ft' : 30.48,
         'inches' : 2.54,
+        '[in_i]' : 2.54,
         'meters' : 100,
         'ft-inches' : 2.54  // converted to inches first ???
       }

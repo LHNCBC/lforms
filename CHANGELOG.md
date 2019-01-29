@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [14.1.2] 2018-01-25
+## [14.1.3] 2018-01-29
 ### Changed
 - Fixed unit conversions to store the unit lists in unitOption extensions and 
   change the data type to quantity. Used initial.valueQuantity.unit to store the
@@ -10,6 +10,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   default.
 - Refactored the code to reduce some duplication in STU3 and R4.  
   
+## [14.1.2] 2018-01-25
+### Fixed
+- The BMI "calculationMethod" can now handle "[in_i]" as a unit.
+
 ## [14.1.1] 2018-01-23
 ### Changed
 - Standard Questionnaire exports for R4 now contain '4.0' (instead of '3.5') as
