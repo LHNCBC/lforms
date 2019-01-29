@@ -125,7 +125,7 @@ function addCommonSDCExportFns(ns) {
   self._getFhirDataType = function(item) {
     
     var dataType = this._getAssumedDataTypeForExport(item);
-    var type = this._itemTypeMapping[dataType];
+    var type = this._lformsTypesToFHIRTypes[dataType];
     // default is string
     if (!type) {
       type = 'string';
@@ -143,7 +143,7 @@ function addCommonSDCExportFns(ns) {
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
    
    * @param item an item in the LForms form object
-   * @returns {string} dataType
+   * @returns {string} dataType - Data type in lforms
    * @private
    */
   self._getAssumedDataTypeForExport = function (item) {
@@ -239,7 +239,7 @@ function addCommonSDCExportFns(ns) {
     
     var fhirType = this._getFhirDataType(item);
     var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
-    var valueKey = this._dataTypeMapping[dataType];
+    var valueKey = this._lformsTypesToFHIRFields[dataType];
     
     return prefix + valueKey;
   };

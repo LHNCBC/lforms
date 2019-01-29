@@ -47,9 +47,10 @@ function addCommonSDCImportFns(ns) {
       var containedVS = self._extractContainedVS(fhirData);
       
       if(fhirData.item && fhirData.item.length > 0) {
+        var linkIdItemMap = self._createLinkIdItemMap(fhirData);
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
           target.items.push(item);
         }
       }
@@ -199,39 +200,47 @@ function addCommonSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param topLevelItems - Top level item object to traverse the path searching for
-   * enableWhen.question text in linkId .
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
-  self._getSourceCodeUsingLinkId = function (topLevelItems, questionLinkId) {
+  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
     
-    var ret = null;
-    if(topLevelItems) {
-      for(var i = 0; !ret && i < topLevelItems.length; i++) {
-        var item = topLevelItems[i];
-        if(item.linkId === questionLinkId) {
-          if (item.code) {
-            ret = {
-              questionCode: item.code[0].code,
-              dataType: self._getDataType(item)
-            };
-          }
-          else {
-            ret = {
-              questionCode: item.linkId,
-              dataType: self._getDataType(item)
-            };
-          }
-          break;
-        }
-        else {
-          ret = self._getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
-        }
-      }
+    var item = linkIdItemMap[questionLinkId];
+    var ret = {dataType: self._getDataType(item)};
+    if(item.code) {
+      ret.questionCode = item.code[0].code;
+    }
+    else {
+      ret.questionCode = item.linkId;
     }
     
+    return ret;
+  };
+  
+  /**
+   * Build a map of items to linkid from a questionnaire resource.
+   * @param qResource - FHIR Questionnaire resource
+   * @returns {*} - Hash object with link id keys pointing to their respective items.
+   * @private
+   */
+  self._createLinkIdItemMap = function (qResource) {
+    var traverse = function (itemArray, collection) {
+        itemArray.forEach(function(item) {
+          collection[item.linkId] = item;
+          if(item.item) {
+            traverse(item.item, collection);
+          }
+        });
+      
+      return collection;
+    };
+
+    var ret = {};
+    if(qResource.item) {
+      ret = traverse(qResource.item, ret);
+    }
     return ret;
   };
   

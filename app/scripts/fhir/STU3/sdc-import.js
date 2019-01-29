@@ -100,12 +100,12 @@ function addSDCImportFns(ns) {
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -123,13 +123,13 @@ function addSDCImportFns(ns) {
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem, containedVS);
-    _processSkipLogic(targetItem, qItem, qResource);
+    _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
         targetItem.items.push(newItem);
       }
     }
@@ -185,11 +185,11 @@ function addSDCImportFns(ns) {
    *                              item to navigate the tree for skip logic source items.
    * @private
    */
-  function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
+  function _processSkipLogic(lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = self._getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
+        var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
         var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
         if(source.dataType === 'CWE' || source.dataType === 'CNE') {

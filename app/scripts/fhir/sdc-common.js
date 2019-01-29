@@ -9,7 +9,7 @@ function addCommonSDCFns(ns) {
   var self = ns;
   
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
-  self._itemTypeMapping = {
+  self._lformsTypesToFHIRTypes = {
     "SECTION": 'group',
     "TITLE": 'display',
     "ST": 'string',
@@ -28,7 +28,7 @@ function addCommonSDCFns(ns) {
   
   // A mapping from LHC-Forms data types to the partial field names of the value fields
   // and initial value fields in FHIR Questionnaire
-  self._dataTypeMapping = {
+  self._lformsTypesToFHIRFields = {
     "INT": 'Integer',
     "REAL": 'Decimal',
     "DT": 'DateTime',

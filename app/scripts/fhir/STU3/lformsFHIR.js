@@ -20262,14 +20262,14 @@ function addSDCImportFns(ns) {
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
 
 
-  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
     var targetItem = {};
     targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
@@ -20301,7 +20301,7 @@ function addSDCImportFns(ns) {
 
     _processAnswers(targetItem, qItem, containedVS);
 
-    _processSkipLogic(targetItem, qItem, qResource);
+    _processSkipLogic(targetItem, qItem, linkIdItemMap);
 
     _processCalculatedValue(targetItem, qItem);
 
@@ -20309,7 +20309,7 @@ function addSDCImportFns(ns) {
       targetItem.items = [];
 
       for (var i = 0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
         targetItem.items.push(newItem);
       }
@@ -20369,7 +20369,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
+  function _processSkipLogic(lfItem, qItem, linkIdItemMap) {
     if (qItem.enableWhen) {
       lfItem.skipLogic = {
         conditions: [],
@@ -20377,7 +20377,7 @@ function addSDCImportFns(ns) {
       };
 
       for (var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = self._getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
+        var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
 
         var condition = {
           source: source.questionCode
@@ -21337,10 +21337,12 @@ function addCommonSDCImportFns(ns) {
       var containedVS = self._extractContainedVS(fhirData);
 
       if (fhirData.item && fhirData.item.length > 0) {
+        var linkIdItemMap = self._createLinkIdItemMap(fhirData);
+
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
 
           target.items.push(item);
         }
@@ -21508,39 +21510,51 @@ function addCommonSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param topLevelItems - Top level item object to traverse the path searching for
-   * enableWhen.question text in linkId .
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
 
 
-  self._getSourceCodeUsingLinkId = function (topLevelItems, questionLinkId) {
-    var ret = null;
+  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
+    var item = linkIdItemMap[questionLinkId];
+    var ret = {
+      dataType: self._getDataType(item)
+    };
 
-    if (topLevelItems) {
-      for (var i = 0; !ret && i < topLevelItems.length; i++) {
-        var item = topLevelItems[i];
+    if (item.code) {
+      ret.questionCode = item.code[0].code;
+    } else {
+      ret.questionCode = item.linkId;
+    }
 
-        if (item.linkId === questionLinkId) {
-          if (item.code) {
-            ret = {
-              questionCode: item.code[0].code,
-              dataType: self._getDataType(item)
-            };
-          } else {
-            ret = {
-              questionCode: item.linkId,
-              dataType: self._getDataType(item)
-            };
-          }
+    return ret;
+  };
+  /**
+   * Build a map of items to linkid from a questionnaire resource.
+   * @param qResource - FHIR Questionnaire resource
+   * @returns {*} - Hash object with link id keys pointing to their respective items.
+   * @private
+   */
 
-          break;
-        } else {
-          ret = self._getSourceCodeUsingLinkId(topLevelItems[i].item, questionLinkId);
+
+  self._createLinkIdItemMap = function (qResource) {
+    var traverse = function traverse(itemArray, collection) {
+      itemArray.forEach(function (item) {
+        collection[item.linkId] = item;
+
+        if (item.item) {
+          traverse(item.item, collection);
         }
-      }
+      });
+      return collection;
+    };
+
+    var ret = {};
+
+    if (qResource.item) {
+      ret = traverse(qResource.item, ret);
     }
 
     return ret;

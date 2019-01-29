@@ -150,12 +150,12 @@ function addSDCImportFns(ns) {
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -173,14 +173,14 @@ function addSDCImportFns(ns) {
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
     self._processAnswers(targetItem, qItem, containedVS);
-    self._processSkipLogic(targetItem, qItem, qResource);
+    self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self._processCopiedItemExtensions(targetItem, qItem);
 
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
         targetItem.items.push(newItem);
       }
     }
@@ -248,21 +248,20 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to assign the skip logic
    * @param qItem {object} - Questionnaire item object
-   * @param sourceQuestionnaire - Questionnaire resource object. This is to provide top level
-   *                              item to navigate the tree for skip logic source items.
+   * @param linkIdItemMap - Map of items to link id from the imported resource.
    * @private
    */
-  self._processSkipLogic = function (lfItem, qItem, sourceQuestionnaire) {
+  self._processSkipLogic = function (lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       // See if it satisfies range. Range in lforms is a single condition, in FHIR it is done with two conditions
-      var rangeCondition = _potentialRange(qItem, sourceQuestionnaire);
+      var rangeCondition = _potentialRange(qItem, linkIdItemMap);
       if(rangeCondition) {
         lfItem.skipLogic.conditions.push(rangeCondition);
       }
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
-          var source = self._getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[i].question);
+          var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
           var condition = {source: source.questionCode};
           var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = null;
@@ -301,12 +300,12 @@ function addSDCImportFns(ns) {
    * @returns {*} - Lforms skip logic condition object.
    * @private
    */
-  function _potentialRange(qItem, sourceQuestionnaire) {
+  function _potentialRange(qItem, linkIdItemMap) {
     var ret = null;
     // Two conditions based on same source with enableBehavior of all implies range.
     if(qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' &&
        qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
-      var source = self._getSourceCodeUsingLinkId(sourceQuestionnaire.item, qItem.enableWhen[0].question);
+      var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[0].question);
       if (source.dataType === 'REAL' || source.dataType === 'INT' || source.dataType === 'DT' ||
         source.dataType === 'DTM' || source.dataType === 'QTY') {
         ret = {source: source.questionCode};
