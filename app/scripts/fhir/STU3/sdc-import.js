@@ -100,7 +100,7 @@ function addSDCImportFns(ns) {
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private

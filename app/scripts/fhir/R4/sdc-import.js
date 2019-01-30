@@ -151,7 +151,7 @@ function addSDCImportFns(ns) {
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
@@ -248,7 +248,7 @@ function addSDCImportFns(ns) {
    *
    * @param lfItem {object} - LForms item object to assign the skip logic
    * @param qItem {object} - Questionnaire item object
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @private
    */
   self._processSkipLogic = function (lfItem, qItem, linkIdItemMap) {

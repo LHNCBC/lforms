@@ -19950,7 +19950,7 @@ function addCommonSDCExportFns(ns) {
   self._getFhirDataType = function (item) {
     var dataType = this._getAssumedDataTypeForExport(item);
 
-    var type = this._itemTypeMapping[dataType]; // default is string
+    var type = this._lformsTypesToFHIRTypes[dataType]; // default is string
 
     if (!type) {
       type = 'string';
@@ -19967,7 +19967,7 @@ function addCommonSDCExportFns(ns) {
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
    
    * @param item an item in the LForms form object
-   * @returns {string} dataType
+   * @returns {string} dataType - Data type in lforms
    * @private
    */
 
@@ -20069,7 +20069,7 @@ function addCommonSDCExportFns(ns) {
     var fhirType = this._getFhirDataType(item);
 
     var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
-    var valueKey = this._dataTypeMapping[dataType];
+    var valueKey = this._lformsTypesToFHIRFields[dataType];
     return prefix + valueKey;
   };
   /**
@@ -20262,7 +20262,7 @@ function addSDCImportFns(ns) {
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
@@ -21197,7 +21197,7 @@ function addCommonSDCFns(ns) {
 
   var self = ns; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
 
-  self._itemTypeMapping = {
+  self._lformsTypesToFHIRTypes = {
     "SECTION": 'group',
     "TITLE": 'display',
     "ST": 'string',
@@ -21216,7 +21216,7 @@ function addCommonSDCFns(ns) {
   }; // A mapping from LHC-Forms data types to the partial field names of the value fields
   // and initial value fields in FHIR Questionnaire
 
-  self._dataTypeMapping = {
+  self._lformsTypesToFHIRFields = {
     "INT": 'Integer',
     "REAL": 'Decimal',
     "DT": 'DateTime',
@@ -21510,7 +21510,7 @@ function addCommonSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
