@@ -200,7 +200,7 @@ function addCommonSDCImportFns(ns) {
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param linkIdItemMap - Map of items to link id from the imported resource.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
