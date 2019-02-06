@@ -14,56 +14,6 @@ function addSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
-  // FHIR extension urls
-  self.fhirExtUrlCardinalityMin = "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs";
-  self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
-  self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
-  self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
-  self.fhirExtUrlAllowedUnits = "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
-  self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
-  self.fhirExtUrlRestrictionArray = [
-    "http://hl7.org/fhir/StructureDefinition/minValue",
-    "http://hl7.org/fhir/StructureDefinition/maxValue",
-    "http://hl7.org/fhir/StructureDefinition/minLength",
-    "http://hl7.org/fhir/StructureDefinition/regex"
-  ];
-
-  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-
-  self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
-  self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
-
-  self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-
-  /**
-   * Convert FHIR SQC Questionnaire to LForms definition
-   *
-   * @param fhirData - FHIR Questionnaire object
-   * @returns {{}} - LForms json object
-   */
-  self.convertQuestionnaireToLForms = function (fhirData) {
-    var target = null;
-
-    if(fhirData) {
-      target = {};
-      _processFormLevelFields(target, fhirData);
-      var containedVS = _extractContainedVS(fhirData);
-
-      if(fhirData.item && fhirData.item.length > 0) {
-        target.items = [];
-        for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
-          target.items.push(item);
-        }
-      }
-      target.fhirVersion = self.fhirVersion;
-    }
-
-    return target;
-  };
-
 
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
@@ -72,9 +22,9 @@ function addSDCImportFns(ns) {
    * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
    * @private
    */
-  function _processFormLevelFields(lfData, questionnaire) {
+  self._processFormLevelFields = function (lfData, questionnaire) {
     lfData.name = questionnaire.title;
-    var code = _getCode(questionnaire);
+    var code = self._getCode(questionnaire);
     if(code) {
       lfData.code = code.code;
       lfData.codeSystem = code.system;
@@ -83,7 +33,7 @@ function addSDCImportFns(ns) {
     if(questionnaire.id) {
       lfData.id = questionnaire.id;
     }
-  }
+  };
 
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
@@ -97,16 +47,16 @@ function addSDCImportFns(ns) {
    *         returns undefined if no contained value set is present.
    * @private
    */
-  function _extractContainedVS(questionnaire) {
+  self._extractContainedVS = function (questionnaire) {
     var answersVS;
 
     if(questionnaire.contained && questionnaire.contained.length > 0) {
       answersVS = {};
-      questionnaire.contained.forEach(vs => {
+      questionnaire.contained.forEach(function(vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var lfVS = {answers: [], systems:[]};
           var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
-          vs.expansion.contains.forEach(vsItem => {
+          vs.expansion.contains.forEach(function (vsItem) {
             var answer = {code: vsItem.code, text: vsItem.display};
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
               "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
@@ -144,18 +94,18 @@ function addSDCImportFns(ns) {
     }
 
     return answersVS;
-  }
+  };
 
   /**
    * Process questionnaire item recursively
    *
    * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
    * @returns {{}} - Converted 'item' field object as defined by LForms definition.
    * @private
    */
-  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
+  self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -168,18 +118,18 @@ function addSDCImportFns(ns) {
     _processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     _processCodingInstructions(targetItem, qItem);
-    _processHiddenItem(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
     _processAnswers(targetItem, qItem, containedVS);
-    _processSkipLogic(targetItem, qItem, qResource);
+    _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
+        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
         targetItem.items.push(newItem);
       }
     }
@@ -235,18 +185,18 @@ function addSDCImportFns(ns) {
    *                              item to navigate the tree for skip logic source items.
    * @private
    */
-  function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
+  function _processSkipLogic(lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = null;
-        for(var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
-        }
+        var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
         var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
         if(source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {code: answer.code};
+        }
+        else if(source.dataType === 'QTY') {
+            condition.trigger = {value: answer.value};
         }
         else {
           condition.trigger = {value: answer};
@@ -280,13 +230,13 @@ function addSDCImportFns(ns) {
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
    */
-  function _processHiddenItem(lfItem, qItem) {
+  self._processHiddenItem = function (lfItem, qItem) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
     if(ci) {
       lfItem._isHidden = typeof ci.valueBoolean === 'boolean'? ci.valueBoolean: ci.valueBoolean === 'true';
     }
     return lfItem._isHidden;
-  }
+  };
 
 
   /**
@@ -371,31 +321,25 @@ function addSDCImportFns(ns) {
 
     var val = _getValueWithPrefixKey(qItem, /^initial/);
     if (val) {
+      var answer = null;
       if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
         if (qItem.repeats) {
-          lfItem.value = [{code: val.code, text: val.display}];
-          lfItem.defaultAnswer = [{code: val.code, text: val.display}];
+          answer = [{code: val.code, text: val.display}];
         }
         // single selection
         else {
-          lfItem.value = {code: val.code, text: val.display};
-          lfItem.defaultAnswer = {code: val.code, text: val.display};
+          answer = {code: val.code, text: val.display};
         }
       }
       else if(lfItem.dataType === 'QTY') {
         if (val.value !== undefined) {
-          lfItem.value = val.value;
-          lfItem.defaultAnswer = val.value;
-        }
-        let unit = val.code? val.code: val.unit;
-        if (unit) {
-          lfItem.unit = {name: unit};
+          answer = val.value;
         }
       }
       else {
-        lfItem.value = val;
-        lfItem.defaultAnswer = val;
+        answer = val;
       }
+      lfItem.defaultAnswer = answer;
     }
   };
 
@@ -408,13 +352,44 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processUnitList(lfItem, qItem) {
-    var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
-    if(units && units.valueCodeableConcept && Array.isArray(units.valueCodeableConcept.coding)) {
-      lfItem.units = [];
-      for(var i = 0; i < units.valueCodeableConcept.coding.length; i++) {
-        var unit = units.valueCodeableConcept.coding[i];
-        lfItem.units.push({name: unit.code});
+    
+    var lformsUnits = [];
+    var lformsDefaultUnit = null;
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+    if(unitOption && unitOption.length > 0) {
+      for(var i = 0; i < unitOption.length; i++) {
+        lformsUnits.push({name: unitOption[i].valueCoding.code});
       }
+    }
+    
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+    if(unit) {
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
+      // If this unit is already in the list, set its default flag, otherwise create new
+      if(lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      }
+      else {
+        lformsDefaultUnit = {name: unit.valueCoding.code, default: true};
+        lformsUnits.push(lformsDefaultUnit);
+      }
+    }
+    else if(qItem.initialQuantity && qItem.initialQuantity.unit) {
+      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initialQuantity.unit);
+      if(lformsDefaultUnit) {
+        lformsDefaultUnit.default = true;
+      }
+      else {
+        lformsDefaultUnit = {name: qItem.initialQuantity.unit, default: true};
+        lformsUnits.push(lformsDefaultUnit);
+      }
+    }
+    
+    if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+      lfItem.units = lformsUnits;
     }
   }
 
@@ -471,7 +446,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processCodeAndLinkId(lfItem, qItem) {
-    var code = _getCode(qItem);
+    var code = self._getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;
       lfItem.questionCodeSystem = code.system;
@@ -510,7 +485,7 @@ function addSDCImportFns(ns) {
    * @param questionnaireItemOrResource {object} - question
    * @private
    */
-  function _getCode(questionnaireItemOrResource) {
+  self._getCode = function (questionnaireItemOrResource) {
     var code = null;
     if(questionnaireItemOrResource &&
          Array.isArray(questionnaireItemOrResource.code) &&
@@ -531,7 +506,7 @@ function addSDCImportFns(ns) {
     }
 
     return code;
-  }
+  };
 
 
   /**
@@ -600,67 +575,12 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processDataType = function (lfItem, qItem) {
-    var type = _getDataType(qItem);
+    var type = self._getDataType(qItem);
     if(type === 'SECTION' || type === 'TITLE') {
       lfItem.header = true;
     }
     lfItem.dataType = type;
   };
-
-
-  /**
-   * Get LForms data type from questionnaire item
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _getDataType (qItem) {
-    var type = 'string';
-
-    switch (qItem.type) {
-      case 'string':
-        type = 'ST';
-        break;
-      case 'group':
-        type = 'SECTION';
-        break;
-      case "choice":
-        type = 'CNE';
-        break;
-      case "open-choice":
-        type = 'CWE';
-        break;
-      case 'integer':
-        type = 'INT';
-        break;
-      case 'decimal':
-        type = 'REAL';
-        break;
-      case 'text':
-        type = 'TX';
-        break;
-      case "boolean":
-        type = 'BL';
-        break;
-      case "dateTime":
-        //dataType = 'date';
-        type = 'DT';
-        break;
-      case "time":
-        type = 'TM';
-        break;
-      case "display":
-        type = 'TITLE';
-        break;
-      case "url":
-        type = 'URL';
-        break;
-      case "quantity":
-        type = 'QTY';
-        break;
-    }
-    return type;
-  }
 
 
   /**
@@ -727,46 +647,6 @@ function addSDCImportFns(ns) {
           ret = obj[key];
           break;
         }
-      }
-    }
-
-    return ret;
-  }
-
-
-  /**
-   * It is used to identify source item in skip logic. Get code from source item
-   * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
-   * to locate source item with item.linkId.
-   *
-   * @param topLevelItem - Top level item object to traverse the path searching for
-   * enableWhen.question text in linkId .
-   * @param questionLinkId - This is the linkId in enableWhen.question
-   * @returns {string} - Returns code of the source item.
-   * @private
-   */
-  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-
-    if(topLevelItem.linkId === questionLinkId) {
-      if (topLevelItem.code) {
-        return {
-          questionCode: topLevelItem.code[0].code,
-          dataType: _getDataType(topLevelItem)
-        };
-      }
-      else {
-        return {
-          questionCode: topLevelItem.linkId,
-          dataType: _getDataType(topLevelItem)
-        };
-
-      }
-    }
-
-    var ret = null;
-    if(Array.isArray(topLevelItem.item)) {
-      for(var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
       }
     }
 

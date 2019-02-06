@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.1.3] 2018-01-29
+### Changed
+- Fixed unit conversions to store the unit lists in unitOption extensions and 
+  change the data type to quantity. Used initial.valueQuantity.unit to store the
+  lforms default value. If no default is found, the first unit in the list is set to 
+  default.
+- Refactored the code to reduce some duplication in STU3 and R4.  
+  
 ## [14.1.2] 2018-01-25
 ### Fixed
 - The BMI "calculationMethod" can now handle "[in_i]" as a unit.

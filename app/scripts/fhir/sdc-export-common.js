@@ -42,8 +42,242 @@ function addCommonSDCExportFns(ns) {
       target["subject"] = LForms.Util.createLocalFHIRReference(subject);
 
     return target;
-  }
-
+  };
+  
+  /**
+   * Process itemControl based on LForms item's answerLayout and questionLayout
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  self._handleItemControl = function(targetItem, item) {
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    var itemControlType = "";
+    // Fly-over, Table, Checkbox, Combo-box, Lookup
+    if (!jQuery.isEmptyObject(item.displayControl)) {
+      var dataType = this._getAssumedDataTypeForExport(item);
+      // for answers
+      if (item.displayControl.answerLayout &&
+        (dataType === "CNE" || dataType === "CWE")) {
+        // search field
+        if (item.externallyDefined) {
+          itemControlType = "Lookup";
+        }
+        // prefetch list
+        // combo-box
+        else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
+          itemControlType = "Combo-box";
+        }
+        // radio or checkbox
+        else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+          if (item.answerCardinality &&
+            (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+            itemControlType = "Checkbox";
+          }
+          else {
+            itemControlType = "Radio";
+          }
+        }
+      }
+      // for section item
+      else if (item.displayControl.questionLayout && dataType === "SECTION") {
+        if (item.displayControl.questionLayout === "horizontal") {
+          itemControlType = "Table";
+        }
+        else if (item.displayControl.questionLayout === "matrix") {
+          itemControlType = "Matrix";
+        }
+        // else {
+        //   itemControlType = "List";
+        // }
+      }
+      
+      if (itemControlType) {
+        targetItem.extension.push(
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+            "valueCodeableConcept": {
+              "coding": [{
+                //"system" : "<uri>", // Identity of the terminology system
+                //"version" : "<string>", // Version of the system - if relevant
+                //"code" : "<code>", // Symbol in syntax defined by the system
+                //"display" : "<string>", // Representation defined by the system
+                //"userSelected" : <boolean> // If this coding was chosen directly by the user
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": itemControlType,
+                "display": itemControlType
+              }],
+              "text": itemControlType
+            }
+          });
+      }
+    }
+  };
+  
+  
+  
+  /**
+   * Convert LForms data type to FHIR SDC data type
+   * @param item an item in the LForms form object
+   * @returns {string}
+   * @private
+   */
+  self._getFhirDataType = function(item) {
+    
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var type = this._lformsTypesToFHIRTypes[dataType];
+    // default is string
+    if (!type) {
+      type = 'string';
+    }
+    return type;
+  };
+  
+  
+  /**
+   * Determine how an item's data type should be for export.
+   
+   If number type has multiple units, change it to quantity type. In such a case,
+   multiple units are converted to quesionnaire-unitOption extension and the default unit
+   would go into initial.valueQuantity.unit.
+   For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
+   
+   * @param item an item in the LForms form object
+   * @returns {string} dataType - Data type in lforms
+   * @private
+   */
+  self._getAssumedDataTypeForExport = function (item) {
+    var dataType = item.dataType;
+    if((item.dataType === 'REAL' || item.dataType === 'INT') && item.units && item.units.length > 1) {
+      dataType = 'QTY';
+    }
+    return dataType;
+  };
+  
+  
+  /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value optional, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  self._makeValueQuantity = function(value, itemUnit, unitSystem) {
+    let fhirQuantity = {};
+    let floatValue = parseFloat(value);
+    
+    if(! isNaN(floatValue)) {
+      fhirQuantity.value = floatValue;
+    }
+    
+    if(itemUnit && itemUnit.name) {
+      fhirQuantity.unit = itemUnit.name;
+      fhirQuantity.code = itemUnit.name;
+      fhirQuantity.system = unitSystem? unitSystem: 'http://unitsofmeasure.org';
+    }
+    
+    return (Object.keys(fhirQuantity).length > 0) ? fhirQuantity : null;
+  };
+  
+  
+  /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnits optional, lform data item.units (An array of units)
+   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+  self._makeQuantity = function(value, itemUnits, unitSystem) {
+    var defaultUnit = this._getDefaultUnit(itemUnits);
+    return this._makeValueQuantity(value, defaultUnit, unitSystem);
+  };
+  
+  
+  /**
+   * Pick a default unit if found, otherwise return first one as default. Will return
+   * null, if passed with empty list.
+   * @param lformsUnits - Array of lforms units i.e with {name, default}
+   * @returns {*} Return lforms unit if found otherwise null.
+   * @private
+   */
+  self._getDefaultUnit = function (lformsUnits) {
+    if(!lformsUnits || lformsUnits.length === 0) {
+      return null;
+    }
+    
+    var ret = null;
+    for(var i = 0; i < lformsUnits.length; i++) {
+      if (lformsUnits[i].default) {
+        ret = lformsUnits[i];
+        break;
+      }
+    }
+    
+    if(!ret) {
+      ret = lformsUnits[0];
+    }
+    
+    return ret;
+  };
+  
+  
+  /**
+   * Create a key from data type to be used in a hash
+   * @param prefix a prefix to be added to the key
+   * @param item a LForms item
+   * @returns {*}
+   * @private
+   */
+  self._getValueKeyByDataType = function(prefix, item) {
+    
+    // prefix could be 'value', 'initial', 'answer'
+    if (!prefix) {
+      prefix = "value"
+    }
+    
+    var fhirType = this._getFhirDataType(item);
+    var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
+    var valueKey = this._lformsTypesToFHIRFields[dataType];
+    
+    return prefix + valueKey;
+  };
+  
+  
+  /**
+   * A single condition in lforms translates to two enableWhen rules in core FHIR.
+   *
+   * @param answerKey - The answer[x] string
+   * @param skipLogicCondition - Lforms skip logic condition object
+   * @param sourceItem - Skip logic source item in lforms.
+   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @private
+   */
+  self._createEnableWhenRulesForRangeAndValue = function(answerKey, skipLogicCondition, sourceItem) {
+    var ret = [];
+    Object.keys(skipLogicCondition.trigger).forEach(function(key) {
+      var rule = {
+        question: sourceItem.linkId,
+        operator: self._operatorMapping[key]
+      };
+      var answer = null;
+      if(answerKey === 'answerQuantity') {
+        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
+      }
+      else {
+        answer = skipLogicCondition.trigger[key];
+      }
+      if(answer) {
+        rule[answerKey] = answer;
+        ret.push(rule);
+      }
+    });
+    
+    return ret;
+  };
+  
+  
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
@@ -81,7 +315,7 @@ function addCommonSDCExportFns(ns) {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
-  }
+  };
 }
 
 export default addCommonSDCExportFns;
