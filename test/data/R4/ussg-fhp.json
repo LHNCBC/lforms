@@ -136,19 +136,8 @@
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
               "valueCoding": {
                 "system": "http://unitsofmeasure.org",
-                "code": "{mm/dd/yyyy}"
-              }
-            },
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-              "valueCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://unitsofmeasure.org",
-                    "code": "{mm/dd/yyyy}",
-                    "display": "{mm/dd/yyyy}"
-                  }
-                ]
+                "code": "{mm/dd/yyyy}",
+                "display": "{mm/dd/yyyy}"
               }
             },
             {
@@ -319,18 +308,6 @@
                 "system": "http://unitsofmeasure.org",
                 "code": "[in_i]"
               }
-            },
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-              "valueCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://unitsofmeasure.org",
-                    "code": "[in_i]",
-                    "display": "[in_i]"
-                  }
-                ]
-              }
             }
           ],
           "required": false,
@@ -352,18 +329,6 @@
               "valueCoding": {
                 "system": "http://unitsofmeasure.org",
                 "code": "kg"
-              }
-            },
-            {
-              "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-              "valueCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://unitsofmeasure.org",
-                    "code": "kg",
-                    "display": "kg"
-                  }
-                ]
               }
             }
           ],
@@ -1281,15 +1246,11 @@
             {
               "extension": [
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-                  "valueCodeableConcept": {
-                    "coding": [
-                      {
-                        "system": "http://unitsofmeasure.org",
-                        "code": "{mm/dd/yyyy}",
-                        "display": "{mm/dd/yyyy}"
-                      }
-                    ]
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+                  "valueCoding": {
+                    "system": "http://unitsofmeasure.org",
+                    "code": "{mm/dd/yyyy}",
+                    "display": "{mm/dd/yyyy}"
                   }
                 }
               ],
@@ -1316,15 +1277,10 @@
             {
               "extension": [
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-                  "valueCodeableConcept": {
-                    "coding": [
-                      {
-                        "system": "http://unitsofmeasure.org",
-                        "code": "a",
-                        "display": "a"
-                      }
-                    ]
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+                  "valueCoding": {
+                    "system": "http://unitsofmeasure.org",
+                    "code": "kg"
                   }
                 }
               ],
