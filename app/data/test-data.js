@@ -4111,6 +4111,53 @@ var questionInQuestion =
       ]
     };
 
+var QTYDemo =
+  {
+    "type": "LOINC",
+    "code": "question-with-quantity-type",
+    "name": "A form that has a question with data type as quantity",
+    "items": [
+      {
+        "questionCode": "q1",
+        "dataType": "QTY",
+        "question": "With default answer and no units",
+        "defaultAnswer": 2.5
+      },
+      {
+        "questionCode": "q2",
+        "dataType": "QTY",
+        "question": "Without default answer and no units"
+      },
+      {
+        "questionCode": "q3",
+        "dataType": "QTY",
+        "question": "With single unit (no default answer)",
+        "units": [{
+          "name": "kgs"
+        }]
+      },
+      {
+        "questionCode": "q4",
+        "dataType": "QTY",
+        "question": "With multiple units with a default unit (no default answer)",
+        "units": [
+          {"name": "kgs"},
+          {"name": "lbs", default: true},
+          {"name": "grams"}
+        ]
+      },
+      {
+        "questionCode": "q5",
+        "dataType": "QTY",
+        "question": "With multiple units with no default unit specified (no default answer)",
+        "units": [
+          {"name": "kgs"},
+          {"name": "lbs"},
+          {"name": "grams"}
+        ]
+      }
+    ]
+  };
 
 var newGenetic = {
   "_comment": "WARNING:  Do not edit the generated copy of this file.",

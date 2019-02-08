@@ -212,7 +212,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             it('should convert units to unitOption extension', function () {
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
-              var unitOptions = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnitOption, 0, true);
+              var unitOptions = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true);
               var qty = null;
               if(fhirVersion === 'STU3') {
                 qty = fhirQ.item[0].initialQuantity;

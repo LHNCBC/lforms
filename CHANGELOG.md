@@ -2,7 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [14.1.3] 2018-01-29
+## [14.1.4] 2019-02-07
+### Changed
+- Fix typo in url for FHIR unit option.  
+
+## [14.1.3] 2019-01-29
 ### Changed
 - Fixed unit conversions to store the unit lists in unitOption extensions and 
   change the data type to quantity. Used initial.valueQuantity.unit to store the
@@ -10,11 +14,11 @@ This project follows [Semantic Versioning](http://semver.org/).
   default.
 - Refactored the code to reduce some duplication in STU3 and R4.  
   
-## [14.1.2] 2018-01-25
+## [14.1.2] 2019-01-25
 ### Fixed
 - The BMI "calculationMethod" can now handle "[in_i]" as a unit.
 
-## [14.1.1] 2018-01-23
+## [14.1.1] 2019-01-23
 ### Changed
 - Standard Questionnaire exports for R4 now contain '4.0' (instead of '3.5') as
   the FHIR version.
@@ -22,11 +26,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Exceptions raised for problems with detecting the version of a FHIR resource
   are now Error objects instead of strings.
 
-## [14.1.0] 2018-01-22
+## [14.1.0] 2019-01-22
 ### Added
 - Added an option to specify the subject for an exported FHIR resource.
 
-## [14.0.1] 2018-01-15
+## [14.0.1] 2019-01-15
 ### Fixed
 - Removed some outdated documentation from form_definitions.md.
 - Reorganized some code (but not in a way the affects public APIs).

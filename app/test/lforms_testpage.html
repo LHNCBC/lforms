@@ -156,7 +156,8 @@
               {text: "PROMIS item bank - social isolation - version 2.0", id: "76806-9"},
               {text: "Master HL7 genetic variant reporting panel (2016-11-21)", id: "81247-9"},
               {text: "A Form with two TOTALSCORE fields", id: "two-totalscore"},
-              {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"}
+              {text: "Vital signs, weight, height, head circumference, oximetry, BMI, & BSA panel", id: "74728-7"},
+              {text: "Items with QTY data type", id: "QTYDemo"}
             ];
 
             // indirect testing of the events emitted from within the LForms widget
@@ -407,6 +408,10 @@ console.log("%%% in onAfterAddingFile");
                 case 'two-totalscore':
                   //'A Form with two TOTALSCORE fields'
                   lfData2 = new LForms.LFormsData(angular.copy(twoTotalScore));
+                  break;
+                case 'QTYDemo':
+                  //'A Form with two TOTALSCORE fields'
+                  lfData2 = new LForms.LFormsData(angular.copy(QTYDemo));
                   break;
                 case '54127-6H':
                   //'USSG-FHT, (with mock-up items for horizontal layout demo)'
