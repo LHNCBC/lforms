@@ -86,6 +86,8 @@ describe('Data Type', function() {
         expect(unit).toEqual({_displayUnit: "kilo grams", name: "kilo grams", code: "kgs"});
       });
       units4.click();
+      // Four units in the list, but one of them is invalid.
+      expect(element(by.id('completionOptions')).all(by.css('span ul li')).count()).toBe(3);
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.DOWN);
       units4.sendKeys(protractor.Key.DOWN);

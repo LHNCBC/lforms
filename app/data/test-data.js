@@ -4142,6 +4142,7 @@ var QTYDemo =
         "question": "With multiple units with a default unit (no default answer)",
         "units": [
           {"name": "kilo grams", "code": "kgs"},
+          {"system": "http://unitsofmeasure.org"}, // Not valid.
           {"code": "lbs", default: true},
           {"name": "grams", "system": "http://unitsofmeasure.org"}
         ]

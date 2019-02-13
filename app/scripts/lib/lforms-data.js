@@ -2198,11 +2198,14 @@ if (typeof LForms === 'undefined')
         var defaultValue;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
-          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : "";
+          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : null;
           if (answers[i].default) {
             defaultValue = listItem._displayUnit;
           }
-          listItems.push(listItem);
+          // Include only if name or code is specified.
+          if(listItem._displayUnit) {
+            listItems.push(listItem);
+          }
         }
 
         var options = {

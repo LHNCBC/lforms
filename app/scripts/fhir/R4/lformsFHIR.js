@@ -19996,7 +19996,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
    * @param itemUnit optional, lform data item.unit (that has a name property)
-   * @param unitSystem optional
+   * @param unitSystem optional, overrides any system in itemUnit.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
