@@ -673,14 +673,9 @@ var self = {
         // make a Quantity type if numeric values has a unit value
         else if (item.unit && typeof values[i] !== 'undefined' &&
             (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
-          answer.push({
-            "valueQuantity": {
-              "value": parseFloat(values[i]),
-              "unit": item.unit.name,
-              "system": "http://unitsofmeasure.org",
-              "code": item.unit.name
-            }
-          });
+          var q = {value: parseFloat(values[i])};
+          self._setUnitAttributesToFhirQuantity(q, item.unit);
+          answer.push({valueQuantity: q});
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
@@ -804,12 +799,8 @@ var self = {
         
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
-          "valueCoding" : {
-            "system": "http://unitsofmeasure.org",
-            // Datatype with multiple units is quantity. There is only one unit here.
-            "code": item.units[0].name,
-            "display": item.units[0].name
-          }
+          // Datatype with multiple units is quantity. There is only one unit here.
+          "valueCoding" : this._createFhirUnitCoding(item.units[0])
         });
       }
       else if(dataType === 'QTY') {
@@ -824,20 +815,14 @@ var self = {
             if(!init.valueQuantity) {
               init.valueQuantity = {};
             }
-            init.valueQuantity.system = "http://unitsofmeasure.org";
-            init.valueQuantity.unit = defUnit.name;
-            init.valueQuantity.code = defUnit.name;
+            self._setUnitAttributesToFhirQuantity(init.valueQuantity, defUnit);
           });
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": {
-              "system": "http://unitsofmeasure.org",
-              "code": unit.name,
-              "display": unit.name
-            }
+            "valueCoding": self._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }

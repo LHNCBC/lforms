@@ -72,7 +72,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" +
     "    <span ng-repeat=\"unit in item.units\">\n" +
     "      <label>\n" +
-    "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit.name}}\n" +
+    "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit._displayUnit}}\n" +
     "      </label>\n" +
     "    </span>\n" +
     "  </div>\n" +

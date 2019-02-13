@@ -18307,8 +18307,8 @@ var dr = {
         valueX.val = {
           "value": item.value,
           "unit": item.unit ? item.unit.name : null,
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit ? item.unit.name : null
+          "system": item.unit ? item.unit.system : null,
+          "code": item.unit ? item.unit.code : null
         };
         break;
 
@@ -19586,13 +19586,14 @@ var self = {
             }
           } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
+              var q = {
+                value: parseFloat(values[i])
+              };
+
+              self._setUnitAttributesToFhirQuantity(q, item.unit);
+
               answer.push({
-                "valueQuantity": {
-                  "value": parseFloat(values[i]),
-                  "unit": item.unit.name,
-                  "system": "http://unitsofmeasure.org",
-                  "code": item.unit.name
-                }
+                valueQuantity: q
               });
             } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
             else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
@@ -19720,12 +19721,8 @@ var self = {
       if (dataType === "REAL" || dataType === "INT") {
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
-          "valueCoding": {
-            "system": "http://unitsofmeasure.org",
-            // Datatype with multiple units is quantity. There is only one unit here.
-            "code": item.units[0].name,
-            "display": item.units[0].name
-          }
+          // Datatype with multiple units is quantity. There is only one unit here.
+          "valueCoding": this._createFhirUnitCoding(item.units[0])
         });
       } else if (dataType === 'QTY') {
         var defUnit = this._getDefaultUnit(item.units);
@@ -19742,9 +19739,7 @@ var self = {
               init.valueQuantity = {};
             }
 
-            init.valueQuantity.system = "http://unitsofmeasure.org";
-            init.valueQuantity.unit = defUnit.name;
-            init.valueQuantity.code = defUnit.name;
+            self._setUnitAttributesToFhirQuantity(init.valueQuantity, defUnit);
           });
         }
 
@@ -19752,11 +19747,7 @@ var self = {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": {
-              "system": "http://unitsofmeasure.org",
-              "code": unit.name,
-              "display": unit.name
-            }
+            "valueCoding": self._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }
@@ -20005,7 +19996,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
    * @param itemUnit optional, lform data item.unit (that has a name property)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -20019,10 +20010,12 @@ function addCommonSDCExportFns(ns) {
       fhirQuantity.value = floatValue;
     }
 
-    if (itemUnit && itemUnit.name) {
-      fhirQuantity.unit = itemUnit.name;
-      fhirQuantity.code = itemUnit.name;
-      fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
+    if (itemUnit) {
+      self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
+
+      if (unitSystem) {
+        fhirQuantity.system = unitSystem;
+      }
     }
 
     return Object.keys(fhirQuantity).length > 0 ? fhirQuantity : null;
@@ -20031,7 +20024,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value required, must be an integer or decimal
    * @param itemUnits optional, lform data item.units (An array of units)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -20157,6 +20150,63 @@ function addCommonSDCExportFns(ns) {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+  };
+  /**
+   * Set unit attributes to a given FHIR quantity.
+   *
+   * @param fhirQuantity - FHIR Quantity object
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @private
+   */
+
+
+  self._setUnitAttributesToFhirQuantity = function (fhirQuantity, lfUnit) {
+    if (fhirQuantity && lfUnit) {
+      if (lfUnit.name) {
+        fhirQuantity.unit = lfUnit.name;
+      }
+
+      if (lfUnit.code) {
+        fhirQuantity.code = lfUnit.code;
+      } // Unit system is optional. It was using a default system before,
+      // Now we have an defined system field, read it from data and
+      // not assume a default.
+
+
+      if (lfUnit.system) {
+        fhirQuantity.system = lfUnit.system;
+      }
+    }
+  };
+  /**
+   * Create a FHIR coding object for a unit.
+   *
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @returns FHIR coding object
+   * @private
+   */
+
+
+  self._createFhirUnitCoding = function (lfUnit) {
+    var ret = null;
+
+    if (lfUnit) {
+      ret = {};
+
+      if (lfUnit.code) {
+        ret.code = lfUnit.code;
+      }
+
+      if (lfUnit.name) {
+        ret.display = lfUnit.name;
+      }
+
+      if (lfUnit.system) {
+        ret.system = lfUnit.system;
+      }
+    }
+
+    return ret;
   };
 }
 
@@ -20670,9 +20720,13 @@ function addSDCImportFns(ns) {
 
     if (unitOption && unitOption.length > 0) {
       for (var i = 0; i < unitOption.length; i++) {
-        lformsUnits.push({
-          name: unitOption[i].valueCoding.code
-        });
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
       }
     }
 
@@ -20685,7 +20739,9 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       } else {
         lformsDefaultUnit = {
-          name: unit.valueCoding.code,
+          name: unit.valueCoding.display,
+          code: unit.valueCoding.code,
+          system: unit.valueCoding.system,
           default: true
         };
         lformsUnits.push(lformsDefaultUnit);
@@ -20698,6 +20754,8 @@ function addSDCImportFns(ns) {
       } else {
         lformsDefaultUnit = {
           name: qItem.initial[0].valueQuantity.unit,
+          code: qItem.initial[0].valueQuantity.code,
+          system: qItem.initial[0].valueQuantity.system,
           default: true
         };
         lformsUnits.push(lformsDefaultUnit);

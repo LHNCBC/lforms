@@ -4141,9 +4141,9 @@ var QTYDemo =
         "dataType": "QTY",
         "question": "With multiple units with a default unit (no default answer)",
         "units": [
-          {"name": "kgs"},
-          {"name": "lbs", default: true},
-          {"name": "grams"}
+          {"name": "kilo grams", "code": "kgs"},
+          {"code": "lbs", default: true},
+          {"name": "grams", "system": "http://unitsofmeasure.org"}
         ]
       },
       {

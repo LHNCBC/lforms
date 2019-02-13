@@ -3,7 +3,7 @@
   <div ng-switch-when="RADIO_CHECKBOX">
     <span ng-repeat="unit in item.units">
       <label>
-        <input type="radio" ng-model="item.unit" ng-value="unit" >{{unit.name}}
+        <input type="radio" ng-model="item.unit" ng-value="unit" >{{unit._displayUnit}}
       </label>
     </span>
   </div>

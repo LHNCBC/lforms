@@ -2196,22 +2196,26 @@ if (typeof LForms === 'undefined')
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
         var defaultValue;
-        for (var i= 0, iLen = answers.length; i<iLen && !defaultValue; i++) {
-           if (answers[i].default)
-             defaultValue = answers[i].name;
+        for (var i= 0, iLen = answers.length; i<iLen; i++) {
+          var listItem = angular.copy(answers[i]);
+          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : "";
+          if (answers[i].default) {
+            defaultValue = listItem._displayUnit;
+          }
+          listItems.push(listItem);
         }
 
         var options = {
-          listItems: answers,
+          listItems: listItems,
           matchListValue: true,
           autoFill: true,
-          display: "name"
+          display: "_displayUnit"
         };
         if (defaultValue !== undefined) {
           options.defaultValue = defaultValue;
         }
-        else if (answers.length === 1) {
-          options.defaultValue = answers[0].name;
+        else if (listItems.length === 1) {
+          options.defaultValue = listItems[0]._displayUnit;
         }
 
         item._unitAutocompOptions = options;
