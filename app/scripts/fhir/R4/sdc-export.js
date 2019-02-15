@@ -821,7 +821,7 @@ var self = {
           }
           var qty = {};
           self._setUnitAttributesToFhirQuantity(qty, defUnit);
-          targetItem.initial.push(qty);
+          targetItem.initial.push({valueQuantity: qty});
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];

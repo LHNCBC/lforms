@@ -455,7 +455,7 @@ function addSDCImportFns(ns) {
         if(val.display !== undefined) answer.text = val.display;
       }
       else if(lfItem.dataType === 'QTY') {
-        answer = val.value; // Associated unit is parsed in _processUnitLists
+        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
       }
       else {
         answer = val;
@@ -463,7 +463,7 @@ function addSDCImportFns(ns) {
 
       if (isMultiple) {
         if(!defaultAnswer) defaultAnswer = [];
-        defaultAnswer.push(answer);
+        if(answer) defaultAnswer.push(answer);
       }
       else {     // single selection
         defaultAnswer = answer;

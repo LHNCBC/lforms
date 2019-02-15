@@ -20189,9 +20189,10 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   /**
+   * Set questionnaire-unitOption extensions using lforms units.
    *
-   * @param targetFhirItem
-   * @param units
+   * @param targetFhirItem - FHIR Questionnaire item
+   * @param units - lforms units array
    * @private
    */
 

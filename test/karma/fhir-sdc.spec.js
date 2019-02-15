@@ -208,9 +208,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               lforms = angular.copy(window['units_example']);
             });
             
-            it.only('should convert units to unitOption extension', function () {
+            it('should convert units to unitOption extension', function () {
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              // There is no default answer and default unit.
               if(fhirVersion === 'STU3') {
                 assert.equal(fhirQ.item[0].initialQuantity, undefined);
               }
@@ -233,7 +234,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(qty.code, lforms.items[0].units[0].code);
               assert.equal(qty.system, lforms.items[0].units[0].system);
               assert.equal(fhirQ.item[0].type, 'quantity');
-
+  
+              // With default unit and default answer.
+              lforms.items[0].units[0].default = true;
+              fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              var qty = null;
+              if(fhirVersion === 'STU3') {
+                qty = fhirQ.item[0].initialQuantity;
+              }
+              else {
+                qty = fhirQ.item[0].initial[0].valueQuantity;
+              }
+              assert.equal(qty.value, 1.0);
+              assert.equal(qty.unit, lforms.items[0].units[0].name);
+              assert.equal(qty.code, lforms.items[0].units[0].code);
+              assert.equal(qty.system, lforms.items[0].units[0].system);
+              assert.equal(fhirQ.item[0].type, 'quantity');
+  
               // Default unit set without default answer.
               delete lforms.items[0].defaultAnswer;
               lforms.items[0].units[0].default = true;

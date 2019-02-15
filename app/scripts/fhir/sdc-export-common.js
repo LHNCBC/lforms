@@ -318,6 +318,7 @@ function addCommonSDCExportFns(ns) {
     };
   };
   
+
   /**
    * Set unit attributes to a given FHIR quantity.
    *
@@ -369,6 +370,7 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   
+
   /**
    * Set questionnaire-unitOption extensions using lforms units.
    *

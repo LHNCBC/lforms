@@ -19731,21 +19731,21 @@ var self = {
           "valueCoding": this._createFhirUnitCoding(item.units[0])
         });
       } else if (dataType === 'QTY') {
-        var defUnit = this._getDefaultUnit(item.units);
+        var defUnit = this._getDefaultUnit(item.units); // Skip if units are already set in default answer conversion.
 
-        if (defUnit && defUnit.default || targetItem.initial && targetItem.initial.length > 0) {
+
+        if (defUnit && defUnit.default && !(targetItem.initial && targetItem.initial.length > 0)) {
           // Use initial[].valueQuantity.unit to export the default unit.
           if (!targetItem.initial) {
-            targetItem.initial = [{}];
-          } // Initial values are multiple. Set same default for all elements.
+            targetItem.initial = [];
+          }
 
+          var qty = {};
 
-          targetItem.initial.forEach(function (init) {
-            if (!init.valueQuantity) {
-              init.valueQuantity = {};
-            }
+          self._setUnitAttributesToFhirQuantity(qty, defUnit);
 
-            self._setUnitAttributesToFhirQuantity(init.valueQuantity, defUnit);
+          targetItem.initial.push({
+            valueQuantity: qty
           });
         }
 
@@ -20215,9 +20215,10 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   /**
+   * Set questionnaire-unitOption extensions using lforms units.
    *
-   * @param targetFhirItem
-   * @param units
+   * @param targetFhirItem - FHIR Questionnaire item
+   * @param units - lforms units array
    * @private
    */
 
@@ -20718,14 +20719,14 @@ function addSDCImportFns(ns) {
         if (val.code !== undefined) answer.code = val.code;
         if (val.display !== undefined) answer.text = val.display;
       } else if (lfItem.dataType === 'QTY') {
-        answer = val.value; // Associated unit is parsed in _processUnitLists
+        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
       } else {
         answer = val;
       }
 
       if (isMultiple) {
         if (!defaultAnswer) defaultAnswer = [];
-        defaultAnswer.push(answer);
+        if (answer) defaultAnswer.push(answer);
       } else {
         // single selection
         defaultAnswer = answer;
