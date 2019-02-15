@@ -99,7 +99,9 @@ __webpack_require__.r(__webpack_exports__);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
-var fhir = LForms.FHIR[fhirVersion] = {};
+var fhir = LForms.FHIR[fhirVersion] = {
+  LOINC_URI: 'http://loinc.org'
+};
 fhir.fhirpath = __webpack_require__(1);
 
 fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
@@ -20344,7 +20346,7 @@ function addSDCImportFns(ns) {
           source: source.questionCode
         };
 
-        var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+        var answer = _getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
 
         if (source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {
@@ -20473,56 +20475,112 @@ function addSDCImportFns(ns) {
     }
   }
   /**
+   *  Imports an observation's values into the given LForms item.
+   * @param lfItem the LForms item to which a value will be assigned.
+   * @param obs the observation whose value will be assigned to lfItem.  It
+   *  assumed that obs has an appropriate data type for its value.
+   */
+
+
+  self.importObsValue = function (lfItem, obs) {
+    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // seems to be looping through the keys on obs looking for something that
+    // starts with "value".
+    var val = null;
+    var lfDataType = lfItem.dataType;
+    var fhirValType = this._dataTypeMapping[lfDataType];
+    if (fhirValType) val = obs['value' + fhirValType];
+
+    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
+      // Accept initial value of type Quantity for these types.
+      val = obs.valueQuantity;
+      if (val) val._type = 'Quantity';
+    }
+
+    if (val) {
+      if (!val._type && _typeof(val) === 'object') val._type = fhirValType; // Before importing, confirm val contains a valid unit from the
+      // item's unit list.
+
+      var unitOkay = true;
+
+      if (val._type === 'Quantity') {
+        // TBD - check code & code system when that is available.
+        if (lfItem.units) {
+          var foundUnit = false;
+
+          for (var i = 0, len = lfItem.units.length; i < len && !foundUnit; ++i) {
+            if (lfItem.units[i].name === val.unit) foundUnit = true;
+          }
+
+          if (!foundUnit) unitOkay = false;
+        }
+      }
+
+      if (unitOkay) this._processFHIRValue(lfItem, val);
+    }
+  },
+  /**
+   *   Assigns a FHIR value to a LForms item.
+   *  @param lfItem the LForms item to receive the value
+   *  @param fhirVal the FHIR value (e.g. a Quantity, Coding, string, etc.).
+   *   Complex types like Quantity should have _type set to the type.
+   *  @param setDefault if true, the default value in lfItem will be set as well
+   *   as the value.
+   */
+  self._processFHIRValue = function (lfItem, fhirVal, setDefault) {
+    var lfDataType = lfItem.dataType;
+
+    if (lfDataType === 'CWE' || lfDataType === 'CNE') {
+      if (lfItem.answerCardinality && lfItem.answerCardinality.max === '*') {
+        lfItem.value = [{
+          code: fhirVal.code,
+          text: fhirVal.display
+        }];
+        if (setDefault) lfItem.defaultAnswer = [{
+          code: fhirVal.code,
+          text: fhirVal.display
+        }];
+      } // single selection
+      else {
+          lfItem.value = {
+            code: fhirVal.code,
+            text: fhirVal.display
+          };
+          if (setDefault) lfItem.defaultAnswer = {
+            code: fhirVal.code,
+            text: fhirVal.display
+          };
+        }
+    } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
+      if (fhirVal.value !== undefined) {
+        lfItem.value = fhirVal.value;
+        if (setDefault) lfItem.defaultAnswer = fhirVal.value;
+      }
+
+      var unit = fhirVal.code ? fhirVal.code : fhirVal.unit;
+
+      if (unit) {
+        lfItem.unit = {
+          name: unit
+        };
+      }
+    } else {
+      lfItem.value = fhirVal;
+      lfItem.defaultAnswer = fhirVal;
+    }
+  },
+  /**
    * Parse questionnaire item for default answer
    *
    * @param lfItem {object} - LForms item object to assign default answer
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-
-
   self._processDefaultAnswer = function (lfItem, qItem) {
-    var val = _getValueWithPrefixKey(qItem, /^initial/);
+    var val = _getFHIRValueWithPrefixKey(qItem, /^initial/);
 
     if (val) {
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE') {
-        if (qItem.repeats) {
-          lfItem.value = [{
-            code: val.code,
-            text: val.display
-          }];
-          lfItem.defaultAnswer = [{
-            code: val.code,
-            text: val.display
-          }];
-        } // single selection
-        else {
-            lfItem.value = {
-              code: val.code,
-              text: val.display
-            };
-            lfItem.defaultAnswer = {
-              code: val.code,
-              text: val.display
-            };
-          }
-      } else if (lfItem.dataType === 'QTY') {
-        if (val.value !== undefined) {
-          lfItem.value = val.value;
-          lfItem.defaultAnswer = val.value;
-        }
-
-        var unit = val.code ? val.code : val.unit;
-
-        if (unit) {
-          lfItem.unit = {
-            name: unit
-          };
-        }
-      } else {
-        lfItem.value = val;
-        lfItem.defaultAnswer = val;
-      }
+      this._processFHIRValue(lfItem, val, true);
     }
   };
   /**
@@ -20532,7 +20590,6 @@ function addSDCImportFns(ns) {
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-
 
   function _processUnitList(lfItem, qItem) {
     var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
@@ -20704,7 +20761,7 @@ function addSDCImportFns(ns) {
     for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
 
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = _getFHIRValueWithPrefixKey(restriction, /^value/);
 
       if (val) {
         if (restriction.url.match(/minValue$/)) {
@@ -20872,23 +20929,30 @@ function addSDCImportFns(ns) {
     }
   }
   /**
-   * Get value from an object given a partial string of hash key.
+   * Get a FHIR value from an object given a partial string of hash key.
    * Use it where at most only one key matches.
    *
    * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
+   * @param keyRegex {regex} - Regular expression to match a key.  This should
+   *  be the beginning part of the key up to the type (e.g., /^value/, to match
+   *  "valueQuantity").
+   * @returns {*} - Corresponding value of matching key.  For complex types,
+   * such as Quantity, the type of the returned object will be present under
+   * a _type attribute.
    * @private
    */
 
 
-  function _getValueWithPrefixKey(obj, keyRegex) {
+  function _getFHIRValueWithPrefixKey(obj, keyRegex) {
     var ret = null;
 
     if (_typeof(obj) === 'object') {
       for (var key in obj) {
-        if (key.match(keyRegex)) {
+        var matchData = key.match(keyRegex);
+
+        if (matchData) {
           ret = obj[key];
+          if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
           break;
         }
       }

@@ -239,14 +239,16 @@ function addSDCImportFns(ns) {
   // A map of FHIR extensions involving Expressions to the property names on
   // which they will be stored in LFormsData, and a boolean indicating whether
   // more than one extension of the type is permitted.
-  var expressionExtensions = {
+  var copiedExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
       ["_calculatedExprExt", false],
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
       ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod":
+      ["_obsLinkPeriodExt", false],
   };
-  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
-  var expressionExtURLs = Object.keys(expressionExtensions);
+  copiedExtensions[self.fhirExtVariable] = ["_variableExt", true];
+  var copiedExtURLs = Object.keys(copiedExtensions);
 
   /**
    *  Some extensions are simply copied over to the LForms data structure.
@@ -256,9 +258,9 @@ function addSDCImportFns(ns) {
    * @param lfItem an item from the LFormsData structure
    */
   self._processCopiedItemExtensions = function (lfItem, qItem) {
-    for (var i=0, len=expressionExtURLs.length; i<len; ++i) {
-      var url = expressionExtURLs[i];
-      var extInfo = expressionExtensions[url];
+    for (var i=0, len=copiedExtURLs.length; i<len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
       var prop = extInfo[0], multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
       if (!multiple || ext.length > 0)

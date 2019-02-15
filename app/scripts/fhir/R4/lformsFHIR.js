@@ -99,7 +99,9 @@ __webpack_require__.r(__webpack_exports__);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
-var fhir = LForms.FHIR[fhirVersion] = {};
+var fhir = LForms.FHIR[fhirVersion] = {
+  LOINC_URI: 'http://loinc.org'
+};
 fhir.fhirpath = __webpack_require__(1);
 
 fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
@@ -19157,6 +19159,7 @@ var sdcExport = {
 
     if (item._initialExprExt) targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
+    if (item._obsLinkPeriodExt) targetItem.extension.push(item._obsLinkPeriodExt);
     if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
     this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
@@ -20350,12 +20353,13 @@ function addSDCImportFns(ns) {
   // more than one extension of the type is permitted.
 
 
-  var expressionExtensions = {
+  var copiedExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false]
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false]
   };
-  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
-  var expressionExtURLs = Object.keys(expressionExtensions);
+  copiedExtensions[self.fhirExtVariable] = ["_variableExt", true];
+  var copiedExtURLs = Object.keys(copiedExtensions);
   /**
    *  Some extensions are simply copied over to the LForms data structure.
    *  This copies those extensions from qItem to lfItem if they exist, and
@@ -20365,9 +20369,9 @@ function addSDCImportFns(ns) {
    */
 
   self._processCopiedItemExtensions = function (lfItem, qItem) {
-    for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
-      var url = expressionExtURLs[i];
-      var extInfo = expressionExtensions[url];
+    for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);

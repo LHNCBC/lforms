@@ -188,7 +188,6 @@ if (typeof LForms === 'undefined')
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
       this._initializeInternalData();
-
     },
 
 
@@ -205,6 +204,7 @@ if (typeof LForms === 'undefined')
       this._asyncChangeListeners.push(listener);
     },
 
+
     /**
      *  Calls the listeners registered via addAsyncChangeListener.
      */
@@ -218,7 +218,8 @@ if (typeof LForms === 'undefined')
 
     /**
      *  Initializes form-level FHIR data.  This should be called before item
-     *  properties are set up.
+     *  properties are set up, because sets properties like this.fhirVersion
+     *  which might be needed for processing the items.
      * @param an LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
@@ -323,6 +324,65 @@ if (typeof LForms === 'undefined')
       // run the all form controls
       this._checkFormControls();
 
+      if (this._fhir)
+        this._requestLinkedObs();
+    },
+
+
+    /**
+     *  Starts the (likely asynchronous) requests to retrieve linked Observation
+     *  resources for pre-populuation.
+     */
+    _requestLinkedObs: function() {
+      // TBD -- This needs to be done in FHIR-version specific code.  STU3 does
+      // not have a "focus" field in Observation, but we were required to check
+      // it in R4
+      if (LForms.fhirContext && this._fhir) {
+        // We will need to know what version of FHIR the server is using.  Make
+        // sure that is available before continuing.
+        var lfData = this;
+        if (!LForms._serverFHIRReleaseID) {
+          LForms.Util.getServerFHIRReleaseID(function() {lfData._requestLinkedObs()});
+        }
+        else {
+          LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
+          var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+          for (var i=0, len=this.items.length; i<len; ++i) {
+            var item = this.items[i];
+            if (item._obsLinkPeriodExt) {
+              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              if (itemCodeSystem === 'LOINC')
+                itemCodeSystem = serverFHIR.LOINC_URI;
+              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              // TBD add date range
+              var queryParams = {type: 'Observation', query: {
+                code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
+                _count: 1}};
+              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+                queryParams.query.focus = {$missing: true};
+              this._asyncLoadCounter++;
+              fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
+                var bundle = successData.data;
+                if (bundle.entry && bundle.entry.length === 1) {
+                  var obs = bundle.entry[0].resource;
+                  serverFHIR.SDC.importObsValue(itemI, obs);
+                }
+                console.log(successData);
+                lfData._asyncLoadCounter--;
+                if (lfData._asyncLoadCounter === 0)
+                  lfData._notifyAsyncChangeListeners()
+              }})(item),
+              function(errorData) {
+                console.log(errorData);
+                lfData._asyncLoadCounter--;
+                if (lfData._asyncLoadCounter === 0)
+                  lfData._notifyAsyncChangeListeners()
+              });
+            }
+          }
+        }
+      }
     },
 
 

@@ -2,7 +2,7 @@
   "name": "lforms",
   "version": "0.0.0",
   "dependencies": {
-    "autocomplete-lhc": "^17.0.3",
+    "autocomplete-lhc": "^18.0.0",
     "fhirpath": "^0.10.1"
   },
   "devDependencies": {

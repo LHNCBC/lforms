@@ -261,6 +261,39 @@ LForms.Util = {
    */
   setFHIRContext: function(fhirContext) {
     LForms.fhirContext = fhirContext;
+    delete LForms._serverFHIRReleaseID; // in case the version changed
+  },
+
+
+  /**
+   *  Gets the release identifier for the version of FHIR being used by the
+   *  server providing the FHIR context set via setFHIRContext (which must have
+   *  been called first).
+   * @param callback Because asking the FHIR server for its version is an
+   * asynchronous call, this callback function will be used to return the
+   * version when found.  The callback will be called asynchrnously with a
+   * release string, like 'STU3' or 'R4'.  This string can then be passed to
+   * validateFHIRVersion to check that the needed support files have been loaded.
+   */
+  getServerFHIRReleaseID: function(callback) {
+    if (!LForms.fhirContext)
+      throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
+    if (!LForms._serverFHIRReleaseID) {
+      // Retrieve the fhir version
+      var fhirAPI = LForms.fhirContext.getFHIRAPI();
+      fhirAPI.conformance({}).then(function(res) {
+        var fhirVersion = res.data.fhirVersion;
+        LForms._serverFHIRReleaseID = (fhirVersion.indexOf('3.') === 0) ?
+          'STU3' : (fhirVersion.indexOf('4.') === 0) ?
+          'R4' : fhirVersion;
+        console.log('Server FHIR version is '+LForms._serverFHIRReleaseID+' ('+
+          fhirVersion+')');
+        callback(LForms._serverFHIRReleaseID);
+      });
+    }
+    else { // preserve the asynchronous nature of the return
+      setTimeout(function(){callback(LForms._serverFHIRReleaseID)});
+    }
   },
 
 

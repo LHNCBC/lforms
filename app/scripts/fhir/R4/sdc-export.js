@@ -244,7 +244,9 @@ var sdcExport = {
       targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt)
       targetItem.extension.push(item._calculatedExprExt);
-    if (item._variableExt)
+    if (item._obsLinkPeriodExt)
+      targetItem.extension.push(item._obsLinkPeriodExt);
+     if (item._variableExt)
       Array.prototype.push.apply(targetItem.extension, item._variableExt);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
