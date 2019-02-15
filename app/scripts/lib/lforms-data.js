@@ -1,12 +1,11 @@
 /**
  * LForms class for form definition data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
-
 (function() {
   "use strict";
 
+  var LForms = require('../../lforms');
+  var Class = require("./js-class.js");
   LForms.LFormsData = Class.extend({
 
     // constants
@@ -2937,5 +2936,3 @@ if (typeof LForms === 'undefined')
 
   });
 })();
-// TBD -- We should remove LFormsData from the global scope.
-var LFormsData = LForms.LFormsData;

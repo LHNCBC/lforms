@@ -165,6 +165,10 @@ module.exports = function (grunt) {
                 '/bower_components',
                 connect.static('./bower_components')
               ),
+              connect().use(
+                '/bower-dist',
+                connect.static('./bower-dist')
+              ),
               connect.static(appConfig.app)
             ];
           }
@@ -180,6 +184,10 @@ module.exports = function (grunt) {
               connect().use(
                 '/bower_components',
                 connect.static('./bower_components')
+              ),
+              connect().use(
+                '/bower-dist',
+                connect.static('./bower-dist')
               ),
               connect.static(appConfig.app)
             ];

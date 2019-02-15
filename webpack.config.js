@@ -31,6 +31,7 @@ function commonConfig() {
 
 let configs = [];
 let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
+/*
 for (let version of fhirVersions) {
   let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
 
@@ -46,13 +47,16 @@ for (let version of fhirVersions) {
   minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
   minConfig.mode = 'production';
   configs.push(minConfig);
-
-  // autocomplete-lhc and (eventually) other ES6 code
-  let es6Config = commonConfig();
-  es6Config.entry = './app/scripts/index.js';
-  es6Config.output.filename = './app/generated/scripts/autocomplete-lhc.js';
-  es6Config.mode = 'none';
-  configs.push(es6Config);
 }
+*/ // TBD uncomment before PR
+
+// LForms and dependencies
+let lformsConfig = commonConfig();
+lformsConfig.entry = './app/scripts/index.js';
+lformsConfig.output.filename = './bower-dist/lforms.js';
+lformsConfig.output.library = 'LForms';
+lformsConfig.devtool = 'source-map';
+lformsConfig.mode = 'none';
+configs.push(lformsConfig);
 
 module.exports = configs;

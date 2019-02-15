@@ -3,8 +3,7 @@
   "version": "14.1.4",
   "dependencies": {
     "jquery-ui": "~1.11.4",
-    "angular": "^1.4.7",
-    "angular-animate": "^1.4.7",
+    "angular": "^1.7.7",
     "angular-bootstrap": "^1.1.0",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",
@@ -35,26 +34,9 @@
   ],
   "description": "An angular directive that displays forms defined in the lforms standard format.",
   "main": [
-    "app/generated/scripts/autocomplete-lhc.js",
+    "bower-dist/lforms.js",
     "app/generated/styles/autocomplete-lhc.css",
-    "app/lforms.js",
-    "app/scripts/lforms-constants.js",
-    "app/scripts/lforms-config.js",
-    "app/scripts/lforms-controllers.js",
-    "app/scripts/lforms-directives.js",
-    "app/scripts/bootstrap-decorators.js",
-    "app/scripts/lib/date.js",
-    "app/scripts/lib/js-class.js",
-    "app/scripts/lib/cross_browser.js",
-    "app/scripts/lib/lforms-util.js",
-    "app/scripts/lib/polyfill.js",
-    "app/scripts/lib/lforms-hl7.js",
-    "app/scripts/lib/lforms-validate.js",
-    "app/scripts/lib/lforms-data.js",
-    "app/scripts/lib/expression-processor.js",
-    "app/scripts/fhir/versions.js",
-    "app/styles/lforms.css",
-    "app/lforms.tpl.js"
+    "app/styles/lforms.css"
   ],
   "keywords": [
     "lforms",

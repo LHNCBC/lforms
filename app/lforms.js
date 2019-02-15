@@ -1,8 +1,9 @@
 // Use IIFE so that strict mode is not at the file level
 (function() {
-  'use strict';
+//  'use strict';
+//  var angular = require('angular');
   angular.module('lformsWidget', [
-    'ngAnimate',
+    require('angular-animate'),
     'ui.bootstrap',
     'smoothScroll',
     'autocompleteLhcMod'
@@ -37,3 +38,7 @@
       };
     });
 })();
+
+// Define the top-level namespace object
+var LForms = {};
+module.exports = LForms;

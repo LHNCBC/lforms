@@ -1,8 +1,8 @@
 /**
  * LForms Utility tools
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
+var LForms = require('../../lforms');
+//var angular = require('angular');
 
 LForms.Util = {
   /**

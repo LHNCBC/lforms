@@ -79,7 +79,7 @@
 
       // Set up FHIR version list
       var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
-      new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+      new LForms.Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
        {matchListValue: true});
       $('#fhirVersion')[0].value = fhirVersions[0];
     </script>

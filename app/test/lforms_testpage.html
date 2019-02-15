@@ -80,29 +80,11 @@
     <script src="../bower_components/jquery-ui/ui/dialog.js"></script>
     <script src="../bower_components/jquery-ui/ui/datepicker.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-animate/angular-animate.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
-    <script src="generated/scripts/autocomplete-lhc.js"></script>
-    <script src="lforms.js"></script>
-    <script src="scripts/lforms-constants.js"></script>
-    <script src="scripts/lforms-config.js"></script>
-    <script src="scripts/lforms-controllers.js"></script>
-    <script src="scripts/lforms-directives.js"></script>
-    <script src="scripts/bootstrap-decorators.js"></script>
-    <script src="scripts/lib/date.js"></script>
-    <script src="scripts/lib/js-class.js"></script>
-    <script src="scripts/lib/cross_browser.js"></script>
-    <script src="scripts/lib/lforms-util.js"></script>
-    <script src="scripts/lib/polyfill.js"></script>
-    <script src="scripts/lib/lforms-hl7.js"></script>
-    <script src="scripts/lib/lforms-validate.js"></script>
-    <script src="scripts/lib/lforms-data.js"></script>
-    <script src="scripts/lib/expression-processor.js"></script>
-    <script src="scripts/fhir/versions.js"></script>
-    <script src="lforms.tpl.js"></script>
+    <script src="../bower-dist/lforms.js"></script>
     <!-- endbower -->
     <script src="scripts/fhir/STU3/lformsFHIR.js"></script>
     <script src="scripts/fhir/R4/lformsFHIR.js"></script>
@@ -539,7 +521,7 @@ console.log("%%% in onAfterAddingFile");
 
        // Set up FHIR version list
        var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
-       new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+       new LForms._Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
          {matchListValue: true});
        $('#fhirVersion')[0].value = fhirVersions[1];
     </script>
