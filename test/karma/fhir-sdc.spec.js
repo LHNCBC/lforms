@@ -208,7 +208,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               lforms = angular.copy(window['units_example']);
             });
             
-            it('should convert units to unitOption extension', function () {
+            it.only('should convert units to unitOption extension', function () {
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
               if(fhirVersion === 'STU3') {
@@ -218,7 +218,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.equal(fhirQ.item[0].initial, undefined);
               }
               //assert.equal(fhirQ.item[0].type, 'decimal');
-              // Add default answer to convert to quantity type.
+              // Add default answer to convert to quantity type - no default unit set.
               lforms.items[0].defaultAnswer = 1.0;
               fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
               var qty = null;
@@ -228,10 +228,29 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               else {
                 qty = fhirQ.item[0].initial[0].valueQuantity;
               }
+              assert.equal(qty.value, 1.0);
               assert.equal(qty.unit, lforms.items[0].units[0].name);
               assert.equal(qty.code, lforms.items[0].units[0].code);
               assert.equal(qty.system, lforms.items[0].units[0].system);
               assert.equal(fhirQ.item[0].type, 'quantity');
+
+              // Default unit set without default answer.
+              delete lforms.items[0].defaultAnswer;
+              lforms.items[0].units[0].default = true;
+              fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
+              var qty = null;
+              if(fhirVersion === 'STU3') {
+                qty = fhirQ.item[0].initialQuantity;
+              }
+              else {
+                qty = fhirQ.item[0].initial[0].valueQuantity;
+              }
+              assert.equal(qty.value, undefined);
+              assert.equal(qty.unit, lforms.items[0].units[0].name);
+              assert.equal(qty.code, lforms.items[0].units[0].code);
+              assert.equal(qty.system, lforms.items[0].units[0].system);
+              assert.equal(fhirQ.item[0].type, 'quantity');
+
               var unitOptions = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption', 0, true);
               assert.equal(unitOptions.length, lforms.items[0].units.length);
               var i = 0;
