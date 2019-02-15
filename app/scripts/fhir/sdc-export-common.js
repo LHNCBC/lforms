@@ -159,7 +159,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
    * @param itemUnit optional, lform data item.unit (that has a name property)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional, overrides any system in itemUnit.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -171,10 +171,11 @@ function addCommonSDCExportFns(ns) {
       fhirQuantity.value = floatValue;
     }
     
-    if(itemUnit && itemUnit.name) {
-      fhirQuantity.unit = itemUnit.name;
-      fhirQuantity.code = itemUnit.name;
-      fhirQuantity.system = unitSystem? unitSystem: 'http://unitsofmeasure.org';
+    if(itemUnit) {
+      self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
+      if(unitSystem) {
+        fhirQuantity.system = unitSystem;
+      }
     }
     
     return (Object.keys(fhirQuantity).length > 0) ? fhirQuantity : null;
@@ -185,7 +186,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value required, must be an integer or decimal
    * @param itemUnits optional, lform data item.units (An array of units)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -316,6 +317,81 @@ function addCommonSDCExportFns(ns) {
       "reference": "Questionnaire/{{questionnaireId}}"
     };
   };
+  
+
+  /**
+   * Set unit attributes to a given FHIR quantity.
+   *
+   * @param fhirQuantity - FHIR Quantity object
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @private
+   */
+  self._setUnitAttributesToFhirQuantity = function(fhirQuantity, lfUnit) {
+    if(fhirQuantity && lfUnit) {
+      if(lfUnit.name) {
+        fhirQuantity.unit = lfUnit.name;
+      }
+      
+      if(lfUnit.code) {
+        fhirQuantity.code = lfUnit.code;
+      }
+      
+      // Unit system is optional. It was using a default system before,
+      // Now we have an defined system field, read it from data and
+      // not assume a default.
+      if(lfUnit.system) {
+        fhirQuantity.system = lfUnit.system;
+      }
+    }
+  };
+  
+
+  /**
+   * Create a FHIR coding object for a unit.
+   *
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @returns FHIR coding object
+   * @private
+   */
+  self._createFhirUnitCoding = function(lfUnit) {
+    var ret = null;
+    if(lfUnit) {
+      ret = {};
+      if(lfUnit.code) {
+        ret.code = lfUnit.code;
+      }
+      if(lfUnit.name) {
+        ret.display = lfUnit.name;
+      }
+      if(lfUnit.system) {
+        ret.system = lfUnit.system;
+      }
+    }
+    return ret;
+  };
+  
+
+  /**
+   * Set questionnaire-unitOption extensions using lforms units.
+   *
+   * @param targetFhirItem - FHIR Questionnaire item
+   * @param units - lforms units array
+   * @private
+   */
+  self._setUnitOptions = function(targetFhirItem, units) {
+    for (var i=0, iLen=units.length; i<iLen; i++) {
+      var unit = units[i];
+      var fhirUnitExt = {
+        "url": this.fhirExtUrlUnitOption,
+        "valueCoding": self._createFhirUnitCoding(unit)
+      };
+      if(!targetFhirItem.extension) {
+        targetFhirItem.extension = [];
+      }
+      targetFhirItem.extension.push(fhirUnitExt);
+    }
+  }
+  
 }
 
 export default addCommonSDCExportFns;

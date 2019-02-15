@@ -209,11 +209,6 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-    // add LForms Extension to units list
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    }
-
     // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
     if (item.codingInstructions) {
       targetItem.extension.push({
@@ -277,7 +272,12 @@ var self = {
 
     // initialValue, for default values
     this._handleInitialValues(targetItem, item);
-
+    // add LForms Extension to units list. Process units after handling initial values.
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
+  
+  
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -673,14 +673,9 @@ var self = {
         // make a Quantity type if numeric values has a unit value
         else if (item.unit && typeof values[i] !== 'undefined' &&
             (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
-          answer.push({
-            "valueQuantity": {
-              "value": parseFloat(values[i]),
-              "unit": item.unit.name,
-              "system": "http://unitsofmeasure.org",
-              "code": item.unit.name
-            }
-          });
+          var q = {value: parseFloat(values[i])};
+          self._setUnitAttributesToFhirQuantity(q, item.unit);
+          answer.push({valueQuantity: q});
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
@@ -709,7 +704,7 @@ var self = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
-    if (item.defaultAnswer) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
 
       targetItem.initial = [];
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -763,9 +758,17 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
-        let fhirQuantity = this._makeQuantity(item.value, item.units);
-        if(fhirQuantity) {
-          targetItem[valueKey] = fhirQuantity;
+        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+          for(var j = 0; j < item.defaultAnswer.length; j++) {
+            answer = {};
+            answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
+            targetItem.initial.push(answer);
+          }
+        }
+        else {
+          answer = {};
+          answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
+          targetItem.initial.push(answer);
         }
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
@@ -804,40 +807,27 @@ var self = {
         
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
-          "valueCoding" : {
-            "system": "http://unitsofmeasure.org",
-            // Datatype with multiple units is quantity. There is only one unit here.
-            "code": item.units[0].name,
-            "display": item.units[0].name
-          }
+          // Datatype with multiple units is quantity. There is only one unit here.
+          "valueCoding" : this._createFhirUnitCoding(item.units[0])
         });
       }
       else if(dataType === 'QTY') {
         var defUnit = this._getDefaultUnit(item.units);
-        if (defUnit) {
+        // Skip if units are already set in default answer conversion.
+        if ((defUnit && defUnit.default) && !(targetItem.initial && targetItem.initial.length > 0)) {
           // Use initial[].valueQuantity.unit to export the default unit.
           if (!targetItem.initial) {
-            targetItem.initial = [{}];
+            targetItem.initial = [];
           }
-          // Initial values are multiple. Set same default for all elements.
-          targetItem.initial.forEach(function (init) {
-            if(!init.valueQuantity) {
-              init.valueQuantity = {};
-            }
-            init.valueQuantity.system = "http://unitsofmeasure.org";
-            init.valueQuantity.unit = defUnit.name;
-            init.valueQuantity.code = defUnit.name;
-          });
+          var qty = {};
+          self._setUnitAttributesToFhirQuantity(qty, defUnit);
+          targetItem.initial.push({valueQuantity: qty});
         }
         for (var i=0, iLen=item.units.length; i<iLen; i++) {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": {
-              "system": "http://unitsofmeasure.org",
-              "code": unit.name,
-              "display": unit.name
-            }
+            "valueCoding": self._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }

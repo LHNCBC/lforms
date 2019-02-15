@@ -18307,8 +18307,8 @@ var dr = {
         valueX.val = {
           "value": item.value,
           "unit": item.unit ? item.unit.name : null,
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit ? item.unit.name : null
+          "system": item.unit ? item.unit.system : null,
+          "code": item.unit ? item.unit.code : null
         };
         break;
 
@@ -19119,12 +19119,7 @@ var self = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // add LForms Extension to units list
-
-
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    } // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
 
 
     if (item.codingInstructions) {
@@ -19185,7 +19180,12 @@ var self = {
       } // initialValue, for default values
 
 
-    this._handleInitialValues(targetItem, item);
+    this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Process units after handling initial values.
+
+
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -19586,13 +19586,14 @@ var self = {
             }
           } // make a Quantity type if numeric values has a unit value
           else if (item.unit && typeof values[i] !== 'undefined' && (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
+              var q = {
+                value: parseFloat(values[i])
+              };
+
+              self._setUnitAttributesToFhirQuantity(q, item.unit);
+
               answer.push({
-                "valueQuantity": {
-                  "value": parseFloat(values[i]),
-                  "unit": item.unit.name,
-                  "system": "http://unitsofmeasure.org",
-                  "code": item.unit.name
-                }
+                valueQuantity: q
               });
             } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
             else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
@@ -19618,7 +19619,7 @@ var self = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
-    if (item.defaultAnswer) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
       targetItem.initial = [];
 
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -19684,10 +19685,16 @@ var self = {
       // }]
       else if (dataType === 'QTY') {
           // for now, handling only simple quantities without the comparators.
-          var fhirQuantity = this._makeQuantity(item.value, item.units);
-
-          if (fhirQuantity) {
-            targetItem[valueKey] = fhirQuantity;
+          if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+            for (var j = 0; j < item.defaultAnswer.length; j++) {
+              answer = {};
+              answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
+              targetItem.initial.push(answer);
+            }
+          } else {
+            answer = {};
+            answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
+            targetItem.initial.push(answer);
           }
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
@@ -19720,31 +19727,25 @@ var self = {
       if (dataType === "REAL" || dataType === "INT") {
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
-          "valueCoding": {
-            "system": "http://unitsofmeasure.org",
-            // Datatype with multiple units is quantity. There is only one unit here.
-            "code": item.units[0].name,
-            "display": item.units[0].name
-          }
+          // Datatype with multiple units is quantity. There is only one unit here.
+          "valueCoding": this._createFhirUnitCoding(item.units[0])
         });
       } else if (dataType === 'QTY') {
-        var defUnit = this._getDefaultUnit(item.units);
+        var defUnit = this._getDefaultUnit(item.units); // Skip if units are already set in default answer conversion.
 
-        if (defUnit) {
+
+        if (defUnit && defUnit.default && !(targetItem.initial && targetItem.initial.length > 0)) {
           // Use initial[].valueQuantity.unit to export the default unit.
           if (!targetItem.initial) {
-            targetItem.initial = [{}];
-          } // Initial values are multiple. Set same default for all elements.
+            targetItem.initial = [];
+          }
 
+          var qty = {};
 
-          targetItem.initial.forEach(function (init) {
-            if (!init.valueQuantity) {
-              init.valueQuantity = {};
-            }
+          self._setUnitAttributesToFhirQuantity(qty, defUnit);
 
-            init.valueQuantity.system = "http://unitsofmeasure.org";
-            init.valueQuantity.unit = defUnit.name;
-            init.valueQuantity.code = defUnit.name;
+          targetItem.initial.push({
+            valueQuantity: qty
           });
         }
 
@@ -19752,11 +19753,7 @@ var self = {
           var unit = item.units[i];
           var fhirUnitExt = {
             "url": this.fhirExtUrlUnitOption,
-            "valueCoding": {
-              "system": "http://unitsofmeasure.org",
-              "code": unit.name,
-              "display": unit.name
-            }
+            "valueCoding": self._createFhirUnitCoding(unit)
           };
           targetItem.extension.push(fhirUnitExt);
         }
@@ -20005,7 +20002,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
    * @param itemUnit optional, lform data item.unit (that has a name property)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional, overrides any system in itemUnit.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -20019,10 +20016,12 @@ function addCommonSDCExportFns(ns) {
       fhirQuantity.value = floatValue;
     }
 
-    if (itemUnit && itemUnit.name) {
-      fhirQuantity.unit = itemUnit.name;
-      fhirQuantity.code = itemUnit.name;
-      fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
+    if (itemUnit) {
+      self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
+
+      if (unitSystem) {
+        fhirQuantity.system = unitSystem;
+      }
     }
 
     return Object.keys(fhirQuantity).length > 0 ? fhirQuantity : null;
@@ -20031,7 +20030,7 @@ function addCommonSDCExportFns(ns) {
    * Make a FHIR Quantity for the given value and unit info.
    * @param value required, must be an integer or decimal
    * @param itemUnits optional, lform data item.units (An array of units)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
+   * @param unitSystem optional.
    * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
    * @private
    */
@@ -20157,6 +20156,87 @@ function addCommonSDCExportFns(ns) {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+  };
+  /**
+   * Set unit attributes to a given FHIR quantity.
+   *
+   * @param fhirQuantity - FHIR Quantity object
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @private
+   */
+
+
+  self._setUnitAttributesToFhirQuantity = function (fhirQuantity, lfUnit) {
+    if (fhirQuantity && lfUnit) {
+      if (lfUnit.name) {
+        fhirQuantity.unit = lfUnit.name;
+      }
+
+      if (lfUnit.code) {
+        fhirQuantity.code = lfUnit.code;
+      } // Unit system is optional. It was using a default system before,
+      // Now we have an defined system field, read it from data and
+      // not assume a default.
+
+
+      if (lfUnit.system) {
+        fhirQuantity.system = lfUnit.system;
+      }
+    }
+  };
+  /**
+   * Create a FHIR coding object for a unit.
+   *
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @returns FHIR coding object
+   * @private
+   */
+
+
+  self._createFhirUnitCoding = function (lfUnit) {
+    var ret = null;
+
+    if (lfUnit) {
+      ret = {};
+
+      if (lfUnit.code) {
+        ret.code = lfUnit.code;
+      }
+
+      if (lfUnit.name) {
+        ret.display = lfUnit.name;
+      }
+
+      if (lfUnit.system) {
+        ret.system = lfUnit.system;
+      }
+    }
+
+    return ret;
+  };
+  /**
+   * Set questionnaire-unitOption extensions using lforms units.
+   *
+   * @param targetFhirItem - FHIR Questionnaire item
+   * @param units - lforms units array
+   * @private
+   */
+
+
+  self._setUnitOptions = function (targetFhirItem, units) {
+    for (var i = 0, iLen = units.length; i < iLen; i++) {
+      var unit = units[i];
+      var fhirUnitExt = {
+        "url": this.fhirExtUrlUnitOption,
+        "valueCoding": self._createFhirUnitCoding(unit)
+      };
+
+      if (!targetFhirItem.extension) {
+        targetFhirItem.extension = [];
+      }
+
+      targetFhirItem.extension.push(fhirUnitExt);
+    }
   };
 }
 
@@ -20639,14 +20719,14 @@ function addSDCImportFns(ns) {
         if (val.code !== undefined) answer.code = val.code;
         if (val.display !== undefined) answer.text = val.display;
       } else if (lfItem.dataType === 'QTY') {
-        answer = val.value; // Associated unit is parsed in _processUnitLists
+        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
       } else {
         answer = val;
       }
 
       if (isMultiple) {
         if (!defaultAnswer) defaultAnswer = [];
-        defaultAnswer.push(answer);
+        if (answer) defaultAnswer.push(answer);
       } else {
         // single selection
         defaultAnswer = answer;
@@ -20670,9 +20750,13 @@ function addSDCImportFns(ns) {
 
     if (unitOption && unitOption.length > 0) {
       for (var i = 0; i < unitOption.length; i++) {
-        lformsUnits.push({
-          name: unitOption[i].valueCoding.code
-        });
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
       }
     }
 
@@ -20685,7 +20769,9 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       } else {
         lformsDefaultUnit = {
-          name: unit.valueCoding.code,
+          name: unit.valueCoding.display,
+          code: unit.valueCoding.code,
+          system: unit.valueCoding.system,
           default: true
         };
         lformsUnits.push(lformsDefaultUnit);
@@ -20698,6 +20784,8 @@ function addSDCImportFns(ns) {
       } else {
         lformsDefaultUnit = {
           name: qItem.initial[0].valueQuantity.unit,
+          code: qItem.initial[0].valueQuantity.code,
+          system: qItem.initial[0].valueQuantity.system,
           default: true
         };
         lformsUnits.push(lformsDefaultUnit);

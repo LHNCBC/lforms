@@ -358,7 +358,13 @@ function addSDCImportFns(ns) {
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
     if(unitOption && unitOption.length > 0) {
       for(var i = 0; i < unitOption.length; i++) {
-        lformsUnits.push({name: unitOption[i].valueCoding.code});
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
       }
     }
     
@@ -370,7 +376,12 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsDefaultUnit = {name: unit.valueCoding.code, default: true};
+        lformsDefaultUnit = {
+          name: unit.valueCoding.display,
+          code: unit.valueCoding.code,
+          system: unit.valueCoding.system,
+          default: true
+        };
         lformsUnits.push(lformsDefaultUnit);
       }
     }
@@ -380,7 +391,12 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsDefaultUnit = {name: qItem.initialQuantity.unit, default: true};
+        lformsDefaultUnit = {
+          name: qItem.initialQuantity.unit,
+          code: qItem.initialQuantity.code,
+          system: qItem.initialQuantity.system,
+          default: true
+        };
         lformsUnits.push(lformsDefaultUnit);
       }
     }
