@@ -209,11 +209,6 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-    // add LForms Extension to units list
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    }
-
     // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
     if (item.codingInstructions) {
       targetItem.extension.push({
@@ -277,7 +272,12 @@ var self = {
 
     // initialValue, for default values
     this._handleInitialValues(targetItem, item);
-
+    // add LForms Extension to units list. Process units after handling initial values.
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
+  
+  
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -704,7 +704,7 @@ var self = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
-    if (item.defaultAnswer) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
 
       targetItem.initial = [];
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -758,9 +758,17 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
-        let fhirQuantity = this._makeQuantity(item.value, item.units);
-        if(fhirQuantity) {
-          targetItem[valueKey] = fhirQuantity;
+        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
+          for(var j = 0; j < item.defaultAnswer.length; j++) {
+            answer = {};
+            answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
+            targetItem.initial.push(answer);
+          }
+        }
+        else {
+          answer = {};
+          answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
+          targetItem.initial.push(answer);
         }
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
@@ -805,7 +813,7 @@ var self = {
       }
       else if(dataType === 'QTY') {
         var defUnit = this._getDefaultUnit(item.units);
-        if (defUnit) {
+        if ((defUnit && defUnit.default) || (targetItem.initial && targetItem.initial.length > 0)) {
           // Use initial[].valueQuantity.unit to export the default unit.
           if (!targetItem.initial) {
             targetItem.initial = [{}];

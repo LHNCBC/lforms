@@ -369,6 +369,26 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   
+  /**
+   *
+   * @param targetFhirItem
+   * @param units
+   * @private
+   */
+  self._setUnitOptions = function(targetFhirItem, units) {
+    for (var i=0, iLen=units.length; i<iLen; i++) {
+      var unit = units[i];
+      var fhirUnitExt = {
+        "url": this.fhirExtUrlUnitOption,
+        "valueCoding": self._createFhirUnitCoding(unit)
+      };
+      if(!targetFhirItem.extension) {
+        targetFhirItem.extension = [];
+      }
+      targetFhirItem.extension.push(fhirUnitExt);
+    }
+  }
+  
 }
 
 export default addCommonSDCExportFns;

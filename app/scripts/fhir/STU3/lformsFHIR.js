@@ -19124,12 +19124,7 @@ var self = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // add LForms Extension to units list
-
-
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    } // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
 
 
     if (item.codingInstructions) {
@@ -19190,7 +19185,12 @@ var self = {
       } // initialValue, for default values
 
 
-    this._handleInitialValues(targetItem, item);
+    this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Handle units after handling initial values.
+
+
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -19642,7 +19642,7 @@ var self = {
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
-    if (item.defaultAnswer) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
       var dataType = this._getAssumedDataTypeForExport(item);
 
       var valueKey = this._getValueKeyByDataType("initial", item); // for Coding
@@ -19688,7 +19688,7 @@ var self = {
       // }]
       else if (dataType === 'QTY') {
           // for now, handling only simple quantities without the comparators.
-          var fhirQuantity = this._makeQuantity(item.value, item.units);
+          var fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
 
           if (fhirQuantity) {
             targetItem[valueKey] = fhirQuantity;
@@ -19720,9 +19720,9 @@ var self = {
       } else if (dataType === 'QTY') {
         var defUnit = this._getDefaultUnit(item.units);
 
-        if (defUnit) {
+        if (defUnit && defUnit.default || targetItem.initialQuantity) {
           // Use initial[].valueQuantity.unit to export the default unit.
-          if (!targetItem.initial) {
+          if (!targetItem.initialQuantity) {
             targetItem.initialQuantity = {};
           }
 
@@ -20187,6 +20187,29 @@ function addCommonSDCExportFns(ns) {
     }
 
     return ret;
+  };
+  /**
+   *
+   * @param targetFhirItem
+   * @param units
+   * @private
+   */
+
+
+  self._setUnitOptions = function (targetFhirItem, units) {
+    for (var i = 0, iLen = units.length; i < iLen; i++) {
+      var unit = units[i];
+      var fhirUnitExt = {
+        "url": this.fhirExtUrlUnitOption,
+        "valueCoding": self._createFhirUnitCoding(unit)
+      };
+
+      if (!targetFhirItem.extension) {
+        targetFhirItem.extension = [];
+      }
+
+      targetFhirItem.extension.push(fhirUnitExt);
+    }
   };
 }
 
