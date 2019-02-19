@@ -1,7 +1,7 @@
 //var angular = require('angular');
 var Def = require('autocomplete-lhc');
 var LForms = require('../lforms.js');
-LForms._Def = Def;
+LForms.Def = Def;
 require("./lforms-constants.js");
 require("./lforms-config.js");
 require("./lforms-controllers.js");

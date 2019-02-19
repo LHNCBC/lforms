@@ -19,7 +19,6 @@
 
     <!-- lforms directive css files -->
     <link rel="stylesheet" href="styles/lforms.css">
-    <link rel="stylesheet" href="styles/autocomplete-lhc/lforms.css">
     <link rel="stylesheet" href="styles/themes.css">
     <!-- end of lforms directive css files -->
 
@@ -521,7 +520,7 @@ console.log("%%% in onAfterAddingFile");
 
        // Set up FHIR version list
        var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
-       new LForms._Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+       new LForms.Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
          {matchListValue: true});
        $('#fhirVersion')[0].value = fhirVersions[1];
     </script>

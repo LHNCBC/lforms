@@ -40,8 +40,8 @@ var util = {
    *  Disables Autocompleter scrolling (by making the move immediate).
    */
   disableAutocompleterScroll: function() {
-    let origStart = LForms._Def.Effect.Base.prototype.start;
-    LForms._Def.Effect.Scroll.prototype.start = function(options) {
+    let origStart = LForms.Def.Effect.Base.prototype.start;
+    LForms.Def.Effect.Scroll.prototype.start = function(options) {
       options.duration = 0;
       origStart.call(this, options);
     }
