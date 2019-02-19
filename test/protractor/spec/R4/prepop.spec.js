@@ -5,7 +5,8 @@ describe('Form pre-population', function() {
   beforeAll(function () {
     tp.openBaseTestPage();
     browser.executeScript(function() {
-      LForms.Util.setFHIRContext({getCurrent:  function(typeList, callback) {
+      LForms.Util.setFHIRContext({
+        getCurrent:  function(typeList, callback) {
           var rtn = null;
           if (typeList.indexOf('Patient') >= 0) {
             rtn = {resourceType: "Patient",
@@ -18,6 +19,17 @@ describe('Form pre-population', function() {
             }
           }
           callback(rtn);
+        },
+        getFHIRAPI: function() {
+          return {
+            conformance: function() {
+              return {
+                then: function(callback) {
+                  callback({data: {fhirVersion: '3.0'}});
+                }
+              }
+            }
+          }
         }});
     });
     tp.loadFromTestData('ussg-fhp.json', 'R4');

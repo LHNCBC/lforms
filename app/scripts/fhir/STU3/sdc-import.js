@@ -343,7 +343,7 @@ function addSDCImportFns(ns) {
           var foundUnit = false;
           for (var i=0, len=lfItem.units.length; i<len && !foundUnit; ++i) {
             if (lfItem.units[i].name === val.unit)
-              foundUnit = lfItem[units[i];
+              foundUnit = lfItem.units[i];
           }
           if (!foundUnit)
             unitOkay = false;
