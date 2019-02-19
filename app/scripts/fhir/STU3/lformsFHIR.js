@@ -94,6 +94,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_sdc_import_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
 /* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(72);
 // Initializes the FHIR structure for STU3
@@ -110,7 +111,7 @@ fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
 Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
 
-Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+_sdc_import_js__WEBPACK_IMPORTED_MODULE_3___default()(fhir.SDC);
 
 Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 
@@ -18309,8 +18310,8 @@ var dr = {
         valueX.val = {
           "value": item.value,
           "unit": item.unit ? item.unit.name : null,
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit ? item.unit.name : null
+          "system": item.unit ? item.unit.system : null,
+          "code": item.unit ? item.unit.code : null
         };
         break;
 
@@ -18956,46 +18957,12 @@ __webpack_require__.r(__webpack_exports__);
  */
 var sdcVersion = '2.0';
 var fhirVersionNum = '3.0';
-var sdcExport = {
+var self = {
   SDCVersion: sdcVersion,
   QProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|' + sdcVersion,
   QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|' + sdcVersion,
   stdQProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/Questionnaire',
   stdQRProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/QuestionnaireResponse',
-  // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
-  _itemTypeMapping: {
-    "SECTION": 'group',
-    "TITLE": 'display',
-    "ST": 'string',
-    "BL": 'boolean',
-    "REAL": 'decimal',
-    "INT": 'integer',
-    "DT": 'dateTime',
-    "DTM": 'dateTime',
-    // not supported yet
-    "TM": 'time',
-    "TX": 'text',
-    "URL": 'url',
-    "CNE": 'choice',
-    "CWE": 'open-choice',
-    "QTY": 'quantity'
-  },
-  // A mapping from LHC-Forms data types to the partial field names of the value fields
-  // and initial value fields in FHIR Questionnaire
-  _dataTypeMapping: {
-    "INT": 'Integer',
-    "REAL": 'Decimal',
-    "DT": 'DateTime',
-    "DTM": 'DateTime',
-    "TM": 'Time',
-    "ST": 'String',
-    "TX": 'String',
-    "BL": 'Boolean',
-    "URL": 'Url',
-    "CNE": 'Coding',
-    "CWE": 'Coding',
-    "QTY": 'Quantity'
-  },
 
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -19108,7 +19075,9 @@ var sdcExport = {
    * @private
    */
   _processItem: function _processItem(item, source, noExtensions) {
-    var targetItem = {}; // id (empty for new record)
+    var targetItem = {}; // type
+
+    targetItem.type = this._getFhirDataType(item); // id (empty for new record)
     // extension
 
     targetItem.extension = []; // required
@@ -19158,25 +19127,7 @@ var sdcExport = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-unit
-    // this is for a single unit, where is the units list??
-    // for user selected unit, not item.units! Not using here
-
-
-    if (item.unit) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
-        "valueCoding": {
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit.name
-        }
-      });
-    } // add LForms Extension to units list
-
-
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    } // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
 
 
     if (item.codingInstructions) {
@@ -19216,9 +19167,7 @@ var sdcExport = {
     } // text
 
 
-    targetItem.text = item.question; // type
-
-    targetItem.type = this._handleDataType(item); // enableWhen
+    targetItem.text = item.question; // enableWhen
 
     if (item.skipLogic) {
       this._handleSkipLogic(targetItem, item, source);
@@ -19239,7 +19188,12 @@ var sdcExport = {
       } // initialValue, for default values
 
 
-    this._handleInitialValues(targetItem, item);
+    this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Handle units after handling initial values.
+
+
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -19296,6 +19250,10 @@ var sdcExport = {
         var value = item.restrictions[key];
         var extValue;
 
+        var dataType = this._getAssumedDataTypeForExport(item);
+
+        var valueKey = this._getValueKeyByDataType("value", item);
+
         switch (key) {
           // http://hl7.org/fhir/StructureDefinition/minValue
           // { // Must be >= this value
@@ -19311,9 +19269,7 @@ var sdcExport = {
           // }
           case "minExclusive":
           case "minInclusive":
-            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "REAL" || item.dataType === "INT") {
-              var valueKey = this._getValueKeyByDataType("value", item.dataType);
-
+            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
               extValue = {
                 "url": "http://hl7.org/fhir/StructureDefinition/minValue"
               };
@@ -19325,9 +19281,7 @@ var sdcExport = {
 
           case "maxExclusive":
           case "maxInclusive":
-            if (item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "REAL" || item.dataType === "INT") {
-              var valueKey = this._getValueKeyByDataType("value", item.dataType);
-
+            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
               extValue = {
                 "url": "http://hl7.org/fhir/StructureDefinition/maxValue"
               };
@@ -19338,7 +19292,7 @@ var sdcExport = {
           // http://hl7.org/fhir/StructureDefinition/minLength
 
           case "minLength":
-            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" || item.dataType === "QTY") {
+            if (dataType === "ST" || dataType === "TX" || dataType === "URL" || dataType === "QTY") {
               extValue = {
                 "url": "http://hl7.org/fhir/StructureDefinition/minLength",
                 "valueInteger": parseInt(value)
@@ -19349,7 +19303,7 @@ var sdcExport = {
           // maxLength, not an extension, directly on item
 
           case "maxLength":
-            if (item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL" || item.dataType === "QTY") {
+            if (dataType === "ST" || dataType === "TX" || dataType === "URL" || dataType === "QTY") {
               targetItem.maxLength = parseInt(value);
             }
 
@@ -19357,7 +19311,7 @@ var sdcExport = {
           // http://hl7.org/fhir/StructureDefinition/regex
 
           case "pattern":
-            if (item.dataType === "ST" || item.dataType === "TX") {
+            if (dataType === "ST" || dataType === "TX") {
               extValue = {
                 "url": "http://hl7.org/fhir/StructureDefinition/regex",
                 "valueString": value
@@ -19370,67 +19324,6 @@ var sdcExport = {
         if (extValue) {
           targetItem.extension.push(extValue);
         }
-      }
-    }
-  },
-
-  /**
-   * Process itemControl based on LForms item's answerLayout and questionLayout
-   * @param targetItem an item in FHIR SDC Questionnaire object
-   * @param item an item in LForms form object
-   * @private
-   */
-  _handleItemControl: function _handleItemControl(targetItem, item) {
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-    var itemControlType = ""; // Fly-over, Table, Checkbox, Combo-box, Lookup
-
-    if (!jQuery.isEmptyObject(item.displayControl)) {
-      // for answers
-      if (item.displayControl.answerLayout && (item.dataType === "CNE" || item.dataType === "CWE")) {
-        // search field
-        if (item.externallyDefined) {
-          itemControlType = "Lookup";
-        } // prefetch list
-        // combo-box
-        else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-            itemControlType = "Combo-box";
-          } // radio or checkbox
-          else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
-              if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-                itemControlType = "Checkbox";
-              } else {
-                itemControlType = "Radio";
-              }
-            }
-      } // for section item
-      else if (item.displayControl.questionLayout && item.dataType === "SECTION") {
-          if (item.displayControl.questionLayout === "horizontal") {
-            itemControlType = "Table";
-          } else if (item.displayControl.questionLayout === "matrix") {
-            itemControlType = "Matrix";
-          } // else {
-          //   itemControlType = "List";
-          // }
-
-        }
-
-      if (itemControlType) {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "coding": [{
-              //"system" : "<uri>", // Identity of the terminology system
-              //"version" : "<string>", // Version of the system - if relevant
-              //"code" : "<code>", // Symbol in syntax defined by the system
-              //"display" : "<string>", // Representation defined by the system
-              //"userSelected" : <boolean> // If this coding was chosen directly by the user
-              "system": "http://hl7.org/fhir/questionnaire-item-control",
-              "code": itemControlType,
-              "display": itemControlType
-            }],
-            "text": itemControlType
-          }
-        });
       }
     }
   },
@@ -19530,23 +19423,6 @@ var sdcExport = {
   },
 
   /**
-   * Create a key from data type to be used in a hash
-   * @param prefix a prefix to be added to the key
-   * @param dataType a LForms data type
-   * @returns {*}
-   * @private
-   */
-  _getValueKeyByDataType: function _getValueKeyByDataType(prefix, dataType) {
-    // prefix could be 'value', 'initial', 'answer'
-    if (!prefix) {
-      prefix = "value";
-    }
-
-    var valueKey = this._dataTypeMapping[dataType];
-    return prefix + valueKey;
-  },
-
-  /**
    * Process an item's externally defined answer list
    * @param targetItem a QuestionnaireResponse object
    * @param item an item in the LForms form object
@@ -19617,22 +19493,6 @@ var sdcExport = {
   },
 
   /**
-   * Convert LForms data type to FHIR SDC data type
-   * @param item an item in the LForms form object
-   * @returns {string}
-   * @private
-   */
-  _handleDataType: function _handleDataType(item) {
-    var dataType = this._itemTypeMapping[item.dataType]; // default is string
-
-    if (!dataType) {
-      dataType = 'string';
-    }
-
-    return dataType;
-  },
-
-  /**
    * Group values of the questions that have the same linkId
    * @param item an item in the LForms form object or a form item object
    * @private
@@ -19666,33 +19526,6 @@ var sdcExport = {
   },
 
   /**
-   * Make a FHIR Quantity for the given value and unit info.
-   * @param value required, must be an integer or decimal
-   * @param itemUnit optional, lform data item.unit (that has a name property)
-   * @param unitSystem optional, default to 'http://unitsofmeasure.org'
-   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
-   * @private
-   */
-  _makeValueQuantity: function _makeValueQuantity(value, itemUnit, unitSystem) {
-    var fhirQuantity = null;
-    var floatValue = parseFloat(value);
-
-    if (!isNaN(floatValue)) {
-      fhirQuantity = {
-        value: floatValue
-      };
-
-      if (itemUnit && itemUnit.name) {
-        fhirQuantity.unit = itemUnit.name;
-        fhirQuantity.code = itemUnit.name;
-        fhirQuantity.system = unitSystem ? unitSystem : 'http://unitsofmeasure.org';
-      }
-    }
-
-    return fhirQuantity;
-  },
-
-  /**
    * Process capture user data
    * @param targetItem an item in FHIR SDC QuestionnaireResponse object
    * @param item an item in LForms form object
@@ -19703,10 +19536,13 @@ var sdcExport = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
     var answer = [];
-    var linkId = item._codePath; // value not processed by previous repeating items
+    var linkId = item._codePath;
 
-    if (item.dataType !== "SECTION" && item.dataType !== "TITLE") {
-      var valueKey = this._getValueKeyByDataType("value", item.dataType);
+    var dataType = this._getAssumedDataTypeForExport(item); // value not processed by previous repeating items
+
+
+    if (dataType !== "SECTION" && dataType !== "TITLE") {
+      var valueKey = this._getValueKeyByDataType("value", item);
 
       if (this._questionRepeats(item)) {
         var values = parentItem._questionValues[linkId];
@@ -19720,7 +19556,7 @@ var sdcExport = {
         // for Coding
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
-        if (item.dataType === 'CWE' || item.dataType === 'CNE') {
+        if (dataType === 'CWE' || dataType === 'CNE') {
           var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
@@ -19766,7 +19602,7 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (item.dataType === "QTY") {
+        else if (dataType === "QTY") {
             // for now, handling only simple quantities without the comparators.
             var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
 
@@ -19776,17 +19612,18 @@ var sdcExport = {
               });
             }
           } // make a Quantity type if numeric values has a unit value
-          else if (item.unit && typeof values[i] !== 'undefined' && (item.dataType === "INT" || item.dataType === "REAL" || item.dataType === "ST")) {
+          else if (item.unit && typeof values[i] !== 'undefined' && (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
+              var q = {
+                value: parseFloat(values[i])
+              };
+
+              self._setUnitAttributesToFhirQuantity(q, item.unit);
+
               answer.push({
-                "valueQuantity": {
-                  "value": parseFloat(values[i]),
-                  "unit": item.unit.name,
-                  "system": "http://unitsofmeasure.org",
-                  "code": item.unit.name
-                }
+                valueQuantity: q
               });
             } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-            else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
+            else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
                 var answerValue = {};
                 answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
                 answer.push(answerValue);
@@ -19808,13 +19645,15 @@ var sdcExport = {
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
-    if (item.defaultAnswer) {
-      var valueKey = this._getValueKeyByDataType("initial", item.dataType); // for Coding
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+      var dataType = this._getAssumedDataTypeForExport(item);
+
+      var valueKey = this._getValueKeyByDataType("initial", item); // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
 
 
-      if (item.dataType === 'CWE' || item.dataType === 'CNE') {
+      if (dataType === 'CWE' || dataType === 'CNE') {
         var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
@@ -19850,18 +19689,17 @@ var sdcExport = {
       //   "system" : "<uri>", // Code System that defines coded unit form
       //   "code" : "<code>" // Coded form of the unit
       // }]
-      else if (item.dataType === 'QTY') {
+      else if (dataType === 'QTY') {
           // for now, handling only simple quantities without the comparators.
-          var fhirQuantity = this._makeValueQuantity(item.value, item.unit);
+          var fhirQuantity = this._makeQuantity(item.defaultAnswer, item.units);
 
           if (fhirQuantity) {
             targetItem[valueKey] = fhirQuantity;
           }
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (item.dataType === "BL" || item.dataType === "REAL" || item.dataType === "INT" || item.dataType === "DT" || item.dataType === "DTM" || item.dataType === "TM" || item.dataType === "ST" || item.dataType === "TX" || item.dataType === "URL") {
+        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
             targetItem[valueKey] = item.defaultAnswer;
-          } //TODO luanx2: when item.unit, shouldn't INT, REAL be valueQuantity? Otherwise item.unit is lost? Leave as is for now.
-      // no support for reference
+          } // no support for reference
 
     }
   },
@@ -19873,24 +19711,36 @@ var sdcExport = {
    * @private
    */
   _handleLFormsUnits: function _handleLFormsUnits(targetItem, item) {
-    if (item.units) {
-      var unitsArray = [];
+    if (item.units && item.units.length > 0) {
+      var dataType = this._getAssumedDataTypeForExport(item);
 
-      for (var i = 0, iLen = item.units.length; i < iLen; i++) {
-        var unit = item.units[i];
-        unitsArray.push({
-          "system": "http://unitsofmeasure.org",
-          "code": unit.name,
-          "display": unit.name
+      if (dataType === "REAL" || dataType === "INT") {
+        targetItem.extension.push({
+          "url": this.fhirExtUrlUnit,
+          // Datatype with multiple units is quantity. There is only one unit here.
+          "valueCoding": self._createFhirUnitCoding(item.units[0])
         });
-      }
+      } else if (dataType === 'QTY') {
+        var defUnit = this._getDefaultUnit(item.units);
 
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits",
-        "valueCodeableConcept": {
-          "coding": unitsArray
+        if (defUnit && defUnit.default || targetItem.initialQuantity) {
+          // Use initial[].valueQuantity.unit to export the default unit.
+          if (!targetItem.initialQuantity) {
+            targetItem.initialQuantity = {};
+          }
+
+          self._setUnitAttributesToFhirQuantity(targetItem.initialQuantity, defUnit);
         }
-      });
+
+        for (var i = 0, iLen = item.units.length; i < iLen; i++) {
+          var unit = item.units[i];
+          var fhirUnitExt = {
+            "url": this.fhirExtUrlUnitOption,
+            "valueCoding": self._createFhirUnitCoding(unit)
+          };
+          targetItem.extension.push(fhirUnitExt);
+        }
+      }
     }
   },
 
@@ -19917,12 +19767,14 @@ var sdcExport = {
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
         // Attachment, Coding, Quantity, Reference(Resource)
 
-        var valueKey = this._getValueKeyByDataType("answer", sourceItem.dataType); // for Coding
+        var valueKey = this._getValueKeyByDataType("answer", sourceItem);
+
+        var dataType = this._getAssumedDataTypeForExport(sourceItem); // for Coding
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
 
 
-        if (sourceItem.dataType === 'CWE' || sourceItem.dataType === 'CNE') {
+        if (dataType === 'CWE' || dataType === 'CNE') {
           if (condition.trigger.code) {
             enableWhenRule[valueKey] = {
               "code": condition.trigger.code
@@ -19941,15 +19793,15 @@ var sdcExport = {
         //   "system" : "<uri>", // Code System that defines coded unit form
         //   "code" : "<code>" // Coded form of the unit
         // }]
-        else if (sourceItem.dataType === 'QTY') {
+        else if (dataType === 'QTY') {
             // for now, handling only simple quantities without the comparators.
-            var fhirQuantity = this._makeValueQuantity(condition.trigger.value, sourceItem.unit);
+            var fhirQuantity = this._makeQuantity(condition.trigger.value, sourceItem.units);
 
             if (fhirQuantity) {
               enableWhenRule[valueKey] = fhirQuantity;
             }
           } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-          else if (sourceItem.dataType === "BL" || sourceItem.dataType === "REAL" || sourceItem.dataType === "INT" || sourceItem.dataType === "DT" || sourceItem.dataType === "DTM" || sourceItem.dataType === "TM" || sourceItem.dataType === "ST" || sourceItem.dataType === "TX" || sourceItem.dataType === "URL") {
+          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
               enableWhenRule[valueKey] = condition.trigger.value; // TODO luanx2: similarly, REAL, INT with unit should be valueQuantity? Leave as is for now.
             } // add a rule to enableWhen
 
@@ -19961,7 +19813,7 @@ var sdcExport = {
     }
   }
 };
-/* harmony default export */ __webpack_exports__["default"] = (sdcExport);
+/* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
 /* 69 */
@@ -20018,6 +19870,238 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
+   * Process itemControl based on LForms item's answerLayout and questionLayout
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+
+
+  self._handleItemControl = function (targetItem, item) {
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    var itemControlType = ""; // Fly-over, Table, Checkbox, Combo-box, Lookup
+
+    if (!jQuery.isEmptyObject(item.displayControl)) {
+      var dataType = this._getAssumedDataTypeForExport(item); // for answers
+
+
+      if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
+        // search field
+        if (item.externallyDefined) {
+          itemControlType = "Lookup";
+        } // prefetch list
+        // combo-box
+        else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
+            itemControlType = "Combo-box";
+          } // radio or checkbox
+          else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
+              if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+                itemControlType = "Checkbox";
+              } else {
+                itemControlType = "Radio";
+              }
+            }
+      } // for section item
+      else if (item.displayControl.questionLayout && dataType === "SECTION") {
+          if (item.displayControl.questionLayout === "horizontal") {
+            itemControlType = "Table";
+          } else if (item.displayControl.questionLayout === "matrix") {
+            itemControlType = "Matrix";
+          } // else {
+          //   itemControlType = "List";
+          // }
+
+        }
+
+      if (itemControlType) {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [{
+              //"system" : "<uri>", // Identity of the terminology system
+              //"version" : "<string>", // Version of the system - if relevant
+              //"code" : "<code>", // Symbol in syntax defined by the system
+              //"display" : "<string>", // Representation defined by the system
+              //"userSelected" : <boolean> // If this coding was chosen directly by the user
+              "system": "http://hl7.org/fhir/questionnaire-item-control",
+              "code": itemControlType,
+              "display": itemControlType
+            }],
+            "text": itemControlType
+          }
+        });
+      }
+    }
+  };
+  /**
+   * Convert LForms data type to FHIR SDC data type
+   * @param item an item in the LForms form object
+   * @returns {string}
+   * @private
+   */
+
+
+  self._getFhirDataType = function (item) {
+    var dataType = this._getAssumedDataTypeForExport(item);
+
+    var type = this._lformsTypesToFHIRTypes[dataType]; // default is string
+
+    if (!type) {
+      type = 'string';
+    }
+
+    return type;
+  };
+  /**
+   * Determine how an item's data type should be for export.
+   
+   If number type has multiple units, change it to quantity type. In such a case,
+   multiple units are converted to quesionnaire-unitOption extension and the default unit
+   would go into initial.valueQuantity.unit.
+   For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
+   
+   * @param item an item in the LForms form object
+   * @returns {string} dataType - Data type in lforms
+   * @private
+   */
+
+
+  self._getAssumedDataTypeForExport = function (item) {
+    var dataType = item.dataType;
+
+    if ((item.dataType === 'REAL' || item.dataType === 'INT') && item.units && item.units.length > 1) {
+      dataType = 'QTY';
+    }
+
+    return dataType;
+  };
+  /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value optional, must be an integer or decimal
+   * @param itemUnit optional, lform data item.unit (that has a name property)
+   * @param unitSystem optional, overrides any system in itemUnit.
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+
+
+  self._makeValueQuantity = function (value, itemUnit, unitSystem) {
+    var fhirQuantity = {};
+    var floatValue = parseFloat(value);
+
+    if (!isNaN(floatValue)) {
+      fhirQuantity.value = floatValue;
+    }
+
+    if (itemUnit) {
+      self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
+
+      if (unitSystem) {
+        fhirQuantity.system = unitSystem;
+      }
+    }
+
+    return Object.keys(fhirQuantity).length > 0 ? fhirQuantity : null;
+  };
+  /**
+   * Make a FHIR Quantity for the given value and unit info.
+   * @param value required, must be an integer or decimal
+   * @param itemUnits optional, lform data item.units (An array of units)
+   * @param unitSystem optional.
+   * @return a FHIR quantity or null IFF the given value is not a number (parseFloat() returns NaN).
+   * @private
+   */
+
+
+  self._makeQuantity = function (value, itemUnits, unitSystem) {
+    var defaultUnit = this._getDefaultUnit(itemUnits);
+
+    return this._makeValueQuantity(value, defaultUnit, unitSystem);
+  };
+  /**
+   * Pick a default unit if found, otherwise return first one as default. Will return
+   * null, if passed with empty list.
+   * @param lformsUnits - Array of lforms units i.e with {name, default}
+   * @returns {*} Return lforms unit if found otherwise null.
+   * @private
+   */
+
+
+  self._getDefaultUnit = function (lformsUnits) {
+    if (!lformsUnits || lformsUnits.length === 0) {
+      return null;
+    }
+
+    var ret = null;
+
+    for (var i = 0; i < lformsUnits.length; i++) {
+      if (lformsUnits[i].default) {
+        ret = lformsUnits[i];
+        break;
+      }
+    }
+
+    if (!ret) {
+      ret = lformsUnits[0];
+    }
+
+    return ret;
+  };
+  /**
+   * Create a key from data type to be used in a hash
+   * @param prefix a prefix to be added to the key
+   * @param item a LForms item
+   * @returns {*}
+   * @private
+   */
+
+
+  self._getValueKeyByDataType = function (prefix, item) {
+    // prefix could be 'value', 'initial', 'answer'
+    if (!prefix) {
+      prefix = "value";
+    }
+
+    var fhirType = this._getFhirDataType(item);
+
+    var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
+    var valueKey = this._lformsTypesToFHIRFields[dataType];
+    return prefix + valueKey;
+  };
+  /**
+   * A single condition in lforms translates to two enableWhen rules in core FHIR.
+   *
+   * @param answerKey - The answer[x] string
+   * @param skipLogicCondition - Lforms skip logic condition object
+   * @param sourceItem - Skip logic source item in lforms.
+   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @private
+   */
+
+
+  self._createEnableWhenRulesForRangeAndValue = function (answerKey, skipLogicCondition, sourceItem) {
+    var ret = [];
+    Object.keys(skipLogicCondition.trigger).forEach(function (key) {
+      var rule = {
+        question: sourceItem.linkId,
+        operator: self._operatorMapping[key]
+      };
+      var answer = null;
+
+      if (answerKey === 'answerQuantity') {
+        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
+      } else {
+        answer = skipLogicCondition.trigger[key];
+      }
+
+      if (answer) {
+        rule[answerKey] = answer;
+        ret.push(rule);
+      }
+    });
+    return ret;
+  };
+  /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
    * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
@@ -20050,31 +20134,217 @@ function addCommonSDCExportFns(ns) {
       "reference": "Questionnaire/{{questionnaireId}}"
     };
   };
+  /**
+   * Set unit attributes to a given FHIR quantity.
+   *
+   * @param fhirQuantity - FHIR Quantity object
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @private
+   */
+
+
+  self._setUnitAttributesToFhirQuantity = function (fhirQuantity, lfUnit) {
+    if (fhirQuantity && lfUnit) {
+      if (lfUnit.name) {
+        fhirQuantity.unit = lfUnit.name;
+      }
+
+      if (lfUnit.code) {
+        fhirQuantity.code = lfUnit.code;
+      } // Unit system is optional. It was using a default system before,
+      // Now we have an defined system field, read it from data and
+      // not assume a default.
+
+
+      if (lfUnit.system) {
+        fhirQuantity.system = lfUnit.system;
+      }
+    }
+  };
+  /**
+   * Create a FHIR coding object for a unit.
+   *
+   * @param lfUnit - Lforms unit, which includes name, code and system.
+   * @returns FHIR coding object
+   * @private
+   */
+
+
+  self._createFhirUnitCoding = function (lfUnit) {
+    var ret = null;
+
+    if (lfUnit) {
+      ret = {};
+
+      if (lfUnit.code) {
+        ret.code = lfUnit.code;
+      }
+
+      if (lfUnit.name) {
+        ret.display = lfUnit.name;
+      }
+
+      if (lfUnit.system) {
+        ret.system = lfUnit.system;
+      }
+    }
+
+    return ret;
+  };
+  /**
+   * Set questionnaire-unitOption extensions using lforms units.
+   *
+   * @param targetFhirItem - FHIR Questionnaire item
+   * @param units - lforms units array
+   * @private
+   */
+
+
+  self._setUnitOptions = function (targetFhirItem, units) {
+    for (var i = 0, iLen = units.length; i < iLen; i++) {
+      var unit = units[i];
+      var fhirUnitExt = {
+        "url": this.fhirExtUrlUnitOption,
+        "valueCoding": self._createFhirUnitCoding(unit)
+      };
+
+      if (!targetFhirItem.extension) {
+        targetFhirItem.extension = [];
+      }
+
+      targetFhirItem.extension.push(fhirUnitExt);
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
 /* 70 */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/plynch/project/lforms/app/scripts/fhir/STU3/sdc-import.js: Unexpected token, expected \"]\" (346:41)\n\n  344 |           for (var i=0, len=lfItem.units.length; i<len && !foundUnit; ++i) {\n  345 |             if (lfItem.units[i].name === val.unit)\n> 346 |               foundUnit = lfItem[units[i];\n      |                                          ^\n  347 |           }\n  348 |           if (!foundUnit)\n  349 |             unitOkay = false;\n    at Parser.raise (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:3939:15)\n    at Parser.unexpected (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5248:16)\n    at Parser.expect (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5236:28)\n    at Parser.parseSubscript (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:6010:12)\n    at Parser.parseSubscripts (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5944:19)\n    at Parser.parseExprSubscripts (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5934:17)\n    at Parser.parseMaybeUnary (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5903:21)\n    at Parser.parseExprOps (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5812:21)\n    at Parser.parseMaybeConditional (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5784:21)\n    at Parser.parseMaybeAssign (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5731:21)\n    at Parser.parseMaybeAssign (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5771:27)\n    at Parser.parseExpression (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:5684:21)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7267:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseIfStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7493:28)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7184:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseBlockOrModuleBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7707:23)\n    at Parser.parseBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7694:10)\n    at Parser.parseBlock (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7683:10)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7212:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseFor (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7741:22)\n    at Parser.parseForStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7461:19)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7172:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseBlockOrModuleBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7707:23)\n    at Parser.parseBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7694:10)\n    at Parser.parseBlock (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7683:10)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7212:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseIfStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7493:28)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7184:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseBlockOrModuleBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7707:23)\n    at Parser.parseBlockBody (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7694:10)\n    at Parser.parseBlock (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7683:10)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7212:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)\n    at Parser.parseIfStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7493:28)\n    at Parser.parseStatementContent (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7184:21)\n    at Parser.parseStatement (/home/plynch/project/lforms/node_modules/@babel/parser/lib/index.js:7153:17)");
+
+/***/ }),
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 /**
- * A package to handle conversion from FHIR SDC (STU2) Questionnaire to LForms
- * STU2 Ballot:
- * http://hl7.org/fhir/us/sdc/sdc-questionnaire.html
- * http://hl7.org/fhir/us/sdc/sdc-questionnaireresponse.html
- *
- * It provides the following functions:
- * convertQuestionnaireToLForms()
- * -- Convert FHIR SDC QuestionnaireResponse data into corresponding LForms data
- * mergeQuestionnaireResponseToLForms()  (defined in sdc-import-common.js)
- * -- Merge FHIR SDC QuestionnaireResponse data into corresponding LForms data
+ *  Defines SDC functions (used by both import and export) that are the same
+ *  across the different FHIR versions.  The function takes SDC namespace object
+ *  defined in the sdc export code, and adds additional functions to it.
  */
-function addSDCImportFns(ns) {
+function addCommonSDCFns(ns) {
+  "use strict";
+
+  var self = ns; // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
+
+  self._lformsTypesToFHIRTypes = {
+    "SECTION": 'group',
+    "TITLE": 'display',
+    "ST": 'string',
+    "BL": 'boolean',
+    "REAL": 'decimal',
+    "INT": 'integer',
+    "DT": 'dateTime',
+    "DTM": 'dateTime',
+    // not supported yet
+    "TM": 'time',
+    "TX": 'text',
+    "URL": 'url',
+    "CNE": 'choice',
+    "CWE": 'open-choice',
+    "QTY": 'quantity'
+  }; // A mapping from LHC-Forms data types to the partial field names of the value fields
+  // and initial value fields in FHIR Questionnaire
+
+  self._lformsTypesToFHIRFields = {
+    "INT": 'Integer',
+    "REAL": 'Decimal',
+    "DT": 'DateTime',
+    "DTM": 'DateTime',
+    "TM": 'Time',
+    "ST": 'String',
+    "TX": 'String',
+    "BL": 'Boolean',
+    "URL": 'Url',
+    "CNE": 'Coding',
+    "CWE": 'Coding',
+    "QTY": 'Quantity'
+  };
+  self._operatorMapping = {
+    'minExclusive': '>',
+    'maxExclusive': '<',
+    'minInclusive': '>=',
+    'maxInclusive': '<=',
+    'value': '=',
+    'not': '!=',
+    '>': 'minExclusive',
+    '<': 'maxExclusive',
+    '>=': 'minInclusive',
+    '<=': 'maxInclusive',
+    '=': 'value',
+    '!=': 'not'
+  };
+  /**
+   * Check if a LForms item has repeating questions
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+
+  self._questionRepeats = function (item) {
+    return item && item.questionCardinality && item.questionCardinality.max && (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
+  };
+  /**
+   * Check if a LForms item has repeating answers
+   * @param item a LForms item
+   * @returns {*|boolean}
+   * @private
+   */
+
+
+  self._answerRepeats = function (item) {
+    return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
+  };
+  /**
+   * Find out if multiple answers extension is true.
+   * @param qItem - FHIR Questionnaire item.
+   * @returns {boolean}
+   */
+
+
+  self._hasMultipleAnswers = function (qItem) {
+    var ret = false;
+
+    if (qItem) {
+      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+
+      if (answerRepeats && answerRepeats.valueBoolean) {
+        ret = true;
+      }
+    }
+
+    return ret;
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ *  Defines SDC import functions that are the same across the different FHIR
+ *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  code, and adds additional functions to it.
+ */
+function addCommonSDCImportFns(ns) {
   "use strict";
 
   var self = ns; // FHIR extension urls
@@ -20083,10 +20353,11 @@ function addSDCImportFns(ns) {
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
-  self.fhirExtUrlAllowedUnits = "http://hl7.org/fhir/StructureDefinition/elementdefinition-allowedUnits";
+  self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
@@ -20105,15 +20376,17 @@ function addSDCImportFns(ns) {
     if (fhirData) {
       target = {};
 
-      _processFormLevelFields(target, fhirData);
+      self._processFormLevelFields(target, fhirData);
 
-      var containedVS = _extractContainedVS(fhirData);
+      var containedVS = self._extractContainedVS(fhirData);
 
       if (fhirData.item && fhirData.item.length > 0) {
+        var linkIdItemMap = self._createLinkIdItemMap(fhirData);
+
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], fhirData, containedVS);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
 
           target.items.push(item);
         }
@@ -20123,683 +20396,90 @@ function addSDCImportFns(ns) {
     }
 
     return target;
+  }; // QuestionnaireResponse Import
+
+
+  var qrImport = self._mergeQR;
+  /**
+   * Merge a QuestionnaireResponse instance into an LForms form object
+   * @param formData an LForms form definition or LFormsData object.
+   * @param qr a QuestionnaireResponse instance
+   * @returns {{}} an updated LForms form definition, with answer data
+   */
+
+  qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
+    // get the default settings in case they are missing in the form data
+    var newFormData = new LForms.LFormsData(formData).getFormData(); // The reference to _mergeQR below is here because this function gets copied to
+    // the containing object to be a part of the public API.
+
+    var qrInfo = qrImport._getQRStructure(qr);
+
+    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
+
+    return newFormData;
   };
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
+   * Merge data into items on the same level
+   * @param parentQRItemInfo structural information of a parent item
+   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
    * @private
    */
 
 
-  function _processFormLevelFields(lfData, questionnaire) {
-    lfData.name = questionnaire.title;
+  qrImport._processQRItemAndLFormsItem = function (parentQRItemInfo, parentLFormsItem) {
+    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
+    for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
+      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
+      var qrItem = qrItemInfo.item;
 
-    var code = _getCode(questionnaire);
-
-    if (code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
-    }
-
-    if (questionnaire.id) {
-      lfData.id = questionnaire.id;
-    }
-  }
-  /**
-   * Extract contained VS (if any) from the given questionnaire resource object.
-   * @param questionnaire the FHIR questionnaire resource object
-   * @return when there are contained value sets, returns a hash from "#<ValueSet.id>" (the character "#"
-   *         followed by the ValueSet id) to the answers options object, which, in turn, is a hash with 4 entries:
-   *         - "answers" is the list of LF answers converted from the value set.
-   *         - "systems" is the list of code systems for each answer item; and
-   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
-   *         returns undefined if no contained value set is present.
-   * @private
-   */
+      if (qrItem) {
+        // first repeating qrItem
+        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
+          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
+          // if it is a case of repeating questions, not repeating answers
 
 
-  function _extractContainedVS(questionnaire) {
-    var answersVS;
+          if (ns._questionRepeats(defItem)) {
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
 
-    if (questionnaire.contained && questionnaire.contained.length > 0) {
-      answersVS = {};
-      questionnaire.contained.forEach(function (vs) {
-        if (vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = {
-            answers: [],
-            systems: []
-          };
-          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
 
-          vs.expansion.contains.forEach(function (vsItem) {
-            var answer = {
-              code: vsItem.code,
-              text: vsItem.display
-            };
-            var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
+              for (var j = 1; j < qrItemInfo.total; j++) {
+                var newQRItemInfo = angular.copy(qrItemInfo);
+                newQRItemInfo.index = j;
+                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+                parentQRItemInfo.qrItemsInfo.splice(i + j, 0, newQRItemInfo);
+              } // change the first qr item's answer too
 
-            if (ordExt) {
-              answer.score = ordExt.valueDecimal;
+
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
             }
-
-            lfVS.answers.push(answer);
-            lfVS.systems.push(vsItem.system);
-
-            if (theCodeSystem === '#placeholder#') {
-              theCodeSystem = vsItem.system;
-            } else if (theCodeSystem !== vsItem.system) {
-              theCodeSystem = null;
+          } // reset the total number of questions when it is the answers that repeats
+          else if (ns._answerRepeats(defItem)) {
+              qrItemInfo.total = 1;
             }
-
-            if (vsItem.system) {
-              lfVS.hasAnswerCodeSystems = true;
-            }
-          }); // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-
-          if (theCodeSystem && theCodeSystem !== '#placeholder#') {
-            lfVS.isSameCodeSystem = true;
-          } // support both id and url based lookup. STU3 reference is quite vague.
+        } // find the matching LForms item
 
 
-          if (vs.id !== undefined) {
-            answersVS['#' + vs.id] = lfVS;
+        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
+
+
+        if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
+          var qrAnswer = qrItem.answer;
+
+          if (qrAnswer && qrAnswer.length > 0) {
+            var code = this._getItemCodeFromLinkId(qrItem.linkId);
+
+            this._setupItemValueAndUnit(code, qrAnswer, item);
           }
-
-          if (vs.url !== undefined) {
-            answersVS[vs.url] = lfVS;
-          }
-        }
-      });
-    }
-
-    return answersVS;
-  }
-  /**
-   * Process questionnaire item recursively
-   *
-   * @param qItem - item object as defined in FHIR Questionnaire.
-   * @param qResource - The source object of FHIR  questionnaire resource to which the qItem belongs to.
-   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
-   * @returns {{}} - Converted 'item' field object as defined by LForms definition.
-   * @private
-   */
+        } // process items on the sub-level
 
 
-  self._processQuestionnaireItem = function (qItem, qResource, containedVS) {
-    var targetItem = {};
-    targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
-
-    self._processDataType(targetItem, qItem);
-
-    _processCodeAndLinkId(targetItem, qItem);
-
-    _processDisplayItemCode(targetItem, qItem);
-
-    _processEditable(targetItem, qItem);
-
-    _processQuestionCardinality(targetItem, qItem);
-
-    _processAnswerCardinality(targetItem, qItem);
-
-    _processDisplayControl(targetItem, qItem);
-
-    _processRestrictions(targetItem, qItem);
-
-    _processCodingInstructions(targetItem, qItem);
-
-    _processHiddenItem(targetItem, qItem);
-
-    _processUnitList(targetItem, qItem);
-
-    self._processDefaultAnswer(targetItem, qItem);
-
-    _processExternallyDefined(targetItem, qItem);
-
-    _processAnswers(targetItem, qItem, containedVS);
-
-    _processSkipLogic(targetItem, qItem, qResource);
-
-    _processCalculatedValue(targetItem, qItem);
-
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-
-      for (var i = 0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], qResource, containedVS);
-
-        targetItem.items.push(newItem);
-      }
-    }
-
-    return targetItem;
-  };
-  /**
-   *  Copies the calculated value expression from qItem to lfItem if it exists,
-   *  and if it is a FHIRPath expression, which is the only type we support.
-   */
-
-
-  function _processCalculatedValue(lfItem, qItem) {
-    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
-
-    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
-      lfItem._calculatedExprExt = calcExt;
-    }
-  }
-  /**
-   * Parse questionnaire object for answer cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign answer cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processAnswerCardinality(lfItem, qItem) {
-    if (qItem.required) {
-      lfItem.answerCardinality = {
-        min: '1'
-      };
-    } else {
-      lfItem.answerCardinality = {
-        min: '0'
-      };
-    }
-
-    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-
-    if (answerRepeats && answerRepeats.valueBoolean) {
-      lfItem.answerCardinality.max = '*';
-    } else {
-      lfItem.answerCardinality.max = '1';
-    }
-  }
-  /**
-   * Parse questionnaire object for skip logic information
-   *
-   * @param lfItem {object} - LForms item object to assign the skip logic
-   * @param qItem {object} - Questionnaire item object
-   * @param sourceQuestionnaire - Questionnaire resource object. This is to provide top level
-   *                              item to navigate the tree for skip logic source items.
-   * @private
-   */
-
-
-  function _processSkipLogic(lfItem, qItem, sourceQuestionnaire) {
-    if (qItem.enableWhen) {
-      lfItem.skipLogic = {
-        conditions: [],
-        action: 'show'
-      };
-
-      for (var i = 0; i < qItem.enableWhen.length; i++) {
-        var source = null;
-
-        for (var n = 0; !source && n < sourceQuestionnaire.item.length; n++) {
-          source = _getSourceCodeUsingLinkId(sourceQuestionnaire.item[n], qItem.enableWhen[i].question);
-        }
-
-        var condition = {
-          source: source.questionCode
-        };
-
-        var answer = _getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-
-        if (source.dataType === 'CWE' || source.dataType === 'CNE') {
-          condition.trigger = {
-            code: answer.code
-          };
-        } else {
-          condition.trigger = {
-            value: answer
-          };
-        }
-
-        lfItem.skipLogic.conditions.push(condition);
-      }
-    }
-  }
-  /**
-   * Parse Questionnaire item for externallyDefined url
-   *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
-   * @private
-   */
-
-
-  function _processExternallyDefined(lfItem, qItem) {
-    var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
-
-    if (externallyDefined && externallyDefined.valueUri) {
-      lfItem.externallyDefined = externallyDefined.valueUri;
-    }
-  }
-  /**
-   * Parse questionnaire item for "hidden" extension
-   *
-   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   * @return true if the item is hidden or if its ancestor is hidden, false otherwise
-   */
-
-
-  function _processHiddenItem(lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
-
-    if (ci) {
-      lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
-    }
-
-    return lfItem._isHidden;
-  }
-  /**
-   * Parse questionnaire item for answers list
-   *
-   * @param lfItem {object} - LForms item object to assign answer list
-   * @param qItem {object} - Questionnaire item object
-   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
-   * @private
-   */
-
-
-  function _processAnswers(lfItem, qItem, containedVS) {
-    if (qItem.option) {
-      lfItem.answers = [];
-
-      for (var i = 0; i < qItem.option.length; i++) {
-        var answer = {};
-        var option = qItem.option[i];
-        var label = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionPrefix);
-
-        if (label) {
-          answer.label = label.valueString;
-        }
-
-        var score = LForms.Util.findObjectInArray(option.extension, 'url', self.fhirExtUrlOptionScore); // Look for argonaut extension.
-
-        score = !score ? LForms.Util.findObjectInArray(option.extension, 'url', self.argonautExtUrlExtensionScore) : score;
-
-        if (score) {
-          answer.score = score.valueDecimal.toString();
-        }
-
-        var optionKey = Object.keys(option).filter(function (key) {
-          return key.indexOf('value') === 0;
-        });
-
-        if (optionKey && optionKey.length > 0) {
-          if (optionKey[0] === 'valueCoding') {
-            // Only one value[x] is expected
-            if (option[optionKey[0]].code !== undefined) answer.code = option[optionKey[0]].code;
-            if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; //Lforms has answer code system at item level, expects all options to have one code system!
-
-            if (option[optionKey[0]].system !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
-          } else {
-            answer.text = option[optionKey[0]].toString();
-          }
-        }
-
-        lfItem.answers.push(answer);
-      }
-    } else if (qItem.options && containedVS) {
-      var vs = containedVS[qItem.options.reference];
-
-      if (vs) {
-        lfItem.answers = vs.answers;
-
-        if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
-        } else if (vs.hasAnswerCodeSystems) {
-          console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s', vs.systems.join(', '));
+        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length > 0) {
+          this._processQRItemAndLFormsItem(qrItemInfo, item);
         }
       }
     }
-  }
-  /**
-   * Parse questionnaire item for editable
-   *
-   * @param lfItem {object} - LForms item object to assign editable
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processEditable(lfItem, qItem) {
-    if (qItem.readOnly) {
-      lfItem.editable = '0';
-    }
-  }
-  /**
-   *  Imports an observation's values into the given LForms item.
-   * @param lfItem the LForms item to which a value will be assigned.
-   * @param obs the observation whose value will be assigned to lfItem.  It
-   *  assumed that obs has an appropriate data type for its value.
-   */
-
-
-  self.importObsValue = function (lfItem, obs) {
-    // Get the value from obs, based on lfItem's data type.  (The altertnative
-    // seems to be looping through the keys on obs looking for something that
-    // starts with "value".
-    var val = null;
-    var lfDataType = lfItem.dataType;
-    var fhirValType = this._dataTypeMapping[lfDataType];
-    if (fhirValType) val = obs['value' + fhirValType];
-
-    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
-      // Accept initial value of type Quantity for these types.
-      val = obs.valueQuantity;
-      if (val) val._type = 'Quantity';
-    }
-
-    if (val) {
-      if (!val._type && _typeof(val) === 'object') val._type = fhirValType; // Before importing, confirm val contains a valid unit from the
-      // item's unit list.
-
-      var unitOkay = true;
-
-      if (val._type === 'Quantity') {
-        // TBD - check code & code system when that is available.
-        if (lfItem.units) {
-          var foundUnit = false;
-
-          for (var i = 0, len = lfItem.units.length; i < len && !foundUnit; ++i) {
-            if (lfItem.units[i].name === val.unit) foundUnit = true;
-          }
-
-          if (!foundUnit) unitOkay = false;
-        }
-      }
-
-      if (unitOkay) this._processFHIRValue(lfItem, val);
-    }
-  },
-  /**
-   *   Assigns a FHIR value to a LForms item.
-   *  @param lfItem the LForms item to receive the value
-   *  @param fhirVal the FHIR value (e.g. a Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
-   *  @param setDefault if true, the default value in lfItem will be set as well
-   *   as the value.
-   */
-  self._processFHIRValue = function (lfItem, fhirVal, setDefault) {
-    var lfDataType = lfItem.dataType;
-
-    if (lfDataType === 'CWE' || lfDataType === 'CNE') {
-      if (lfItem.answerCardinality && lfItem.answerCardinality.max === '*') {
-        lfItem.value = [{
-          code: fhirVal.code,
-          text: fhirVal.display
-        }];
-        if (setDefault) lfItem.defaultAnswer = [{
-          code: fhirVal.code,
-          text: fhirVal.display
-        }];
-      } // single selection
-      else {
-          lfItem.value = {
-            code: fhirVal.code,
-            text: fhirVal.display
-          };
-          if (setDefault) lfItem.defaultAnswer = {
-            code: fhirVal.code,
-            text: fhirVal.display
-          };
-        }
-    } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
-      if (fhirVal.value !== undefined) {
-        lfItem.value = fhirVal.value;
-        if (setDefault) lfItem.defaultAnswer = fhirVal.value;
-      }
-
-      var unit = fhirVal.code ? fhirVal.code : fhirVal.unit;
-
-      if (unit) {
-        lfItem.unit = {
-          name: unit
-        };
-      }
-    } else {
-      lfItem.value = fhirVal;
-      lfItem.defaultAnswer = fhirVal;
-    }
-  },
-  /**
-   * Parse questionnaire item for default answer
-   *
-   * @param lfItem {object} - LForms item object to assign default answer
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processDefaultAnswer = function (lfItem, qItem) {
-    var val = _getFHIRValueWithPrefixKey(qItem, /^initial/);
-
-    if (val) {
-      this._processFHIRValue(lfItem, val, true);
-    }
-  };
-  /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-  function _processUnitList(lfItem, qItem) {
-    var units = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAllowedUnits);
-
-    if (units && units.valueCodeableConcept && Array.isArray(units.valueCodeableConcept.coding)) {
-      lfItem.units = [];
-
-      for (var i = 0; i < units.valueCodeableConcept.coding.length; i++) {
-        var unit = units.valueCodeableConcept.coding[i];
-        lfItem.units.push({
-          name: unit.code
-        });
-      }
-    }
-  }
-  /**
-   * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
-   *
-   * @param lfItem {object} - LForms item object to assign questionCode
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processDisplayItemCode(lfItem, qItem) {
-    if (qItem.type === "display" && qItem.linkId) {
-      var codes = qItem.linkId.split("/");
-
-      if (codes && codes[codes.length - 1]) {
-        lfItem.questionCode = codes[codes.length - 1];
-      }
-    }
-  }
-  /**
-   * Parse questionnaire item for question cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign question cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processQuestionCardinality(lfItem, qItem) {
-    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-
-    if (min) {
-      lfItem.questionCardinality = {
-        min: min.valueInteger.toString()
-      };
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-
-      if (max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      } else if (qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
-      }
-    } else if (qItem.repeats) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "*"
-      };
-    } else if (qItem.required) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "1"
-      };
-    }
-  }
-  /**
-   * Parse questionnaire item for code and code system
-   * @param lfItem {object} - LForms item object to assign question code
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processCodeAndLinkId(lfItem, qItem) {
-    var code = _getCode(qItem);
-
-    if (code) {
-      lfItem.questionCode = code.code;
-      lfItem.questionCodeSystem = code.system;
-    } // use linkId as questionCode, which should not be exported as code
-    else {
-        lfItem.questionCode = qItem.linkId;
-        lfItem.questionCodeSystem = "LinkId";
-      }
-
-    lfItem.linkId = qItem.linkId;
-  }
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-
-
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-
-    switch (codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-
-
-  function _getCode(questionnaireItemOrResource) {
-    var code = null;
-
-    if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    } // If code is missing look for identifier.
-    else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
-        code = {
-          code: questionnaireItemOrResource.identifier[0].value,
-          system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-        };
-      }
-
-    return code;
-  }
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param lfItem {object} - LForms item object to assign coding instructions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processCodingInstructions(lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-
-    if (ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
-    }
-  }
-  /**
-   * Parse questionnaire item for restrictions
-   *
-   * @param lfItem {object} - LForms item object to assign restrictions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processRestrictions(lfItem, qItem) {
-    var restrictions = {};
-
-    if (typeof qItem.maxLength !== 'undefined') {
-      restrictions['maxLength'] = qItem.maxLength.toString();
-    }
-
-    for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
-      var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-
-      var val = _getFHIRValueWithPrefixKey(restriction, /^value/);
-
-      if (val) {
-        if (restriction.url.match(/minValue$/)) {
-          // TODO -
-          // There is no distinction between inclusive and exclusive.
-          // Lforms looses this information when converting back and forth.
-          restrictions['minInclusive'] = val;
-        } else if (restriction.url.match(/maxValue$/)) {
-          restrictions['maxInclusive'] = val;
-        } else if (restriction.url.match(/minLength$/)) {
-          restrictions['minLength'] = val;
-        } else if (restriction.url.match(/regex$/)) {
-          restrictions['pattern'] = val;
-        }
-      }
-    }
-
-    if (!jQuery.isEmptyObject(restrictions)) {
-      lfItem.restrictions = restrictions;
-    }
-  }
-  /**
-   * Parse questionnaire item for data type
-   *
-   * @param lfItem {object} - LForms item object to assign data type
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  self._processDataType = function (lfItem, qItem) {
-    var type = _getDataType(qItem);
-
-    if (type === 'SECTION' || type === 'TITLE') {
-      lfItem.header = true;
-    }
-
-    lfItem.dataType = type;
   };
   /**
    * Get LForms data type from questionnaire item
@@ -20809,7 +20489,7 @@ function addSDCImportFns(ns) {
    */
 
 
-  function _getDataType(qItem) {
+  self._getDataType = function (qItem) {
     var type = 'string';
 
     switch (qItem.type) {
@@ -20868,559 +20548,62 @@ function addSDCImportFns(ns) {
     }
 
     return type;
-  }
-  /**
-   * Parse questionnaire item for display control
-   *
-   * @param lfItem {object} - LForms item object to assign display control
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processDisplayControl(lfItem, qItem) {
-    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-
-    if (itemControlType) {
-      var displayControl = {};
-
-      switch (itemControlType.valueCodeableConcept.coding[0].code) {
-        case 'Lookup':
-          // TODO -
-          // Implies externallyDefined, but the URL is not saved in fhir resource.
-          // Perhaps it could be save in itemControlType.valueCodableConcept.text ...
-          // lfItem.externallyDefined = itemControlType.valueCodableConcept.text;
-          break;
-
-        case 'Combo-box':
-          displayControl.answerLayout = {
-            type: 'COMBO_BOX'
-          };
-          break;
-
-        case 'Checkbox':
-        case 'Radio':
-          displayControl.answerLayout = {
-            type: 'RADIO_CHECKBOX'
-          };
-          break;
-
-        case 'Table':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "horizontal";
-          }
-
-          break;
-
-        case 'Matrix':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "matrix";
-          }
-
-          break;
-
-        default:
-          displayControl = null;
-      }
-
-      if (displayControl && !jQuery.isEmptyObject(displayControl)) {
-        lfItem.displayControl = displayControl;
-      }
-    }
-  }
-  /**
-   * Get a FHIR value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key.  This should
-   *  be the beginning part of the key up to the type (e.g., /^value/, to match
-   *  "valueQuantity").
-   * @returns {*} - Corresponding value of matching key.  For complex types,
-   * such as Quantity, the type of the returned object will be present under
-   * a _type attribute.
-   * @private
-   */
-
-
-  function _getFHIRValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-
-    if (_typeof(obj) === 'object') {
-      for (var key in obj) {
-        var matchData = key.match(keyRegex);
-
-        if (matchData) {
-          ret = obj[key];
-          if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
-          break;
-        }
-      }
-    }
-
-    return ret;
-  }
+  };
   /**
    * It is used to identify source item in skip logic. Get code from source item
    * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
    * to locate source item with item.linkId.
    *
-   * @param topLevelItem - Top level item object to traverse the path searching for
-   * enableWhen.question text in linkId .
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
    * @param questionLinkId - This is the linkId in enableWhen.question
    * @returns {string} - Returns code of the source item.
    * @private
    */
 
 
-  function _getSourceCodeUsingLinkId(topLevelItem, questionLinkId) {
-    if (topLevelItem.linkId === questionLinkId) {
-      if (topLevelItem.code) {
-        return {
-          questionCode: topLevelItem.code[0].code,
-          dataType: _getDataType(topLevelItem)
-        };
-      } else {
-        return {
-          questionCode: topLevelItem.linkId,
-          dataType: _getDataType(topLevelItem)
-        };
-      }
-    }
+  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
+    var item = linkIdItemMap[questionLinkId];
+    var ret = {
+      dataType: self._getDataType(item)
+    };
 
-    var ret = null;
-
-    if (Array.isArray(topLevelItem.item)) {
-      for (var i = 0; !ret && i < topLevelItem.item.length; i++) {
-        ret = _getSourceCodeUsingLinkId(topLevelItem.item[i], questionLinkId);
-      }
+    if (item.code) {
+      ret.questionCode = item.code[0].code;
+    } else {
+      ret.questionCode = item.linkId;
     }
 
     return ret;
-  } // QuesitonnaireResponse Import
-
-
-  self._mergeQR = {
-    /**
-     * Get structure information of a QuestionnaireResponse instance
-     * @param qr a QuestionnaireResponse instance
-     * @returns {{}} a QuestionnaireResponse data structure object
-     * @private
-     */
-    _getQRStructure: function _getQRStructure(qr) {
-      var qrInfo = {
-        qrItemsInfo: []
-      };
-
-      if (qr) {
-        this._checkQRItems(qrInfo, qr);
-      }
-
-      return qrInfo;
-    },
-
-    /**
-     * Get the item code from a link id
-     * @param linkId a link id
-     * @returns {*}
-     * @private
-     */
-    _getItemCodeFromLinkId: function _getItemCodeFromLinkId(linkId) {
-      var parts = linkId.split("/");
-      var itemCode = parts[parts.length - 1];
-      return itemCode;
-    },
-
-    /**
-     * Get structural info of a QuestionnaireResponse by going though each level of items
-     * @param parentQRItemInfo the structural info of a parent item
-     * @param parentItem a parent item in a QuestionnaireResponse object
-     * @private
-     */
-    _checkQRItems: function _checkQRItems(parentQRItemInfo, parentQRItem) {
-      var qrItemsInfo = [];
-      var repeatingItemProcessed = {};
-
-      if (parentQRItem && parentQRItem.item) {
-        for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
-          var item = parentQRItem.item[i];
-
-          var itemCode = this._getItemCodeFromLinkId(item.linkId); // first item that has the same code, either repeating or non-repeating
-
-
-          if (!repeatingItemProcessed[itemCode]) {
-            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem); // create structure info for the item
-
-
-            var repeatingItems = repeatingInfo.repeatingItems;
-
-            for (var j = 0, jLen = repeatingItems.length; j < jLen; j++) {
-              var qrItemInfo = {
-                code: itemCode,
-                item: repeatingItems[j],
-                index: j,
-                total: repeatingInfo.total
-              }; // check observation instances in the sub level
-
-              this._checkQRItems(qrItemInfo, repeatingItems[j]);
-
-              qrItemsInfo.push(qrItemInfo);
-            }
-
-            repeatingItemProcessed[itemCode] = true;
-          }
-        }
-
-        parentQRItemInfo.qrItemsInfo = qrItemsInfo;
-      }
-    },
-
-    /**
-     * Find the number of the repeating items that have the same code
-     * @param code an item code
-     * @param parentQRItem a parent item in a QuestionnaireResponse object
-     * @returns a structural info object for a repeating item
-     * @private
-     */
-    _findTotalRepeatingNum: function _findTotalRepeatingNum(code, parentQRItem) {
-      var total = 0;
-      var repeatingItems = [];
-
-      for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
-        var item = parentQRItem.item[i];
-
-        var itemCode = this._getItemCodeFromLinkId(item.linkId);
-
-        if (itemCode === code) {
-          repeatingItems.push(item);
-
-          if (Array.isArray(item.answer)) {
-            total += item.answer.length; // answers for repeating questions and repeating answers
-          } else {
-            total += 1;
-          }
-        }
-      }
-
-      return {
-        total: total,
-        repeatingItems: repeatingItems
-      };
-    },
-
-    /**
-     * Add repeating items into LForms definition data object
-     * @param parentItem a parent item
-     * @param itemCode code of a repeating item
-     * @param total total number of the repeating item with the same code
-     * @private
-     */
-    _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
-      // find the first (and the only one) item
-      var item = null;
-
-      if (parentItem.items) {
-        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
-            item = parentItem.items[i];
-            break;
-          }
-        } // insert new items
-
-
-        if (item) {
-          while (total > 1) {
-            var newItem = angular.copy(item);
-            parentItem.items.splice(i, 0, newItem);
-            total -= 1;
-          }
-        }
-      }
-    },
-
-    /**
-     * Find a matching repeating item by item code and the index in the items array
-     * @param parentItem a parent item
-     * @param itemCode code of a repeating (or non-repeating) item
-     * @param index index of the item in the sub item array of the parent item
-     * @returns {{}} a matching item
-     * @private
-     */
-    _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, itemCode, index) {
-      var item = null;
-      var idx = 0;
-
-      if (parentItem.items) {
-        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
-            if (idx === index) {
-              item = parentItem.items[i];
-              break;
-            } else {
-              idx += 1;
-            }
-          }
-        }
-      }
-
-      return item;
-    },
-
-    /**
-     * Find a matching repeating item by item code alone
-     * When used on the LForms definition data object, there is no repeating items yet.
-     * @param parentItem a parent item
-     * @param itemCode code of an item
-     * @returns {{}} a matching item
-     * @private
-     */
-    _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, itemCode) {
-      var item = null;
-
-      if (parentItem.items) {
-        for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
-            item = parentItem.items[i];
-            break;
-          }
-        }
-      }
-
-      return item;
-    },
-
-    /**
-     * Set value and units on a LForms item
-     * @param code an item code
-     * @param answer value for the item
-     * @param item a LForms item
-     * @private
-     */
-    _setupItemValueAndUnit: function _setupItemValueAndUnit(code, answer, item) {
-      if (item && code === item.questionCode && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
-        var dataType = item.dataType; // any one has a unit must be a numerical type, let use REAL for now.
-        // dataType conversion should be handled when panel data are added to lforms-service.
-
-        if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
-          item.dataType = dataType = "REAL";
-        }
-
-        var qrValue = answer[0];
-
-        switch (dataType) {
-          case "INT":
-            if (qrValue.valueQuantity) {
-              item.value = qrValue.valueQuantity.value;
-
-              if (qrValue.valueQuantity.code) {
-                item.unit = {
-                  name: qrValue.valueQuantity.code
-                };
-              }
-            } else if (qrValue.valueInteger) {
-              item.value = qrValue.valueInteger;
-            }
-
-            break;
-
-          case "REAL":
-          case "QTY":
-            if (qrValue.valueQuantity) {
-              item.value = qrValue.valueQuantity.value;
-
-              if (qrValue.valueQuantity.code) {
-                item.unit = {
-                  name: qrValue.valueQuantity.code
-                };
-              }
-            } else if (qrValue.valueDecimal) {
-              item.value = qrValue.valueDecimal;
-            }
-
-            break;
-
-          case "DT":
-            item.value = qrValue.valueDateTime;
-            break;
-
-          case "CNE":
-          case "CWE":
-            if (ns._answerRepeats(item)) {
-              var value = [];
-
-              for (var j = 0, jLen = answer.length; j < jLen; j++) {
-                var coding = answer[j];
-                value.push({
-                  "code": coding.valueCoding.code,
-                  "text": coding.valueCoding.display
-                });
-              }
-
-              item.value = value;
-            } else {
-              item.value = {
-                "code": qrValue.valueCoding.code,
-                "text": qrValue.valueCoding.display
-              };
-            }
-
-            break;
-
-          case "ST":
-          case "TX":
-            item.value = qrValue.valueString;
-            break;
-
-          case "SECTION":
-          case "TITLE":
-          case "":
-            // do nothing
-            break;
-
-          default:
-            item.value = qrValue.valueString;
-        }
-      }
-    }
   };
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
-
-/***/ }),
-/* 71 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/**
- *  Defines SDC functions (used by both import and export) that are the same
- *  across the different FHIR versions.  The function takes SDC namespace object
- *  defined in the sdc export code, and adds additional functions to it.
- */
-function addCommonSDCFns(ns) {
-  "use strict";
-
-  var self = ns;
   /**
-   * Check if a LForms item has repeating questions
-   * @param item a LForms item
-   * @returns {*|boolean}
+   * Build a map of items to linkid from a questionnaire resource.
+   * @param qResource - FHIR Questionnaire resource
+   * @returns {*} - Hash object with link id keys pointing to their respective items.
    * @private
    */
 
-  self._questionRepeats = function (item) {
-    return item && item.questionCardinality && item.questionCardinality.max && (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
-  },
-  /**
-   * Check if a LForms item has repeating answers
-   * @param item a LForms item
-   * @returns {*|boolean}
-   * @private
-   */
-  self._answerRepeats = function (item) {
-    return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
-  };
-}
 
-/* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
+  self._createLinkIdItemMap = function (qResource) {
+    var traverse = function traverse(itemArray, collection) {
+      itemArray.forEach(function (item) {
+        collection[item.linkId] = item;
 
-/***/ }),
-/* 72 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/**
- *  Defines SDC import functions that are the same across the different FHIR
- *  versions.  The function takes SDC namespace object defined in the sdc export
- *  code, and adds additional functions to it.
- */
-function addCommonSDCImportFns(ns) {
-  "use strict";
-
-  var self = ns; // QuestionnaireResponse Import
-
-  var qrImport = self._mergeQR;
-  /**
-   * Merge a QuestionnaireResponse instance into an LForms form object
-   * @param formData an LForms form definition or LFormsData object.
-   * @param qr a QuestionnaireResponse instance
-   * @returns {{}} an updated LForms form definition, with answer data
-   */
-
-  qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData(); // The reference to _mergeQR below is here because this function gets copied to
-    // the containing object to be a part of the public API.
-
-    var qrInfo = qrImport._getQRStructure(qr);
-
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
-
-    return newFormData;
-  },
-  /**
-   * Merge data into items on the same level
-   * @param parentQRItemInfo structural information of a parent item
-   * @param parentLFormsItem a parent item, could be a LForms form object or a form item object.
-   * @private
-   */
-  qrImport._processQRItemAndLFormsItem = function (parentQRItemInfo, parentLFormsItem) {
-    // note: parentQRItemInfo.qrItemInfo.length will increase when new data is inserted into the array
-    for (var i = 0; i < parentQRItemInfo.qrItemsInfo.length; i++) {
-      var qrItemInfo = parentQRItemInfo.qrItemsInfo[i];
-      var qrItem = qrItemInfo.item;
-
-      if (qrItem) {
-        // first repeating qrItem
-        if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
-          // if it is a case of repeating questions, not repeating answers
-
-
-          if (ns._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
-
-
-            if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
-              for (var j = 1; j < qrItemInfo.total; j++) {
-                var newQRItemInfo = angular.copy(qrItemInfo);
-                newQRItemInfo.index = j;
-                newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
-                parentQRItemInfo.qrItemsInfo.splice(i + j, 0, newQRItemInfo);
-              } // change the first qr item's answer too
-
-
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
-            }
-          } // reset the total number of questions when it is the answers that repeats
-          else if (ns._answerRepeats(defItem)) {
-              qrItemInfo.total = 1;
-            }
-        } // find the matching LForms item
-
-
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
-
-
-        if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
-          var qrAnswer = qrItem.answer;
-
-          if (qrAnswer && qrAnswer.length > 0) {
-            var code = this._getItemCodeFromLinkId(qrItem.linkId);
-
-            this._setupItemValueAndUnit(code, qrAnswer, item);
-          }
-        } // process items on the sub-level
-
-
-        if (qrItemInfo.qrItemsInfo && qrItemInfo.qrItemsInfo.length > 0) {
-          this._processQRItemAndLFormsItem(qrItemInfo, item);
+        if (item.item) {
+          traverse(item.item, collection);
         }
-      }
+      });
+      return collection;
+    };
+
+    var ret = {};
+
+    if (qResource.item) {
+      ret = traverse(qResource.item, ret);
     }
+
+    return ret;
   }; // Copy the main merge function to preserve the same API usage.
+
 
   self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
 }

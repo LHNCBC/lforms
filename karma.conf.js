@@ -30,6 +30,7 @@ module.exports = function(config) {
       'app/scripts/fhir/versions.js',
       'app/scripts/fhir/*/lformsFHIR.js',
       'test/karma/*.js',
+      'test/data/*.js',
       'test/data/R4/*.js',
       'test/data/STU3/*.js',
       'app/data/test-data.js'

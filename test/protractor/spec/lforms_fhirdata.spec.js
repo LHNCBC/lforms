@@ -122,9 +122,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 // DOB
                 expect(fhirData.contained[3].valueDateTime).toBe("2016-10-27T00:00:00-04:00");
                 // Height
-                expect(fhirData.contained[4].valueQuantity).toEqual({"code":"inches","system":"http://unitsofmeasure.org","unit":"inches","value":70});
+                expect(fhirData.contained[4].valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
-                expect(fhirData.contained[5].valueQuantity).toEqual({"code":"lbs","system":"http://unitsofmeasure.org","unit":"lbs","value":170});
+                expect(fhirData.contained[5].valueQuantity).toEqual({"unit":"lbs","value":170});
                 // BMI
                 expect(fhirData.contained[6].valueString).toBe("24.39");
                 // Race
@@ -283,9 +283,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 // DOB
                 expect(fhirData.entry[4].resource.valueDateTime).toBe("2016-10-27T00:00:00-04:00");
                 // Height
-                expect(fhirData.entry[5].resource.valueQuantity).toEqual({"code":"inches","system":"http://unitsofmeasure.org","unit":"inches","value":70});
+                expect(fhirData.entry[5].resource.valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
-                expect(fhirData.entry[6].resource.valueQuantity).toEqual({"code":"lbs","system":"http://unitsofmeasure.org","unit":"lbs","value":170});
+                expect(fhirData.entry[6].resource.valueQuantity).toEqual({"unit":"lbs","value":170});
                 // BMI
                 expect(fhirData.entry[7].resource.valueString).toBe("24.39");
                 // Race
@@ -451,16 +451,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[3].text).toBe("Height");
               expect(fhirData.item[0].item[3].linkId).toBe("/54126-8/8302-2");
               expect(fhirData.item[0].item[3].answer.length).toBe(1);
-              expect(fhirData.item[0].item[3].answer[0].valueQuantity.code).toBe("inches");
-              expect(fhirData.item[0].item[3].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
               expect(fhirData.item[0].item[3].answer[0].valueQuantity.unit).toBe("inches");
               expect(fhirData.item[0].item[3].answer[0].valueQuantity.value).toBe(70);
               // Weight
               expect(fhirData.item[0].item[4].text).toBe("Weight");
               expect(fhirData.item[0].item[4].linkId).toBe("/54126-8/29463-7");
               expect(fhirData.item[0].item[4].answer.length).toBe(1);
-              expect(fhirData.item[0].item[4].answer[0].valueQuantity.code).toBe("lbs");
-              expect(fhirData.item[0].item[4].answer[0].valueQuantity.system).toBe("http://unitsofmeasure.org");
               expect(fhirData.item[0].item[4].answer[0].valueQuantity.unit).toBe("lbs");
               expect(fhirData.item[0].item[4].answer[0].valueQuantity.value).toBe(170);
               // BMI

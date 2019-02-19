@@ -57,7 +57,8 @@ var TestPage = function() {
     HL7GeneticPanel: 15,
     DefaultAnswerForm: 17,
     TwoTotalScoreForm: 20,
-    VitalSign: 21
+    VitalSign: 21,
+    QTYDemo: 22
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {
