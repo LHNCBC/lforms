@@ -355,7 +355,7 @@ if (typeof LForms === 'undefined')
               if (itemCodeSystem === 'LOINC')
                 itemCodeSystem = serverFHIR.LOINC_URI;
               var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
-              // TBD add date range
+              // TBD add date range (requires UCUM)
               var queryParams = {type: 'Observation', query: {
                 code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
                 _count: 1}};
@@ -367,6 +367,8 @@ if (typeof LForms === 'undefined')
                 if (bundle.entry && bundle.entry.length === 1) {
                   var obs = bundle.entry[0].resource;
                   serverFHIR.SDC.importObsValue(itemI, obs);
+                  if (itemI.unit)
+                    lfData._setUnitDisplay(itemI.unit);
                 }
                 console.log(successData);
                 lfData._asyncLoadCounter--;
@@ -2243,6 +2245,15 @@ if (typeof LForms === 'undefined')
 
 
     /**
+     *  Sets the display string for an item's unit.
+     * @param unit the unit object on which the display string should be set.
+     */
+    _setUnitDisplay: function(unit) {
+      unit._displayUnit = unit.name ? unit.name : unit.code ? unit.code : null;
+    },
+
+
+    /**
      * Update an item's units autocomplete options
      * @param item an item on the form
      * @private
@@ -2258,7 +2269,7 @@ if (typeof LForms === 'undefined')
         var defaultValue;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
-          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : null;
+          this._setUnitDisplay(listItem);
           if (answers[i].default) {
             defaultValue = listItem._displayUnit;
           }

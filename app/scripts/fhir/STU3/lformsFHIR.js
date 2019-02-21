@@ -20605,7 +20605,7 @@ function addSDCImportFns(ns) {
     // starts with "value".
     var val = null;
     var lfDataType = lfItem.dataType;
-    var fhirValType = this._dataTypeMapping[lfDataType];
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
     if (fhirValType) val = obs['value' + fhirValType];
 
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -20621,12 +20621,19 @@ function addSDCImportFns(ns) {
       var unitOkay = true;
 
       if (val._type === 'Quantity') {
-        // TBD - check code & code system when that is available.
         if (lfItem.units) {
           var foundUnit = false;
 
           for (var i = 0, len = lfItem.units.length; i < len && !foundUnit; ++i) {
-            if (lfItem.units[i].name === val.unit) foundUnit = lfItem.units[i];
+            var lfUnit = lfItem.units[i]; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
+            // for UCUM).  For now, just remove it.
+
+            var valSystem = val.system;
+            if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+
+            if (lfUnit.system && lfUnit.system === valSystem && lfUnit.code === val.code || !lfUnit.system && lfUnit.name === val.unit) {
+              foundUnit = lfItem.units[i];
+            }
           }
 
           if (!foundUnit) unitOkay = false;
