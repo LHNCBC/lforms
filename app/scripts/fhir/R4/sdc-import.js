@@ -12,7 +12,7 @@ function addSDCImportFns(ns) {
 
   var self = ns;
   // FHIR extension urls
-  
+
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
 
   self.formLevelIgnoredFields = [
@@ -265,7 +265,7 @@ function addSDCImportFns(ns) {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
           var condition = {source: source.questionCode};
-          var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = null;
           if(source.dataType === 'CWE' || source.dataType === 'CNE') {
             condition.trigger = {code: answer.code};
@@ -312,9 +312,9 @@ function addSDCImportFns(ns) {
         source.dataType === 'DTM' || source.dataType === 'QTY') {
         ret = {source: source.questionCode};
         ret.trigger = {};
-        var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
-        var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-    
+        var answer0 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
+        var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
+
         if(source.dataType === 'QTY') {
           ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
           ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
@@ -444,35 +444,15 @@ function addSDCImportFns(ns) {
       return;
     }
 
-    var isMultiple = self._hasMultipleAnswers(qItem);
-    var defaultAnswer = null;
-
+    var vals = [];
     qItem.initial.forEach(function(elem) {
       var answer = null;
-      var val = _getValueWithPrefixKey(elem, /^value/);
-
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
-        answer = {};
-        if(val.code !== undefined) answer.code = val.code;
-        if(val.display !== undefined) answer.text = val.display;
-      }
-      else if(lfItem.dataType === 'QTY') {
-        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
-      }
-      else {
-        answer = val;
-      }
-
-      if (isMultiple) {
-        if(!defaultAnswer) defaultAnswer = [];
-        if(answer) defaultAnswer.push(answer);
-      }
-      else {     // single selection
-        defaultAnswer = answer;
-      }
+      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
+      if (val)
+        vals.push(val);
     });
-
-    lfItem.defaultAnswer = defaultAnswer;
+    if (vals.length > 0)
+      this._processFHIRValues(lfItem, vals, true);
   };
 
 
@@ -484,7 +464,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processUnitList = function (lfItem, qItem) {
- 
+
     var lformsUnits = [];
     var lformsDefaultUnit = null;
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
@@ -499,7 +479,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lUnit);
       }
     }
-  
+
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if(unit) {
       lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
@@ -532,7 +512,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lformsDefaultUnit);
       }
     }
-  
+
     if(lformsUnits.length > 0) {
       if (!lformsDefaultUnit) {
         lformsUnits[0].default = true;
@@ -688,7 +668,7 @@ function addSDCImportFns(ns) {
 
     for(var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
       if (val) {
 
         if(restriction.url.match(/minValue$/)) {
@@ -776,30 +756,6 @@ function addSDCImportFns(ns) {
       }
     }
   };
-
-
-  /**
-   * Get value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
-   * @private
-   */
-  function _getValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-    if(typeof obj === 'object') {
-      for(var key in obj) {
-        if(key.match(keyRegex)) {
-          ret = obj[key];
-          break;
-        }
-      }
-    }
-
-    return ret;
-  }
 
 
   // Quesitonnaire Response Import

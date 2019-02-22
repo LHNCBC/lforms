@@ -378,9 +378,10 @@ console.log("%%% in onAfterAddingFile");
                 // in the internal LForms format
                 else {
                   $scope.lfData2 = new LFormsData(importedData);
-                  $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
+                // Reset the field with the filename we can load the same file again if needed.
+                $('#fileAnchor')[0].value = '';
               };
               reader.readAsText(item._file);
             };

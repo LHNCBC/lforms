@@ -289,7 +289,6 @@ if (typeof LForms === 'undefined')
      * @private
      */
     _initializeInternalData: function() {
-
       //TODO, validate form data
 
       // set default values of certain form definition fields
@@ -370,7 +369,6 @@ if (typeof LForms === 'undefined')
                   if (itemI.unit)
                     lfData._setUnitDisplay(itemI.unit);
                 }
-                console.log(successData);
                 lfData._asyncLoadCounter--;
                 if (lfData._asyncLoadCounter === 0)
                   lfData._notifyAsyncChangeListeners()

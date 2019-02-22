@@ -191,7 +191,7 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
-        var answer = _getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
         if(source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {code: answer.code};
         }
@@ -309,95 +309,6 @@ function addSDCImportFns(ns) {
     }
   }
 
-  /**
-   *  Imports an observation's values into the given LForms item.
-   * @param lfItem the LForms item to which a value will be assigned.
-   * @param obs the observation whose value will be assigned to lfItem.  It
-   *  assumed that obs has an appropriate data type for its value.
-   */
-  self.importObsValue = function(lfItem, obs) {
-    // Get the value from obs, based on lfItem's data type.  (The altertnative
-    // seems to be looping through the keys on obs looking for something that
-    // starts with "value".
-    var val = null;
-    var lfDataType = lfItem.dataType;
-    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
-    if (fhirValType)
-      val = obs['value'+fhirValType];
-    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
-      // Accept initial value of type Quantity for these types.
-      val = obs.valueQuantity;
-      if (val)
-        val._type = 'Quantity'
-    }
-    if (val) {
-      if (!val._type && typeof val === 'object')
-        val._type = fhirValType;
-
-      // Before importing, confirm val contains a valid unit from the
-      // item's unit list.
-      var unitOkay = true;
-      if (val._type === 'Quantity') {
-        if (lfItem.units) {
-          var foundUnit = false;
-          for (var i=0, len=lfItem.units.length; i<len && !foundUnit; ++i) {
-            var lfUnit = lfItem.units[i];
-            // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
-            // for UCUM).  For now, just remove it.
-            var valSystem = val.system;
-            if (valSystem[valSystem.length - 1] === '/')
-              valSystem = valSystem.slice(0, -1);
-            if (lfUnit.system && (lfUnit.system===valSystem && lfUnit.code===val.code) ||
-                !lfUnit.system && (lfUnit.name===val.unit)) {
-              foundUnit = lfItem.units[i];
-            }
-          }
-          if (!foundUnit)
-            unitOkay = false;
-        }
-      }
-      if (unitOkay) {
-        lfItem.unit = foundUnit;
-        this._processFHIRValue(lfItem, val);
-      }
-    }
-  },
-
-
-  /**
-   *   Assigns a FHIR value to a LForms item.
-   *  @param lfItem the LForms item to receive the value
-   *  @param fhirVal the FHIR value (e.g. a Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
-   *  @param setDefault if true, the default value in lfItem will be set as well
-   *   as the value.
-   */
-  self._processFHIRValue = function(lfItem, fhirVal, setDefault) {
-    var lfDataType = lfItem.dataType;
-    var answer = null;
-    if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
-      if (lfItem.answerCardinality && lfItem.answerCardinality.max === '*') {
-        answer = [{code: fhirVal.code, text: fhirVal.display}];
-      }
-      // single selection
-      else {
-        answer = {code: fhirVal.code, text: fhirVal.display};
-      }
-    }
-    else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
-        lfDataType === 'REAL' || lfDataType === 'INT')) {
-      if (fhirVal.value !== undefined) {
-        answer = fhirVal.value;
-      }
-    }
-    else {
-      answer = fhirVal;
-    }
-    lfItem.value = answer;
-    if (setDefault)
-      lfItem.defaultAnswer = answer;
-  },
-
 
   /**
    * Parse questionnaire item for default answer
@@ -408,9 +319,9 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = _getFHIRValueWithPrefixKey(qItem, /^initial/);
+    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
     if (val) {
-      this._processFHIRValue(lfItem, val, true);
+      this._processFHIRValues(lfItem, [val], true);
     }
   };
 
@@ -627,7 +538,7 @@ function addSDCImportFns(ns) {
 
     for(var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-      var val = _getFHIRValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
       if (val) {
 
         if(restriction.url.match(/minValue$/)) {
@@ -714,37 +625,6 @@ function addSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  }
-
-
-  /**
-   * Get a FHIR value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key.  This should
-   *  be the beginning part of the key up to the type (e.g., /^value/, to match
-   *  "valueQuantity").
-   * @returns {*} - Corresponding value of matching key.  For complex types,
-   * such as Quantity, the type of the returned object will be present under
-   * a _type attribute.
-   * @private
-   */
-  function _getFHIRValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-    if(typeof obj === 'object') {
-      for(var key in obj) {
-        var matchData = key.match(keyRegex);
-        if (matchData) {
-          ret = obj[key];
-          if (typeof ret === 'object')
-            ret._type = key.substring(matchData[0].length);
-          break;
-        }
-      }
-    }
-
-    return ret;
   }
 
 

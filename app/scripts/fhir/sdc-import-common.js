@@ -7,7 +7,7 @@ function addCommonSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
-  
+
   // FHIR extension urls
   self.fhirExtUrlCardinalityMin = "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs";
   self.fhirExtUrlCardinalityMax = "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs";
@@ -24,12 +24,12 @@ function addCommonSDCImportFns(ns) {
     "http://hl7.org/fhir/StructureDefinition/minLength",
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
-  
+
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-  
+
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
-  
+
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
 
   /**
@@ -40,12 +40,12 @@ function addCommonSDCImportFns(ns) {
    */
   self.convertQuestionnaireToLForms = function (fhirData) {
     var target = null;
-    
+
     if(fhirData) {
       target = {};
       self._processFormLevelFields(target, fhirData);
       var containedVS = self._extractContainedVS(fhirData);
-      
+
       if(fhirData.item && fhirData.item.length > 0) {
         var linkIdItemMap = self._createLinkIdItemMap(fhirData);
         target.items = [];
@@ -56,11 +56,145 @@ function addCommonSDCImportFns(ns) {
       }
       target.fhirVersion = self.fhirVersion;
     }
-    
+
     return target;
   };
-  
-  
+
+
+  /**
+   *  Imports an observation's values into the given LForms item.
+   * @param lfItem the LForms item to which a value will be assigned.
+   * @param obs the observation whose value will be assigned to lfItem.  It
+   *  assumed that obs has an appropriate data type for its value.
+   */
+  self.importObsValue = function(lfItem, obs) {
+    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // seems to be looping through the keys on obs looking for something that
+    // starts with "value".
+    var val = null;
+    var lfDataType = lfItem.dataType;
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    if (fhirValType)
+      val = obs['value'+fhirValType];
+    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
+      // Accept initial value of type Quantity for these types.
+      val = obs.valueQuantity;
+      if (val)
+        val._type = 'Quantity'
+    }
+    if (val) {
+      if (!val._type && typeof val === 'object')
+        val._type = fhirValType;
+
+      // Before importing, confirm val contains a valid unit from the
+      // item's unit list.
+      var unitOkay = true;
+      if (val._type === 'Quantity') {
+        if (lfItem.units) {
+          var foundUnit = false;
+          for (var i=0, len=lfItem.units.length; i<len && !foundUnit; ++i) {
+            var lfUnit = lfItem.units[i];
+            // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
+            // for UCUM).  For now, just remove it.
+            var valSystem = val.system;
+            if (valSystem[valSystem.length - 1] === '/')
+              valSystem = valSystem.slice(0, -1);
+            if (lfUnit.system && (lfUnit.system===valSystem && lfUnit.code===val.code) ||
+                !lfUnit.system && (lfUnit.name===val.unit)) {
+              foundUnit = lfItem.units[i];
+            }
+          }
+          if (!foundUnit)
+            unitOkay = false;
+        }
+      }
+      if (unitOkay) {
+        lfItem.unit = foundUnit;
+        this._processFHIRValues(lfItem, [val]);
+      }
+    }
+  };
+
+
+  /**
+   *   Assigns FHIR values to an LForms item.
+   *  @param lfItem the LForms item to receive the values from fhirVals
+   *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
+   *   Complex types like Quantity should have _type set to the type.
+   *  @param setDefault if true, the default value in lfItem will be set instead
+   *   of the value.
+   */
+  self._processFHIRValues = function(lfItem, fhirVals, setDefault) {
+    var lfDataType = lfItem.dataType;
+    var isMultiple = lfItem.answerCardinality && lfItem.answerCardinality.max === '*';
+    var answers = [];
+    for (let i=0, len=fhirVals.length; i<len; ++i) {
+      let fhirVal = fhirVals[i];
+      var answer = null;
+      if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
+        answer = {};
+        if(fhirVal.code !== undefined) answer.code = fhirVal.code;
+        if(fhirVal.display !== undefined) answer.text = fhirVal.display;
+      }
+      else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
+          lfDataType === 'REAL' || lfDataType === 'INT')) {
+        if (fhirVal.value !== undefined) {
+          answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
+        }
+      }
+      else {
+        answer = fhirVal;
+      }
+      answers.push(answer);
+    }
+    if (isMultiple) {
+      if (setDefault)
+        lfItem.defaultAnswer = answers;
+      else
+        lfItem.value = answers;
+    }
+    else { // there should just be one answer
+      if (setDefault)
+        lfItem.defaultAnswer = answers[0];
+      else
+        lfItem.value = answers[0];
+    }
+  };
+
+
+  /**
+   * Get a FHIR value from an object given a partial string of hash key.
+   * Use it where at most only one key matches.
+   *
+   * @param obj {object} - Object to search
+   * @param keyRegex {regex} - Regular expression to match a key.  This should
+   *  be the beginning part of the key up to the type (e.g., /^value/, to match
+   *  "valueQuantity").
+   * @returns {*} - Corresponding value of matching key.  For complex types,
+   *  such as Quantity, the type of the returned object will be present under
+   *  a _type attribute.
+   * @private
+   */
+  self._getFHIRValueWithPrefixKey = function(obj, keyRegex) {
+    var ret = null;
+    if(typeof obj === 'object') {
+      for(var key in obj) {
+        var matchData = key.match(keyRegex);
+        if (matchData) {
+          ret = obj[key];
+          if (typeof ret === 'object')
+            ret._type = key.substring(matchData[0].length);
+          break;
+        }
+      }
+    }
+
+    return ret;
+  }
+
+
+
+
   // QuestionnaireResponse Import
   var qrImport = self._mergeQR;
 
@@ -138,8 +272,8 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
-  
-  
+
+
   /**
    * Get LForms data type from questionnaire item
    *
@@ -148,7 +282,7 @@ function addCommonSDCImportFns(ns) {
    */
   self._getDataType = function (qItem) {
     var type = 'string';
-    
+
     switch (qItem.type) {
       case 'string':
         type = 'ST';
@@ -193,7 +327,7 @@ function addCommonSDCImportFns(ns) {
     }
     return type;
   };
-  
+
 
   /**
    * It is used to identify source item in skip logic. Get code from source item
@@ -206,7 +340,7 @@ function addCommonSDCImportFns(ns) {
    * @private
    */
   self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
-    
+
     var item = linkIdItemMap[questionLinkId];
     var ret = {dataType: self._getDataType(item)};
     if(item.code) {
@@ -215,10 +349,10 @@ function addCommonSDCImportFns(ns) {
     else {
       ret.questionCode = item.linkId;
     }
-    
+
     return ret;
   };
-  
+
   /**
    * Build a map of items to linkid from a questionnaire resource.
    * @param qResource - FHIR Questionnaire resource
@@ -233,7 +367,7 @@ function addCommonSDCImportFns(ns) {
             traverse(item.item, collection);
           }
         });
-      
+
       return collection;
     };
 
@@ -243,8 +377,8 @@ function addCommonSDCImportFns(ns) {
     }
     return ret;
   };
-  
-  
+
+
   // Copy the main merge function to preserve the same API usage.
   self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
 }
