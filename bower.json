@@ -33,8 +33,9 @@
     "Ye Wang <wangye@mail.nih.gov>"
   ],
   "description": "An angular directive that displays forms defined in the lforms standard format.",
+  "TBD - use this for main js file in place of app/generated/lforms.js": "bower-dist/lforms.js",
   "main": [
-    "bower-dist/lforms.js",
+    "app/generated/lforms.js",
     "app/generated/styles/autocomplete-lhc.css",
     "app/styles/lforms.css"
   ],

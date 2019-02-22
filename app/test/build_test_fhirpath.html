@@ -64,11 +64,11 @@
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
                   var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-                  $scope.lfData2 = new LFormsData(questionnaire);
+                  $scope.lfData2 = new LForms.LFormsData(questionnaire);
                 }
                 // in the internal LForms format
                 else {
-                  $scope.lfData2 = new LFormsData(importedData);
+                  $scope.lfData2 = new LForms.LFormsData(importedData);
                 }
                 $scope.$apply();
               };

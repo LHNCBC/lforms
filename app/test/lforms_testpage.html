@@ -83,7 +83,7 @@
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
-    <script src="../bower-dist/lforms.js"></script>
+    <script src="generated/lforms.js"></script>
     <!-- endbower -->
     <script src="scripts/fhir/STU3/lformsFHIR.js"></script>
     <script src="scripts/fhir/R4/lformsFHIR.js"></script>
@@ -354,11 +354,11 @@ console.log("%%% in onAfterAddingFile");
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
                   var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-                  $scope.lfData2 = new LFormsData(questionnaire);
+                  $scope.lfData2 = new LForms.LFormsData(questionnaire);
                 }
                 // in the internal LForms format
                 else {
-                  $scope.lfData2 = new LFormsData(importedData);
+                  $scope.lfData2 = new LForms.LFormsData(importedData);
                   $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
