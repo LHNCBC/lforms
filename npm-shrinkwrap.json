@@ -1179,9 +1179,9 @@
       "dev": true
     },
     "angular-animate": {
-      "version": "1.7.7",
-      "resolved": "https://registry.npmjs.org/angular-animate/-/angular-animate-1.7.7.tgz",
-      "integrity": "sha512-KLbU9gtgCyNSaMZKnNe9Yi6UTlDMN2EWyokQ06TG5fbDWOePm+kv2xqeUg1S2h+ZLjK0NnoVDIvwDhVQ+AWAag=="
+      "version": "1.5.8",
+      "resolved": "https://registry.npmjs.org/angular-animate/-/angular-animate-1.5.8.tgz",
+      "integrity": "sha1-U19zaSJaun+xW/cTTHGxW8Y1xYY="
     },
     "angular-ui-bootstrap": {
       "version": "2.5.6",

@@ -3,7 +3,7 @@
   "version": "14.1.4",
   "dependencies": {
     "jquery-ui": "~1.11.4",
-    "angular": "^1.7.7",
+    "angular": "^1.4.7",
     "angular-bootstrap": "^1.1.0",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",

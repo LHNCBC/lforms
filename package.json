@@ -2,7 +2,7 @@
   "name": "lforms",
   "version": "0.0.0",
   "dependencies": {
-    "angular-animate": "^1.7.7",
+    "angular-animate": "1.5.8",
     "angular-ui-bootstrap": "^2.5.6",
     "autocomplete-lhc": "^18.0.0",
     "bootstrap": "^4.2.1",
