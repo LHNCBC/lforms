@@ -6,12 +6,19 @@ var mockFHIRContext = require('./fhir_context');
 /**
  *  Sets up a mock server FHIR context.
  * @param fhirVersion the FHIR version number (as a string) for the mock server.
+ * @param weightQuantity the quantity to return from a search for a weight.
  */
-function setServerFHIRContext(fhirVersion) {
-  browser.executeScript(function(fhirVersion, mockFHIRContext) {
-    var fhirContext = new Function("return "+mockFHIRContext)();
-    LForms.Util.setFHIRContext(fhirContext(fhirVersion));
-  }, fhirVersion, mockFHIRContext);
+function setServerFHIRContext(fhirVersion, weightQuantity) {
+  browser.executeScript(function(fhirVersion, mockFHIRContext, weightQuantity) {
+    try {
+      var fhirContext = new Function("return "+mockFHIRContext)();
+      LForms.Util.setFHIRContext(fhirContext(fhirVersion, weightQuantity));
+    }
+    catch(e) {
+      console.log("caught error in executeScript");
+      console.log(e);
+    }
+  }, fhirVersion, mockFHIRContext, weightQuantity);
 }
 
 describe('Form pre-population', function() {
@@ -40,15 +47,35 @@ describe('Form pre-population', function() {
     expect(launchContextExt).not.toBeNull();
   });
 
+
   for (let serverFHIRNum of ['3.0', '4.0']) {
-    it('should load values from observationLinkPeriod for server FHIR version '+
-       serverFHIRNum, function() {
-      setServerFHIRContext(serverFHIRNum);
-      tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
-      var weightField = element(by.id('/29463-7/1'));
-      expect(weightField.getAttribute('value')).toBe('95');
-      var unitField = element(by.id('unit_/29463-7/1'));
-      expect(unitField.getAttribute('value')).toBe('kg');
+    describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
+             function() {
+      it('should load values from observationLinkPeriod for server FHIR version '+
+         serverFHIRNum, function() {
+        setServerFHIRContext(serverFHIRNum);
+        tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+        var weightField = element(by.id('/29463-7/1'));
+        expect(weightField.getAttribute('value')).toBe('95');
+        var unitField = element(by.id('unit_/29463-7/1'));
+        expect(unitField.getAttribute('value')).toBe('kg');
+      });
+
+      it('should convert values from observationLinkPeriod for server FHIR version '+
+         serverFHIRNum, function() {
+        setServerFHIRContext(serverFHIRNum, {
+          "value": 140,
+          "unit": "[lb_av]",
+          "system": "http://unitsofmeasure.org",
+          "code": "[lb_av]"
+        });
+
+        tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+        var weightField = element(by.id('/29463-7/1'));
+        expect(weightField.getAttribute('value')).toBe('63.5');
+        var unitField = element(by.id('unit_/29463-7/1'));
+        expect(unitField.getAttribute('value')).toBe('kg');
+      });
     });
   }
 });

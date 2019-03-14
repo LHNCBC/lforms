@@ -21431,7 +21431,10 @@ function addCommonSDCFns(ns) {
     }
 
     return ret;
-  };
+  }; // Store the UCUM code system URI
+
+
+  self.UCUM_URI = 'http://unitsofmeasure.org';
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
@@ -21503,6 +21506,56 @@ function addCommonSDCImportFns(ns) {
     return target;
   };
   /**
+   *  Returns the number of digits in the number after the decimal point, ignoring
+   *  trailing zeros.
+   */
+
+
+  function decimalPlaces(x) {
+    // Based on https://stackoverflow.com/a/9539746/360782
+    // Make sure it is a number and use the builtin number -> string.
+    var s = "" + +x;
+    var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
+    // We arbitrarily decide that Infinity is integral.
+
+    if (!match) {
+      return 0;
+    } // Count the number of digits in the fraction and subtract the
+    // exponent to simulate moving the decimal point left by exponent places.
+    // 1.234e+2 has 1 fraction digit and '234'.length -  2 == 1
+    // 1.234e-2 has 5 fraction digit and '234'.length - -2 == 5
+    //var wholeNum = match[1];
+
+
+    var fraction = match[2];
+    var exponent = match[3];
+    return Math.max(0, // lower limit.
+    (fraction == '0' ? 0 : (fraction || '').length) - ( // fraction length
+    exponent || 0)); // exponent
+  }
+  /**
+   *  Returns the number of digits in the number after the decimal point, ignoring
+   *  trailing zeros.  (I am including this on "self" so we can have tests for it.)
+   */
+
+
+  self._significantDigits = function (x) {
+    // Based on https://stackoverflow.com/a/9539746/360782
+    // Make sure it is a number and use the builtin number -> string.
+    var s = "" + +x;
+    var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
+    // We arbitrarily decide that Infinity is integral.
+
+    if (!match) {
+      return 0;
+    }
+
+    var wholeNum = match[1];
+    var fraction = match[2]; //var exponent = match[3];
+
+    return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
+  };
+  /**
    *  Imports an observation's values into the given LForms item.
    * @param lfItem the LForms item to which a value will be assigned.
    * @param obs the observation whose value will be assigned to lfItem.  It
@@ -21533,26 +21586,45 @@ function addCommonSDCImportFns(ns) {
 
       if (val._type === 'Quantity') {
         if (lfItem.units) {
-          var foundUnit = false;
+          var matchingUnit;
+          var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
+          // for UCUM).  For now, just remove it.
 
-          for (var i = 0, len = lfItem.units.length; i < len && !foundUnit; ++i) {
-            var lfUnit = lfItem.units[i]; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
-            // for UCUM).  For now, just remove it.
+          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          var isUCUMUnit = valSystem === self.UCUM_URI;
+          var ucumUnit;
 
-            var valSystem = val.system;
-            if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          for (var i = 0, len = lfItem.units.length; i < len && !matchingUnit; ++i) {
+            var lfUnit = lfItem.units[i];
 
             if (lfUnit.system && lfUnit.system === valSystem && lfUnit.code === val.code || !lfUnit.system && lfUnit.name === val.unit) {
-              foundUnit = lfItem.units[i];
+              matchingUnit = lfUnit;
+            }
+
+            if (isUCUMUnit && !matchingUnit && !ucumUnit && lfUnit.system === self.UCUM_URI) ucumUnit = lfUnit;
+          }
+
+          if (!matchingUnit && ucumUnit) {
+            // See if we can convert to the ucumUnit we found
+            var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
+
+            if (result.status === 'succeeded') {
+              matchingUnit = ucumUnit; // Round the result to the same number of significant digits as the
+              // input value.
+
+              var originalSD = this._significantDigits(val.value);
+
+              if (originalSD > 0) val.value = Number.parseFloat(result.toVal.toPrecision(originalSD));else val.value = result.toVal;
+              val.code = ucumUnit.code;
             }
           }
 
-          if (!foundUnit) unitOkay = false;
+          if (!matchingUnit) unitOkay = false;
         }
       }
 
       if (unitOkay) {
-        lfItem.unit = foundUnit;
+        lfItem.unit = matchingUnit;
 
         this._processFHIRValues(lfItem, [val]);
       }

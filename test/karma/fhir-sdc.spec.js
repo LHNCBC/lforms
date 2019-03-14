@@ -5,6 +5,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe('_significantDigits', function() {
+          it('should count zeros left of the decimal', function() {
+            // This is because users are not likely to enter number in
+            // scientific notation.
+            assert.equal(fhir.SDC._significantDigits(12300), 5);
+          });
+          it('should count digits right of the decimal', function() {
+            assert.equal(fhir.SDC._significantDigits(12.01), 4);
+          });
+        });
         describe('itemToQuestionnaireItem', function() {
 
           it('should convert code system', function() {

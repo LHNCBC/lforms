@@ -354,12 +354,23 @@ if (typeof LForms === 'undefined')
               if (itemCodeSystem === 'LOINC')
                 itemCodeSystem = serverFHIR.LOINC_URI;
               var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
-              // TBD add date range (requires UCUM)
               var queryParams = {type: 'Observation', query: {
                 code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
                 _count: 1}};
               if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
                 queryParams.query.focus = {$missing: true};
+console.log("%%% duration=");
+console.log(duration);
+              if (duration && duration.value && duration.code) {
+                // Convert value to milliseconds
+                var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+console.log(result);
+                if (result.status === 'succeeded') {
+                  var date = new Date(new Date() - result.toVal);
+                  queryParams.query._lastUpdated = 'gt'+date.toISOString();
+console.log(queryParams);
+                }
+              }
               this._asyncLoadCounter++;
               fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
                 var bundle = successData.data;

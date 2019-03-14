@@ -8,7 +8,8 @@
     "angular-bootstrap": "^1.1.0",
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",
-    "element-resize-detector": "^1.1.11"
+    "element-resize-detector": "^1.1.11",
+    "ucum-lhc": "^2.5.4"
   },
   "overrides": {
     "jquery-ui": {
