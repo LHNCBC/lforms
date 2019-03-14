@@ -333,9 +333,6 @@ if (typeof LForms === 'undefined')
      *  resources for pre-populuation.
      */
     _requestLinkedObs: function() {
-      // TBD -- This needs to be done in FHIR-version specific code.  STU3 does
-      // not have a "focus" field in Observation, but we were required to check
-      // it in R4
       if (LForms.fhirContext && this._fhir) {
         // We will need to know what version of FHIR the server is using.  Make
         // sure that is available before continuing.
@@ -359,16 +356,12 @@ if (typeof LForms === 'undefined')
                 _count: 1}};
               if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
                 queryParams.query.focus = {$missing: true};
-console.log("%%% duration=");
-console.log(duration);
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
-console.log(result);
                 if (result.status === 'succeeded') {
                   var date = new Date(new Date() - result.toVal);
                   queryParams.query._lastUpdated = 'gt'+date.toISOString();
-console.log(queryParams);
                 }
               }
               this._asyncLoadCounter++;
