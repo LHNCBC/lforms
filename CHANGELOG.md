@@ -2,22 +2,27 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [14.3.0] 2019-03-14
+### Added
+- Support for the questionnaire-observationLinkPeriod extenstion for
+  pre-population.  (Extraction is not yet supported.)
+
 ## [14.2.0] 2019-02-13
 ### Added
 - Added code and system attributes to unit, to align with FHIR specs.
 
 ## [14.1.4] 2019-02-07
 ### Changed
-- Fix typo in url for FHIR unit option.  
+- Fix typo in url for FHIR unit option.
 
 ## [14.1.3] 2019-01-29
 ### Changed
-- Fixed unit conversions to store the unit lists in unitOption extensions and 
+- Fixed unit conversions to store the unit lists in unitOption extensions and
   change the data type to quantity. Used initial.valueQuantity.unit to store the
-  lforms default value. If no default is found, the first unit in the list is set to 
+  lforms default value. If no default is found, the first unit in the list is set to
   default.
-- Refactored the code to reduce some duplication in STU3 and R4.  
-  
+- Refactored the code to reduce some duplication in STU3 and R4.
+
 ## [14.1.2] 2019-01-25
 ### Fixed
 - The BMI "calculationMethod" can now handle "[in_i]" as a unit.
