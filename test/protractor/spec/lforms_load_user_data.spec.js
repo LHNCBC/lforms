@@ -115,6 +115,7 @@ describe('load saved user data', function() {
     expect(ff.rpq5_4.getAttribute('value')).toBe('');
 
     // select from an answer list
+    browser.waitForAngular();
     ff.q5.click();
     // pick the 1st item, Answer 1
     ff.q5.sendKeys(protractor.Key.ARROW_DOWN);
