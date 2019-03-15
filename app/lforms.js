@@ -1,10 +1,12 @@
 // Use IIFE so that strict mode is not at the file level
+import popover from 'angular-ui-bootstrap/src/popover';
+import tooltip from 'angular-ui-bootstrap/src/tooltip';
 (function() {
 //  'use strict';
 //  var angular = require('angular');
   angular.module('lformsWidget', [
     require('angular-animate'),
-    'ui.bootstrap',
+    popover, tooltip, // ui-bootstrap
     'smoothScroll',
     'autocompleteLhcMod'
     ])
