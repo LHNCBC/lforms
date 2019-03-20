@@ -318,7 +318,7 @@ module.exports = function (grunt) {
         flow: {
           html: {
             steps: {
-              js: ['concat', 'uglifyjs'],
+//              js: ['concat', 'uglifyjs'],
               css: ['cssmin']
             },
             post: {}
@@ -562,7 +562,7 @@ module.exports = function (grunt) {
     'cssmin',
     'shell:dist_dir_link', // needed by webpack
     'shell:webpack', // produces files needed by uglify
-    'uglify',
+//    'uglify',  // webpack now creates the browser-ready file
     'compress'
   ]);
 

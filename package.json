@@ -1,12 +1,16 @@
 {
   "name": "lforms",
-  "version": "0.0.0",
+  "version": "14.1.4",
   "dependencies": {
+    "jquery-ui": "^1.12.1",
+    "angular": "^1.5.8",
     "angular-animate": "1.5.8",
-    "angular-ui-bootstrap": "^2.5.6",
+    "angular-ui-bootstrap": "^1.3.3",
     "autocomplete-lhc": "^18.0.0",
     "bootstrap": "^4.2.1",
-    "fhirpath": "^0.10.1"
+    "element-resize-detector": "^1.1.15",
+    "fhirpath": "^0.10.1",
+    "ngSmoothScroll": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -53,18 +57,27 @@
     "karma-mocha": "^1.3.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "^1.1.0",
+    "mini-css-extract-plugin": "^0.5.0",
     "mocha": "^2.5.3",
+    "node-sass": "^4.11.0",
     "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
     "style-loader": "^0.23.1",
     "time-grunt": "^1.0.0",
-    "webpack": "^4.28.3",
+    "uglify-js": "^3.4.10",
+    "webpack": "^4.29.6",
     "webpack-cli": "^3.1.0",
     "wiredep": "^3.0.0"
   },
   "scripts": {
     "test": "grunt test",
-    "postinstall": "npm run update-webdriver",
+    "build:clean": "rm -rf dist bower-dist app/generated .tmp",
+    "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
+    "build:css:lforms": "cleancss --skip-rebase -o dist/latest/styles/lforms.min.css .tmp/styles/main.css .tmp/styles/lforms.css bower_components/jquery-ui/themes/start/jquery-ui.min.css",
+    "build:css:themes": "node-sass app/styles/themes.scss --output .tmp/styles && cleancss --skip-rebase -o dist/latest/styles/themes.min.css .tmp/styles/themes.css",
+    "build:css": "npm run build:css:themes && npm run build:css:lforms",
+    "build:js": "uglifyjs .tmp/lforms.js bower_components/jquery/dist/jquery.js bower_components/jquery-ui/ui/core.js bower_components/jquery-ui/ui/widget.js bower_components/jquery-ui/ui/button.js bower_components/jquery-ui/ui/dialog.js bower_components/jquery-ui/ui/datepicker.js --source-map \"url='lforms.min.js.map',includeSources\" --output dist/latest/lforms.min.js",
+    "build": "npm run build:clean && npm run build:mkdist && webpack && npm run build:js && npm run build:css",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
   }
 }

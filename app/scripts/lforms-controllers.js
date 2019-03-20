@@ -56,7 +56,7 @@ angular.module('lformsWidget')
 
 
         // initialize an element resize detector
-        var erd = elementResizeDetectorMaker({
+        var erd = LForms._elementResizeDetectorMaker({
           strategy: "scroll" //<- For ultra performance.
         });
 
