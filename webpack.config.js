@@ -31,7 +31,7 @@ function commonConfig() {
 
 let configs = [];
 let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
-let versionedDist = 'lforms-'+require('./bower.json').version;
+let versionedDist = 'lforms-'+require('./package.json').version;
 for (let version of fhirVersions) {
   let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
 
@@ -64,32 +64,58 @@ configs.push(bowerConfig);
 // (except for the versioned FHIR files).
 let lformsConfig = commonConfig();
 lformsConfig.entry = './app/scripts/index.js';
-lformsConfig.output.filename = './.tmp/lforms.js';
+lformsConfig.output.path = require('path').resolve(__dirname, 'dist/'+versionedDist);
+lformsConfig.output.filename = 'lforms.min.js';
 lformsConfig.output.library = 'LForms';
-// lformsConfig.devtool = 'source-map';
-lformsConfig.mode = 'none'; // final output generated later by uglify-js
+lformsConfig.devtool = 'source-map';
 //lformsConfig.mode = 'production';
+lformsConfig.mode = 'none';
 // For angular-ui-bootstrap, we need to pick up and process the CSS imports
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 lformsConfig.plugins = [
   new MiniCssExtractPlugin({
-    // Options similar to the same options in webpackOptions.output
-    // both options are optional
-    filename: ".tmp/styles/[name].css",
-    chunkFilename: ".tmp/styles/[id].css"
+    filename: "styles/lforms.css"
   })
 ];
 lformsConfig.module.rules.push({
   test: /\.css$/,
-  include: /node_modules/,
+//  include: /node_modules/,
   use: [
     {
+      // This loader creates one CSS file per JS file that contains CSS.
+      // Or so the documentation says.  It seems to just create one file.
       loader: MiniCssExtractPlugin.loader,
+      options: {
+        outputPath: 'styles',
+      }
     },
     //'style-loader', // for devlopment only
-    'css-loader'
+    'css-loader' // resolves paths for CSS files in require/import
   ]
 });
+lformsConfig.module.rules.push({
+  test: /glyphicons.*\.(eot|svg|ttf|woff2?)$/,
+  use: [{
+    loader: 'file-loader',
+    options: {
+      name: '[name]_[hash].[ext]',
+      outputPath: 'styles/images',
+      publicPath: 'images'
+    }
+  }]
+});
+lformsConfig.module.rules.push({
+  test: /\.(png|svg|jpg|gif)$/,
+  use: [{
+    loader: 'file-loader',
+    options: {
+      name: '[name]_[hash].[ext]',
+      outputPath: 'styles/images',
+      publicPath: 'images'
+    }
+  }]
+});
+
 
 configs.push(lformsConfig);
 

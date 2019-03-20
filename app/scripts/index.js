@@ -1,5 +1,9 @@
 // This is the entry point for building the browser-ready version.
-//window.jquery = window.jQuery = require('../../bower_components/jquery/dist/jquery.js');
+window.jQuery = require('jquery');
+require('jquery-ui/ui/widgets/datepicker.js');
+require('jquery-ui/themes/base/core.css');
+require('jquery-ui/themes/base/datepicker.css');
+require('jquery-ui/themes/base/theme.css');
 //require('./jquery-imports');
 // jQuery will be bundled separately using uglifyjs
 window.angular = require('angular');
@@ -24,5 +28,7 @@ require("./lib/lforms-data.js");
 require("./lib/expression-processor.js");
 LForms.Util.FHIRSupport = require("./fhir/versions.js");
 require("../lforms.tpl.js");
-
+require("autocomplete-lhc/source/auto_completion.css");
+require("../styles/lforms.css");
+require("bootstrap/dist/css/bootstrap.css"); // fonts for datepicker, and a lot of CSS, but old build system did the same
 module.exports = LForms;
