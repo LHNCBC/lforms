@@ -7,11 +7,11 @@ var units_example = {
     questionCode: "Q1",
     dataType: "REAL",
     units: [
-      {"name": "unit0"},
-      {"name": "unit1"},
-      {"name": "unit2"},
-      {"name": "unit3"},
-      {"name": "unit4"}
+      {"name": "unit name 0"},
+      {"code": "unitCode1"},
+      {"name": "unit name 2", "code": "unitCode2"},
+      {"name": "unit name 3", "code": "unitCode3", "system": "http://unitsystem3.org"},
+      {"name": "unit name 4", "code": "unitCode4", "system": "http://unitsystem4.org"}
     ]
-}]
+  }]
 };

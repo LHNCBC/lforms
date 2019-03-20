@@ -44,6 +44,8 @@ about the meaning of each key:
         "dataType": string,
         "units": [{
           "name": string,
+          "code": string,
+          "system": string,
           "default": boolean
         }],
         "header": boolean,
@@ -246,6 +248,8 @@ about the meaning of each key:
       for the quantity being entered.  Each hash in this array can contain the
       following keys:
         * name - The display string for the unit
+        * code - Code associated with the unit
+        * system - Code system associated with the unit
         * default - If true, this unit will be the default unit, which means it
           will show up in the field when the question is shown and the user does
           not have to pick it.  If false, this key can be omitted.

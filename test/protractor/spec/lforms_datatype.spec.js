@@ -75,8 +75,27 @@ describe('Data Type', function() {
       
       var ac = tp.Autocomp;
       expect(units4.getAttribute("value")).toBe("lbs");
+      units4.evaluate("item.unit").then(function (unit) {
+        expect(unit).toEqual({_displayUnit: "lbs", code: "lbs", default: true});
+      });
       units4.click();
-      expect(ac.searchResults.isDisplayed()).toBe(true);
+      units4.sendKeys(protractor.Key.DOWN);
+      units4.sendKeys(protractor.Key.ENTER);
+      expect(units4.getAttribute("value")).toBe('kilo grams');
+      units4.evaluate("item.unit").then(function (unit) {
+        expect(unit).toEqual({_displayUnit: "kilo grams", name: "kilo grams", code: "kgs"});
+      });
+      units4.click();
+      // Four units in the list, but one of them is invalid.
+      expect(element(by.id('completionOptions')).all(by.css('span ul li')).count()).toBe(3);
+      units4.sendKeys(protractor.Key.DOWN);
+      units4.sendKeys(protractor.Key.DOWN);
+      units4.sendKeys(protractor.Key.DOWN);
+      units4.sendKeys(protractor.Key.ENTER);
+      expect(units4.getAttribute("value")).toBe('grams');
+      units4.evaluate("item.unit").then(function (unit) {
+        expect(unit).toEqual({_displayUnit: "grams", name: "grams", system: "http://unitsofmeasure.org"});
+      });
   
       field1.click(); // Close auto complete pull down.
       expect(ac.searchResults.isDisplayed()).toBe(false);

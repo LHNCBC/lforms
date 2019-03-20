@@ -1,8 +1,8 @@
 {
   "name": "lforms",
-  "version": "14.1.4",
+  "version": "15.0.0",
   "dependencies": {
-    "jquery-ui": "~1.11.4",
+    "jquery-ui": "^1.12.1",
     "angular": "^1.4.7",
     "angular-animate": "^1.4.7",
     "angular-bootstrap": "^1.1.0",
@@ -13,11 +13,8 @@
   "overrides": {
     "jquery-ui": {
       "main": [
-        "ui/core.js",
         "ui/widget.js",
-        "ui/button.js",
-        "ui/dialog.js",
-        "ui/datepicker.js",
+        "ui/widgets/datepicker.js",
         "themes/start/jquery-ui.min.css"
       ]
     }

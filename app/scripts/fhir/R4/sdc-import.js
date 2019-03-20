@@ -455,7 +455,7 @@ function addSDCImportFns(ns) {
         if(val.display !== undefined) answer.text = val.display;
       }
       else if(lfItem.dataType === 'QTY') {
-        answer = val.value; // Associated unit is parsed in _processUnitLists
+        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
       }
       else {
         answer = val;
@@ -463,7 +463,7 @@ function addSDCImportFns(ns) {
 
       if (isMultiple) {
         if(!defaultAnswer) defaultAnswer = [];
-        defaultAnswer.push(answer);
+        if(answer) defaultAnswer.push(answer);
       }
       else {     // single selection
         defaultAnswer = answer;
@@ -488,7 +488,13 @@ function addSDCImportFns(ns) {
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
     if(unitOption && unitOption.length > 0) {
       for(var i = 0; i < unitOption.length; i++) {
-        lformsUnits.push({name: unitOption[i].valueCoding.code});
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
       }
     }
   
@@ -500,7 +506,12 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsDefaultUnit = {name: unit.valueCoding.code, default: true};
+        lformsDefaultUnit = {
+          name: unit.valueCoding.display,
+          code: unit.valueCoding.code,
+          system: unit.valueCoding.system,
+          default: true
+        };
         lformsUnits.push(lformsDefaultUnit);
       }
     }
@@ -510,7 +521,12 @@ function addSDCImportFns(ns) {
         lformsDefaultUnit.default = true;
       }
       else {
-        lformsDefaultUnit = {name: qItem.initial[0].valueQuantity.unit, default: true};
+        lformsDefaultUnit = {
+          name: qItem.initial[0].valueQuantity.unit,
+          code: qItem.initial[0].valueQuantity.code,
+          system: qItem.initial[0].valueQuantity.system,
+          default: true
+        };
         lformsUnits.push(lformsDefaultUnit);
       }
     }

@@ -144,8 +144,8 @@ var dr = {
         valueX.val = {
           "value": item.value,
           "unit": item.unit ? item.unit.name : null,
-          "system": "http://unitsofmeasure.org",
-          "code": item.unit ? item.unit.name : null
+          "system": item.unit ? item.unit.system : null,
+          "code": item.unit ? item.unit.code : null
         };
         break;
       case "DT":
