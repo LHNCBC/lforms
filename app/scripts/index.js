@@ -3,7 +3,8 @@ window.jQuery = require('jquery');
 require('jquery-ui/ui/widgets/datepicker.js');
 require('jquery-ui/themes/base/core.css');
 require('jquery-ui/themes/base/datepicker.css');
-require('jquery-ui/themes/base/theme.css');
+require("../../start-theme/theme.css");
+//require('jquery-ui/themes/base/theme.css'); // default theme
 //require('./jquery-imports');
 // jQuery will be bundled separately using uglifyjs
 window.angular = require('angular');
