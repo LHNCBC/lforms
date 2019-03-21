@@ -5168,15 +5168,6 @@
         }
       }
     },
-    "grunt-contrib-copy": {
-      "version": "0.7.0",
-      "resolved": "https://registry.npmjs.org/grunt-contrib-copy/-/grunt-contrib-copy-0.7.0.tgz",
-      "integrity": "sha1-xt5I4N9zFEmu2w8InAldvCpVBQ8=",
-      "dev": true,
-      "requires": {
-        "chalk": "~0.5.1"
-      }
-    },
     "grunt-contrib-jshint": {
       "version": "0.11.3",
       "resolved": "https://registry.npmjs.org/grunt-contrib-jshint/-/grunt-contrib-jshint-0.11.3.tgz",

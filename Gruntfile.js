@@ -69,7 +69,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: ['autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -266,78 +266,13 @@ module.exports = function (grunt) {
       }
     },
 
-    // Copies remaining files to places other tasks can use
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= uncompressedDist %>',
-          src: [
-            'images/{,*/}*'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/styles',
-          cwd: 'bower_components/jquery-ui/themes/start',
-          src: [
-            'images/*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>',
-          cwd: 'bower_components/bootstrap/dist',
-          src: [
-            'fonts/*'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= yeoman.generated %>/styles',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: [
-            '*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= yeoman.generated %>/styles/',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: 'auto_completion.css',
-          rename: function() {return '<%= yeoman.generated %>/styles/autocomplete-lhc.css'}
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/styles',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: [
-            '*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/',
-          cwd: 'app/scripts/fhirpath',
-          src: [
-            'fhirpath.min.js'
-          ]
-        }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
-        src: '{,*/}*.css'
-      }
-    },
-
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       server: [
-        'copy:styles'
       ],
       test: [
-        'copy:styles'
       ],
       dist: [
-        'copy:styles',
         'imagemin',
         'svgmin'
       ]
@@ -355,7 +290,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
+      return grunt.task.run(['connect:dist:keepalive']);
     }
 
     grunt.task.run([
@@ -375,7 +310,6 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('test:server', [
-    'build',
     'karma'
   ]);
 
@@ -391,20 +325,6 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'test:server',
     'test:e2e'
-  ]);
-
-  grunt.registerTask('readBowerVersion', function () {
-    var bowerVersion = grunt.file.readJSON('./bower.json').version;
-    var versionedName = 'lforms-'+bowerVersion;
-    grunt.config.set('versionedName', versionedName);
-    grunt.config.set('uncompressedDist', 'dist/'+versionedName);
-  });
-
-
-  grunt.registerTask('build', [
-    'ngtemplates',
-    'readBowerVersion',
-    'copy:dist'
   ]);
 
   grunt.registerTask('default', [
