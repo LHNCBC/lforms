@@ -51,7 +51,6 @@ for (let version of fhirVersions) {
 // LForms and dependencies
 // The Bower package needs a single, transpiled lforms.js file that does
 // not include other bower packages (angular, etc.)
-// (It should include autocomplete-lhc, which is now an npm package.)
 let bowerConfig = commonConfig();
 bowerConfig.entry = './app/scripts/bower-index.js';
 bowerConfig.output.filename = './bower-dist/lforms.js';
@@ -99,8 +98,8 @@ lformsConfig.module.rules.push({
     loader: 'file-loader',
     options: {
       name: '[name]_[hash].[ext]',
-      outputPath: 'styles/images',
-      publicPath: 'images'
+      outputPath: 'styles/fonts',
+      publicPath: 'fonts'
     }
   }]
 });

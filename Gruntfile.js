@@ -34,62 +34,6 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: appConfig,
 
-    compress: {
-      main: {
-        options: {
-          archive: '<%= uncompressedDist %>.zip'
-        },
-        files: [{
-          src: ['<%= versionedName %>/**'],
-          cwd: 'dist',
-          expand: true
-        }]
-      }
-    },
-
-
-    cssmin: {
-      dist: {
-        files: [{
-          src: wiredep({includeSelf: true}).css.concat(
-            'bower_components/bootstrap/dist/css/bootstrap.css'),
-          dest: '<%= uncompressedDist %>/styles/lforms.min.css'
-        },
-        {
-          src: 'app/styles/themes.css',
-          dest: '<%= uncompressedDist %>/styles/themes.min.css'
-        }]
-      }
-    },
-
-
-    sass: {
-      options: {
-        sourceMap: true
-      },
-      dist: {
-        files: {
-          'app/styles/themes.css': 'app/styles/themes.scss'
-        }
-      }
-    },
-
-    shell: {
-      dist_dir_link: {
-        // Make a softlink to the versioned dist directory, for the tests
-        command: 'ln -s <%= versionedName %> latest',
-        options: {
-          execOptions: {
-            cwd: 'dist'
-          }
-        }
-      },
-      webpack: {
-        command: 'webpack',
-      }
-    },
-
-
     ngtemplates:  {
       lformsWidget:        {
         cwd: '<%= yeoman.app %>/views/partials',
@@ -240,22 +184,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Empties folders to start fresh
-    clean: {
-      dist: {
-        files: [{
-          dot: true,
-          src: [
-            '.tmp',
-            '<%= yeoman.dist %>/{,*/}*',
-            '!<%= yeoman.dist %>/.git*',
-            '<%= yeoman.generated %>/**/*'
-          ]
-        }]
-      },
-      server: '.tmp'
-    },
-
     // Add vendor prefixed styles
     autoprefixer: {
       options: {
@@ -297,17 +225,6 @@ module.exports = function (grunt) {
       }
     },
 
-    uglify: {
-      // options: { beautify: true, mangle: false }, // debugging only
-      dist: {
-        files: {
-          // This will include dependencies, including jQuery
-          '<%= uncompressedDist %>/lforms.min.js':
-            wiredep({includeSelf: true}).js,
-        }
-      }
-    },
-
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
@@ -319,7 +236,7 @@ module.exports = function (grunt) {
           html: {
             steps: {
 //              js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
+//              css: ['cssmin']
             },
             post: {}
           }
@@ -333,72 +250,6 @@ module.exports = function (grunt) {
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
         assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
-      }
-    },
-
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    svgmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    htmlmin: {
-      dist: {
-        options: {
-          collapseWhitespace: true,
-          conservativeCollapse: true,
-          collapseBooleanAttributes: true,
-          removeCommentsFromCDATA: true,
-          removeOptionalTags: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/{,*/}*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
       }
     },
 
@@ -508,9 +359,7 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'clean:server',
       'wiredep',
-      'sass',
       'ngtemplates',
       'concurrent:server',
       'autoprefixer',
@@ -531,7 +380,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test:e2e', [
-    'clean:server',
     'ngtemplates',
     'concurrent:test',
     'autoprefixer',
@@ -554,16 +402,9 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('build', [
-    'clean:dist',
     'ngtemplates',
-    'sass',
     'readBowerVersion',
-    'copy:dist',
-    'cssmin',
-    'shell:dist_dir_link', // needed by webpack
-    'shell:webpack', // produces files needed by uglify
-//    'uglify',  // webpack now creates the browser-ready file
-    'compress'
+    'copy:dist'
   ]);
 
   grunt.registerTask('default', [
