@@ -19,8 +19,6 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-  var wiredep = require('wiredep');
-
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -294,10 +292,6 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'wiredep',
-      'ngtemplates',
-      'concurrent:server',
-      'autoprefixer',
       'connect:livereload',
       'watch'
     ]);
@@ -314,11 +308,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test:e2e', [
-    'ngtemplates',
-    'concurrent:test',
-    'autoprefixer',
     'connect:test',
-    'wiredep',
     'protractor'
   ]);
 
@@ -332,16 +322,5 @@ module.exports = function (grunt) {
     'test'
   ]);
 
-
-  // This task is just for debugging the "uglify" configuration
-  grunt.registerTask('listDepJS', function() {
-    console.log("\n\n" + wiredep(
-      {includeSelf: true}).js.join("\n"));
-  });
-
-  grunt.registerTask('listDepCSS', function() {
-    console.log("\n\n" + wiredep(
-      {includeSelf: true}).css.join("\n"));
-  });
 
 };
