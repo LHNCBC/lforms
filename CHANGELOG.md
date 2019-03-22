@@ -2,10 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [14.3.0] 2019-03-14
+## [15.1.0] 2019-03-22
 ### Added
 - Support for the questionnaire-observationLinkPeriod extenstion for
   pre-population.  (Extraction is not yet supported.)
+
+## [15.0.1] 2019-03-20
+### Fixed
+- This is a fix for calculated expressions in the Safari browser.  (Chrome, Edge,
+  and Firefox were working).
+
+## [15.0.0] 2019-03-20
+### Changed
+- Updated the jquery-ui package to 1.12.1 from 1.11.4, which is a breaking
+  change for that package.  Since jQuery is a global variable, this is
+  potentially a breaking change for users of the lforms package.  The lforms
+  APIs themselves are unchanged.
 
 ## [14.2.0] 2019-02-13
 ### Added
