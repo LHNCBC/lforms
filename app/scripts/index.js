@@ -1,5 +1,5 @@
 // This is the entry point for building the browser-ready version.
-window.jQuery = require('jquery');
+window.$ = window.jQuery = require('jquery');
 require('jquery-ui/ui/widgets/datepicker.js');
 require('jquery-ui/themes/base/core.css');
 require('jquery-ui/themes/base/datepicker.css');
