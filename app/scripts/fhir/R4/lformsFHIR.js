@@ -21506,7 +21506,7 @@ function addCommonSDCImportFns(ns) {
     return target;
   };
   /**
-   *  Returns the number of digits in the number after the decimal point, ignoring
+   *  Returns the number of sinificant digits in the number after, ignoring
    *  trailing zeros.  (I am including this on "self" so we can have tests for it.)
    */
 
