@@ -71,7 +71,7 @@
     "build:css": "npm run build:css:themes && npm run build:css:lforms",
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
-    "build": "wiredep && npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run build:zip",
+    "build": "npm run wiredep && npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run build:zip",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
   }
 }
