@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.0.1] 2019-03-20
+### Fixed
+- This is a fix for calculated expressions in the Safari browser.  (Chrome, Edge,
+  and Firefox were working).
+
 ## [15.0.0] 2019-03-20
 ### Changed
 - Updated the jquery-ui package to 1.12.1 from 1.11.4, which is a breaking
