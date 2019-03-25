@@ -218,7 +218,7 @@ if (typeof LForms === 'undefined')
 
     /**
      *  Initializes form-level FHIR data.  This should be called before item
-     *  properties are set up, because sets properties like this.fhirVersion
+     *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
      * @param an LForms form definition object (or LFormsData).
      */
