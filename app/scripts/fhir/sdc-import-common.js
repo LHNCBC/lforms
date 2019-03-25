@@ -69,7 +69,9 @@ function addCommonSDCImportFns(ns) {
     // Based on https://stackoverflow.com/a/9539746/360782
     // Make sure it is a number and use the builtin number -> string.
     var s = "" + (+x);
-    var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
+    // The following RegExp include the exponent, which we don't need
+    //var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
+    var match = /(\d+)(?:\.(\d+))?/.exec(s);
     // NaN or Infinity or integer.
     // We arbitrarily decide that Infinity is integral.
     if (!match) { return 0; }

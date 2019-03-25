@@ -21506,7 +21506,7 @@ function addCommonSDCImportFns(ns) {
     return target;
   };
   /**
-   *  Returns the number of digits in the number after the decimal point, ignoring
+   *  Returns the number of sinificant digits in the number after, ignoring
    *  trailing zeros.  (I am including this on "self" so we can have tests for it.)
    */
 
@@ -21514,8 +21514,10 @@ function addCommonSDCImportFns(ns) {
   self._significantDigits = function (x) {
     // Based on https://stackoverflow.com/a/9539746/360782
     // Make sure it is a number and use the builtin number -> string.
-    var s = "" + +x;
-    var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
+    var s = "" + +x; // The following RegExp include the exponent, which we don't need
+    //var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
+
+    var match = /(\d+)(?:\.(\d+))?/.exec(s); // NaN or Infinity or integer.
     // We arbitrarily decide that Infinity is integral.
 
     if (!match) {
