@@ -1,5 +1,5 @@
 var LForms = require('../lforms');
-//var angular = require('angular');
+
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
       ['$window','$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',

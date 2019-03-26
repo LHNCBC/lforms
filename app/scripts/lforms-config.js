@@ -1,4 +1,3 @@
-//var angular = require('angular');
 angular.module('lformsWidget')
     .service('lformsConfig', ['$animate', function($animate) {
       'use strict';

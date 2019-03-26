@@ -2,7 +2,6 @@
  * LForms Utility tools
  */
 var LForms = require('../../lforms');
-//var angular = require('angular');
 
 LForms.Util = {
   /**
