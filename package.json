@@ -24,7 +24,6 @@
     "file-loader": "^3.0.1",
     "grunt": "^0.4.5",
     "grunt-angular-templates": "^1.0.3",
-    "grunt-autoprefixer": "^2.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-concurrent": "^1.0.0",
     "grunt-contrib-connect": "^0.9.0",

@@ -7681,7 +7681,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /*
  * Define lforms constants here and use this a dependency in the angular application
  */
-//var angular = require('angular');
 angular.module('lformsWidget').constant('LF_CONSTANTS', {
   BLANK_GIF_DATAURL: 'data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///////wAAACH5BAUUAAIALAAAAAABAAEAAAICVAEAOw==',
   EVENT_REPEATING_ITEM_ADDED: 'LF_EVENT_REPEATING_ITEM_ADDED',
@@ -7693,7 +7692,6 @@ angular.module('lformsWidget').constant('LF_CONSTANTS', {
 /* 21 */
 /***/ (function(module, exports) {
 
-//var angular = require('angular');
 angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($animate) {
   'use strict';
 
@@ -7713,8 +7711,7 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(2); //var angular = require('angular');
-
+var LForms = __webpack_require__(2);
 
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
@@ -8272,7 +8269,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           if ($scope.unwatchFHIRPath) $scope.unwatchFHIRPath();
           $scope.unwatchFHIRPath = $scope.$watch(function () {
             return JSON.stringify(lfData, function (key, val) {
+              // In Safari, "key" is a number (not a string) for arrays
+              key = "" + key; // a little faster than checking the type
               // Ignore changes to internal variables and $$hashKey
+
               return key.indexOf('_') === 0 || key.indexOf('$$') === 0 ? undefined : val;
             });
           }, function () {
@@ -11062,8 +11062,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  * LForms Utility tools
  */
-var LForms = __webpack_require__(2); //var angular = require('angular');
-
+var LForms = __webpack_require__(2);
 
 LForms.Util = {
   /**
