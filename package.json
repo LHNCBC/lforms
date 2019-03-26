@@ -44,7 +44,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "^1.1.0",
     "mini-css-extract-plugin": "^0.5.0",
-    "mocha": "^2.5.3",
+    "mocha": "^6.0.2",
     "node-sass": "^4.11.0",
     "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
