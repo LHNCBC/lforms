@@ -40,13 +40,6 @@ module.exports = function (grunt) {
       }
     },
 
-    directivejs: {
-
-    },
-
-    directivecss: {
-
-    },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
@@ -196,18 +189,6 @@ module.exports = function (grunt) {
       }
     },
 
-
-    // Run some tasks in parallel to speed up the build process
-    concurrent: {
-      server: [
-      ],
-      test: [
-      ],
-      dist: [
-        'imagemin',
-        'svgmin'
-      ]
-    },
 
     // Test settings
     karma: {
