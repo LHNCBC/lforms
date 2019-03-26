@@ -1,6 +1,7 @@
 {
   "name": "lforms",
   "version": "15.1.0",
+  "main": "app/scripts/index.js",
   "dependencies": {
     "angular": "^1.5.8",
     "angular-animate": "1.5.8",
