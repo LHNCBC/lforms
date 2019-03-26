@@ -16,7 +16,7 @@
       "main": [
         "ui/widget.js",
         "ui/widgets/datepicker.js",
-        "themes/start/jquery-ui.min.css"
+        "themes/redmond/jquery-ui.min.css"
       ]
     }
   },

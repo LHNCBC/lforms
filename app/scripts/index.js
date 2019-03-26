@@ -3,10 +3,7 @@ window.$ = window.jQuery = require('jquery');
 require('jquery-ui/ui/widgets/datepicker.js');
 require('jquery-ui/themes/base/core.css');
 require('jquery-ui/themes/base/datepicker.css');
-require("../../start-theme/theme.css");
-//require('jquery-ui/themes/base/theme.css'); // default theme
-//require('./jquery-imports');
-// jQuery will be bundled separately using uglifyjs
+require("../styles/redmond-theme/theme.css");
 window.angular = require('angular');
 require('./angular-packages.js');
 require('ngSmoothScroll');

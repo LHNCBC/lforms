@@ -67,8 +67,8 @@ lformsConfig.output.path = require('path').resolve(__dirname, 'dist/'+versionedD
 lformsConfig.output.filename = 'lforms.min.js';
 lformsConfig.output.library = 'LForms';
 lformsConfig.devtool = 'source-map';
-//lformsConfig.mode = 'production';
-lformsConfig.mode = 'none';
+lformsConfig.mode = 'production';
+//lformsConfig.mode = 'none';
 // For angular-ui-bootstrap, we need to pick up and process the CSS imports
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 lformsConfig.plugins = [
