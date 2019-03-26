@@ -36,7 +36,7 @@
     "jasmine-spec-reporter": "^2.7.0",
     "jit-grunt": "^0.10.0",
     "jshint-stylish": "^1.0.0",
-    "karma": "^0.13.14",
+    "karma": "^4.0.1",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^0.3.6",
