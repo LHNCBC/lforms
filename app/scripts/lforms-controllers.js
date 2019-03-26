@@ -550,6 +550,8 @@ angular.module('lformsWidget')
                   $scope.unwatchFHIRPath();
                 $scope.unwatchFHIRPath = $scope.$watch(function() {
                   return JSON.stringify(lfData, function(key, val) {
+                    // In Safari, "key" is a number (not a string) for arrays
+                    key = ""+key; // a little faster than checking the type
                     // Ignore changes to internal variables and $$hashKey
                     return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
                   });
