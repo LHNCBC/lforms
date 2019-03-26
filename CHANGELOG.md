@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.1.0] 2019-03-26
+### Added
+- The build process has been changed to use npm packages, in preparation for
+  registering this package on npm.  (At this point, this package should be ready
+  for being registered, which we will do soon.)
+
 ## [15.0.1] 2019-03-20
 ### Fixed
 - This is a fix for calculated expressions in the Safari browser.  (Chrome, Edge,
