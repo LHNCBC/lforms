@@ -114,8 +114,6 @@ lformsConfig.module.rules.push({
     }
   }]
 });
-
-
 configs.push(lformsConfig);
 
 module.exports = configs;

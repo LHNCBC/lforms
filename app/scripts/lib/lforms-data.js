@@ -187,7 +187,6 @@
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
       this._initializeInternalData();
-
     },
 
 
@@ -204,6 +203,7 @@
       this._asyncChangeListeners.push(listener);
     },
 
+
     /**
      *  Calls the listeners registered via addAsyncChangeListener.
      */
@@ -217,7 +217,8 @@
 
     /**
      *  Initializes form-level FHIR data.  This should be called before item
-     *  properties are set up.
+     *  properties are set up, because it sets properties like this.fhirVersion
+     *  which might be needed for processing the items.
      * @param an LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
@@ -287,7 +288,6 @@
      * @private
      */
     _initializeInternalData: function() {
-
       //TODO, validate form data
 
       // set default values of certain form definition fields
@@ -322,6 +322,70 @@
       // run the all form controls
       this._checkFormControls();
 
+      if (this._fhir)
+        this._requestLinkedObs();
+    },
+
+
+    /**
+     *  Starts the (likely asynchronous) requests to retrieve linked Observation
+     *  resources for pre-populuation.
+     */
+    _requestLinkedObs: function() {
+      if (LForms.fhirContext && this._fhir) {
+        // We will need to know what version of FHIR the server is using.  Make
+        // sure that is available before continuing.
+        var lfData = this;
+        if (!LForms._serverFHIRReleaseID) {
+          LForms.Util.getServerFHIRReleaseID(function() {lfData._requestLinkedObs()});
+        }
+        else {
+          LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
+          var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+          for (var i=0, len=this.items.length; i<len; ++i) {
+            var item = this.items[i];
+            if (item._obsLinkPeriodExt) {
+              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              if (itemCodeSystem === 'LOINC')
+                itemCodeSystem = serverFHIR.LOINC_URI;
+              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              var queryParams = {type: 'Observation', query: {
+                code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
+                _count: 1}};
+              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+                queryParams.query.focus = {$missing: true};
+              if (duration && duration.value && duration.code) {
+                // Convert value to milliseconds
+                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+                if (result.status === 'succeeded') {
+                  var date = new Date(new Date() - result.toVal);
+                  queryParams.query._lastUpdated = 'gt'+date.toISOString();
+                }
+              }
+              this._asyncLoadCounter++;
+              fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
+                var bundle = successData.data;
+                if (bundle.entry && bundle.entry.length === 1) {
+                  var obs = bundle.entry[0].resource;
+                  serverFHIR.SDC.importObsValue(itemI, obs);
+                  if (itemI.unit)
+                    lfData._setUnitDisplay(itemI.unit);
+                }
+                lfData._asyncLoadCounter--;
+                if (lfData._asyncLoadCounter === 0)
+                  lfData._notifyAsyncChangeListeners()
+              }})(item),
+              function(errorData) {
+                console.log(errorData);
+                lfData._asyncLoadCounter--;
+                if (lfData._asyncLoadCounter === 0)
+                  lfData._notifyAsyncChangeListeners()
+              });
+            }
+          }
+        }
+      }
     },
 
 
@@ -2182,6 +2246,15 @@
 
 
     /**
+     *  Sets the display string for an item's unit.
+     * @param unit the unit object on which the display string should be set.
+     */
+    _setUnitDisplay: function(unit) {
+      unit._displayUnit = unit.name ? unit.name : unit.code ? unit.code : null;
+    },
+
+
+    /**
      * Update an item's units autocomplete options
      * @param item an item on the form
      * @private
@@ -2197,7 +2270,7 @@
         var defaultValue;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
-          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : null;
+          this._setUnitDisplay(listItem);
           if (answers[i].default) {
             defaultValue = listItem._displayUnit;
           }

@@ -94,6 +94,8 @@ var LForms =
 var LForms = __webpack_require__(1);
 
 LForms.Def = Def; // from the bower autocomplete-lhc package
+
+if (!LForms.ucumPkg) LForms.ucumPkg = window.ucumPkg; // window.ucumPkg is defined by the bower ucum-lhc package
 // The NPM version of lforms puts elementResizeDetectorMaker in an internal
 // variable to avoid creating another global.  For compatibility, do the same
 // for this bower version.
@@ -11299,6 +11301,37 @@ LForms.Util = {
    */
   setFHIRContext: function setFHIRContext(fhirContext) {
     LForms.fhirContext = fhirContext;
+    delete LForms._serverFHIRReleaseID; // in case the version changed
+  },
+
+  /**
+   *  Gets the release identifier for the version of FHIR being used by the
+   *  server providing the FHIR context set via setFHIRContext (which must have
+   *  been called first).
+   * @param callback Because asking the FHIR server for its version is an
+   * asynchronous call, this callback function will be used to return the
+   * version when found.  The callback will be called asynchrnously with a
+   * release string, like 'STU3' or 'R4'.  This string can then be passed to
+   * validateFHIRVersion to check that the needed support files have been loaded.
+   */
+  getServerFHIRReleaseID: function getServerFHIRReleaseID(callback) {
+    if (!LForms.fhirContext) throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
+
+    if (!LForms._serverFHIRReleaseID) {
+      // Retrieve the fhir version
+      var fhirAPI = LForms.fhirContext.getFHIRAPI();
+      fhirAPI.conformance({}).then(function (res) {
+        var fhirVersion = res.data.fhirVersion;
+        LForms._serverFHIRReleaseID = fhirVersion.indexOf('3.') === 0 ? 'STU3' : fhirVersion.indexOf('4.') === 0 ? 'R4' : fhirVersion;
+        console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
+        callback(LForms._serverFHIRReleaseID);
+      });
+    } else {
+      // preserve the asynchronous nature of the return
+      setTimeout(function () {
+        callback(LForms._serverFHIRReleaseID);
+      });
+    }
   },
 
   /**
@@ -13153,7 +13186,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
     /**
      *  Initializes form-level FHIR data.  This should be called before item
-     *  properties are set up.
+     *  properties are set up, because it sets properties like this.fhirVersion
+     *  which might be needed for processing the items.
      * @param an LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
@@ -13257,6 +13291,84 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       this._checkFormControls();
+
+      if (this._fhir) this._requestLinkedObs();
+    },
+
+    /**
+     *  Starts the (likely asynchronous) requests to retrieve linked Observation
+     *  resources for pre-populuation.
+     */
+    _requestLinkedObs: function _requestLinkedObs() {
+      if (LForms.fhirContext && this._fhir) {
+        // We will need to know what version of FHIR the server is using.  Make
+        // sure that is available before continuing.
+        var lfData = this;
+
+        if (!LForms._serverFHIRReleaseID) {
+          LForms.Util.getServerFHIRReleaseID(function () {
+            lfData._requestLinkedObs();
+          });
+        } else {
+          LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
+          var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+
+          for (var i = 0, len = this.items.length; i < len; ++i) {
+            var item = this.items[i];
+
+            if (item._obsLinkPeriodExt) {
+              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+
+              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
+              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+
+              var queryParams = {
+                type: 'Observation',
+                query: {
+                  code: itemCodeSystem + '|' + item.questionCode,
+                  _sort: '-date',
+                  _count: 1
+                }
+              };
+              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+                queryParams.query.focus = {
+                  $missing: true
+                };
+
+              if (duration && duration.value && duration.code) {
+                // Convert value to milliseconds
+                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+
+                if (result.status === 'succeeded') {
+                  var date = new Date(new Date() - result.toVal);
+                  queryParams.query._lastUpdated = 'gt' + date.toISOString();
+                }
+              }
+
+              this._asyncLoadCounter++;
+              fhirjs.search(queryParams).then(function (itemI) {
+                return function (successData) {
+                  var bundle = successData.data;
+
+                  if (bundle.entry && bundle.entry.length === 1) {
+                    var obs = bundle.entry[0].resource;
+                    serverFHIR.SDC.importObsValue(itemI, obs);
+                    if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                  }
+
+                  lfData._asyncLoadCounter--;
+                  if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
+                };
+              }(item), function (errorData) {
+                console.log(errorData);
+                lfData._asyncLoadCounter--;
+                if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
+              });
+            }
+          }
+        }
+      }
     },
 
     /**
@@ -15126,6 +15238,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
+     *  Sets the display string for an item's unit.
+     * @param unit the unit object on which the display string should be set.
+     */
+    _setUnitDisplay: function _setUnitDisplay(unit) {
+      unit._displayUnit = unit.name ? unit.name : unit.code ? unit.code : null;
+    },
+
+    /**
      * Update an item's units autocomplete options
      * @param item an item on the form
      * @private
@@ -15141,7 +15261,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         for (var i = 0, iLen = answers.length; i < iLen; i++) {
           var listItem = angular.copy(answers[i]);
-          listItem._displayUnit = listItem.name ? listItem.name : listItem.code ? listItem.code : null;
+
+          this._setUnitDisplay(listItem);
 
           if (answers[i].default) {
             defaultValue = listItem._displayUnit;

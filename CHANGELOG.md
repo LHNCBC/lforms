@@ -2,11 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.1.0] 2019-03-26
+## [15.2.0] 2019-03-26
 ### Added
 - The build process has been changed to use npm packages, in preparation for
   registering this package on npm.  (At this point, this package should be ready
-  for being registered, which we will do soon.)
+  for being registered, which we will do soon.)  It is not expected that this is
+  a breaking change.
+
+## [15.1.0] 2019-03-22
+### Added
+- Support for the questionnaire-observationLinkPeriod extenstion for
+  pre-population.  (Extraction is not yet supported.)
 
 ## [15.0.1] 2019-03-20
 ### Fixed

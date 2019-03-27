@@ -6,7 +6,8 @@ exports.config = {
   //directConnect: true,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'chrome',
+    'loggingPrefs': {'browser': 'ALL'}
   },
   specs: 'spec/**/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
@@ -76,8 +77,8 @@ exports.config = {
 
   onComplete: () => {
     // Print the browser's console messages
-    /* Not sure if they actually gets everything.  I could not see my debugging
-       messages.  Disabling for now.
+    // Note that for this to get all of the output, a loggingPrefs object must
+    // be added to the capabilities (see above).
     browser.manage().logs().get('browser').then(function(browserLogs) {
       if (browserLogs.length > 0) {
         console.log("Messages from browser's console");
@@ -87,6 +88,6 @@ exports.config = {
         console.log("End of messages from browser's console");
       }
     });
-    */
+
   }
 };

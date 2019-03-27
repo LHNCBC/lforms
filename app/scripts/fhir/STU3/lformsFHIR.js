@@ -99,7 +99,9 @@ __webpack_require__.r(__webpack_exports__);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
-var fhir = LForms.FHIR[fhirVersion] = {};
+var fhir = LForms.FHIR[fhirVersion] = {
+  LOINC_URI: 'http://loinc.org'
+};
 fhir.fhirpath = __webpack_require__(1);
 
 fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
@@ -20207,8 +20209,6 @@ function addCommonSDCExportFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 /**
  * A package to handle conversion from FHIR SDC (STU2) Questionnaire to LForms
  * STU2 Ballot:
@@ -20442,7 +20442,7 @@ function addSDCImportFns(ns) {
           source: source.questionCode
         };
 
-        var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
 
         if (source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {
@@ -20584,33 +20584,10 @@ function addSDCImportFns(ns) {
 
 
   self._processDefaultAnswer = function (lfItem, qItem) {
-    var val = _getValueWithPrefixKey(qItem, /^initial/);
+    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
 
     if (val) {
-      var answer = null;
-
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE') {
-        if (qItem.repeats) {
-          answer = [{
-            code: val.code,
-            text: val.display
-          }];
-        } // single selection
-        else {
-            answer = {
-              code: val.code,
-              text: val.display
-            };
-          }
-      } else if (lfItem.dataType === 'QTY') {
-        if (val.value !== undefined) {
-          answer = val.value;
-        }
-      } else {
-        answer = val;
-      }
-
-      lfItem.defaultAnswer = answer;
+      this._processFHIRValues(lfItem, [val], true);
     }
   };
   /**
@@ -20835,7 +20812,7 @@ function addSDCImportFns(ns) {
     for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
 
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
 
       if (val) {
         if (restriction.url.match(/minValue$/)) {
@@ -20933,31 +20910,6 @@ function addSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  }
-  /**
-   * Get value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
-   * @private
-   */
-
-
-  function _getValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-
-    if (_typeof(obj) === 'object') {
-      for (var key in obj) {
-        if (key.match(keyRegex)) {
-          ret = obj[key];
-          break;
-        }
-      }
-    }
-
-    return ret;
   } // QuesitonnaireResponse Import
 
 
@@ -21351,7 +21303,10 @@ function addCommonSDCFns(ns) {
     }
 
     return ret;
-  };
+  }; // Store the UCUM code system URI
+
+
+  self.UCUM_URI = 'http://unitsofmeasure.org';
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
@@ -21362,6 +21317,8 @@ function addCommonSDCFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -21419,6 +21376,178 @@ function addCommonSDCImportFns(ns) {
     }
 
     return target;
+  };
+  /**
+   *  Returns the number of sinificant digits in the number after, ignoring
+   *  trailing zeros.  (I am including this on "self" so we can have tests for it.)
+   */
+
+
+  self._significantDigits = function (x) {
+    // Based on https://stackoverflow.com/a/9539746/360782
+    // Make sure it is a number and use the builtin number -> string.
+    var s = "" + +x; // The following RegExp include the exponent, which we don't need
+    //var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
+
+    var match = /(\d+)(?:\.(\d+))?/.exec(s); // NaN or Infinity or integer.
+    // We arbitrarily decide that Infinity is integral.
+
+    if (!match) {
+      return 0;
+    }
+
+    var wholeNum = match[1];
+    var fraction = match[2]; //var exponent = match[3];
+
+    return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
+  };
+  /**
+   *  Imports an observation's values into the given LForms item.
+   * @param lfItem the LForms item to which a value will be assigned.
+   * @param obs the observation whose value will be assigned to lfItem.  It
+   *  assumed that obs has an appropriate data type for its value.
+   */
+
+
+  self.importObsValue = function (lfItem, obs) {
+    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // seems to be looping through the keys on obs looking for something that
+    // starts with "value".
+    var val = null;
+    var lfDataType = lfItem.dataType;
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    if (fhirValType) val = obs['value' + fhirValType];
+
+    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
+      // Accept initial value of type Quantity for these types.
+      val = obs.valueQuantity;
+      if (val) val._type = 'Quantity';
+    }
+
+    if (val) {
+      if (!val._type && _typeof(val) === 'object') val._type = fhirValType; // Before importing, confirm val contains a valid unit from the
+      // item's unit list.
+
+      var unitOkay = true;
+
+      if (val._type === 'Quantity') {
+        if (lfItem.units) {
+          var matchingUnit;
+          var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
+          // for UCUM).  For now, just remove it.
+
+          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          var isUCUMUnit = valSystem === self.UCUM_URI;
+          var ucumUnit;
+
+          for (var i = 0, len = lfItem.units.length; i < len && !matchingUnit; ++i) {
+            var lfUnit = lfItem.units[i];
+
+            if (lfUnit.system && lfUnit.system === valSystem && lfUnit.code === val.code || !lfUnit.system && lfUnit.name === val.unit) {
+              matchingUnit = lfUnit;
+            }
+
+            if (isUCUMUnit && !matchingUnit && !ucumUnit && lfUnit.system === self.UCUM_URI) ucumUnit = lfUnit;
+          }
+
+          if (!matchingUnit && ucumUnit) {
+            // See if we can convert to the ucumUnit we found
+            var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
+
+            if (result.status === 'succeeded') {
+              matchingUnit = ucumUnit; // Round the result to the same number of significant digits as the
+              // input value.
+
+              var originalSD = this._significantDigits(val.value);
+
+              if (originalSD > 0) val.value = Number.parseFloat(result.toVal.toPrecision(originalSD));else val.value = result.toVal;
+              val.code = ucumUnit.code;
+            }
+          }
+
+          if (!matchingUnit) unitOkay = false;
+        }
+      }
+
+      if (unitOkay) {
+        lfItem.unit = matchingUnit;
+
+        this._processFHIRValues(lfItem, [val]);
+      }
+    }
+  };
+  /**
+   *   Assigns FHIR values to an LForms item.
+   *  @param lfItem the LForms item to receive the values from fhirVals
+   *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
+   *   Complex types like Quantity should have _type set to the type.
+   *  @param setDefault if true, the default value in lfItem will be set instead
+   *   of the value.
+   */
+
+
+  self._processFHIRValues = function (lfItem, fhirVals, setDefault) {
+    var lfDataType = lfItem.dataType;
+    var isMultiple = lfItem.answerCardinality && lfItem.answerCardinality.max === '*';
+    var answers = [];
+
+    for (var i = 0, len = fhirVals.length; i < len; ++i) {
+      var fhirVal = fhirVals[i];
+      var answer = null;
+
+      if (lfDataType === 'CWE' || lfDataType === 'CNE') {
+        answer = {};
+        if (fhirVal.code !== undefined) answer.code = fhirVal.code;
+        if (fhirVal.display !== undefined) answer.text = fhirVal.display;
+      } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
+        if (fhirVal.value !== undefined) {
+          answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
+        }
+      } else {
+        answer = fhirVal;
+      }
+
+      answers.push(answer);
+    }
+
+    if (isMultiple) {
+      if (setDefault) lfItem.defaultAnswer = answers;else lfItem.value = answers;
+    } else {
+      // there should just be one answer
+      if (setDefault) lfItem.defaultAnswer = answers[0];else lfItem.value = answers[0];
+    }
+  };
+  /**
+   * Get a FHIR value from an object given a partial string of hash key.
+   * Use it where at most only one key matches.
+   *
+   * @param obj {object} - Object to search
+   * @param keyRegex {regex} - Regular expression to match a key.  This should
+   *  be the beginning part of the key up to the type (e.g., /^value/, to match
+   *  "valueQuantity").
+   * @returns {*} - Corresponding value of matching key.  For complex types,
+   *  such as Quantity, the type of the returned object will be present under
+   *  a _type attribute.
+   * @private
+   */
+
+
+  self._getFHIRValueWithPrefixKey = function (obj, keyRegex) {
+    var ret = null;
+
+    if (_typeof(obj) === 'object') {
+      for (var key in obj) {
+        var matchData = key.match(keyRegex);
+
+        if (matchData) {
+          ret = obj[key];
+          if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
+          break;
+        }
+      }
+    }
+
+    return ret;
   }; // QuestionnaireResponse Import
 
 

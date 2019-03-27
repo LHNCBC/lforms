@@ -48,6 +48,15 @@
     {
       "extension": [
         {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod",
+          "valueDuration": {
+            "value": "1",
+            "unit": "year",
+            "system": "http://ucum.org",
+            "code": "a"
+          }
+        },
+        {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
           "valueCoding": {
             "system": "http://unitsofmeasure.org",
@@ -65,7 +74,7 @@
         }
       ],
       "text": "Weight",
-      "type": "string"
+      "type": "decimal"
     },
     {
       "extension": [
@@ -138,7 +147,7 @@
         }
       ],
       "text": "Body height",
-      "type": "string"
+      "type": "decimal"
     },
     {
       "extension": [

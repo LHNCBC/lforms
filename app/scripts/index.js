@@ -9,6 +9,7 @@ require('./angular-packages.js');
 require('ngSmoothScroll');
 var LForms = require('./lforms-index.js');
 LForms.Def = require('autocomplete-lhc');
+LForms.ucumPkg = require('@lhncbc/ucum-lhc');
 // CSS
 require("autocomplete-lhc/source/auto_completion.css");
 require("../styles/lforms.css");

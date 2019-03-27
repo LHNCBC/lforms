@@ -3,6 +3,7 @@
   "version": "15.1.0",
   "main": "app/scripts/index.js",
   "dependencies": {
+    "@lhncbc/ucum-lhc": "^2.6.1",
     "angular": "1.6.x",
     "angular-animate": "1.6.x",
     "angular-ui-bootstrap": "^1.3.3",
