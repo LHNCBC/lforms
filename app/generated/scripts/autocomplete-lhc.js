@@ -88,30 +88,34 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-Def = {};
-Def.PrototypeAPI = __webpack_require__(1);
+Def = __webpack_require__(1);
 
-__webpack_require__(2);
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(3)(Def);
+var Def = {};
+Def.PrototypeAPI = __webpack_require__(2);
 
-__webpack_require__(4)(Def.PrototypeAPI.$, jQuery, Def);
+__webpack_require__(3);
 
-__webpack_require__(5)(Def.PrototypeAPI.$, Def.Effect);
+__webpack_require__(4)(Def);
 
-__webpack_require__(6)(Def.PrototypeAPI.$, Def);
+__webpack_require__(5)(Def.PrototypeAPI.$, jQuery, Def);
 
-__webpack_require__(7)(Def);
+__webpack_require__(6)(Def.PrototypeAPI, Def.Effect);
+
+__webpack_require__(7)(Def.PrototypeAPI.$, Def);
 
 __webpack_require__(8)(Def);
 
-__webpack_require__(9)(Def.PrototypeAPI.$, jQuery, Def);
+__webpack_require__(9)(Def);
 
 __webpack_require__(10)(Def.PrototypeAPI.$, jQuery, Def);
 
-__webpack_require__(11)(Def);
+__webpack_require__(11)(Def.PrototypeAPI.$, jQuery, Def);
 
-__webpack_require__(12)(Def.PrototypeAPI.$, jQuery, Def);
+__webpack_require__(12)(Def);
 
 __webpack_require__(13)(Def.PrototypeAPI.$, jQuery, Def);
 
@@ -119,17 +123,21 @@ __webpack_require__(14)(Def.PrototypeAPI.$, jQuery, Def);
 
 __webpack_require__(15)(Def.PrototypeAPI.$, jQuery, Def);
 
-__webpack_require__(16)(Def);
+__webpack_require__(16)(Def.PrototypeAPI.$, jQuery, Def);
+
+__webpack_require__(17)(Def);
+
+module.exports = Def;
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains the subset of PrototypeJS APIs needed by this package, reimplemented
 // using jQuery.
 // Mostly copied (and modified) from the original PrototypeJS at
 // http://prototypejs.org/
-if (typeof Def === 'undefined') window.Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 Def.PrototypeAPI = function () {
   "use strict";
@@ -167,14 +175,14 @@ Def.PrototypeAPI = function () {
   var _toString = Object.prototype.toString;
 
   var Browser = function () {
-    var ua = navigator.userAgent;
+    var ua = typeof navigator !== 'undefined' ? navigator.userAgent : false;
     var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
     return {
       IE: !!window.attachEvent && !isOpera,
       Opera: isOpera,
-      WebKit: ua.indexOf('AppleWebKit/') > -1,
-      Gecko: ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
-      MobileSafari: /Apple.*Mobile/.test(ua)
+      WebKit: ua && ua.indexOf('AppleWebKit/') > -1,
+      Gecko: ua && ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
+      MobileSafari: ua && /Apple.*Mobile/.test(ua)
     };
   }();
   /**
@@ -746,7 +754,7 @@ Def.PrototypeAPI = function () {
 if (true) module.exports = Def.PrototypeAPI;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 // Needed polyfills.
@@ -797,7 +805,7 @@ String.prototype.trimLeft = function () {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // A replacement for the parts of jQuery (right now just jQuery UI) needed by
@@ -840,7 +848,7 @@ String.prototype.trimLeft = function () {
 })();
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // A subset of Scriptaculous' effects.js code needed by this package, with
@@ -868,7 +876,7 @@ String.prototype.trimLeft = function () {
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-if (typeof Def === 'undefined') window.Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 (function () {
   function initEffects($, jQuery, Def) {
@@ -1170,7 +1178,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // These two methods are based on code from the web page (but don't use this URL, as it seems to have been
@@ -1180,10 +1188,11 @@ if (typeof Def === 'undefined') window.Def = {};
 // instead of an element, and can scroll a div as well as a window.
 // Wrap the definitions in a function to protect our version of global variables
 (function () {
-  function initEffectScroll($, Effect) {
+  function initEffectScroll(PrototypeAPI, Effect) {
     "use strict";
 
-    var Class = Def.PrototypeAPI.Class;
+    var Class = PrototypeAPI.Class;
+    var $ = PrototypeAPI.$;
     /**
      *  Sets the scroll position within an element.
      * @param element the element whose contents are being scrolled.
@@ -1268,7 +1277,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Based on:  https://github.com/kangax/protolicious/blob/5b56fdafcd7d7662c9d648534225039b2e78e371/event.simulate.js
@@ -1345,10 +1354,10 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-if (typeof Def === 'undefined') Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 (function () {
   function initObservable(Def) {
@@ -1484,7 +1493,7 @@ if (typeof Def === 'undefined') Def = {};
 })();
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function () {
@@ -1556,10 +1565,10 @@ if (typeof Def === 'undefined') Def = {};
 })();
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-if (typeof Def === 'undefined') window.Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 (function () {
   // Wrap the definitions in a function to protect our version of global variables
@@ -2262,10 +2271,10 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-if (typeof Def === 'undefined') window.Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 (function () {
   // Wrap the definitions in a function to protect our version of global variables
@@ -2317,7 +2326,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This is a base64-encoded version of bonk.mp3.  Using this version avoids
@@ -2332,7 +2341,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // These autocompleters are based on the Autocompleter.Base class defined
@@ -2362,7 +2371,7 @@ if (typeof Def === 'undefined') window.Def = {};
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-if (typeof Def === 'undefined') window.Def = {};
+if (typeof Def === 'undefined') var Def = {};
 
 (function () {
   // Wrap the definitions in a function to protect our version of global variables
@@ -2370,7 +2379,7 @@ if (typeof Def === 'undefined') window.Def = {};
     "use strict"; // A test for IE, borrowed from PrototypeJS -- and modified.
 
     var Browser = Def.PrototypeAPI.Browser;
-    var isIE = !!window.attachEvent && !Browser.isOpera || navigator.userAgent.indexOf('Trident') >= 0;
+    var isIE = !!window.attachEvent && !Browser.isOpera || typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') >= 0;
     Def.Autocompleter = {
       // Namespace for DEF autocompletion stuff
       // Variables related to autocompleters but independent of any particular
@@ -4912,7 +4921,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file contains auto-completer code for the Data Entry Framework project.
@@ -5893,7 +5902,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file defines the "search" (AJAX) autocompleter.
@@ -6947,7 +6956,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function () {
@@ -7124,7 +7133,7 @@ if (typeof Def === 'undefined') window.Def = {};
 })();
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.1.0] 2019-03-22
+### Added
+- Support for the questionnaire-observationLinkPeriod extenstion for
+  pre-population.  (Extraction is not yet supported.)
+
 ## [15.0.1] 2019-03-20
 ### Fixed
 - This is a fix for calculated expressions in the Safari browser.  (Chrome, Edge,

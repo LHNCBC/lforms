@@ -38,6 +38,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+      'app/scripts/index.js'
     ],
 
 

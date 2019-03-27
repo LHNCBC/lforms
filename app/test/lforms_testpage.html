@@ -82,6 +82,7 @@
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
+    <script src="../bower_components/ucum-lhc/browser-dist/ucum-lhc.js"></script>
     <script src="generated/scripts/autocomplete-lhc.js"></script>
     <script src="lforms.js"></script>
     <script src="scripts/lforms-constants.js"></script>
@@ -360,7 +361,6 @@
              *   Apart from others, it has selected file reference.
              */
             $scope.uploader.onAfterAddingFile = function(item) {
-console.log("%%% in onAfterAddingFile");
               // clean up the form before assigning a new one for performance reasons related to AngularJS watches
               $scope.lfData2 = null;
 
@@ -375,9 +375,10 @@ console.log("%%% in onAfterAddingFile");
                 // in the internal LForms format
                 else {
                   $scope.lfData2 = new LFormsData(importedData);
-                  $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
+                // Reset the field with the filename we can load the same file again if needed.
+                $('#fileAnchor')[0].value = '';
               };
               reader.readAsText(item._file);
             };

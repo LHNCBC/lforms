@@ -191,7 +191,7 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
-        var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
         if(source.dataType === 'CWE' || source.dataType === 'CNE') {
           condition.trigger = {code: answer.code};
         }
@@ -319,27 +319,9 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = _getValueWithPrefixKey(qItem, /^initial/);
+    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
     if (val) {
-      var answer = null;
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
-        if (qItem.repeats) {
-          answer = [{code: val.code, text: val.display}];
-        }
-        // single selection
-        else {
-          answer = {code: val.code, text: val.display};
-        }
-      }
-      else if(lfItem.dataType === 'QTY') {
-        if (val.value !== undefined) {
-          answer = val.value;
-        }
-      }
-      else {
-        answer = val;
-      }
-      lfItem.defaultAnswer = answer;
+      this._processFHIRValues(lfItem, [val], true);
     }
   };
 
@@ -352,7 +334,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processUnitList(lfItem, qItem) {
-    
+
     var lformsUnits = [];
     var lformsDefaultUnit = null;
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
@@ -367,7 +349,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lUnit);
       }
     }
-    
+
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if(unit) {
       lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
@@ -400,7 +382,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lformsDefaultUnit);
       }
     }
-    
+
     if(lformsUnits.length > 0) {
       if (!lformsDefaultUnit) {
         lformsUnits[0].default = true;
@@ -556,7 +538,7 @@ function addSDCImportFns(ns) {
 
     for(var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
       if (val) {
 
         if(restriction.url.match(/minValue$/)) {
@@ -643,30 +625,6 @@ function addSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  }
-
-
-  /**
-   * Get value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
-   * @private
-   */
-  function _getValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-    if(typeof obj === 'object') {
-      for(var key in obj) {
-        if(key.match(keyRegex)) {
-          ret = obj[key];
-          break;
-        }
-      }
-    }
-
-    return ret;
   }
 
 

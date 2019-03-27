@@ -1,0 +1,1 @@
+Def = require('autocomplete-lhc');

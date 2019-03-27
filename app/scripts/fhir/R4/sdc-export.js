@@ -143,7 +143,7 @@ var self = {
 
     // type
     targetItem.type = this._getFhirDataType(item);
-  
+
     // id (empty for new record)
 
     // extension
@@ -195,6 +195,8 @@ var self = {
       targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt)
       targetItem.extension.push(item._calculatedExprExt);
+    if (item._obsLinkPeriodExt)
+      targetItem.extension.push(item._obsLinkPeriodExt);
     if (item._variableExt)
       Array.prototype.push.apply(targetItem.extension, item._variableExt);
 
@@ -276,8 +278,8 @@ var self = {
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
     }
-  
-  
+
+
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -495,7 +497,7 @@ var self = {
     }
   },
 
-  
+
   /**
    * Process an item's answer list
    * @param item an item in the LForms form object
@@ -804,7 +806,7 @@ var self = {
     if (item.units && item.units.length > 0) {
       var dataType = this._getAssumedDataTypeForExport(item);
       if(dataType === "REAL" || dataType === "INT") {
-        
+
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
           // Datatype with multiple units is quantity. There is only one unit here.

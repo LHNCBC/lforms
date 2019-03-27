@@ -2,7 +2,9 @@
 let fhirVersion = 'R4';
 if (!LForms.FHIR)
   LForms.FHIR = {};
-var fhir = LForms.FHIR[fhirVersion] = {};
+var fhir = LForms.FHIR[fhirVersion] = {
+  LOINC_URI: 'http://loinc.org'
+};
 fhir.fhirpath = require('fhirpath');
 import dr from '../lforms-fhir-diagnostic-report.js';
 fhir.DiagnosticReport = dr;
