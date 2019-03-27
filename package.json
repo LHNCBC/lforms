@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.1.0",
+  "version": "15.2.0",
   "main": "app/scripts/index.js",
   "dependencies": {
     "@lhncbc/ucum-lhc": "^2.6.1",
