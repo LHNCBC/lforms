@@ -1,11 +1,10 @@
 // Processes FHIR Expression Extensions
-if (typeof LForms === 'undefined')
-  LForms = {};
 
 (function() {
   "use strict";
   // A class whose instances handle the running of FHIR expressions.
 
+  var LForms = require('../../lforms');
   LForms.ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];

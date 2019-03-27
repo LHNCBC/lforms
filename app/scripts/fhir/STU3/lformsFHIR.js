@@ -18106,24 +18106,9 @@ engine.andOp = function (a, b) {
 };
 
 engine.xorOp = function (a, b) {
-  if (Array.isArray(b)) {
-    if (a === true) {
-      return true;
-    } else if (a === false) {
-      return [];
-    } else if (Array.isArray(a)) {
-      return [];
-    }
-  }
-
-  if (Array.isArray(a)) {
-    if (b === true) {
-      return true;
-    } else {
-      return [];
-    }
-  }
-
+  // If a or b are arrays, they must be the empty set.
+  // In that case, the result is always the empty set.
+  if (Array.isArray(a) || Array.isArray(b)) return [];
   return a && !b || !a && b;
 };
 
@@ -21467,7 +21452,7 @@ function addCommonSDCImportFns(ns) {
 
           if (!matchingUnit && ucumUnit) {
             // See if we can convert to the ucumUnit we found
-            var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
+            var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
 
             if (result.status === 'succeeded') {
               matchingUnit = ucumUnit; // Round the result to the same number of significant digits as the

@@ -1,3 +1,5 @@
+var LForms = require('../lforms');
+
 angular.module('lformsWidget')
     .controller('LFormsCtrl',
       ['$window','$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig',
@@ -54,7 +56,7 @@ angular.module('lformsWidget')
 
 
         // initialize an element resize detector
-        var erd = elementResizeDetectorMaker({
+        var erd = LForms._elementResizeDetectorMaker({
           strategy: "scroll" //<- For ultra performance.
         });
 
@@ -773,7 +775,7 @@ angular.module('lformsWidget')
          * @param msg the message to be read
          */
         $scope.sendMsgToScreenReader = function(msg) {
-          Def.Autocompleter.screenReaderLog(msg);
+          LForms.Def.Autocompleter.screenReaderLog(msg);
         };
 
 
@@ -783,9 +785,9 @@ angular.module('lformsWidget')
          */
         $scope.sendActionsToScreenReader = function() {
           var widgetData = $scope.lfData;
-          if (widgetData._actionLogs.length > 0 && Def && Def.Autocompleter) {
+          if (widgetData._actionLogs.length > 0) {
             widgetData._actionLogs.forEach(function(log) {
-              Def.Autocompleter.screenReaderLog(log);
+              LForms.Def.Autocompleter.screenReaderLog(log);
             });
             // clean up logs
             widgetData._actionLogs = [];

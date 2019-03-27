@@ -1,5 +1,7 @@
 (function() {
   'use strict';
+  var LForms = require('../lforms');
+//  var angular = require('angular');
   angular.module('lformsWidget')
       .factory('RecursionHelper', ['$compile', function($compile){
         return {
@@ -276,5 +278,4 @@
         };
       })
   ;
-
 })();

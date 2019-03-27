@@ -1,3 +1,4 @@
+var util = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
 
@@ -76,7 +77,7 @@ describe('Unused repeating item/section control', function() {
       ff.mockSubItem2.sendKeys("a value");
       ff.ageAtDiag2.clear();
       expect(ff.mockSubItem2.isPresent()).toBe(false);
-      ff.btnDiseasesHist2.click();
+      util.clickAddRemoveButton(ff.btnDiseasesHist2);
       expect(diseasesPopover.isDisplayed()).toBe(true);
     });
 

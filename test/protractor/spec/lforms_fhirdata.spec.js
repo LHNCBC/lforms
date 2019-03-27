@@ -1,5 +1,6 @@
 // Tests FHIR output and import of FHIR resources.
 
+var util = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
@@ -79,7 +80,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-              ff.btnDiseasesHist.click();
+              util.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -237,7 +238,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-              ff.btnDiseasesHist.click();
+              util.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -401,7 +402,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-            ff.btnDiseasesHist.click();
+            util.clickAddRemoveButton(ff.btnDiseasesHist);
 
             ff.disease2.click();
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -552,9 +553,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.openUSSGFHTVertical();
 
             element(by.id("merge-dr")).click();
+            browser.waitForAngular();
 
             browser.wait(function() {
-              return ff.name.isDisplayed();
+              return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
+             // return element(by.id('/54126-8/54125-0/1/1')).isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
             expect(ff.name.getAttribute('value')).toBe("name 1");

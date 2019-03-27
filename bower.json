@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.1.0",
+  "version": "15.2.0",
   "dependencies": {
     "jquery-ui": "^1.12.1",
     "angular": "^1.4.7",
@@ -9,6 +9,7 @@
     "bootstrap": "^3.3.5",
     "ngSmoothScroll": "^2.0.0",
     "element-resize-detector": "^1.1.11",
+    "autocomplete-lhc": "^18.0.1",
     "ucum-lhc": "^2.5.4"
   },
   "overrides": {
@@ -16,7 +17,7 @@
       "main": [
         "ui/widget.js",
         "ui/widgets/datepicker.js",
-        "themes/start/jquery-ui.min.css"
+        "themes/redmond/jquery-ui.min.css"
       ]
     }
   },
@@ -33,26 +34,8 @@
   ],
   "description": "An angular directive that displays forms defined in the lforms standard format.",
   "main": [
-    "app/generated/scripts/autocomplete-lhc.js",
-    "app/generated/styles/autocomplete-lhc.css",
-    "app/lforms.js",
-    "app/scripts/lforms-constants.js",
-    "app/scripts/lforms-config.js",
-    "app/scripts/lforms-controllers.js",
-    "app/scripts/lforms-directives.js",
-    "app/scripts/bootstrap-decorators.js",
-    "app/scripts/lib/date.js",
-    "app/scripts/lib/js-class.js",
-    "app/scripts/lib/cross_browser.js",
-    "app/scripts/lib/lforms-util.js",
-    "app/scripts/lib/polyfill.js",
-    "app/scripts/lib/lforms-hl7.js",
-    "app/scripts/lib/lforms-validate.js",
-    "app/scripts/lib/lforms-data.js",
-    "app/scripts/lib/expression-processor.js",
-    "app/scripts/fhir/versions.js",
-    "app/styles/lforms.css",
-    "app/lforms.tpl.js"
+    "bower-dist/lforms.js",
+    "app/styles/lforms.css"
   ],
   "keywords": [
     "lforms",

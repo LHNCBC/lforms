@@ -1,12 +1,11 @@
 /**
  * LForms class for form definition data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
-
 (function() {
   "use strict";
 
+  var LForms = require('../../lforms');
+  var Class = require("./js-class.js");
   LForms.LFormsData = Class.extend({
 
     // constants
@@ -358,7 +357,7 @@ if (typeof LForms === 'undefined')
                 queryParams.query.focus = {$missing: true};
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
-                var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
                 if (result.status === 'succeeded') {
                   var date = new Date(new Date() - result.toVal);
                   queryParams.query._lastUpdated = 'gt'+date.toISOString();
@@ -3017,5 +3016,3 @@ if (typeof LForms === 'undefined')
 
   });
 })();
-// TBD -- We should remove LFormsData from the global scope.
-var LFormsData = LForms.LFormsData;

@@ -1,3 +1,4 @@
+var util = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
@@ -102,13 +103,13 @@ describe('load saved user data', function() {
   it('form should be actionable', function() {
 
     // add a repeating item
-    ff.rpq1_add_btn.click();
+    util.clickAddRemoveButton(ff.rpq1_add_btn);
     expect(ff.rpq1_add_btn.isPresent()).toBe(false);
     expect(ff.rpq1_add_btn_3.isDisplayed()).toBe(true);
     expect(ff.rpq1_add_btn_3.getText()).toBe('+ Add another "A Repeating Item"');
     expect(ff.rpq1_3.getAttribute('value')).toBe('');
     // add a repeating section
-    ff.rpq4_add_btn_1.click();
+    util.clickAddRemoveButton(ff.rpq4_add_btn_1);
     expect(ff.rpq4_add_btn_1.isPresent()).toBe(false);
     expect(ff.rpq4_add_btn_1b.isDisplayed()).toBe(true);
     expect(ff.rpq4_add_btn_1b.getText()).toBe('+ Add another "A repeating section in a repeating section"');

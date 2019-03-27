@@ -131,7 +131,7 @@ function addCommonSDCImportFns(ns) {
           }
           if (!matchingUnit && ucumUnit) {
             // See if we can convert to the ucumUnit we found
-            var result = ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
+            var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
             if (result.status === 'succeeded') {
               matchingUnit = ucumUnit;
               // Round the result to the same number of significant digits as the

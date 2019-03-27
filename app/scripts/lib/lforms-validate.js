@@ -1,8 +1,7 @@
 /**
  * A package to process user data validations in LForms
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
+var LForms = require('../../lforms.js');
 
 LForms.Validations = {
   // supported keys in restrictions

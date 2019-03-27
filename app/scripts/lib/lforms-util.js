@@ -1,8 +1,7 @@
 /**
  * LForms Utility tools
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
+var LForms = require('../../lforms');
 
 LForms.Util = {
   /**
@@ -46,7 +45,7 @@ LForms.Util = {
     );
     // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
-    var isInitialized = formContainer.injector();
+    var isInitialized = formContainer.injector && formContainer.injector();
     if (!isInitialized)
       angular.bootstrap(formContainer.children(':first'), [appName]);
   },
