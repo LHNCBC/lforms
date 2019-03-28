@@ -2,7 +2,7 @@ node_modules
 dist
 bower-dist/*.map
 bower_components
-.*
+/.*
 !.gitattributes
 !.gitignore
 !.bowerrc

@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.2.1] 2019-03-27
+### Removed
+- Excluded unnecessary files from the npm package.
+
 ## [15.2.0] 2019-03-26
 ### Added
 - The build process has been changed to use npm packages, in preparation for
