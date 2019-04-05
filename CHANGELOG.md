@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.2.2] 2019-04-05
+### Fixed
+- Corrected a problem with detecting which version of FHIR was being used by a
+  FHIR server.
+
 ## [15.2.1] 2019-03-27
 ### Removed
 - Excluded unnecessary files from the npm package.
