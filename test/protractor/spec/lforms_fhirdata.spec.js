@@ -539,7 +539,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.contained[0].code.coding[0].code).toBe("nameAndRoute");
               expect(fhirData.contained[0].code.coding[0].system).toBe("http://loinc.org");
               expect(fhirData.contained[0].code.text).toBe("Drug Name");
-              expect(fhirData.contained[0].valueCodeableConcept).toEqual({"coding": [{"code": "ASPERCREME (Topical)", "display": "ASPERCREME (Topical)", "system": "http://loinc.org"}], "text": "ASPERCREME (Topical)"});
+              expect(fhirData.contained[0].valueCodeableConcept).toEqual({"coding": [{"code": "ASPERCREME (Topical)", "display": "ASPERCREME (Topical)"}], "text": "ASPERCREME (Topical)"});
             });
           });
 

@@ -233,9 +233,35 @@ function addCommonSDCImportFns(ns) {
   }
 
 
+  /**
+   * Parse questionnaire item for code and code system
+   * @param lfItem {object} - LForms item object to assign question code
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processCodeAndLinkId = function (lfItem, qItem) {
+    var code = self._getCode(qItem);
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    }
+    // use linkId as questionCode, which should not be exported as code
+    else {
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId"
+    }
+
+    lfItem.linkId = qItem.linkId;
+
+    // Also save all the codings, for use on export.
+    lfItem._codings = lfItem.code;
+  };
 
 
-  // QuestionnaireResponse Import
+
+
+  // ---------------- QuestionnaireResponse Import ---------------
+
   var qrImport = self._mergeQR;
 
   /**

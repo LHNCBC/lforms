@@ -133,17 +133,17 @@ __webpack_require__(28);
 
 __webpack_require__(29);
 
-__webpack_require__(30);
-
 __webpack_require__(31);
 
-__webpack_require__(33);
+__webpack_require__(32);
 
-LForms.Util.FHIRSupport = __webpack_require__(34);
+__webpack_require__(34);
 
-__webpack_require__(35);
+LForms.Util.FHIRSupport = __webpack_require__(35);
 
-LForms._elementResizeDetectorMaker = __webpack_require__(36);
+__webpack_require__(36);
+
+LForms._elementResizeDetectorMaker = __webpack_require__(37);
 module.exports = LForms;
 
 /***/ }),
@@ -11145,7 +11145,7 @@ LForms.Util = {
    *  Get FHIR data from the form.
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   *  and "QuestionnaireResponse" (SDC profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
@@ -11166,6 +11166,7 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
    * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
@@ -11177,34 +11178,38 @@ LForms.Util = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
+   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    resource will be a bundle consisting of the QuestionnaireResponse and any
+   *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.
    * @returns {*} a FHIR resource
    */
   _convertLFormsToFHIRData: function _convertLFormsToFHIRData(resourceType, fhirVersion, formData, options) {
+    if (!options) options = {};
     if (!(formData instanceof LForms.LFormsData)) formData = new LForms.LFormsData(formData);
     var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
 
     if (formData) {
-      var noExtensions = options ? options.noExtensions : undefined;
-      var subject = options ? options.subject : undefined;
+      var noExtensions = options.noExtensions;
 
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
-          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, subject, inBundle, bundleType);
+          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, options.subject, inBundle, bundleType);
           break;
 
         case "Questionnaire":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, options.noExtensions);
           break;
 
         case "QuestionnaireResponse":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions, subject);
+          if (options.extract) fhirData = fhir.SDC.convertLFormsToQRBundle(formData, options.noExtensions, options.subject);else fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, options.noExtensions, options.subject);
           break;
       }
     }
@@ -11258,10 +11263,13 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData._hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData._hasSavedData = true; // will be used to determine whether to update or save
+
           break;
       }
     }
@@ -11805,12 +11813,17 @@ if (!String.prototype.repeat) {
 
 /***/ }),
 /* 29 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
 /**
  * A package to generate HL7 messgages from LForms form data
  */
 var LForms = __webpack_require__(2);
+
+
 
 LForms.HL7 = function () {
   "use strict";
@@ -12544,7 +12557,9 @@ LForms.HL7 = function () {
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
             }
 
-            var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
+            var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
+            console.log(item.answerCodeSystem);
+            console.log(answerCS);
 
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
@@ -12612,6 +12627,16 @@ LForms.HL7 = function () {
 
 /***/ }),
 /* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOINC_URI", function() { return LOINC_URI; });
+// Definitions for things needed by both importing and exporting.
+var LOINC_URI = 'http://loinc.org';
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -12929,7 +12954,7 @@ LForms.Validations = {
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -12942,7 +12967,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
   var LForms = __webpack_require__(2);
 
-  var Class = __webpack_require__(32);
+  var Class = __webpack_require__(33);
 
   LForms.LFormsData = Class.extend({
     // constants
@@ -16046,7 +16071,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 /* Simple JavaScript Inheritance
@@ -16107,7 +16132,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Processes FHIR Expression Extensions
@@ -16399,7 +16424,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains information about the supported FHIR versions.
@@ -16410,7 +16435,7 @@ var FHIRSupport = {
 if (true) module.exports = FHIRSupport;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').run(['$templateCache', function ($templateCache) {
@@ -16436,34 +16461,34 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
 }]);
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach = __webpack_require__(37).forEach;
+var forEach = __webpack_require__(38).forEach;
 
-var elementUtilsMaker = __webpack_require__(38);
+var elementUtilsMaker = __webpack_require__(39);
 
-var listenerHandlerMaker = __webpack_require__(39);
+var listenerHandlerMaker = __webpack_require__(40);
 
-var idGeneratorMaker = __webpack_require__(40);
+var idGeneratorMaker = __webpack_require__(41);
 
-var idHandlerMaker = __webpack_require__(41);
+var idHandlerMaker = __webpack_require__(42);
 
-var reporterMaker = __webpack_require__(42);
+var reporterMaker = __webpack_require__(43);
 
-var browserDetector = __webpack_require__(43);
+var browserDetector = __webpack_require__(44);
 
-var batchProcessorMaker = __webpack_require__(44);
+var batchProcessorMaker = __webpack_require__(45);
 
-var stateHandler = __webpack_require__(46); //Detection strategies.
+var stateHandler = __webpack_require__(47); //Detection strategies.
 
 
-var objectStrategyMaker = __webpack_require__(47);
+var objectStrategyMaker = __webpack_require__(48);
 
-var scrollStrategyMaker = __webpack_require__(48);
+var scrollStrategyMaker = __webpack_require__(49);
 
 function isCollection(obj) {
   return Array.isArray(obj) || obj.length !== undefined;
@@ -16772,7 +16797,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16798,7 +16823,7 @@ utils.forEach = function (collection, callback) {
 };
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16859,7 +16884,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16931,7 +16956,7 @@ module.exports = function (idHandler) {
 };
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16955,7 +16980,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17007,7 +17032,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17057,7 +17082,7 @@ module.exports = function (quiet) {
 };
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17101,13 +17126,13 @@ detector.isLegacyOpera = function () {
 };
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(45);
+var utils = __webpack_require__(46);
 
 module.exports = function batchProcessorMaker(options) {
   options = options || {};
@@ -17250,7 +17275,7 @@ function Batch() {
 }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17270,7 +17295,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17298,7 +17323,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17308,7 +17333,7 @@ module.exports = {
  */
 
 
-var browserDetector = __webpack_require__(43);
+var browserDetector = __webpack_require__(44);
 
 module.exports = function (options) {
   options = options || {};
@@ -17514,7 +17539,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17524,7 +17549,7 @@ module.exports = function (options) {
  */
 
 
-var forEach = __webpack_require__(37).forEach;
+var forEach = __webpack_require__(38).forEach;
 
 module.exports = function (options) {
   options = options || {};

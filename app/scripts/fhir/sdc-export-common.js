@@ -1,6 +1,6 @@
 /**
  *  Defines SDC export functions that are the same across the different FHIR
- *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  versions.  The function takes the SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
 function addCommonSDCExportFns(ns) {
@@ -43,7 +43,34 @@ function addCommonSDCExportFns(ns) {
 
     return target;
   };
-  
+
+
+  /**
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns {{}}
+   */
+  self.convertLFormsToQRBundle = function(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    var observations = [];
+    for (var i=0, len=this.items.length; i<len; ++i) {
+      var item = this.items[i];
+      if (item._obsLinkPeriodExt) {
+
+      }
+    }
+  };
+
+
   /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object
@@ -91,7 +118,7 @@ function addCommonSDCExportFns(ns) {
         //   itemControlType = "List";
         // }
       }
-      
+
       if (itemControlType) {
         targetItem.extension.push(
           {
@@ -113,9 +140,9 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
-  
-  
-  
+
+
+
   /**
    * Convert LForms data type to FHIR SDC data type
    * @param item an item in the LForms form object
@@ -123,7 +150,7 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._getFhirDataType = function(item) {
-    
+
     var dataType = this._getAssumedDataTypeForExport(item);
     var type = this._lformsTypesToFHIRTypes[dataType];
     // default is string
@@ -132,16 +159,16 @@ function addCommonSDCExportFns(ns) {
     }
     return type;
   };
-  
-  
+
+
   /**
    * Determine how an item's data type should be for export.
-   
+
    If number type has multiple units, change it to quantity type. In such a case,
    multiple units are converted to quesionnaire-unitOption extension and the default unit
    would go into initial.valueQuantity.unit.
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
-   
+
    * @param item an item in the LForms form object
    * @returns {string} dataType - Data type in lforms
    * @private
@@ -153,8 +180,8 @@ function addCommonSDCExportFns(ns) {
     }
     return dataType;
   };
-  
-  
+
+
   /**
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
@@ -166,22 +193,22 @@ function addCommonSDCExportFns(ns) {
   self._makeValueQuantity = function(value, itemUnit, unitSystem) {
     let fhirQuantity = {};
     let floatValue = parseFloat(value);
-    
+
     if(! isNaN(floatValue)) {
       fhirQuantity.value = floatValue;
     }
-    
+
     if(itemUnit) {
       self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
       if(unitSystem) {
         fhirQuantity.system = unitSystem;
       }
     }
-    
+
     return (Object.keys(fhirQuantity).length > 0) ? fhirQuantity : null;
   };
-  
-  
+
+
   /**
    * Make a FHIR Quantity for the given value and unit info.
    * @param value required, must be an integer or decimal
@@ -194,8 +221,8 @@ function addCommonSDCExportFns(ns) {
     var defaultUnit = this._getDefaultUnit(itemUnits);
     return this._makeValueQuantity(value, defaultUnit, unitSystem);
   };
-  
-  
+
+
   /**
    * Pick a default unit if found, otherwise return first one as default. Will return
    * null, if passed with empty list.
@@ -207,7 +234,7 @@ function addCommonSDCExportFns(ns) {
     if(!lformsUnits || lformsUnits.length === 0) {
       return null;
     }
-    
+
     var ret = null;
     for(var i = 0; i < lformsUnits.length; i++) {
       if (lformsUnits[i].default) {
@@ -215,15 +242,15 @@ function addCommonSDCExportFns(ns) {
         break;
       }
     }
-    
+
     if(!ret) {
       ret = lformsUnits[0];
     }
-    
+
     return ret;
   };
-  
-  
+
+
   /**
    * Create a key from data type to be used in a hash
    * @param prefix a prefix to be added to the key
@@ -232,20 +259,20 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._getValueKeyByDataType = function(prefix, item) {
-    
+
     // prefix could be 'value', 'initial', 'answer'
     if (!prefix) {
       prefix = "value"
     }
-    
+
     var fhirType = this._getFhirDataType(item);
     var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
     var valueKey = this._lformsTypesToFHIRFields[dataType];
-    
+
     return prefix + valueKey;
   };
-  
-  
+
+
   /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
@@ -274,11 +301,11 @@ function addCommonSDCExportFns(ns) {
         ret.push(rule);
       }
     });
-    
+
     return ret;
   };
-  
-  
+
+
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
@@ -317,7 +344,7 @@ function addCommonSDCExportFns(ns) {
       "reference": "Questionnaire/{{questionnaireId}}"
     };
   };
-  
+
 
   /**
    * Set unit attributes to a given FHIR quantity.
@@ -331,11 +358,11 @@ function addCommonSDCExportFns(ns) {
       if(lfUnit.name) {
         fhirQuantity.unit = lfUnit.name;
       }
-      
+
       if(lfUnit.code) {
         fhirQuantity.code = lfUnit.code;
       }
-      
+
       // Unit system is optional. It was using a default system before,
       // Now we have an defined system field, read it from data and
       // not assume a default.
@@ -344,7 +371,7 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
-  
+
 
   /**
    * Create a FHIR coding object for a unit.
@@ -369,7 +396,7 @@ function addCommonSDCExportFns(ns) {
     }
     return ret;
   };
-  
+
 
   /**
    * Set questionnaire-unitOption extensions using lforms units.
@@ -391,7 +418,7 @@ function addCommonSDCExportFns(ns) {
       targetFhirItem.extension.push(fhirUnitExt);
     }
   }
-  
+
 }
 
 export default addCommonSDCExportFns;

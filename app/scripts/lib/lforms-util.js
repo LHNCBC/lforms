@@ -97,7 +97,7 @@ LForms.Util = {
    *  Get FHIR data from the form.
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   *  and "QuestionnaireResponse" (SDC profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
@@ -120,6 +120,7 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
    * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
@@ -131,33 +132,43 @@ LForms.Util = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
+   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    resource will be a bundle consisting of the QuestionnaireResponse and any
+   *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.
    * @returns {*} a FHIR resource
    */
   _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+    if (!options)
+      options = {};
     if (!(formData instanceof LForms.LFormsData))
       formData = new LForms.LFormsData(formData);
     var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
-      var noExtensions = options ? options.noExtensions : undefined;
-      var subject = options ? options.subject : undefined;
+      var noExtensions = options.noExtensions;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
           fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData,
-            subject, inBundle, bundleType);
+            options.subject, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData,
+            options.noExtensions);
           break;
         case "QuestionnaireResponse":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
-            noExtensions, subject);
+          if (options.extract)
+            fhirData = fhir.SDC.convertLFormsToQRBundle(formData,
+              options.noExtensions, options.subject);
+          else
+            fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
+              options.noExtensions, options.subject);
           break;
       }
     }
@@ -209,9 +220,11 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData._hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData._hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
     }

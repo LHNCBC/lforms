@@ -2,6 +2,8 @@
  * A package to handle FHIR DiagnosticReport for LForms
  * https://www.hl7.org/fhir/diagnosticreport.html
  *
+ * Note that this was written for DSTU2 and has not been updated.
+ *
  * It provides the following functions:
  * createDiagnosticReport()
  * -- Convert existing LOINC panels/forms data in LForms format into FHIR DiagnosticReport data
@@ -93,7 +95,8 @@ var dr = {
     for(var i=0, iLen=item.items.length; i<iLen; i++) {
       var subItem = item.items[i];
       if (subItem) {
-        var obx = this._createObservation(subItem);
+        var obx = this._commonExport._createObservation(subItem,
+          this._getUniqueId(subItem.questionCode));
         if (subItem.items && subItem.items.length>0) {
           obx.related = [];
           var ret = this._createDiagnosticReportContent(subItem, contained);
@@ -115,99 +118,6 @@ var dr = {
       }
     }
     return content;
-  },
-
-
-  /**
-   * Create an Observation instance from an LForms item object
-   * @param item an LForms item object
-   * @returns {{}} an observation instance
-   * @private
-   */
-  _createObservation : function(item) {
-
-    // get key and value
-    var valueX = {
-      key: "",
-      val: ""
-    };
-
-    var dataType = item.dataType;
-    // any item has a unit must be a numerical type, let use REAL for now.
-    if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
-      dataType = "REAL";
-    }
-    switch (dataType) {
-      case "INT":
-      case "REAL":
-        valueX.key = "valueQuantity";
-        valueX.val = {
-          "value": item.value,
-          "unit": item.unit ? item.unit.name : null,
-          "system": item.unit ? item.unit.system : null,
-          "code": item.unit ? item.unit.code : null
-        };
-        break;
-      case "DT":
-        valueX.key = "valueDateTime";
-        valueX.val = item.value;
-        break;
-      case "CNE":
-      case "CWE":
-        valueX.key = "valueCodeableConcept";
-        var max = item.answerCardinality.max;
-        if (max && (max === "*" || parseInt(max) > 1)) {
-          var coding = [];
-          for (var j=0,jLen=item.value.length; j<jLen; j++) {
-            coding.push({
-              "system": "http://loinc.org",
-              "code": item.value[j].code,
-              "display": item.value[j].text
-            });
-          }
-          valueX.val = {
-            "coding": coding
-          }
-        }
-        else {
-          valueX.val = {
-            "coding": [
-              {
-                "system": "http://loinc.org",
-                "code": item.value.code,
-                "display": item.value.text
-              }
-            ],
-            "text": item.value.text
-          };
-        }
-        break;
-      default:
-        valueX.key = "valueString";
-        valueX.val = item.value;
-    }
-
-    // create Observation
-    var obx = {
-      "resourceType": "Observation",
-      "id": this._getUniqueId(item.questionCode),
-      "status": "final",
-      "code": {
-        "coding": [
-          {
-            "system": "http://loinc.org",
-            "code": item.questionCode
-          }
-        ],
-        "text": item.question
-      }
-    };
-
-    if (!item.header) {
-      obx[valueX.key] = valueX.val;
-    }
-
-    return obx;
   },
 
 

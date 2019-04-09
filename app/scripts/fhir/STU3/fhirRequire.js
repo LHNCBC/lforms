@@ -2,12 +2,15 @@
 let fhirVersion = 'STU3';
 if (!LForms.FHIR)
   LForms.FHIR = {};
+import {LOINC_URI} from '../fhir-common';
 var fhir = LForms.FHIR[fhirVersion] = {
-  LOINC_URI: 'http://loinc.org'
+  LOINC_URI: LOINC_URI
 }
 fhir.fhirpath = require('fhirpath');
 import dr from '../lforms-fhir-diagnostic-report.js';
 fhir.DiagnosticReport = dr;
+import commonExport from '../export-common.js';
+fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;
 import addCommonSDCExportFns from '../sdc-export-common.js'
