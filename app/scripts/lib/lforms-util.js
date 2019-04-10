@@ -266,7 +266,9 @@ LForms.Util = {
 
   /**
    *  Converts a FHIR version string (e.g. 3.0.1) to a release ID (e.g. 'STU3').
-   * @return the release ID for the given version string.
+   * @param versionStr the version string to be converted to a release ID.
+   * @return the release ID for the given version string, or versionStr if the
+   *  version string cannot be mapped to a release ID.
    */
   _fhirVersionToRelease: function(versionStr) {
     var releaseID = versionStr; // default
@@ -275,7 +277,7 @@ LForms.Util = {
       var versionNum = parseFloat(matchData[0]);
       // Following http://www.hl7.org/fhir/directory.cfml
       var releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
-        'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : fhirVersion;
+        'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
     }
     return releaseID;
   },
@@ -287,7 +289,7 @@ LForms.Util = {
    *  been called first).
    * @param callback Because asking the FHIR server for its version is an
    * asynchronous call, this callback function will be used to return the
-   * version when found.  The callback will be called asynchrnously with a
+   * version when found.  The callback will be called asynchronously with a
    * release string, like 'STU3' or 'R4'.  This string can then be passed to
    * validateFHIRVersion to check that the needed support files have been loaded.
    */

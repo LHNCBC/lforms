@@ -31,4 +31,9 @@ describe('_fhirVersionToRelease', function() {
     assert.equal('R4', LForms.Util._fhirVersionToRelease('4.0.0'));
     assert.equal('R4', LForms.Util._fhirVersionToRelease('4.0.1'));
   });
+
+  it('should return the argument if the version number cannot be mapped', function () {
+    assert.equal('abc', LForms.Util._fhirVersionToRelease('abc'));
+    assert.equal('0.1.2', LForms.Util._fhirVersionToRelease('0.1.2'));
+  });
 });
