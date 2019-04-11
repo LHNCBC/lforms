@@ -354,7 +354,7 @@
                 code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
                 _count: 1}};
               if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-                queryParams.query.focus = {$missing: true};
+                queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
@@ -368,9 +368,11 @@
                 var bundle = successData.data;
                 if (bundle.entry && bundle.entry.length === 1) {
                   var obs = bundle.entry[0].resource;
-                  serverFHIR.SDC.importObsValue(itemI, obs);
-                  if (itemI.unit)
-                    lfData._setUnitDisplay(itemI.unit);
+                  if (!obs.focus) { // in case we couldn't using focus:missing above
+                    serverFHIR.SDC.importObsValue(itemI, obs);
+                    if (itemI.unit)
+                      lfData._setUnitDisplay(itemI.unit);
+                  }
                 }
                 lfData._asyncLoadCounter--;
                 if (lfData._asyncLoadCounter === 0)
