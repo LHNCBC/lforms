@@ -292,10 +292,10 @@ LForms.Util = {
    *  version when found.  The callback will be called asynchronously with a
    *  release string, like 'STU3' or 'R4'.  This string can then be passed to
    *  validateFHIRVersion to check that the needed support files have been loaded.
-   *  If the release ID cannot be determined because because the server's fhir
-   *  version is not known, the version number will passed the callback.  If
+   *  If the release ID cannot be determined because the server's fhir
+   *  version is not known, the version number will passed to the callback.  If
    *  communication with the FHIR server is not succesful, the callback will be
-   *  passed called without an argument.
+   *  called without an argument.
    */
   getServerFHIRReleaseID: function(callback) {
     if (!LForms.fhirContext)
