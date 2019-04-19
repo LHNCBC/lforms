@@ -168,10 +168,10 @@ describe('Visual effect tests', function() {
       }, tp.WAIT_TIMEOUT_1);
 
 
-      // break points, 800
-      browser.executeScript('jQuery(".lf-form-view").width(801)').then(function(){
+      // break points, 600 //800
+      browser.executeScript('jQuery(".lf-form-view").width(601)').then(function(){
         element(by.css(".lf-form-view")).getSize().then(function(eleSize){
-          expect(eleSize.width).toEqual(801);
+          expect(eleSize.width).toEqual(601);
         });
         expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(true);
         expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(false);
@@ -186,10 +186,10 @@ describe('Visual effect tests', function() {
       });
 
 
-      browser.executeScript('jQuery(".lf-form-view").width(798)').then(function(){
+      browser.executeScript('jQuery(".lf-form-view").width(598)').then(function(){
         element(by.css(".lf-form-view")).getSize().then(function(eleSize){
           console.log('element size: '+JSON.stringify(eleSize));
-          expect(eleSize.width).toEqual(798);
+          expect(eleSize.width).toEqual(598);
         });
         expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
         expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(true);
@@ -204,11 +204,11 @@ describe('Visual effect tests', function() {
         expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(false);
       });
 
-      // break points, 480
-      browser.executeScript('jQuery(".lf-form-view").width(478)').then(function(){
+      // break points, 400 //480
+      browser.executeScript('jQuery(".lf-form-view").width(398)').then(function(){
         element(by.css(".lf-form-view")).getSize().then(function(eleSize){
           console.log('element size: '+JSON.stringify(eleSize));
-          expect(eleSize.width).toEqual(478);
+          expect(eleSize.width).toEqual(398);
         });
         expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
         expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(false);
@@ -223,10 +223,10 @@ describe('Visual effect tests', function() {
         expect(element.all(by.css(".data-row.lf-item-view-sm")).get(1).element(by.id("/q_auto/1")).isPresent()).toBe(true);
       });
 
-      browser.executeScript('jQuery(".lf-form-view").width(481)').then(function(){
+      browser.executeScript('jQuery(".lf-form-view").width(401)').then(function(){
         element(by.css(".lf-form-view")).getSize().then(function(eleSize){
           console.log('element size: '+JSON.stringify(eleSize));
-          expect(eleSize.width).toEqual(481);
+          expect(eleSize.width).toEqual(401);
         });
         expect(element(by.css(".lf-form-view.lf-view-lg")).isPresent()).toBe(false);
         expect(element(by.css(".lf-form-view.lf-view-md")).isPresent()).toBe(true);
@@ -252,10 +252,10 @@ describe('Visual effect tests', function() {
         return element(by.id('/type0/1')).isPresent();
       }, tp.WAIT_TIMEOUT_1);
 
-      // break points, 800
-      browser.executeScript('jQuery(".lf-form-view").width(801)').then(function () {
+      // break points, 600 //800
+      browser.executeScript('jQuery(".lf-form-view").width(601)').then(function () {
         element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
-          expect(eleSize.width).toEqual(801);
+          expect(eleSize.width).toEqual(601);
         });
         expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("width: 10em; min-width: 4em;");
         expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("56px");
@@ -271,10 +271,10 @@ describe('Visual effect tests', function() {
         return element(by.id('/type0/1')).isPresent();
       }, tp.WAIT_TIMEOUT_1);
 
-      // break points, 800
-      browser.executeScript('jQuery(".lf-form-view").width(798)').then(function () {
+      // break points, 600 //800
+      browser.executeScript('jQuery(".lf-form-view").width(598)').then(function () {
         element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
-          expect(eleSize.width).toEqual(798);
+          expect(eleSize.width).toEqual(598);
         });
         expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
         expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
@@ -283,10 +283,10 @@ describe('Visual effect tests', function() {
         expect(element.all(by.css(".lf-header-de")).get(3).getAttribute("style")).toBe("");
       });
 
-      // break points, 480
-      browser.executeScript('jQuery(".lf-form-view").width(478)').then(function () {
+      // break points, 400 //480
+      browser.executeScript('jQuery(".lf-form-view").width(398)').then(function () {
         element(by.css(".lf-form-view")).getSize().then(function (eleSize) {
-          expect(eleSize.width).toEqual(478);
+          expect(eleSize.width).toEqual(398);
         });
         expect(element.all(by.css(".lf-header-de")).first().getAttribute("style")).toBe("");
         expect(element.all(by.css(".lf-header-de")).first().getCssValue("min-width")).toBe("auto"); // 0px on FF
