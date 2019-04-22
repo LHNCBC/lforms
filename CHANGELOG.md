@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.2.4] 2019-04-19
+### Fixed
+- Enabled generation of soure cmaps for the FHIR support files.
+
 ## [15.2.3] 2019-04-15
 ### Fixed
 - Improved error handling and reporting for LForms.util.getFHIRServerReleaseID.
