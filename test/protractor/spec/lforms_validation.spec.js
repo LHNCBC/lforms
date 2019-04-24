@@ -70,7 +70,6 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
 
-
 }
 
 describe('Validations:', function() {
@@ -167,12 +166,24 @@ describe('Validations:', function() {
       shortenValidationMsgShowTime();
     });
 
-    it('should validate INT type', function () {
+    it('should validate INT type, for unsigned values', function () {
       testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
+    it('should validate INT type, for positive values', function () {
+      testOneType(int, lblbl, errorINT, "-1234.56", "-123");
+    });
+    it('should validate INT type, for negative values', function () {
+      testOneType(int, lblbl, errorINT, "-1234.56", "-123");
+    });
 
-    it('should validate REAL type', function () {
+    it('should validate REAL type, for unsigned values', function () {
       testOneType(real, lblint, errorREAL, "not a number", "123.45");
+    });
+    it('should validate REAL type, for positive values', function () {
+      testOneType(real, lblint, errorREAL, "+ 123.45", "+123.45");
+    });
+    it('should validate REAL type, for negative values', function () {
+      testOneType(real, lblint, errorREAL, "- 123.45", "-123.45");
     });
 
     it('should validate PHONE type', function () {

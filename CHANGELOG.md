@@ -6,6 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Changed view's screensize breakpoints
 - Changed import function to work around 'linkId' in FHIR QuestionnaireResponse resource
+- Added vaildation for signed values of INT and REAL data types 
    
 ## [15.2.2] 2019-04-05
 ### Fixed
