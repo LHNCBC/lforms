@@ -11,6 +11,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed bug in processing regexp value of 'pattern' restriction.
    
+## [15.2.4] 2019-04-19
+### Fixed
+- Enabled generation of source maps for the FHIR support files.
+
 ## [15.2.3] 2019-04-15
 ### Fixed
 - Improved error handling and reporting for LForms.util.getFHIRServerReleaseID.
