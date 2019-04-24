@@ -11331,23 +11331,38 @@ LForms.Util = {
    *  server providing the FHIR context set via setFHIRContext (which must have
    *  been called first).
    * @param callback Because asking the FHIR server for its version is an
-   * asynchronous call, this callback function will be used to return the
-   * version when found.  The callback will be called asynchronously with a
-   * release string, like 'STU3' or 'R4'.  This string can then be passed to
-   * validateFHIRVersion to check that the needed support files have been loaded.
+   *  asynchronous call, this callback function will be used to return the
+   *  version when found.  The callback will be called asynchronously with a
+   *  release string, like 'STU3' or 'R4'.  This string can then be passed to
+   *  validateFHIRVersion to check that the needed support files have been loaded.
+   *  If the release ID cannot be determined because the server's fhir
+   *  version is not known, the version number will passed to the callback.  If
+   *  communication with the FHIR server is not succesful, the callback will be
+   *  called without an argument.
    */
   getServerFHIRReleaseID: function getServerFHIRReleaseID(callback) {
     if (!LForms.fhirContext) throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
 
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
-      var fhirAPI = LForms.fhirContext.getFHIRAPI();
-      fhirAPI.conformance({}).then(function (res) {
-        var fhirVersion = res.data.fhirVersion;
-        LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
-        console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
-        callback(LForms._serverFHIRReleaseID);
-      });
+      try {
+        var fhirAPI = LForms.fhirContext.getFHIRAPI();
+        fhirAPI.conformance({}).then(function (res) {
+          var fhirVersion = res.data.fhirVersion;
+          LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
+          console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
+          callback(LForms._serverFHIRReleaseID);
+        }, function (err) {
+          console.log("Error retrieving server's CompatibilityStatement:");
+          console.log(err);
+          callback();
+        });
+      } catch (e) {
+        setTimeout(function () {
+          callback();
+        });
+        throw e;
+      }
     } else {
       // preserve the asynchronous nature of the return
       setTimeout(function () {
