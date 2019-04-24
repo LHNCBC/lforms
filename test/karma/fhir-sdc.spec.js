@@ -405,7 +405,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
-            assert.equal(convertedLfData.items.length, 33);
+            assert.equal(convertedLfData.items.length, 34);
             // TODO - min/max exclusive is not supported
             assert.equal(convertedLfData.items[12].restrictions.minInclusive, 5);
             assert.equal(convertedLfData.items[14].restrictions.maxInclusive, 10);
@@ -418,7 +418,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
             var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
-            assert.equal(convertedLfData.items.length, 33);
+            assert.equal(convertedLfData.items.length, 34);
             assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
           });
         });

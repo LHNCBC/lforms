@@ -1334,7 +1334,10 @@ var validationTestForm = {
     {"questionCode": "CWE2", "dataType": "CWE", "restrictions":{},"answerCardinality":{"max":"*", "min":"1"}, "question": "CWE multiple required","answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
-      {"code": "c3", "text": "Answer 3"}]}
+      {"code": "c3", "text": "Answer 3"}]},
+
+    {"questionCode": "STB", "dataType": "ST", "restrictions":{"pattern": "/^[a-z]+$/i"},"answerCardinality": null, "question": "ST with pattern and flags"},
+
 
 
   ]

@@ -101,7 +101,8 @@ describe('Validations:', function() {
       cne1 = element(by.id("/CNE1/1")),
       cne2 = element(by.id("/CNE2/1")),
       cwe1 = element(by.id("/CWE1/1")),
-      cwe2 = element(by.id("/CWE2/1"));
+      cwe2 = element(by.id("/CWE2/1")),
+      stb = element(by.id("/STB/1"));
 
   var lblbl = element(by.css("label[for='/BL/1'")),
       lblint = element(by.css("label[for='/INT/1'")),
@@ -129,7 +130,9 @@ describe('Validations:', function() {
       lblcne1 = element(by.css("label[for='/CNE1/1'")),
       lblcne2 = element(by.css("label[for='/CNE2/1'")),
       lblcwe1 = element(by.css("label[for='/CWE1/1'")),
-      lblcwe2 = element(by.css("label[for='/CWE2/1'"));
+      lblcwe2 = element(by.css("label[for='/CWE2/1'")),
+      lblstb = element(by.css("label[for='/STB/1'"));
+
 
 
   var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
@@ -141,7 +144,7 @@ describe('Validations:', function() {
       errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" must be a numeric value of day')),
       errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
       errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
-      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number'));
+      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number')),
       errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
@@ -205,7 +208,7 @@ describe('Validations:', function() {
   });
 
   describe('restrictions validations (table)', function () {
-    beforeAll(function() {
+    beforeEach(function() {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
@@ -255,6 +258,14 @@ describe('Validations:', function() {
 
     it('should validate maxLength', function () {
       testOneType(st3, lblst2, errorMaxLength, "12345678901", "1234567890");
+    });
+
+    it('should validate pattern', function () {
+      testOneType(sta, lblst3, errorPattern, "AAAAA", "aaaaa");
+    });
+
+    it('should validate pattern, with flags (i, ignore cases)', function () {
+      testOneType(stb, lblsta, errorPattern, "AAAAA1", "AAAAAa");
     });
 
     it('should validate "required" on ST', function () {

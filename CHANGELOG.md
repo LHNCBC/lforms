@@ -4,9 +4,12 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [15.3.0] 2019-04-24
 ### Changed
-- Changed view's screensize breakpoints
-- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse resource
-- Added vaildation for signed values of INT and REAL data types 
+- Changed view's screen size breakpoints.
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse 
+  resource.
+- Added validation for signed values of INT and REAL data types. 
+### Fixed
+- Fixed bug in processing regexp value of 'pattern' restriction.
    
 ## [15.2.2] 2019-04-05
 ### Fixed
