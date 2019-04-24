@@ -7749,8 +7749,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     $scope._viewMode = "";
     $scope._inputFieldWidth = ""; // small screen
 
-    if (width <= 480) $scope._viewMode = "sm"; // medium screen
-    else if (width <= 800) $scope._viewMode = "md"; // large screen
+    if (width <= 400) //480
+      $scope._viewMode = "sm"; // medium screen
+    else if (width <= 600) //800
+        $scope._viewMode = "md"; // large screen
       else {
           $scope._viewMode = "lg";
         }

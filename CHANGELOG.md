@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.3.0] 2019-04-24
+### Changed
+- Changed view's screensize breakpoints
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse resource
+   
 ## [15.2.2] 2019-04-05
 ### Fixed
 - Corrected a problem with detecting which version of FHIR was being used by a

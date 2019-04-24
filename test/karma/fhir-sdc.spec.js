@@ -389,6 +389,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var lfItem = {
               "questionCodeSystem":"ad-hoc",
               "questionCode": "12345",
+              "linkId": "12345",
               "question": "fill in weight",
               "dataType": "QTY"
             };
