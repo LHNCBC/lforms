@@ -5,6 +5,11 @@
   // A class whose instances handle the running of FHIR expressions.
 
   var LForms = require('../../lforms');
+
+  /**
+   *   Constructor.
+   *  @param lfData an instance of LForms.LFormsData
+   */
   LForms.ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
@@ -205,40 +210,61 @@
      */
     _addToIDtoQRItemMap: function(lfItem, qrItem, map) {
       var added = 0;
-      if (lfItem.items) {
-        if (qrItem && qrItem.item && qrItem.item.length > 0) {
-          var lfItems = lfItem.items, qrItems = qrItem.item;
-          var numLFItems = lfItems.length;
-          for (var i=0, qrI=0, len=qrItems.length; qrI<len; ++qrI) {
-            // Answers are repeated in QR, but items are repeated in LForms
-            var numAnswers = qrItems[qrI].answer ? qrItems[qrI].answer.length : 1;
-            for (var a=0; a<numAnswers; ++a, ++i) {
-              if (i > numLFItems)
-                throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
-              var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrItems[qrI], map);
-              if (newlyAdded === 0) { // blank; try next lfItem
-                --a;
+      if (lfItem.linkId === qrItem.linkId) {
+        if (lfItem.items) {
+          // lfItem.items might contains blank items, but qrItem.item will not, so
+          // we need to skip the blank items.
+          // Also, for a repeating question, there will be multiple answers on an
+          // qrItem.item, but repeats of the item in lfItem.items with one answer
+          // each.
+          // LForms does not currently support items that contain both answers
+          // and child items, but I am trying to accomodate that here for the
+          // future.
+          if (qrItem && qrItem.item && qrItem.item.length > 0) {
+            var lfItems = lfItem.items, qrItems = qrItem.item;
+            var numLFItems = lfItems.length;
+            for (var i=0, qrI=0, len=qrItems.length; qrI<len && i<numLFItems; ++qrI) {
+              // Answers are repeated in QR, but items are repeated in LForms
+              var qrIthItem = qrItems[qrI];
+              var lfIthItem = lfItems[i];
+              if (!qrIthItem.answer) {
+                // process item anyway to handle child items with data
+                var newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+                if (newlyAdded === 0) {
+                  // lfIthItem was blank, so qrIthItem must be for a following
+                  // item.
+                  --qrI; // so we try qrIthItem with the next lfIthItem
+                }
+                else
+                  added += newlyAdded;
+                ++i;
               }
-              else {
-                added += newlyAdded;
+              else { // there are answers on the qrIthItem item
+                var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
+                for (var a=0; a<numAnswers; ++a, ++i) {
+                  if (i >= numLFItems)
+                    throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  if (newlyAdded === 0) { // lfItems[i] was blank; try next lfItem
+                    --a;
+                  }
+                  else {
+                    added += newlyAdded;
+                  }
+                }
               }
             }
           }
-          if (added && lfItem._elementId) {
-            // Since the children were not empty, also add the entry for the
-            // parent node.
+        }
+
+        if (lfItem._elementId && (added || !this._lfData.isEmpty(lfItem))) { // this item has a value
+          if (!qrItem) { // if there is data in lfItem, there should be a qrItem
+            throw new Error('Logic error in _addToIDtoQRItemMap');
+          }
+          else {
             map[lfItem._elementId] = qrItem;
             added += 1;
           }
-        }
-      }
-      else if (!this._lfData.isEmpty(lfItem)) {
-        if (!qrItem) { // if there is data in lfItem, there should be a qrItem
-          throw new Error('Logic error in _addToIDtoQRItemMap');
-        }
-        else {
-          map[lfItem._elementId] = qrItem;
-          added += 1;
         }
       }
       return added;

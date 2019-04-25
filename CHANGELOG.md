@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.2.5] 2019-04-25
+### Fixed
+- Problems with mapping from the LForms structure to QuestionnaireResponse when
+  running FHIRPath expressions.  Added some tests.
+
 ## [15.2.4] 2019-04-19
 ### Fixed
 - Enabled generation of soure cmaps for the FHIR support files.
