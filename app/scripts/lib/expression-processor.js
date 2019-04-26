@@ -212,8 +212,9 @@
       var added = 0;
       if (lfItem.linkId === qrItem.linkId) {
         if (lfItem.items) {
-          // lfItem.items might contains blank items, but qrItem.item will not, so
-          // we need to skip the blank items.
+          // lfItem.items might contain items that don't have values, but
+          // qrItem.item will not, so we need to skip the blank items.
+          //
           // Also, for a repeating question, there will be multiple answers on an
           // qrItem.item, but repeats of the item in lfItem.items with one answer
           // each.
