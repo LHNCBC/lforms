@@ -31,12 +31,17 @@ function waitForNotPresent(errorMsg) {
     return errorMsg.isPresent().then(function(result){return !result});
   }, tp.WAIT_TIMEOUT_1);
 }
+function sendKeys(field, str) {
+  browser.executeScript('arguments[0].value = "'+str.slice(0,-1)+'"', field.getWebElement());
+  field.sendKeys(str.slice(-1));
+}
 
 function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   // no initial validations
   expect(eleMessage.isPresent()).toBe(false);
   // no error messages on first visit
-  eleInput.sendKeys(value1);
+  //eleInput.sendKeys(value1);
+  sendKeys(eleInput, value1);
   waitForNotDisplayed(eleMessage);
   expect(eleMessage.isPresent()).toBe(true);
   expect(eleMessage.isDisplayed()).toBe(false);
@@ -62,7 +67,8 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   expect(eleMessage.isDisplayed()).toBe(true);
   // valid value no messages
   tp.clearField(eleInput);
-  eleInput.sendKeys(value2);
+  //eleInput.sendKeys(value2);
+  sendKeys(eleInput, value2);
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
   // still no message when the focus is gone
@@ -95,14 +101,14 @@ describe('Validations:', function() {
       inta = element(by.id("/INTA/1")),
       reala = element(by.id("/REALA/1")),
       sta = element(by.id("/STA/1")),
+      stb = element(by.id("/STB/1")),
 
       st0 = element(by.id("/ST0/1")),
       dt = element(by.id("/DT/1")),
       cne1 = element(by.id("/CNE1/1")),
       cne2 = element(by.id("/CNE2/1")),
       cwe1 = element(by.id("/CWE1/1")),
-      cwe2 = element(by.id("/CWE2/1")),
-      stb = element(by.id("/STB/1"));
+      cwe2 = element(by.id("/CWE2/1"));
 
   var lblbl = element(by.css("label[for='/BL/1'")),
       lblint = element(by.css("label[for='/INT/1'")),
@@ -125,13 +131,16 @@ describe('Validations:', function() {
       lblinta = element(by.css("label[for='/INTA/1'")),
       lblreala = element(by.css("label[for='/REALA/1'")),
       lblsta = element(by.css("label[for='/STA/1'")),
+      lblstb = element(by.css("label[for='/STB/1'")),
+      // lblsta = element(by.id("label-/STA/1")),
+      // lblstb = element(by.id("label-/STB/1")),
       lblst0 = element(by.css("label[for='/ST0/1'")),
       lbldt = element(by.css("label[for='/DT/1'")),
       lblcne1 = element(by.css("label[for='/CNE1/1'")),
       lblcne2 = element(by.css("label[for='/CNE2/1'")),
       lblcwe1 = element(by.css("label[for='/CWE1/1'")),
-      lblcwe2 = element(by.css("label[for='/CWE2/1'")),
-      lblstb = element(by.css("label[for='/STB/1'"));
+      lblcwe2 = element(by.css("label[for='/CWE2/1'"));
+
 
 
 
@@ -173,7 +182,7 @@ describe('Validations:', function() {
       testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
     it('should validate INT type, for positive values', function () {
-      testOneType(int, lblbl, errorINT, "-1234.56", "-123");
+      testOneType(int, lblbl, errorINT, "+1234.56", "+123");
     });
     it('should validate INT type, for negative values', function () {
       testOneType(int, lblbl, errorINT, "-1234.56", "-123");
@@ -264,8 +273,8 @@ describe('Validations:', function() {
       testOneType(sta, lblst3, errorPattern, "AAAAA", "aaaaa");
     });
 
-    it('should validate pattern, with flags (i, ignore cases)', function () {
-      testOneType(stb, lblsta, errorPattern, "AAAAA1", "AAAAAa");
+    it('should validate pattern, with "/" and flags (i, ignore cases)', function () {
+      testOneType(stb, lblsta, errorPattern, "2/AAAAA", "/aBBBc");
     });
 
     it('should validate "required" on ST', function () {

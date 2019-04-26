@@ -21157,7 +21157,7 @@ function addSDCImportFns(ns) {
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, linkId, index) {
+    _findTheMatchingItemByLinkIdAndIndex: function _findTheMatchingItemByLinkIdAndIndex(parentItem, linkId, index) {
       var item = null;
       var idx = 0;
 
@@ -21185,7 +21185,7 @@ function addSDCImportFns(ns) {
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, linkId) {
+    _findTheMatchingItemByLinkId: function _findTheMatchingItemByLinkId(parentItem, linkId) {
       var item = null;
 
       if (parentItem.items) {
@@ -21685,7 +21685,7 @@ function addCommonSDCImportFns(ns) {
       if (qrItem) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.linkId); // add repeating items in form data
+          var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId); // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
 
 
@@ -21711,7 +21711,7 @@ function addCommonSDCImportFns(ns) {
         } // find the matching LForms item
 
 
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index); // set up value and units if it is a question
+        var item = this._findTheMatchingItemByLinkIdAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index); // set up value and units if it is a question
 
 
         if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {

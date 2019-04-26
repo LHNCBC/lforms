@@ -1313,6 +1313,7 @@ var validationTestForm = {
     {"questionCode": "INTA", "dataType": "INT", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "INT with minInclusive, maxExclusive"},
     {"questionCode": "REALA", "dataType": "REAL", "restrictions":{"minInclusive": 5, "maxExclusive": 10},"answerCardinality": null, "question": "REAL with minInclusive, maxExclusive"},
     {"questionCode": "STA", "dataType": "ST", "restrictions":{"maxLength": 10, "minLength": 5, "pattern": "/^[a-z]+$/"},"answerCardinality": null, "question": "ST with maxLength, minLength, pattern"},
+    {"questionCode": "STB", "dataType": "ST", "restrictions":{"pattern": "/^/[a-z]+$/i"},"answerCardinality": null, "question": "ST with pattern and flags"},
     {"questionCode": "externallyDefined1", "dataType": "CNE", "restrictions":{},"answerCardinality":{"max":"1", "min":"1"}, "question": "Externally defined 1",
       "externallyDefined": "https://lforms-service.nlm.nih.gov/dummy/test?var1=1&va2=a%20b"
     },
@@ -1334,11 +1335,7 @@ var validationTestForm = {
     {"questionCode": "CWE2", "dataType": "CWE", "restrictions":{},"answerCardinality":{"max":"*", "min":"1"}, "question": "CWE multiple required","answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
-      {"code": "c3", "text": "Answer 3"}]},
-
-    {"questionCode": "STB", "dataType": "ST", "restrictions":{"pattern": "/^[a-z]+$/i"},"answerCardinality": null, "question": "ST with pattern and flags"},
-
-
+      {"code": "c3", "text": "Answer 3"}]}
 
   ]
 };

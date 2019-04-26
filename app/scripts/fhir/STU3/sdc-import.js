@@ -756,7 +756,7 @@ function addSDCImportFns(ns) {
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCodeAndIndex : function(parentItem, linkId, index) {
+    _findTheMatchingItemByLinkIdAndIndex : function(parentItem, linkId, index) {
       var item = null;
       var idx = 0;
       if (parentItem.items) {
@@ -784,7 +784,7 @@ function addSDCImportFns(ns) {
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCode : function(parentItem, linkId) {
+    _findTheMatchingItemByLinkId : function(parentItem, linkId) {
       var item = null;
       if (parentItem.items) {
         for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {

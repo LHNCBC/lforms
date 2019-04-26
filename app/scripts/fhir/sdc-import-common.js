@@ -271,7 +271,7 @@ function addCommonSDCImportFns(ns) {
       if (qrItem) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.linkId);
+          var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId);
           // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
           if (ns._questionRepeats(defItem)) {
@@ -294,7 +294,7 @@ function addCommonSDCImportFns(ns) {
           }
         }
         // find the matching LForms item
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index);
+        var item = this._findTheMatchingItemByLinkIdAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index);
 
         // set up value and units if it is a question
         if ((item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
