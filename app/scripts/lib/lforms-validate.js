@@ -109,7 +109,7 @@ LForms.Validations = {
           valid = regex.test(value);
           break;
         case "REAL":
-          var regex = /^(\+|-)?\d+(\.\d*)?$/;
+          var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
         case "PHONE":
