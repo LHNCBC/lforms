@@ -7,6 +7,8 @@ describe('CDE form template', function() {
     tp.openFormByIndex(8);
 
     var headerRow = element(by.css(".lf-empty-question.lf-section-header"));
+    var EC = protractor.ExpectedConditions;
+    browser.wait(EC.presenceOf(headerRow), 5000);
     expect(headerRow.isDisplayed()).toBe(true);
 
     var headerLabel = element(by.css("label[for='//1']"));

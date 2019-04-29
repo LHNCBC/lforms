@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.3.0] 2019-04-24
+## [15.3.0] 2019-04-29
 ### Changed
 - Changed view's screen size breakpoints.
 - Changed import function to work around 'linkId' in FHIR QuestionnaireResponse 
@@ -11,6 +11,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed bug in processing regexp value of 'pattern' restriction.
    
+## [15.2.5] 2019-04-25
+### Fixed
+- Problems with mapping from the LForms structure to QuestionnaireResponse when
+  running FHIRPath expressions.  Added some tests.
+
 ## [15.2.4] 2019-04-19
 ### Fixed
 - Enabled generation of source maps for the FHIR support files.
