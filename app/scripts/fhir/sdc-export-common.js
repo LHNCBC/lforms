@@ -64,9 +64,8 @@ function addCommonSDCExportFns(ns) {
     var observations = [];
     for (var i=0, len=this.items.length; i<len; ++i) {
       var item = this.items[i];
-      if (item._obsLinkPeriodExt) {
-
-      }
+      if (item._obsLinkPeriodExt)
+        observations.push(this._commonExport._createObservation(item));
     }
   };
 

@@ -91,7 +91,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 /* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
@@ -107,7 +107,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
 };
 fhir.fhirpath = __webpack_require__(2);
 
-fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
+fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
 fhir.DiagnosticReport._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
@@ -19942,8 +19942,7 @@ function addCommonSDCExportFns(ns) {
 
     for (var i = 0, len = this.items.length; i < len; ++i) {
       var item = this.items[i];
-
-      if (item._obsLinkPeriodExt) {}
+      if (item._obsLinkPeriodExt) observations.push(this._commonExport._createObservation(item));
     }
   };
   /**

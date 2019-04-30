@@ -7,7 +7,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: LOINC_URI
 }
 fhir.fhirpath = require('fhirpath');
-import dr from '../lforms-fhir-diagnostic-report.js';
+import dr from '../diagnostic-report.js';
 fhir.DiagnosticReport = dr;
 import commonExport from '../export-common.js';
 fhir.DiagnosticReport._commonExport = commonExport;

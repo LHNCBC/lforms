@@ -12558,8 +12558,6 @@ LForms.HL7 = function () {
             }
 
             var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
-            console.log(item.answerCodeSystem);
-            console.log(answerCS);
 
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
@@ -13359,7 +13357,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
               if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
                 queryParams.query.focus = {
                   $missing: true
-                };
+                }; // TBD -- sometimes :missing is not supported
 
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
@@ -13378,8 +13376,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
                   if (bundle.entry && bundle.entry.length === 1) {
                     var obs = bundle.entry[0].resource;
-                    serverFHIR.SDC.importObsValue(itemI, obs);
-                    if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+
+                    if (!obs.focus) {
+                      // in case we couldn't using focus:missing above
+                      serverFHIR.SDC.importObsValue(itemI, obs);
+                      if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                    }
                   }
 
                   lfData._asyncLoadCounter--;
