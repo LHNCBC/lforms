@@ -278,30 +278,61 @@ LForms.Util = {
 
 
   /**
+   *  Converts a FHIR version string (e.g. 3.0.1) to a release ID (e.g. 'STU3').
+   * @param versionStr the version string to be converted to a release ID.
+   * @return the release ID for the given version string, or versionStr if the
+   *  version string cannot be mapped to a release ID.
+   */
+  _fhirVersionToRelease: function(versionStr) {
+    var releaseID = versionStr; // default
+    var matchData = versionStr.match(/^\d+(\.\d+)/);
+    if (matchData) {
+      var versionNum = parseFloat(matchData[0]);
+      // Following http://www.hl7.org/fhir/directory.cfml
+      var releaseID = versionNum > 3.0 && versionNum <= 4.0 ?
+        'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
+    }
+    return releaseID;
+  },
+
+
+  /**
    *  Gets the release identifier for the version of FHIR being used by the
    *  server providing the FHIR context set via setFHIRContext (which must have
    *  been called first).
    * @param callback Because asking the FHIR server for its version is an
-   * asynchronous call, this callback function will be used to return the
-   * version when found.  The callback will be called asynchrnously with a
-   * release string, like 'STU3' or 'R4'.  This string can then be passed to
-   * validateFHIRVersion to check that the needed support files have been loaded.
+   *  asynchronous call, this callback function will be used to return the
+   *  version when found.  The callback will be called asynchronously with a
+   *  release string, like 'STU3' or 'R4'.  This string can then be passed to
+   *  validateFHIRVersion to check that the needed support files have been loaded.
+   *  If the release ID cannot be determined because the server's fhir
+   *  version is not known, the version number will passed to the callback.  If
+   *  communication with the FHIR server is not succesful, the callback will be
+   *  called without an argument.
    */
   getServerFHIRReleaseID: function(callback) {
     if (!LForms.fhirContext)
       throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
-      var fhirAPI = LForms.fhirContext.getFHIRAPI();
-      fhirAPI.conformance({}).then(function(res) {
-        var fhirVersion = res.data.fhirVersion;
-        LForms._serverFHIRReleaseID = (fhirVersion.indexOf('3.') === 0) ?
-          'STU3' : (fhirVersion.indexOf('4.') === 0) ?
-          'R4' : fhirVersion;
-        console.log('Server FHIR version is '+LForms._serverFHIRReleaseID+' ('+
-          fhirVersion+')');
-        callback(LForms._serverFHIRReleaseID);
-      });
+      try {
+        var fhirAPI = LForms.fhirContext.getFHIRAPI();
+        fhirAPI.conformance({}).then(function(res) {
+          var fhirVersion = res.data.fhirVersion;
+          LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
+          console.log('Server FHIR version is '+LForms._serverFHIRReleaseID+' ('+
+            fhirVersion+')');
+          callback(LForms._serverFHIRReleaseID);
+        }, function(err) {
+          console.log("Error retrieving server's CompatibilityStatement:");
+          console.log(err);
+          callback();
+        });
+      }
+      catch(e) {
+        setTimeout(function(){callback()});
+        throw e;
+      }
     }
     else { // preserve the asynchronous nature of the return
       setTimeout(function(){callback(LForms._serverFHIRReleaseID)});
@@ -344,6 +375,7 @@ LForms.Util = {
     var fhirVersion;
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile;
+      // See http://build.fhir.org/versioning.html#mp-version
       var questionnairePattern =
         new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern =
@@ -362,16 +394,8 @@ LForms.Util = {
         }
       }
     }
-    var method;
-    if (fhirVersion) {
-      method = 'meta.profile';
-      fhirVersion = parseFloat(fhirVersion); // converts '3.0.1' to 3.0
-      // See http://build.fhir.org/versioning.html#mp-version
-      if (fhirVersion == 3.0)
-        fhirVersion = 'STU3';
-      else if (3.2 <= fhirVersion && fhirVersion < 4.1)
-        fhirVersion = 'R4';
-    }
+    if (fhirVersion)
+      fhirVersion = this._fhirVersionToRelease(fhirVersion);
     return fhirVersion;
   },
 

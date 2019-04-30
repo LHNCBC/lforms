@@ -7749,8 +7749,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     $scope._viewMode = "";
     $scope._inputFieldWidth = ""; // small screen
 
-    if (width <= 480) $scope._viewMode = "sm"; // medium screen
-    else if (width <= 800) $scope._viewMode = "md"; // large screen
+    if (width <= 400) //480
+      $scope._viewMode = "sm"; // medium screen
+    else if (width <= 600) //800
+        $scope._viewMode = "md"; // large screen
       else {
           $scope._viewMode = "lg";
         }
@@ -11313,27 +11315,62 @@ LForms.Util = {
   },
 
   /**
+   *  Converts a FHIR version string (e.g. 3.0.1) to a release ID (e.g. 'STU3').
+   * @param versionStr the version string to be converted to a release ID.
+   * @return the release ID for the given version string, or versionStr if the
+   *  version string cannot be mapped to a release ID.
+   */
+  _fhirVersionToRelease: function _fhirVersionToRelease(versionStr) {
+    var releaseID = versionStr; // default
+
+    var matchData = versionStr.match(/^\d+(\.\d+)/);
+
+    if (matchData) {
+      var versionNum = parseFloat(matchData[0]); // Following http://www.hl7.org/fhir/directory.cfml
+
+      var releaseID = versionNum > 3.0 && versionNum <= 4.0 ? 'R4' : versionNum >= 1.1 && versionNum <= 3.0 ? 'STU3' : versionStr;
+    }
+
+    return releaseID;
+  },
+
+  /**
    *  Gets the release identifier for the version of FHIR being used by the
    *  server providing the FHIR context set via setFHIRContext (which must have
    *  been called first).
    * @param callback Because asking the FHIR server for its version is an
-   * asynchronous call, this callback function will be used to return the
-   * version when found.  The callback will be called asynchrnously with a
-   * release string, like 'STU3' or 'R4'.  This string can then be passed to
-   * validateFHIRVersion to check that the needed support files have been loaded.
+   *  asynchronous call, this callback function will be used to return the
+   *  version when found.  The callback will be called asynchronously with a
+   *  release string, like 'STU3' or 'R4'.  This string can then be passed to
+   *  validateFHIRVersion to check that the needed support files have been loaded.
+   *  If the release ID cannot be determined because the server's fhir
+   *  version is not known, the version number will passed to the callback.  If
+   *  communication with the FHIR server is not succesful, the callback will be
+   *  called without an argument.
    */
   getServerFHIRReleaseID: function getServerFHIRReleaseID(callback) {
     if (!LForms.fhirContext) throw new Error('setFHIRContext needs to be called before getFHIRReleaseID');
 
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
-      var fhirAPI = LForms.fhirContext.getFHIRAPI();
-      fhirAPI.conformance({}).then(function (res) {
-        var fhirVersion = res.data.fhirVersion;
-        LForms._serverFHIRReleaseID = fhirVersion.indexOf('3.') === 0 ? 'STU3' : fhirVersion.indexOf('4.') === 0 ? 'R4' : fhirVersion;
-        console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
-        callback(LForms._serverFHIRReleaseID);
-      });
+      try {
+        var fhirAPI = LForms.fhirContext.getFHIRAPI();
+        fhirAPI.conformance({}).then(function (res) {
+          var fhirVersion = res.data.fhirVersion;
+          LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
+          console.log('Server FHIR version is ' + LForms._serverFHIRReleaseID + ' (' + fhirVersion + ')');
+          callback(LForms._serverFHIRReleaseID);
+        }, function (err) {
+          console.log("Error retrieving server's CompatibilityStatement:");
+          console.log(err);
+          callback();
+        });
+      } catch (e) {
+        setTimeout(function () {
+          callback();
+        });
+        throw e;
+      }
     } else {
       // preserve the asynchronous nature of the return
       setTimeout(function () {
@@ -11370,7 +11407,8 @@ LForms.Util = {
     var fhirVersion;
 
     if (fhirData.meta && fhirData.meta.profile) {
-      var profiles = fhirData.meta.profile;
+      var profiles = fhirData.meta.profile; // See http://build.fhir.org/versioning.html#mp-version
+
       var questionnairePattern = new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern = new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
 
@@ -11387,16 +11425,7 @@ LForms.Util = {
       }
     }
 
-    var method;
-
-    if (fhirVersion) {
-      method = 'meta.profile';
-      fhirVersion = parseFloat(fhirVersion); // converts '3.0.1' to 3.0
-      // See http://build.fhir.org/versioning.html#mp-version
-
-      if (fhirVersion == 3.0) fhirVersion = 'STU3';else if (3.2 <= fhirVersion && fhirVersion < 4.1) fhirVersion = 'R4';
-    }
-
+    if (fhirVersion) fhirVersion = this._fhirVersionToRelease(fhirVersion);
     return fhirVersion;
   },
 
@@ -12740,12 +12769,12 @@ LForms.Validations = {
           break;
 
         case "INT":
-          var regex = /^\s*(\d+)\s*$/;
+          var regex = /^(\+|-)?\d+$/;
           valid = regex.test(value);
           break;
 
         case "REAL":
-          var regex = /^\-?\d+(\.\d*)?$/;
+          var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
 
@@ -12829,11 +12858,10 @@ LForms.Validations = {
     if (value !== undefined && value !== null && value !== "") {
       for (var key in restrictions) {
         var valid = true;
+        var keyValue = restrictions[key];
 
         switch (key) {
           case "minExclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) > parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12844,8 +12872,6 @@ LForms.Validations = {
             break;
 
           case "minInclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) >= parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12856,8 +12882,6 @@ LForms.Validations = {
             break;
 
           case "maxExclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) < parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12868,8 +12892,6 @@ LForms.Validations = {
             break;
 
           case "maxInclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) <= parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12888,8 +12910,6 @@ LForms.Validations = {
             break;
 
           case "length":
-            var keyValue = restrictions[key];
-
             if (value.length == parseInt(keyValue)) {
               valid = true;
             } else {
@@ -12900,8 +12920,6 @@ LForms.Validations = {
             break;
 
           case "maxLength":
-            var keyValue = restrictions[key];
-
             if (value.length <= parseInt(keyValue)) {
               valid = true;
             } else {
@@ -12912,8 +12930,6 @@ LForms.Validations = {
             break;
 
           case "minLength":
-            var keyValue = restrictions[key];
-
             if (value.length >= parseInt(keyValue)) {
               valid = true;
             } else {
@@ -12925,10 +12941,12 @@ LForms.Validations = {
 
           case "pattern":
             // the "\" in the pattern string should have been escaped
-            var keyValue = restrictions[key]; // get the pattern and the flag
+            var indexOfFirst = keyValue.indexOf("/");
+            var indexOfLast = keyValue.lastIndexOf("/"); // get the pattern and the flag
 
-            var parts = keyValue.split("/");
-            var regex = new RegExp(parts[1], parts[2]);
+            var pattern = keyValue.slice(indexOfFirst + 1, indexOfLast);
+            var flags = keyValue.slice(indexOfLast + 1);
+            var regex = new RegExp(pattern, flags);
 
             if (regex.test(value)) {
               valid = true;
@@ -16142,6 +16160,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   "use strict"; // A class whose instances handle the running of FHIR expressions.
 
   var LForms = __webpack_require__(2);
+  /**
+   *   Constructor.
+   *  @param lfData an instance of LForms.LFormsData
+   */
+
 
   LForms.ExpressionProcessor = function (lfData) {
     this._lfData = lfData;
@@ -16357,44 +16380,68 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _addToIDtoQRItemMap: function _addToIDtoQRItemMap(lfItem, qrItem, map) {
       var added = 0;
 
-      if (lfItem.items) {
-        if (qrItem && qrItem.item && qrItem.item.length > 0) {
-          var lfItems = lfItem.items,
-              qrItems = qrItem.item;
-          var numLFItems = lfItems.length;
+      if (lfItem.linkId === qrItem.linkId) {
+        if (lfItem.items) {
+          // lfItem.items might contain items that don't have values, but
+          // qrItem.item will not, so we need to skip the blank items.
+          //
+          // Also, for a repeating question, there will be multiple answers on an
+          // qrItem.item, but repeats of the item in lfItem.items with one answer
+          // each.
+          // LForms does not currently support items that contain both answers
+          // and child items, but I am trying to accomodate that here for the
+          // future.
+          if (qrItem && qrItem.item && qrItem.item.length > 0) {
+            var lfItems = lfItem.items,
+                qrItems = qrItem.item;
+            var numLFItems = lfItems.length;
 
-          for (var i = 0, qrI = 0, len = qrItems.length; qrI < len; ++qrI) {
-            // Answers are repeated in QR, but items are repeated in LForms
-            var numAnswers = qrItems[qrI].answer ? qrItems[qrI].answer.length : 1;
+            for (var i = 0, qrI = 0, len = qrItems.length; qrI < len && i < numLFItems; ++qrI) {
+              // Answers are repeated in QR, but items are repeated in LForms
+              var qrIthItem = qrItems[qrI];
+              var lfIthItem = lfItems[i];
 
-            for (var a = 0; a < numAnswers; ++a, ++i) {
-              if (i > numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+              if (!qrIthItem.answer) {
+                // process item anyway to handle child items with data
+                var newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
 
-              var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrItems[qrI], map);
+                if (newlyAdded === 0) {
+                  // lfIthItem was blank, so qrIthItem must be for a following
+                  // item.
+                  --qrI; // so we try qrIthItem with the next lfIthItem
+                } else added += newlyAdded;
 
-              if (newlyAdded === 0) {
-                // blank; try next lfItem
-                --a;
+                ++i;
               } else {
-                added += newlyAdded;
+                // there are answers on the qrIthItem item
+                var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
+
+                for (var a = 0; a < numAnswers; ++a, ++i) {
+                  if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+
+                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+
+                  if (newlyAdded === 0) {
+                    // lfItems[i] was blank; try next lfItem
+                    --a;
+                  } else {
+                    added += newlyAdded;
+                  }
+                }
               }
             }
           }
+        }
 
-          if (added && lfItem._elementId) {
-            // Since the children were not empty, also add the entry for the
-            // parent node.
+        if (lfItem._elementId && (added || !this._lfData.isEmpty(lfItem))) {
+          // this item has a value
+          if (!qrItem) {
+            // if there is data in lfItem, there should be a qrItem
+            throw new Error('Logic error in _addToIDtoQRItemMap');
+          } else {
             map[lfItem._elementId] = qrItem;
             added += 1;
           }
-        }
-      } else if (!this._lfData.isEmpty(lfItem)) {
-        if (!qrItem) {
-          // if there is data in lfItem, there should be a qrItem
-          throw new Error('Logic error in _addToIDtoQRItemMap');
-        } else {
-          map[lfItem._elementId] = qrItem;
-          added += 1;
         }
       }
 

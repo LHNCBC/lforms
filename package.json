@@ -1,8 +1,10 @@
 {
   "name": "lforms",
-  "version": "15.2.1",
+  "version": "15.3.0",
   "main": "app/scripts/index.js",
-  "files": ["app"],
+  "files": [
+    "app"
+  ],
   "dependencies": {
     "@lhncbc/ucum-lhc": "^2.6.1",
     "angular": "1.6.x",
@@ -12,7 +14,7 @@
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
     "fhirpath": "^0.10.1",
-    "jquery": "^3.1.0",
+    "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "ngSmoothScroll": "^2.0.1"
   },
@@ -46,8 +48,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "^1.1.0",
     "mini-css-extract-plugin": "^0.5.0",
-    "mocha": "^6.0.2",
-    "node-sass": "^4.11.0",
+    "mocha": "^6.1.4",
+    "node-sass": "^4.12.0",
     "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
     "serve-static": "^1.13.2",

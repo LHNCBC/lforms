@@ -47,6 +47,7 @@ function makeConfigs(env) {
     minConfig.entry = entryFile;
     minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
     minConfig.mode = 'production';
+    minConfig.devtool = 'source-map';
     configs.push(minConfig);
   }
 

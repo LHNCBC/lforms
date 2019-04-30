@@ -79,6 +79,7 @@ exports.config = {
     // Print the browser's console messages
     // Note that for this to get all of the output, a loggingPrefs object must
     // be added to the capabilities (see above).
+    /*
     browser.manage().logs().get('browser').then(function(browserLogs) {
       /*
       if (browserLogs.length > 0) {
@@ -90,6 +91,6 @@ exports.config = {
       }
       */
     });
-
+    */
   }
 };

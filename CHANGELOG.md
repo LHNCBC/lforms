@@ -2,11 +2,38 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.3.0] 2019-04-11
+## [15.4.0] 2019-04-11
 ### Added
 - Support for data extraction via observationLinkPeriod. (TBD - document API)
 ### Fixed
 - Added a check to make sure linked observations do not have focus set to true.
+
+## [15.3.0] 2019-04-29
+### Changed
+- Changed view's screen size breakpoints.
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse
+  resource.
+- Added validation for signed values of INT and REAL data types.
+### Fixed
+- Fixed bug in processing regexp value of 'pattern' restriction.
+
+## [15.2.5] 2019-04-25
+### Fixed
+- Problems with mapping from the LForms structure to QuestionnaireResponse when
+  running FHIRPath expressions.  Added some tests.
+
+## [15.2.4] 2019-04-19
+### Fixed
+- Enabled generation of source maps for the FHIR support files.
+
+## [15.2.3] 2019-04-15
+### Fixed
+- Improved error handling and reporting for LForms.util.getFHIRServerReleaseID.
+
+## [15.2.2] 2019-04-05
+### Fixed
+- Corrected a problem with detecting which version of FHIR was being used by a
+  FHIR server.
 
 ## [15.2.1] 2019-03-27
 ### Removed
