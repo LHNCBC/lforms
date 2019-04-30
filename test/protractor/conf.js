@@ -81,7 +81,6 @@ exports.config = {
     // be added to the capabilities (see above).
     /*
     browser.manage().logs().get('browser').then(function(browserLogs) {
-      /*
       if (browserLogs.length > 0) {
         console.log("Messages from browser's console");
         browserLogs.forEach(function(log){
@@ -89,7 +88,6 @@ exports.config = {
         });
         console.log("End of messages from browser's console");
       }
-      */
     });
     */
   }
