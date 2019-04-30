@@ -35,6 +35,7 @@ if (typeof LForms === 'undefined')
         ST:     "ST",
         TX:     "TX",
         DT:     "DT",
+        DTM:    "DTM",
         TM:     "TM",
         CNE:    "CNE",
         CWE:    "CWE",
@@ -50,7 +51,6 @@ if (typeof LForms === 'undefined')
         QTY:    "QTY",
         BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
-        // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
       },
       DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
@@ -715,7 +715,7 @@ if (typeof LForms === 'undefined')
       if (this.templateOptions.formHeaderItems) {
         for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
           var item = this.templateOptions.formHeaderItems[i];
-          if (item.value && item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+          if (item.value && (item.dataType === this._CONSTANTS.DATA_TYPE.DT || item.dataType === this._CONSTANTS.DATA_TYPE.DTM)) {
               item.value = LForms.Util.stringToDate(item.value);
           }
         }
@@ -909,7 +909,8 @@ if (typeof LForms === 'undefined')
         if (!item._readOnly) {
           switch (item.dataType) {
             case this._CONSTANTS.DATA_TYPE.DT:
-              item._toolTip = "MM/DD/YYYY";
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              item._toolTip = item.dataType === this._CONSTANTS.DATA_TYPE.DT?  "MM/DD/YYYY": "MM/DD/YYYY HH:MM";
               // process user data
               if (item.value) {
                 item.value = LForms.Util.stringToDate(item.value);
@@ -1342,6 +1343,9 @@ if (typeof LForms === 'undefined')
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
+              retValue = LForms.Util.dateToStringYMD(value);
+              break;
+            case this._CONSTANTS.DATA_TYPE.DTM:
               retValue = LForms.Util.dateToString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:

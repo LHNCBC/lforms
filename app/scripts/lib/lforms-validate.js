@@ -147,7 +147,7 @@ LForms.Validations = {
           break;
         case "DT":  // date, handled by date directive
         case "ST":  // not needed
-        case "DTM": // TBD
+        case "DTM": // dataTime, handled by the datetime directive (datetime picker)
         case "RTO": // TBD
         case "QTY": // TBD
         case "CNE": // answers list with no exception, handled by autocomplete directive

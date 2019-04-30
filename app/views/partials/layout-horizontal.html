@@ -101,6 +101,21 @@
                    id="{{cell._elementId}}"
                    aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
                    ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
+            <!-- Gillardo boostrap datetime picker -->
+            <div ng-switch-when="DTM" class="lf-dtm-picker-block">
+              <input name="{{cell.question}}" type="text" class="form-control"
+                     ng-model="cell.value"
+                     datetime-picker="{{uibDateTimePickerFormat}}" alt-input-formats="uibDatePickerAltFormats"
+                     is-open="isOpen" enable-time="true" close-on-date-selection="true"
+                     datepicker-options="uibDatePickerOptions" timepicker-options="uibTimePickerOptions"
+                     placeholder="{{cell._toolTip}}" ng-disabled="cell._readOnly"
+                     id="{{cell._elementId}}"
+                     aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
+                     ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="openUibDtmPicker($event)"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
             <textarea ng-switch-when="TX" name="{{cell.question}}"
                       ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-disabled="cell._readOnly"
                       id="{{cell._elementId}}"

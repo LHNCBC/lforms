@@ -1029,6 +1029,9 @@ function addSDCImportFns(ns) {
             }
             break;
           case "DT":
+            item.value = qrValue.valueDate;
+            break;
+          case "DTM":
             item.value = qrValue.valueDateTime;
             break;
           case "CNE":

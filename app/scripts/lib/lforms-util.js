@@ -426,6 +426,19 @@ LForms.Util = {
     return formObj;
   },
 
+  /**
+   * Convert the given date string (date only no time) into mm/dd/yyyy (local/US) format with year,
+   * month, and date values at the local timezone.
+   * @param dateObj the date object to be converted.
+   * @return date string in format mm/dd/yyyy with year, month, and date values corresponding to that at local timezone.
+   */
+  dateToStringYMD: function (dateObj) {
+    return isNaN(dateObj.getTime())? undefined:
+      (101 + dateObj.getMonth()).toString().substr(1) + '/' +
+      (100 + dateObj.getDate()).toString().substr(1) + '/' +
+      (10000 + dateObj.getFullYear()).toString().substr(1);
+  },
+
 
   /**
    * Get a formatted date string from a date object
@@ -439,14 +452,26 @@ LForms.Util = {
     return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
   },
 
-
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
    * @returns a date object
    */
   stringToDate: function(strDate) {
-    return new Date(strDate);
+    // var dt = new Date(strDate);
+    // new Date("t") (date.js) isn't working. How/whether it worked before (or at all) is a mystery.
+    var dt = undefined;
+    if(strDate) {
+      dt = Date.parse(strDate);
+      if(dt === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
+        dt = new Date(strDate);
+      }
+      if(typeof dt === 'number') {
+        dt = new Date(dt); // just in case the date.js is switch out - standard Date.parse() returns epoch millis.
+      }
+    }
+
+    return dt;
   },
 
 
@@ -458,29 +483,32 @@ LForms.Util = {
    */
   isItemValueEmpty: function(value) {
     var empty = true;
-    if (typeof value !== 'undefined') {
-      // object
-      if (angular.isObject(value)) {
-        var keys = Object.keys(value);
+    if(Array.isArray(value)) {
+      for(var i=0; i < value.length; ++i) {
+        if(! this.isItemValueEmpty(value[i])) {
+          empty = false;
+          break;
+        }
+      }
+    }
+    else if (value != null && typeof value === 'object') {
+      var keys = Object.keys(value);
+      if(keys.length > 0) {
         for(var i=0, iLen=keys.length; i<iLen; i++) {
-          var val = value[keys[i]];
-          if (val !== null && val !== "" ) {
+          if(! this.isItemValueEmpty(value[keys[i]])) {
             empty = false;
             break;
           }
         }
       }
-      // array
-      else if (angular.isArray(value)) {
-        if (value.length > 0) {
-          empty = false;
-        }
-      }
-      // other
-      else if (value !== null && value !== "") {
+      else if(value.constructor !== Object && ! (value instanceof String && value.trim() === '')) { // e.g., a Date object has zero length keys
         empty = false;
       }
     }
+    else if(value !== null && value !== undefined && value !== '' && (typeof value !== 'string' || value.trim() !== '')) {
+      return false;
+    }
+
     return empty;
   },
 

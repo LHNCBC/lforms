@@ -174,9 +174,12 @@ function addCommonSDCImportFns(ns) {
       case "boolean":
         type = 'BL';
         break;
-      case "dateTime":
+      case "date":
         //dataType = 'date';
         type = 'DT';
+        break;
+      case "dateTime":
+        type = 'DTM';
         break;
       case "time":
         type = 'TM';

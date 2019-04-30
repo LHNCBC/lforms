@@ -371,6 +371,21 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "\n" +
+    "          <!-- Gillardo boostrap datetime picker -->\n" +
+    "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
+    "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" +
+    "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
+    "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +
+    "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\"\n" +
+    "                   datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" +
+    "                   ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                   ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "            <span class=\"input-group-btn\">\n" +
+    "              <button type=\"button\" class=\"btn btn-default\" ng-click=\"openUibDtmPicker($event)\"><i class=\"fa fa-calendar\"></i></button>\n" +
+    "            </span>\n" +
+    "          </div>\n" +
+    "\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
     "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" +
@@ -511,6 +526,21 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                   id=\"{{cell._elementId}}\"\n" +
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
+    "            <!-- Gillardo boostrap datetime picker -->\n" +
+    "            <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
+    "              <input name=\"{{cell.question}}\" type=\"text\" class=\"form-control\"\n" +
+    "                     ng-model=\"cell.value\"\n" +
+    "                     datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +
+    "                     is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\"\n" +
+    "                     datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" +
+    "                     placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
+    "                     id=\"{{cell._elementId}}\"\n" +
+    "                     aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
+    "                     ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
+    "              <span class=\"input-group-btn\">\n" +
+    "                <button type=\"button\" class=\"btn btn-default\" ng-click=\"openUibDtmPicker($event)\"><i class=\"fa fa-calendar\"></i></button>\n" +
+    "              </span>\n" +
+    "            </div>\n" +
     "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
     "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                      id=\"{{cell._elementId}}\"\n" +

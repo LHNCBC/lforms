@@ -36,7 +36,7 @@
     "id": "21112-8-485677",
     "status": "final",
     "code": {"coding": [{"system": "http://loinc.org", "code": "21112-8"}], "text": "Date of Birth"},
-    "valueDateTime": "2016-10-27T00:00:00-04:00"
+    "valueDate": "2016-10-27"
   }, {
     "resourceType": "Observation",
     "id": "8302-2-245473",

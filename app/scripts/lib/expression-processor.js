@@ -95,7 +95,7 @@ if (typeof LForms === 'undefined')
       if (changesOnly) {
         if (item.items && item._varChanged) {
           item._varChanged = false; // clear flag
-          changeOnly = false; // process all child items
+          changesOnly = false; // process all child items
         }
       }
       else if (!changesOnly) {  // process this and all child items
@@ -260,7 +260,10 @@ if (typeof LForms === 'undefined')
       if (!fhirPathVal)
         item.value = undefined;
       else {
-        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
+        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
+          item.value = new Date(fhirPathVal);
+        }
+        else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
           var d = new Date(fhirPathVal);
           // Convert to local time, so the date does not get shifted for negative
           // local timezones.

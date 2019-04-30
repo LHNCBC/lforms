@@ -149,6 +149,10 @@ var dr = {
         };
         break;
       case "DT":
+        valueX.key = "valueDate";
+        valueX.val = item.value;
+        break;
+      case "DTM":
         valueX.key = "valueDateTime";
         valueX.val = item.value;
         break;
@@ -440,6 +444,9 @@ var dr = {
           item.unit = {name: obx.valueQuantity.code};
           break;
         case "DT":
+          item.value = obx.valueDate;
+          break;
+        case "DTM":
           item.value = obx.valueDateTime;
           break;
         case "CNE":

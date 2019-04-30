@@ -16,7 +16,7 @@ angular.module('lformsWidget')
         // encoding for a 1x1 blank gif file.
         $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL;
 
-        // Default option for calendar
+        // Default option for calendar - for the JQuery datepicker
         $scope.dateOptions = {
           changeYear: true,
           changeMonth: true,
@@ -29,6 +29,25 @@ angular.module('lformsWidget')
           buttonText: "Show date picker"
         };
 
+        // uib booststrap datetime picker, https://github.com/Gillardo/bootstrap-ui-datetime-picker
+        $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
+        $scope.uibDatePickerAltFormats = ['yyyy', 'MM yyyy', 'MMM yyyy', 'MMMM yyyy', 'MM/dd/yyyy'];
+
+        $scope.uibDatePickerOptions = {
+          showWeeks: false
+        };
+
+        $scope.uibTimePickerOptions = {
+          arrowkeys: true,
+          //showSeconds: false
+        };
+
+        // open the uib bootstrap datetime picker
+        $scope.openUibDtmPicker = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.isOpen = true;
+        };
 
         /**
          * Check the current view's width

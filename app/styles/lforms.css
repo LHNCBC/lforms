@@ -394,6 +394,125 @@ Override color of select boxes in calendar widget title bar.
   color: #0087fd;
 }
 
+
+/* start ==== styles for uib datetime picker */
+
+/* The container of the datetime picker block */
+.lf-dtm-picker-block {
+  position: relative;
+  display: table;
+  border: 2px solid lightgrey;
+  border-radius: 4px;
+}
+
+.datetime-picker-dropdown > li.date-picker-menu {
+  width: 275px;
+  background: white;
+}
+
+/* Make the input field and calendar icon look better side by side */
+.lf-dtm-picker-block > input.form-control {
+  border: none;
+}
+
+/* color of the calendar icon in the form/input*/
+.lf-dtm-picker-block .input-group-btn .btn {
+  margin: 3px;
+  background-color: white;
+  color: #066aa0;
+}
+.lf-dtm-picker-block .input-group-btn .btn:hover {
+  color: #0087fd;
+}
+
+/* re-align the calendar header (conflicts with lform button style) */
+.datetime-picker-dropdown > li.date-picker-menu .btn-sm,
+.datetime-picker-dropdown > li.date-picker-menu .btn-group-sm>.btn {
+  padding: 5px 10px;
+}
+
+/* The header (month and prev/next arrow) */
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th * {
+  background-color: #066aa0;
+}
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th *:hover {
+  background-color: #5bc0de;
+  color: black;
+}
+/* the real controls in the header (month, prev/next) */
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button * {
+  background-color: inherit;
+}
+
+
+/* Calendar grid */
+.datetime-picker-dropdown > li.date-picker-menu div > table td,
+.datetime-picker-dropdown > li.date-picker-menu div > table th {
+  border:2px solid white;
+}
+
+/* Calendar date cells */
+.datetime-picker-dropdown > li.date-picker-menu div > table .btn-default {
+  background: #1c94c4;
+  color: white;
+  border: none;
+}
+.datetime-picker-dropdown .btn-default:hover,
+.datetime-picker-dropdown > li.time-picker-menu .btn-default:hover,
+.datetime-picker-dropdown > li.date-picker-menu tbody .btn-default:hover {
+  background: #5bc0de;
+  color: black;
+}
+
+/* Today's date color */
+.datetime-picker-dropdown > li.date-picker-menu div > table .btn-default .text-info {
+  color: red;
+}
+
+/* selected date */
+.datetime-picker-dropdown > li.date-picker-menu div > table .btn-default.active {
+  color: white;
+  background-color: #6eac2c;
+  border: 0;
+}
+
+/* calendar/time bottom buttons and time AM/PM button */
+.datetime-picker-dropdown .btn-group > .btn-sm,
+.datetime-picker-dropdown > li.time-picker-menu div table button {
+  background: #1c94c4;
+  color: white;
+  border: 1px solid lightgrey;
+  padding: 5px 8px;
+}
+.datetime-picker-dropdown .btn-group > .btn-sm:hover,
+.datetime-picker-dropdown > li.time-picker-menu div table button:hover {
+  background-color: #5bc0de;
+  color: black;
+}
+
+/* Time picker popup */
+.datetime-picker-dropdown > li.time-picker-menu div table {
+  padding-left: 50px;
+  padding-right: 50px;
+  display: inline-block;
+  padding-top: 10px;
+}
+
+/* time input/selection elements cells */
+.datetime-picker-dropdown > li.time-picker-menu div table td {
+  width: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/* hour/minute input field */
+.datetime-picker-dropdown > li.time-picker-menu div table input {
+  width: 3em;
+}
+
+/* end ==== styles for uib datetime picker */
+
+
 /* popover dialog */
 .lf-form .lf-de-label.has-popover-warning .popover {
   border-color: #eea236;

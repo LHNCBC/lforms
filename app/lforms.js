@@ -5,7 +5,10 @@
     'ngAnimate',
     'ui.bootstrap',
     'smoothScroll',
-    'autocompleteLhcMod'
+    'autocompleteLhcMod',
+    'ui.bootstrap.datepicker',
+    'ui.bootstrap.timepicker',
+    'ui.bootstrap.datetimepicker'
     ])
     .config(['$animateProvider', function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
