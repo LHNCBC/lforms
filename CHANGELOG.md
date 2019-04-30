@@ -2,15 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.3.1] 2019-04-30
+### Fixed
+- Corrected the FHIR itemControl codes.  We still accept the incorrect codes (as
+  well as the correct ones) for import, but the export is now correct.
+
 ## [15.3.0] 2019-04-29
 ### Changed
 - Changed view's screen size breakpoints.
-- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse 
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse
   resource.
-- Added validation for signed values of INT and REAL data types. 
+- Added validation for signed values of INT and REAL data types.
 ### Fixed
 - Fixed bug in processing regexp value of 'pattern' restriction.
-   
+
 ## [15.2.5] 2019-04-25
 ### Fixed
 - Problems with mapping from the LForms structure to QuestionnaireResponse when

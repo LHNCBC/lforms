@@ -87,11 +87,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -169,11 +169,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -220,11 +220,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -264,11 +264,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -356,11 +356,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -516,11 +516,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -644,11 +644,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Lookup",
-                        "display": "Lookup"
+                        "code": "autocomplete",
+                        "display": "Auto-complete"
                       }
                     ],
-                    "text": "Lookup"
+                    "text": "Auto-complete"
                   }
                 },
                 {
@@ -676,11 +676,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Combo-box",
-                        "display": "Combo-box"
+                        "code": "drop-down",
+                        "display": "Drop down"
                       }
                     ],
-                    "text": "Combo-box"
+                    "text": "Drop down"
                   }
                 }
               ],
@@ -801,11 +801,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             },
             {
@@ -1141,11 +1141,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             },
             {
@@ -1200,11 +1200,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -1312,11 +1312,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Combo-box",
-                        "display": "Combo-box"
+                        "code": "drop-down",
+                        "display": "Drop down"
                       }
                     ],
-                    "text": "Combo-box"
+                    "text": "Drop down"
                   }
                 }
               ],
@@ -1840,11 +1840,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Combo-box",
-                        "display": "Combo-box"
+                        "code": "drop-down",
+                        "display": "Drop down"
                       }
                     ],
-                    "text": "Combo-box"
+                    "text": "Drop down"
                   }
                 }
               ],
@@ -1957,11 +1957,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -2008,11 +2008,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -2056,11 +2056,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -2216,11 +2216,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -2330,11 +2330,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "Combo-box",
-                    "display": "Combo-box"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
-                "text": "Combo-box"
+                "text": "Drop down"
               }
             }
           ],
@@ -2388,11 +2388,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Lookup",
-                        "display": "Lookup"
+                        "code": "autocomplete",
+                        "display": "Auto-complete"
                       }
                     ],
-                    "text": "Lookup"
+                    "text": "Auto-complete"
                   }
                 },
                 {
@@ -2420,11 +2420,11 @@
                     "coding": [
                       {
                         "system": "http://hl7.org/fhir/questionnaire-item-control",
-                        "code": "Combo-box",
-                        "display": "Combo-box"
+                        "code": "drop-down",
+                        "display": "Drop down"
                       }
                     ],
-                    "text": "Combo-box"
+                    "text": "Drop down"
                   }
                 }
               ],
