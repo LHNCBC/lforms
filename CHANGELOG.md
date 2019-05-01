@@ -8,6 +8,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Added a check to make sure linked observations do not have focus set to true.
 
+## [15.3.1] 2019-04-30
+### Fixed
+- Corrected the FHIR itemControl codes.  We still accept the incorrect codes (as
+  well as the correct ones) for import, but the export is now correct.
+
 ## [15.3.0] 2019-04-29
 ### Changed
 - Changed view's screen size breakpoints.

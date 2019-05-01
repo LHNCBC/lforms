@@ -5,7 +5,7 @@
   "version": "2.56",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|3.5.0"
     ]
   },
   "title": "Weight & Height tracking panel",
@@ -52,7 +52,7 @@
           "valueDuration": {
             "value": "1",
             "unit": "year",
-            "system": "http://ucum.org",
+            "system": "http://unitsofmeasure.org",
             "code": "a"
           }
         },
@@ -84,11 +84,11 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "Combo-box",
-                "display": "Combo-box"
+                "code": "drop-down",
+                "display": "Drop down"
               }
             ],
-            "text": "Combo-box"
+            "text": "Drop down"
           }
         }
       ],
@@ -196,11 +196,11 @@
             "coding": [
               {
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
-                "code": "Combo-box",
-                "display": "Combo-box"
+                "code": "drop-down",
+                "display": "Drop down"
               }
             ],
-            "text": "Combo-box"
+            "text": "Drop down"
           }
         }
       ],

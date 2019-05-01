@@ -259,6 +259,53 @@ function addCommonSDCImportFns(ns) {
 
 
 
+  /**
+   * Parse questionnaire item for display control
+   *
+   * @param lfItem {object} - LForms item object to assign display control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processDisplayControl = function (lfItem, qItem) {
+    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if(itemControlType) {
+      var displayControl = {};
+      switch (itemControlType.valueCodeableConcept.coding[0].code) {
+        case 'Lookup': // backward-compatibility with old export
+        case 'Combo-box': // backward-compatibility with old export
+        case 'autocomplete':
+        case 'drop-down':
+          displayControl.answerLayout = {type: 'COMBO_BOX'};
+          break;
+        case 'Checkbox': // backward-compatibility with old export
+        case 'check-box':
+        case 'Radio': // backward-compatibility with old export
+        case 'radio-button':
+          displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
+          break;
+        case 'Table': // backward-compatibility with old export
+        case 'gtable':  // Not in STU3, but we'll accept it
+          if(lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "horizontal";
+          }
+          break;
+        case 'Matrix': // backward-compatibility with old export
+        case 'table':
+          if(lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "matrix";
+          }
+          break;
+        default:
+          displayControl = null;
+      }
+
+      if(displayControl && !jQuery.isEmptyObject(displayControl)) {
+        lfItem.displayControl = displayControl;
+      }
+    }
+  };
+
 
   // ---------------- QuestionnaireResponse Import ---------------
 

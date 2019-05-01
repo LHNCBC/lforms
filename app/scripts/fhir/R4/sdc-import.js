@@ -692,53 +692,6 @@ function addSDCImportFns(ns) {
   };
 
 
-  /**
-   * Parse questionnaire item for display control
-   *
-   * @param lfItem {object} - LForms item object to assign display control
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processDisplayControl = function (lfItem, qItem) {
-    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-
-    if(itemControlType) {
-      var displayControl = {};
-      switch (itemControlType.valueCodeableConcept.coding[0].code) {
-        case 'Lookup':
-          // TODO -
-          // Implies externallyDefined, but the URL is not saved in fhir resource.
-          // Perhaps it could be save in itemControlType.valueCodableConcept.text ...
-          // lfItem.externallyDefined = itemControlType.valueCodableConcept.text;
-          break;
-        case 'Combo-box':
-          displayControl.answerLayout = {type: 'COMBO_BOX'};
-          break;
-        case 'Checkbox':
-        case 'Radio':
-          displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
-          break;
-        case 'Table':
-          if(lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "horizontal";
-          }
-          break;
-        case 'Matrix':
-          if(lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "matrix";
-          }
-          break;
-        default:
-          displayControl = null;
-      }
-
-      if(displayControl && !jQuery.isEmptyObject(displayControl)) {
-        lfItem.displayControl = displayControl;
-      }
-    }
-  };
-
-
   // Quesitonnaire Response Import
   self._mergeQR = {
 

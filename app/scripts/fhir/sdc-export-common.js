@@ -79,6 +79,7 @@ function addCommonSDCExportFns(ns) {
   self._handleItemControl = function(targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
+    var itemControlDisplay;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -87,31 +88,37 @@ function addCommonSDCExportFns(ns) {
         (dataType === "CNE" || dataType === "CWE")) {
         // search field
         if (item.externallyDefined) {
-          itemControlType = "Lookup";
+          itemControlType = "autocomplete";
+          itemControlDisplay = "Auto-complete";
         }
         // prefetch list
         // combo-box
         else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-          itemControlType = "Combo-box";
+          itemControlType = "drop-down";
+          itemControlDisplay = "Drop down";
         }
         // radio or checkbox
         else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
           if (item.answerCardinality &&
             (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            itemControlType = "Checkbox";
+            itemControlType = "check-box";
+            itemControlDisplay = "Check-box";
           }
           else {
-            itemControlType = "Radio";
+            itemControlType = "radio-button";
+            itemControlDisplay = "Radio Button";
           }
         }
       }
       // for section item
       else if (item.displayControl.questionLayout && dataType === "SECTION") {
         if (item.displayControl.questionLayout === "horizontal") {
-          itemControlType = "Table";
+          itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
+          itemControlDisplay = "Group Table";
         }
         else if (item.displayControl.questionLayout === "matrix") {
-          itemControlType = "Matrix";
+          itemControlType = "table";
+          itemControlDisplay = "Vertical Answer Table";
         }
         // else {
         //   itemControlType = "List";
@@ -131,9 +138,9 @@ function addCommonSDCExportFns(ns) {
                 //"userSelected" : <boolean> // If this coding was chosen directly by the user
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
                 "code": itemControlType,
-                "display": itemControlType
+                "display": itemControlDisplay
               }],
-              "text": itemControlType
+              "text": itemControlDisplay || itemControlType
             }
           });
       }
