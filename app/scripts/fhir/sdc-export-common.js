@@ -43,7 +43,7 @@ function addCommonSDCExportFns(ns) {
 
     return target;
   };
-  
+
   /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object
@@ -53,6 +53,7 @@ function addCommonSDCExportFns(ns) {
   self._handleItemControl = function(targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
+    var itemControlDisplay;
     // Fly-over, Table, Checkbox, Combo-box, Lookup
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item);
@@ -61,37 +62,43 @@ function addCommonSDCExportFns(ns) {
         (dataType === "CNE" || dataType === "CWE")) {
         // search field
         if (item.externallyDefined) {
-          itemControlType = "Lookup";
+          itemControlType = "autocomplete";
+          itemControlDisplay = "Auto-complete";
         }
         // prefetch list
         // combo-box
         else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-          itemControlType = "Combo-box";
+          itemControlType = "drop-down";
+          itemControlDisplay = "Drop down";
         }
         // radio or checkbox
         else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
           if (item.answerCardinality &&
             (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            itemControlType = "Checkbox";
+            itemControlType = "check-box";
+            itemControlDisplay = "Check-box";
           }
           else {
-            itemControlType = "Radio";
+            itemControlType = "radio-button";
+            itemControlDisplay = "Radio Button";
           }
         }
       }
       // for section item
       else if (item.displayControl.questionLayout && dataType === "SECTION") {
         if (item.displayControl.questionLayout === "horizontal") {
-          itemControlType = "Table";
+          itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
+          itemControlDisplay = "Group Table";
         }
         else if (item.displayControl.questionLayout === "matrix") {
-          itemControlType = "Matrix";
+          itemControlType = "table";
+          itemControlDisplay = "Vertical Answer Table";
         }
         // else {
         //   itemControlType = "List";
         // }
       }
-      
+
       if (itemControlType) {
         targetItem.extension.push(
           {
@@ -105,17 +112,17 @@ function addCommonSDCExportFns(ns) {
                 //"userSelected" : <boolean> // If this coding was chosen directly by the user
                 "system": "http://hl7.org/fhir/questionnaire-item-control",
                 "code": itemControlType,
-                "display": itemControlType
+                "display": itemControlDisplay
               }],
-              "text": itemControlType
+              "text": itemControlDisplay || itemControlType
             }
           });
       }
     }
   };
-  
-  
-  
+
+
+
   /**
    * Convert LForms data type to FHIR SDC data type
    * @param item an item in the LForms form object
@@ -123,7 +130,7 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._getFhirDataType = function(item) {
-    
+
     var dataType = this._getAssumedDataTypeForExport(item);
     var type = this._lformsTypesToFHIRTypes[dataType];
     // default is string
@@ -132,16 +139,16 @@ function addCommonSDCExportFns(ns) {
     }
     return type;
   };
-  
-  
+
+
   /**
    * Determine how an item's data type should be for export.
-   
+
    If number type has multiple units, change it to quantity type. In such a case,
    multiple units are converted to quesionnaire-unitOption extension and the default unit
    would go into initial.valueQuantity.unit.
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
-   
+
    * @param item an item in the LForms form object
    * @returns {string} dataType - Data type in lforms
    * @private
@@ -153,8 +160,8 @@ function addCommonSDCExportFns(ns) {
     }
     return dataType;
   };
-  
-  
+
+
   /**
    * Make a FHIR Quantity for the given value and unit info.
    * @param value optional, must be an integer or decimal
@@ -166,22 +173,22 @@ function addCommonSDCExportFns(ns) {
   self._makeValueQuantity = function(value, itemUnit, unitSystem) {
     let fhirQuantity = {};
     let floatValue = parseFloat(value);
-    
+
     if(! isNaN(floatValue)) {
       fhirQuantity.value = floatValue;
     }
-    
+
     if(itemUnit) {
       self._setUnitAttributesToFhirQuantity(fhirQuantity, itemUnit);
       if(unitSystem) {
         fhirQuantity.system = unitSystem;
       }
     }
-    
+
     return (Object.keys(fhirQuantity).length > 0) ? fhirQuantity : null;
   };
-  
-  
+
+
   /**
    * Make a FHIR Quantity for the given value and unit info.
    * @param value required, must be an integer or decimal
@@ -194,8 +201,8 @@ function addCommonSDCExportFns(ns) {
     var defaultUnit = this._getDefaultUnit(itemUnits);
     return this._makeValueQuantity(value, defaultUnit, unitSystem);
   };
-  
-  
+
+
   /**
    * Pick a default unit if found, otherwise return first one as default. Will return
    * null, if passed with empty list.
@@ -207,7 +214,7 @@ function addCommonSDCExportFns(ns) {
     if(!lformsUnits || lformsUnits.length === 0) {
       return null;
     }
-    
+
     var ret = null;
     for(var i = 0; i < lformsUnits.length; i++) {
       if (lformsUnits[i].default) {
@@ -215,15 +222,15 @@ function addCommonSDCExportFns(ns) {
         break;
       }
     }
-    
+
     if(!ret) {
       ret = lformsUnits[0];
     }
-    
+
     return ret;
   };
-  
-  
+
+
   /**
    * Create a key from data type to be used in a hash
    * @param prefix a prefix to be added to the key
@@ -232,16 +239,16 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._getValueKeyByDataType = function(prefix, item) {
-    
+
     // prefix could be 'value', 'initial', 'answer'
     if (!prefix) {
       prefix = "value"
     }
-    
+
     var fhirType = this._getFhirDataType(item);
     var dataType = fhirType === 'quantity' ? 'QTY' : item.dataType;
     var valueKey = this._lformsTypesToFHIRFields[dataType];
-    
+
     return prefix + valueKey;
   };
 
@@ -318,11 +325,11 @@ function addCommonSDCExportFns(ns) {
         ret.push(rule);
       }
     });
-    
+
     return ret;
   };
-  
-  
+
+
   /**
    * Set form level attribute
    * @param target a QuestionnaireResponse object
@@ -361,7 +368,7 @@ function addCommonSDCExportFns(ns) {
       "reference": "Questionnaire/{{questionnaireId}}"
     };
   };
-  
+
 
   /**
    * Set unit attributes to a given FHIR quantity.
@@ -375,11 +382,11 @@ function addCommonSDCExportFns(ns) {
       if(lfUnit.name) {
         fhirQuantity.unit = lfUnit.name;
       }
-      
+
       if(lfUnit.code) {
         fhirQuantity.code = lfUnit.code;
       }
-      
+
       // Unit system is optional. It was using a default system before,
       // Now we have an defined system field, read it from data and
       // not assume a default.
@@ -388,7 +395,7 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
-  
+
 
   /**
    * Create a FHIR coding object for a unit.
@@ -413,7 +420,7 @@ function addCommonSDCExportFns(ns) {
     }
     return ret;
   };
-  
+
 
   /**
    * Set questionnaire-unitOption extensions using lforms units.
@@ -435,7 +442,7 @@ function addCommonSDCExportFns(ns) {
       targetFhirItem.extension.push(fhirUnitExt);
     }
   }
-  
+
 }
 
 export default addCommonSDCExportFns;

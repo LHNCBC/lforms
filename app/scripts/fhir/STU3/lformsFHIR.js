@@ -19859,7 +19859,8 @@ function addCommonSDCExportFns(ns) {
 
   self._handleItemControl = function (targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-    var itemControlType = ""; // Fly-over, Table, Checkbox, Combo-box, Lookup
+    var itemControlType = "";
+    var itemControlDisplay; // Fly-over, Table, Checkbox, Combo-box, Lookup
 
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item); // for answers
@@ -19868,25 +19869,32 @@ function addCommonSDCExportFns(ns) {
       if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
         // search field
         if (item.externallyDefined) {
-          itemControlType = "Lookup";
+          itemControlType = "autocomplete";
+          itemControlDisplay = "Auto-complete";
         } // prefetch list
         // combo-box
         else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-            itemControlType = "Combo-box";
+            itemControlType = "drop-down";
+            itemControlDisplay = "Drop down";
           } // radio or checkbox
           else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
               if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-                itemControlType = "Checkbox";
+                itemControlType = "check-box";
+                itemControlDisplay = "Check-box";
               } else {
-                itemControlType = "Radio";
+                itemControlType = "radio-button";
+                itemControlDisplay = "Radio Button";
               }
             }
       } // for section item
       else if (item.displayControl.questionLayout && dataType === "SECTION") {
           if (item.displayControl.questionLayout === "horizontal") {
-            itemControlType = "Table";
+            itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
+
+            itemControlDisplay = "Group Table";
           } else if (item.displayControl.questionLayout === "matrix") {
-            itemControlType = "Matrix";
+            itemControlType = "table";
+            itemControlDisplay = "Vertical Answer Table";
           } // else {
           //   itemControlType = "List";
           // }
@@ -19905,9 +19913,9 @@ function addCommonSDCExportFns(ns) {
               //"userSelected" : <boolean> // If this coding was chosen directly by the user
               "system": "http://hl7.org/fhir/questionnaire-item-control",
               "code": itemControlType,
-              "display": itemControlType
+              "display": itemControlDisplay
             }],
-            "text": itemControlType
+            "text": itemControlDisplay || itemControlType
           }
         });
       }
@@ -19934,13 +19942,11 @@ function addCommonSDCExportFns(ns) {
   };
   /**
    * Determine how an item's data type should be for export.
-   
-   If number type has multiple units, change it to quantity type. In such a case,
+    If number type has multiple units, change it to quantity type. In such a case,
    multiple units are converted to quesionnaire-unitOption extension and the default unit
    would go into initial.valueQuantity.unit.
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
-   
-   * @param item an item in the LForms form object
+    * @param item an item in the LForms form object
    * @returns {string} dataType - Data type in lforms
    * @private
    */
@@ -20376,7 +20382,7 @@ function addSDCImportFns(ns) {
 
     _processAnswerCardinality(targetItem, qItem);
 
-    _processDisplayControl(targetItem, qItem);
+    self._processDisplayControl(targetItem, qItem);
 
     _processRestrictions(targetItem, qItem);
 
@@ -20883,66 +20889,7 @@ function addSDCImportFns(ns) {
     }
 
     lfItem.dataType = type;
-  };
-  /**
-   * Parse questionnaire item for display control
-   *
-   * @param lfItem {object} - LForms item object to assign display control
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processDisplayControl(lfItem, qItem) {
-    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-
-    if (itemControlType) {
-      var displayControl = {};
-
-      switch (itemControlType.valueCodeableConcept.coding[0].code) {
-        case 'Lookup':
-          // TODO -
-          // Implies externallyDefined, but the URL is not saved in fhir resource.
-          // Perhaps it could be save in itemControlType.valueCodableConcept.text ...
-          // lfItem.externallyDefined = itemControlType.valueCodableConcept.text;
-          break;
-
-        case 'Combo-box':
-          displayControl.answerLayout = {
-            type: 'COMBO_BOX'
-          };
-          break;
-
-        case 'Checkbox':
-        case 'Radio':
-          displayControl.answerLayout = {
-            type: 'RADIO_CHECKBOX'
-          };
-          break;
-
-        case 'Table':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "horizontal";
-          }
-
-          break;
-
-        case 'Matrix':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "matrix";
-          }
-
-          break;
-
-        default:
-          displayControl = null;
-      }
-
-      if (displayControl && !jQuery.isEmptyObject(displayControl)) {
-        lfItem.displayControl = displayControl;
-      }
-    }
-  } // QuesitonnaireResponse Import
+  }; // QuesitonnaireResponse Import
 
 
   self._mergeQR = {
@@ -21569,6 +21516,72 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
+  };
+  /**
+   * Parse questionnaire item for display control
+   *
+   * @param lfItem {object} - LForms item object to assign display control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processDisplayControl = function (lfItem, qItem) {
+    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if (itemControlType) {
+      var displayControl = {};
+
+      switch (itemControlType.valueCodeableConcept.coding[0].code) {
+        case 'Lookup': // backward-compatibility with old export
+
+        case 'Combo-box': // backward-compatibility with old export
+
+        case 'autocomplete':
+        case 'drop-down':
+          displayControl.answerLayout = {
+            type: 'COMBO_BOX'
+          };
+          break;
+
+        case 'Checkbox': // backward-compatibility with old export
+
+        case 'check-box':
+        case 'Radio': // backward-compatibility with old export
+
+        case 'radio-button':
+          displayControl.answerLayout = {
+            type: 'RADIO_CHECKBOX'
+          };
+          break;
+
+        case 'Table': // backward-compatibility with old export
+
+        case 'gtable':
+          // Not in STU3, but we'll accept it
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "horizontal";
+          }
+
+          break;
+
+        case 'Matrix': // backward-compatibility with old export
+
+        case 'table':
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "matrix";
+          }
+
+          break;
+
+        default:
+          displayControl = null;
+      }
+
+      if (displayControl && !jQuery.isEmptyObject(displayControl)) {
+        lfItem.displayControl = displayControl;
+      }
+    }
   }; // QuestionnaireResponse Import
 
 
