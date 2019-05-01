@@ -1,15 +1,17 @@
 // Use IIFE so that strict mode is not at the file level
 (function() {
   'use strict';
-  angular.module('lformsWidget', [
-    'ngAnimate',
-    'ui.bootstrap',
+  var Def = require('autocomplete-lhc');
+  var widgetDeps = [
     'smoothScroll',
     'autocompleteLhcMod',
-    'ui.bootstrap.datepicker',
-    'ui.bootstrap.timepicker',
-    'ui.bootstrap.datetimepicker'
-    ])
+    'ui.bootstrap.datetimepicker'];
+  if (Def._tooltip)
+    widgetDeps = [Def._animate, Def._popover, Def._tooltip].concat(widgetDeps);
+  else
+    widgetDeps = ['ngAnimate', 'ui.bootstrap', 'ui.bootstrap.datepicker',
+      'ui.bootstrap.timepicker'].concat(widgetDeps);
+  angular.module('lformsWidget', widgetDeps)
     .config(['$animateProvider', function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
     }])
@@ -40,3 +42,7 @@
       };
     });
 })();
+
+// Define the top-level namespace object
+var LForms = {};
+module.exports = LForms;

@@ -1,6 +1,8 @@
 // Generated on 2014-10-20 using generator-angular 0.9.8
 'use strict';
 
+var serveStatic = require('serve-static');
+
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -19,8 +21,6 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
-  var wiredep = require('wiredep');
-
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -34,62 +34,6 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: appConfig,
 
-    compress: {
-      main: {
-        options: {
-          archive: '<%= uncompressedDist %>.zip'
-        },
-        files: [{
-          src: ['<%= versionedName %>/**'],
-          cwd: 'dist',
-          expand: true
-        }]
-      }
-    },
-
-
-    cssmin: {
-      dist: {
-        files: [{
-          src: wiredep({includeSelf: true}).css.concat(
-            'bower_components/bootstrap/dist/css/bootstrap.css'),
-          dest: '<%= uncompressedDist %>/styles/lforms.min.css'
-        },
-        {
-          src: 'app/styles/themes.css',
-          dest: '<%= uncompressedDist %>/styles/themes.min.css'
-        }]
-      }
-    },
-
-
-    sass: {
-      options: {
-        sourceMap: true
-      },
-      dist: {
-        files: {
-          'app/styles/themes.css': 'app/styles/themes.scss'
-        }
-      }
-    },
-
-    shell: {
-      dist_dir_link: {
-        // Make a softlink to the versioned dist directory, for the tests
-        command: 'ln -s <%= versionedName %> latest',
-        options: {
-          execOptions: {
-            cwd: 'dist'
-          }
-        }
-      },
-      webpack: {
-        command: 'webpack',
-      }
-    },
-
-
     ngtemplates:  {
       lformsWidget:        {
         cwd: '<%= yeoman.app %>/views/partials',
@@ -98,13 +42,6 @@ module.exports = function (grunt) {
       }
     },
 
-    directivejs: {
-
-    },
-
-    directivecss: {
-
-    },
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
@@ -125,7 +62,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: []
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -160,12 +97,16 @@ module.exports = function (grunt) {
           },
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
+              serveStatic('.tmp'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              connect().use(
+                '/bower-dist',
+                serveStatic('./bower-dist')
+              ),
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -175,13 +116,17 @@ module.exports = function (grunt) {
           port: 9001,
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
-              connect.static('test'),
+              serveStatic('.tmp'),
+              serveStatic('test'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              connect().use(
+                '/bower-dist',
+                serveStatic('./bower-dist')
+              ),
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -232,37 +177,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Empties folders to start fresh
-    clean: {
-      dist: {
-        files: [{
-          dot: true,
-          src: [
-            '.tmp',
-            '<%= yeoman.dist %>/{,*/}*',
-            '!<%= yeoman.dist %>/.git*',
-            '<%= yeoman.generated %>/**/*'
-          ]
-        }]
-      },
-      server: '.tmp'
-    },
-
-    // Add vendor prefixed styles
-    autoprefixer: {
-      options: {
-        browsers: ['last 1 version']
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      }
-    },
-
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
@@ -277,212 +191,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Renames files for browser caching purposes
-    filerev: {
-      dist: {
-        src: [
-          '<%= yeoman.dist %>/scripts/{,*/}*.js',
-          '<%= yeoman.dist %>/styles/{,*/}*.css',
-          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/styles/fonts/*'
-        ]
-      }
-    },
-
-    uglify: {
-      // options: { beautify: true, mangle: false }, // debugging only
-      dist: {
-        files: {
-          // This will include dependencies, including jQuery
-          '<%= uncompressedDist %>/lforms.min.js':
-            wiredep({includeSelf: true}).js,
-        }
-      }
-    },
-
-    // Reads HTML for usemin blocks to enable smart builds that automatically
-    // concat, minify and revision files. Creates configurations in memory so
-    // additional tasks can operate on them
-    useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
-      options: {
-        dest: '<%= yeoman.dist %>',
-        flow: {
-          html: {
-            steps: {
-              js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
-            },
-            post: {}
-          }
-        }
-      }
-    },
-
-    // Performs rewrites based on filerev and the useminPrepare configuration
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
-      }
-    },
-
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    svgmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    htmlmin: {
-      dist: {
-        options: {
-          collapseWhitespace: true,
-          conservativeCollapse: true,
-          collapseBooleanAttributes: true,
-          removeCommentsFromCDATA: true,
-          removeOptionalTags: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/{,*/}*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
-    },
-
-    // ng-annotate tries to make the code safe for minification automatically
-    // by using the Angular long form for dependency injection.
-    ngAnnotate: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/concat/scripts',
-          src: ['*.js', '!oldieshim.js'],
-          dest: '.tmp/concat/scripts'
-        }]
-      }
-    },
-
-    // Copies remaining files to places other tasks can use
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= uncompressedDist %>',
-          src: [
-            'images/{,*/}*'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/styles',
-          cwd: 'bower_components/jquery-ui/themes/start',
-          src: [
-            'images/*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>',
-          cwd: 'bower_components/bootstrap/dist',
-          src: [
-            'fonts/*'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= yeoman.generated %>/styles',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: [
-            '*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= yeoman.generated %>/styles/',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: 'auto_completion.css',
-          rename: function() {return '<%= yeoman.generated %>/styles/autocomplete-lhc.css'}
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/styles',
-          cwd: 'node_modules/autocomplete-lhc/source',
-          src: [
-            '*png'
-          ]
-        }, {
-          expand: true,
-          dest: '<%= uncompressedDist %>/',
-          cwd: 'app/scripts/fhirpath',
-          src: [
-            'fhirpath.min.js'
-          ]
-        }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
-        src: '{,*/}*.css'
-      }
-    },
-
-    // Run some tasks in parallel to speed up the build process
-    concurrent: {
-      server: [
-        'copy:styles'
-      ],
-      test: [
-        'copy:styles'
-      ],
-      dist: [
-        'copy:styles',
-        'imagemin',
-        'svgmin'
-      ]
-    },
 
     // Test settings
     karma: {
@@ -496,16 +204,10 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
+      return grunt.task.run(['connect:dist:keepalive']);
     }
 
     grunt.task.run([
-      'clean:server',
-      'wiredep',
-      'sass',
-      'ngtemplates',
-      'concurrent:server',
-      'autoprefixer',
       'connect:livereload',
       'watch'
     ]);
@@ -518,17 +220,11 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('test:server', [
-    'build',
     'karma'
   ]);
 
   grunt.registerTask('test:e2e', [
-    'clean:server',
-    'ngtemplates',
-    'concurrent:test',
-    'autoprefixer',
     'connect:test',
-    'wiredep',
     'protractor'
   ]);
 
@@ -537,42 +233,10 @@ module.exports = function (grunt) {
     'test:e2e'
   ]);
 
-  grunt.registerTask('readBowerVersion', function () {
-    var bowerVersion = grunt.file.readJSON('./bower.json').version;
-    var versionedName = 'lforms-'+bowerVersion;
-    grunt.config.set('versionedName', versionedName);
-    grunt.config.set('uncompressedDist', 'dist/'+versionedName);
-  });
-
-
-  grunt.registerTask('build', [
-    'clean:dist',
-    'ngtemplates',
-    'sass',
-    'readBowerVersion',
-    'copy:dist',
-    'cssmin',
-    'shell:dist_dir_link', // needed by webpack
-    'shell:webpack', // produces files needed by uglify
-    'uglify',
-    'compress'
-  ]);
-
   grunt.registerTask('default', [
     //'newer:jshint',
     'test'
   ]);
 
-
-  // This task is just for debugging the "uglify" configuration
-  grunt.registerTask('listDepJS', function() {
-    console.log("\n\n" + wiredep(
-      {includeSelf: true}).js.join("\n"));
-  });
-
-  grunt.registerTask('listDepCSS', function() {
-    console.log("\n\n" + wiredep(
-      {includeSelf: true}).css.join("\n"));
-  });
 
 };

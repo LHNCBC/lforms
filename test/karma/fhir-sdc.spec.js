@@ -5,6 +5,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe('_significantDigits', function() {
+          it('should count zeros left of the decimal', function() {
+            // This is because users are not likely to enter number in
+            // scientific notation.
+            assert.equal(fhir.SDC._significantDigits(12300), 5);
+          });
+          it('should count digits right of the decimal', function() {
+            assert.equal(fhir.SDC._significantDigits(12.01), 4);
+          });
+        });
         describe('itemToQuestionnaireItem', function() {
 
           it('should convert code system', function() {
@@ -132,6 +142,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   });
                 }
                 var lfItem = {};
+                lfItem.answerCardinality = fixture.answerCardinality;
                 LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
                 LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
                 assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
@@ -201,13 +212,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[5].displayControl, undefined);
             assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
           });
-          
+
           describe('Units', function () {
             var lforms = null;
             beforeEach(function(){
               lforms = angular.copy(window['units_example']);
             });
-            
+
             it('should convert units to unitOption extension', function () {
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
@@ -234,7 +245,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(qty.code, lforms.items[0].units[0].code);
               assert.equal(qty.system, lforms.items[0].units[0].system);
               assert.equal(fhirQ.item[0].type, 'quantity');
-  
+
               // With default unit and default answer.
               lforms.items[0].units[0].default = true;
               fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
@@ -250,7 +261,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(qty.code, lforms.items[0].units[0].code);
               assert.equal(qty.system, lforms.items[0].units[0].system);
               assert.equal(fhirQ.item[0].type, 'quantity');
-  
+
               // Default unit set without default answer.
               delete lforms.items[0].defaultAnswer;
               lforms.items[0].units[0].default = true;
@@ -276,7 +287,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 assert.equal(unitOptions[i].valueCoding.display, lforms.items[0].units[i].name);
                 assert.equal(unitOptions[i].valueCoding.system, lforms.items[0].units[i].system);
               }
-              
+
               // Import
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
@@ -289,7 +300,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }
               assert.isOk(convertedLfData.items[0].units[0].default);
             });
-            
+
             it('should convert default unit to initial quantity unit', function () {
               lforms.items[0].units[2].default = true;
               // Export
@@ -301,38 +312,38 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               else {
                 qty = fhirQ.item[0].initial[0].valueQuantity;
               }
-              
+
               assert.equal(qty.unit, lforms.items[0].units[2].name);
               assert.equal(qty.code, lforms.items[0].units[2].code);
               assert.equal(qty.system, lforms.items[0].units[2].system);
-  
+
               // Import
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
-  
+
               assert.equal(convertedLfData.items[0].units.length, lforms.items[0].units.length);
               assert.isOk(convertedLfData.items[0].units[2].default);
             });
-            
+
             it('should convert a single unit to questionnaire unit extention', function() {
               lforms.items[0].units.splice(1);
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
-              
+
               var unitOption = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnitOption);
 
               assert.isNotOk(unitOption);
               if(fhirVersion === 'STU3') assert.isUndefined(fhirQ.item[0].initialQuantity);
               if(fhirVersion === 'R4') assert.isUndefined(fhirQ.item[0].initial);
-              
+
               var qUnit = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnit);
-              
+
               assert.equal(qUnit.valueCoding.code, lforms.items[0].units[0].code);
-              assert.equal(qUnit.valueCoding.display, lforms.items[0].units[0].name);
+            assert.equal(qUnit.valueCoding.display, lforms.items[0].units[0].name);
               assert.equal(qUnit.valueCoding.system, lforms.items[0].units[0].system);
-  
+
               // Import
               var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
-  
+
               assert.equal(convertedLfData.items[0].dataType, lforms.items[0].dataType);
               assert.equal(convertedLfData.items[0].units.length, 1);
               assert.equal(convertedLfData.items[0].units[0].name, lforms.items[0].units[0].name);
@@ -378,6 +389,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var lfItem = {
               "questionCodeSystem":"ad-hoc",
               "questionCode": "12345",
+              "linkId": "12345",
               "question": "fill in weight",
               "dataType": "QTY"
             };
@@ -393,7 +405,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(validationTestForm));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
 
-            assert.equal(convertedLfData.items.length, 33);
+            assert.equal(convertedLfData.items.length, 34);
             // TODO - min/max exclusive is not supported
             assert.equal(convertedLfData.items[12].restrictions.minInclusive, 5);
             assert.equal(convertedLfData.items[14].restrictions.maxInclusive, 10);
@@ -406,7 +418,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
             var convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
 
-            assert.equal(convertedLfData.items.length, 33);
+            assert.equal(convertedLfData.items.length, 34);
             assert.equal(convertedLfData.items[23].externallyDefined, optionsRes);
           });
         });

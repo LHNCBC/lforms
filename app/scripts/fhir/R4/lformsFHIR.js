@@ -99,7 +99,9 @@ __webpack_require__.r(__webpack_exports__);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
-var fhir = LForms.FHIR[fhirVersion] = {};
+var fhir = LForms.FHIR[fhirVersion] = {
+  LOINC_URI: 'http://loinc.org'
+};
 fhir.fhirpath = __webpack_require__(1);
 
 fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
@@ -18104,24 +18106,9 @@ engine.andOp = function (a, b) {
 };
 
 engine.xorOp = function (a, b) {
-  if (Array.isArray(b)) {
-    if (a === true) {
-      return true;
-    } else if (a === false) {
-      return [];
-    } else if (Array.isArray(a)) {
-      return [];
-    }
-  }
-
-  if (Array.isArray(a)) {
-    if (b === true) {
-      return true;
-    } else {
-      return [];
-    }
-  }
-
+  // If a or b are arrays, they must be the empty set.
+  // In that case, the result is always the empty set.
+  if (Array.isArray(a) || Array.isArray(b)) return [];
   return a && !b || !a && b;
 };
 
@@ -19120,6 +19107,7 @@ var self = {
 
     if (item._initialExprExt) targetItem.extension.push(item._initialExprExt);
     if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
+    if (item._obsLinkPeriodExt) targetItem.extension.push(item._obsLinkPeriodExt);
     if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
     this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
@@ -20280,8 +20268,6 @@ function addCommonSDCExportFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 /**
  * A package to handle conversion from FHIR SDC Questionnaire to LForms
  *
@@ -20462,12 +20448,13 @@ function addSDCImportFns(ns) {
   // more than one extension of the type is permitted.
 
 
-  var expressionExtensions = {
+  var copiedExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false]
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false]
   };
-  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
-  var expressionExtURLs = Object.keys(expressionExtensions);
+  copiedExtensions[self.fhirExtVariable] = ["_variableExt", true];
+  var copiedExtURLs = Object.keys(copiedExtensions);
   /**
    *  Some extensions are simply copied over to the LForms data structure.
    *  This copies those extensions from qItem to lfItem if they exist, and
@@ -20477,9 +20464,9 @@ function addSDCImportFns(ns) {
    */
 
   self._processCopiedItemExtensions = function (lfItem, qItem) {
-    for (var i = 0, len = expressionExtURLs.length; i < len; ++i) {
-      var url = expressionExtURLs[i];
-      var extInfo = expressionExtensions[url];
+    for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
@@ -20541,7 +20528,7 @@ function addSDCImportFns(ns) {
             source: source.questionCode
           };
 
-          var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
 
           var opMapping = null;
 
@@ -20596,9 +20583,9 @@ function addSDCImportFns(ns) {
         };
         ret.trigger = {};
 
-        var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
+        var answer0 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
 
-        var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
+        var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
 
         if (source.dataType === 'QTY') {
           ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
@@ -20738,33 +20725,15 @@ function addSDCImportFns(ns) {
       return;
     }
 
-    var isMultiple = self._hasMultipleAnswers(qItem);
-
-    var defaultAnswer = null;
+    var vals = [];
     qItem.initial.forEach(function (elem) {
       var answer = null;
 
-      var val = _getValueWithPrefixKey(elem, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
 
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE') {
-        answer = {};
-        if (val.code !== undefined) answer.code = val.code;
-        if (val.display !== undefined) answer.text = val.display;
-      } else if (lfItem.dataType === 'QTY') {
-        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
-      } else {
-        answer = val;
-      }
-
-      if (isMultiple) {
-        if (!defaultAnswer) defaultAnswer = [];
-        if (answer) defaultAnswer.push(answer);
-      } else {
-        // single selection
-        defaultAnswer = answer;
-      }
+      if (val) vals.push(val);
     });
-    lfItem.defaultAnswer = defaultAnswer;
+    if (vals.length > 0) this._processFHIRValues(lfItem, vals, true);
   };
   /**
    * Parse questionnaire item for units list
@@ -20988,7 +20957,7 @@ function addSDCImportFns(ns) {
     for (var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
 
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
 
       if (val) {
         if (restriction.url.match(/minValue$/)) {
@@ -21086,32 +21055,7 @@ function addSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  };
-  /**
-   * Get value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
-   * @private
-   */
-
-
-  function _getValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-
-    if (_typeof(obj) === 'object') {
-      for (var key in obj) {
-        if (key.match(keyRegex)) {
-          ret = obj[key];
-          break;
-        }
-      }
-    }
-
-    return ret;
-  } // Quesitonnaire Response Import
+  }; // Quesitonnaire Response Import
 
 
   self._mergeQR = {
@@ -21134,18 +21078,6 @@ function addSDCImportFns(ns) {
     },
 
     /**
-     * Get the item code from a link id
-     * @param linkId a link id
-     * @returns {*}
-     * @private
-     */
-    _getItemCodeFromLinkId: function _getItemCodeFromLinkId(linkId) {
-      var parts = linkId.split("/");
-      var itemCode = parts[parts.length - 1];
-      return itemCode;
-    },
-
-    /**
      * Get structural info of a QuestionnaireResponse by going though each level of items
      * @param parentQRItemInfo the structural info of a parent item
      * @param parentItem a parent item in a QuestionnaireResponse object
@@ -21158,19 +21090,18 @@ function addSDCImportFns(ns) {
       if (parentQRItem && parentQRItem.item) {
         for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
           var item = parentQRItem.item[i];
+          var linkId = item.linkId; //code is not necessary included in linkId
+          // first item that has the same code, either repeating or non-repeating
 
-          var itemCode = this._getItemCodeFromLinkId(item.linkId); // first item that has the same code, either repeating or non-repeating
-
-
-          if (!repeatingItemProcessed[itemCode]) {
-            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem); // create structure info for the item
+          if (!repeatingItemProcessed[linkId]) {
+            var repeatingInfo = this._findTotalRepeatingNum(linkId, parentQRItem); // create structure info for the item
 
 
             var repeatingItems = repeatingInfo.repeatingItems;
 
             for (var j = 0, jLen = repeatingItems.length; j < jLen; j++) {
               var qrItemInfo = {
-                code: itemCode,
+                linkId: linkId,
                 item: repeatingItems[j],
                 index: j,
                 total: repeatingInfo.total
@@ -21181,7 +21112,7 @@ function addSDCImportFns(ns) {
               qrItemsInfo.push(qrItemInfo);
             }
 
-            repeatingItemProcessed[itemCode] = true;
+            repeatingItemProcessed[linkId] = true;
           }
         }
 
@@ -21191,21 +21122,19 @@ function addSDCImportFns(ns) {
 
     /**
      * Find the number of the repeating items that have the same code
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param parentQRItem a parent item in a QuestionnaireResponse object
      * @returns a structural info object for a repeating item
      * @private
      */
-    _findTotalRepeatingNum: function _findTotalRepeatingNum(code, parentQRItem) {
+    _findTotalRepeatingNum: function _findTotalRepeatingNum(linkId, parentQRItem) {
       var total = 0;
       var repeatingItems = [];
 
       for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
         var item = parentQRItem.item[i];
 
-        var itemCode = this._getItemCodeFromLinkId(item.linkId);
-
-        if (itemCode === code) {
+        if (linkId === item.linkId) {
           repeatingItems.push(item);
 
           if (Array.isArray(item.answer)) {
@@ -21225,17 +21154,17 @@ function addSDCImportFns(ns) {
     /**
      * Add repeating items into LForms definition data object
      * @param parentItem a parent item
-     * @param itemCode code of a repeating item
+     * @param linkId linkId of a repeating item
      * @param total total number of the repeating item with the same code
      * @private
      */
-    _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
+    _addRepeatingItems: function _addRepeatingItems(parentItem, linkId, total) {
       // find the first (and the only one) item
       var item = null;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -21255,18 +21184,18 @@ function addSDCImportFns(ns) {
     /**
      * Find a matching repeating item by item code and the index in the items array
      * @param parentItem a parent item
-     * @param itemCode code of a repeating (or non-repeating) item
+     * @param linkId linkId of a repeating (or non-repeating) item
      * @param index index of the item in the sub item array of the parent item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, itemCode, index) {
+    _findTheMatchingItemByLinkIdAndIndex: function _findTheMatchingItemByLinkIdAndIndex(parentItem, linkId, index) {
       var item = null;
       var idx = 0;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             if (idx === index) {
               item = parentItem.items[i];
               break;
@@ -21284,16 +21213,16 @@ function addSDCImportFns(ns) {
      * Find a matching repeating item by item code alone
      * When used on the LForms definition data object, there is no repeating items yet.
      * @param parentItem a parent item
-     * @param itemCode code of an item
+     * @param linkId linkId of an item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, itemCode) {
+    _findTheMatchingItemByLinkId: function _findTheMatchingItemByLinkId(parentItem, linkId) {
       var item = null;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -21305,13 +21234,13 @@ function addSDCImportFns(ns) {
 
     /**
      * Set value and units on a LForms item
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param answer value for the item
      * @param item a LForms item
      * @private
      */
-    _setupItemValueAndUnit: function _setupItemValueAndUnit(code, answer, item) {
-      if (item && code === item.questionCode && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
+    _setupItemValueAndUnit: function _setupItemValueAndUnit(linkId, answer, item) {
+      if (item && linkId === item.linkId && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
         var dataType = item.dataType; // any one has a unit must be a numerical type, let use REAL for now.
         // dataType conversion should be handled when panel data are added to lforms-service.
 
@@ -21508,7 +21437,10 @@ function addCommonSDCFns(ns) {
     }
 
     return ret;
-  };
+  }; // Store the UCUM code system URI
+
+
+  self.UCUM_URI = 'http://unitsofmeasure.org';
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
@@ -21519,6 +21451,8 @@ function addCommonSDCFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -21576,6 +21510,178 @@ function addCommonSDCImportFns(ns) {
     }
 
     return target;
+  };
+  /**
+   *  Returns the number of sinificant digits in the number after, ignoring
+   *  trailing zeros.  (I am including this on "self" so we can have tests for it.)
+   */
+
+
+  self._significantDigits = function (x) {
+    // Based on https://stackoverflow.com/a/9539746/360782
+    // Make sure it is a number and use the builtin number -> string.
+    var s = "" + +x; // The following RegExp include the exponent, which we don't need
+    //var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s);
+
+    var match = /(\d+)(?:\.(\d+))?/.exec(s); // NaN or Infinity or integer.
+    // We arbitrarily decide that Infinity is integral.
+
+    if (!match) {
+      return 0;
+    }
+
+    var wholeNum = match[1];
+    var fraction = match[2]; //var exponent = match[3];
+
+    return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
+  };
+  /**
+   *  Imports an observation's values into the given LForms item.
+   * @param lfItem the LForms item to which a value will be assigned.
+   * @param obs the observation whose value will be assigned to lfItem.  It
+   *  assumed that obs has an appropriate data type for its value.
+   */
+
+
+  self.importObsValue = function (lfItem, obs) {
+    // Get the value from obs, based on lfItem's data type.  (The altertnative
+    // seems to be looping through the keys on obs looking for something that
+    // starts with "value".
+    var val = null;
+    var lfDataType = lfItem.dataType;
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    if (fhirValType) val = obs['value' + fhirValType];
+
+    if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
+      // Accept initial value of type Quantity for these types.
+      val = obs.valueQuantity;
+      if (val) val._type = 'Quantity';
+    }
+
+    if (val) {
+      if (!val._type && _typeof(val) === 'object') val._type = fhirValType; // Before importing, confirm val contains a valid unit from the
+      // item's unit list.
+
+      var unitOkay = true;
+
+      if (val._type === 'Quantity') {
+        if (lfItem.units) {
+          var matchingUnit;
+          var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
+          // for UCUM).  For now, just remove it.
+
+          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          var isUCUMUnit = valSystem === self.UCUM_URI;
+          var ucumUnit;
+
+          for (var i = 0, len = lfItem.units.length; i < len && !matchingUnit; ++i) {
+            var lfUnit = lfItem.units[i];
+
+            if (lfUnit.system && lfUnit.system === valSystem && lfUnit.code === val.code || !lfUnit.system && lfUnit.name === val.unit) {
+              matchingUnit = lfUnit;
+            }
+
+            if (isUCUMUnit && !matchingUnit && !ucumUnit && lfUnit.system === self.UCUM_URI) ucumUnit = lfUnit;
+          }
+
+          if (!matchingUnit && ucumUnit) {
+            // See if we can convert to the ucumUnit we found
+            var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(val.code, val.value, ucumUnit.code);
+
+            if (result.status === 'succeeded') {
+              matchingUnit = ucumUnit; // Round the result to the same number of significant digits as the
+              // input value.
+
+              var originalSD = this._significantDigits(val.value);
+
+              if (originalSD > 0) val.value = Number.parseFloat(result.toVal.toPrecision(originalSD));else val.value = result.toVal;
+              val.code = ucumUnit.code;
+            }
+          }
+
+          if (!matchingUnit) unitOkay = false;
+        }
+      }
+
+      if (unitOkay) {
+        lfItem.unit = matchingUnit;
+
+        this._processFHIRValues(lfItem, [val]);
+      }
+    }
+  };
+  /**
+   *   Assigns FHIR values to an LForms item.
+   *  @param lfItem the LForms item to receive the values from fhirVals
+   *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
+   *   Complex types like Quantity should have _type set to the type.
+   *  @param setDefault if true, the default value in lfItem will be set instead
+   *   of the value.
+   */
+
+
+  self._processFHIRValues = function (lfItem, fhirVals, setDefault) {
+    var lfDataType = lfItem.dataType;
+    var isMultiple = lfItem.answerCardinality && lfItem.answerCardinality.max === '*';
+    var answers = [];
+
+    for (var i = 0, len = fhirVals.length; i < len; ++i) {
+      var fhirVal = fhirVals[i];
+      var answer = null;
+
+      if (lfDataType === 'CWE' || lfDataType === 'CNE') {
+        answer = {};
+        if (fhirVal.code !== undefined) answer.code = fhirVal.code;
+        if (fhirVal.display !== undefined) answer.text = fhirVal.display;
+      } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
+        if (fhirVal.value !== undefined) {
+          answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
+        }
+      } else {
+        answer = fhirVal;
+      }
+
+      answers.push(answer);
+    }
+
+    if (isMultiple) {
+      if (setDefault) lfItem.defaultAnswer = answers;else lfItem.value = answers;
+    } else {
+      // there should just be one answer
+      if (setDefault) lfItem.defaultAnswer = answers[0];else lfItem.value = answers[0];
+    }
+  };
+  /**
+   * Get a FHIR value from an object given a partial string of hash key.
+   * Use it where at most only one key matches.
+   *
+   * @param obj {object} - Object to search
+   * @param keyRegex {regex} - Regular expression to match a key.  This should
+   *  be the beginning part of the key up to the type (e.g., /^value/, to match
+   *  "valueQuantity").
+   * @returns {*} - Corresponding value of matching key.  For complex types,
+   *  such as Quantity, the type of the returned object will be present under
+   *  a _type attribute.
+   * @private
+   */
+
+
+  self._getFHIRValueWithPrefixKey = function (obj, keyRegex) {
+    var ret = null;
+
+    if (_typeof(obj) === 'object') {
+      for (var key in obj) {
+        var matchData = key.match(keyRegex);
+
+        if (matchData) {
+          ret = obj[key];
+          if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
+          break;
+        }
+      }
+    }
+
+    return ret;
   }; // QuestionnaireResponse Import
 
 
@@ -21615,12 +21721,12 @@ function addCommonSDCImportFns(ns) {
       if (qrItem) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
+          var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId); // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
 
 
           if (ns._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
 
 
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
@@ -21641,16 +21747,14 @@ function addCommonSDCImportFns(ns) {
         } // find the matching LForms item
 
 
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
+        var item = this._findTheMatchingItemByLinkIdAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index); // set up value and units if it is a question
 
 
         if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
           var qrAnswer = qrItem.answer;
 
           if (qrAnswer && qrAnswer.length > 0) {
-            var code = this._getItemCodeFromLinkId(qrItem.linkId);
-
-            this._setupItemValueAndUnit(code, qrAnswer, item);
+            this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
           }
         } // process items on the sub-level
 

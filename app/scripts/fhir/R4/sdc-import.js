@@ -12,7 +12,7 @@ function addSDCImportFns(ns) {
 
   var self = ns;
   // FHIR extension urls
-  
+
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
 
   self.formLevelIgnoredFields = [
@@ -191,14 +191,16 @@ function addSDCImportFns(ns) {
   // A map of FHIR extensions involving Expressions to the property names on
   // which they will be stored in LFormsData, and a boolean indicating whether
   // more than one extension of the type is permitted.
-  var expressionExtensions = {
+  var copiedExtensions = {
     "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
       ["_calculatedExprExt", false],
     "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
       ["_initialExprExt", false],
+    "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod":
+      ["_obsLinkPeriodExt", false],
   };
-  expressionExtensions[self.fhirExtVariable] = ["_variableExt", true];
-  var expressionExtURLs = Object.keys(expressionExtensions);
+  copiedExtensions[self.fhirExtVariable] = ["_variableExt", true];
+  var copiedExtURLs = Object.keys(copiedExtensions);
 
   /**
    *  Some extensions are simply copied over to the LForms data structure.
@@ -208,9 +210,9 @@ function addSDCImportFns(ns) {
    * @param lfItem an item from the LFormsData structure
    */
   self._processCopiedItemExtensions = function (lfItem, qItem) {
-    for (var i=0, len=expressionExtURLs.length; i<len; ++i) {
-      var url = expressionExtURLs[i];
-      var extInfo = expressionExtensions[url];
+    for (var i=0, len=copiedExtURLs.length; i<len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
       var prop = extInfo[0], multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
       if (!multiple || ext.length > 0)
@@ -263,7 +265,7 @@ function addSDCImportFns(ns) {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
           var condition = {source: source.questionCode};
-          var answer = _getValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = null;
           if(source.dataType === 'CWE' || source.dataType === 'CNE') {
             condition.trigger = {code: answer.code};
@@ -310,9 +312,9 @@ function addSDCImportFns(ns) {
         source.dataType === 'DTM' || source.dataType === 'QTY') {
         ret = {source: source.questionCode};
         ret.trigger = {};
-        var answer0 = _getValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
-        var answer1 = _getValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-    
+        var answer0 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
+        var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
+
         if(source.dataType === 'QTY') {
           ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
           ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
@@ -442,35 +444,15 @@ function addSDCImportFns(ns) {
       return;
     }
 
-    var isMultiple = self._hasMultipleAnswers(qItem);
-    var defaultAnswer = null;
-
+    var vals = [];
     qItem.initial.forEach(function(elem) {
       var answer = null;
-      var val = _getValueWithPrefixKey(elem, /^value/);
-
-      if (lfItem.dataType === 'CWE' || lfItem.dataType === 'CNE' ) {
-        answer = {};
-        if(val.code !== undefined) answer.code = val.code;
-        if(val.display !== undefined) answer.text = val.display;
-      }
-      else if(lfItem.dataType === 'QTY') {
-        if (val) answer = val.value; // Associated unit is parsed in _processUnitLists
-      }
-      else {
-        answer = val;
-      }
-
-      if (isMultiple) {
-        if(!defaultAnswer) defaultAnswer = [];
-        if(answer) defaultAnswer.push(answer);
-      }
-      else {     // single selection
-        defaultAnswer = answer;
-      }
+      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
+      if (val)
+        vals.push(val);
     });
-
-    lfItem.defaultAnswer = defaultAnswer;
+    if (vals.length > 0)
+      this._processFHIRValues(lfItem, vals, true);
   };
 
 
@@ -482,7 +464,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processUnitList = function (lfItem, qItem) {
- 
+
     var lformsUnits = [];
     var lformsDefaultUnit = null;
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
@@ -497,7 +479,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lUnit);
       }
     }
-  
+
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if(unit) {
       lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
@@ -530,7 +512,7 @@ function addSDCImportFns(ns) {
         lformsUnits.push(lformsDefaultUnit);
       }
     }
-  
+
     if(lformsUnits.length > 0) {
       if (!lformsDefaultUnit) {
         lformsUnits[0].default = true;
@@ -686,7 +668,7 @@ function addSDCImportFns(ns) {
 
     for(var i = 0; i < self.fhirExtUrlRestrictionArray.length; i++) {
       var restriction = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlRestrictionArray[i]);
-      var val = _getValueWithPrefixKey(restriction, /^value/);
+      var val = self._getFHIRValueWithPrefixKey(restriction, /^value/);
       if (val) {
 
         if(restriction.url.match(/minValue$/)) {
@@ -776,30 +758,6 @@ function addSDCImportFns(ns) {
   };
 
 
-  /**
-   * Get value from an object given a partial string of hash key.
-   * Use it where at most only one key matches.
-   *
-   * @param obj {object} - Object to search
-   * @param keyRegex {regex} - Regular expression to match a key
-   * @returns {*} - Corresponding value of matching key.
-   * @private
-   */
-  function _getValueWithPrefixKey(obj, keyRegex) {
-    var ret = null;
-    if(typeof obj === 'object') {
-      for(var key in obj) {
-        if(key.match(keyRegex)) {
-          ret = obj[key];
-          break;
-        }
-      }
-    }
-
-    return ret;
-  }
-
-
   // Quesitonnaire Response Import
   self._mergeQR = {
 
@@ -821,19 +779,6 @@ function addSDCImportFns(ns) {
 
 
     /**
-     * Get the item code from a link id
-     * @param linkId a link id
-     * @returns {*}
-     * @private
-     */
-    _getItemCodeFromLinkId: function(linkId) {
-      var parts = linkId.split("/");
-      var itemCode = parts[parts.length -1];
-      return itemCode;
-    },
-
-
-    /**
      * Get structural info of a QuestionnaireResponse by going though each level of items
      * @param parentQRItemInfo the structural info of a parent item
      * @param parentItem a parent item in a QuestionnaireResponse object
@@ -847,16 +792,16 @@ function addSDCImportFns(ns) {
       if (parentQRItem && parentQRItem.item) {
         for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
           var item = parentQRItem.item[i];
-          var itemCode = this._getItemCodeFromLinkId(item.linkId);
+          var linkId = item.linkId; //code is not necessary included in linkId
           // first item that has the same code, either repeating or non-repeating
-          if (!repeatingItemProcessed[itemCode]) {
-            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem);
+          if (!repeatingItemProcessed[linkId]) {
+            var repeatingInfo = this._findTotalRepeatingNum(linkId, parentQRItem);
 
             // create structure info for the item
             var repeatingItems = repeatingInfo.repeatingItems;
             for (var j=0, jLen=repeatingItems.length; j<jLen; j++) {
               var qrItemInfo = {
-                code: itemCode,
+                linkId: linkId,
                 item: repeatingItems[j],
                 index: j,
                 total: repeatingInfo.total
@@ -865,7 +810,7 @@ function addSDCImportFns(ns) {
               this._checkQRItems(qrItemInfo, repeatingItems[j]);
               qrItemsInfo.push(qrItemInfo);
             }
-            repeatingItemProcessed[itemCode] = true;
+            repeatingItemProcessed[linkId] = true;
           }
         }
         parentQRItemInfo.qrItemsInfo = qrItemsInfo;
@@ -875,19 +820,18 @@ function addSDCImportFns(ns) {
 
     /**
      * Find the number of the repeating items that have the same code
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param parentQRItem a parent item in a QuestionnaireResponse object
      * @returns a structural info object for a repeating item
      * @private
      */
-    _findTotalRepeatingNum : function(code, parentQRItem) {
+    _findTotalRepeatingNum : function(linkId, parentQRItem) {
 
       var total = 0;
       var repeatingItems = [];
       for (var i=0, iLen=parentQRItem.item.length; i<iLen; i++) {
         var item = parentQRItem.item[i];
-        var itemCode = this._getItemCodeFromLinkId(item.linkId);
-        if (itemCode === code) {
+        if (linkId === item.linkId) {
           repeatingItems.push(item);
           if (Array.isArray(item.answer)) {
             total += item.answer.length; // answers for repeating questions and repeating answers
@@ -908,16 +852,16 @@ function addSDCImportFns(ns) {
     /**
      * Add repeating items into LForms definition data object
      * @param parentItem a parent item
-     * @param itemCode code of a repeating item
+     * @param linkId linkId of a repeating item
      * @param total total number of the repeating item with the same code
      * @private
      */
-    _addRepeatingItems : function(parentItem, itemCode, total) {
+    _addRepeatingItems : function(parentItem, linkId, total) {
       // find the first (and the only one) item
       var item = null;
       if (parentItem.items) {
         for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -937,17 +881,17 @@ function addSDCImportFns(ns) {
     /**
      * Find a matching repeating item by item code and the index in the items array
      * @param parentItem a parent item
-     * @param itemCode code of a repeating (or non-repeating) item
+     * @param linkId linkId of a repeating (or non-repeating) item
      * @param index index of the item in the sub item array of the parent item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCodeAndIndex : function(parentItem, itemCode, index) {
+    _findTheMatchingItemByLinkIdAndIndex : function(parentItem, linkId, index) {
       var item = null;
       var idx = 0;
       if (parentItem.items) {
         for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             if (idx === index) {
               item = parentItem.items[i];
               break;
@@ -966,15 +910,15 @@ function addSDCImportFns(ns) {
      * Find a matching repeating item by item code alone
      * When used on the LForms definition data object, there is no repeating items yet.
      * @param parentItem a parent item
-     * @param itemCode code of an item
+     * @param linkId linkId of an item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCode : function(parentItem, itemCode) {
+    _findTheMatchingItemByLinkId : function(parentItem, linkId) {
       var item = null;
       if (parentItem.items) {
         for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -986,14 +930,14 @@ function addSDCImportFns(ns) {
 
     /**
      * Set value and units on a LForms item
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param answer value for the item
      * @param item a LForms item
      * @private
      */
-    _setupItemValueAndUnit : function(code, answer, item) {
+    _setupItemValueAndUnit : function(linkId, answer, item) {
 
-      if (item && code === item.questionCode && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
+      if (item && linkId === item.linkId && (item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
         var dataType = item.dataType;
 
         // any one has a unit must be a numerical type, let use REAL for now.

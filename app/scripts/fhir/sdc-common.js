@@ -7,7 +7,7 @@ function addCommonSDCFns(ns) {
 "use strict";
 
   var self = ns;
-  
+
   // A mapping of data types of items from LHC-Forms to FHIR Questionnaire
   self._lformsTypesToFHIRTypes = {
     "SECTION": 'group',
@@ -25,7 +25,7 @@ function addCommonSDCFns(ns) {
     "CWE": 'open-choice',
     "QTY": 'quantity'
   };
-  
+
   // A mapping from LHC-Forms data types to the partial field names of the value fields
   // and initial value fields in FHIR Questionnaire
   self._lformsTypesToFHIRFields = {
@@ -42,7 +42,7 @@ function addCommonSDCFns(ns) {
     "CWE": 'Coding',
     "QTY": 'Quantity'
   };
-  
+
   self._operatorMapping = {
     'minExclusive': '>',
     'maxExclusive': '<',
@@ -57,7 +57,7 @@ function addCommonSDCFns(ns) {
     '=': 'value',
     '!=': 'not'
   };
-  
+
   /**
    * Check if a LForms item has repeating questions
    * @param item a LForms item
@@ -80,8 +80,8 @@ function addCommonSDCFns(ns) {
     return item && item.answerCardinality && item.answerCardinality.max &&
         (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)
   };
-  
-  
+
+
   /**
    * Find out if multiple answers extension is true.
    * @param qItem - FHIR Questionnaire item.
@@ -97,8 +97,10 @@ function addCommonSDCFns(ns) {
     }
     return ret;
   };
-  
-  
+
+  // Store the UCUM code system URI
+  self.UCUM_URI = 'http://unitsofmeasure.org';
+
 }
 
 export default addCommonSDCFns;

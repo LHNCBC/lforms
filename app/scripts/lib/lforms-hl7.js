@@ -1,8 +1,7 @@
 /**
  * A package to generate HL7 messgages from LForms form data
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
+var LForms = require('../../lforms.js');
 
 LForms.HL7 = (function() {
   "use strict";

@@ -2,22 +2,77 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.3.0] 2019-04-29
+### Changed
+- Changed view's screen size breakpoints.
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse 
+  resource.
+- Added validation for signed values of INT and REAL data types. 
+### Fixed
+- Fixed bug in processing regexp value of 'pattern' restriction.
+   
+## [15.2.5] 2019-04-25
+### Fixed
+- Problems with mapping from the LForms structure to QuestionnaireResponse when
+  running FHIRPath expressions.  Added some tests.
+
+## [15.2.4] 2019-04-19
+### Fixed
+- Enabled generation of source maps for the FHIR support files.
+
+## [15.2.3] 2019-04-15
+### Fixed
+- Improved error handling and reporting for LForms.util.getFHIRServerReleaseID.
+
+## [15.2.2] 2019-04-05
+### Fixed
+- Corrected a problem with detecting which version of FHIR was being used by a
+  FHIR server.
+
+## [15.2.1] 2019-03-27
+### Removed
+- Excluded unnecessary files from the npm package.
+
+## [15.2.0] 2019-03-26
+### Added
+- The build process has been changed to use npm packages, in preparation for
+  registering this package on npm.  (At this point, this package should be ready
+  for being registered, which we will do soon.)  It is not expected that this is
+  a breaking change.
+
+## [15.1.0] 2019-03-22
+### Added
+- Support for the questionnaire-observationLinkPeriod extenstion for
+  pre-population.  (Extraction is not yet supported.)
+
+## [15.0.1] 2019-03-20
+### Fixed
+- This is a fix for calculated expressions in the Safari browser.  (Chrome, Edge,
+  and Firefox were working).
+
+## [15.0.0] 2019-03-20
+### Changed
+- Updated the jquery-ui package to 1.12.1 from 1.11.4, which is a breaking
+  change for that package.  Since jQuery is a global variable, this is
+  potentially a breaking change for users of the lforms package.  The lforms
+  APIs themselves are unchanged.
+
 ## [14.2.0] 2019-02-13
 ### Added
 - Added code and system attributes to unit, to align with FHIR specs.
 
 ## [14.1.4] 2019-02-07
 ### Changed
-- Fix typo in url for FHIR unit option.  
+- Fix typo in url for FHIR unit option.
 
 ## [14.1.3] 2019-01-29
 ### Changed
-- Fixed unit conversions to store the unit lists in unitOption extensions and 
+- Fixed unit conversions to store the unit lists in unitOption extensions and
   change the data type to quantity. Used initial.valueQuantity.unit to store the
-  lforms default value. If no default is found, the first unit in the list is set to 
+  lforms default value. If no default is found, the first unit in the list is set to
   default.
-- Refactored the code to reduce some duplication in STU3 and R4.  
-  
+- Refactored the code to reduce some duplication in STU3 and R4.
+
 ## [14.1.2] 2019-01-25
 ### Fixed
 - The BMI "calculationMethod" can now handle "[in_i]" as a unit.

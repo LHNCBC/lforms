@@ -14,14 +14,13 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
 
     <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/jquery-ui/themes/start/jquery-ui.min.css" />
-    <link rel="stylesheet" href="generated/styles/autocomplete-lhc.css" />
+    <link rel="stylesheet" href="../bower_components/jquery-ui/themes/redmond/jquery-ui.min.css" />
+    <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
+    <link rel="stylesheet" href="styles/lforms.css" />
     <!-- endbower -->
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin" media="all"/>
 
     <!-- lforms directive css files -->
-    <link rel="stylesheet" href="styles/lforms.css">
-    <link rel="stylesheet" href="styles/autocomplete-lhc/lforms.css">
     <link rel="stylesheet" href="styles/themes.css">
     <!-- end of lforms directive css files -->
 
@@ -76,11 +75,8 @@
 
     <!-- bower:js -->
     <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/jquery-ui/ui/core.js"></script>
     <script src="../bower_components/jquery-ui/ui/widget.js"></script>
-    <script src="../bower_components/jquery-ui/ui/button.js"></script>
-    <script src="../bower_components/jquery-ui/ui/dialog.js"></script>
-    <script src="../bower_components/jquery-ui/ui/datepicker.js"></script>
+    <script src="../bower_components/jquery-ui/ui/widgets/datepicker.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angular-animate/angular-animate.js"></script>
     <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -88,24 +84,24 @@
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
     <script src="../bower_components/bootstrap-ui-datetime-picker/dist/datetime-picker.js"></script>
-    <script src="generated/scripts/autocomplete-lhc.js"></script>
-    <script src="lforms.js"></script>
-    <script src="scripts/lforms-constants.js"></script>
-    <script src="scripts/lforms-config.js"></script>
-    <script src="scripts/lforms-controllers.js"></script>
-    <script src="scripts/lforms-directives.js"></script>
-    <script src="scripts/bootstrap-decorators.js"></script>
-    <script src="scripts/lib/date.js"></script>
-    <script src="scripts/lib/js-class.js"></script>
-    <script src="scripts/lib/cross_browser.js"></script>
-    <script src="scripts/lib/lforms-util.js"></script>
-    <script src="scripts/lib/polyfill.js"></script>
-    <script src="scripts/lib/lforms-hl7.js"></script>
-    <script src="scripts/lib/lforms-validate.js"></script>
-    <script src="scripts/lib/lforms-data.js"></script>
-    <script src="scripts/lib/expression-processor.js"></script>
-    <script src="scripts/fhir/versions.js"></script>
-    <script src="lforms.tpl.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/polyfill.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/prototype_api.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/jqueryLite.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effects.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/effectScroll.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/event.simulate.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/observable.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
+    <script src="../bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
+    <script src="../bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
+    <script src="../bower_components/ucum-lhc/browser-dist/ucum-lhc.js"></script>
+    <script src="../bower-dist/lforms.js"></script>
     <!-- endbower -->
     <script src="scripts/fhir/STU3/lformsFHIR.js"></script>
     <script src="scripts/fhir/R4/lformsFHIR.js"></script>
@@ -366,7 +362,6 @@
              *   Apart from others, it has selected file reference.
              */
             $scope.uploader.onAfterAddingFile = function(item) {
-console.log("%%% in onAfterAddingFile");
               // clean up the form before assigning a new one for performance reasons related to AngularJS watches
               $scope.lfData2 = null;
 
@@ -376,14 +371,16 @@ console.log("%%% in onAfterAddingFile");
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
                   var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-                  $scope.lfData2 = new LFormsData(questionnaire);
+                  $scope.lfData2 = new LForms.LFormsData(questionnaire);
                 }
                 // in the internal LForms format
                 else {
-                  $scope.lfData2 = new LFormsData(importedData);
+                  $scope.lfData2 = new LForms.LFormsData(importedData);
                   $('#fileAnchor')[0].value = '';
                 }
                 $scope.$apply();
+                // Reset the field with the filename we can load the same file again if needed.
+                $('#fileAnchor')[0].value = '';
               };
               reader.readAsText(item._file);
             };
@@ -542,7 +539,7 @@ console.log("%%% in onAfterAddingFile");
 
        // Set up FHIR version list
        var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
-       new Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
+       new LForms.Def.Autocompleter.Prefetch('fhirVersion', fhirVersions,
          {matchListValue: true});
        $('#fhirVersion')[0].value = fhirVersions[1];
     </script>

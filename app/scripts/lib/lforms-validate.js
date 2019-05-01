@@ -1,8 +1,7 @@
 /**
  * A package to process user data validations in LForms
  */
-if (typeof LForms === 'undefined')
-  LForms = {};
+var LForms = require('../../lforms.js');
 
 LForms.Validations = {
   // supported keys in restrictions
@@ -106,11 +105,11 @@ LForms.Validations = {
           }
           break;
         case "INT":
-          var regex = /^\s*(\d+)\s*$/;
+          var regex = /^(\+|-)?\d+$/;
           valid = regex.test(value);
           break;
         case "REAL":
-          var regex = /^\-?\d+(\.\d*)?$/;
+          var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
         case "PHONE":
@@ -177,9 +176,9 @@ LForms.Validations = {
     if (value !== undefined && value !== null && value !=="") {
       for (var key in restrictions) {
         var valid = true;
+        var keyValue = restrictions[key];
         switch(key) {
           case "minExclusive":
-            var keyValue = restrictions[key];
             if (parseFloat(value) > parseFloat(keyValue)) {
               valid = true;
             }
@@ -189,7 +188,6 @@ LForms.Validations = {
             }
             break;
           case "minInclusive":
-            var keyValue = restrictions[key];
             if (parseFloat(value) >= parseFloat(keyValue)) {
               valid = true;
             }
@@ -199,7 +197,6 @@ LForms.Validations = {
             }
             break;
           case "maxExclusive":
-            var keyValue = restrictions[key];
             if (parseFloat(value) < parseFloat(keyValue)) {
               valid = true;
             }
@@ -209,7 +206,6 @@ LForms.Validations = {
             }
             break;
           case "maxInclusive":
-            var keyValue = restrictions[key];
             if (parseFloat(value) <= parseFloat(keyValue)) {
               valid = true;
             }
@@ -225,7 +221,6 @@ LForms.Validations = {
             // TBD
             break;
           case "length":
-            var keyValue = restrictions[key];
             if (value.length == parseInt(keyValue)) {
               valid = true;
             }
@@ -235,7 +230,6 @@ LForms.Validations = {
             }
             break;
           case "maxLength":
-            var keyValue = restrictions[key];
             if (value.length <= parseInt(keyValue)) {
               valid = true;
             }
@@ -245,7 +239,6 @@ LForms.Validations = {
             }
             break;
           case "minLength":
-            var keyValue = restrictions[key];
             if (value.length >= parseInt(keyValue)) {
               valid = true;
             }
@@ -256,10 +249,12 @@ LForms.Validations = {
             break;
           case "pattern":
             // the "\" in the pattern string should have been escaped
-            var keyValue = restrictions[key];
+            var indexOfFirst = keyValue.indexOf("/");
+            var indexOfLast = keyValue.lastIndexOf("/");
             // get the pattern and the flag
-            var parts = keyValue.split("/");
-            var regex = new RegExp(parts[1], parts[2]);
+            var pattern = keyValue.slice(indexOfFirst+1, indexOfLast);
+            var flags = keyValue.slice(indexOfLast+1);
+            var regex = new RegExp(pattern, flags);
             if (regex.test(value)) {
               valid = true;
             }
