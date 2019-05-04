@@ -46,31 +46,6 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
-   *  QuestionnaireResponse and any extractable resources. (Currently this means
-   *  any Observations that can be extracted via the observationLinkPeriod
-   *  extension).
-   *
-   * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *  The default is false.
-   * @param subject A local FHIR resource that is the subject of the output resource.
-   *  If provided, a reference to this resource will be added to the output FHIR
-   *  resource when applicable.
-   * @returns {{}}
-   */
-  self.convertLFormsToQRBundle = function(lfData, noExtensions, subject) {
-    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
-    var observations = [];
-    for (var i=0, len=this.items.length; i<len; ++i) {
-      var item = this.items[i];
-      if (item._obsLinkPeriodExt)
-        observations.push(this._commonExport._createObservation(item));
-    }
-  };
-
-
-  /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
@@ -345,10 +320,14 @@ function addCommonSDCExportFns(ns) {
     target.authored = LForms.Util.dateToString(new Date());
 
     // questionnaire , required
+    // We do not have the ID at this point, so leave it unset for now.  Note
+    // that the fomat has also changed from Reference to canonical in R4.
+    /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+    */
   };
 
 

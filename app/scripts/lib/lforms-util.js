@@ -134,12 +134,13 @@ LForms.Util = {
    *    The default is false.
    *  * extract:  a flag for QuestionnaireReponse that data should be extracted
    *    (using the observationLinkPeriod extension).  In this case the returned
-   *    resource will be a bundle consisting of the QuestionnaireResponse and any
+   *    resource will be an array consisting of the QuestionnaireResponse and any
    *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.
-   * @returns {*} a FHIR resource
+   * @returns {*} a FHIR resource, or (if extract is true) an array of
+   *    resources.
    */
   _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
     if (!options)
@@ -164,7 +165,7 @@ LForms.Util = {
           break;
         case "QuestionnaireResponse":
           if (options.extract)
-            fhirData = fhir.SDC.convertLFormsToQRBundle(formData,
+            fhirData = fhir.SDC.convertLFormsToFHIRData(formData,
               options.noExtensions, options.subject);
           else
             fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,

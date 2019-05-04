@@ -79,20 +79,14 @@ var self = {
     }
 
     // create Observation
-console.log(LOINC_URI);
-console.log(item.questionCodeSystem);
     var qCodeSystem = (!item.questionCodeSystem || item.questionCodeSystem==='LOINC') ?
       LOINC_URI : item.questionCodeSystem;
+
     var obx = {
       "resourceType": "Observation",
       "status": "final",
       "code": {
-        "coding": [
-          {
-            "system": qCodeSystem,
-            "code": item.questionCode
-          }
-        ],
+        "coding": item.codings,
         "text": item.question
       }
     };
@@ -105,7 +99,22 @@ console.log(item.questionCodeSystem);
     }
 
     return obx;
+  },
+
+
+  /**
+   * Generate an almost unique ID for a given Observation code
+   * @param prefix A prefix for the ID (e.g. a code or resource name)
+   * @returns {string} a unique id
+   * @private
+   */
+  _getUniqueId: function(prefix) {
+    this._idCtr || (this._idCtr = 0);
+    return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' +
+      Math.random().toString(16).substr(2);
   }
+
+
 }
 
 export default self;

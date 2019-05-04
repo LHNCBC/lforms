@@ -26,6 +26,61 @@ var self = {
   stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
 
   /**
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns an array of QuestionnaireResponse and Observations.  Observations
+   *  will have derivedFrom set to a temporary reference created for the returned
+   *  QuestionnaireResponse (the first element of the array). The caller may
+   *  wish to put all of the returned resources into a transaction Bundle for
+   *  creating them on a FHIR server.
+   */
+  convertLFormsToFHIRData: function(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    if (!qr.id) {
+      qr.id = this._commonExport._getUniqueId(
+        qr.identifier && qr.identifier.value || 'QR')
+    }
+    var qrRef = 'QuestionnaireResponse/'+qr.id;
+    var rtn = [qr];
+    for (var i=0, len=lfData.items.length; i<len; ++i) {
+      var item = lfData.items[i];
+      if (item._obsLinkPeriodExt && item.value) {
+        var obs = this._commonExport._createObservation(item);
+        // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        if (qr.basedOn)
+          obs.basedOn = qr.basedOn;
+        if (qr.partOf)
+          obs.partOf = qr.partOf;
+        if (qr.subject)
+          obs.subject = qr.subject;
+        if (qr.encounter)
+          obs.encounter = qr.encounter;
+        if (qr.authored) {
+          obs.effectiveDateTime = qr.authored;
+          obs.issued = qr.authored;
+        }
+        if (qr.author)
+          obs.performer = qr.author;
+        obs.derivedFrom = qrRef;
+
+        rtn.push(obs);
+      }
+    }
+    return rtn;
+  },
+
+
+  /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
@@ -241,12 +296,22 @@ var self = {
     // code
     // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
     // don't create a 'code' when converting it back to Questionnaire.
+    // Otherwise, the questionCode (which might have been modified since import)
+    // is the first code from the codings array (which might not have been
+    // updated, so we discard it in favor of questionCode).
     if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
+      var codings = [{
         "system": codeSystem,
         "code": item.questionCode,
         "display": item.question
       }];
+      if (item.codings)
+        codings.concat(item.codings.slice(1));
+      item.codings = codings;
+      targetItem.code = item.codings;
+    }
+    else if (item.codings) {
+      targetItem.code = item.codings;
     }
 
     // text

@@ -25,6 +25,60 @@ var self = {
   stdQProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/Questionnaire',
   stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
 
+
+  /**
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns an array of QuestionnaireResponse and Observations.  Observations
+   *  will have derivedFrom set to a temporary reference created for the returned
+   *  QuestionnaireResponse (the first element of the array). The caller may
+   *  wish to put all of the returned resources into a transaction Bundle for
+   *  creating them on a FHIR server.
+   */
+  convertLFormsToFHIRData: function(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    if (!qr.id) {
+      qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code ||
+        qr.identifier || 'QR')
+    }
+    var qrRef = 'QuestionnaireResponse/'+qr.id;
+    var rtn = [qr];
+    var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
+    for (var i=0, len=lfData.items.length; i<len; ++i) {
+      var item = lfData.items[i];
+      if (item._obsLinkPeriodExt) {
+        var obs = this._commonExport._createObservation(item);
+        // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        if (qr.basedOn)
+          obs.basedOn = qr.basedOn;
+        if (qr.subject)
+          obs.subject = qr.subject;
+        if (qr.context)
+          obs.context = qr.context;
+        if (qr.authored) {
+          obs.effectiveDateTime = qr.authored;
+          obs.issued = qr.authored;
+        }
+        if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
+          obs.performer = qr.author;
+
+        rtn.push(obs);
+      }
+    }
+    return rtn;
+  },
+
+
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
    * @param lfData a LForms form object
@@ -96,9 +150,6 @@ var self = {
     // date
     target.date = LForms.Util.dateToString(new Date());
 
-    // version, assuming questionnaires are from LOINC forms
-    target.version = "2.56";
-
     // url
     // TODO - Commented out until we figure out the right url. -Ajay
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
@@ -154,7 +205,7 @@ var self = {
 
     // type
     targetItem.type = this._getFhirDataType(item);
-  
+
     // id (empty for new record)
 
     // extension
@@ -731,7 +782,7 @@ var self = {
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
-  
+
       var dataType = this._getAssumedDataTypeForExport(item);
       var valueKey = this._getValueKeyByDataType("initial", item);
       // for Coding
@@ -802,7 +853,7 @@ var self = {
     if (item.units && item.units.length > 0) {
       var dataType = this._getAssumedDataTypeForExport(item);
       if(dataType === "REAL" || dataType === "INT") {
-      
+
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
           // Datatype with multiple units is quantity. There is only one unit here.

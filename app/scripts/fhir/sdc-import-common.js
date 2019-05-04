@@ -254,7 +254,7 @@ function addCommonSDCImportFns(ns) {
     lfItem.linkId = qItem.linkId;
 
     // Also save all the codings, for use on export.
-    lfItem._codings = lfItem.code;
+    lfItem.codings = lfItem.code; // IMO, codings is a better name
   };
 
 

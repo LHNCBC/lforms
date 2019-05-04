@@ -13,6 +13,7 @@ import commonExport from '../export-common.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;
+fhir.SDC._commonExport = commonExport;
 import addCommonSDCExportFns from '../sdc-export-common.js'
 addCommonSDCExportFns(fhir.SDC);
 import addSDCImportFns from './sdc-import.js';

@@ -67,17 +67,6 @@ var dr = {
 
 
   /**
-   * Generate an almost unique ID for a given Observation code
-   * @param itemCode code of the item
-   * @returns {string} a unique id
-   * @private
-   */
-  _getUniqueId : function(itemCode) {
-    return itemCode + "-" + Math.random().toString(36).substr(2);
-  },
-
-
-  /**
    * A recursive function that generates the DiagnosticReport content by
    * going through the LForms form data structure
    * @param item an LForms item
@@ -96,7 +85,7 @@ var dr = {
       var subItem = item.items[i];
       if (subItem) {
         var obx = this._commonExport._createObservation(subItem,
-          this._getUniqueId(subItem.questionCode));
+          this._commonExport._getUniqueId(subItem.questionCode));
         if (subItem.items && subItem.items.length>0) {
           obx.related = [];
           var ret = this._createDiagnosticReportContent(subItem, contained);

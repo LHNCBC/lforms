@@ -112,6 +112,7 @@ fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["defa
 fhir.DiagnosticReport._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__["default"];
+fhir.SDC._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 
@@ -18229,16 +18230,6 @@ var dr = {
   },
 
   /**
-   * Generate an almost unique ID for a given Observation code
-   * @param itemCode code of the item
-   * @returns {string} a unique id
-   * @private
-   */
-  _getUniqueId: function _getUniqueId(itemCode) {
-    return itemCode + "-" + Math.random().toString(36).substr(2);
-  },
-
-  /**
    * A recursive function that generates the DiagnosticReport content by
    * going through the LForms form data structure
    * @param item an LForms item
@@ -18257,7 +18248,7 @@ var dr = {
       var subItem = item.items[i];
 
       if (subItem) {
-        var obx = this._commonExport._createObservation(subItem, this._getUniqueId(subItem.questionCode));
+        var obx = this._commonExport._createObservation(subItem, this._commonExport._getUniqueId(subItem.questionCode));
 
         if (subItem.items && subItem.items.length > 0) {
           obx.related = [];
@@ -18931,17 +18922,12 @@ var self = {
     } // create Observation
 
 
-    console.log(_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]);
-    console.log(item.questionCodeSystem);
     var qCodeSystem = !item.questionCodeSystem || item.questionCodeSystem === 'LOINC' ? _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] : item.questionCodeSystem;
     var obx = {
       "resourceType": "Observation",
       "status": "final",
       "code": {
-        "coding": [{
-          "system": qCodeSystem,
-          "code": item.questionCode
-        }],
+        "coding": item.codings,
         "text": item.question
       }
     };
@@ -18952,6 +18938,17 @@ var self = {
     }
 
     return obx;
+  },
+
+  /**
+   * Generate an almost unique ID for a given Observation code
+   * @param prefix A prefix for the ID (e.g. a code or resource name)
+   * @returns {string} a unique id
+   * @private
+   */
+  _getUniqueId: function _getUniqueId(prefix) {
+    this._idCtr || (this._idCtr = 0);
+    return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' + Math.random().toString(16).substr(2);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
@@ -18986,6 +18983,60 @@ var self = {
   QRProfile: 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaireresponse|' + sdcVersion,
   stdQProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/Questionnaire',
   stdQRProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/QuestionnaireResponse',
+
+  /**
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns an array of QuestionnaireResponse and Observations.  Observations
+   *  will have derivedFrom set to a temporary reference created for the returned
+   *  QuestionnaireResponse (the first element of the array). The caller may
+   *  wish to put all of the returned resources into a transaction Bundle for
+   *  creating them on a FHIR server.
+   */
+  convertLFormsToFHIRData: function convertLFormsToFHIRData(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+
+    if (!qr.id) {
+      qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code || qr.identifier || 'QR');
+    }
+
+    var qrRef = 'QuestionnaireResponse/' + qr.id;
+    var rtn = [qr];
+    var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
+
+    for (var i = 0, len = lfData.items.length; i < len; ++i) {
+      var item = lfData.items[i];
+
+      if (item._obsLinkPeriodExt) {
+        var obs = this._commonExport._createObservation(item); // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+
+
+        if (qr.basedOn) obs.basedOn = qr.basedOn;
+        if (qr.subject) obs.subject = qr.subject;
+        if (qr.context) obs.context = qr.context;
+
+        if (qr.authored) {
+          obs.effectiveDateTime = qr.authored;
+          obs.issued = qr.authored;
+        }
+
+        if (qr.author && objPerformers.indexOf(qr.author.type) >= 0) obs.performer = qr.author;
+        rtn.push(obs);
+      }
+    }
+
+    return rtn;
+  },
 
   /**
    * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
@@ -19052,9 +19103,7 @@ var self = {
 
     target.status = "draft"; // date
 
-    target.date = LForms.Util.dateToString(new Date()); // version, assuming questionnaires are from LOINC forms
-
-    target.version = "2.56"; // url
+    target.date = LForms.Util.dateToString(new Date()); // url
     // TODO - Commented out until we figure out the right url. -Ajay
     // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
     // meta
@@ -19893,31 +19942,6 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
-   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
-   *  QuestionnaireResponse and any extractable resources. (Currently this means
-   *  any Observations that can be extracted via the observationLinkPeriod
-   *  extension).
-   *
-   * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *  The default is false.
-   * @param subject A local FHIR resource that is the subject of the output resource.
-   *  If provided, a reference to this resource will be added to the output FHIR
-   *  resource when applicable.
-   * @returns {{}}
-   */
-
-
-  self.convertLFormsToQRBundle = function (lfData, noExtensions, subject) {
-    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
-    var observations = [];
-
-    for (var i = 0, len = this.items.length; i < len; ++i) {
-      var item = this.items[i];
-      if (item._obsLinkPeriodExt) observations.push(this._commonExport._createObservation(item));
-    }
-  };
-  /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
@@ -20182,11 +20206,15 @@ function addCommonSDCExportFns(ns) {
     target.status = "completed"; // authored, required
 
     target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
+    // We do not have the ID at this point, so leave it unset for now.  Note
+    // that the fomat has also changed from Reference to canonical in R4.
 
+    /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+    */
   };
   /**
    * Set unit attributes to a given FHIR quantity.
@@ -21548,7 +21576,7 @@ function addCommonSDCImportFns(ns) {
 
     lfItem.linkId = qItem.linkId; // Also save all the codings, for use on export.
 
-    lfItem._codings = lfItem.code;
+    lfItem.codings = lfItem.code; // IMO, codings is a better name
   };
   /**
    * Parse questionnaire item for display control
