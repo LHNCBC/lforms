@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.3.0] 2019-05-09
+### Added
+- Added support for FHIR Questionnaire form level fields. 
+- Patched date parsing errors encountered in form builder environment.
+
 ## [15.2.4] 2019-04-19
 ### Fixed
 - Enabled generation of soure cmaps for the FHIR support files.

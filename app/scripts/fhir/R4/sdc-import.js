@@ -15,46 +15,6 @@ function addSDCImportFns(ns) {
 
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
 
-  self.formLevelIgnoredFields = [
-    // Resource
-    'id',
-    'meta',
-    'implicitRules',
-    'language',
-
-
-    // Domain Resource
-    'text',
-    'contained',
-    'text',
-    'contained',
-    'extension',
-    'modifiedExtension',
-
-    // Questionnaire
-    'date',
-    'version',
-    'derivedFrom', // New in R4
-    'status',
-    'experimental',
-    'publisher',
-    'contact',
-    'description',
-    'useContext',
-    'jurisdiction',
-    'purpose',
-    'copyright',
-    'approvalDate',
-    'reviewDate',
-    'effectivePeriod',
-    'url'
-  ];
-
-  self.itemLevelIgnoredFields = [
-    'definition',
-    'prefix'
-  ];
-
 
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
@@ -64,31 +24,28 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
-    lfData.name = questionnaire.title;
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
+  
+    // TODO
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // into qeustionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+    if(lfData.code) {
+      lfData.fhirCodes = lfData.code;
+      delete lfData.code;
+    }
     var code = self._getCode(questionnaire);
     if(code) {
       lfData.code = code.code;
       lfData.codeSystem = code.system;
     }
 
-    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
-
     // form-level variables
     var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
       self.fhirExtVariable, 0, true);
     if (ext.length > 0)
       lfData._variableExt = ext;
-  };
-
-
-  self.copyFields = function(source, target, fieldList) {
-    if(source && target && fieldList && fieldList.length > 0) {
-      fieldList.forEach(function(field) {
-        if(source[field] !== undefined ) {
-          target[field] = source[field];
-        }
-      });
-    }
   };
 
 
@@ -406,7 +363,7 @@ function addSDCImportFns(ns) {
       if(vs) {
         lfItem.answers = vs.answers;
         if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         }
         else if(vs.hasAnswerCodeSystems) {
           console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s',
@@ -574,6 +531,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    lfItem.fhirCodes = qItem.code;
     var code = self._getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;
@@ -586,54 +544,6 @@ function addSDCImportFns(ns) {
     }
 
     lfItem.linkId = qItem.linkId;
-  };
-
-
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-    switch(codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-
-
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-    if(questionnaireItemOrResource &&
-         Array.isArray(questionnaireItemOrResource.code) &&
-         questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    }
-    // If code is missing look for identifier.
-    else if(questionnaireItemOrResource &&
-      Array.isArray(questionnaireItemOrResource.identifier) &&
-      questionnaireItemOrResource.identifier.length) {
-      code = {
-        code: questionnaireItemOrResource.identifier[0].value,
-        system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-      };
-    }
-
-    return code;
   };
 
 

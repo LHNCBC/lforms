@@ -59,6 +59,8 @@
     type: null,
     // form's code
     code: null,
+    fhirCodes: null,
+    identifier: null,
     // form's name
     name: null,
 
@@ -167,6 +169,8 @@
 
       this.items = data.items;
       this.code = data.code;
+      this.fhirCodes = data.fhirCodes;
+      this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -219,7 +223,7 @@
      *  Initializes form-level FHIR data.  This should be called before item
      *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
-     * @param an LForms form definition object (or LFormsData).
+     * @param data - LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
       var lfData = this;
@@ -293,6 +297,7 @@
       // set default values of certain form definition fields
       this._setDefaultValues();
 
+      LForms.Util.initializeCodes(this);
       // update internal status
       this._repeatableItems = {};
       this._setTreeNodes(this.items, this);
@@ -852,7 +857,15 @@
       // for each item on this level
       for (var i=0; i<iLen; i++) {
         var item = items[i];
-
+  
+        // question coding system. If form level code system is LOINC, assume all
+        // child items are of LOINC, unless specified otherwise.
+        if (this.type ==="LOINC" && !item.questionCodeSystem) {
+          item.questionCodeSystem = "LOINC";
+        }
+  
+        LForms.Util.initializeCodes(item);
+        
         // set default dataType
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE)
@@ -1017,11 +1030,6 @@
              item.dataType !== this._CONSTANTS.DATA_TYPE.CWE &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
           item._hasValidation = true;
-        }
-
-        // question coding system
-        if (this.type ==="LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
         }
 
         // add a link to external site for item's definition
@@ -1205,6 +1213,8 @@
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
+        fhirCodes: this.fhirCodes,
+        identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,

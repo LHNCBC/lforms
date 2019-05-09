@@ -502,7 +502,34 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function(strDate) {
-    return new Date(strDate);
+    var matches, millis = null, ret = null;
+  
+    // This date parsing (from Datejs) fails to parse string that includes milliseconds.
+    // If the input is in ISO format, remove millis from the string before parsing and add it after
+    // constructing the date object.
+    if((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
+      strDate = strDate.substring(0, matches.index) + matches[2];
+      millis = parseInt(matches[1]);
+    }
+    else if((matches = strDate.match(/\s*\(.*\)$/)) !== null){
+      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
+      // It has problem with content in the parenthesis at the end. Remove it before parsing.
+      strDate = strDate.substring(0, matches.index);
+    }
+  
+    
+    if(strDate) {
+      ret = Date.parse(strDate);
+      if (ret === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
+        ret = new Date(strDate);
+      }
+    }
+    
+    if(ret && millis !== null) {
+      ret.addMilliseconds(millis);
+    }
+    
+    return ret;
   },
 
 
@@ -702,8 +729,66 @@ LForms.Util = {
       });
     }
   },
-
-
+  
+  
+  /**
+   * Initialize form level form.code, form.fhirCodes, and item.fhirCodes, based on
+   * form.code, form.fhirCodes, items.questionCode, items.questionCodeSystem, and items.fhirCodes.
+   *
+   * In brief, initialize code from fhirCodes and fhirCodes from code.
+   *
+   * Idea is to initialize form.code,
+   * @param formOrItem
+   * @private
+   */
+  initializeCodes: function (formOrItem) {
+    
+    var isItem = (formOrItem.question || formOrItem.questionCode);
+    var code = isItem ? formOrItem.questionCode : formOrItem.code;
+    var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
+    var display = isItem ? formOrItem.question : formOrItem.name;
+    var fhirSystem = codeSystem === 'LOINC' ? 'http://loinc.org' : codeSystem;
+    
+    if(code) {
+      if(!formOrItem.fhirCodes) {
+        formOrItem.fhirCodes = [];
+      }
+      var fhirCodes = formOrItem.fhirCodes;
+      var found = false;
+      for(var i = 0; i < fhirCodes.length; i++) {
+        if(code === fhirCodes[i].code && fhirSystem === fhirCodes[i].system) {
+          found = true;
+        }
+      }
+  
+      // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+      // don't create a 'code' when converting it back to Questionnaire.
+      if(!found && fhirSystem !== 'LinkId') {
+        fhirCodes.unshift({
+          system: fhirSystem,
+          code: code,
+          display: display
+        });
+      }
+    }
+    else {
+      if(formOrItem.fhirCodes && formOrItem.fhirCodes.length > 0) {
+        if(isItem) {
+          // questionCode is required, so this shouldn't happen??
+          formOrItem.questionCode = formOrItem.fhirCodes[0].code;
+          formOrItem.questionCodeSystem = formOrItem.fhirCodes[0].system;
+        }
+        else {
+          formOrItem.code = formOrItem.fhirCodes[0].code;
+          formOrItem.codeSystem = formOrItem.fhirCodes[0].system;
+        }
+      }
+    }
+    
+    return formOrItem;
+  },
+  
+  
   /**
    *  Creates a Reference to the given FHIR resource, to be used an a subject in
    *  another resource.

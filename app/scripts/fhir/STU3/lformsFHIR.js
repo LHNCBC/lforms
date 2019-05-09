@@ -18905,7 +18905,7 @@ var dr = {
 
 
     if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
-      var whenDone = new Date(dr.effectiveDateTime);
+      var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
 
       if (whenDone) {
         newFormData.templateOptions.formHeaderItems[0].value = whenDone;
@@ -18961,6 +18961,10 @@ var self = {
     if (lfData) {
       var source = angular.copy(lfData);
 
+      if (!(source instanceof LForms.LFormsData)) {
+        LForms.Util.initializeCodes(source);
+      }
+
       this._removeRepeatingItems(source);
 
       this._setFormLevelFields(target, source, noExtensions);
@@ -19000,56 +19004,6 @@ var self = {
   },
 
   /**
-   * Set form level attributes
-   * @param target a Questionnaire object
-   * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @private
-   */
-  _setFormLevelFields: function _setFormLevelFields(target, source, noExtensions) {
-    // resourceType
-    target.resourceType = "Questionnaire"; // status
-
-    target.status = "draft"; // date
-
-    target.date = LForms.Util.dateToString(new Date()); // version, assuming questionnaires are from LOINC forms
-
-    target.version = "2.56"; // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
-    // meta
-
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // title
-
-    target.title = source.name; // name
-
-    target.name = source.name;
-
-    var codeSystem = this._getCodeSystem(source.codeSystem); // "identifier": [
-
-
-    target.identifier = [{
-      "system": codeSystem,
-      "value": source.code
-    }]; // code
-
-    target.code = [{
-      "system": codeSystem,
-      "code": source.code,
-      "display": source.name
-    }]; // subjectType
-
-    target.subjectType = ["Patient", "Person"];
-
-    if (source.id) {
-      target.id = source.id;
-    }
-  },
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
@@ -19062,6 +19016,24 @@ var self = {
     var targetItem = {}; // type
 
     targetItem.type = this._getFhirDataType(item); // id (empty for new record)
+    // code
+    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+    // don't create a 'code' when converting it back to Questionnaire.
+
+    if (!item.fhirCodes) {
+      LForms.Util.initializeCodes(item);
+    }
+
+    targetItem.code = item.fhirCodes;
+    /*
+    if (codeSystem !== 'LinkId') {
+      targetItem.code = [{
+        "system": codeSystem,
+        "code": item.questionCode,
+        "display": item.question
+      }];
+    }
+    */
     // extension
 
     targetItem.extension = []; // required
@@ -19137,18 +19109,7 @@ var self = {
 
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem); // code
-    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-    // don't create a 'code' when converting it back to Questionnaire.
-
-
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    } // text
+    var codeSystem = this._getCodeSystem(item.questionCodeSystem); // text
 
 
     targetItem.text = item.question; // enableWhen
@@ -19854,6 +19815,59 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
+   * Set form level attributes
+   * @param target a Questionnaire object
+   * @param source a LForms form object
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @private
+   */
+
+
+  self._setFormLevelFields = function (target, source, noExtensions) {
+    this.copyFields(source, target, this.formLevelFields);
+    target.code = source.fhirCodes || [];
+
+    var codeSystem = this._getCodeSystem(source.codeSystem); // TODO
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // into qeustionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+
+
+    if (codeSystem) {
+      var code = {
+        "system": codeSystem,
+        "code": source.code,
+        "display": source.name
+      };
+      var found = false;
+
+      for (var i = 0; !found && i < target.code.length; i++) {
+        if (angular.equals(target.code[i], code)) {
+          found = true;
+        }
+      }
+
+      if (!found) {
+        target.code.unshift(code);
+      }
+    } // If missing, assign title
+
+
+    if (!target.title) {
+      target.title = target.name;
+    } // resourceType
+
+
+    target.resourceType = "Questionnaire";
+    target.status = target.status ? target.status : "draft"; // meta
+
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+  };
+  /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
@@ -20234,17 +20248,18 @@ function addSDCImportFns(ns) {
    */
 
   self._processFormLevelFields = function (lfData, questionnaire) {
-    lfData.name = questionnaire.title;
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
+
+    if (lfData.code) {
+      lfData.fhirCodes = lfData.code;
+      delete lfData.code;
+    }
 
     var code = self._getCode(questionnaire);
 
     if (code) {
       lfData.code = code.code;
       lfData.codeSystem = code.system;
-    }
-
-    if (questionnaire.id) {
-      lfData.id = questionnaire.id;
     }
   };
   /**
@@ -20553,7 +20568,7 @@ function addSDCImportFns(ns) {
         lfItem.answers = vs.answers;
 
         if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         } else if (vs.hasAnswerCodeSystems) {
           console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s', vs.systems.join(', '));
         }
@@ -20718,6 +20733,8 @@ function addSDCImportFns(ns) {
 
 
   function _processCodeAndLinkId(lfItem, qItem) {
+    lfItem.fhirCodes = qItem.code;
+
     var code = self._getCode(qItem);
 
     if (code) {
@@ -20731,51 +20748,6 @@ function addSDCImportFns(ns) {
 
     lfItem.linkId = qItem.linkId;
   }
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-
-
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-
-    switch (codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-
-
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-
-    if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    } // If code is missing look for identifier.
-    else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
-        code = {
-          code: questionnaireItemOrResource.identifier[0].value,
-          system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-        };
-      }
-
-    return code;
-  };
   /**
    * Parse questionnaire item for coding instructions
    *
@@ -21303,6 +21275,16 @@ function addCommonSDCFns(ns) {
     }
 
     return ret;
+  };
+
+  self.copyFields = function (source, target, fieldList) {
+    if (source && target && fieldList && fieldList.length > 0) {
+      fieldList.forEach(function (field) {
+        if (source[field] !== undefined) {
+          target[field] = source[field];
+        }
+      });
+    }
   }; // Store the UCUM code system URI
 
 
@@ -21343,6 +21325,13 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+  self.formLevelFields = [// Resource
+  'id', 'meta', 'implicitRules', 'language', // Domain Resource
+  'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
+  'date', 'version', 'title', 'name', 'identifier', //'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
+  'subjectType', 'derivedFrom', // New in R4
+  'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
+  self.itemLevelIgnoredFields = ['definition', 'prefix'];
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -21751,6 +21740,51 @@ function addCommonSDCImportFns(ns) {
 
     if (qResource.item) {
       ret = traverse(qResource.item, ret);
+    }
+
+    return ret;
+  };
+  /**
+   * Get an object with code and code system
+   *
+   * @param questionnaireItemOrResource {object} - question
+   * @private
+   */
+
+
+  self._getCode = function (questionnaireItemOrResource) {
+    var code = null;
+
+    if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
+    } // If code is missing look for identifier.
+    else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
+        code = {
+          code: questionnaireItemOrResource.identifier[0].value,
+          system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+        };
+      }
+
+    return code;
+  };
+  /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+
+
+  self._toLfCodeSystem = function (codeSystem) {
+    var ret = codeSystem;
+
+    switch (codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
     }
 
     return ret;

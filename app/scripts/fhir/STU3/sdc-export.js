@@ -37,6 +37,9 @@ var self = {
 
     if (lfData) {
       var source = angular.copy(lfData);
+      if(! (source instanceof LForms.LFormsData)) {
+        LForms.Util.initializeCodes(source);
+      }
       this._removeRepeatingItems(source);
       this._setFormLevelFields(target, source, noExtensions);
 
@@ -78,69 +81,6 @@ var self = {
 
 
   /**
-   * Set form level attributes
-   * @param target a Questionnaire object
-   * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @private
-   */
-  _setFormLevelFields: function(target, source, noExtensions) {
-
-    // resourceType
-    target.resourceType = "Questionnaire";
-
-    // status
-    target.status = "draft";
-
-    // date
-    target.date = LForms.Util.dateToString(new Date());
-
-    // version, assuming questionnaires are from LOINC forms
-    target.version = "2.56";
-
-    // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
-
-    // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
-
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
-
-    // title
-    target.title = source.name;
-
-    // name
-    target.name = source.name;
-
-    var codeSystem = this._getCodeSystem(source.codeSystem);
-
-    // "identifier": [
-    target.identifier = [{
-      "system": codeSystem,
-      "value": source.code
-    }];
-
-    // code
-    target.code = [{
-      "system": codeSystem,
-      "code": source.code,
-      "display": source.name
-    }];
-
-    // subjectType
-    target.subjectType = ["Patient", "Person"];
-
-    if(source.id) {
-      target.id = source.id;
-    }
-
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
@@ -156,6 +96,16 @@ var self = {
     targetItem.type = this._getFhirDataType(item);
   
     // id (empty for new record)
+  
+    // code
+    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+    // don't create a 'code' when converting it back to Questionnaire.
+  
+    if(!item.fhirCodes) {
+      LForms.Util.initializeCodes(item);
+    }
+  
+    targetItem.code = item.fhirCodes;
 
     // extension
     targetItem.extension = [];
@@ -241,16 +191,6 @@ var self = {
 
     var codeSystem = this._getCodeSystem(item.questionCodeSystem);
 
-    // code
-    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-    // don't create a 'code' when converting it back to Questionnaire.
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    }
 
     // text
     targetItem.text = item.question;

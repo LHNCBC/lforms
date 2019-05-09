@@ -8986,7 +8986,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             };
 
             element.on('change', function () {
-              var valid_date = Date.parse(this.value);
+              var valid_date = LForms.Util.stringToDate(this.value);
 
               if (valid_date) {
                 controller.$setViewValue(valid_date);
@@ -9008,7 +9008,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 throw new Error('ng-Model value must be a Date object or a string - currently it is a ' + _typeof(date));
               } // convert saved user data into date
               else if (typeof date === "string") {
-                  date = new Date(date);
+                  date = LForms.Util.stringToDate(date);
                 }
 
               element.datepicker("setDate", date);
@@ -11533,7 +11533,35 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate) {
-    return new Date(strDate);
+    var matches,
+        millis = null,
+        ret = null; // This date parsing (from Datejs) fails to parse string that includes milliseconds.
+    // If the input is in ISO format, remove millis from the string before parsing and add it after
+    // constructing the date object.
+
+    if ((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
+      strDate = strDate.substring(0, matches.index) + matches[2];
+      millis = parseInt(matches[1]);
+    } else if ((matches = strDate.match(/\s*\(.*\)$/)) !== null) {
+      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
+      // It has problem with content in the parenthesis at the end. Remove it before parsing.
+      strDate = strDate.substring(0, matches.index);
+    }
+
+    if (strDate) {
+      ret = Date.parse(strDate);
+
+      if (ret === null) {
+        // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
+        ret = new Date(strDate);
+      }
+    }
+
+    if (ret && millis !== null) {
+      ret.addMilliseconds(millis);
+    }
+
+    return ret;
   },
 
   /**
@@ -11732,6 +11760,62 @@ LForms.Util = {
         }
       });
     }
+  },
+
+  /**
+   * Initialize form level form.code, form.fhirCodes, and item.fhirCodes, based on
+   * form.code, form.fhirCodes, items.questionCode, items.questionCodeSystem, and items.fhirCodes.
+   *
+   * In brief, initialize code from fhirCodes and fhirCodes from code.
+   *
+   * Idea is to initialize form.code,
+   * @param formOrItem
+   * @private
+   */
+  initializeCodes: function initializeCodes(formOrItem) {
+    var isItem = formOrItem.question || formOrItem.questionCode;
+    var code = isItem ? formOrItem.questionCode : formOrItem.code;
+    var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
+    var display = isItem ? formOrItem.question : formOrItem.name;
+    var fhirSystem = codeSystem === 'LOINC' ? 'http://loinc.org' : codeSystem;
+
+    if (code) {
+      if (!formOrItem.fhirCodes) {
+        formOrItem.fhirCodes = [];
+      }
+
+      var fhirCodes = formOrItem.fhirCodes;
+      var found = false;
+
+      for (var i = 0; i < fhirCodes.length; i++) {
+        if (code === fhirCodes[i].code && fhirSystem === fhirCodes[i].system) {
+          found = true;
+        }
+      } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+      // don't create a 'code' when converting it back to Questionnaire.
+
+
+      if (!found && fhirSystem !== 'LinkId') {
+        fhirCodes.unshift({
+          system: fhirSystem,
+          code: code,
+          display: display
+        });
+      }
+    } else {
+      if (formOrItem.fhirCodes && formOrItem.fhirCodes.length > 0) {
+        if (isItem) {
+          // questionCode is required, so this shouldn't happen??
+          formOrItem.questionCode = formOrItem.fhirCodes[0].code;
+          formOrItem.questionCodeSystem = formOrItem.fhirCodes[0].system;
+        } else {
+          formOrItem.code = formOrItem.fhirCodes[0].code;
+          formOrItem.codeSystem = formOrItem.fhirCodes[0].system;
+        }
+      }
+    }
+
+    return formOrItem;
   },
 
   /**
@@ -13025,6 +13109,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     type: null,
     // form's code
     code: null,
+    fhirCodes: null,
     // form's name
     name: null,
     // a pre-defined view template used to display the form
@@ -13166,6 +13251,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     init: function init(data) {
       this.items = data.items;
       this.code = data.code;
+      this.fhirCodes = data.fhirCodes;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -13215,7 +13301,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      *  Initializes form-level FHIR data.  This should be called before item
      *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
-     * @param an LForms form definition object (or LFormsData).
+     * @param data - LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
@@ -13285,8 +13371,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _initializeInternalData: function _initializeInternalData() {
       //TODO, validate form data
       // set default values of certain form definition fields
-      this._setDefaultValues(); // update internal status
+      this._setDefaultValues();
 
+      LForms.Util.initializeCodes(this); // update internal status
 
       this._repeatableItems = {};
 
@@ -13770,7 +13857,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       if (this.codeSystem === "LOINC") {
-        this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
+        this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html"; // TODO - address code definition
       } // template
 
 
@@ -13858,7 +13945,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // set default dataType
+        var item = items[i]; // question coding system
+
+        if (this.type === "LOINC" && !item.questionCodeSystem) {
+          item.questionCodeSystem = "LOINC";
+        }
+
+        LForms.Util.initializeCodes(item); // set default dataType
 
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE) item.dataType = this._CONSTANTS.DATA_TYPE.SECTION;
@@ -14015,11 +14108,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE) {
           item._hasValidation = true;
-        } // question coding system
-
-
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
         } // add a link to external site for item's definition
 
 
@@ -14197,6 +14285,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
+        fhirCodes: this.fhirCodes,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,
@@ -16413,7 +16502,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
       if (!fhirPathVal) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
+          var d = new LForms.Util.stringToDate(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
           // local timezones.
 
           item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());

@@ -44,6 +44,60 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   
+
+  /**
+   * Set form level attributes
+   * @param target a Questionnaire object
+   * @param source a LForms form object
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @private
+   */
+  self._setFormLevelFields = function(target, source, noExtensions) {
+    
+    this.copyFields(source, target, this.formLevelFields);
+    target.code = source.fhirCodes || [];
+    var codeSystem = this._getCodeSystem(source.codeSystem);
+  
+    // TODO
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // into qeustionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+    if(codeSystem) {
+      var code = {
+        "system": codeSystem,
+        "code": source.code,
+        "display": source.name
+      };
+      var found = false;
+      for(var i = 0; !found && i < target.code.length; i++) {
+        if(angular.equals(target.code[i], code)) {
+          found = true;
+        }
+      }
+      if(!found) {
+        target.code.unshift(code);
+      }
+    }
+
+    // If missing, assign title
+    if(!target.title) {
+      target.title = target.name;
+    }
+    
+    // resourceType
+    target.resourceType = "Questionnaire";
+    target.status = target.status ? target.status : "draft";
+    
+    // meta
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+  };
+  
+  
   /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
    * @param targetItem an item in FHIR SDC Questionnaire object

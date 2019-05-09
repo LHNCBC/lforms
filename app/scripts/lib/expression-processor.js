@@ -260,7 +260,7 @@
         item.value = undefined;
       else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathVal);
+          var d = new LForms.Util.stringToDate(fhirPathVal);
           // Convert to local time, so the date does not get shifted for negative
           // local timezones.
           item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());

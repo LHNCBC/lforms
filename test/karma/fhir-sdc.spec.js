@@ -34,7 +34,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/54126-8/54125-0",
               "_idPath": "/1/1"
             };
-            var out = fhir.SDC._processItem(item, {});
+            
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
             assert.equal(out.linkId, "/54126-8/54125-0");
@@ -54,20 +55,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "dataType": "QTY",
               "_codePath": "/weight"
             };
-            var out = fhir.SDC._processItem(item, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.linkId, "/weight");
             assert.equal(out.type, "quantity");
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
-            var out = fhir.SDC._processItem(cneFixture.input, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(cneFixture.input), {});
             assert.deepEqual(out, cneFixture.output);
           });
 
           it('should convert an item with answerCodeSystem', function () {
             var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
-            var out = fhir.SDC._processItem(alFixture.input, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(alFixture.input), {});
             assert.deepEqual(out, alFixture.output);
           });
 
@@ -99,7 +100,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_idPath": "/1/1"
             };
 
-            var out = fhir.SDC._processItem(item, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
             assert.equal(out.linkId, "/54126-8/54137-5X");
