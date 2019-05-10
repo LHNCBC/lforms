@@ -732,14 +732,23 @@ LForms.Util = {
   
   
   /**
-   * Initialize form level form.code, form.codeList, and item.codeList, based on
-   * form.code, form.codeList, items.questionCode, items.questionCodeSystem, and items.codeList.
+   * We are transitioning lforms fields representing code (form.code, form.questionCode,
+   * items[x].questionCode
+   * and items[x].questionCodeSystem) to FHIR definition of Coding type.
+   * In lforms, these fields are string type and FHIR Coding is an array of
+   * objects encapsulating multiple codes
+   * .
+   * To preserve compatibility with existing lforms code, we preserve
+   * both fields adding codeList which is Coding type. We make the first object
    *
-   * In brief, initialize code from codeList and codeList from code.
+   * This function adopts the following rules.
    *
-   * Idea is to initialize form.code,
-   * @param formOrItem
-   * @private
+   * . If codeList is not present create it making the first item representing lforms code.
+   * . If lforms code is not present, create it as appropriate (form.code or item[x].questionCode) from
+   *   first item in codeList.
+   * . Always make sure the first item in codeList represents lforms code.
+   *
+   * @param formOrItem - lforms form or items[x]
    */
   initializeCodes: function (formOrItem) {
     
