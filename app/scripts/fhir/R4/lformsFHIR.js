@@ -19025,17 +19025,7 @@ var self = {
       LForms.Util.initializeCodes(item);
     }
 
-    targetItem.code = item.fhirCodes;
-    /*
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    }
-    */
-    // extension
+    targetItem.code = item.fhirCodes; // extension
 
     targetItem.extension = []; // required
 
@@ -19909,7 +19899,8 @@ function addCommonSDCExportFns(ns) {
 
   self._handleItemControl = function (targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-    var itemControlType = ""; // Fly-over, Table, Checkbox, Combo-box, Lookup
+    var itemControlType = "";
+    var itemControlDisplay; // Fly-over, Table, Checkbox, Combo-box, Lookup
 
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item); // for answers
@@ -19918,25 +19909,32 @@ function addCommonSDCExportFns(ns) {
       if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
         // search field
         if (item.externallyDefined) {
-          itemControlType = "Lookup";
+          itemControlType = "autocomplete";
+          itemControlDisplay = "Auto-complete";
         } // prefetch list
         // combo-box
         else if (item.displayControl.answerLayout.type === "COMBO_BOX") {
-            itemControlType = "Combo-box";
+            itemControlType = "drop-down";
+            itemControlDisplay = "Drop down";
           } // radio or checkbox
           else if (item.displayControl.answerLayout.type === "RADIO_CHECKBOX") {
               if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-                itemControlType = "Checkbox";
+                itemControlType = "check-box";
+                itemControlDisplay = "Check-box";
               } else {
-                itemControlType = "Radio";
+                itemControlType = "radio-button";
+                itemControlDisplay = "Radio Button";
               }
             }
       } // for section item
       else if (item.displayControl.questionLayout && dataType === "SECTION") {
           if (item.displayControl.questionLayout === "horizontal") {
-            itemControlType = "Table";
+            itemControlType = "gtable"; // Not in STU3, but the binding is extensible, so we can use it
+
+            itemControlDisplay = "Group Table";
           } else if (item.displayControl.questionLayout === "matrix") {
-            itemControlType = "Matrix";
+            itemControlType = "table";
+            itemControlDisplay = "Vertical Answer Table";
           } // else {
           //   itemControlType = "List";
           // }
@@ -19955,9 +19953,9 @@ function addCommonSDCExportFns(ns) {
               //"userSelected" : <boolean> // If this coding was chosen directly by the user
               "system": "http://hl7.org/fhir/questionnaire-item-control",
               "code": itemControlType,
-              "display": itemControlType
+              "display": itemControlDisplay
             }],
-            "text": itemControlType
+            "text": itemControlDisplay || itemControlType
           }
         });
       }
@@ -19984,13 +19982,11 @@ function addCommonSDCExportFns(ns) {
   };
   /**
    * Determine how an item's data type should be for export.
-   
-   If number type has multiple units, change it to quantity type. In such a case,
+    If number type has multiple units, change it to quantity type. In such a case,
    multiple units are converted to quesionnaire-unitOption extension and the default unit
    would go into initial.valueQuantity.unit.
    For single unit numbers, use the same type, whose unit will be in questionnaire-unit extension.
-   
-   * @param item an item in the LForms form object
+    * @param item an item in the LForms form object
    * @returns {string} dataType - Data type in lforms
    * @private
    */
@@ -20932,65 +20928,6 @@ function addSDCImportFns(ns) {
     }
 
     lfItem.dataType = type;
-  };
-  /**
-   * Parse questionnaire item for display control
-   *
-   * @param lfItem {object} - LForms item object to assign display control
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  self._processDisplayControl = function (lfItem, qItem) {
-    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-
-    if (itemControlType) {
-      var displayControl = {};
-
-      switch (itemControlType.valueCodeableConcept.coding[0].code) {
-        case 'Lookup':
-          // TODO -
-          // Implies externallyDefined, but the URL is not saved in fhir resource.
-          // Perhaps it could be save in itemControlType.valueCodableConcept.text ...
-          // lfItem.externallyDefined = itemControlType.valueCodableConcept.text;
-          break;
-
-        case 'Combo-box':
-          displayControl.answerLayout = {
-            type: 'COMBO_BOX'
-          };
-          break;
-
-        case 'Checkbox':
-        case 'Radio':
-          displayControl.answerLayout = {
-            type: 'RADIO_CHECKBOX'
-          };
-          break;
-
-        case 'Table':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "horizontal";
-          }
-
-          break;
-
-        case 'Matrix':
-          if (lfItem.dataType === 'SECTION') {
-            displayControl.questionLayout = "matrix";
-          }
-
-          break;
-
-        default:
-          displayControl = null;
-      }
-
-      if (displayControl && !jQuery.isEmptyObject(displayControl)) {
-        lfItem.displayControl = displayControl;
-      }
-    }
   }; // Quesitonnaire Response Import
 
 
@@ -21014,18 +20951,6 @@ function addSDCImportFns(ns) {
     },
 
     /**
-     * Get the item code from a link id
-     * @param linkId a link id
-     * @returns {*}
-     * @private
-     */
-    _getItemCodeFromLinkId: function _getItemCodeFromLinkId(linkId) {
-      var parts = linkId.split("/");
-      var itemCode = parts[parts.length - 1];
-      return itemCode;
-    },
-
-    /**
      * Get structural info of a QuestionnaireResponse by going though each level of items
      * @param parentQRItemInfo the structural info of a parent item
      * @param parentItem a parent item in a QuestionnaireResponse object
@@ -21038,19 +20963,18 @@ function addSDCImportFns(ns) {
       if (parentQRItem && parentQRItem.item) {
         for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
           var item = parentQRItem.item[i];
+          var linkId = item.linkId; //code is not necessary included in linkId
+          // first item that has the same code, either repeating or non-repeating
 
-          var itemCode = this._getItemCodeFromLinkId(item.linkId); // first item that has the same code, either repeating or non-repeating
-
-
-          if (!repeatingItemProcessed[itemCode]) {
-            var repeatingInfo = this._findTotalRepeatingNum(itemCode, parentQRItem); // create structure info for the item
+          if (!repeatingItemProcessed[linkId]) {
+            var repeatingInfo = this._findTotalRepeatingNum(linkId, parentQRItem); // create structure info for the item
 
 
             var repeatingItems = repeatingInfo.repeatingItems;
 
             for (var j = 0, jLen = repeatingItems.length; j < jLen; j++) {
               var qrItemInfo = {
-                code: itemCode,
+                linkId: linkId,
                 item: repeatingItems[j],
                 index: j,
                 total: repeatingInfo.total
@@ -21061,7 +20985,7 @@ function addSDCImportFns(ns) {
               qrItemsInfo.push(qrItemInfo);
             }
 
-            repeatingItemProcessed[itemCode] = true;
+            repeatingItemProcessed[linkId] = true;
           }
         }
 
@@ -21071,21 +20995,19 @@ function addSDCImportFns(ns) {
 
     /**
      * Find the number of the repeating items that have the same code
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param parentQRItem a parent item in a QuestionnaireResponse object
      * @returns a structural info object for a repeating item
      * @private
      */
-    _findTotalRepeatingNum: function _findTotalRepeatingNum(code, parentQRItem) {
+    _findTotalRepeatingNum: function _findTotalRepeatingNum(linkId, parentQRItem) {
       var total = 0;
       var repeatingItems = [];
 
       for (var i = 0, iLen = parentQRItem.item.length; i < iLen; i++) {
         var item = parentQRItem.item[i];
 
-        var itemCode = this._getItemCodeFromLinkId(item.linkId);
-
-        if (itemCode === code) {
+        if (linkId === item.linkId) {
           repeatingItems.push(item);
 
           if (Array.isArray(item.answer)) {
@@ -21105,17 +21027,17 @@ function addSDCImportFns(ns) {
     /**
      * Add repeating items into LForms definition data object
      * @param parentItem a parent item
-     * @param itemCode code of a repeating item
+     * @param linkId linkId of a repeating item
      * @param total total number of the repeating item with the same code
      * @private
      */
-    _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
+    _addRepeatingItems: function _addRepeatingItems(parentItem, linkId, total) {
       // find the first (and the only one) item
       var item = null;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -21135,18 +21057,18 @@ function addSDCImportFns(ns) {
     /**
      * Find a matching repeating item by item code and the index in the items array
      * @param parentItem a parent item
-     * @param itemCode code of a repeating (or non-repeating) item
+     * @param linkId linkId of a repeating (or non-repeating) item
      * @param index index of the item in the sub item array of the parent item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCodeAndIndex: function _findTheMatchingItemByCodeAndIndex(parentItem, itemCode, index) {
+    _findTheMatchingItemByLinkIdAndIndex: function _findTheMatchingItemByLinkIdAndIndex(parentItem, linkId, index) {
       var item = null;
       var idx = 0;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             if (idx === index) {
               item = parentItem.items[i];
               break;
@@ -21164,16 +21086,16 @@ function addSDCImportFns(ns) {
      * Find a matching repeating item by item code alone
      * When used on the LForms definition data object, there is no repeating items yet.
      * @param parentItem a parent item
-     * @param itemCode code of an item
+     * @param linkId linkId of an item
      * @returns {{}} a matching item
      * @private
      */
-    _findTheMatchingItemByCode: function _findTheMatchingItemByCode(parentItem, itemCode) {
+    _findTheMatchingItemByLinkId: function _findTheMatchingItemByLinkId(parentItem, linkId) {
       var item = null;
 
       if (parentItem.items) {
         for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-          if (itemCode === parentItem.items[i].questionCode) {
+          if (linkId === parentItem.items[i].linkId) {
             item = parentItem.items[i];
             break;
           }
@@ -21185,13 +21107,13 @@ function addSDCImportFns(ns) {
 
     /**
      * Set value and units on a LForms item
-     * @param code an item code
+     * @param linkId an item's linkId
      * @param answer value for the item
      * @param item a LForms item
      * @private
      */
-    _setupItemValueAndUnit: function _setupItemValueAndUnit(code, answer, item) {
-      if (item && code === item.questionCode && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
+    _setupItemValueAndUnit: function _setupItemValueAndUnit(linkId, answer, item) {
+      if (item && linkId === item.linkId && item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
         var dataType = item.dataType; // any one has a unit must be a numerical type, let use REAL for now.
         // dataType conversion should be handled when panel data are added to lforms-service.
 
@@ -21385,6 +21307,15 @@ function addCommonSDCFns(ns) {
 
     return ret;
   };
+  /**
+   * Do a shallow copy of specified fields from source to target.
+   *
+   * @param source - Source object
+   * @param target - Target object
+   * @param fieldList - Array of fields to copy from the source. If the field is
+   * not found in the source, it is ignored.
+   */
+
 
   self.copyFields = function (source, target, fieldList) {
     if (source && target && fieldList && fieldList.length > 0) {
@@ -21646,6 +21577,72 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
+  };
+  /**
+   * Parse questionnaire item for display control
+   *
+   * @param lfItem {object} - LForms item object to assign display control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processDisplayControl = function (lfItem, qItem) {
+    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if (itemControlType) {
+      var displayControl = {};
+
+      switch (itemControlType.valueCodeableConcept.coding[0].code) {
+        case 'Lookup': // backward-compatibility with old export
+
+        case 'Combo-box': // backward-compatibility with old export
+
+        case 'autocomplete':
+        case 'drop-down':
+          displayControl.answerLayout = {
+            type: 'COMBO_BOX'
+          };
+          break;
+
+        case 'Checkbox': // backward-compatibility with old export
+
+        case 'check-box':
+        case 'Radio': // backward-compatibility with old export
+
+        case 'radio-button':
+          displayControl.answerLayout = {
+            type: 'RADIO_CHECKBOX'
+          };
+          break;
+
+        case 'Table': // backward-compatibility with old export
+
+        case 'gtable':
+          // Not in STU3, but we'll accept it
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "horizontal";
+          }
+
+          break;
+
+        case 'Matrix': // backward-compatibility with old export
+
+        case 'table':
+          if (lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "matrix";
+          }
+
+          break;
+
+        default:
+          displayControl = null;
+      }
+
+      if (displayControl && !jQuery.isEmptyObject(displayControl)) {
+        lfItem.displayControl = displayControl;
+      }
+    }
   }; // QuestionnaireResponse Import
 
 
@@ -21685,12 +21682,12 @@ function addCommonSDCImportFns(ns) {
       if (qrItem) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code); // add repeating items in form data
+          var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId); // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
 
 
           if (ns._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.total); // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
 
 
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
@@ -21711,16 +21708,14 @@ function addCommonSDCImportFns(ns) {
         } // find the matching LForms item
 
 
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index); // set up value and units if it is a question
+        var item = this._findTheMatchingItemByLinkIdAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index); // set up value and units if it is a question
 
 
         if (item.dataType !== 'SECTION' && item.dataType !== 'TITLE') {
           var qrAnswer = qrItem.answer;
 
           if (qrAnswer && qrAnswer.length > 0) {
-            var code = this._getItemCodeFromLinkId(qrItem.linkId);
-
-            this._setupItemValueAndUnit(code, qrAnswer, item);
+            this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
           }
         } // process items on the sub-level
 

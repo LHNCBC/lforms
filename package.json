@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.3.0",
+  "version": "15.4.0",
   "main": "app/scripts/index.js",
   "files": ["app"],
   "dependencies": {
@@ -12,7 +12,7 @@
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
     "fhirpath": "^0.10.1",
-    "jquery": "^3.1.0",
+    "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "ngSmoothScroll": "^2.0.1"
   },
@@ -46,8 +46,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-requirejs": "^1.1.0",
     "mini-css-extract-plugin": "^0.5.0",
-    "mocha": "^6.0.2",
-    "node-sass": "^4.11.0",
+    "mocha": "^6.1.4",
+    "node-sass": "^4.12.0",
     "phantomjs-prebuilt": "^2.1.16",
     "requirejs": "^2.3.2",
     "serve-static": "^1.13.2",
@@ -60,7 +60,7 @@
   },
   "scripts": {
     "wiredep": "grunt wiredep",
-    "test": "grunt test",
+    "test": "npm run update-webdriver && grunt test",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:css:lforms": "cleancss --skip-rebase -o dist/latest/styles/lforms.min.css dist/latest/styles/lforms.css",
@@ -69,6 +69,6 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.standalone 3.141.59"
   }
 }

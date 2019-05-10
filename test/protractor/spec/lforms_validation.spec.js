@@ -31,12 +31,17 @@ function waitForNotPresent(errorMsg) {
     return errorMsg.isPresent().then(function(result){return !result});
   }, tp.WAIT_TIMEOUT_1);
 }
+function sendKeys(field, str) {
+  browser.executeScript('arguments[0].value = "'+str.slice(0,-1)+'"', field.getWebElement());
+  field.sendKeys(str.slice(-1));
+}
 
 function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   // no initial validations
   expect(eleMessage.isPresent()).toBe(false);
   // no error messages on first visit
-  eleInput.sendKeys(value1);
+  //eleInput.sendKeys(value1);
+  sendKeys(eleInput, value1);
   waitForNotDisplayed(eleMessage);
   expect(eleMessage.isPresent()).toBe(true);
   expect(eleMessage.isDisplayed()).toBe(false);
@@ -62,14 +67,14 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   expect(eleMessage.isDisplayed()).toBe(true);
   // valid value no messages
   tp.clearField(eleInput);
-  eleInput.sendKeys(value2);
+  //eleInput.sendKeys(value2);
+  sendKeys(eleInput, value2);
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
   // still no message when the focus is gone
   eleAway.click();
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
-
 
 }
 
@@ -96,6 +101,7 @@ describe('Validations:', function() {
       inta = element(by.id("/INTA/1")),
       reala = element(by.id("/REALA/1")),
       sta = element(by.id("/STA/1")),
+      stb = element(by.id("/STB/1")),
 
       st0 = element(by.id("/ST0/1")),
       dt = element(by.id("/DT/1")),
@@ -125,12 +131,17 @@ describe('Validations:', function() {
       lblinta = element(by.css("label[for='/INTA/1'")),
       lblreala = element(by.css("label[for='/REALA/1'")),
       lblsta = element(by.css("label[for='/STA/1'")),
+      lblstb = element(by.css("label[for='/STB/1'")),
+      // lblsta = element(by.id("label-/STA/1")),
+      // lblstb = element(by.id("label-/STB/1")),
       lblst0 = element(by.css("label[for='/ST0/1'")),
       lbldt = element(by.css("label[for='/DT/1'")),
       lblcne1 = element(by.css("label[for='/CNE1/1'")),
       lblcne2 = element(by.css("label[for='/CNE2/1'")),
       lblcwe1 = element(by.css("label[for='/CWE1/1'")),
       lblcwe2 = element(by.css("label[for='/CWE2/1'"));
+
+
 
 
   var errorBL = element(by.cssContainingText("div.validation-error", '"BL" must be a boolean (true/false)')),
@@ -142,7 +153,7 @@ describe('Validations:', function() {
       errorDAY = element(by.cssContainingText("div.validation-error", '"DAY" must be a numeric value of day')),
       errorURL = element(by.cssContainingText("div.validation-error", '"URL" must be a valid URL')),
       errorEMAIL = element(by.cssContainingText("div.validation-error", '"EMAIL" must be a valid email address')),
-      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number'));
+      errorPHONE = element(by.cssContainingText("div.validation-error", '"PHONE" must be a valid phone number')),
       errorNR = element(by.cssContainingText("div.validation-error", '"NR" must be two numeric values separated by a ^. One value can be omitted, but not the ^'));
 
   var errorMinExclusive = element(by.cssContainingText("div.validation-error", "must be a value greater than ")),
@@ -167,12 +178,24 @@ describe('Validations:', function() {
       shortenValidationMsgShowTime();
     });
 
-    it('should validate INT type', function () {
+    it('should validate INT type, for unsigned values', function () {
       testOneType(int, lblbl, errorINT, "1234.56", "123");
     });
+    it('should validate INT type, for positive values', function () {
+      testOneType(int, lblbl, errorINT, "+1234.56", "+123");
+    });
+    it('should validate INT type, for negative values', function () {
+      testOneType(int, lblbl, errorINT, "-1234.56", "-123");
+    });
 
-    it('should validate REAL type', function () {
+    it('should validate REAL type, for unsigned values', function () {
       testOneType(real, lblint, errorREAL, "not a number", "123.45");
+    });
+    it('should validate REAL type, for positive values', function () {
+      testOneType(real, lblint, errorREAL, "+ 123.45", "+123.45");
+    });
+    it('should validate REAL type, for negative values', function () {
+      testOneType(real, lblint, errorREAL, "- 123.45", "-123.45");
     });
 
     it('should validate PHONE type', function () {
@@ -194,7 +217,7 @@ describe('Validations:', function() {
   });
 
   describe('restrictions validations (table)', function () {
-    beforeAll(function() {
+    beforeEach(function() {
       tp.openValidationTest();
       browser.wait(function () {
         return int.isPresent();
@@ -244,6 +267,14 @@ describe('Validations:', function() {
 
     it('should validate maxLength', function () {
       testOneType(st3, lblst2, errorMaxLength, "12345678901", "1234567890");
+    });
+
+    it('should validate pattern', function () {
+      testOneType(sta, lblst3, errorPattern, "AAAAA", "aaaaa");
+    });
+
+    it('should validate pattern, with "/" and flags (i, ignore cases)', function () {
+      testOneType(stb, lblsta, errorPattern, "2/AAAAA", "/aBBBc");
     });
 
     it('should validate "required" on ST', function () {

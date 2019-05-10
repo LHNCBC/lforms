@@ -2,14 +2,33 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.3.0] 2019-05-09
+## [15.4.0] 2019-05-09
 ### Added
 - Added support for FHIR Questionnaire form level fields. 
 - Patched date parsing errors encountered in form builder environment.
 
+## [15.3.1] 2019-04-30
+### Fixed
+- Corrected the FHIR itemControl codes.  We still accept the incorrect codes (as
+  well as the correct ones) for import, but the export is now correct.
+
+## [15.3.0] 2019-04-29
+### Changed
+- Changed view's screen size breakpoints.
+- Changed import function to work around 'linkId' in FHIR QuestionnaireResponse
+  resource.
+- Added validation for signed values of INT and REAL data types.
+### Fixed
+- Fixed bug in processing regexp value of 'pattern' restriction.
+
+## [15.2.5] 2019-04-25
+### Fixed
+- Problems with mapping from the LForms structure to QuestionnaireResponse when
+  running FHIRPath expressions.  Added some tests.
+
 ## [15.2.4] 2019-04-19
 ### Fixed
-- Enabled generation of soure cmaps for the FHIR support files.
+- Enabled generation of source maps for the FHIR supported files.
 
 ## [15.2.3] 2019-04-15
 ### Fixed

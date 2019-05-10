@@ -7749,8 +7749,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     $scope._viewMode = "";
     $scope._inputFieldWidth = ""; // small screen
 
-    if (width <= 480) $scope._viewMode = "sm"; // medium screen
-    else if (width <= 800) $scope._viewMode = "md"; // large screen
+    if (width <= 400) //480
+      $scope._viewMode = "sm"; // medium screen
+    else if (width <= 600) //800
+        $scope._viewMode = "md"; // large screen
       else {
           $scope._viewMode = "lg";
         }
@@ -12828,12 +12830,12 @@ LForms.Validations = {
           break;
 
         case "INT":
-          var regex = /^\s*(\d+)\s*$/;
+          var regex = /^(\+|-)?\d+$/;
           valid = regex.test(value);
           break;
 
         case "REAL":
-          var regex = /^\-?\d+(\.\d*)?$/;
+          var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
 
@@ -12917,11 +12919,10 @@ LForms.Validations = {
     if (value !== undefined && value !== null && value !== "") {
       for (var key in restrictions) {
         var valid = true;
+        var keyValue = restrictions[key];
 
         switch (key) {
           case "minExclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) > parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12932,8 +12933,6 @@ LForms.Validations = {
             break;
 
           case "minInclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) >= parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12944,8 +12943,6 @@ LForms.Validations = {
             break;
 
           case "maxExclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) < parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12956,8 +12953,6 @@ LForms.Validations = {
             break;
 
           case "maxInclusive":
-            var keyValue = restrictions[key];
-
             if (parseFloat(value) <= parseFloat(keyValue)) {
               valid = true;
             } else {
@@ -12976,8 +12971,6 @@ LForms.Validations = {
             break;
 
           case "length":
-            var keyValue = restrictions[key];
-
             if (value.length == parseInt(keyValue)) {
               valid = true;
             } else {
@@ -12988,8 +12981,6 @@ LForms.Validations = {
             break;
 
           case "maxLength":
-            var keyValue = restrictions[key];
-
             if (value.length <= parseInt(keyValue)) {
               valid = true;
             } else {
@@ -13000,8 +12991,6 @@ LForms.Validations = {
             break;
 
           case "minLength":
-            var keyValue = restrictions[key];
-
             if (value.length >= parseInt(keyValue)) {
               valid = true;
             } else {
@@ -13013,10 +13002,12 @@ LForms.Validations = {
 
           case "pattern":
             // the "\" in the pattern string should have been escaped
-            var keyValue = restrictions[key]; // get the pattern and the flag
+            var indexOfFirst = keyValue.indexOf("/");
+            var indexOfLast = keyValue.lastIndexOf("/"); // get the pattern and the flag
 
-            var parts = keyValue.split("/");
-            var regex = new RegExp(parts[1], parts[2]);
+            var pattern = keyValue.slice(indexOfFirst + 1, indexOfLast);
+            var flags = keyValue.slice(indexOfLast + 1);
+            var regex = new RegExp(pattern, flags);
 
             if (regex.test(value)) {
               valid = true;
@@ -13110,6 +13101,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     // form's code
     code: null,
     fhirCodes: null,
+    identifier: null,
     // form's name
     name: null,
     // a pre-defined view template used to display the form
@@ -13252,6 +13244,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this.items = data.items;
       this.code = data.code;
       this.fhirCodes = data.fhirCodes;
+      this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -13857,7 +13850,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       if (this.codeSystem === "LOINC") {
-        this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html"; // TODO - address code definition
+        this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
       } // template
 
 
@@ -13945,7 +13938,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // question coding system
+        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
+        // child items are of LOINC, unless specified otherwise.
 
         if (this.type === "LOINC" && !item.questionCodeSystem) {
           item.questionCodeSystem = "LOINC";
@@ -14286,6 +14280,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         fhirCodes: this.fhirCodes,
+        identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,
@@ -16231,6 +16226,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   "use strict"; // A class whose instances handle the running of FHIR expressions.
 
   var LForms = __webpack_require__(2);
+  /**
+   *   Constructor.
+   *  @param lfData an instance of LForms.LFormsData
+   */
+
 
   LForms.ExpressionProcessor = function (lfData) {
     this._lfData = lfData;
@@ -16446,44 +16446,68 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _addToIDtoQRItemMap: function _addToIDtoQRItemMap(lfItem, qrItem, map) {
       var added = 0;
 
-      if (lfItem.items) {
-        if (qrItem && qrItem.item && qrItem.item.length > 0) {
-          var lfItems = lfItem.items,
-              qrItems = qrItem.item;
-          var numLFItems = lfItems.length;
+      if (lfItem.linkId === qrItem.linkId) {
+        if (lfItem.items) {
+          // lfItem.items might contain items that don't have values, but
+          // qrItem.item will not, so we need to skip the blank items.
+          //
+          // Also, for a repeating question, there will be multiple answers on an
+          // qrItem.item, but repeats of the item in lfItem.items with one answer
+          // each.
+          // LForms does not currently support items that contain both answers
+          // and child items, but I am trying to accomodate that here for the
+          // future.
+          if (qrItem && qrItem.item && qrItem.item.length > 0) {
+            var lfItems = lfItem.items,
+                qrItems = qrItem.item;
+            var numLFItems = lfItems.length;
 
-          for (var i = 0, qrI = 0, len = qrItems.length; qrI < len; ++qrI) {
-            // Answers are repeated in QR, but items are repeated in LForms
-            var numAnswers = qrItems[qrI].answer ? qrItems[qrI].answer.length : 1;
+            for (var i = 0, qrI = 0, len = qrItems.length; qrI < len && i < numLFItems; ++qrI) {
+              // Answers are repeated in QR, but items are repeated in LForms
+              var qrIthItem = qrItems[qrI];
+              var lfIthItem = lfItems[i];
 
-            for (var a = 0; a < numAnswers; ++a, ++i) {
-              if (i > numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+              if (!qrIthItem.answer) {
+                // process item anyway to handle child items with data
+                var newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
 
-              var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrItems[qrI], map);
+                if (newlyAdded === 0) {
+                  // lfIthItem was blank, so qrIthItem must be for a following
+                  // item.
+                  --qrI; // so we try qrIthItem with the next lfIthItem
+                } else added += newlyAdded;
 
-              if (newlyAdded === 0) {
-                // blank; try next lfItem
-                --a;
+                ++i;
               } else {
-                added += newlyAdded;
+                // there are answers on the qrIthItem item
+                var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
+
+                for (var a = 0; a < numAnswers; ++a, ++i) {
+                  if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+
+                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+
+                  if (newlyAdded === 0) {
+                    // lfItems[i] was blank; try next lfItem
+                    --a;
+                  } else {
+                    added += newlyAdded;
+                  }
+                }
               }
             }
           }
+        }
 
-          if (added && lfItem._elementId) {
-            // Since the children were not empty, also add the entry for the
-            // parent node.
+        if (lfItem._elementId && (added || !this._lfData.isEmpty(lfItem))) {
+          // this item has a value
+          if (!qrItem) {
+            // if there is data in lfItem, there should be a qrItem
+            throw new Error('Logic error in _addToIDtoQRItemMap');
+          } else {
             map[lfItem._elementId] = qrItem;
             added += 1;
           }
-        }
-      } else if (!this._lfData.isEmpty(lfItem)) {
-        if (!qrItem) {
-          // if there is data in lfItem, there should be a qrItem
-          throw new Error('Logic error in _addToIDtoQRItemMap');
-        } else {
-          map[lfItem._elementId] = qrItem;
-          added += 1;
         }
       }
 

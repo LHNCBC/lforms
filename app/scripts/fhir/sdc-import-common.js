@@ -278,6 +278,52 @@ function addCommonSDCImportFns(ns) {
   }
 
 
+  /**
+   * Parse questionnaire item for display control
+   *
+   * @param lfItem {object} - LForms item object to assign display control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processDisplayControl = function (lfItem, qItem) {
+    var itemControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if(itemControlType) {
+      var displayControl = {};
+      switch (itemControlType.valueCodeableConcept.coding[0].code) {
+        case 'Lookup': // backward-compatibility with old export
+        case 'Combo-box': // backward-compatibility with old export
+        case 'autocomplete':
+        case 'drop-down':
+          displayControl.answerLayout = {type: 'COMBO_BOX'};
+          break;
+        case 'Checkbox': // backward-compatibility with old export
+        case 'check-box':
+        case 'Radio': // backward-compatibility with old export
+        case 'radio-button':
+          displayControl.answerLayout = {type: 'RADIO_CHECKBOX'};
+          break;
+        case 'Table': // backward-compatibility with old export
+        case 'gtable':  // Not in STU3, but we'll accept it
+          if(lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "horizontal";
+          }
+          break;
+        case 'Matrix': // backward-compatibility with old export
+        case 'table':
+          if(lfItem.dataType === 'SECTION') {
+            displayControl.questionLayout = "matrix";
+          }
+          break;
+        default:
+          displayControl = null;
+      }
+
+      if(displayControl && !jQuery.isEmptyObject(displayControl)) {
+        lfItem.displayControl = displayControl;
+      }
+    }
+  };
 
 
   // QuestionnaireResponse Import
@@ -316,11 +362,11 @@ function addCommonSDCImportFns(ns) {
       if (qrItem) {
         // first repeating qrItem
         if (qrItemInfo.total > 1 && qrItemInfo.index === 0) {
-          var defItem = this._findTheMatchingItemByCode(parentLFormsItem, qrItemInfo.code);
+          var defItem = this._findTheMatchingItemByLinkId(parentLFormsItem, qrItemInfo.linkId);
           // add repeating items in form data
           // if it is a case of repeating questions, not repeating answers
           if (ns._questionRepeats(defItem)) {
-            this._addRepeatingItems(parentLFormsItem, qrItemInfo.code, qrItemInfo.total);
+            this._addRepeatingItems(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.total);
             // add missing qrItemInfo nodes for the newly added repeating LForms items (questions, not sections)
             if (defItem.dataType !== 'SECTION' && defItem.dataType !== 'TITLE') {
               for (var j=1; j<qrItemInfo.total; j++) {
@@ -339,14 +385,13 @@ function addCommonSDCImportFns(ns) {
           }
         }
         // find the matching LForms item
-        var item = this._findTheMatchingItemByCodeAndIndex(parentLFormsItem, qrItemInfo.code, qrItemInfo.index);
+        var item = this._findTheMatchingItemByLinkIdAndIndex(parentLFormsItem, qrItemInfo.linkId, qrItemInfo.index);
 
         // set up value and units if it is a question
         if ((item.dataType !== 'SECTION' && item.dataType !== 'TITLE')) {
           var qrAnswer = qrItem.answer;
           if (qrAnswer && qrAnswer.length > 0) {
-            var code = this._getItemCodeFromLinkId(qrItem.linkId);
-            this._setupItemValueAndUnit(code, qrAnswer, item);
+            this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
           }
         }
 
