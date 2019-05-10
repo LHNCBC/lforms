@@ -19020,11 +19020,11 @@ var self = {
     // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
     // don't create a 'code' when converting it back to Questionnaire.
 
-    if (!item.fhirCodes) {
+    if (!item.codeList) {
       LForms.Util.initializeCodes(item);
     }
 
-    targetItem.code = item.fhirCodes; // extension
+    targetItem.code = item.codeList; // extension
 
     targetItem.extension = []; // required
 
@@ -19816,13 +19816,13 @@ function addCommonSDCExportFns(ns) {
 
   self._setFormLevelFields = function (target, source, noExtensions) {
     this.copyFields(source, target, this.formLevelFields);
-    target.code = source.fhirCodes || [];
+    target.code = source.codeList || [];
 
     var codeSystem = this._getCodeSystem(source.codeSystem); // TODO
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into qeustionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
 
 
     if (codeSystem) {
@@ -20247,7 +20247,7 @@ function addSDCImportFns(ns) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
 
     if (lfData.code) {
-      lfData.fhirCodes = lfData.code;
+      lfData.codeList = lfData.code;
       delete lfData.code;
     }
 
@@ -20729,7 +20729,7 @@ function addSDCImportFns(ns) {
 
 
   function _processCodeAndLinkId(lfItem, qItem) {
-    lfItem.fhirCodes = qItem.code;
+    lfItem.codeList = qItem.code;
 
     var code = self._getCode(qItem);
 

@@ -56,14 +56,14 @@ function addCommonSDCExportFns(ns) {
   self._setFormLevelFields = function(target, source, noExtensions) {
     
     this.copyFields(source, target, this.formLevelFields);
-    target.code = source.fhirCodes || [];
+    target.code = source.codeList || [];
     var codeSystem = this._getCodeSystem(source.codeSystem);
   
     // TODO
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into qeustionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
     if(codeSystem) {
       var code = {
         "system": codeSystem,

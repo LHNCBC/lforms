@@ -25,7 +25,7 @@ function addSDCImportFns(ns) {
   self._processFormLevelFields = function (lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
     if(lfData.code) {
-      lfData.fhirCodes = lfData.code;
+      lfData.codeList = lfData.code;
       delete lfData.code;
     }
     var code = self._getCode(questionnaire);
@@ -444,7 +444,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   function _processCodeAndLinkId(lfItem, qItem) {
-    lfItem.fhirCodes = qItem.code;
+    lfItem.codeList = qItem.code;
     var code = self._getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;

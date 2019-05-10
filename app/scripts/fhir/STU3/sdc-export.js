@@ -101,11 +101,11 @@ var self = {
     // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
     // don't create a 'code' when converting it back to Questionnaire.
   
-    if(!item.fhirCodes) {
+    if(!item.codeList) {
       LForms.Util.initializeCodes(item);
     }
   
-    targetItem.code = item.fhirCodes;
+    targetItem.code = item.codeList;
 
     // extension
     targetItem.extension = [];

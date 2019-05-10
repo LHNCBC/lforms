@@ -59,7 +59,7 @@
     type: null,
     // form's code
     code: null,
-    fhirCodes: null,
+    codeList: null,
     identifier: null,
     // form's name
     name: null,
@@ -169,7 +169,7 @@
 
       this.items = data.items;
       this.code = data.code;
-      this.fhirCodes = data.fhirCodes;
+      this.codeList = data.codeList;
       this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
@@ -1213,7 +1213,7 @@
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
-        fhirCodes: this.fhirCodes,
+        codeList: this.codeList,
         identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,

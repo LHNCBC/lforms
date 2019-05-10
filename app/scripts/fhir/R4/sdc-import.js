@@ -27,12 +27,12 @@ function addSDCImportFns(ns) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
   
     // TODO
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.fhirCodes
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.fhirCodes
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into qeustionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.fhirCodes.
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
     if(lfData.code) {
-      lfData.fhirCodes = lfData.code;
+      lfData.codeList = lfData.code;
       delete lfData.code;
     }
     var code = self._getCode(questionnaire);
@@ -531,7 +531,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processCodeAndLinkId = function (lfItem, qItem) {
-    lfItem.fhirCodes = qItem.code;
+    lfItem.codeList = qItem.code;
     var code = self._getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;

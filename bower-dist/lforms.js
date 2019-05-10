@@ -11765,10 +11765,10 @@ LForms.Util = {
   },
 
   /**
-   * Initialize form level form.code, form.fhirCodes, and item.fhirCodes, based on
-   * form.code, form.fhirCodes, items.questionCode, items.questionCodeSystem, and items.fhirCodes.
+   * Initialize form level form.code, form.codeList, and item.codeList, based on
+   * form.code, form.codeList, items.questionCode, items.questionCodeSystem, and items.codeList.
    *
-   * In brief, initialize code from fhirCodes and fhirCodes from code.
+   * In brief, initialize code from codeList and codeList from code.
    *
    * Idea is to initialize form.code,
    * @param formOrItem
@@ -11782,15 +11782,15 @@ LForms.Util = {
     var fhirSystem = codeSystem === 'LOINC' ? 'http://loinc.org' : codeSystem;
 
     if (code) {
-      if (!formOrItem.fhirCodes) {
-        formOrItem.fhirCodes = [];
+      if (!formOrItem.codeList) {
+        formOrItem.codeList = [];
       }
 
-      var fhirCodes = formOrItem.fhirCodes;
+      var codeList = formOrItem.codeList;
       var found = false;
 
-      for (var i = 0; i < fhirCodes.length; i++) {
-        if (code === fhirCodes[i].code && fhirSystem === fhirCodes[i].system) {
+      for (var i = 0; i < codeList.length; i++) {
+        if (code === codeList[i].code && fhirSystem === codeList[i].system) {
           found = true;
         }
       } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
@@ -11798,21 +11798,21 @@ LForms.Util = {
 
 
       if (!found && fhirSystem !== 'LinkId') {
-        fhirCodes.unshift({
+        codeList.unshift({
           system: fhirSystem,
           code: code,
           display: display
         });
       }
     } else {
-      if (formOrItem.fhirCodes && formOrItem.fhirCodes.length > 0) {
+      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
         if (isItem) {
           // questionCode is required, so this shouldn't happen??
-          formOrItem.questionCode = formOrItem.fhirCodes[0].code;
-          formOrItem.questionCodeSystem = formOrItem.fhirCodes[0].system;
+          formOrItem.questionCode = formOrItem.codeList[0].code;
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
         } else {
-          formOrItem.code = formOrItem.fhirCodes[0].code;
-          formOrItem.codeSystem = formOrItem.fhirCodes[0].system;
+          formOrItem.code = formOrItem.codeList[0].code;
+          formOrItem.codeSystem = formOrItem.codeList[0].system;
         }
       }
     }
@@ -13100,7 +13100,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     type: null,
     // form's code
     code: null,
-    fhirCodes: null,
+    codeList: null,
     identifier: null,
     // form's name
     name: null,
@@ -13243,7 +13243,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     init: function init(data) {
       this.items = data.items;
       this.code = data.code;
-      this.fhirCodes = data.fhirCodes;
+      this.codeList = data.codeList;
       this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
@@ -14279,7 +14279,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
-        fhirCodes: this.fhirCodes,
+        codeList: this.codeList,
         identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
