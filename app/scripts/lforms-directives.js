@@ -93,6 +93,7 @@
                   element.change();
                 };
                 opts.beforeShow = function() {
+                  element.click(); // without this, the UIB datetime picker does not close (if it were open)
                   showing = true;
                 };
                 opts.onClose = function(value, picker) {

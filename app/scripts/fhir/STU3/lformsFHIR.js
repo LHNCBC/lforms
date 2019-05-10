@@ -18171,7 +18171,7 @@ var dr = {
    */
   _getFormattedDate: function _getFormattedDate(dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    return dateObj ? LForms.Util.dateToString(dateObj) : "";
+    return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
   /**
@@ -19022,7 +19022,7 @@ var self = {
 
     target.status = "draft"; // date
 
-    target.date = LForms.Util.dateToString(new Date()); // version, assuming questionnaires are from LOINC forms
+    target.date = LForms.Util.dateToDTMString(new Date()); // version, assuming questionnaires are from LOINC forms
 
     target.version = "2.56"; // url
     // TODO - Commented out until we figure out the right url. -Ajay
@@ -20149,7 +20149,7 @@ function addCommonSDCExportFns(ns) {
 
     target.status = "completed"; // authored, required
 
-    target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
+    target.authored = LForms.Util.dateToDTMString(new Date()); // questionnaire , required
 
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
@@ -21193,7 +21193,6 @@ function addCommonSDCFns(ns) {
     "INT": 'integer',
     "DT": 'date',
     "DTM": 'dateTime',
-    // not supported yet
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',

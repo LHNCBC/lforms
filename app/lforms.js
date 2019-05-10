@@ -9,8 +9,7 @@
   if (Def._tooltip)
     widgetDeps = [Def._animate, Def._popover, Def._tooltip].concat(widgetDeps);
   else
-    widgetDeps = ['ngAnimate', 'ui.bootstrap', 'ui.bootstrap.datepicker',
-      'ui.bootstrap.timepicker'].concat(widgetDeps);
+    widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps)
     .config(['$animateProvider', function ($animateProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);

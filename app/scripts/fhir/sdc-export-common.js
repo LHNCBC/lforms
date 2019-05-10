@@ -360,7 +360,7 @@ function addCommonSDCExportFns(ns) {
     target.status = "completed";
 
     // authored, required
-    target.authored = LForms.Util.dateToString(new Date());
+    target.authored = LForms.Util.dateToDTMString(new Date());
 
     // questionnaire , required
     target.questionnaire = {

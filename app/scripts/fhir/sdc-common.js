@@ -17,7 +17,7 @@ function addCommonSDCFns(ns) {
     "REAL": 'decimal',
     "INT": 'integer',
     "DT": 'date',
-    "DTM": 'dateTime', // not supported yet
+    "DTM": 'dateTime',
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',

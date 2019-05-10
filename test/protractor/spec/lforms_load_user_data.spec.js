@@ -3,7 +3,7 @@ var tp = require('./lforms_testpage.po.js');
 var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
 
-  it('should load ST, DT, INT, answer lists', function() {
+  it('should load ST, DT, DTM, INT, answer lists', function() {
 
     tp.openFormWithUserData();
     expect(ff.q1.getAttribute('value')).toBe('no data type');

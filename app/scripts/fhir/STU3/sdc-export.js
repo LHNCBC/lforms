@@ -94,7 +94,7 @@ var self = {
     target.status = "draft";
 
     // date
-    target.date = LForms.Util.dateToString(new Date());
+    target.date = LForms.Util.dateToDTMString(new Date());
 
     // version, assuming questionnaires are from LOINC forms
     target.version = "2.56";

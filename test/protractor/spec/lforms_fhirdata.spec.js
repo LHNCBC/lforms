@@ -7,36 +7,6 @@ var ff = tp.USSGFHTVertical;
 var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 
-/**
- * Convert the given date string (date only no time) into mm/dd/yyyy (local/US) format with year,
- * month, and date values at the local timezone.
- * @param inDateString input data string. Although it can be in any format that javascript understands,
- * javascript interprets the date differently (with regard to assumed timezone) based on the string
- * format, which can be made even worse if a third party package (e.g., date.js) is used. Therefore, the
- * yyyy-mm-dd format is highly recommended, which is (?) consistently interpreted to be UTC in Date(string).
- * @return date string in format mm/dd/yyyy with year, month, and date values corresponding to that at local timezone.
- */
-function toLocalDateStr(inDateString) {
-  return LForms.Util.dateToStringYMD(new Date(inDateString))
-}
-
-
-/**
- * Convert the given date string (date only no time) into yyyy-mm-dd format with date value
- * at UTC.
- * @param inDateString input data string, can be in any format that javascript understands. Note that
- * javascript interprets the date differently (with regard to assumed timezone) based on the string
- * format. E.g., yyyy-mm-dd will be parsed using UTC time zone, mm/dd/yyyy in the US will be parsed using local
- * time zone.
- * @return date string in format yyyy-mm-dd with year, month, and date values corresponding to that at UTC.
- */
-function toUTCDateString(inDateString) {
-  var dateObj = new Date(inDateString);
-  return isNaN(dateObj.getTime())? undefined:
-    (10000 + dateObj.getUTCFullYear()).toString().substr(1) + '-' +
-    (101 + dateObj.getUTCMonth()).toString().substr(1) + '-' +
-    (100 + dateObj.getUTCDate()).toString().substr(1);
-}
 
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
@@ -152,7 +122,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[2].code.text).toBe("Gender");
                 expect(fhirData.contained[2].valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
                 // DOB
-                expect(fhirData.contained[3].valueDate).toBe("10/27/2016");
+                expect(fhirData.contained[3].valueDate).toBe("2016-10-27");
                 // Height
                 expect(fhirData.contained[4].valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
@@ -313,7 +283,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.entry[3].resource.code.text).toBe("Gender");
                 expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
                 // DOB
-                expect(fhirData.entry[4].resource.valueDate).toBe("10/27/2016");
+                expect(fhirData.entry[4].resource.valueDate).toBe("2016-10-27");
                 // Height
                 expect(fhirData.entry[5].resource.valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
@@ -478,7 +448,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[2].text).toBe("Date of Birth");
               expect(fhirData.item[0].item[2].linkId).toBe("/54126-8/21112-8");
               expect(fhirData.item[0].item[2].answer.length).toBe(1);
-              expect(fhirData.item[0].item[2].answer[0].valueDate).toBe("10/27/2016");
+              expect(fhirData.item[0].item[2].answer[0].valueDate).toBe("2016-10-27");
               // Height
               expect(fhirData.item[0].item[3].text).toBe("Height");
               expect(fhirData.item[0].item[3].linkId).toBe("/54126-8/8302-2");

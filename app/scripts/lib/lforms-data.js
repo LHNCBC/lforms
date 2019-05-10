@@ -1406,10 +1406,10 @@
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
-              retValue = LForms.Util.dateToStringYMD(value);
+              retValue = LForms.Util.dateToDTStringISO(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DTM:
-              retValue = LForms.Util.dateToString(value);
+              retValue = LForms.Util.dateToDTMString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
             case this._CONSTANTS.DATA_TYPE.CWE:

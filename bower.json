@@ -11,7 +11,8 @@
     "element-resize-detector": "^1.1.11",
     "bootstrap-ui-datetime-picker": "^2.6.3",
     "autocomplete-lhc": "^18.0.1",
-    "ucum-lhc": "^2.5.4"
+    "ucum-lhc": "^2.5.4",
+    "components-font-awesome": "^5.4.2"
   },
   "overrides": {
     "jquery-ui": {

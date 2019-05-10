@@ -483,18 +483,35 @@ LForms.Util = {
   },
 
   /**
-   * Convert the given date string (date only no time) into mm/dd/yyyy (local/US) format with year,
-   * month, and date values at the local timezone.
+   * This function and stringToDTDateISO are meant to work as a pair on DT (or FHIR date) data type.
+   * The idea is that DT/date type does not have timezone info, as a result, the string value could be
+   * off by a day during either way of conversion depending on the time zone the code is executed.
+   * The solution here is to keep the literal values of the year, month, and date components remain
+   * unchanged regardless of the time zones.
+   * Convert the given date object into a DT type date string, in "yyyy-mm-dd" format, where the
+   * year, month, and date are based on the "local time zone" as the users can see on the display.
    * @param dateObj the date object to be converted.
-   * @return date string in format mm/dd/yyyy with year, month, and date values corresponding to that at local timezone.
+   * @return date string in yyyy-mm-dd format with year, month, and date values corresponding to that
+   * at the local timezone.
    */
-  dateToStringYMD: function (dateObj) {
-    return isNaN(dateObj.getTime())? undefined:
-      (101 + dateObj.getMonth()).toString().substr(1) + '/' +
-      (100 + dateObj.getDate()).toString().substr(1) + '/' +
-      (10000 + dateObj.getFullYear()).toString().substr(1);
+  dateToDTStringISO: function (dateObj) {
+    return isNaN(dateObj.getTime())? undefined: [
+      (10000 + dateObj.getFullYear()).toString().substr(1),
+      (101 + dateObj.getMonth()).toString().substr(1),
+      (100 + dateObj.getDate()).toString().substr(1) ].join('-');
   },
 
+  /**
+   * Parse the given iso date string, that is, a string of format "yyyy[-mm[-dd]]", into a Date object,
+   * and then, adjust the year, month, and day so that when displayed (as local date) the literal values of
+   * the year, month, and date components remain unchanged.
+   * See the comments/docs for function dateToDTStringISO().
+   * @param isoDateString
+   */
+  stringToDTDateISO: function(isoDateString) {
+    var d = new Date(isoDateString);
+    return isNaN(d.getTime())? undefined: new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  },
 
   /**
    * Get a formatted date string from a date object
@@ -502,7 +519,7 @@ LForms.Util = {
    * @param objDate a date object
    * @returns a formatted date string
    */
-  dateToString: function(objDate) {
+  dateToDTMString: function(objDate) {
     var offset = objDate.getUTCOffset();
     offset = offset.slice(0,-2) + ":" + offset.slice(-2);
     return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
@@ -516,6 +533,7 @@ LForms.Util = {
   stringToDate: function(strDate) {
     // var dt = new Date(strDate);
     // new Date("t") (date.js) isn't working. How/whether it worked before (or at all) is a mystery.
+    // TODO: date.js Date.parse(string) could not correctly parse standard ISO date string, need to switch it out.
     var dt = undefined;
     if(strDate) {
       dt = Date.parse(strDate);
@@ -523,7 +541,7 @@ LForms.Util = {
         dt = new Date(strDate);
       }
       if(typeof dt === 'number') {
-        dt = new Date(dt); // just in case the date.js is switch out - standard Date.parse() returns epoch millis.
+        dt = isNaN(dt)? undefined: new Date(dt); // just in case the date.js is switch out - standard Date.parse() returns epoch millis.
       }
     }
 
@@ -539,30 +557,35 @@ LForms.Util = {
    */
   isItemValueEmpty: function(value) {
     var empty = true;
-    if(Array.isArray(value)) {
-      for(var i=0; i < value.length; ++i) {
-        if(! this.isItemValueEmpty(value[i])) {
-          empty = false;
-          break;
-        }
+    if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
+      if(typeof value === 'string' || value instanceof String) {
+        empty = value.trim() === '';
       }
-    }
-    else if (value != null && typeof value === 'object') {
-      var keys = Object.keys(value);
-      if(keys.length > 0) {
-        for(var i=0, iLen=keys.length; i<iLen; i++) {
-          if(! this.isItemValueEmpty(value[keys[i]])) {
+      else if(Array.isArray(value)) {
+        for(var i=0; i < value.length; ++i) {
+          if(! this.isItemValueEmpty(value[i])) {
             empty = false;
             break;
           }
         }
       }
-      else if(value.constructor !== Object && ! (value instanceof String && value.trim() === '')) { // e.g., a Date object has zero length keys
+      else if(typeof value === 'object') {
+        var keys = Object.keys(value);
+        if(keys.length > 0) {
+          for(var i=0, iLen=keys.length; i<iLen; i++) {
+            if(! this.isItemValueEmpty(value[keys[i]])) {
+              empty = false;
+              break;
+            }
+          }
+        }
+        else if(value.constructor !== Object) { // e.g., a Date object has zero length keys
+          empty = false;
+        }
+      }
+      else {
         empty = false;
       }
-    }
-    else if(value !== null && value !== undefined && value !== '' && (typeof value !== 'string' || value.trim() !== '')) {
-      return false;
     }
 
     return empty;

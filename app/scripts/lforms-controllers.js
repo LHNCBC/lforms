@@ -33,7 +33,12 @@ angular.module('lformsWidget')
 
         // uib booststrap datetime picker, https://github.com/Gillardo/bootstrap-ui-datetime-picker
         $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
-        $scope.uibDatePickerAltFormats = ['yyyy', 'MM yyyy', 'MMM yyyy', 'MMMM yyyy', 'MM/dd/yyyy'];
+        $scope.uibDatePickerAltFormats = [
+          'yyyy',
+          'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM',
+          'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy',
+          "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm"
+        ];
 
         $scope.uibDatePickerOptions = {
           showWeeks: false
@@ -46,9 +51,33 @@ angular.module('lformsWidget')
 
         // open the uib bootstrap datetime picker
         $scope.openUibDtmPicker = function(e) {
-          e.preventDefault();
-          e.stopPropagation();
           this.isOpen = true;
+        }
+
+        $scope.uibDtmPickerButtonBar = {
+          // specify the class for the close button so that we can locate the element.
+          // must specify each button but each button's conf fall back to system default if not specified.
+          show: true,
+          now: {},
+          today: {},
+          clear: {},
+          date: {},
+          time: {},
+          close: {
+            cls: 'btn-sm btn-default lf-dtmpk-close'
+          },
+          cancel: {}
+        };
+
+        // Close the uib bootstrap datetime picker if the input field loses focus -
+        // if the input loses focus due to clicking on the calendar icon, it will open fine.
+        // not intended to use on other fields but having the eleName param make it useful for troubleshooting
+        $scope.uibDtmPickerOnBlur = function(eleName) {
+          if(eleName === 'input' && this.isOpen) {
+            setTimeout(function(){
+              document.getElementsByClassName('lf-dtmpk-close')[0].click()
+            });
+          }
         };
 
         /**
