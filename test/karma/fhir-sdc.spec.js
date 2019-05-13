@@ -20,7 +20,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert code system', function() {
 
             var codeSystem = "LOINC";
-            var fhirCodeSystem = fhir.SDC._getCodeSystem(codeSystem);
+            var fhirCodeSystem = LForms.Util.getCodeSystem(codeSystem);
             assert.equal(fhirCodeSystem, "http://loinc.org");
           });
 

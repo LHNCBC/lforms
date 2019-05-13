@@ -101,7 +101,7 @@ var self = {
     // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
     // don't create a 'code' when converting it back to Questionnaire.
     if(!item.codeList) {
-      item.questioncodeSystem = this._getCodeSystem(item.questionCodeSystem);
+      item.questioncodeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
       LForms.Util.initializeCodes(item);
     }
     targetItem.code = item.codeList;
@@ -358,31 +358,6 @@ var self = {
 
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function(codeSystemInLForms) {
-
-    var codeSystem;
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-      case "CDE": // TBD
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-        break;
-      default:
-        codeSystem = codeSystemInLForms;
-
-    }
-
-    return codeSystem;
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -488,7 +463,7 @@ var self = {
       };
 
       if(item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -566,7 +541,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
@@ -665,7 +640,7 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
         if(item.answerCodeSystem) {
-          codeSystem = this._getCodeSystem(item.answerCodeSystem);
+          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
         }
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {

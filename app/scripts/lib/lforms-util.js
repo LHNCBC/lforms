@@ -739,7 +739,7 @@ LForms.Util = {
    * objects encapsulating multiple codes
    * .
    * To preserve compatibility with existing lforms code, we preserve
-   * both fields adding codeList which is Coding type. We make the first object
+   * both lforms code and FHIR Coding. FHIR Coding is preserved in codeList.
    *
    * This function adopts the following rules.
    *
@@ -756,7 +756,7 @@ LForms.Util = {
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
-    var fhirSystem = codeSystem === 'LOINC' ? 'http://loinc.org' : codeSystem;
+    var codeSystemUrl = this.getCodeSystem(codeSystem);
     
     if(code) {
       if(!formOrItem.codeList) {
@@ -765,16 +765,16 @@ LForms.Util = {
       var codeList = formOrItem.codeList;
       var found = false;
       for(var i = 0; i < codeList.length; i++) {
-        if(code === codeList[i].code && fhirSystem === codeList[i].system) {
+        if(code === codeList[i].code && codeSystemUrl === codeList[i].system) {
           found = true;
         }
       }
   
       // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
-      if(!found && fhirSystem !== 'LinkId') {
+      if(!found && codeSystemUrl !== 'LinkId') {
         codeList.unshift({
-          system: fhirSystem,
+          system: codeSystemUrl,
           code: code,
           display: display
         });
@@ -827,5 +827,33 @@ LForms.Util = {
     // Not sure what to put for display for something other than patient, but it
     // is optional, so for now I will just leave it blank.
     return ref;
-  }
+  },
+  
+  
+  /**
+   * Get a code system based on the code system value used in LForms
+   * @param codeSystemInLForms code system value used in LForms
+   * @private
+   */
+  getCodeSystem: function(codeSystemInLForms) {
+    
+    var codeSystem;
+    switch (codeSystemInLForms) {
+      case "LOINC":
+        codeSystem = "http://loinc.org";
+        break;
+      case "CDE": // TBD
+      case undefined:
+        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+        break;
+      default:
+        codeSystem = codeSystemInLForms;
+      
+    }
+    
+    return codeSystem;
+  },
+  
+  
+  
 };

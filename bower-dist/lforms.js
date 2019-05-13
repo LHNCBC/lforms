@@ -11765,21 +11765,30 @@ LForms.Util = {
   },
 
   /**
-   * Initialize form level form.code, form.codeList, and item.codeList, based on
-   * form.code, form.codeList, items.questionCode, items.questionCodeSystem, and items.codeList.
+   * We are transitioning lforms fields representing code (form.code, form.questionCode,
+   * items[x].questionCode
+   * and items[x].questionCodeSystem) to FHIR definition of Coding type.
+   * In lforms, these fields are string type and FHIR Coding is an array of
+   * objects encapsulating multiple codes
+   * .
+   * To preserve compatibility with existing lforms code, we preserve
+   * both lforms code and FHIR Coding. FHIR Coding is preserved in codeList.
    *
-   * In brief, initialize code from codeList and codeList from code.
+   * This function adopts the following rules.
    *
-   * Idea is to initialize form.code,
-   * @param formOrItem
-   * @private
+   * . If codeList is not present create it making the first item representing lforms code.
+   * . If lforms code is not present, create it as appropriate (form.code or item[x].questionCode) from
+   *   first item in codeList.
+   * . Always make sure the first item in codeList represents lforms code.
+   *
+   * @param formOrItem - lforms form or items[x]
    */
   initializeCodes: function initializeCodes(formOrItem) {
     var isItem = formOrItem.question || formOrItem.questionCode;
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
-    var fhirSystem = codeSystem === 'LOINC' ? 'http://loinc.org' : codeSystem;
+    var codeSystemUrl = this.getCodeSystem(codeSystem);
 
     if (code) {
       if (!formOrItem.codeList) {
@@ -11790,16 +11799,16 @@ LForms.Util = {
       var found = false;
 
       for (var i = 0; i < codeList.length; i++) {
-        if (code === codeList[i].code && fhirSystem === codeList[i].system) {
+        if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
           found = true;
         }
       } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
 
 
-      if (!found && fhirSystem !== 'LinkId') {
+      if (!found && codeSystemUrl !== 'LinkId') {
         codeList.unshift({
-          system: fhirSystem,
+          system: codeSystemUrl,
           code: code,
           display: display
         });
@@ -11847,6 +11856,33 @@ LForms.Util = {
 
 
     return ref;
+  },
+
+  /**
+   * Get a code system based on the code system value used in LForms
+   * @param codeSystemInLForms code system value used in LForms
+   * @private
+   */
+  getCodeSystem: function getCodeSystem(codeSystemInLForms) {
+    var codeSystem;
+
+    switch (codeSystemInLForms) {
+      case "LOINC":
+        codeSystem = "http://loinc.org";
+        break;
+
+      case "CDE": // TBD
+
+      case undefined:
+        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+
+        break;
+
+      default:
+        codeSystem = codeSystemInLForms;
+    }
+
+    return codeSystem;
   }
 };
 

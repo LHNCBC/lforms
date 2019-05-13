@@ -57,7 +57,7 @@ function addCommonSDCExportFns(ns) {
     
     this.copyFields(source, target, this.formLevelFields);
     target.code = source.codeList || [];
-    var codeSystem = this._getCodeSystem(source.codeSystem);
+    var codeSystem = LForms.Util.getCodeSystem(source.codeSystem);
   
     // TODO
     // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
@@ -361,7 +361,7 @@ function addCommonSDCExportFns(ns) {
 
     // "identifier":
     target.identifier = {
-      "system": this._getCodeSystem(source.codeSystem),
+      "system": LForms.Util.getCodeSystem(source.codeSystem),
       "value": source.code
     };
 

@@ -189,7 +189,7 @@ var self = {
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+    var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
 
 
     // text
@@ -375,31 +375,6 @@ var self = {
 
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function(codeSystemInLForms) {
-
-    var codeSystem;
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-      case "CDE": // TBD
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-        break;
-      default:
-        codeSystem = codeSystemInLForms;
-
-    }
-
-    return codeSystem;
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -505,7 +480,7 @@ var self = {
       };
 
       if(item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -583,7 +558,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
@@ -678,7 +653,7 @@ var self = {
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           // targetItem[valueKey] = [];

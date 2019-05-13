@@ -19098,9 +19098,7 @@ var self = {
 
 
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
-
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem); // text
-
+    var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem); // text
 
     targetItem.text = item.question; // enableWhen
 
@@ -19284,33 +19282,6 @@ var self = {
   },
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function _getCodeSystem(codeSystemInLForms) {
-    var codeSystem;
-
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-
-      case "CDE": // TBD
-
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-
-        break;
-
-      default:
-        codeSystem = codeSystemInLForms;
-    }
-
-    return codeSystem;
-  },
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -19418,7 +19389,7 @@ var self = {
       };
 
       if (item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -19492,7 +19463,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE') {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
 
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j = 0, jLen = values[i].length; j < jLen; j++) {
@@ -19589,7 +19560,7 @@ var self = {
 
 
       if (dataType === 'CWE' || dataType === 'CNE') {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
@@ -19817,13 +19788,11 @@ function addCommonSDCExportFns(ns) {
   self._setFormLevelFields = function (target, source, noExtensions) {
     this.copyFields(source, target, this.formLevelFields);
     target.code = source.codeList || [];
-
-    var codeSystem = this._getCodeSystem(source.codeSystem); // TODO
+    var codeSystem = LForms.Util.getCodeSystem(source.codeSystem); // TODO
     // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into qeustionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
-
 
     if (codeSystem) {
       var code = {
@@ -20114,7 +20083,7 @@ function addCommonSDCExportFns(ns) {
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
 
     target.identifier = {
-      "system": this._getCodeSystem(source.codeSystem),
+      "system": LForms.Util.getCodeSystem(source.codeSystem),
       "value": source.code
     }; // status, required
     // "in-progress", "completed", "amended"
