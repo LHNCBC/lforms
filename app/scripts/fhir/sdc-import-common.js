@@ -54,7 +54,7 @@ function addCommonSDCImportFns(ns) {
     'title',
     'name',
     'identifier',
-    //'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
+    'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
     'subjectType',
     'derivedFrom', // New in R4
     'status',

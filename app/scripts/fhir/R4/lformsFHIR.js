@@ -21339,7 +21339,7 @@ function addCommonSDCImportFns(ns) {
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
-  'date', 'version', 'title', 'name', 'identifier', //'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
+  'date', 'version', 'title', 'name', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
   'subjectType', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
   self.itemLevelIgnoredFields = ['definition', 'prefix'];
