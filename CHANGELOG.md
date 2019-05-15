@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.3.2] 2019-05-15
+### Fixed
+- Changed to allow 'label' in answers to be null.
+
 ## [15.3.1] 2019-04-30
 ### Fixed
 - Corrected the FHIR itemControl codes.  We still accept the incorrect codes (as

@@ -1376,13 +1376,21 @@ var formWithUserData =
       {"code": "c4", "text": "Other:", "other": true}],
       "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, user selected value
-    {"questionCode": "q6", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": {"code": "c1", "text": "Answer 1", "other": null},
-      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value", "answers": [
-      {"code": "c1", "text": "Answer 1", "other": null},
-      {"code": "c2", "text": "Answer 2", "other": null},
-      {"code": "c3", "text": "Answer 3", "other": null},
-      {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q6", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "value": {"code": "c2", "text": "Answer 2", "other": null, label: null, score: null},
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value",
+      "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null, label: null, score: null},
+      {"code": "c2", "text": "Answer 2", "other": null, label: null, score: null},
+      {"code": "c3", "text": "Answer 3", "other": null, label: null, score: null},
+      {"code": "c4", "text": "Other:", "other": true, label: null, score: null}],
+      "skipLogic": null, "editable": null,  "calculationMethod": null,
+      // "displayControl": {
+      //   "answerLayout": {
+      //     "type": "RADIO_CHECKBOX"
+      //   }
+      // },
+    },
     // answer list, user selected value overrides default answer
     {"questionCode": "q7", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": {"code": "c3", "text": "Answer 3", "other": null},
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value over default value", "answers": [
