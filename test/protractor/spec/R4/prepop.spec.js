@@ -22,7 +22,7 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
 }
 
 describe('Form pre-population', function() {
-  describe('with bower packages', function() {
+  fdescribe('with bower packages', function() {
     beforeAll(function () {
       tp.openBaseTestPage();
     });

@@ -44,7 +44,60 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   
-
+  
+  /**
+   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @returns {{}}
+   */
+  self.convertLFormsToQuestionnaire = function(lfData, noExtensions) {
+    var target = {};
+    
+    if (lfData) {
+      var source = angular.copy(lfData);
+      source = new LForms.LFormsData(source);
+      this._removeRepeatingItems(source);
+      this._setFormLevelFields(target, source, noExtensions);
+      
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+        for (var i=0, iLen=source.items.length; i<iLen; i++) {
+          var newItem = this._processItem(source.items[i], source, noExtensions);
+          target.item.push(newItem);
+        }
+        
+      }
+    }
+    
+    // FHIR doesn't allow null values, strip them out.
+    LForms.Util.pruneNulls(target);
+    return target;
+  };
+  
+  
+  /**
+   * Remove repeating items in a form data object
+   * @param source a LForms form data object
+   * @private
+   */
+  self._removeRepeatingItems = function(source) {
+    
+    if (source.items && Array.isArray(source.items)) {
+      for (var i= source.items.length-1; i>=0; i--) {
+        // if it is a repeating item, whose _id is not 1
+        if (source.items[i]._id > 1) {
+          source.items.splice(i,1);
+        }
+        else {
+          this._removeRepeatingItems(source.items[i]);
+        }
+      }
+    }
+  };
+  
+  
   /**
    * Set form level attributes
    * @param target a Questionnaire object
@@ -56,31 +109,8 @@ function addCommonSDCExportFns(ns) {
   self._setFormLevelFields = function(target, source, noExtensions) {
     
     this.copyFields(source, target, this.formLevelFields);
-    target.code = source.codeList || [];
-    var codeSystem = LForms.Util.getCodeSystem(source.codeSystem);
+    target.code = source.codeList;
   
-    // TODO
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
-    // into qeustionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(codeSystem) {
-      var code = {
-        "system": codeSystem,
-        "code": source.code,
-        "display": source.name
-      };
-      var found = false;
-      for(var i = 0; !found && i < target.code.length; i++) {
-        if(angular.equals(target.code[i], code)) {
-          found = true;
-        }
-      }
-      if(!found) {
-        target.code.unshift(code);
-      }
-    }
-
     // If missing, assign title
     if(!target.title) {
       target.title = target.name;

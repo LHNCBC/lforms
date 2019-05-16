@@ -502,6 +502,9 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function(strDate) {
+    if(strDate instanceof Date) {
+      return strDate;
+    }
     var matches, millis = null, ret = null;
   
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
@@ -842,7 +845,6 @@ LForms.Util = {
       case "LOINC":
         codeSystem = "http://loinc.org";
         break;
-      case "CDE": // TBD
       case undefined:
         codeSystem = "http://unknown"; // temp solution. as code system is required for coding
         break;
