@@ -57,7 +57,9 @@ function addCommonSDCExportFns(ns) {
     
     if (lfData) {
       var source = angular.copy(lfData);
-      source = new LForms.LFormsData(source);
+      if(! (source instanceof LForms.LFormsData)) {
+        source = new LForms.LFormsData(source);
+      }
       this._removeRepeatingItems(source);
       this._setFormLevelFields(target, source, noExtensions);
       

@@ -3,7 +3,7 @@ var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     var fhir = LForms.FHIR[fhirVersion];
-    describe.skip(fhirVersion, function() {
+    describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
         describe('_significantDigits', function() {
           it('should count zeros left of the decimal', function() {

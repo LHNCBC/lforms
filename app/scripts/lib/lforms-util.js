@@ -502,9 +502,6 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function(strDate) {
-    if(strDate instanceof Date) {
-      return strDate;
-    }
     var matches, millis = null, ret = null;
   
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
