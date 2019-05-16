@@ -334,7 +334,7 @@
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-populuation.
+     *  resources for pre-population.
      */
     _requestLinkedObs: function() {
       if (LForms.fhirContext && this._fhir) {
@@ -929,10 +929,9 @@
             var listVals = [];
             for (var k=0, kLen=vals.length; k<kLen; ++k) {
               var val = vals[k];
-              var valKey = val.label !== undefined  ? 'label' :
-                val.code !== undefined ? 'code' : 'text';
-              // val should be a hash, but to preserve current behavior, we are
-              // permitted it to be a string.
+              var valKey = val.label !== undefined && val.label !== null ? 'label' :
+                val.code !== undefined && val.code !== null ? 'code' : 'text';
+              // val should be a hash, but to preserve current behavior, a string is allowed.
               var valValue = typeof val === 'string' ? val : val[valKey];
               var found = false;
               for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {

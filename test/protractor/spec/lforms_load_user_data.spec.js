@@ -13,7 +13,7 @@ describe('load saved user data', function() {
     expect(ff.q3.getAttribute('value')).toBe('user input value');
     expect(ff.q4.getAttribute('value')).toBe('11/17/2015');
     expect(ff.q5.getAttribute('value')).toBe('Answer 2');
-    expect(ff.q6.getAttribute('value')).toBe('Answer 1');
+    expect(ff.q6.getAttribute('value')).toBe('Answer 2');
     expect(ff.q7.getAttribute('value')).toBe('Answer 3');
 
     expect(ff.q8.getAttribute('value')).toBe('');
