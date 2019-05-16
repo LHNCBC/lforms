@@ -11801,6 +11801,7 @@ LForms.Util = {
       for (var i = 0; i < codeList.length; i++) {
         if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
           found = true;
+          break;
         }
       } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.

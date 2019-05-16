@@ -554,7 +554,7 @@ function addCommonSDCImportFns(ns) {
     }
     
     return ret;
-  }
+  };
   
   
   // Copy the main merge function to preserve the same API usage.

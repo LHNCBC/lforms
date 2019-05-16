@@ -767,6 +767,7 @@ LForms.Util = {
       for(var i = 0; i < codeList.length; i++) {
         if(code === codeList[i].code && codeSystemUrl === codeList[i].system) {
           found = true;
+          break;
         }
       }
   

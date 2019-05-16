@@ -20216,13 +20216,13 @@ function addSDCImportFns(ns) {
    */
 
   self._processFormLevelFields = function (lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields); // TODO
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    self.copyFields(questionnaire, lfData, self.formLevelFields); // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
-    // into qeustionnaire.code. While importing, convert first of questionnaire.code
+    // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
 
     if (lfData.code) {
+      // Rename code to codeList
       lfData.codeList = lfData.code;
       delete lfData.code;
     }

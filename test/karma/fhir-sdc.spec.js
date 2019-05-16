@@ -154,6 +154,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            convertedLfData = new LForms.LFormsData(convertedLfData);
 
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
@@ -554,6 +555,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
           $.get(qFile, function(fhirQnData) { // load the questionnaire json
             var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+            qnForm = new LForms.LFormsData(qnForm);
 
             it('should properly convert to LForms answers', function () {
               var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');
