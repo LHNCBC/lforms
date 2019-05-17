@@ -30,7 +30,7 @@ function addSDCImportFns(ns) {
       delete lfData.code;
     }
     var codeAndSystemObj = self._getCode(questionnaire);
-    if(code) {
+    if(codeAndSystemObj) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
     }

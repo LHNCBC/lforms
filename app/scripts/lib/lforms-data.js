@@ -281,74 +281,6 @@
       }
     },
   
-  
-    /**
-     * We are transitioning lforms fields representing code (form.code, form.questionCode,
-     * items[x].questionCode
-     * and items[x].questionCodeSystem) to FHIR definition of Coding type.
-     * In lforms, these fields are string type and FHIR Coding is an array of
-     * objects encapsulating multiple codes
-     * .
-     * To preserve compatibility with existing lforms code, we preserve
-     * both lforms code and FHIR Coding. FHIR Coding is preserved in codeList.
-     *
-     * This function adopts the following rules.
-     *
-     * . If codeList is not present create it making the first item representing lforms code.
-     * . If lforms code is not present, create it as appropriate (form.code or item[x].questionCode) from
-     *   first item in codeList.
-     * . Always make sure the first item in codeList represents lforms code.
-     *
-     * @param formOrItem - lforms form or items[x]
-     */
-    _initializeCodes: function (formOrItem) {
-    
-      var isItem = (formOrItem.question || formOrItem.questionCode);
-      var code = isItem ? formOrItem.questionCode : formOrItem.code;
-      var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
-      var display = isItem ? formOrItem.question : formOrItem.name;
-      var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
-    
-      if(code) {
-        if(!formOrItem.codeList) {
-          formOrItem.codeList = [];
-        }
-        var codeList = formOrItem.codeList;
-        var found = false;
-        for(var i = 0; i < codeList.length; i++) {
-          if(code === codeList[i].code && codeSystemUrl === codeList[i].system) {
-            found = true;
-            break;
-          }
-        }
-      
-        // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-        // don't create a 'code' when converting it back to Questionnaire.
-        if(!found && codeSystemUrl !== 'LinkId') {
-          codeList.unshift({
-            system: codeSystemUrl,
-            code: code,
-            display: display
-          });
-        }
-      }
-      else {
-        if(formOrItem.codeList && formOrItem.codeList.length > 0) {
-          if(isItem) {
-            // questionCode is required, so this shouldn't happen??
-            formOrItem.questionCode = formOrItem.codeList[0].code;
-            formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
-          }
-          else {
-            formOrItem.code = formOrItem.codeList[0].code;
-            formOrItem.codeSystem = formOrItem.codeList[0].system;
-          }
-        }
-      }
-    
-      return formOrItem;
-    },
-  
     
     /**
      * Calculate internal data from the raw form definition data,
@@ -365,7 +297,7 @@
       // set default values of certain form definition fields
       this._setDefaultValues();
 
-      this._initializeCodes(this);
+      LForms.Util.initializeCodes(this);
       // update internal status
       this._repeatableItems = {};
       this._setTreeNodes(this.items, this);
@@ -932,7 +864,7 @@
           item.questionCodeSystem = "LOINC";
         }
   
-        this._initializeCodes(item);
+        LForms.Util.initializeCodes(item);
         
         // set default dataType
         if (item.header) {

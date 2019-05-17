@@ -20191,11 +20191,11 @@ function addSDCImportFns(ns) {
       delete lfData.code;
     }
 
-    var code = self._getCode(questionnaire);
+    var codeAndSystemObj = self._getCode(questionnaire);
 
-    if (code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    if (codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
   };
   /**

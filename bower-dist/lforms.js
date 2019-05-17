@@ -11788,7 +11788,7 @@ LForms.Util = {
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
-    var codeSystemUrl = this.getCodeSystem(codeSystem);
+    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
 
     if (code) {
       if (!formOrItem.codeList) {
