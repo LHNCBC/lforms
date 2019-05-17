@@ -29,10 +29,10 @@ function addSDCImportFns(ns) {
       lfData.codeList = lfData.code;
       delete lfData.code;
     }
-    var code = self._getCode(questionnaire);
+    var codeAndSystemObj = self._getCode(questionnaire);
     if(code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
   };
 
