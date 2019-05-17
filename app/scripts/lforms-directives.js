@@ -99,7 +99,7 @@
                   showing = false;
                 };
                 element.on('change', function() {
-                  var valid_date = Date.parse(this.value);
+                  var valid_date = LForms.Util.stringToDate(this.value);
                   if(valid_date) {
                     controller.$setViewValue(valid_date);
                     element.datepicker("setDate", valid_date);
@@ -120,7 +120,7 @@
                   }
                   // convert saved user data into date
                   else if (typeof(date) === "string") {
-                    date = new Date(date);
+                    date = LForms.Util.stringToDate(date);
                   }
                   element.datepicker("setDate", date);
                 };

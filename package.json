@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.3.2",
+  "version": "15.4.0",
   "main": "app/scripts/index.js",
   "files": [
     "app"
@@ -62,7 +62,7 @@
   },
   "scripts": {
     "wiredep": "grunt wiredep",
-    "test": "grunt test",
+    "test": "npm run update-webdriver && grunt test",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:css:lforms": "cleancss --skip-rebase -o dist/latest/styles/lforms.min.css dist/latest/styles/lforms.css",
@@ -71,6 +71,6 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update"
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.standalone 3.141.59"
   }
 }

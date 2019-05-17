@@ -751,7 +751,7 @@ var dr = {
 
     // date
     if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
-      var whenDone = new Date(dr.effectiveDateTime);
+      var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
       if (whenDone) {
         newFormData.templateOptions.formHeaderItems[0].value = whenDone;
       }

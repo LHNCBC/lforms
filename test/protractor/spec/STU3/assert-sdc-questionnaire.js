@@ -7,8 +7,8 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.code[0].code).toBe("54127-6N");
   expect(fhirData.code[0].display).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
   expect(fhirData.code[0].system).toBe("http://loinc.org");
-  expect(fhirData.identifier[0].value).toBe("54127-6N");
-  expect(fhirData.identifier[0].system).toBe("http://loinc.org");
+  //expect(fhirData.identifier[0].value).toBe("54127-6N");
+  //expect(fhirData.identifier[0].system).toBe("http://loinc.org");
   
   expect(fhirData.item.length).toBe(2);
   expect(fhirData.item[0].code[0].code).toBe("54126-8");

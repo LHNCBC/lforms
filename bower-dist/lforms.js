@@ -8988,7 +8988,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             };
 
             element.on('change', function () {
-              var valid_date = Date.parse(this.value);
+              var valid_date = LForms.Util.stringToDate(this.value);
 
               if (valid_date) {
                 controller.$setViewValue(valid_date);
@@ -9010,7 +9010,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 throw new Error('ng-Model value must be a Date object or a string - currently it is a ' + _typeof(date));
               } // convert saved user data into date
               else if (typeof date === "string") {
-                  date = new Date(date);
+                  date = LForms.Util.stringToDate(date);
                 }
 
               element.datepicker("setDate", date);
@@ -11535,7 +11535,35 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate) {
-    return new Date(strDate);
+    var matches,
+        millis = null,
+        ret = null; // This date parsing (from Datejs) fails to parse string that includes milliseconds.
+    // If the input is in ISO format, remove millis from the string before parsing and add it after
+    // constructing the date object.
+
+    if ((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
+      strDate = strDate.substring(0, matches.index) + matches[2];
+      millis = parseInt(matches[1]);
+    } else if ((matches = strDate.match(/\s*\(.*\)$/)) !== null) {
+      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
+      // It has problem with content in the parenthesis at the end. Remove it before parsing.
+      strDate = strDate.substring(0, matches.index);
+    }
+
+    if (strDate) {
+      ret = Date.parse(strDate);
+
+      if (ret === null) {
+        // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
+        ret = new Date(strDate);
+      }
+    }
+
+    if (ret && millis !== null) {
+      ret.addMilliseconds(millis);
+    }
+
+    return ret;
   },
 
   /**
@@ -11737,6 +11765,72 @@ LForms.Util = {
   },
 
   /**
+   * We are transitioning lforms fields representing code (form.code, form.questionCode,
+   * items[x].questionCode
+   * and items[x].questionCodeSystem) to FHIR definition of Coding type.
+   * In lforms, these fields are string type and FHIR Coding is an array of
+   * objects encapsulating multiple codes
+   * .
+   * To preserve compatibility with existing lforms code, we preserve
+   * both lforms code and FHIR Coding. FHIR Coding is preserved in codeList.
+   *
+   * This function adopts the following rules.
+   *
+   * . If codeList is not present create it making the first item representing lforms code.
+   * . If lforms code is not present, create it as appropriate (form.code or item[x].questionCode) from
+   *   first item in codeList.
+   * . Always make sure the first item in codeList represents lforms code.
+   *
+   * @param formOrItem - lforms form or items[x]
+   */
+  initializeCodes: function initializeCodes(formOrItem) {
+    var isItem = formOrItem.question || formOrItem.questionCode;
+    var code = isItem ? formOrItem.questionCode : formOrItem.code;
+    var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
+    var display = isItem ? formOrItem.question : formOrItem.name;
+    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
+
+    if (code) {
+      if (!formOrItem.codeList) {
+        formOrItem.codeList = [];
+      }
+
+      var codeList = formOrItem.codeList;
+      var found = false;
+
+      for (var i = 0; i < codeList.length; i++) {
+        if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
+          found = true;
+          break;
+        }
+      } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+      // don't create a 'code' when converting it back to Questionnaire.
+
+
+      if (!found && codeSystemUrl !== 'LinkId') {
+        codeList.unshift({
+          system: codeSystemUrl,
+          code: code,
+          display: display
+        });
+      }
+    } else {
+      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
+        if (isItem) {
+          // questionCode is required, so this shouldn't happen??
+          formOrItem.questionCode = formOrItem.codeList[0].code;
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+        } else {
+          formOrItem.code = formOrItem.codeList[0].code;
+          formOrItem.codeSystem = formOrItem.codeList[0].system;
+        }
+      }
+    }
+
+    return formOrItem;
+  },
+
+  /**
    *  Creates a Reference to the given FHIR resource, to be used an a subject in
    *  another resource.
    * @param fhirRes the FHIR resource for which to create a Reference.
@@ -11763,6 +11857,31 @@ LForms.Util = {
 
 
     return ref;
+  },
+
+  /**
+   * Get a code system based on the code system value used in LForms
+   * @param codeSystemInLForms code system value used in LForms
+   * @private
+   */
+  getCodeSystem: function getCodeSystem(codeSystemInLForms) {
+    var codeSystem;
+
+    switch (codeSystemInLForms) {
+      case "LOINC":
+        codeSystem = "http://loinc.org";
+        break;
+
+      case undefined:
+        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+
+        break;
+
+      default:
+        codeSystem = codeSystemInLForms;
+    }
+
+    return codeSystem;
   }
 };
 
@@ -13016,6 +13135,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     type: null,
     // form's code
     code: null,
+    codeList: null,
+    identifier: null,
     // form's name
     name: null,
     // a pre-defined view template used to display the form
@@ -13157,6 +13278,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     init: function init(data) {
       this.items = data.items;
       this.code = data.code;
+      this.codeList = data.codeList;
+      this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -13206,7 +13329,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      *  Initializes form-level FHIR data.  This should be called before item
      *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
-     * @param an LForms form definition object (or LFormsData).
+     * @param data - LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
@@ -13276,8 +13399,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _initializeInternalData: function _initializeInternalData() {
       //TODO, validate form data
       // set default values of certain form definition fields
-      this._setDefaultValues(); // update internal status
+      this._setDefaultValues();
 
+      LForms.Util.initializeCodes(this); // update internal status
 
       this._repeatableItems = {};
 
@@ -13849,7 +13973,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // set default dataType
+        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
+        // child items are of LOINC, unless specified otherwise.
+
+        if (this.type === "LOINC" && !item.questionCodeSystem) {
+          item.questionCodeSystem = "LOINC";
+        }
+
+        LForms.Util.initializeCodes(item); // set default dataType
 
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE) item.dataType = this._CONSTANTS.DATA_TYPE.SECTION;
@@ -14005,11 +14136,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE) {
           item._hasValidation = true;
-        } // question coding system
-
-
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
         } // add a link to external site for item's definition
 
 
@@ -14187,6 +14313,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
+        codeList: this.codeList,
+        identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,
@@ -16432,7 +16560,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
       if (!fhirPathVal) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          var d = new Date(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
+          var d = new LForms.Util.stringToDate(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
           // local timezones.
 
           item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());

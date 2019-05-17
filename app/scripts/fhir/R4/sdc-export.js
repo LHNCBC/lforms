@@ -26,110 +26,6 @@ var self = {
   stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
 
   /**
-   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
-   * @param lfData a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
-   */
-  convertLFormsToQuestionnaire: function(lfData, noExtensions) {
-    var target = {};
-
-    if (lfData) {
-      var source = angular.copy(lfData);
-      this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        target.item = [];
-        for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(source.items[i], source, noExtensions);
-          target.item.push(newItem);
-        }
-
-      }
-    }
-
-    // FHIR doesn't allow null values, strip them out.
-    LForms.Util.pruneNulls(target);
-    return target;
-  },
-
-
-  /**
-   * Remove repeating items in a form data object
-   * @param source a LForms form data object
-   * @private
-   */
-  _removeRepeatingItems: function(source) {
-
-    if (source.items && Array.isArray(source.items)) {
-      for (var i= source.items.length-1; i>=0; i--) {
-        // if it is a repeating item, whose _id is not 1
-        if (source.items[i]._id > 1) {
-          source.items.splice(i,1);
-        }
-        else {
-          this._removeRepeatingItems(source.items[i]);
-        }
-      }
-    }
-  },
-
-
-  /**
-   * Set form level attributes
-   * @param target a Questionnaire object
-   * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @private
-   */
-  _setFormLevelFields: function(target, source, noExtensions) {
-
-    this.copyFields(source, target, this.formLevelIgnoredFields);
-    // resourceType
-    target.resourceType = "Questionnaire";
-    target.status = target.status ? target.status : "draft";
-
-    // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
-
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
-
-    // title
-    target.title = source.name;
-
-    // name
-    target.name = source.name;
-
-    var codeSystem = this._getCodeSystem(source.codeSystem);
-
-    // "identifier": [
-    target.identifier = [{
-      "system": codeSystem,
-      "value": source.code
-    }];
-
-    // code
-    target.code = [{
-      "system": codeSystem,
-      "code": source.code,
-      "display": source.name
-    }];
-
-    // subjectType
-    target.subjectType = ["Patient", "Person"];
-
-    if(source.id) {
-      target.id = source.id;
-    }
-
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
@@ -145,6 +41,9 @@ var self = {
     targetItem.type = this._getFhirDataType(item);
 
     // id (empty for new record)
+
+    // code
+    targetItem.code = item.codeList;
 
     // extension
     targetItem.extension = [];
@@ -236,18 +135,6 @@ var self = {
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem);
-
-    // code
-    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-    // don't create a 'code' when converting it back to Questionnaire.
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    }
 
     // text
     targetItem.text = item.question;
@@ -410,31 +297,6 @@ var self = {
 
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function(codeSystemInLForms) {
-
-    var codeSystem;
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-      case "CDE": // TBD
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-        break;
-      default:
-        codeSystem = codeSystemInLForms;
-
-    }
-
-    return codeSystem;
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -540,7 +402,7 @@ var self = {
       };
 
       if(item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -618,7 +480,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
@@ -717,7 +579,7 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
         if(item.answerCodeSystem) {
-          codeSystem = this._getCodeSystem(item.answerCodeSystem);
+          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
         }
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {

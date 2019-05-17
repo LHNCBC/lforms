@@ -4,4 +4,5 @@ themes.css -diff
 app/scripts/fhir/*/lformsFHIR.js -diff
 app/scripts/fhir/*/lformsFHIR.js linguist-generated=true
 app/styles/themes.css linguist-generated=true
+bower-dist/lforms.js -diff
 bower-dist linguist-generated=true
