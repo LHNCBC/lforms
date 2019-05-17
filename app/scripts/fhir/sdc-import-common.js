@@ -360,13 +360,15 @@ function addCommonSDCImportFns(ns) {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = (new LForms.LFormsData(formData)).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      formData = (new LForms.LFormsData(formData)).getFormData();
+    }
     // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
     var qrInfo = qrImport._getQRStructure(qr);
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
-    return newFormData;
+    qrImport._processQRItemAndLFormsItem(qrInfo, formData);
+    return formData;
   };
 
 

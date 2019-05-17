@@ -18418,7 +18418,7 @@ var dr = {
 
       dr = {
         "resourceType": "DiagnosticReport",
-        "id": this._getUniqueId(formAndUserData.code),
+        "id": this._commonExport._getUniqueId(formAndUserData.code),
         "status": "final",
         "code": {
           "coding": [{
@@ -18927,7 +18927,7 @@ var self = {
       "resourceType": "Observation",
       "status": "final",
       "code": {
-        "coding": item.codings,
+        "coding": item.codeList,
         "text": item.question
       }
     };
@@ -21581,15 +21581,18 @@ function addCommonSDCImportFns(ns) {
    */
 
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData(); // The reference to _mergeQR below is here because this function gets copied to
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      formData = new LForms.LFormsData(formData).getFormData();
+    } // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
+
 
     var qrInfo = qrImport._getQRStructure(qr);
 
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
+    qrImport._processQRItemAndLFormsItem(qrInfo, formData);
 
-    return newFormData;
+    return formData;
   };
   /**
    * Merge data into items on the same level

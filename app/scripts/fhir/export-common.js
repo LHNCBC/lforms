@@ -86,7 +86,7 @@ var self = {
       "resourceType": "Observation",
       "status": "final",
       "code": {
-        "coding": item.codings,
+        "coding": item.codeList,
         "text": item.question
       }
     };

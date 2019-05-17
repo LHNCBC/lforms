@@ -363,8 +363,8 @@
               // will check the focus parameter when the Observation is
               // returned.  Later, we might query the server to find out whether
               // :missing is supported.
-              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-                queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
+              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
@@ -380,7 +380,7 @@
                   var foundObs;
                   for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
                     var obs = bundle.entry[j].resource;
-                    if (!obs.focus) { // in case we couldn't using focus:missing above
+                    if (!obs.focus) { // in case we couldn't use focus:missing above
                       foundObs = true;
                       serverFHIR.SDC.importObsValue(itemI, obs);
                       if (itemI.unit)

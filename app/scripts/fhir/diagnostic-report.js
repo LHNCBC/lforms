@@ -257,7 +257,7 @@ var dr = {
 
       dr = {
         "resourceType": "DiagnosticReport",
-        "id":  this._getUniqueId(formAndUserData.code),
+        "id":  this._commonExport._getUniqueId(formAndUserData.code),
         "status": "final",
         "code": {
           "coding": [
