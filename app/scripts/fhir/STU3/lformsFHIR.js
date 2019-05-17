@@ -20186,6 +20186,7 @@ function addSDCImportFns(ns) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
 
     if (lfData.code) {
+      // Rename questionnaire code to codeList
       lfData.codeList = lfData.code;
       delete lfData.code;
     }
@@ -21150,7 +21151,7 @@ function addCommonSDCFns(ns) {
   self.copyFields = function (source, target, fieldList) {
     if (source && target && fieldList && fieldList.length > 0) {
       fieldList.forEach(function (field) {
-        if (source[field] !== undefined) {
+        if (source.hasOwnProperty(field)) {
           target[field] = source[field];
         }
       });

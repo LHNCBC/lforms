@@ -31,14 +31,14 @@ function addSDCImportFns(ns) {
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
     if(lfData.code) {
-      // Rename code to codeList
+      // Rename questionnaire code to codeList
       lfData.codeList = lfData.code;
       delete lfData.code;
     }
-    var code = self._getCode(questionnaire);
-    if(code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    var codeAndSystemObj = self._getCode(questionnaire);
+    if(codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
 
     // form-level variables

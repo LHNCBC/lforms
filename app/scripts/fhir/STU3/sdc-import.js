@@ -25,6 +25,7 @@ function addSDCImportFns(ns) {
   self._processFormLevelFields = function (lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
     if(lfData.code) {
+      // Rename questionnaire code to codeList
       lfData.codeList = lfData.code;
       delete lfData.code;
     }

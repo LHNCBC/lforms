@@ -20222,16 +20222,16 @@ function addSDCImportFns(ns) {
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
 
     if (lfData.code) {
-      // Rename code to codeList
+      // Rename questionnaire code to codeList
       lfData.codeList = lfData.code;
       delete lfData.code;
     }
 
-    var code = self._getCode(questionnaire);
+    var codeAndSystemObj = self._getCode(questionnaire);
 
-    if (code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    if (codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     } // form-level variables
 
 
@@ -21261,7 +21261,7 @@ function addCommonSDCFns(ns) {
   self.copyFields = function (source, target, fieldList) {
     if (source && target && fieldList && fieldList.length > 0) {
       fieldList.forEach(function (field) {
-        if (source[field] !== undefined) {
+        if (source.hasOwnProperty(field)) {
           target[field] = source[field];
         }
       });

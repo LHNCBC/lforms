@@ -109,7 +109,7 @@ function addCommonSDCFns(ns) {
   self.copyFields = function(source, target, fieldList) {
     if(source && target && fieldList && fieldList.length > 0) {
       fieldList.forEach(function(field) {
-        if(source[field] !== undefined ) {
+        if(source.hasOwnProperty(field)) {
           target[field] = source[field];
         }
       });
