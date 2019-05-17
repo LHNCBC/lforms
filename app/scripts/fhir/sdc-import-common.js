@@ -32,6 +32,51 @@ function addCommonSDCImportFns(ns) {
 
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
 
+  self.formLevelFields = [
+    // Resource
+    'id',
+    'meta',
+    'implicitRules',
+    'language',
+
+
+    // Domain Resource
+    'text',
+    'contained',
+    'text',
+    'contained',
+    'extension',
+    'modifiedExtension',
+
+    // Questionnaire
+    'date',
+    'version',
+    'title',
+    'name',
+    'identifier',
+    'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
+    'subjectType',
+    'derivedFrom', // New in R4
+    'status',
+    'experimental',
+    'publisher',
+    'contact',
+    'description',
+    'useContext',
+    'jurisdiction',
+    'purpose',
+    'copyright',
+    'approvalDate',
+    'reviewDate',
+    'effectivePeriod',
+    'url'
+  ];
+
+  self.itemLevelIgnoredFields = [
+    'definition',
+    'prefix'
+  ];
+
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -252,9 +297,6 @@ function addCommonSDCImportFns(ns) {
     }
 
     lfItem.linkId = qItem.linkId;
-
-    // Also save all the codings, for use on export.
-    lfItem.codings = lfItem.code; // IMO, codings is a better name
   };
 
 
@@ -487,6 +529,54 @@ function addCommonSDCImportFns(ns) {
     if(qResource.item) {
       ret = traverse(qResource.item, ret);
     }
+    return ret;
+  };
+
+
+  /**
+   * Get an object with code and code system
+   *
+   * @param questionnaireItemOrResource {object} - question
+   * @private
+   */
+  self._getCode = function (questionnaireItemOrResource) {
+    var code = null;
+    if(questionnaireItemOrResource &&
+      Array.isArray(questionnaireItemOrResource.code) &&
+      questionnaireItemOrResource.code.length) {
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
+    }
+    // If code is missing look for identifier.
+    else if(questionnaireItemOrResource &&
+      Array.isArray(questionnaireItemOrResource.identifier) &&
+      questionnaireItemOrResource.identifier.length) {
+      code = {
+        code: questionnaireItemOrResource.identifier[0].value,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+      };
+    }
+
+    return code;
+  };
+
+
+  /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+  self._toLfCodeSystem = function(codeSystem) {
+    var ret = codeSystem;
+    switch(codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
+    }
+
     return ret;
   };
 

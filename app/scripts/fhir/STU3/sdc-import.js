@@ -23,15 +23,16 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processFormLevelFields = function (lfData, questionnaire) {
-    lfData.name = questionnaire.title;
-    var code = self._getCode(questionnaire);
-    if(code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
+    if(lfData.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = lfData.code;
+      delete lfData.code;
     }
-
-    if(questionnaire.id) {
-      lfData.id = questionnaire.id;
+    var codeAndSystemObj = self._getCode(questionnaire);
+    if(codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
   };
 
@@ -287,7 +288,7 @@ function addSDCImportFns(ns) {
       if(vs) {
         lfItem.answers = vs.answers;
         if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         }
         else if(vs.hasAnswerCodeSystems) {
           console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s',
@@ -438,54 +439,6 @@ function addSDCImportFns(ns) {
       lfItem.questionCardinality = {min: "1", max: "1"};
     }
   }
-
-
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-    switch(codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-
-
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-    if(questionnaireItemOrResource &&
-         Array.isArray(questionnaireItemOrResource.code) &&
-         questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    }
-    // If code is missing look for identifier.
-    else if(questionnaireItemOrResource &&
-      Array.isArray(questionnaireItemOrResource.identifier) &&
-      questionnaireItemOrResource.identifier.length) {
-      code = {
-        code: questionnaireItemOrResource.identifier[0].value,
-        system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-      };
-    }
-
-    return code;
-  };
 
 
   /**

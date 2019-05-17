@@ -20,7 +20,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert code system', function() {
 
             var codeSystem = "LOINC";
-            var fhirCodeSystem = fhir.SDC._getCodeSystem(codeSystem);
+            var fhirCodeSystem = LForms.Util.getCodeSystem(codeSystem);
             assert.equal(fhirCodeSystem, "http://loinc.org");
           });
 
@@ -34,7 +34,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/54126-8/54125-0",
               "_idPath": "/1/1"
             };
-            var out = fhir.SDC._processItem(item, {});
+            
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
             assert.equal(out.linkId, "/54126-8/54125-0");
@@ -54,20 +55,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "dataType": "QTY",
               "_codePath": "/weight"
             };
-            var out = fhir.SDC._processItem(item, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.linkId, "/weight");
             assert.equal(out.type, "quantity");
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
-            var out = fhir.SDC._processItem(cneFixture.input, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(cneFixture.input), {});
             assert.deepEqual(out, cneFixture.output);
           });
 
           it('should convert an item with answerCodeSystem', function () {
             var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
-            var out = fhir.SDC._processItem(alFixture.input, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(alFixture.input), {});
             assert.deepEqual(out, alFixture.output);
           });
 
@@ -99,7 +100,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_idPath": "/1/1"
             };
 
-            var out = fhir.SDC._processItem(item, {});
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
             assert.equal(out.linkId, "/54126-8/54137-5X");
@@ -153,15 +154,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
+            convertedLfData = new LForms.LFormsData(convertedLfData);
 
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
             assert.equal(convertedLfData.codeSystem, 'LOINC');
+            assert.equal(convertedLfData.codeList.length, 1);
+            assert.equal(convertedLfData.codeList[0].code, '54127-6N');
+            assert.equal(convertedLfData.codeList[0].system, 'http://loinc.org');
+            assert.equal(convertedLfData.codeList[0].display, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.items.length, 2);
             assert.equal(convertedLfData.items[0].question, "Your health information");
             assert.equal(convertedLfData.items[0].questionCode, "54126-8");
             assert.equal(convertedLfData.items[0].questionCodeSystem, "LOINC");
-            assert.equal(convertedLfData.items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].codeList.length, 1);
+            assert.equal(convertedLfData.items[0].codeList[0].display, "Your health information");
+            assert.equal(convertedLfData.items[0].codeList[0].code, "54126-8");
+            assert.equal(convertedLfData.items[0].codeList[0].system, "http://loinc.org");
             assert.equal(convertedLfData.items[0].dataType, 'SECTION');
             assert.equal(convertedLfData.items[0].header, true);
             assert.equal(convertedLfData.items[0].items.length, 13);
@@ -546,6 +555,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           var qFile = 'test/data/' + fhirVersion + '/argonaut-phq9-ish.json';
           $.get(qFile, function(fhirQnData) { // load the questionnaire json
             var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
+            qnForm = new LForms.LFormsData(qnForm);
 
             it('should properly convert to LForms answers', function () {
               var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q2');

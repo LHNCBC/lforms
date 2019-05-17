@@ -1,6 +1,6 @@
 // Tests for ExpressionProcessor
 describe('ExpresssionProcessor', function () {
-  describe.only('_addToIDtoQRItemMap', function() {
+  describe('_addToIDtoQRItemMap', function() {
     it('should handle repeating items with missing data', function() {
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{questionCode: 'g1', items:  [{
         questionCode: 'q1',

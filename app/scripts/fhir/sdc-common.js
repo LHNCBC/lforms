@@ -97,7 +97,26 @@ function addCommonSDCFns(ns) {
     }
     return ret;
   };
-
+  
+  /**
+   * Do a shallow copy of specified fields from source to target.
+   *
+   * @param source - Source object
+   * @param target - Target object
+   * @param fieldList - Array of fields to copy from the source. If the field is
+   * not found in the source, it is ignored.
+   */
+  self.copyFields = function(source, target, fieldList) {
+    if(source && target && fieldList && fieldList.length > 0) {
+      fieldList.forEach(function(field) {
+        if(source.hasOwnProperty(field)) {
+          target[field] = source[field];
+        }
+      });
+    }
+  };
+  
+  
   // Store the UCUM code system URI
   self.UCUM_URI = 'http://unitsofmeasure.org';
 
