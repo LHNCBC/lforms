@@ -4,7 +4,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [15.5.0] 2019-04-11
 ### Added
-- Support for data extraction via observationLinkPeriod. (TBD - document API)
+- Support for data extraction via observationLinkPeriod.  If you pass in an
+  "extract" option (set to true) to LForms.Util.getFormFHIRData when
+  "resourceType" is set to QuestionnaireResponse, it will return an array of the
+  QuestionnaireResponse resource and any extracted Observation resources.
 ### Fixed
 - Added a check to make sure linked observations do not have focus set to true.
 
