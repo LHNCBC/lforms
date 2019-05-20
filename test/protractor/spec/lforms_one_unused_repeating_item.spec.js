@@ -1,6 +1,7 @@
 var util = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
+var EC = protractor.ExpectedConditions;
 
 describe('Unused repeating item/section control', function() {
 
@@ -84,6 +85,7 @@ describe('Unused repeating item/section control', function() {
 
     it('should not add a new one when the previous non-empty items in the section become empty again', function () {
       ff.disease.clear();
+      browser.wait(EC.elementToBeClickable(ff.disease2));
       ff.disease2.click();
       ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
       ff.disease.sendKeys(protractor.Key.TAB);

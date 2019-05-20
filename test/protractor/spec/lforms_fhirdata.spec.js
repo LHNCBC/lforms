@@ -6,6 +6,7 @@ var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
 var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
+var EC = protractor.ExpectedConditions;
 
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
@@ -94,6 +95,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
                 [error, fhirData] = callbackData;
+
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("DiagnosticReport");
                 expect(fhirData.result.length).toBe(1);
@@ -106,6 +108,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[0].code.coding[0].system).toBe("http://loinc.org");
                 expect(fhirData.contained[0].code.text).toBe("Name");
                 expect(fhirData.contained[0].valueString).toBe("name 1");
+
                 // name 2
                 expect(fhirData.contained[1].resourceType).toBe("Observation");
                 expect(fhirData.contained[1].id).not.toBe(undefined);
@@ -188,7 +191,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[13].related.length).toBe(2);
                 // Your health information
                 expect(fhirData.contained[14].related.length).toBe(10);
-
               });
             });
           });
@@ -422,7 +424,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
               expect(fhirData.identifier.value).toBe("54127-6N");
               expect(fhirData.identifier.system).toBe("http://loinc.org");
-              expect(fhirData.questionnaire.reference).toBe("Questionnaire/{{questionnaireId}}");
 
               expect(fhirData.item.length).toBe(1);
               expect(fhirData.item[0].linkId).toBe("/54126-8");
@@ -610,6 +611,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               return ff.name.isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
+            browser.wait(EC.textToBePresentInElementValue(ff.name,
+              'name 1'), 2000);
             expect(ff.name.getAttribute('value')).toBe("name 1");
             expect(ff.name2.getAttribute('value')).toBe("name 2");
             expect(ff.name3.getAttribute('value')).toBe("name 3");
