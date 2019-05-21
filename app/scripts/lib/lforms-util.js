@@ -151,7 +151,6 @@ LForms.Util = {
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
-      var noExtensions = options.noExtensions;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
@@ -517,7 +516,7 @@ LForms.Util = {
    */
   stringToDate: function(strDate) {
     var matches, millis = null, ret = null;
-  
+
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
     // If the input is in ISO format, remove millis from the string before parsing and add it after
     // constructing the date object.
@@ -530,19 +529,19 @@ LForms.Util = {
       // It has problem with content in the parenthesis at the end. Remove it before parsing.
       strDate = strDate.substring(0, matches.index);
     }
-  
-    
+
+
     if(strDate) {
       ret = Date.parse(strDate);
       if (ret === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
         ret = new Date(strDate);
       }
     }
-    
+
     if(ret && millis !== null) {
       ret.addMilliseconds(millis);
     }
-    
+
     return ret;
   },
 
@@ -743,8 +742,8 @@ LForms.Util = {
       });
     }
   },
-  
-  
+
+
   /**
    * We are transitioning lforms fields representing code (form.code, form.questionCode,
    * items[x].questionCode
@@ -765,13 +764,13 @@ LForms.Util = {
    * @param formOrItem - lforms form or items[x]
    */
   initializeCodes: function (formOrItem) {
-    
+
     var isItem = (formOrItem.question || formOrItem.questionCode);
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
     var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
-    
+
     if(code) {
       if(!formOrItem.codeList) {
         formOrItem.codeList = [];
@@ -784,7 +783,7 @@ LForms.Util = {
           break;
         }
       }
-      
+
       // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
       if(!found && codeSystemUrl !== 'LinkId') {
@@ -808,11 +807,11 @@ LForms.Util = {
         }
       }
     }
-    
+
     return formOrItem;
   },
-  
-  
+
+
   /**
    *  Creates a Reference to the given FHIR resource, to be used an a subject in
    *  another resource.
@@ -843,15 +842,15 @@ LForms.Util = {
     // is optional, so for now I will just leave it blank.
     return ref;
   },
-  
-  
+
+
   /**
    * Get a code system based on the code system value used in LForms
    * @param codeSystemInLForms code system value used in LForms
    * @private
    */
   getCodeSystem: function(codeSystemInLForms) {
-    
+
     var codeSystem;
     switch (codeSystemInLForms) {
       case "LOINC":
@@ -862,12 +861,12 @@ LForms.Util = {
         break;
       default:
         codeSystem = codeSystemInLForms;
-      
+
     }
-    
+
     return codeSystem;
   },
-  
-  
-  
+
+
+
 };
