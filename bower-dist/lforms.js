@@ -11198,8 +11198,6 @@ LForms.Util = {
     var fhirData = null;
 
     if (formData) {
-      var noExtensions = options.noExtensions;
-
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
