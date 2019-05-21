@@ -31,15 +31,15 @@ function addCommonSDCImportFns(ns) {
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
 
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
-  
+
   self.formLevelFields = [
     // Resource
     'id',
     'meta',
     'implicitRules',
     'language',
-    
-    
+
+
     // Domain Resource
     'text',
     'contained',
@@ -47,7 +47,7 @@ function addCommonSDCImportFns(ns) {
     'contained',
     'extension',
     'modifiedExtension',
-    
+
     // Questionnaire
     'date',
     'version',
@@ -71,12 +71,12 @@ function addCommonSDCImportFns(ns) {
     'effectivePeriod',
     'url'
   ];
-  
+
   self.itemLevelIgnoredFields = [
     'definition',
     'prefix'
   ];
-  
+
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -279,6 +279,29 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Parse questionnaire item for code and code system
+   * @param lfItem {object} - LForms item object to assign question code
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processCodeAndLinkId = function (lfItem, qItem) {
+    var code = self._getCode(qItem);
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    }
+    // use linkId as questionCode, which should not be exported as code
+    else {
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId"
+    }
+
+    lfItem.linkId = qItem.linkId;
+  };
+
+
+
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -326,7 +349,8 @@ function addCommonSDCImportFns(ns) {
   };
 
 
-  // QuestionnaireResponse Import
+  // ---------------- QuestionnaireResponse Import ---------------
+
   var qrImport = self._mergeQR;
 
   /**
@@ -336,13 +360,15 @@ function addCommonSDCImportFns(ns) {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = (new LForms.LFormsData(formData)).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      formData = (new LForms.LFormsData(formData)).getFormData();
+    }
     // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
     var qrInfo = qrImport._getQRStructure(qr);
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
-    return newFormData;
+    qrImport._processQRItemAndLFormsItem(qrInfo, formData);
+    return formData;
   };
 
 
@@ -507,8 +533,8 @@ function addCommonSDCImportFns(ns) {
     }
     return ret;
   };
-  
-  
+
+
   /**
    * Get an object with code and code system
    *
@@ -534,11 +560,11 @@ function addCommonSDCImportFns(ns) {
         system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
       };
     }
-    
+
     return code;
   };
-  
-  
+
+
   /**
    * Convert the given code system to LForms internal code system. Currently
    * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
@@ -552,11 +578,11 @@ function addCommonSDCImportFns(ns) {
         ret = 'LOINC';
         break;
     }
-    
+
     return ret;
   };
-  
-  
+
+
   // Copy the main merge function to preserve the same API usage.
   self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
 }

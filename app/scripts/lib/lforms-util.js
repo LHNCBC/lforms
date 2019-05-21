@@ -97,7 +97,7 @@ LForms.Util = {
    *  Get FHIR data from the form.
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   *  and "QuestionnaireResponse" (SDC profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
@@ -120,6 +120,7 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
    * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
@@ -131,33 +132,43 @@ LForms.Util = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
+   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    resource will be an array consisting of the QuestionnaireResponse and any
+   *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.
-   * @returns {*} a FHIR resource
+   * @returns {*} a FHIR resource, or (if extract is true) an array of
+   *    resources.
    */
   _convertLFormsToFHIRData: function(resourceType, fhirVersion, formData, options) {
+    if (!options)
+      options = {};
     if (!(formData instanceof LForms.LFormsData))
       formData = new LForms.LFormsData(formData);
     var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
     if (formData) {
-      var noExtensions = options ? options.noExtensions : undefined;
-      var subject = options ? options.subject : undefined;
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
           fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData,
-            subject, inBundle, bundleType);
+            options.subject, inBundle, bundleType);
           break;
         case "Questionnaire":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData,
+            options.noExtensions);
           break;
         case "QuestionnaireResponse":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
-            noExtensions, subject);
+          if (options.extract)
+            fhirData = fhir.SDC.convertLFormsToFHIRData(formData,
+              options.noExtensions, options.subject);
+          else
+            fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData,
+              options.noExtensions, options.subject);
           break;
       }
     }
@@ -209,9 +220,11 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData._hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData._hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
     }
@@ -503,7 +516,7 @@ LForms.Util = {
    */
   stringToDate: function(strDate) {
     var matches, millis = null, ret = null;
-  
+
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
     // If the input is in ISO format, remove millis from the string before parsing and add it after
     // constructing the date object.
@@ -516,19 +529,19 @@ LForms.Util = {
       // It has problem with content in the parenthesis at the end. Remove it before parsing.
       strDate = strDate.substring(0, matches.index);
     }
-  
-    
+
+
     if(strDate) {
       ret = Date.parse(strDate);
       if (ret === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
         ret = new Date(strDate);
       }
     }
-    
+
     if(ret && millis !== null) {
       ret.addMilliseconds(millis);
     }
-    
+
     return ret;
   },
 
@@ -729,8 +742,8 @@ LForms.Util = {
       });
     }
   },
-  
-  
+
+
   /**
    * We are transitioning lforms fields representing code (form.code, form.questionCode,
    * items[x].questionCode
@@ -751,13 +764,13 @@ LForms.Util = {
    * @param formOrItem - lforms form or items[x]
    */
   initializeCodes: function (formOrItem) {
-    
+
     var isItem = (formOrItem.question || formOrItem.questionCode);
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
     var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
-    
+
     if(code) {
       if(!formOrItem.codeList) {
         formOrItem.codeList = [];
@@ -770,7 +783,7 @@ LForms.Util = {
           break;
         }
       }
-      
+
       // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
       if(!found && codeSystemUrl !== 'LinkId') {
@@ -794,11 +807,11 @@ LForms.Util = {
         }
       }
     }
-    
+
     return formOrItem;
   },
-  
-  
+
+
   /**
    *  Creates a Reference to the given FHIR resource, to be used an a subject in
    *  another resource.
@@ -829,15 +842,15 @@ LForms.Util = {
     // is optional, so for now I will just leave it blank.
     return ref;
   },
-  
-  
+
+
   /**
    * Get a code system based on the code system value used in LForms
    * @param codeSystemInLForms code system value used in LForms
    * @private
    */
   getCodeSystem: function(codeSystemInLForms) {
-    
+
     var codeSystem;
     switch (codeSystemInLForms) {
       case "LOINC":
@@ -848,12 +861,12 @@ LForms.Util = {
         break;
       default:
         codeSystem = codeSystemInLForms;
-      
+
     }
-    
+
     return codeSystem;
   },
-  
-  
-  
+
+
+
 };

@@ -25,7 +25,7 @@ function addSDCImportFns(ns) {
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
-  
+
     // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into questionnaire.code. While importing, convert first of questionnaire.code
@@ -347,8 +347,11 @@ function addSDCImportFns(ns) {
           if(optionKey[0] === 'valueCoding') { // Only one value[x] is expected
             if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
-            //Lforms has answer code system at item level, expects all options to have one code system!
-            if(option[optionKey[0]].system  !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
+            // TBD- Lforms has answer code system at item level, expects all options to have one code system!
+            if(option[optionKey[0]].system  !== undefined) {
+              answer.codeSystem = option[optionKey[0]].system;
+              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
+            }
           }
           else {
             answer.text = option[optionKey[0]].toString();
@@ -521,29 +524,6 @@ function addSDCImportFns(ns) {
     else if (qItem.required) {
       lfItem.questionCardinality = {min: "1", max: "1"};
     }
-  };
-
-
-  /**
-   * Parse questionnaire item for code and code system
-   * @param lfItem {object} - LForms item object to assign question code
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processCodeAndLinkId = function (lfItem, qItem) {
-    lfItem.codeList = qItem.code;
-    var code = self._getCode(qItem);
-    if (code) {
-      lfItem.questionCode = code.code;
-      lfItem.questionCodeSystem = code.system;
-    }
-    // use linkId as questionCode, which should not be exported as code
-    else {
-      lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
-    }
-
-    lfItem.linkId = qItem.linkId;
   };
 
 

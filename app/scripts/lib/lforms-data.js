@@ -357,9 +357,14 @@
               var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
               var queryParams = {type: 'Observation', query: {
                 code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
-                _count: 1}};
-              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-                queryParams.query.focus = {$missing: true};
+                _count: 5}};  // only need one, but we need to filter out focus=true below
+              // Temporarily disabling the addition of the focus search
+              // parameter, because of support issues.  Instead, for now, we
+              // will check the focus parameter when the Observation is
+              // returned.  Later, we might query the server to find out whether
+              // :missing is supported.
+              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
@@ -371,11 +376,17 @@
               this._asyncLoadCounter++;
               fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
                 var bundle = successData.data;
-                if (bundle.entry && bundle.entry.length === 1) {
-                  var obs = bundle.entry[0].resource;
-                  serverFHIR.SDC.importObsValue(itemI, obs);
-                  if (itemI.unit)
-                    lfData._setUnitDisplay(itemI.unit);
+                if (bundle.entry) {
+                  var foundObs;
+                  for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
+                    var obs = bundle.entry[j].resource;
+                    if (!obs.focus) { // in case we couldn't use focus:missing above
+                      foundObs = true;
+                      serverFHIR.SDC.importObsValue(itemI, obs);
+                      if (itemI.unit)
+                        lfData._setUnitDisplay(itemI.unit);
+                    }
+                  }
                 }
                 lfData._asyncLoadCounter--;
                 if (lfData._asyncLoadCounter === 0)
