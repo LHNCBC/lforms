@@ -2,6 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.4.1] 2019-05-21
+### Fixed
+- Fixed URL in R4 for ordinalValue (score)
 ## [15.4.0] 2019-05-09
 ### Added
 - Added support for FHIR Questionnaire form level fields. 
