@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.5.1] 2019-05-21
+### Fixed
+- Fixed URL in R4 for ordinalValue (score)
+
 ## [15.5.0] 2019-04-11
 ### Added
 - Support for data extraction via observationLinkPeriod.  If you pass in an

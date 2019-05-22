@@ -482,9 +482,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(convertedQ.item[11].item[0].option.length, json.item[11].item[0].option.length);
                   // The score is changed from argonaut extension to FHIR extension.
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].url,
-                    'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
+                      'http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue');
                   assert.equal(convertedQ.item[11].item[0].option[0].extension[0].valueDecimal,
-                    json.item[11].item[0].option[0].extension[0].valueDecimal);
+                      json.item[11].item[0].option[0].extension[0].valueDecimal);
                 }).done(function () {
                   done();
                 }).fail(function (err) {
@@ -494,6 +494,44 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           }
         });
+
+        if (fhirVersion === 'R4') {
+          describe('Conversion between R4 SDC Questionnaire and LForms', function () {
+            it('should convert score value between R4 SDC Questionnaire and LForm format', function (done) {
+
+              var file = 'test/data/R4/phq9.json';
+              $.get(file, function (json) {
+                try {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+                  assert.equal(lfData.items[0].answers.length, json.item[0].answerOption.length);
+                  assert.equal(lfData.items[0].answers[0].score, undefined);
+                  assert.equal(lfData.items[0].answers[0].text, "Not at all");
+                  assert.equal(lfData.items[0].answers[1].score, "1");
+                  assert.equal(lfData.items[0].answers[1].text, "Several days");
+
+                  // convert it back to SDC Questionnaire
+                  var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
+
+                  var answerOptionExt = LForms.Util.findObjectInArray(newQ.item[0].answerOption[0].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/ordinalValue', 0, true);
+                  assert.equal(answerOptionExt.length, 0)
+                  answerOptionExt = LForms.Util.findObjectInArray(newQ.item[0].answerOption[1].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/ordinalValue', 0, true);
+                  assert.equal(answerOptionExt[0].valueDecimal, 1)
+                  assert.equal(answerOptionExt[0].url, 'http://hl7.org/fhir/StructureDefinition/ordinalValue')
+                  assert.equal(newQ.item[0].answerOption[1].valueCoding.code, "LA6569-3")
+                  assert.equal(newQ.item[0].answerOption[1].valueCoding.display, "Several days")
+                }
+                catch(err) {
+                  done(err)
+                }
+              }).done(function () {
+                done();
+              }).fail(function (err) {
+                console.log(': Unable to load ' + file);
+                done(err);
+              });
+            });
+          });
+        }
 
         describe('LForms data to QuestionnaireResponse conversion', function() {
 
