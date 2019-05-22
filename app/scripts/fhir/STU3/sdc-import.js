@@ -15,6 +15,9 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+
+
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
    *
