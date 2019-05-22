@@ -2,6 +2,7 @@
  * A package to generate HL7 messgages from LForms form data
  */
 var LForms = require('../../lforms.js');
+import {LOINC_URI} from '../fhir/fhir-common';
 
 LForms.HL7 = (function() {
   "use strict";
@@ -455,7 +456,8 @@ LForms.HL7 = (function() {
             itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
           }
 
-          var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
+          var answerCS = (!item.answerCodeSystem || item.answerCodeSystem == 'LOINC' ||
+            item.answerCodeSystem == LOINC_URI) ? this.LOINC_CS : item.answerCodeSystem;
           for (var i=0, len=vals.length; i<len; ++i) {
             var val = vals[i];
             // OBX4 - sub id

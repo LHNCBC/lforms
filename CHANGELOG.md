@@ -2,12 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.4.1] 2019-05-21
+## [15.5.1] 2019-05-21
 ### Fixed
 - Fixed URL in R4 for ordinalValue (score)
+
+## [15.5.0] 2019-04-11
+### Added
+- Support for data extraction via observationLinkPeriod.  If you pass in an
+  "extract" option (set to true) to LForms.Util.getFormFHIRData when
+  "resourceType" is set to QuestionnaireResponse, it will return an array of the
+  QuestionnaireResponse resource and any extracted Observation resources.
+### Fixed
+- Added a check to make sure linked observations do not have focus set to true.
+
 ## [15.4.0] 2019-05-09
 ### Added
-- Added support for FHIR Questionnaire form level fields. 
+- Added support for FHIR Questionnaire form level fields.
 - Patched date parsing errors encountered in form builder environment.
 
 ## [15.3.2] 2019-05-15
