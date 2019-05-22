@@ -25,15 +25,22 @@
      *   from questionnaire-launchContext have been completed).
      */
     runCalculations: function(includeInitialExpr) {
+      // Create an export of Questionnaire for the %questionnaire variable in
+      // FHIRPath.  We only need to do this once per form.
+      var lfData = this._lfData;
+      if (!lfData._fhirVariables.questionnaire) {
+        lfData._fhirVariables.questionnaire =
+          LForms.Util.getFormFHIRData('Questionnaire', lfData.fhirVersion, lfData);
+      }
       var firstRun = true;
       var changed = true;
       while (changed) {
         if (changed || firstRun) {
           this._regenerateQuestionnaireResp();
-          changed = this._evaluateVariables(this._lfData, !firstRun);
+          changed = this._evaluateVariables(lfData, !firstRun);
         }
         if (changed || firstRun)
-          changed = this._evaluateFieldExpressions(this._lfData, includeInitialExpr, !firstRun);
+          changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
     },
@@ -114,7 +121,6 @@
         for (var i=0, len=exts.length; i<len; ++i) {
           var ext = exts[i];
           if (ext && ext.valueExpression.language=="text/fhirpath") {
-            var varName = ext.name;
             var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
             var exprChanged = this._setItemValueFromFHIRPath(item, newVal);
             if (!changed)

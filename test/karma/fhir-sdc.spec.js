@@ -34,7 +34,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/54126-8/54125-0",
               "_idPath": "/1/1"
             };
-            
+
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
@@ -467,9 +467,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
                   // valueString is changed to valueCoding.display
                   assert.equal(convertedQ.item[0].item[1].option[0].valueCoding.display, json.item[0].item[1].option[0].valueString);
-
-                }).done(function () {
-                  done();
+                  done()
                 }).fail(function (err) {
                   done(err);
                 });
