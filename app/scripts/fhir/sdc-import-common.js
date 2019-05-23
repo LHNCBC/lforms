@@ -16,7 +16,6 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
     "http://hl7.org/fhir/StructureDefinition/minValue",

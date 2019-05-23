@@ -440,7 +440,7 @@ var self = {
 
         if(answer.score) {
           ext.push({
-            "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
+            "url" : "http://hl7.org/fhir/StructureDefinition/ordinalValue",
             "valueDecimal" : parseFloat(answer.score)
           });
         }
@@ -829,7 +829,7 @@ var self = {
         targetItem.enableBehavior = 'any';
       }
     }
-  },
+  }
 };
 
 export default self;
