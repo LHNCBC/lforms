@@ -18870,13 +18870,19 @@ var self = {
     switch (dataType) {
       case "INT":
       case "REAL":
-        valueX.key = "valueQuantity";
-        valueX.val = {
-          "value": item.value,
-          "unit": item.unit ? item.unit.name : null,
-          "system": item.unit ? item.unit.system : null,
-          "code": item.unit ? item.unit.code : null
-        };
+        if (item.unit) {
+          valueX.key = "valueQuantity";
+          valueX.val = {
+            "value": item.value,
+            "unit": item.unit ? item.unit.name : null,
+            "system": item.unit ? item.unit.system : null,
+            "code": item.unit ? item.unit.code : null
+          };
+        } else {
+          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
+          valueX.val = item.value;
+        }
+
         break;
 
       case "DT":
@@ -21482,7 +21488,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
 
-          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          if (valSystem && valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
 
