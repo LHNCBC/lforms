@@ -16598,7 +16598,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
       var oldVal = item.value;
       if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
-      if (!fhirPathVal) item.value = undefined;else {
+      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
           var d = new LForms.Util.stringToDate(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
           // local timezones.

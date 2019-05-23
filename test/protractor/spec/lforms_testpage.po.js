@@ -1,5 +1,8 @@
 let util = require('./util.js');
 
+//var searchResCSS = '#searchResults'; // autocompleter results
+
+
 var TestPage = function() {
 
   var testDirURL = 'http://0.0.0.0:9001/test';
@@ -318,6 +321,71 @@ var TestPage = function() {
       field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
     },
 
+
+    /**
+     *  Sends key events to a field.
+     * @param field the field to which the characters should be send
+     * @param text the text whose characters should be sent
+     */
+/*
+    sendKeys: function(field, text) {
+      // For some reason, on RHEL 7 in Chrome, if you focus a field and then send
+      // key events withouht sleeping a bit between the two, the autocompleter's
+      // getUpdates function does not get called before the field value is updated
+      // with the last character.  The problem can also be solved by increasing
+      // the autocompleter options.frequency setting, but it only happens when
+      // testing, so I don't want to make that slower.
+      browser.sleep(100);
+      // Some key events are lost?  Send them one at a time.
+      for (var i=0, len=text.length; i<len; ++i) {
+        field.sendKeys(text[i]);
+        browser.sleep(10);
+      }
+    },
+*/
+
+    /**
+     * Wait for the autocomplete results to be shown
+     */
+/*
+    waitForSearchResults: function() {
+      browser.wait(function() {
+        return $('#searchResults').isDisplayed();
+      }, 5000);
+    },
+*/
+
+    /**
+     *  Returns the list item in the search results list at the given position
+     *  number (starting at 1).  The returned item might be a heading.
+     * @param pos the item position number (starting at 1).
+     */
+/*
+    searchResult: function(pos) {
+      return $(searchResCSS + ' li:nth-child('+pos+'), '+
+        searchResCSS + ' tr:nth-child('+pos+')');
+    },
+*/
+
+    /**
+     *  Sets the field's value to the given text string, and picks the nth
+     *  autocompletion result.
+     * @param field the autocompleting field
+     * @param text the text with which to autocomplete.  This can be null or the
+     *  empty string for prefetch lists.
+     * @param n the number of the list item to pick (starting at 1).
+     */
+/*
+    autocompPickNth: function(field, text, n) {
+      this.clearField(field);
+      expect(field.getAttribute('value')).toEqual('');
+      field.click();
+      if (text)
+        this.sendKeys(field, text);
+      this.waitForSearchResults();
+      this.searchResult(n).click();
+    },
+*/
 
     /**
      *  Selects a FHIR version.
