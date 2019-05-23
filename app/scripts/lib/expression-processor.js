@@ -290,7 +290,7 @@
       var oldVal = item.value;
       if (fhirPathRes !== undefined)
         var fhirPathVal = fhirPathRes[0];
-      if (!fhirPathVal)
+      if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
       else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
