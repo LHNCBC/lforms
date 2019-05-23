@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.6.0] 2019-05-23
+### Added
+- The %questionnaire variable is now available for FHIRPath expressions.
+
 ## [15.5.1] 2019-05-21
 ### Fixed
 - Fixed URL in R4 for ordinalValue (score)
