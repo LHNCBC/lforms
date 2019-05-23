@@ -160,7 +160,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system;
           // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
-          if (valSystem[valSystem.length - 1] === '/')
+          if (valSystem && valSystem[valSystem.length - 1] === '/')
             valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
