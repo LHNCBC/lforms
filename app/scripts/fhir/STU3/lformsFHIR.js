@@ -18870,13 +18870,19 @@ var self = {
     switch (dataType) {
       case "INT":
       case "REAL":
-        valueX.key = "valueQuantity";
-        valueX.val = {
-          "value": item.value,
-          "unit": item.unit ? item.unit.name : null,
-          "system": item.unit ? item.unit.system : null,
-          "code": item.unit ? item.unit.code : null
-        };
+        if (item.unit) {
+          valueX.key = "valueQuantity";
+          valueX.val = {
+            "value": item.value,
+            "unit": item.unit ? item.unit.name : null,
+            "system": item.unit ? item.unit.system : null,
+            "code": item.unit ? item.unit.code : null
+          };
+        } else {
+          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
+          valueX.val = item.value;
+        }
+
         break;
 
       case "DT":
@@ -18996,9 +19002,7 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  Observations
-   *  will have derivedFrom set to a temporary reference created for the returned
-   *  QuestionnaireResponse (the first element of the array). The caller may
+   * @returns an array of QuestionnaireResponse and Observations.  The caller may
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
    */
@@ -19397,7 +19401,7 @@ var self = {
           });
         }
 
-        if (answer.score) {
+        if (answer.score !== null && answer.score !== undefined) {
           ext.push({
             "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal": parseFloat(answer.score)
@@ -21369,7 +21373,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
 
-          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          if (valSystem && valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
 

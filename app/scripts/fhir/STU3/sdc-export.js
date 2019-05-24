@@ -38,9 +38,7 @@ var self = {
    * @param subject A local FHIR resource that is the subject of the output resource.
    *  If provided, a reference to this resource will be added to the output FHIR
    *  resource when applicable.
-   * @returns an array of QuestionnaireResponse and Observations.  Observations
-   *  will have derivedFrom set to a temporary reference created for the returned
-   *  QuestionnaireResponse (the first element of the array). The caller may
+   * @returns an array of QuestionnaireResponse and Observations.  The caller may
    *  wish to put all of the returned resources into a transaction Bundle for
    *  creating them on a FHIR server.
    */
@@ -451,7 +449,7 @@ var self = {
           });
         }
 
-        if(answer.score) {
+        if (answer.score !== null && answer.score !== undefined) {
           ext.push({
             "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal" : parseFloat(answer.score)

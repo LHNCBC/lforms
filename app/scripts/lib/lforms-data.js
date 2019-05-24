@@ -280,8 +280,8 @@
           'assign a value to it.';
       }
     },
-  
-    
+
+
     /**
      * Calculate internal data from the raw form definition data,
      * including:
@@ -868,15 +868,15 @@
       // for each item on this level
       for (var i=0; i<iLen; i++) {
         var item = items[i];
-  
+
         // question coding system. If form level code system is LOINC, assume all
         // child items are of LOINC, unless specified otherwise.
         if (this.type ==="LOINC" && !item.questionCodeSystem) {
           item.questionCodeSystem = "LOINC";
         }
-  
+
         LForms.Util.initializeCodes(item);
-        
+
         // set default dataType
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE)

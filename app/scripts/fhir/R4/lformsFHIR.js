@@ -18870,13 +18870,19 @@ var self = {
     switch (dataType) {
       case "INT":
       case "REAL":
-        valueX.key = "valueQuantity";
-        valueX.val = {
-          "value": item.value,
-          "unit": item.unit ? item.unit.name : null,
-          "system": item.unit ? item.unit.system : null,
-          "code": item.unit ? item.unit.code : null
-        };
+        if (item.unit) {
+          valueX.key = "valueQuantity";
+          valueX.val = {
+            "value": item.value,
+            "unit": item.unit ? item.unit.name : null,
+            "system": item.unit ? item.unit.system : null,
+            "code": item.unit ? item.unit.code : null
+          };
+        } else {
+          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
+          valueX.val = item.value;
+        }
+
         break;
 
       case "DT":
@@ -19031,7 +19037,9 @@ var self = {
         }
 
         if (qr.author) obs.performer = qr.author;
-        obs.derivedFrom = qrRef;
+        obs.derivedFrom = {
+          reference: qrRef
+        };
         rtn.push(obs);
       }
     }
@@ -19382,7 +19390,7 @@ var self = {
           });
         }
 
-        if (answer.score) {
+        if (answer.score !== null && answer.score !== undefined) {
           ext.push({
             "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
             "valueDecimal": parseFloat(answer.score)
@@ -21480,7 +21488,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
 
-          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          if (valSystem && valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
 

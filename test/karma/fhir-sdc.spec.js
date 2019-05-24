@@ -34,7 +34,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/54126-8/54125-0",
               "_idPath": "/1/1"
             };
-            
+
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
             assert.equal(out.repeats, true);
@@ -467,8 +467,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
                   // valueString is changed to valueCoding.display
                   assert.equal(convertedQ.item[0].item[1].option[0].valueCoding.display, json.item[0].item[1].option[0].valueString);
-                }).done(function () {
-                  done();
+                  done()
                 }).fail(function (err) {
                   done(err);
                 });
@@ -505,7 +504,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 try {
                   var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
                   assert.equal(lfData.items[0].answers.length, json.item[0].answerOption.length);
-                  assert.equal(lfData.items[0].answers[0].score, undefined);
+                  assert.equal(lfData.items[0].answers[0].score, 0);
                   assert.equal(lfData.items[0].answers[0].text, "Not at all");
                   assert.equal(lfData.items[0].answers[1].score, "1");
                   assert.equal(lfData.items[0].answers[1].text, "Several days");
@@ -514,7 +513,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
 
                   var answerOptionExt = LForms.Util.findObjectInArray(newQ.item[0].answerOption[0].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/ordinalValue', 0, true);
-                  assert.equal(answerOptionExt.length, 0)
+                  assert.equal(answerOptionExt.length, 1)
                   answerOptionExt = LForms.Util.findObjectInArray(newQ.item[0].answerOption[1].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/ordinalValue', 0, true);
                   assert.equal(answerOptionExt[0].valueDecimal, 1)
                   assert.equal(answerOptionExt[0].url, 'http://hl7.org/fhir/StructureDefinition/ordinalValue')
