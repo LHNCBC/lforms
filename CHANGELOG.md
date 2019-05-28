@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.6.1] 2019-05-28
+### Fixed
+- Empty Observation records were being saved during data extraction to an STU3
+  FHIR server (for fields without values).
+- Corrected the setting of derivedFrom in extracted obsevations in R4.
+
 ## [15.6.0] 2019-05-23
 ### Added
 - The %questionnaire variable is now available for FHIRPath expressions.
