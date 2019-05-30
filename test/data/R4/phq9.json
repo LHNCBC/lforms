@@ -79,6 +79,7 @@
             }
           ],
           "valueCoding": {
+            "system": "http://loinc.org",
             "code": "LA6568-5",
             "display": "Not at all"
           }
@@ -95,6 +96,7 @@
             }
           ],
           "valueCoding": {
+            "system": "http://loinc.org",
             "code": "LA6569-3",
             "display": "Several days"
           }
@@ -111,6 +113,7 @@
             }
           ],
           "valueCoding": {
+            "system": "http://loinc.org",
             "code": "LA6570-1",
             "display": "More than half the days"
           }
@@ -128,7 +131,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -187,7 +191,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -203,7 +208,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -219,7 +225,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -235,7 +242,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -294,7 +302,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -310,7 +319,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -326,7 +336,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -342,7 +353,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -401,7 +413,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -417,7 +430,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -433,7 +447,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -449,7 +464,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -508,7 +524,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -524,7 +541,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -540,7 +558,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -556,7 +575,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -615,7 +635,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -631,7 +652,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -647,7 +669,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -663,7 +686,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -722,7 +746,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -738,7 +763,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -754,7 +780,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -770,7 +797,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -829,7 +857,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -845,7 +874,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -861,7 +891,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -877,7 +908,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -932,7 +964,8 @@
           ],
           "valueCoding": {
             "code": "LA6568-5",
-            "display": "Not at all"
+            "display": "Not at all",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -948,7 +981,8 @@
           ],
           "valueCoding": {
             "code": "LA6569-3",
-            "display": "Several days"
+            "display": "Several days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -964,7 +998,8 @@
           ],
           "valueCoding": {
             "code": "LA6570-1",
-            "display": "More than half the days"
+            "display": "More than half the days",
+            "system": "http://loinc.org"
           }
         },
         {
@@ -980,7 +1015,8 @@
           ],
           "valueCoding": {
             "code": "LA6571-9",
-            "display": "Nearly every day"
+            "display": "Nearly every day",
+            "system": "http://loinc.org"
           }
         }
       ]
@@ -1006,88 +1042,88 @@
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "scoreExt",
             "language": "text/fhirpath",
             "expression": "'http://hl7.org/fhir/StructureDefinition/ordinalValue'"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q1_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44250-9').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44250-9').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q2_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44255-8').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44255-8').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q3_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44259-0').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44259-0').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q4_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44254-1').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44254-1').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q5_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44251-7').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44251-7').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q6_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44258-2').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44258-2').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q7_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44252-5').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44252-5').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q8_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44253-3').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44253-3').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "q9_value",
             "language": "text/fhirpath",
             "expression": "%questionnaire.item.where(linkId = '/44260-8').answerOption.where(valueCoding.code=%resource.item.where(linkId = '/44260-8').answer.valueCoding.code).extension.where(url=%scoreExt).valueDecimal"
           }
         },
         {
-          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
-          "valueExpression" : {
+          "url": "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression": {
             "name": "any_questions_answered",
             "language": "text/fhirpath",
             "expression": "%q1_value.exists() or %q2_value.exists() or %q3_value.exists() or %q4_value.exists() or %q5_value.exists() or %q6_value.exists() or %q7_value.exists() or %q8_value.exists() or %q9_value.exists()"
@@ -1097,7 +1133,7 @@
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
           "valueExpression": {
             "description": "Total score calculation",
-            "language" : "text/fhirpath",
+            "language": "text/fhirpath",
             "expression": "iif(%any_questions_answered, iif(%q1_value.exists(), %q1_value, 0) + iif(%q2_value.exists(), %q2_value, 0) + iif(%q3_value.exists(), %q3_value, 0) + iif(%q4_value.exists(), %q4_value, 0) + iif(%q5_value.exists(), %q5_value, 0) + iif(%q6_value.exists(), %q6_value, 0) + iif(%q7_value.exists(), %q7_value, 0) + iif(%q8_value.exists(), %q8_value, 0) + iif(%q9_value.exists(), %q9_value, 0), {})"
           }
         },
@@ -1173,25 +1209,29 @@
         {
           "valueCoding": {
             "code": "LA6572-7",
-            "display": "Not difficult at all"
+            "display": "Not difficult at all",
+            "system": "http://loinc.org"
           }
         },
         {
           "valueCoding": {
             "code": "LA6573-5",
-            "display": "Somewhat difficult"
+            "display": "Somewhat difficult",
+            "system": "http://loinc.org"
           }
         },
         {
           "valueCoding": {
             "code": "LA6575-0",
-            "display": "Very difficult"
+            "display": "Very difficult",
+            "system": "http://loinc.org"
           }
         },
         {
           "valueCoding": {
             "code": "LA6574-3",
-            "display": "Extremely difficult"
+            "display": "Extremely difficult",
+            "system": "http://loinc.org"
           }
         }
       ]
