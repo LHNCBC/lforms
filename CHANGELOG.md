@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.6.1] 2019-05-28
+## [15.6.2] 2019-05-31
 ### Fixed
 - Fix an error when creating LFormsData object with empty items.
 
