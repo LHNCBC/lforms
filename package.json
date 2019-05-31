@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.6.1",
+  "version": "15.6.2",
   "main": "app/scripts/index.js",
   "files": [
     "app"
