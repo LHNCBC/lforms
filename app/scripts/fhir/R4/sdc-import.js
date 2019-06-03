@@ -114,36 +114,61 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    var targetItem = {};
-    targetItem.question = qItem.text;
-    //A lot of parsing depends on data type. Extract it first.
-    self._processDataType(targetItem, qItem);
-    self._processCodeAndLinkId(targetItem, qItem);
-    self._processDisplayItemCode(targetItem, qItem);
-    self._processEditable(targetItem, qItem);
-    self._processQuestionCardinality(targetItem, qItem);
-    self._processAnswerCardinality(targetItem, qItem);
-    self._processDisplayControl(targetItem, qItem);
-    self._processRestrictions(targetItem, qItem);
-    self._processCodingInstructions(targetItem, qItem);
-    self._processHiddenItem(targetItem, qItem);
-    self._processUnitList(targetItem, qItem);
-    self._processDefaultAnswer(targetItem, qItem);
-    self._processExternallyDefined(targetItem, qItem);
-    self._processAnswers(targetItem, qItem, containedVS);
-    self._processSkipLogic(targetItem, qItem, linkIdItemMap);
-    self._processCopiedItemExtensions(targetItem, qItem);
 
-    self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-      for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
+    if ( qItem.type === "display" && ci ) {
+      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+      return {
+        type: "help",
+        item: {
+          codingInstructions: qItem.text,
+          codingInstructionsFormat: format ? "html" : "text"
+        }
       }
     }
+    else {
+      var targetItem = {};
+      targetItem.question = qItem.text;
+      //A lot of parsing depends on data type. Extract it first.
+      self._processDataType(targetItem, qItem);
+      self._processCodeAndLinkId(targetItem, qItem);
+      self._processDisplayItemCode(targetItem, qItem);
+      self._processEditable(targetItem, qItem);
+      self._processQuestionCardinality(targetItem, qItem);
+      self._processAnswerCardinality(targetItem, qItem);
+      self._processDisplayControl(targetItem, qItem);
+      self._processRestrictions(targetItem, qItem);
+      self._processHiddenItem(targetItem, qItem);
+      self._processUnitList(targetItem, qItem);
+      self._processDefaultAnswer(targetItem, qItem);
+      self._processExternallyDefined(targetItem, qItem);
+      self._processAnswers(targetItem, qItem, containedVS);
+      self._processSkipLogic(targetItem, qItem, linkIdItemMap);
+      self._processCopiedItemExtensions(targetItem, qItem);
 
-    return targetItem;
+      self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
+
+      //self._processCodingInstructions(targetItem, qItem);
+
+      if (Array.isArray(qItem.item)) {
+        targetItem.items = [];
+        for (var i=0; i < qItem.item.length; i++) {
+          var ret = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          if (ret.type === "help") {
+            targetItem.codingInstructions = ret.item.codingInstructions;
+            targetItem.codingInstructionsFormat = ret.item.codingInstructionsFormat;
+          }
+          else if (ret.type === "item") {
+            targetItem.items.push(ret.item);
+          }
+        }
+      }
+      return {type: "item", item: targetItem};
+    }
+
+
   };
 
   // A map of FHIR extensions involving Expressions to the property names on

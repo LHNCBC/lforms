@@ -121,6 +121,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should convert FHTData to Questionnaire', function () {
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
+            assert.equal(fhirQ.item[0].item[2].item.length, 1);
+            assert.equal(fhirQ.item[0].item[2].item[0].text,
+                "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
+            if (fhirVersion === "R4") {
+              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
+                  "http://hl7.org/fhir/StructureDefinition/rendering-style")
+            }
+          });
+
         });
 
         describe('Questionnaire to lforms item conversion', function () {
@@ -201,8 +215,24 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, FHTData.items[0].items[6].items[2].skipLogic);
             }
 
+            assert.equal(convertedLfData.items[0].items[2].codingInstructions,
+                "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
+            if (fhirVersion === 'R4') {
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, "html");
+            }
+            else if (fhirVersion === 'STU3') {
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, undefined);
+            }
+
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
+            if (fhirVersion === 'R4') {
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, "text");
+            }
+            else if (fhirVersion === 'STU3') {
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, undefined);
+            }
+
             // TODO units[x].code is not supported.
             assert.equal(convertedLfData.items[0].items[6].units.length, FHTData.items[0].items[6].units.length);
             assert.equal(convertedLfData.items[0].items[6].units[0].default, FHTData.items[0].items[6].units[0].default);
@@ -371,7 +401,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }]
             };
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
-            assert.equal(lfItem.dataType, 'QTY');
+            assert.equal(lfItem.item.dataType, 'QTY');
           });
 
           it('should convert FHIR Questionnaire initial quantity value to LForms QTY item value', function () {
@@ -390,8 +420,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
 
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
-            assert.equal(lfItem.dataType, 'QTY');
-            assert.equal(lfItem.defaultAnswer, 222);
+            assert.equal(lfItem.item.dataType, 'QTY');
+            assert.equal(lfItem.item.defaultAnswer, 222);
           });
 
           it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {

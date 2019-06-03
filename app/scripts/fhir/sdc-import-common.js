@@ -14,7 +14,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
+  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
@@ -94,8 +94,9 @@ function addCommonSDCImportFns(ns) {
         var linkIdItemMap = self._createLinkIdItemMap(fhirData);
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
-          target.items.push(item);
+          var ret = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          // no instructions on the questionnaire level
+          target.items.push(ret.item);
         }
       }
       target.fhirVersion = self.fhirVersion;

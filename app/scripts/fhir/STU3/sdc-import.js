@@ -110,35 +110,55 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    var targetItem = {};
-    targetItem.question = qItem.text;
-    //A lot of parsing depends on data type. Extract it first.
-    self._processDataType(targetItem, qItem);
-    self._processCodeAndLinkId(targetItem, qItem);
-    _processDisplayItemCode(targetItem, qItem);
-    _processEditable(targetItem, qItem);
-    _processQuestionCardinality(targetItem, qItem);
-    _processAnswerCardinality(targetItem, qItem);
-    self._processDisplayControl(targetItem, qItem);
-    _processRestrictions(targetItem, qItem);
-    _processCodingInstructions(targetItem, qItem);
-    self._processHiddenItem(targetItem, qItem);
-    _processUnitList(targetItem, qItem);
-    self._processDefaultAnswer(targetItem, qItem);
-    _processExternallyDefined(targetItem, qItem);
-    _processAnswers(targetItem, qItem, containedVS);
-    _processSkipLogic(targetItem, qItem, linkIdItemMap);
-    _processCalculatedValue(targetItem, qItem);
 
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-      for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
+    if ( qItem.type === "display" && ci ) {
+      return {
+        type: "help",
+        item: {
+          codingInstructions: qItem.text
+        }
       }
     }
+    else {
+      var targetItem = {};
+      targetItem.question = qItem.text;
+      //A lot of parsing depends on data type. Extract it first.
+      self._processDataType(targetItem, qItem);
+      self._processCodeAndLinkId(targetItem, qItem);
+      _processDisplayItemCode(targetItem, qItem);
+      _processEditable(targetItem, qItem);
+      _processQuestionCardinality(targetItem, qItem);
+      _processAnswerCardinality(targetItem, qItem);
+      self._processDisplayControl(targetItem, qItem);
+      _processRestrictions(targetItem, qItem);
+      self._processHiddenItem(targetItem, qItem);
+      _processUnitList(targetItem, qItem);
+      self._processDefaultAnswer(targetItem, qItem);
+      _processExternallyDefined(targetItem, qItem);
+      _processAnswers(targetItem, qItem, containedVS);
+      _processSkipLogic(targetItem, qItem, linkIdItemMap);
+      _processCalculatedValue(targetItem, qItem);
 
-    return targetItem;
+      if (Array.isArray(qItem.item)) {
+        targetItem.items = [];
+        for (var i=0; i < qItem.item.length; i++) {
+          var ret = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          if (ret.type === "help") {
+            targetItem.codingInstructions = ret.item.codingInstructions;
+            targetItem.codingInstructionsFormat = ret.item.codingInstructionsFormat;
+          }
+          else if (ret.type === "item") {
+            targetItem.items.push(ret.item);
+          }
+        }
+      }
+      return {type: "item", item: targetItem};
+    }
+
+
   };
 
 

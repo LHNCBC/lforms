@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.7.0] 2019-06-03
+### Fixed
+- Used a correct extension for coding instructions in FHIR Questionnaire
+### Added
+- Added support for coding instructions format in FHIR Questionnaire
+
 ## [15.6.0] 2019-05-23
 ### Added
 - The %questionnaire variable is now available for FHIRPath expressions.
