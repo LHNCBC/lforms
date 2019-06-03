@@ -14616,6 +14616,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @private
      */
     _updateLastRepeatingItemsStatus: function _updateLastRepeatingItemsStatus(items) {
+      if (!items || items.length === 0) {
+        // Nothing to update. This allows to run the constructor on forms
+        // with empty items, something FHIR Questionnaire supports.
+        return;
+      }
+
       var iLen = items.length;
       var prevCodePath = ''; // process all items in the array except the last one
 
