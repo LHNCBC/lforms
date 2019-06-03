@@ -19020,7 +19020,7 @@ var self = {
     for (var i = 0, len = lfData.items.length; i < len; ++i) {
       var item = lfData.items[i];
 
-      if (item._obsLinkPeriodExt) {
+      if (item._obsLinkPeriodExt && item.value) {
         var obs = this._commonExport._createObservation(item); // Following
         // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
 

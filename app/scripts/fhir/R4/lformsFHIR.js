@@ -19037,9 +19037,9 @@ var self = {
         }
 
         if (qr.author) obs.performer = qr.author;
-        obs.derivedFrom = {
+        obs.derivedFrom = [{
           reference: qrRef
-        };
+        }];
         rtn.push(obs);
       }
     }
