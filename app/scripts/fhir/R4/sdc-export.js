@@ -219,10 +219,10 @@ var self = {
     // it is added as a sub item of this item.
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
     if (item.codingInstructions) {
-      let itemControl = {
+      let helpItem = {
         text: item.codingInstructions,
         type: "display",
-        linkId: targetItem.linkId + "-item-control",
+        linkId: targetItem.linkId + "-help",
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
@@ -240,17 +240,17 @@ var self = {
 
       // format could be 'html' or 'text'
       if (item.codingInstructionsFormat === 'html') {
-        itemControl.extension.push({
+        helpItem.extension.push({
           "url": "http://hl7.org/fhir/StructureDefinition/rendering-style"
         })
       }
 
       if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(itemControl)
+        targetItem.item.push(helpItem)
       }
       else {
         targetItem.item = [
-            itemControl
+          helpItem
         ]
       }
     }

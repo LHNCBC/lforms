@@ -207,10 +207,10 @@ var self = {
     // it is added as a sub item of this item.
     // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
     if (item.codingInstructions) {
-      let itemControl = {
+      let helpItem = {
         text: item.codingInstructions,
         type: "display",
-        linkId: targetItem.linkId + "-item-control",
+        linkId: targetItem.linkId + "-help",
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
@@ -225,11 +225,11 @@ var self = {
       };
 
       if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(itemControl)
+        targetItem.item.push(helpItem)
       }
       else {
         targetItem.item = [
-          itemControl
+          helpItem
         ]
       }
     }

@@ -19168,10 +19168,10 @@ var self = {
 
 
     if (item.codingInstructions) {
-      var itemControl = {
+      var helpItem = {
         text: item.codingInstructions,
         type: "display",
-        linkId: targetItem.linkId + "-item-control",
+        linkId: targetItem.linkId + "-help",
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
@@ -19188,15 +19188,15 @@ var self = {
       }; // format could be 'html' or 'text'
 
       if (item.codingInstructionsFormat === 'html') {
-        itemControl.extension.push({
+        helpItem.extension.push({
           "url": "http://hl7.org/fhir/StructureDefinition/rendering-style"
         });
       }
 
       if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(itemControl);
+        targetItem.item.push(helpItem);
       } else {
-        targetItem.item = [itemControl];
+        targetItem.item = [helpItem];
       }
     } // handle special constraints for "display" item
 
@@ -20439,7 +20439,7 @@ function addSDCImportFns(ns) {
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
 
     if (qItem.type === "display" && ci) {
       var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
@@ -20484,7 +20484,7 @@ function addSDCImportFns(ns) {
 
       self._processCopiedItemExtensions(targetItem, qItem);
 
-      self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields); //self._processCodingInstructions(targetItem, qItem);
+      self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
 
       if (Array.isArray(qItem.item)) {
         targetItem.items = [];
@@ -20918,23 +20918,6 @@ function addSDCImportFns(ns) {
         min: "1",
         max: "1"
       };
-    }
-  };
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param lfItem {object} - LForms item object to assign coding instructions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  self._processCodingInstructions = function (lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-
-    if (ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
     }
   };
   /**
@@ -21423,7 +21406,6 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];

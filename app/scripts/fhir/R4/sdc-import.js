@@ -117,7 +117,7 @@ function addSDCImportFns(ns) {
 
     // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
     // which in LForms is an attribute of the parent item, not a separate item.
-    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     if ( qItem.type === "display" && ci ) {
       let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
       return {
@@ -149,8 +149,6 @@ function addSDCImportFns(ns) {
       self._processCopiedItemExtensions(targetItem, qItem);
 
       self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
-
-      //self._processCodingInstructions(targetItem, qItem);
 
       if (Array.isArray(qItem.item)) {
         targetItem.items = [];
@@ -549,22 +547,6 @@ function addSDCImportFns(ns) {
     }
     else if (qItem.required) {
       lfItem.questionCardinality = {min: "1", max: "1"};
-    }
-  };
-
-
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param lfItem {object} - LForms item object to assign coding instructions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processCodingInstructions = function (lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-    if(ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
     }
   };
 
