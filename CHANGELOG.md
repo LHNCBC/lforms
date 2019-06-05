@@ -8,6 +8,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added support for coding instructions format in FHIR Questionnaire
 
+## [15.6.2] 2019-05-31
+### Fixed
+- Fix an error when creating LFormsData object with empty items.
+
 ## [15.6.1] 2019-05-28
 ### Fixed
 - Empty Observation records were being saved during data extraction to an STU3
