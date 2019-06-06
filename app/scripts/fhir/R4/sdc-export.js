@@ -241,7 +241,8 @@ var self = {
       // format could be 'html' or 'text'
       if (item.codingInstructionsFormat === 'html') {
         helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml"
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
         })
       }
 

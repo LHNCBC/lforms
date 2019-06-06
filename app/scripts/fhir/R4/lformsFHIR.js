@@ -19189,7 +19189,8 @@ var self = {
 
       if (item.codingInstructionsFormat === 'html') {
         helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml"
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
         });
       }
 
@@ -20482,6 +20483,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
         } else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
@@ -20923,7 +20925,8 @@ function addSDCImportFns(ns) {
       var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       ret = {
         codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text"
+        codingInstructionsFormat: format ? "html" : "text",
+        codingInstructionsXHTML: format ? format.valueString : null
       };
     }
 

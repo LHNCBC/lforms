@@ -132,6 +132,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             if (fhirVersion === "R4") {
               assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
                   "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
+              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].valueString,
+                  "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>")
             }
           });
 
@@ -206,7 +208,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             //assert.equal(convertedLfData.items[0].items[1].answers[2].other, "Please Specify");
             assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
-            // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
+            // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
             // Only skip logic 'value' works in STU3
             assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
             assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
@@ -219,18 +221,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, "html");
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML,
+                  "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, undefined);
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML, undefined);
             }
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, "text");
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, null);
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, undefined);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, undefined);
             }
 
             // TODO units[x].code is not supported.

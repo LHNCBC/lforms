@@ -144,6 +144,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
         }
         else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
@@ -553,7 +554,8 @@ function addSDCImportFns(ns) {
       let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       ret = {
         codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text"
+        codingInstructionsFormat: format ? "html" : "text",
+        codingInstructionsXHTML: format ? format.valueString : null
       }
     }
     return ret;
