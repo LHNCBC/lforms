@@ -550,7 +550,7 @@ function addSDCImportFns(ns) {
     let ret = null;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
     if ( qItem.type === "display" && ci ) {
-      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       ret = {
         codingInstructions: qItem.text,
         codingInstructionsFormat: format ? "html" : "text"

@@ -131,7 +131,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
             if (fhirVersion === "R4") {
               assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
-                  "http://hl7.org/fhir/StructureDefinition/rendering-style")
+                  "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
             }
           });
 

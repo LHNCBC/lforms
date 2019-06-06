@@ -19189,7 +19189,7 @@ var self = {
 
       if (item.codingInstructionsFormat === 'html') {
         helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-style"
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml"
         });
       }
 
@@ -20920,7 +20920,7 @@ function addSDCImportFns(ns) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
 
     if (qItem.type === "display" && ci) {
-      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       ret = {
         codingInstructions: qItem.text,
         codingInstructionsFormat: format ? "html" : "text"
