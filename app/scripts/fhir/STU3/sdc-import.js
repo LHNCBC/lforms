@@ -326,7 +326,11 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
+    var val = qItem.initialCoding;
+    if (val)
+      val._type = 'Coding';
+    else
+      val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
     if (val) {
       this._processFHIRValues(lfItem, [val], true);
     }
