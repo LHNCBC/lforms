@@ -145,6 +145,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 var lfItem = {};
                 lfItem.answerCardinality = fixture.answerCardinality;
                 LForms.FHIR[fhirVersion].SDC._processDataType(lfItem,qItem);
+                lfItem.answers = fixture.answers;
                 LForms.FHIR[fhirVersion].SDC._processDefaultAnswer(lfItem,qItem);
                 assert.deepEqual(lfItem.defaultAnswer,fixture.defaultAnswer);
               }
@@ -508,6 +509,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(lfData.items[0].answers[0].text, "Not at all");
                   assert.equal(lfData.items[0].answers[1].score, "1");
                   assert.equal(lfData.items[0].answers[1].text, "Several days");
+                  assert.equal(lfData.items[0].answerCodeSystem, "http://loinc.org");
 
                   // convert it back to SDC Questionnaire
                   var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
@@ -517,6 +519,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   answerOptionExt = LForms.Util.findObjectInArray(newQ.item[0].answerOption[1].extension, 'url', 'http://hl7.org/fhir/StructureDefinition/ordinalValue', 0, true);
                   assert.equal(answerOptionExt[0].valueDecimal, 1)
                   assert.equal(answerOptionExt[0].url, 'http://hl7.org/fhir/StructureDefinition/ordinalValue')
+                  assert.equal(newQ.item[0].answerOption[1].valueCoding.system, "http://loinc.org")
                   assert.equal(newQ.item[0].answerOption[1].valueCoding.code, "LA6569-3")
                   assert.equal(newQ.item[0].answerOption[1].valueCoding.display, "Several days")
                 }

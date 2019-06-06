@@ -41,6 +41,7 @@ function makeConfigs(env) {
     nonMinConfig.entry = entryFile;
     nonMinConfig.output.filename = './app/scripts/fhir/'+version+'/lformsFHIR.js';
     nonMinConfig.mode = 'none';
+    nonMinConfig.devtool = 'source-map';
     configs.push(nonMinConfig);
 
     let minConfig = commonConfig();

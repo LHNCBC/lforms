@@ -128,9 +128,9 @@ function addSDCImportFns(ns) {
     self._processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
+    self._processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
-    self._processAnswers(targetItem, qItem, containedVS);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self._processCopiedItemExtensions(targetItem, qItem);
 
@@ -408,7 +408,11 @@ function addSDCImportFns(ns) {
     var vals = [];
     qItem.initial.forEach(function(elem) {
       var answer = null;
-      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
+      var val = elem.valueCoding;
+      if (val)
+        val._type = 'Coding';
+      else
+       val = self._getFHIRValueWithPrefixKey(elem, /^value/);
       if (val)
         vals.push(val);
     });

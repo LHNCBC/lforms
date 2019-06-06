@@ -124,9 +124,9 @@ function addSDCImportFns(ns) {
     _processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
+    _processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
-    _processAnswers(targetItem, qItem, containedVS);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 

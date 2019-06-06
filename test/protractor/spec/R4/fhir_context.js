@@ -35,39 +35,70 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
         conformance: function() {
           return {
             then: function(callback) {
-              callback({data: {fhirVersion: fhirVersion}});
+              setTimeout(function() { // preserve expected async behavior
+                callback({data: {fhirVersion: fhirVersion}});
+              });
             }
           }
         },
         search: function(queryParams) {
-          // For now, we just have one test.
+          var entry = {
+            "resource": {
+              "status": "final",
+              "effectiveDateTime": "2016-06-29T19:14:57-04:00",
+              "issued": "2016-06-29T19:14:57-04:00",
+            }
+          }
+          switch(queryParams.query.code) {
+            case 'http://loinc.org|29463-7':
+              entry.resource.code = {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "29463-7",
+                    "display": "Body Weight"
+                  }
+                ],
+                "text": "Body Weight"
+              };
+              entry.resource.valueQuantity = weightQuantity;
+              break;
+            case 'http://loinc.org|44250-9':
+              entry.resource.code = {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "44250-9",
+                    "display": "Little interest or pleasure in doing things?"
+                  }
+                ],
+                "text": "Little interest or pleasure in doing things?"
+              },
+              entry.resource.valueCodeableConcept = {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "LA6568-5",
+                    "display": "Not at all"
+                  }
+                ],
+                "text": "Not at all"
+              }
+              break;
+          }
+
           return {
             then: function(callback) {
-              callback({
-                "data": {
-                  "resourceType": "Bundle",
-                  "type": "searchset",
-                  "entry": [
-                    {
-                      "fullUrl": "https://launch.smarthealthit.org/v/r3/fhir/Observation/8919e529-7c56-41e0-a696-2b974d4c95ae",
-                      "resource": {
-                        "code": {
-                          "coding": [
-                            {
-                              "system": "http://loinc.org",
-                              "code": "29463-7",
-                              "display": "Body Weight"
-                            }
-                          ],
-                          "text": "Body Weight"
-                        },
-                        "effectiveDateTime": "2016-06-29T19:14:57-04:00",
-                        "issued": "2016-06-29T19:14:57-04:00",
-                        "valueQuantity": weightQuantity,
-                      }
-                    }
-                  ]
-                }
+              setTimeout(function() { // preserve expected async behavior
+                callback({
+                  "data": {
+                    "resourceType": "Bundle",
+                    "type": "searchset",
+                    "entry": [
+                      entry
+                    ]
+                  }
+                });
               });
             }
           };

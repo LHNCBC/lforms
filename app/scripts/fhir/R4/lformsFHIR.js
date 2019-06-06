@@ -18892,34 +18892,34 @@ var self = {
 
       case "CNE":
       case "CWE":
+        // TBD -- This is wrong.  Multi-valued list fields should generate an array of Observations, each with one value.
         valueX.key = "valueCodeableConcept";
         var max = item.answerCardinality.max;
+        var itemVals;
+        if (max && (max === "*" || parseInt(max) > 1)) itemVals = item.value;else itemVals = [item.value];
+        var coding = [];
 
-        if (max && (max === "*" || parseInt(max) > 1)) {
-          var coding = [];
+        for (var j = 0, jLen = itemVals.length; j < jLen; j++) {
+          var val = itemVals[j];
+          var c = {
+            "code": val.code,
+            "display": val.text
+          };
+          var cSystem = val.system || item.answerCodeSystem;
 
-          for (var j = 0, jLen = item.value.length; j < jLen; j++) {
-            coding.push({
-              "system": item.value[j].codeSystem || item.answerCodeSystem,
-              "code": item.value[j].code,
-              "display": item.value[j].text
-            });
+          if (cSystem) {
+            cSystem = LForms.Util.getCodeSystem(cSystem);
+            c.system = cSystem;
           }
 
-          valueX.val = {
-            "coding": coding
-          };
-        } else {
-          valueX.val = {
-            "coding": [{
-              "system": item.value.codeSystem || item.answerCodeSystem,
-              "code": item.value.code,
-              "display": item.value.text
-            }],
-            "text": item.value.text
-          };
+          coding.push(c);
         }
 
+        valueX.val = {
+          "coding": coding
+        };
+        if (coding.length === 1) // TBD after the above fix, length should always be 1
+          valueX.val.text = coding[0].display;
         break;
 
       default:
@@ -19586,10 +19586,7 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE') {
         var codeSystem = null,
             coding = null;
-
-        if (item.answerCodeSystem) {
-          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
-        }
+        if (item.answerCodeSystem) codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
@@ -20440,11 +20437,11 @@ function addSDCImportFns(ns) {
 
     self._processUnitList(targetItem, qItem);
 
+    self._processAnswers(targetItem, qItem, containedVS);
+
     self._processDefaultAnswer(targetItem, qItem);
 
     self._processExternallyDefined(targetItem, qItem);
-
-    self._processAnswers(targetItem, qItem, containedVS);
 
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
 
@@ -20751,9 +20748,8 @@ function addSDCImportFns(ns) {
     var vals = [];
     qItem.initial.forEach(function (elem) {
       var answer = null;
-
-      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
-
+      var val = elem.valueCoding;
+      if (val) val._type = 'Coding';else val = self._getFHIRValueWithPrefixKey(elem, /^value/);
       if (val) vals.push(val);
     });
     if (vals.length > 0) this._processFHIRValues(lfItem, vals, true);
@@ -21467,7 +21463,10 @@ function addCommonSDCImportFns(ns) {
     // starts with "value".
     var val = null;
     var lfDataType = lfItem.dataType;
-    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType]; // fhirValType is now the FHIR data type for a Questionnaire.  However,
+    // where Questionnaire uses Coding, Observation uses CodeableConcept.
+
+    if (fhirValType == 'Coding') fhirValType = 'CodeableConcept';
     if (fhirValType) val = obs['value' + fhirValType];
 
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -21517,13 +21516,11 @@ function addCommonSDCImportFns(ns) {
             }
           }
 
-          if (!matchingUnit) unitOkay = false;
+          if (!matchingUnit) unitOkay = false;else lfItem.unit = matchingUnit;
         }
       }
 
       if (unitOkay) {
-        lfItem.unit = matchingUnit;
-
         this._processFHIRValues(lfItem, [val]);
       }
     }
@@ -21548,9 +21545,41 @@ function addCommonSDCImportFns(ns) {
       var answer = null;
 
       if (lfDataType === 'CWE' || lfDataType === 'CNE') {
-        answer = {};
-        if (fhirVal.code !== undefined) answer.code = fhirVal.code;
-        if (fhirVal.display !== undefined) answer.text = fhirVal.display;
+        var codings = null;
+
+        if (fhirVal._type == 'CodeableConcept') {
+          codings = fhirVal.coding;
+        } else if (fhirVal._type == 'Coding') {
+          codings = [fhirVal];
+        }
+
+        if (!codings) {
+          // maybe a string?
+          if (lfDataType === 'CWE') {
+            answer = fhirVal;
+          }
+        } else {
+          // Pick a Coding that is appropriate for this list item.
+          if (lfItem.answers) {
+            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
+            if (itemAnswersFHIRCodeSystem) itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
+            var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
+
+            for (var k = 0, kLen = codings.length; k < kLen && !answer; ++k) {
+              var coding = codings[k];
+
+              for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
+                var system = coding.system;
+                var listAnswer = itemAnswers[j];
+                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
+
+                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                  answer = itemAnswers[j]; // include label in answer text
+                }
+              }
+            }
+          }
+        }
       } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
         if (fhirVal.value !== undefined) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
@@ -21559,7 +21588,7 @@ function addCommonSDCImportFns(ns) {
         answer = fhirVal;
       }
 
-      answers.push(answer);
+      if (answer) answers.push(answer);
     }
 
     if (isMultiple) {
@@ -21950,3 +21979,4 @@ function addCommonSDCImportFns(ns) {
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=lformsFHIR.js.map

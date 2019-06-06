@@ -24,13 +24,14 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
 describe('Form pre-population', function() {
   it('should be able to use %questionnaire in expressions', function() {
     tp.openBaseTestPage();
+    setServerFHIRContext('4.0');
     tp.loadFromTestData('phq9.json', 'R4');
-    // This test form does prepoluation, which might or might not work (pending bug fixes).
-    // So, set a value, and confirm that the total (which uses %questionnaire) is not blank.
+    // This test form does prepoluation of the first answer.
     var firstQ = element(by.id('/44250-9/1'));
-    tp.Autocomp.helpers.autocompPickNth(firstQ, null, 1);
+    browser.wait(function() {return firstQ.getAttribute('value')}, 2000)
+    expect(firstQ.getAttribute('value')).not.toBe('');
     var sum = element(by.id('/44261-6/1'));
-    browser.wait(function() {return sum.getAttribute('value')})
+    browser.wait(function() {return sum.getAttribute('value')}, 2000)
     expect(sum.getAttribute('value')).not.toBe('');
   });
 

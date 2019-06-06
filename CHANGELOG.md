@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.6.2] 2019-06-06
+### Fixed
+- Observation-based prepoluation of list fields now works.
+
 ## [15.6.1] 2019-05-28
 ### Fixed
 - Empty Observation records were being saved during data extraction to an STU3

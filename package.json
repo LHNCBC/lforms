@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "15.6.1",
+  "version": "15.6.2",
   "main": "app/scripts/index.js",
   "files": [
     "app"
@@ -60,6 +60,8 @@
     "webpack-cli": "^3.1.0",
     "wiredep": "^4.0.0"
   },
+  "repository": "github:lhncbc/lforms",
+  "license": "See LICENSE.md",
   "scripts": {
     "wiredep": "grunt wiredep",
     "webpack": "webpack",
