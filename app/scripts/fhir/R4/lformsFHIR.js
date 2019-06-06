@@ -20437,75 +20437,60 @@ function addSDCImportFns(ns) {
 
 
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
-    // which in LForms is an attribute of the parent item, not a separate item.
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    var targetItem = {};
+    targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
-    if (qItem.type === "display" && ci) {
-      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
-      return {
-        type: "help",
-        item: {
-          codingInstructions: qItem.text,
-          codingInstructionsFormat: format ? "html" : "text"
-        }
-      };
-    } else {
-      var targetItem = {};
-      targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
+    self._processDataType(targetItem, qItem);
 
-      self._processDataType(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
 
-      self._processCodeAndLinkId(targetItem, qItem);
+    self._processDisplayItemCode(targetItem, qItem);
 
-      self._processDisplayItemCode(targetItem, qItem);
+    self._processEditable(targetItem, qItem);
 
-      self._processEditable(targetItem, qItem);
+    self._processQuestionCardinality(targetItem, qItem);
 
-      self._processQuestionCardinality(targetItem, qItem);
+    self._processAnswerCardinality(targetItem, qItem);
 
-      self._processAnswerCardinality(targetItem, qItem);
+    self._processDisplayControl(targetItem, qItem);
 
-      self._processDisplayControl(targetItem, qItem);
+    self._processRestrictions(targetItem, qItem);
 
-      self._processRestrictions(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
 
-      self._processHiddenItem(targetItem, qItem);
+    self._processUnitList(targetItem, qItem);
 
-      self._processUnitList(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
 
-      self._processDefaultAnswer(targetItem, qItem);
+    self._processExternallyDefined(targetItem, qItem);
 
-      self._processExternallyDefined(targetItem, qItem);
+    self._processAnswers(targetItem, qItem, containedVS);
 
-      self._processAnswers(targetItem, qItem, containedVS);
+    self._processSkipLogic(targetItem, qItem, linkIdItemMap);
 
-      self._processSkipLogic(targetItem, qItem, linkIdItemMap);
+    self._processCopiedItemExtensions(targetItem, qItem);
 
-      self._processCopiedItemExtensions(targetItem, qItem);
+    self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
 
-      self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
+    if (Array.isArray(qItem.item)) {
+      targetItem.items = [];
 
-      if (Array.isArray(qItem.item)) {
-        targetItem.items = [];
+      for (var i = 0; i < qItem.item.length; i++) {
+        var help = _processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
 
-        for (var i = 0; i < qItem.item.length; i++) {
-          var ret = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
-          if (ret.type === "help") {
-            targetItem.codingInstructions = ret.item.codingInstructions;
-            targetItem.codingInstructionsFormat = ret.item.codingInstructionsFormat;
-          } else if (ret.type === "item") {
-            targetItem.items.push(ret.item);
-          }
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+        } else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+
+          targetItem.items.push(item);
         }
       }
-
-      return {
-        type: "item",
-        item: targetItem
-      };
     }
+
+    return targetItem;
   }; // A map of FHIR extensions involving Expressions to the property names on
   // which they will be stored in LFormsData, and a boolean indicating whether
   // more than one extension of the type is permitted.
@@ -20920,6 +20905,30 @@ function addSDCImportFns(ns) {
       };
     }
   };
+  /**
+   * Parse questionnaire item for coding instructions
+   *
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    var ret = null;
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if (qItem.type === "display" && ci) {
+      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-style");
+      ret = {
+        codingInstructions: qItem.text,
+        codingInstructionsFormat: format ? "html" : "text"
+      };
+    }
+
+    return ret;
+  }
   /**
    * Parse questionnaire item for restrictions
    *
@@ -21443,10 +21452,10 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var ret = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
 
 
-          target.items.push(ret.item);
+          target.items.push(item);
         }
       }
 

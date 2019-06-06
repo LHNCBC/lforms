@@ -20393,71 +20393,57 @@ function addSDCImportFns(ns) {
 
 
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
-    // which in LForms is an attribute of the parent item, not a separate item.
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    var targetItem = {};
+    targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
-    if (qItem.type === "display" && ci) {
-      return {
-        type: "help",
-        item: {
-          codingInstructions: qItem.text
-        }
-      };
-    } else {
-      var targetItem = {};
-      targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
+    self._processDataType(targetItem, qItem);
 
-      self._processDataType(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
 
-      self._processCodeAndLinkId(targetItem, qItem);
+    _processDisplayItemCode(targetItem, qItem);
 
-      _processDisplayItemCode(targetItem, qItem);
+    _processEditable(targetItem, qItem);
 
-      _processEditable(targetItem, qItem);
+    _processQuestionCardinality(targetItem, qItem);
 
-      _processQuestionCardinality(targetItem, qItem);
+    _processAnswerCardinality(targetItem, qItem);
 
-      _processAnswerCardinality(targetItem, qItem);
+    self._processDisplayControl(targetItem, qItem);
 
-      self._processDisplayControl(targetItem, qItem);
+    _processRestrictions(targetItem, qItem);
 
-      _processRestrictions(targetItem, qItem);
+    self._processHiddenItem(targetItem, qItem);
 
-      self._processHiddenItem(targetItem, qItem);
+    _processUnitList(targetItem, qItem);
 
-      _processUnitList(targetItem, qItem);
+    self._processDefaultAnswer(targetItem, qItem);
 
-      self._processDefaultAnswer(targetItem, qItem);
+    _processExternallyDefined(targetItem, qItem);
 
-      _processExternallyDefined(targetItem, qItem);
+    _processAnswers(targetItem, qItem, containedVS);
 
-      _processAnswers(targetItem, qItem, containedVS);
+    _processSkipLogic(targetItem, qItem, linkIdItemMap);
 
-      _processSkipLogic(targetItem, qItem, linkIdItemMap);
+    _processCalculatedValue(targetItem, qItem);
 
-      _processCalculatedValue(targetItem, qItem);
+    if (Array.isArray(qItem.item)) {
+      targetItem.items = [];
 
-      if (Array.isArray(qItem.item)) {
-        targetItem.items = [];
+      for (var i = 0; i < qItem.item.length; i++) {
+        var help = _processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
 
-        for (var i = 0; i < qItem.item.length; i++) {
-          var ret = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
-          if (ret.type === "help") {
-            targetItem.codingInstructions = ret.item.codingInstructions;
-            targetItem.codingInstructionsFormat = ret.item.codingInstructionsFormat;
-          } else if (ret.type === "item") {
-            targetItem.items.push(ret.item);
-          }
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+        } else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+
+          targetItem.items.push(item);
         }
       }
-
-      return {
-        type: "item",
-        item: targetItem
-      };
     }
+
+    return targetItem;
   };
   /**
    *  Copies the calculated value expression from qItem to lfItem if it exists,
@@ -20794,6 +20780,28 @@ function addSDCImportFns(ns) {
         max: "1"
       };
     }
+  }
+  /**
+   * Parse questionnaire item for coding instructions
+   *
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    var ret = null;
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+
+    if (qItem.type === "display" && ci) {
+      ret = {
+        codingInstructions: qItem.text
+      };
+    }
+
+    return ret;
   }
   /**
    * Parse questionnaire item for restrictions
@@ -21318,10 +21326,10 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var ret = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
 
 
-          target.items.push(ret.item);
+          target.items.push(item);
         }
       }
 

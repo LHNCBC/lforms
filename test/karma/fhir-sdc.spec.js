@@ -401,7 +401,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               }]
             };
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
-            assert.equal(lfItem.item.dataType, 'QTY');
+            assert.equal(lfItem.dataType, 'QTY');
           });
 
           it('should convert FHIR Questionnaire initial quantity value to LForms QTY item value', function () {
@@ -420,8 +420,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
 
             var lfItem = fhir.SDC._processQuestionnaireItem(fhirData.item[0], fhirData);
-            assert.equal(lfItem.item.dataType, 'QTY');
-            assert.equal(lfItem.item.defaultAnswer, 222);
+            assert.equal(lfItem.dataType, 'QTY');
+            assert.equal(lfItem.defaultAnswer, 222);
           });
 
           it('should convert/merge FHIR valueQuantity to LForms QTY item value', function () {

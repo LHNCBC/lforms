@@ -90,9 +90,9 @@ function addCommonSDCImportFns(ns) {
         var linkIdItemMap = self._createLinkIdItemMap(fhirData);
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
-          var ret = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
           // no instructions on the questionnaire level
-          target.items.push(ret.item);
+          target.items.push(item);
         }
       }
       target.fhirVersion = self.fhirVersion;
