@@ -110,6 +110,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -121,7 +122,6 @@ function addSDCImportFns(ns) {
     _processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
-    _processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
     self._processDefaultAnswer(targetItem, qItem);
@@ -133,12 +133,21 @@ function addSDCImportFns(ns) {
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+        var help = _processCodingInstructions(qItem.item[i]);
+        // pick one coding instruction if there are multiple ones in Questionnaire
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+        }
+        else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          targetItem.items.push(item);
+        }
       }
     }
 
     return targetItem;
+
+
   };
 
 
@@ -447,16 +456,20 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processCodingInstructions(lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-    if(ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ret = null;
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    if ( qItem.type === "display" && ci ) {
+      ret = {
+        codingInstructions: qItem.text
+      }
     }
+    return ret;
   }
 
 

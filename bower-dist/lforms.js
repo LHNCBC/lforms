@@ -8143,9 +8143,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
   $scope.getTrustedCodingInstructions = function (item) {
     var ret = '';
+    var instruction = item.codingInstructionsFormat === 'html' ? item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions : item.codingInstructions;
 
-    if (item.codingInstructions) {
-      ret = $sce.trustAsHtml(item.codingInstructions);
+    if (instruction) {
+      ret = $sce.trustAsHtml(instruction);
     }
 
     return ret;

@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.7.0] 2019-06-03
+### Fixed
+- Used a correct extension for coding instructions in FHIR Questionnaire
+### Added
+- Added support for coding instructions format in FHIR Questionnaire
+
 ## [15.6.2] 2019-05-31
 ### Fixed
 - Fix an error when creating LFormsData object with empty items.
