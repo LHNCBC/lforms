@@ -19175,8 +19175,6 @@ var self = {
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
-            // item.codingInstructionsFormat,
-            // item.codingInstructions,
             "text": "Help-Button",
             "coding": [{
               "code": "help",
@@ -20925,9 +20923,12 @@ function addSDCImportFns(ns) {
       var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
       ret = {
         codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text",
-        codingInstructionsXHTML: format ? format.valueString : null
+        codingInstructionsFormat: format ? "html" : "text"
       };
+
+      if (format) {
+        ret.codingInstructionsXHTML = format.valueString;
+      }
     }
 
     return ret;

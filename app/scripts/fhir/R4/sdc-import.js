@@ -555,7 +555,11 @@ function addSDCImportFns(ns) {
       ret = {
         codingInstructions: qItem.text,
         codingInstructionsFormat: format ? "html" : "text",
-        codingInstructionsXHTML: format ? format.valueString : null
+
+      };
+
+      if (format) {
+        ret.codingInstructionsXHTML = format.valueString
       }
     }
     return ret;
