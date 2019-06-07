@@ -114,6 +114,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -125,7 +126,6 @@ function addSDCImportFns(ns) {
     self._processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
-    self._processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
     self._processAnswers(targetItem, qItem, containedVS);
@@ -135,15 +135,26 @@ function addSDCImportFns(ns) {
     self._processCopiedItemExtensions(targetItem, qItem);
 
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
+
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+        var help = _processCodingInstructions(qItem.item[i]);
+        // pick one coding instruction if there are multiple ones in Questionnaire
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+        }
+        else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          targetItem.items.push(item);
+        }
       }
     }
 
     return targetItem;
+
   };
 
   // A map of FHIR extensions involving Expressions to the property names on
@@ -535,17 +546,28 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  self._processCodingInstructions = function (lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-    if(ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ret = null;
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    if ( qItem.type === "display" && ci ) {
+      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      ret = {
+        codingInstructions: qItem.text,
+        codingInstructionsFormat: format ? "html" : "text",
+
+      };
+
+      if (format) {
+        ret.codingInstructionsXHTML = format.valueString
+      }
     }
-  };
+    return ret;
+  }
 
 
   /**

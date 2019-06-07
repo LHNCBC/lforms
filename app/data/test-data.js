@@ -30,7 +30,9 @@ var FHTData = {
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
         ], "answerCardinality": {"min": "1", "max": "1"},"dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "21112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false},
+        {"questionCode": "21112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>",
+          "codingInstructionsFormat": "html"},
         {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54125-0", "trigger": {"value": "Alex"}}],
@@ -751,7 +753,7 @@ var allInOne =
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": "A Copyright notice of the form",
   "templateOptions": {
-    showFormOptionPanel: true,
+    "showFormOptionPanel": true,
     "formHeaderItems": [{
       "question": "Date Done",
       "questionCode": "date_done",
@@ -1355,6 +1357,7 @@ var formWithUserData =
     // different data type
     {"questionCode": "q1", "header": false, "units": null,
       "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo.nlm.nih.gov'>LForms Demo</a>",
+      "codingInstructionsFormat": "html",
       "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},

@@ -14,7 +14,6 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
@@ -23,12 +22,9 @@ function addCommonSDCImportFns(ns) {
     "http://hl7.org/fhir/StructureDefinition/minLength",
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
-
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
-
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
 
   self.formLevelFields = [
@@ -95,6 +91,7 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
           var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          // no instructions on the questionnaire level
           target.items.push(item);
         }
       }

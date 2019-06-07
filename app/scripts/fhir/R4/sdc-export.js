@@ -165,20 +165,6 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
-    if (item.codingInstructions) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-        "valueCodeableConcept": {
-          "text": item.codingInstructions,
-          "coding": [{
-            "code": item.codingInstructionsFormat,
-            "display": item.codingInstructions
-          }]
-        }
-      });
-    }
-
     if(item._isHidden) {
       targetItem.extension.push({
         url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
@@ -226,6 +212,45 @@ var self = {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var newItem = this._processItem(item.items[i], source, noExtensions);
         targetItem.item.push(newItem);
+      }
+    }
+
+    // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+    if (item.codingInstructions) {
+      let helpItem = {
+        text: item.codingInstructions,
+        type: "display",
+        linkId: targetItem.linkId + "-help",
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      // format could be 'html' or 'text'
+      if (item.codingInstructionsFormat === 'html') {
+        helpItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+        })
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem)
+      }
+      else {
+        targetItem.item = [
+          helpItem
+        ]
       }
     }
 

@@ -19114,21 +19114,7 @@ var self = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
 
-
-    if (item.codingInstructions) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-        "valueCodeableConcept": {
-          "text": item.codingInstructions,
-          "coding": [{
-            "code": item.codingInstructionsFormat,
-            "display": item.codingInstructions
-          }]
-        }
-      });
-    }
 
     if (item._isHidden) {
       targetItem.extension.push({
@@ -19175,6 +19161,41 @@ var self = {
         var newItem = this._processItem(item.items[i], source, noExtensions);
 
         targetItem.item.push(newItem);
+      }
+    } // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+
+
+    if (item.codingInstructions) {
+      var helpItem = {
+        text: item.codingInstructions,
+        type: "display",
+        linkId: targetItem.linkId + "-help",
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      }; // format could be 'html' or 'text'
+
+      if (item.codingInstructionsFormat === 'html') {
+        helpItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+        });
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem);
+      } else {
+        targetItem.item = [helpItem];
       }
     } // handle special constraints for "display" item
 
@@ -20431,8 +20452,6 @@ function addSDCImportFns(ns) {
 
     self._processRestrictions(targetItem, qItem);
 
-    self._processCodingInstructions(targetItem, qItem);
-
     self._processHiddenItem(targetItem, qItem);
 
     self._processUnitList(targetItem, qItem);
@@ -20453,9 +20472,18 @@ function addSDCImportFns(ns) {
       targetItem.items = [];
 
       for (var i = 0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+        var help = _processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
 
-        targetItem.items.push(newItem);
+
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+        } else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+
+          targetItem.items.push(item);
+        }
       }
     }
 
@@ -20876,20 +20904,31 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
 
 
-  self._processCodingInstructions = function (lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    var ret = null;
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
 
-    if (ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
+    if (qItem.type === "display" && ci) {
+      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      ret = {
+        codingInstructions: qItem.text,
+        codingInstructionsFormat: format ? "html" : "text"
+      };
+
+      if (format) {
+        ret.codingInstructionsXHTML = format.valueString;
+      }
     }
-  };
+
+    return ret;
+  }
   /**
    * Parse questionnaire item for restrictions
    *
@@ -21376,7 +21415,6 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
@@ -21414,7 +21452,8 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
+
 
           target.items.push(item);
         }

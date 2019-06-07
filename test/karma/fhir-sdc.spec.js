@@ -121,6 +121,22 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should convert FHTData to Questionnaire', function () {
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
+            assert.equal(fhirQ.item[0].item[2].item.length, 1);
+            assert.equal(fhirQ.item[0].item[2].item[0].text,
+                "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
+            assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
+            if (fhirVersion === "R4") {
+              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
+                  "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
+              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].valueString,
+                  "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>")
+            }
+          });
+
         });
 
         describe('Questionnaire to lforms item conversion', function () {
@@ -193,7 +209,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             //assert.equal(convertedLfData.items[0].items[1].answers[2].other, "Please Specify");
             assert.equal(convertedLfData.items[0].items[1].dataType, "CNE");
 
-            // TODO - skip logic triggers for min/max inclsuive/exclusive are not supported.
+            // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
             // Only skip logic 'value' works in STU3
             assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
             assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
@@ -202,8 +218,29 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, FHTData.items[0].items[6].items[2].skipLogic);
             }
 
+            assert.equal(convertedLfData.items[0].items[2].codingInstructions,
+                "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
+            if (fhirVersion === 'R4') {
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, "html");
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML,
+                  "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
+            }
+            else if (fhirVersion === 'STU3') {
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, undefined);
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML, undefined);
+            }
+
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
+            if (fhirVersion === 'R4') {
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, "text");
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, null);
+            }
+            else if (fhirVersion === 'STU3') {
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, undefined);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, undefined);
+            }
+
             // TODO units[x].code is not supported.
             assert.equal(convertedLfData.items[0].items[6].units.length, FHTData.items[0].items[6].units.length);
             assert.equal(convertedLfData.items[0].items[6].units[0].default, FHTData.items[0].items[6].units[0].default);
