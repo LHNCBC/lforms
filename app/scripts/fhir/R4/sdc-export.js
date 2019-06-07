@@ -226,8 +226,6 @@ var self = {
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
-            // item.codingInstructionsFormat,
-            // item.codingInstructions,
             "text": "Help-Button",
             "coding": [{
               "code": "help",
