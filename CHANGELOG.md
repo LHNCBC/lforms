@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.7.1] 2019-06-06
+### Fixed
+- Observation-based prepoluation of list fields now works.
+
 ## [15.7.0] 2019-06-03
 ### Fixed
 - Used a correct extension for coding instructions in FHIR Questionnaire

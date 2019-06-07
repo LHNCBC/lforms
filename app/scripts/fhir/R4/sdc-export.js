@@ -657,9 +657,8 @@ var self = {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
-        if(item.answerCodeSystem) {
+        if (item.answerCodeSystem)
           codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
-        }
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values

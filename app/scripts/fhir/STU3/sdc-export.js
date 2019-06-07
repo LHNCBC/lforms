@@ -657,7 +657,9 @@ var self = {
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
-        var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
+        var codeSystem = null, coding = null;
+        if (item.answerCodeSystem)
+          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           // targetItem[valueKey] = [];
@@ -670,19 +672,23 @@ var self = {
           // };
 
           // pick the first one only
-          targetItem[valueKey] = {
-            "system": codeSystem,
+          coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
           };
+          if (codeSystem)
+            coding.system = codeSystem;
+          targetItem[valueKey] = coding;
         }
         // single selection, item.defaultAnswer is an object
         else {
-          targetItem[valueKey] = {
-            "system": codeSystem,
+          coding = {
             "code": item.defaultAnswer.code,
             "display": item.defaultAnswer.text
           };
+          if (codeSystem)
+            coding.system = codeSystem;
+          targetItem[valueKey] = coding
         }
       }
       // for Quantity,

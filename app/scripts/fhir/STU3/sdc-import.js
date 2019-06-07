@@ -124,9 +124,9 @@ function addSDCImportFns(ns) {
     _processRestrictions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
+    _processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
-    _processAnswers(targetItem, qItem, containedVS);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 
@@ -335,7 +335,11 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
+    var val = qItem.initialCoding;
+    if (val)
+      val._type = 'Coding';
+    else
+      val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
     if (val) {
       this._processFHIRValues(lfItem, [val], true);
     }

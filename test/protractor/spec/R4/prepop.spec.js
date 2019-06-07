@@ -22,17 +22,21 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
 }
 
 describe('Form pre-population', function() {
-  it('should be able to use %questionnaire in expressions', function() {
-    tp.openBaseTestPage();
-    tp.loadFromTestData('phq9.json', 'R4');
-    // This test form does prepoluation, which might or might not work (pending bug fixes).
-    // So, set a value, and confirm that the total (which uses %questionnaire) is not blank.
-    var firstQ = element(by.id('/44250-9/1'));
-    tp.Autocomp.helpers.autocompPickNth(firstQ, null, 1);
-    var sum = element(by.id('/44261-6/1'));
-    browser.wait(function() {return sum.getAttribute('value')})
-    expect(sum.getAttribute('value')).not.toBe('');
-  });
+  for (let serverFHIRNum of ['3.0', '4.0']) {
+    it('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
+      tp.openBaseTestPage();
+      setServerFHIRContext(serverFHIRNum);
+      tp.loadFromTestData('phq9.json', 'R4');
+      // This test form does prepoluation of the first answer.
+      // This is also a test of prepoluation of list questions.
+      var firstQ = element(by.id('/44250-9/1'));
+      browser.wait(function() {return firstQ.getAttribute('value')}, 2000)
+      expect(firstQ.getAttribute('value')).not.toBe('');
+      var sum = element(by.id('/44261-6/1'));
+      browser.wait(function() {return sum.getAttribute('value')}, 2000)
+      expect(sum.getAttribute('value')).not.toBe('');
+    });
+  }
 
   describe('with bower packages', function() {
     beforeAll(function () {

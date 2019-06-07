@@ -51,33 +51,33 @@ var self = {
         break;
       case "CNE":
       case "CWE":
+        // TBD -- This is wrong.  Multi-valued list fields should generate an array of Observations, each with one value.
         valueX.key = "valueCodeableConcept";
         var max = item.answerCardinality.max;
-        if (max && (max === "*" || parseInt(max) > 1)) {
-          var coding = [];
-          for (var j=0,jLen=item.value.length; j<jLen; j++) {
-            coding.push({
-              "system": item.value[j].codeSystem || item.answerCodeSystem,
-              "code": item.value[j].code,
-              "display": item.value[j].text
-            });
-          }
-          valueX.val = {
-            "coding": coding
-          }
-        }
-        else {
-          valueX.val = {
-            "coding": [
-              {
-                "system": item.value.codeSystem || item.answerCodeSystem,
-                "code": item.value.code,
-                "display": item.value.text
-              }
-            ],
-            "text": item.value.text
+        var itemVals;
+        if (max && (max === "*" || parseInt(max) > 1))
+          itemVals = item.value;
+        else
+          itemVals = [item.value];
+        var coding = [];
+        for (var j=0,jLen=itemVals.length; j<jLen; j++) {
+          var val = itemVals[j];
+          var c = {
+            "code": val.code,
+            "display": val.text
           };
+          var cSystem = val.system || item.answerCodeSystem;
+          if (cSystem) {
+            cSystem = LForms.Util.getCodeSystem(cSystem);
+            c.system = cSystem;
+          }
+          coding.push(c);
         }
+        valueX.val = {
+          "coding": coding
+        }
+        if (coding.length === 1) // TBD after the above fix, length should always be 1
+          valueX.val.text = coding[0].display;
         break;
       default:
         valueX.key = "valueString";
