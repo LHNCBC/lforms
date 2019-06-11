@@ -46,8 +46,9 @@ LForms.Util = {
     // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
     var isInitialized = formContainer.injector && formContainer.injector();
-    if (!isInitialized)
+    if (!isInitialized) {
       angular.bootstrap(formContainer.children(':first'), [appName]);
+    }
   },
 
 

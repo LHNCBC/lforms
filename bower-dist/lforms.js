@@ -157,7 +157,7 @@ module.exports = LForms;
   var Def = __webpack_require__(3);
 
   var widgetDeps = ['smoothScroll', 'autocompleteLhcMod', 'ui.bootstrap.datetimepicker'];
-  if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
+  if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps).config(['$animateProvider', function ($animateProvider) {
     $animateProvider.classNameFilter(/has-ng-animate/);
   }]).directive('lforms', function () {
@@ -7740,7 +7740,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
   }; // uib booststrap datetime picker, https://github.com/Gillardo/bootstrap-ui-datetime-picker
 
   $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
-  $scope.uibDatePickerAltFormats = ['yyyy', 'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM', 'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy', "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm"];
+  $scope.uibDatePickerAltFormats = ['yyyy', 'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM', 'yyyy-M', 'yyyy-MM', 'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy', 'yyyy-MM-dd', "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm", "yyyy-MM-dd HH:mm"];
   $scope.uibDatePickerOptions = {
     showWeeks: false
   };
@@ -8429,6 +8429,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
   $scope.getRowClass = function (item) {
     var eleClass = 'level' + item._displayLevel;
+    eleClass += ' lf-datatype-' + item.dataType;
 
     if (item._answerRequired) {
       eleClass += ' lf-answer-required';
@@ -9158,6 +9159,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
          * @param ctrl the directive control
          */
         function validate(item, value, ctrl) {
+          // DTM comes to here ONLY if the input is valid.
           item._validationErrors = [];
           var valid1 = LForms.Validations.checkDataType(item.dataType, value, item._validationErrors);
           ctrl.$setValidity('lf-datatype', valid1);
@@ -9168,6 +9170,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
           for (var i = 0, len = item._validationErrors.length; i < len; ++i) {
             scope.$parent.sendMsgToScreenReader('"' + item.question + '"' + item._validationErrors[i]);
+          }
+
+          if (item.dataType == 'DTM') {
+            console.log('DTM value=' + value + '; valid=' + (valid1 && valid2 && valid3));
           }
 
           return valid1 && valid2 && valid3;
@@ -11140,7 +11146,10 @@ LForms.Util = {
     // Following http://stackoverflow.com/a/34501500/360782
 
     var isInitialized = formContainer.injector && formContainer.injector();
-    if (!isInitialized) angular.bootstrap(formContainer.children(':first'), [appName]);
+
+    if (!isInitialized) {
+      angular.bootstrap(formContainer.children(':first'), [appName]);
+    }
   },
 
   /**
@@ -14102,7 +14111,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // set up validation flag
 
 
-        if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE) {
+        if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+        item.dataType !== this._CONSTANTS.DATA_TYPE.CNE && item.dataType !== this._CONSTANTS.DATA_TYPE.DTM) {
           item._hasValidation = true;
         } // question coding system
 

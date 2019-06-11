@@ -1016,7 +1016,9 @@
             (item.dataType !== this._CONSTANTS.DATA_TYPE.ST &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.TX &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.CWE &&
-             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
+             item.dataType !== this._CONSTANTS.DATA_TYPE.DTM)) { // datetime picker controls input.
           item._hasValidation = true;
         }
 

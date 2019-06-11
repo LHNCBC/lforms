@@ -37,7 +37,8 @@ angular.module('lformsWidget')
           'yyyy',
           'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM',
           'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy',
-          "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm"
+          "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm",
+          "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH:mm"
         ];
 
         $scope.uibDatePickerOptions = {
@@ -714,6 +715,7 @@ angular.module('lformsWidget')
          */
         $scope.getRowClass = function(item) {
           var eleClass = 'level' + item._displayLevel;
+          eleClass += ' lf-datatype-' + item.dataType;
           if (item._answerRequired) {
             eleClass += ' lf-answer-required';
           }

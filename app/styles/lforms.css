@@ -265,6 +265,27 @@
   position: absolute;
   z-index: 99;
 }
+
+/* Hiding the error message bubble for DTM - datetimepicker controls the input and it doesn't
+   run through our validation process.
+   See below (commented out) on a potential way to deliver the error message - there are still issues to work out.
+*/
+.lf-form .lf-datatype-DTM .lf-visited-before .ng-invalid > .tooltipContainer:hover:before,
+.lf-form .lf-datatype-DTM .active-row.lf-visited-before .ng-invalid > .tooltipContainer:before,
+.lf-form .lf-datatype-DTM .lf-show-validation .ng-invalid > .tooltipContainer:before {
+  display:none;
+}
+
+/* An alternative way of managing/displaying error messages for DTM (where the datetimepicker controls
+   many things), could explore down the road.
+.lf-form .lf-datatype-DTM .ng-invalid > .tooltipContainer .tooltipContent:before {
+  bottom: -1px;
+  left: -6px;
+  content: "It must be a date and time value."
+}
+*/
+
+
 .lf-form .lf-visited-before .ng-invalid input[type="number"],
 .lf-form .lf-visited-before .ng-invalid input[type="text"],
 .lf-form .lf-visited-before .ng-invalid textarea,
@@ -413,13 +434,29 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* color of the calendar icon in the form/input*/
+
+.lf-dtm-picker-block .input-group-btn {
+  margin-left: 30px;
+  color: #066aa0;
+  background-color: inherit;
+}
 .lf-dtm-picker-block .input-group-btn .btn {
   margin: 3px;
-  background-color: white;
   color: #066aa0;
+  background-color: inherit;
 }
 .lf-dtm-picker-block .input-group-btn .btn:hover {
   color: #0087fd;
+}
+
+.lf-dtm-picker-block > input.form-control,
+.lf-dtm-picker-block .input-group-btn {
+  background-color: white;
+}
+.lf-dtm-picker-block > input.form-control:active,
+.lf-dtm-picker-block > input.form-control:focus,
+.lf-dtm-picker-block > input.form-control:focus ~ span {
+  background-color: #FFF8C6;
 }
 
 /* Overall popup window for both date and time popups*/
@@ -441,19 +478,27 @@ Override color of select boxes in calendar widget title bar.
 }
 
 /* The header (month and prev/next arrow) */
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th,
 .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th * {
   background-color: #5c9ccc;
   color: #dfeffc;
 }
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th:hover,
 .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th *:hover {
   color: #5c9ccc;
   background-color: #dfeffc;
 }
 /* the real controls in the header (month, prev/next) */
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button,
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button:hover,
 .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button *,
 .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button *:hover {
   background-color: inherit;
   color: inherit;
+}
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button,
+.datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button:hover {
+  border: none;
 }
 
 /* Calendar date cells buttons */
