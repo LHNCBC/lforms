@@ -14,46 +14,7 @@ function addSDCImportFns(ns) {
   // FHIR extension urls
 
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
-
-  self.formLevelIgnoredFields = [
-    // Resource
-    'id',
-    'meta',
-    'implicitRules',
-    'language',
-
-
-    // Domain Resource
-    'text',
-    'contained',
-    'text',
-    'contained',
-    'extension',
-    'modifiedExtension',
-
-    // Questionnaire
-    'date',
-    'version',
-    'derivedFrom', // New in R4
-    'status',
-    'experimental',
-    'publisher',
-    'contact',
-    'description',
-    'useContext',
-    'jurisdiction',
-    'purpose',
-    'copyright',
-    'approvalDate',
-    'reviewDate',
-    'effectivePeriod',
-    'url'
-  ];
-
-  self.itemLevelIgnoredFields = [
-    'definition',
-    'prefix'
-  ];
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
 
 
   /**
@@ -64,31 +25,28 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processFormLevelFields = function(lfData, questionnaire) {
-    lfData.name = questionnaire.title;
-    var code = self._getCode(questionnaire);
-    if(code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
-    }
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
 
-    self.copyFields(questionnaire, lfData, self.formLevelIgnoredFields);
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
+    // into questionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
+    if(lfData.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = lfData.code;
+      delete lfData.code;
+    }
+    var codeAndSystemObj = self._getCode(questionnaire);
+    if(codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
+    }
 
     // form-level variables
     var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
       self.fhirExtVariable, 0, true);
     if (ext.length > 0)
       lfData._variableExt = ext;
-  };
-
-
-  self.copyFields = function(source, target, fieldList) {
-    if(source && target && fieldList && fieldList.length > 0) {
-      fieldList.forEach(function(field) {
-        if(source[field] !== undefined ) {
-          target[field] = source[field];
-        }
-      });
-    }
   };
 
 
@@ -156,6 +114,7 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
@@ -167,25 +126,35 @@ function addSDCImportFns(ns) {
     self._processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
-    self._processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
+    self._processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
-    self._processAnswers(targetItem, qItem, containedVS);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self._processCopiedItemExtensions(targetItem, qItem);
 
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
+
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+        var help = _processCodingInstructions(qItem.item[i]);
+        // pick one coding instruction if there are multiple ones in Questionnaire
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+        }
+        else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          targetItem.items.push(item);
+        }
       }
     }
 
     return targetItem;
+
   };
 
   // A map of FHIR extensions involving Expressions to the property names on
@@ -390,8 +359,11 @@ function addSDCImportFns(ns) {
           if(optionKey[0] === 'valueCoding') { // Only one value[x] is expected
             if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
-            //Lforms has answer code system at item level, expects all options to have one code system!
-            if(option[optionKey[0]].system  !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
+            // TBD- Lforms has answer code system at item level, expects all options to have one code system!
+            if(option[optionKey[0]].system  !== undefined) {
+              answer.codeSystem = option[optionKey[0]].system;
+              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
+            }
           }
           else {
             answer.text = option[optionKey[0]].toString();
@@ -406,7 +378,7 @@ function addSDCImportFns(ns) {
       if(vs) {
         lfItem.answers = vs.answers;
         if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         }
         else if(vs.hasAnswerCodeSystems) {
           console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s',
@@ -447,7 +419,11 @@ function addSDCImportFns(ns) {
     var vals = [];
     qItem.initial.forEach(function(elem) {
       var answer = null;
-      var val = self._getFHIRValueWithPrefixKey(elem, /^value/);
+      var val = elem.valueCoding;
+      if (val)
+        val._type = 'Coding';
+      else
+        val = self._getFHIRValueWithPrefixKey(elem, /^value/);
       if (val)
         vals.push(val);
     });
@@ -568,89 +544,30 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for code and code system
-   * @param lfItem {object} - LForms item object to assign question code
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processCodeAndLinkId = function (lfItem, qItem) {
-    var code = self._getCode(qItem);
-    if (code) {
-      lfItem.questionCode = code.code;
-      lfItem.questionCodeSystem = code.system;
-    }
-    // use linkId as questionCode, which should not be exported as code
-    else {
-      lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
-    }
-
-    lfItem.linkId = qItem.linkId;
-  };
-
-
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-    switch(codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-
-
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-    if(questionnaireItemOrResource &&
-         Array.isArray(questionnaireItemOrResource.code) &&
-         questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    }
-    // If code is missing look for identifier.
-    else if(questionnaireItemOrResource &&
-      Array.isArray(questionnaireItemOrResource.identifier) &&
-      questionnaireItemOrResource.identifier.length) {
-      code = {
-        code: questionnaireItemOrResource.identifier[0].value,
-        system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-      };
-    }
-
-    return code;
-  };
-
-
-  /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  self._processCodingInstructions = function (lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-    if(ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ret = null;
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    if ( qItem.type === "display" && ci ) {
+      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      ret = {
+        codingInstructions: qItem.text,
+        codingInstructionsFormat: format ? "html" : "text",
+
+      };
+
+      if (format) {
+        ret.codingInstructionsXHTML = format.valueString
+      }
     }
-  };
+    return ret;
+  }
 
 
   /**

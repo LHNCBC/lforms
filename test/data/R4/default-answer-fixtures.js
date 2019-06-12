@@ -19,7 +19,7 @@ var defaultAnswers = [
     question: 'should convert single default - coding type',
     questionCode: 'defAns',
     dataType: 'CNE',
-    answers: [{code: 'ac1'}, {code: 'ac2'}, {code: 'ac3'}],
+    answers: [{code: 'ac1'}, {code: 'ac2', text: 'AC2'}, {code: 'ac3'}],
     defaultAnswer: {code: 'ac2', text: 'AC2'}
   },
   {
@@ -30,8 +30,8 @@ var defaultAnswers = [
       min: '0',
       max: '*'
     },
-    
-    answers: [{code: 'ac1'}, {code: 'ac2'}, {code: 'ac3'}],
+
+    answers: [{code: 'ac1'}, {code: 'ac2', text: 'AC2'}, {code: 'ac3', text: 'AC3'}],
     defaultAnswer: [
       {code: 'ac2', text: 'AC2'},
       {code: 'ac3', text: 'AC3'}

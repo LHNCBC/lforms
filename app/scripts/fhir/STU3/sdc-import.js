@@ -15,6 +15,9 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+
+
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
    *
@@ -23,15 +26,16 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processFormLevelFields = function (lfData, questionnaire) {
-    lfData.name = questionnaire.title;
-    var code = self._getCode(questionnaire);
-    if(code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
+    if(lfData.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = lfData.code;
+      delete lfData.code;
     }
-
-    if(questionnaire.id) {
-      lfData.id = questionnaire.id;
+    var codeAndSystemObj = self._getCode(questionnaire);
+    if(codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
   };
 
@@ -106,35 +110,44 @@ function addSDCImportFns(ns) {
    * @private
    */
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
+
     var targetItem = {};
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     self._processDataType(targetItem, qItem);
-    _processCodeAndLinkId(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
     _processQuestionCardinality(targetItem, qItem);
     _processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
-    _processCodingInstructions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     _processUnitList(targetItem, qItem);
+    _processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
-    _processAnswers(targetItem, qItem, containedVS);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 
     if (Array.isArray(qItem.item)) {
       targetItem.items = [];
       for (var i=0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-        targetItem.items.push(newItem);
+        var help = _processCodingInstructions(qItem.item[i]);
+        // pick one coding instruction if there are multiple ones in Questionnaire
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+        }
+        else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          targetItem.items.push(item);
+        }
       }
     }
 
     return targetItem;
+
+
   };
 
 
@@ -268,8 +281,11 @@ function addSDCImportFns(ns) {
           if(optionKey[0] === 'valueCoding') { // Only one value[x] is expected
             if(option[optionKey[0]].code    !== undefined) answer.code = option[optionKey[0]].code;
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
-            //Lforms has answer code system at item level, expects all options to have one code system!
-            if(option[optionKey[0]].system  !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
+            // TBD- Lforms has answer code system at item level, expects all options to have one code system!
+            if(option[optionKey[0]].system  !== undefined) {
+              answer.codeSystem = option[optionKey[0]].system;
+              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
+            }
           }
           else {
             answer.text = option[optionKey[0]].toString();
@@ -284,7 +300,7 @@ function addSDCImportFns(ns) {
       if(vs) {
         lfItem.answers = vs.answers;
         if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         }
         else if(vs.hasAnswerCodeSystems) {
           console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s',
@@ -319,7 +335,11 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
+    var val = qItem.initialCoding;
+    if (val)
+      val._type = 'Coding';
+    else
+      val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
     if (val) {
       this._processFHIRValues(lfItem, [val], true);
     }
@@ -438,88 +458,22 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for code and code system
-   * @param lfItem {object} - LForms item object to assign question code
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _processCodeAndLinkId(lfItem, qItem) {
-    var code = self._getCode(qItem);
-    if (code) {
-      lfItem.questionCode = code.code;
-      lfItem.questionCodeSystem = code.system;
-    }
-    // use linkId as questionCode, which should not be exported as code
-    else {
-      lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
-    }
-
-    lfItem.linkId = qItem.linkId;
-  }
-
-
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-    switch(codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
-    }
-
-    return ret;
-  }
-
-
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-    if(questionnaireItemOrResource &&
-         Array.isArray(questionnaireItemOrResource.code) &&
-         questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    }
-    // If code is missing look for identifier.
-    else if(questionnaireItemOrResource &&
-      Array.isArray(questionnaireItemOrResource.identifier) &&
-      questionnaireItemOrResource.identifier.length) {
-      code = {
-        code: questionnaireItemOrResource.identifier[0].value,
-        system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-      };
-    }
-
-    return code;
-  };
-
-
-  /**
    * Parse questionnaire item for coding instructions
    *
-   * @param lfItem {object} - LForms item object to assign coding instructions
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  function _processCodingInstructions(lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-    if(ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ret = null;
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    if ( qItem.type === "display" && ci ) {
+      ret = {
+        codingInstructions: qItem.text
+      }
     }
+    return ret;
   }
 
 

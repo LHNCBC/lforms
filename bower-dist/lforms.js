@@ -133,17 +133,17 @@ __webpack_require__(28);
 
 __webpack_require__(29);
 
-__webpack_require__(30);
-
 __webpack_require__(31);
 
-__webpack_require__(33);
+__webpack_require__(32);
 
-LForms.Util.FHIRSupport = __webpack_require__(34);
+__webpack_require__(34);
 
-__webpack_require__(35);
+LForms.Util.FHIRSupport = __webpack_require__(35);
 
-LForms._elementResizeDetectorMaker = __webpack_require__(36);
+__webpack_require__(36);
+
+LForms._elementResizeDetectorMaker = __webpack_require__(37);
 module.exports = LForms;
 
 /***/ }),
@@ -7740,7 +7740,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
   }; // uib booststrap datetime picker, https://github.com/Gillardo/bootstrap-ui-datetime-picker
 
   $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
-  $scope.uibDatePickerAltFormats = ['yyyy', 'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM', 'yyyy-M', 'yyyy-MM', 'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy', 'yyyy-MM-dd', "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm", "yyyy-MM-dd HH:mm"];
+  $scope.uibDatePickerAltFormats = ['yyyy', 'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM', 'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy', "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm", "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH:mm"];
   $scope.uibDatePickerOptions = {
     showWeeks: false
   };
@@ -8183,9 +8183,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
   $scope.getTrustedCodingInstructions = function (item) {
     var ret = '';
+    var instruction = item.codingInstructionsFormat === 'html' ? item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions : item.codingInstructions;
 
-    if (item.codingInstructions) {
-      ret = $sce.trustAsHtml(item.codingInstructions);
+    if (instruction) {
+      ret = $sce.trustAsHtml(instruction);
     }
 
     return ret;
@@ -8307,30 +8308,29 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
     if (LForms.FHIR) {
-      if (lfData && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
-        // Watch for changes that require FHIRPath to run
-        if (lfData.hasFHIRPath) {
-          if ($scope.unwatchFHIRPath) $scope.unwatchFHIRPath();
-          $scope.unwatchFHIRPath = $scope.$watch(function () {
-            return JSON.stringify(lfData, function (key, val) {
-              // In Safari, "key" is a number (not a string) for arrays
-              key = "" + key; // a little faster than checking the type
-              // Ignore changes to internal variables and $$hashKey
+      if (lfData) {
+        // sometimes set to null to clear the page
+        if (lfData.hasFHIRPath || lfData._hasInitialExpr) {
+          // Watch for changes that require FHIRPath to run
+          if (lfData.hasFHIRPath) {
+            if ($scope.unwatchFHIRPath) $scope.unwatchFHIRPath();
+            $scope.unwatchFHIRPath = $scope.$watch(function () {
+              return JSON.stringify(lfData, function (key, val) {
+                // In Safari, "key" is a number (not a string) for arrays
+                key = "" + key; // a little faster than checking the type
+                // Ignore changes to internal variables and $$hashKey
 
-              return key.indexOf('_') === 0 || key.indexOf('$$') === 0 ? undefined : val;
+                return key.indexOf('_') === 0 || key.indexOf('$$') === 0 ? undefined : val;
+              });
+            }, function () {
+              if (lfData) lfData._expressionProcessor.runCalculations(false);
             });
-          }, function () {
-            if (lfData) lfData._expressionProcessor.runCalculations(false);
-          });
+          }
         } // Set up a listener for asynchronous change events (triggered by
         // lfData itself).
 
 
         if (!lfData._controllerInit) {
-          // TBD: I think there is a race-condition here (though I
-          // have not seen it happen).  Potentially the lfData could
-          // have already notified regarding async changes before
-          // this listener is added.
           lfData.addAsyncChangeListener(function () {
             $scope.$apply(function () {
               if (lfData.hasFHIRPath || lfData._hasInitialExpr) lfData._expressionProcessor.runCalculations(true);
@@ -9031,7 +9031,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             };
 
             element.on('change', function () {
-              var valid_date = Date.parse(this.value);
+              var valid_date = LForms.Util.stringToDate(this.value);
 
               if (valid_date) {
                 controller.$setViewValue(valid_date);
@@ -9053,7 +9053,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 throw new Error('ng-Model value must be a Date object or a string - currently it is a ' + _typeof(date));
               } // convert saved user data into date
               else if (typeof date === "string") {
-                  date = new Date(date);
+                  date = LForms.Util.stringToDate(date);
                 }
 
               element.datepicker("setDate", date);
@@ -9159,7 +9159,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
          * @param ctrl the directive control
          */
         function validate(item, value, ctrl) {
-          // DTM comes to here ONLY if the input is valid.
           item._validationErrors = [];
           var valid1 = LForms.Validations.checkDataType(item.dataType, value, item._validationErrors);
           ctrl.$setValidity('lf-datatype', valid1);
@@ -9170,10 +9169,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
           for (var i = 0, len = item._validationErrors.length; i < len; ++i) {
             scope.$parent.sendMsgToScreenReader('"' + item.question + '"' + item._validationErrors[i]);
-          }
-
-          if (item.dataType == 'DTM') {
-            console.log('DTM value=' + value + '; valid=' + (valid1 && valid2 && valid3));
           }
 
           return valid1 && valid2 && valid3;
@@ -11198,7 +11193,7 @@ LForms.Util = {
    *  Get FHIR data from the form.
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    *  "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
-   *  and "QuestionnaireResponse" (SDC profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR being used (e.g., 'STU3')
    * @param formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
@@ -11219,6 +11214,7 @@ LForms.Util = {
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
+   *  and "QuestionnaireResponse" (SDC profile).
    * @param fhirVersion the version of FHIR to be used (e.g., 'STU3')
    * @param formData an LFormsData object or an LForms form definition (parsed).
    * @param options A hash of other options, with the following optional keys:
@@ -11230,34 +11226,37 @@ LForms.Util = {
    *  * noExtensions: a flag that a standard FHIR Questionnaire or QuestionnaireResponse is to be created
    *    without any extensions, when resourceType is Questionnaire or QuestionnaireResponse.
    *    The default is false.
+   *  * extract:  a flag for QuestionnaireReponse that data should be extracted
+   *    (using the observationLinkPeriod extension).  In this case the returned
+   *    resource will be an array consisting of the QuestionnaireResponse and any
+   *    extracted Observations.
    *  * subject: A local FHIR resource that is the subject of the output resource.
    *    If provided, a reference to this resource will be added to the output FHIR
    *    resource when applicable.
-   * @returns {*} a FHIR resource
+   * @returns {*} a FHIR resource, or (if extract is true) an array of
+   *    resources.
    */
   _convertLFormsToFHIRData: function _convertLFormsToFHIRData(resourceType, fhirVersion, formData, options) {
+    if (!options) options = {};
     if (!(formData instanceof LForms.LFormsData)) formData = new LForms.LFormsData(formData);
     var version = this.validateFHIRVersion(fhirVersion);
     var fhir = LForms.FHIR[version];
     var fhirData = null;
 
     if (formData) {
-      var noExtensions = options ? options.noExtensions : undefined;
-      var subject = options ? options.subject : undefined;
-
       switch (resourceType) {
         case "DiagnosticReport":
           var bundleType = options ? options.bundleType : undefined;
           var inBundle = bundleType != undefined;
-          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, subject, inBundle, bundleType);
+          fhirData = fhir.DiagnosticReport.createDiagnosticReport(formData, options.subject, inBundle, bundleType);
           break;
 
         case "Questionnaire":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, noExtensions);
+          fhirData = fhir.SDC.convertLFormsToQuestionnaire(formData, options.noExtensions);
           break;
 
         case "QuestionnaireResponse":
-          fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, noExtensions, subject);
+          if (options.extract) fhirData = fhir.SDC.convertLFormsToFHIRData(formData, options.noExtensions, options.subject);else fhirData = fhir.SDC.convertLFormsToQuestionnaireResponse(formData, options.noExtensions, options.subject);
           break;
       }
     }
@@ -11311,10 +11310,13 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
+          formData._hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
+          formData._hasSavedData = true; // will be used to determine whether to update or save
+
           break;
       }
     }
@@ -11581,7 +11583,7 @@ LForms.Util = {
    * at the local timezone.
    */
   dateToDTStringISO: function dateToDTStringISO(dateObj) {
-    return isNaN(dateObj.getTime()) ? undefined : [(10000 + dateObj.getFullYear()).toString().substr(1), (101 + dateObj.getMonth()).toString().substr(1), (100 + dateObj.getDate()).toString().substr(1)].join('-');
+    return !dateObj || isNaN(dateObj.getTime()) ? undefined : [(10000 + dateObj.getFullYear()).toString().substr(1), (101 + dateObj.getMonth()).toString().substr(1), (100 + dateObj.getDate()).toString().substr(1)].join('-');
   },
 
   /**
@@ -11614,25 +11616,40 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate) {
-    // var dt = new Date(strDate);
-    // new Date("t") (date.js) isn't working. How/whether it worked before (or at all) is a mystery.
-    // TODO: date.js Date.parse(string) could not correctly parse standard ISO date string, need to switch it out.
-    var dt = undefined;
+    if (!strDate || typeof strDate != 'string') {
+      // maybe already a date object.
+      return strDate;
+    }
+
+    var matches,
+        millis = null,
+        ret = null; // This date parsing (from Datejs) fails to parse string that includes milliseconds.
+    // If the input is in ISO format, remove millis from the string before parsing and add it after
+    // constructing the date object.
+
+    if ((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
+      strDate = strDate.substring(0, matches.index) + matches[2];
+      millis = parseInt(matches[1]);
+    } else if ((matches = strDate.match(/\s*\(.*\)$/)) !== null) {
+      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
+      // It has problem with content in the parenthesis at the end. Remove it before parsing.
+      strDate = strDate.substring(0, matches.index);
+    }
 
     if (strDate) {
-      dt = Date.parse(strDate);
+      ret = Date.parse(strDate);
 
-      if (dt === null) {
+      if (ret === null) {
         // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
-        dt = new Date(strDate);
-      }
-
-      if (typeof dt === 'number') {
-        dt = isNaN(dt) ? undefined : new Date(dt); // just in case the date.js is switch out - standard Date.parse() returns epoch millis.
+        ret = new Date(strDate);
       }
     }
 
-    return dt;
+    if (ret && millis !== null) {
+      ret.addMilliseconds(millis);
+    }
+
+    return ret;
   },
 
   /**
@@ -11839,6 +11856,72 @@ LForms.Util = {
   },
 
   /**
+   * We are transitioning lforms fields representing code (form.code, form.questionCode,
+   * items[x].questionCode
+   * and items[x].questionCodeSystem) to FHIR definition of Coding type.
+   * In lforms, these fields are string type and FHIR Coding is an array of
+   * objects encapsulating multiple codes
+   * .
+   * To preserve compatibility with existing lforms code, we preserve
+   * both lforms code and FHIR Coding. FHIR Coding is preserved in codeList.
+   *
+   * This function adopts the following rules.
+   *
+   * . If codeList is not present create it making the first item representing lforms code.
+   * . If lforms code is not present, create it as appropriate (form.code or item[x].questionCode) from
+   *   first item in codeList.
+   * . Always make sure the first item in codeList represents lforms code.
+   *
+   * @param formOrItem - lforms form or items[x]
+   */
+  initializeCodes: function initializeCodes(formOrItem) {
+    var isItem = formOrItem.question || formOrItem.questionCode;
+    var code = isItem ? formOrItem.questionCode : formOrItem.code;
+    var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
+    var display = isItem ? formOrItem.question : formOrItem.name;
+    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
+
+    if (code) {
+      if (!formOrItem.codeList) {
+        formOrItem.codeList = [];
+      }
+
+      var codeList = formOrItem.codeList;
+      var found = false;
+
+      for (var i = 0; i < codeList.length; i++) {
+        if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
+          found = true;
+          break;
+        }
+      } // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
+      // don't create a 'code' when converting it back to Questionnaire.
+
+
+      if (!found && codeSystemUrl !== 'LinkId') {
+        codeList.unshift({
+          system: codeSystemUrl,
+          code: code,
+          display: display
+        });
+      }
+    } else {
+      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
+        if (isItem) {
+          // questionCode is required, so this shouldn't happen??
+          formOrItem.questionCode = formOrItem.codeList[0].code;
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+        } else {
+          formOrItem.code = formOrItem.codeList[0].code;
+          formOrItem.codeSystem = formOrItem.codeList[0].system;
+        }
+      }
+    }
+
+    return formOrItem;
+  },
+
+  /**
    *  Creates a Reference to the given FHIR resource, to be used an a subject in
    *  another resource.
    * @param fhirRes the FHIR resource for which to create a Reference.
@@ -11865,6 +11948,31 @@ LForms.Util = {
 
 
     return ref;
+  },
+
+  /**
+   * Get a code system based on the code system value used in LForms
+   * @param codeSystemInLForms code system value used in LForms
+   * @private
+   */
+  getCodeSystem: function getCodeSystem(codeSystemInLForms) {
+    var codeSystem;
+
+    switch (codeSystemInLForms) {
+      case "LOINC":
+        codeSystem = "http://loinc.org";
+        break;
+
+      case undefined:
+        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
+
+        break;
+
+      default:
+        codeSystem = codeSystemInLForms;
+    }
+
+    return codeSystem;
   }
 };
 
@@ -11936,12 +12044,17 @@ if (!String.prototype.repeat) {
 
 /***/ }),
 /* 29 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
 /**
  * A package to generate HL7 messgages from LForms form data
  */
 var LForms = __webpack_require__(2);
+
+
 
 LForms.HL7 = function () {
   "use strict";
@@ -12678,7 +12791,7 @@ LForms.HL7 = function () {
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
             }
 
-            var answerCS = item.answerCodeSystem ? item.answerCodeSystem : this.LOINC_CS;
+            var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
 
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
@@ -12747,6 +12860,16 @@ LForms.HL7 = function () {
 
 /***/ }),
 /* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOINC_URI", function() { return LOINC_URI; });
+// Definitions for things needed by both importing and exporting.
+var LOINC_URI = 'http://loinc.org';
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -13053,7 +13176,7 @@ LForms.Validations = {
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -13066,7 +13189,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
   var LForms = __webpack_require__(2);
 
-  var Class = __webpack_require__(32);
+  var Class = __webpack_require__(33);
 
   LForms.LFormsData = Class.extend({
     // constants
@@ -13122,6 +13245,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     type: null,
     // form's code
     code: null,
+    codeList: null,
+    identifier: null,
     // form's name
     name: null,
     // a pre-defined view template used to display the form
@@ -13263,6 +13388,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     init: function init(data) {
       this.items = data.items;
       this.code = data.code;
+      this.codeList = data.codeList;
+      this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -13312,7 +13439,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      *  Initializes form-level FHIR data.  This should be called before item
      *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
-     * @param an LForms form definition object (or LFormsData).
+     * @param data - LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
@@ -13382,8 +13509,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _initializeInternalData: function _initializeInternalData() {
       //TODO, validate form data
       // set default values of certain form definition fields
-      this._setDefaultValues(); // update internal status
+      this._setDefaultValues();
 
+      LForms.Util.initializeCodes(this); // update internal status
 
       this._repeatableItems = {};
 
@@ -13421,7 +13549,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-populuation.
+     *  resources for pre-population.
      */
     _requestLinkedObs: function _requestLinkedObs() {
       if (LForms.fhirContext && this._fhir) {
@@ -13452,13 +13580,16 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 query: {
                   code: itemCodeSystem + '|' + item.questionCode,
                   _sort: '-date',
-                  _count: 1
+                  _count: 5
                 }
-              };
-              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-                queryParams.query.focus = {
-                  $missing: true
-                };
+              }; // only need one, but we need to filter out focus=true below
+              // Temporarily disabling the addition of the focus search
+              // parameter, because of support issues.  Instead, for now, we
+              // will check the focus parameter when the Observation is
+              // returned.  Later, we might query the server to find out whether
+              // :missing is supported.
+              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
 
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
@@ -13475,10 +13606,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 return function (successData) {
                   var bundle = successData.data;
 
-                  if (bundle.entry && bundle.entry.length === 1) {
-                    var obs = bundle.entry[0].resource;
-                    serverFHIR.SDC.importObsValue(itemI, obs);
-                    if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                  if (bundle.entry) {
+                    var foundObs;
+
+                    for (var j = 0, jLen = bundle.entry.length; j < jLen && !foundObs; ++j) {
+                      var obs = bundle.entry[j].resource;
+
+                      if (!obs.focus) {
+                        // in case we couldn't use focus:missing above
+                        foundObs = true;
+                        serverFHIR.SDC.importObsValue(itemI, obs);
+                        if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                      }
+                    }
                   }
 
                   lfData._asyncLoadCounter--;
@@ -13955,7 +14095,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // set default dataType
+        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
+        // child items are of LOINC, unless specified otherwise.
+
+        if (this.type === "LOINC" && !item.questionCodeSystem) {
+          item.questionCodeSystem = "LOINC";
+        }
+
+        LForms.Util.initializeCodes(item); // set default dataType
 
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE) item.dataType = this._CONSTANTS.DATA_TYPE.SECTION;
@@ -14015,8 +14162,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
             for (var k = 0, kLen = vals.length; k < kLen; ++k) {
               var val = vals[k];
-              var valKey = val.label !== undefined ? 'label' : val.code !== undefined ? 'code' : 'text'; // val should be a hash, but to preserve current behavior, we are
-              // permitted it to be a string.
+              var valKey = val.label !== undefined && val.label !== null ? 'label' : val.code !== undefined && val.code !== null ? 'code' : 'text'; // val should be a hash, but to preserve current behavior, a string is allowed.
 
               var valValue = typeof val === 'string' ? val : val[valKey];
               var found = false;
@@ -14113,12 +14259,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
         item.dataType !== this._CONSTANTS.DATA_TYPE.CNE && item.dataType !== this._CONSTANTS.DATA_TYPE.DTM) {
+          // datetime picker controls input.
           item._hasValidation = true;
-        } // question coding system
-
-
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
         } // add a link to external site for item's definition
 
 
@@ -14296,6 +14438,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
+        codeList: this.codeList,
+        identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,
@@ -14568,6 +14712,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @private
      */
     _updateLastRepeatingItemsStatus: function _updateLastRepeatingItemsStatus(items) {
+      if (!items || items.length === 0) {
+        // Nothing to update. This allows to run the constructor on forms
+        // with empty items, something FHIR Questionnaire supports.
+        return;
+      }
+
       var iLen = items.length;
       var prevCodePath = ''; // process all items in the array except the last one
 
@@ -16176,7 +16326,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 /* Simple JavaScript Inheritance
@@ -16237,7 +16387,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Processes FHIR Expression Extensions
@@ -16264,6 +16414,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      *   from questionnaire-launchContext have been completed).
      */
     runCalculations: function runCalculations(includeInitialExpr) {
+      // Create an export of Questionnaire for the %questionnaire variable in
+      // FHIRPath.  We only need to do this once per form.
+      var lfData = this._lfData;
+
+      if (!lfData._fhirVariables.questionnaire) {
+        lfData._fhirVariables.questionnaire = LForms.Util.getFormFHIRData('Questionnaire', lfData.fhirVersion, lfData);
+      }
+
       var firstRun = true;
       var changed = true;
 
@@ -16271,10 +16429,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (changed || firstRun) {
           this._regenerateQuestionnaireResp();
 
-          changed = this._evaluateVariables(this._lfData, !firstRun);
+          changed = this._evaluateVariables(lfData, !firstRun);
         }
 
-        if (changed || firstRun) changed = this._evaluateFieldExpressions(this._lfData, includeInitialExpr, !firstRun);
+        if (changed || firstRun) changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
     },
@@ -16358,8 +16516,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var ext = exts[i];
 
           if (ext && ext.valueExpression.language == "text/fhirpath") {
-            var varName = ext.name;
-
             var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
 
             var exprChanged = this._setItemValueFromFHIRPath(item, newVal);
@@ -16543,7 +16699,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
       var oldVal = item.value;
       if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
-      if (!fhirPathVal) item.value = undefined;else {
+      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
           item.value = new Date(fhirPathVal);
         } else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
@@ -16557,7 +16713,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains information about the supported FHIR versions.
@@ -16568,7 +16724,7 @@ var FHIRSupport = {
 if (true) module.exports = FHIRSupport;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').run(['$templateCache', function ($templateCache) {
@@ -16594,34 +16750,34 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
 }]);
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach = __webpack_require__(37).forEach;
+var forEach = __webpack_require__(38).forEach;
 
-var elementUtilsMaker = __webpack_require__(38);
+var elementUtilsMaker = __webpack_require__(39);
 
-var listenerHandlerMaker = __webpack_require__(39);
+var listenerHandlerMaker = __webpack_require__(40);
 
-var idGeneratorMaker = __webpack_require__(40);
+var idGeneratorMaker = __webpack_require__(41);
 
-var idHandlerMaker = __webpack_require__(41);
+var idHandlerMaker = __webpack_require__(42);
 
-var reporterMaker = __webpack_require__(42);
+var reporterMaker = __webpack_require__(43);
 
-var browserDetector = __webpack_require__(43);
+var browserDetector = __webpack_require__(44);
 
-var batchProcessorMaker = __webpack_require__(44);
+var batchProcessorMaker = __webpack_require__(45);
 
-var stateHandler = __webpack_require__(46); //Detection strategies.
+var stateHandler = __webpack_require__(47); //Detection strategies.
 
 
-var objectStrategyMaker = __webpack_require__(47);
+var objectStrategyMaker = __webpack_require__(48);
 
-var scrollStrategyMaker = __webpack_require__(48);
+var scrollStrategyMaker = __webpack_require__(49);
 
 function isCollection(obj) {
   return Array.isArray(obj) || obj.length !== undefined;
@@ -16930,7 +17086,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16956,7 +17112,7 @@ utils.forEach = function (collection, callback) {
 };
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17017,7 +17173,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17089,7 +17245,7 @@ module.exports = function (idHandler) {
 };
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17113,7 +17269,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17165,7 +17321,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17215,7 +17371,7 @@ module.exports = function (quiet) {
 };
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17259,13 +17415,13 @@ detector.isLegacyOpera = function () {
 };
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(45);
+var utils = __webpack_require__(46);
 
 module.exports = function batchProcessorMaker(options) {
   options = options || {};
@@ -17408,7 +17564,7 @@ function Batch() {
 }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17428,7 +17584,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17456,7 +17612,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17466,7 +17622,7 @@ module.exports = {
  */
 
 
-var browserDetector = __webpack_require__(43);
+var browserDetector = __webpack_require__(44);
 
 module.exports = function (options) {
   options = options || {};
@@ -17672,7 +17828,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17682,7 +17838,7 @@ module.exports = function (options) {
  */
 
 
-var forEach = __webpack_require__(37).forEach;
+var forEach = __webpack_require__(38).forEach;
 
 module.exports = function (options) {
   options = options || {};

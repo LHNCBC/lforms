@@ -59,6 +59,8 @@
     type: null,
     // form's code
     code: null,
+    codeList: null,
+    identifier: null,
     // form's name
     name: null,
 
@@ -167,6 +169,8 @@
 
       this.items = data.items;
       this.code = data.code;
+      this.codeList = data.codeList;
+      this.identifier = data.identifier;
       this.name = data.name;
       this.type = data.type;
       this.codeSystem = data.codeSystem;
@@ -219,7 +223,7 @@
      *  Initializes form-level FHIR data.  This should be called before item
      *  properties are set up, because it sets properties like this.fhirVersion
      *  which might be needed for processing the items.
-     * @param an LForms form definition object (or LFormsData).
+     * @param data - LForms form definition object (or LFormsData).
      */
     _initializeFormFHIRData: function(data) {
       var lfData = this;
@@ -293,6 +297,7 @@
       // set default values of certain form definition fields
       this._setDefaultValues();
 
+      LForms.Util.initializeCodes(this);
       // update internal status
       this._repeatableItems = {};
       this._setTreeNodes(this.items, this);
@@ -329,7 +334,7 @@
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-populuation.
+     *  resources for pre-population.
      */
     _requestLinkedObs: function() {
       if (LForms.fhirContext && this._fhir) {
@@ -352,9 +357,14 @@
               var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
               var queryParams = {type: 'Observation', query: {
                 code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
-                _count: 1}};
-              if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-                queryParams.query.focus = {$missing: true};
+                _count: 5}};  // only need one, but we need to filter out focus=true below
+              // Temporarily disabling the addition of the focus search
+              // parameter, because of support issues.  Instead, for now, we
+              // will check the focus parameter when the Observation is
+              // returned.  Later, we might query the server to find out whether
+              // :missing is supported.
+              //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
+              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
@@ -366,11 +376,17 @@
               this._asyncLoadCounter++;
               fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
                 var bundle = successData.data;
-                if (bundle.entry && bundle.entry.length === 1) {
-                  var obs = bundle.entry[0].resource;
-                  serverFHIR.SDC.importObsValue(itemI, obs);
-                  if (itemI.unit)
-                    lfData._setUnitDisplay(itemI.unit);
+                if (bundle.entry) {
+                  var foundObs;
+                  for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
+                    var obs = bundle.entry[j].resource;
+                    if (!obs.focus) { // in case we couldn't use focus:missing above
+                      foundObs = true;
+                      serverFHIR.SDC.importObsValue(itemI, obs);
+                      if (itemI.unit)
+                        lfData._setUnitDisplay(itemI.unit);
+                    }
+                  }
                 }
                 lfData._asyncLoadCounter--;
                 if (lfData._asyncLoadCounter === 0)
@@ -853,6 +869,14 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
+        // question coding system. If form level code system is LOINC, assume all
+        // child items are of LOINC, unless specified otherwise.
+        if (this.type ==="LOINC" && !item.questionCodeSystem) {
+          item.questionCodeSystem = "LOINC";
+        }
+
+        LForms.Util.initializeCodes(item);
+
         // set default dataType
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE)
@@ -916,10 +940,9 @@
             var listVals = [];
             for (var k=0, kLen=vals.length; k<kLen; ++k) {
               var val = vals[k];
-              var valKey = val.label !== undefined  ? 'label' :
-                val.code !== undefined ? 'code' : 'text';
-              // val should be a hash, but to preserve current behavior, we are
-              // permitted it to be a string.
+              var valKey = val.label !== undefined && val.label !== null ? 'label' :
+                val.code !== undefined && val.code !== null ? 'code' : 'text';
+              // val should be a hash, but to preserve current behavior, a string is allowed.
               var valValue = typeof val === 'string' ? val : val[valKey];
               var found = false;
               for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
@@ -1020,11 +1043,6 @@
              item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.DTM)) { // datetime picker controls input.
           item._hasValidation = true;
-        }
-
-        // question coding system
-        if (this.type ==="LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
         }
 
         // add a link to external site for item's definition
@@ -1208,6 +1226,8 @@
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
+        codeList: this.codeList,
+        identifier: this.identifier,
         codeSystem: this.codeSystem,
         name: this.name,
         type: this.type,
@@ -1476,6 +1496,12 @@
      * @private
      */
     _updateLastRepeatingItemsStatus: function(items) {
+      if(!items || items.length === 0) {
+        // Nothing to update. This allows to run the constructor on forms
+        // with empty items, something FHIR Questionnaire supports.
+        return;
+      }
+      
       var iLen = items.length;
       var prevCodePath = '';
       // process all items in the array except the last one

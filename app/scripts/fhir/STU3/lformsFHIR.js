@@ -90,31 +90,37 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(72);
+/* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(72);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(74);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
+
 var fhir = LForms.FHIR[fhirVersion] = {
-  LOINC_URI: 'http://loinc.org'
+  LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
-fhir.fhirpath = __webpack_require__(1);
+fhir.fhirpath = __webpack_require__(2);
 
-fhir.DiagnosticReport = _lforms_fhir_diagnostic_report_js__WEBPACK_IMPORTED_MODULE_0__["default"];
+fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_1__["default"];
+fhir.DiagnosticReport._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
-Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"])(fhir.SDC);
+fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__["default"];
+fhir.SDC._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
-Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_3__["default"])(fhir.SDC);
+Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 
-Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
+Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_5__["default"])(fhir.SDC);
 
-Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_5__["default"])(fhir.SDC);
+Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_6__["default"])(fhir.SDC);
+
+Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__["default"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -124,6 +130,16 @@ fhir.reservedVarNames = {};
 
 /***/ }),
 /* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LOINC_URI", function() { return LOINC_URI; });
+// Definitions for things needed by both importing and exporting.
+var LOINC_URI = 'http://loinc.org';
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This is fhirpath interpreter
@@ -155,33 +171,33 @@ fhir.reservedVarNames = {};
 // Not solved problem is overloading functions by types - for example + operator defined
 // for strings and numbers
 // we can make dispatching params type dependent - let see
-var parser = __webpack_require__(2);
+var parser = __webpack_require__(3);
 
-var util = __webpack_require__(54);
+var util = __webpack_require__(55);
 
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(55);
+var existence = __webpack_require__(56);
 
-var filtering = __webpack_require__(56);
+var filtering = __webpack_require__(57);
 
-var combining = __webpack_require__(57);
+var combining = __webpack_require__(58);
 
-var misc = __webpack_require__(58);
+var misc = __webpack_require__(59);
 
-var equality = __webpack_require__(59);
+var equality = __webpack_require__(60);
 
-var collections = __webpack_require__(61);
+var collections = __webpack_require__(62);
 
-var math = __webpack_require__(62);
+var math = __webpack_require__(63);
 
-var strings = __webpack_require__(63);
+var strings = __webpack_require__(64);
 
-var navigation = __webpack_require__(64);
+var navigation = __webpack_require__(65);
 
-var datetime = __webpack_require__(65);
+var datetime = __webpack_require__(66);
 
-var logic = __webpack_require__(66); // * fn: handler
+var logic = __webpack_require__(67); // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
 //   function accepts value of this type or empty value {}
@@ -975,16 +991,16 @@ module.exports = {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var antlr4 = __webpack_require__(3);
+var antlr4 = __webpack_require__(4);
 
-var Lexer = __webpack_require__(51).FHIRPathLexer;
+var Lexer = __webpack_require__(52).FHIRPathLexer;
 
-var Parser = __webpack_require__(52).FHIRPathParser;
+var Parser = __webpack_require__(53).FHIRPathParser;
 
-var Listener = __webpack_require__(53).FHIRPathListener;
+var Listener = __webpack_require__(54).FHIRPathListener;
 
 var ErrorListener = function ErrorListener(errors) {
   antlr4.error.ErrorListener.call(this);
@@ -1110,36 +1126,6 @@ module.exports = {
 };
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-exports.atn = __webpack_require__(4);
-exports.codepointat = __webpack_require__(35);
-exports.dfa = __webpack_require__(36);
-exports.fromcodepoint = __webpack_require__(39);
-exports.tree = __webpack_require__(40);
-exports.error = __webpack_require__(41);
-exports.Token = __webpack_require__(8).Token;
-exports.CharStreams = __webpack_require__(44).CharStreams;
-exports.CommonToken = __webpack_require__(8).CommonToken;
-exports.InputStream = __webpack_require__(45).InputStream;
-exports.FileStream = __webpack_require__(47).FileStream;
-exports.CommonTokenStream = __webpack_require__(48).CommonTokenStream;
-exports.Lexer = __webpack_require__(24).Lexer;
-exports.Parser = __webpack_require__(50).Parser;
-
-var pc = __webpack_require__(14);
-
-exports.PredictionContextCache = pc.PredictionContextCache;
-exports.ParserRuleContext = __webpack_require__(18).ParserRuleContext;
-exports.Interval = __webpack_require__(12).Interval;
-exports.Utils = __webpack_require__(7);
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1147,11 +1133,27 @@ exports.Utils = __webpack_require__(7);
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-exports.ATN = __webpack_require__(5).ATN;
-exports.ATNDeserializer = __webpack_require__(19).ATNDeserializer;
-exports.LexerATNSimulator = __webpack_require__(23).LexerATNSimulator;
-exports.ParserATNSimulator = __webpack_require__(33).ParserATNSimulator;
-exports.PredictionMode = __webpack_require__(34).PredictionMode;
+exports.atn = __webpack_require__(5);
+exports.codepointat = __webpack_require__(36);
+exports.dfa = __webpack_require__(37);
+exports.fromcodepoint = __webpack_require__(40);
+exports.tree = __webpack_require__(41);
+exports.error = __webpack_require__(42);
+exports.Token = __webpack_require__(9).Token;
+exports.CharStreams = __webpack_require__(45).CharStreams;
+exports.CommonToken = __webpack_require__(9).CommonToken;
+exports.InputStream = __webpack_require__(46).InputStream;
+exports.FileStream = __webpack_require__(48).FileStream;
+exports.CommonTokenStream = __webpack_require__(49).CommonTokenStream;
+exports.Lexer = __webpack_require__(25).Lexer;
+exports.Parser = __webpack_require__(51).Parser;
+
+var pc = __webpack_require__(15);
+
+exports.PredictionContextCache = pc.PredictionContextCache;
+exports.ParserRuleContext = __webpack_require__(19).ParserRuleContext;
+exports.Interval = __webpack_require__(13).Interval;
+exports.Utils = __webpack_require__(8);
 
 /***/ }),
 /* 5 */
@@ -1161,9 +1163,23 @@ exports.PredictionMode = __webpack_require__(34).PredictionMode;
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-var LL1Analyzer = __webpack_require__(6).LL1Analyzer;
+exports.ATN = __webpack_require__(6).ATN;
+exports.ATNDeserializer = __webpack_require__(20).ATNDeserializer;
+exports.LexerATNSimulator = __webpack_require__(24).LexerATNSimulator;
+exports.ParserATNSimulator = __webpack_require__(34).ParserATNSimulator;
+exports.PredictionMode = __webpack_require__(35).PredictionMode;
 
-var IntervalSet = __webpack_require__(12).IntervalSet;
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+var LL1Analyzer = __webpack_require__(7).LL1Analyzer;
+
+var IntervalSet = __webpack_require__(13).IntervalSet;
 
 function ATN(grammarType, maxTokenType) {
   // Used for runtime deserialization of ATNs from strings///
@@ -1268,7 +1284,7 @@ ATN.prototype.getDecisionState = function (decision) {
 // number {@code stateNumber}
 
 
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
 ATN.prototype.getExpectedTokens = function (stateNumber, ctx) {
   if (stateNumber < 0 || stateNumber >= this.states.length) {
@@ -1306,7 +1322,7 @@ ATN.INVALID_ALT_NUMBER = 0;
 exports.ATN = ATN;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -1316,29 +1332,29 @@ exports.ATN = ATN;
  * can be found in the LICENSE.txt file in the project root.
  */
 ///
-var Set = __webpack_require__(7).Set;
+var Set = __webpack_require__(8).Set;
 
-var BitSet = __webpack_require__(7).BitSet;
+var BitSet = __webpack_require__(8).BitSet;
 
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var ATNConfig = __webpack_require__(9).ATNConfig;
+var ATNConfig = __webpack_require__(10).ATNConfig;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
-var IntervalSet = __webpack_require__(12).IntervalSet;
+var IntervalSet = __webpack_require__(13).IntervalSet;
 
-var RuleStopState = __webpack_require__(10).RuleStopState;
+var RuleStopState = __webpack_require__(11).RuleStopState;
 
-var RuleTransition = __webpack_require__(13).RuleTransition;
+var RuleTransition = __webpack_require__(14).RuleTransition;
 
-var NotSetTransition = __webpack_require__(13).NotSetTransition;
+var NotSetTransition = __webpack_require__(14).NotSetTransition;
 
-var WildcardTransition = __webpack_require__(13).WildcardTransition;
+var WildcardTransition = __webpack_require__(14).WildcardTransition;
 
-var AbstractPredicateTransition = __webpack_require__(13).AbstractPredicateTransition;
+var AbstractPredicateTransition = __webpack_require__(14).AbstractPredicateTransition;
 
-var pc = __webpack_require__(14);
+var pc = __webpack_require__(15);
 
 var predictionContextFromRuleContext = pc.predictionContextFromRuleContext;
 var PredictionContext = pc.PredictionContext;
@@ -1544,7 +1560,7 @@ LL1Analyzer.prototype._LOOK = function (s, stopState, ctx, look, lookBusy, calle
 exports.LL1Analyzer = LL1Analyzer;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2025,7 +2041,7 @@ exports.titleCase = titleCase;
 exports.equalArrays = equalArrays;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -2180,7 +2196,7 @@ exports.Token = Token;
 exports.CommonToken = CommonToken;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -2197,11 +2213,11 @@ exports.CommonToken = CommonToken;
 //  the tree of semantic predicates encountered before reaching
 //  an ATN state.
 ///
-var DecisionState = __webpack_require__(10).DecisionState;
+var DecisionState = __webpack_require__(11).DecisionState;
 
-var SemanticContext = __webpack_require__(11).SemanticContext;
+var SemanticContext = __webpack_require__(12).SemanticContext;
 
-var Hash = __webpack_require__(7).Hash;
+var Hash = __webpack_require__(8).Hash;
 
 function checkParams(params, isCfg) {
   if (params === null) {
@@ -2340,7 +2356,7 @@ exports.ATNConfig = ATNConfig;
 exports.LexerATNConfig = LexerATNConfig;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 //
@@ -2638,7 +2654,7 @@ exports.StarBlockStartState = StarBlockStartState;
 exports.BasicBlockStartState = BasicBlockStartState;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -2655,9 +2671,9 @@ exports.BasicBlockStartState = BasicBlockStartState;
 //  <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
 //  {@link SemanticContext} within the scope of this outer class.</p>
 //
-var Set = __webpack_require__(7).Set;
+var Set = __webpack_require__(8).Set;
 
-var Hash = __webpack_require__(7).Hash;
+var Hash = __webpack_require__(8).Hash;
 
 function SemanticContext() {
   return this;
@@ -3069,7 +3085,7 @@ exports.PrecedencePredicate = PrecedencePredicate;
 exports.Predicate = Predicate;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -3078,7 +3094,7 @@ exports.Predicate = Predicate;
  */
 
 /*jslint smarttabs:true */
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 /* stop is not included! */
 
 
@@ -3378,7 +3394,7 @@ exports.Interval = Interval;
 exports.IntervalSet = IntervalSet;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -3397,15 +3413,15 @@ exports.IntervalSet = IntervalSet;
 //  on the other hand need to update the labels as it adds transitions to
 //  the states. We'll use the term Edge for the DFA to distinguish them from
 //  ATN transitions.</p>
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
-var IntervalSet = __webpack_require__(12).IntervalSet;
+var IntervalSet = __webpack_require__(13).IntervalSet;
 
-var Predicate = __webpack_require__(11).Predicate;
+var Predicate = __webpack_require__(12).Predicate;
 
-var PrecedencePredicate = __webpack_require__(11).PrecedencePredicate;
+var PrecedencePredicate = __webpack_require__(12).PrecedencePredicate;
 
 function Transition(target) {
   // The target of this transition.
@@ -3690,7 +3706,7 @@ exports.PrecedencePredicateTransition = PrecedencePredicateTransition;
 exports.AbstractPredicateTransition = AbstractPredicateTransition;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -3700,9 +3716,9 @@ exports.AbstractPredicateTransition = AbstractPredicateTransition;
  * can be found in the LICENSE.txt file in the project root.
  */
 ///
-var RuleContext = __webpack_require__(15).RuleContext;
+var RuleContext = __webpack_require__(16).RuleContext;
 
-var Hash = __webpack_require__(7).Hash;
+var Hash = __webpack_require__(8).Hash;
 
 function PredictionContext(cachedHashCode) {
   this.cachedHashCode = cachedHashCode;
@@ -4506,7 +4522,7 @@ exports.predictionContextFromRuleContext = predictionContextFromRuleContext;
 exports.getCachedPredictionContext = getCachedPredictionContext;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -4534,11 +4550,11 @@ exports.getCachedPredictionContext = getCachedPredictionContext;
 //
 //  @see ParserRuleContext
 ///
-var RuleNode = __webpack_require__(16).RuleNode;
+var RuleNode = __webpack_require__(17).RuleNode;
 
-var INVALID_INTERVAL = __webpack_require__(16).INVALID_INTERVAL;
+var INVALID_INTERVAL = __webpack_require__(17).INVALID_INTERVAL;
 
-var INVALID_ALT_NUMBER = __webpack_require__(5).INVALID_ALT_NUMBER;
+var INVALID_ALT_NUMBER = __webpack_require__(6).INVALID_ALT_NUMBER;
 
 function RuleContext(parent, invokingState) {
   RuleNode.call(this); // What context invoked this rule?
@@ -4634,7 +4650,7 @@ RuleContext.prototype.accept = function (visitor) {
 
 exports.RuleContext = RuleContext;
 
-var Trees = __webpack_require__(17).Trees; // Print out a whole tree, not just a node, in LISP format
+var Trees = __webpack_require__(18).Trees; // Print out a whole tree, not just a node, in LISP format
 // (root child1 .. childN). Print just a node if this is a leaf.
 //
 
@@ -4672,7 +4688,7 @@ RuleContext.prototype.toString = function (ruleNames, stop) {
 };
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -4683,13 +4699,13 @@ RuleContext.prototype.toString = function (ruleNames, stop) {
 // The basic notion of a tree has a parent, a payload, and a list of children.
 //  It is the most abstract interface for all the trees used by ANTLR.
 ///
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
 var INVALID_INTERVAL = new Interval(-1, -2);
 
-var Utils = __webpack_require__(7);
+var Utils = __webpack_require__(8);
 
 function Tree() {
   return this;
@@ -4902,28 +4918,28 @@ exports.ParseTreeWalker = ParseTreeWalker;
 exports.INVALID_INTERVAL = INVALID_INTERVAL;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-var Utils = __webpack_require__(7);
+var Utils = __webpack_require__(8);
 
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var RuleNode = __webpack_require__(16).RuleNode;
+var RuleNode = __webpack_require__(17).RuleNode;
 
-var ErrorNode = __webpack_require__(16).ErrorNode;
+var ErrorNode = __webpack_require__(17).ErrorNode;
 
-var TerminalNode = __webpack_require__(16).TerminalNode;
+var TerminalNode = __webpack_require__(17).TerminalNode;
 
-var ParserRuleContext = __webpack_require__(18).ParserRuleContext;
+var ParserRuleContext = __webpack_require__(19).ParserRuleContext;
 
-var RuleContext = __webpack_require__(15).RuleContext;
+var RuleContext = __webpack_require__(16).RuleContext;
 
-var INVALID_ALT_NUMBER = __webpack_require__(5).INVALID_ALT_NUMBER;
+var INVALID_ALT_NUMBER = __webpack_require__(6).INVALID_ALT_NUMBER;
 /** A set of utility routines useful for all kinds of ANTLR trees. */
 
 
@@ -5073,7 +5089,7 @@ Trees.descendants = function (t) {
 exports.Trees = Trees;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -5102,16 +5118,16 @@ exports.Trees = Trees;
 //  I do not use getters for fields of objects that are used simply to
 //  group values such as this aggregate.  The getters/setters are there to
 //  satisfy the superclass interface.
-var RuleContext = __webpack_require__(15).RuleContext;
+var RuleContext = __webpack_require__(16).RuleContext;
 
-var Tree = __webpack_require__(16);
+var Tree = __webpack_require__(17);
 
 var INVALID_INTERVAL = Tree.INVALID_INTERVAL;
 var TerminalNode = Tree.TerminalNode;
 var TerminalNodeImpl = Tree.TerminalNodeImpl;
 var ErrorNodeImpl = Tree.ErrorNodeImpl;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
 function ParserRuleContext(parent, invokingStateNumber) {
   parent = parent || null;
@@ -5313,20 +5329,20 @@ InterpreterRuleContext.prototype.constructor = InterpreterRuleContext;
 exports.ParserRuleContext = ParserRuleContext;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var ATN = __webpack_require__(5).ATN;
+var ATN = __webpack_require__(6).ATN;
 
-var ATNType = __webpack_require__(20).ATNType;
+var ATNType = __webpack_require__(21).ATNType;
 
-var ATNStates = __webpack_require__(10);
+var ATNStates = __webpack_require__(11);
 
 var ATNState = ATNStates.ATNState;
 var BasicState = ATNStates.BasicState;
@@ -5344,7 +5360,7 @@ var PlusBlockStartState = ATNStates.PlusBlockStartState;
 var StarBlockStartState = ATNStates.StarBlockStartState;
 var BasicBlockStartState = ATNStates.BasicBlockStartState;
 
-var Transitions = __webpack_require__(13);
+var Transitions = __webpack_require__(14);
 
 var Transition = Transitions.Transition;
 var AtomTransition = Transitions.AtomTransition;
@@ -5358,13 +5374,13 @@ var WildcardTransition = Transitions.WildcardTransition;
 var PredicateTransition = Transitions.PredicateTransition;
 var PrecedencePredicateTransition = Transitions.PrecedencePredicateTransition;
 
-var IntervalSet = __webpack_require__(12).IntervalSet;
+var IntervalSet = __webpack_require__(13).IntervalSet;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
-var ATNDeserializationOptions = __webpack_require__(21).ATNDeserializationOptions;
+var ATNDeserializationOptions = __webpack_require__(22).ATNDeserializationOptions;
 
-var LexerActions = __webpack_require__(22);
+var LexerActions = __webpack_require__(23);
 
 var LexerActionType = LexerActions.LexerActionType;
 var LexerSkipAction = LexerActions.LexerSkipAction;
@@ -6141,7 +6157,7 @@ ATNDeserializer.prototype.lexerActionFactory = function (type, data1, data2) {
 exports.ATNDeserializer = ATNDeserializer;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -6157,7 +6173,7 @@ ATNType.PARSER = 1;
 exports.ATNType = ATNType;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -6184,7 +6200,7 @@ ATNDeserializationOptions.defaultOptions.readOnly = true; //    def __setattr__(
 exports.ATNDeserializationOptions = ATNDeserializationOptions;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 //
@@ -6541,7 +6557,7 @@ exports.LexerPopModeAction = LexerPopModeAction;
 exports.LexerModeAction = LexerModeAction;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -6566,33 +6582,33 @@ exports.LexerModeAction = LexerModeAction;
 //  then the ATN does the accept and the DFA simulator that invoked it
 //  can simply return the predicted token type.</p>
 ///
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Lexer = __webpack_require__(24).Lexer;
+var Lexer = __webpack_require__(25).Lexer;
 
-var ATN = __webpack_require__(5).ATN;
+var ATN = __webpack_require__(6).ATN;
 
-var ATNSimulator = __webpack_require__(29).ATNSimulator;
+var ATNSimulator = __webpack_require__(30).ATNSimulator;
 
-var DFAState = __webpack_require__(30).DFAState;
+var DFAState = __webpack_require__(31).DFAState;
 
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var OrderedATNConfigSet = __webpack_require__(31).OrderedATNConfigSet;
+var OrderedATNConfigSet = __webpack_require__(32).OrderedATNConfigSet;
 
-var PredictionContext = __webpack_require__(14).PredictionContext;
+var PredictionContext = __webpack_require__(15).PredictionContext;
 
-var SingletonPredictionContext = __webpack_require__(14).SingletonPredictionContext;
+var SingletonPredictionContext = __webpack_require__(15).SingletonPredictionContext;
 
-var RuleStopState = __webpack_require__(10).RuleStopState;
+var RuleStopState = __webpack_require__(11).RuleStopState;
 
-var LexerATNConfig = __webpack_require__(9).LexerATNConfig;
+var LexerATNConfig = __webpack_require__(10).LexerATNConfig;
 
-var Transition = __webpack_require__(13).Transition;
+var Transition = __webpack_require__(14).Transition;
 
-var LexerActionExecutor = __webpack_require__(32).LexerActionExecutor;
+var LexerActionExecutor = __webpack_require__(33).LexerActionExecutor;
 
-var LexerNoViableAltException = __webpack_require__(28).LexerNoViableAltException;
+var LexerNoViableAltException = __webpack_require__(29).LexerNoViableAltException;
 
 function resetSimState(sim) {
   sim.index = -1;
@@ -7264,7 +7280,7 @@ LexerATNSimulator.prototype.getTokenName = function (tt) {
 exports.LexerATNSimulator = LexerATNSimulator;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -7275,15 +7291,15 @@ exports.LexerATNSimulator = LexerATNSimulator;
 // A lexer is recognizer that draws input symbols from a character stream.
 //  lexer grammars result in a subclass of this object. A Lexer object
 //  uses simplified match() and error recovery mechanisms in the interest of speed.
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Recognizer = __webpack_require__(25).Recognizer;
+var Recognizer = __webpack_require__(26).Recognizer;
 
-var CommonTokenFactory = __webpack_require__(27).CommonTokenFactory;
+var CommonTokenFactory = __webpack_require__(28).CommonTokenFactory;
 
-var RecognitionException = __webpack_require__(28).RecognitionException;
+var RecognitionException = __webpack_require__(29).RecognitionException;
 
-var LexerNoViableAltException = __webpack_require__(28).LexerNoViableAltException;
+var LexerNoViableAltException = __webpack_require__(29).LexerNoViableAltException;
 
 function TokenSource() {
   return this;
@@ -7644,7 +7660,7 @@ Lexer.prototype.recover = function (re) {
 exports.Lexer = Lexer;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -7654,11 +7670,11 @@ exports.Lexer = Lexer;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var ConsoleErrorListener = __webpack_require__(26).ConsoleErrorListener;
+var ConsoleErrorListener = __webpack_require__(27).ConsoleErrorListener;
 
-var ProxyErrorListener = __webpack_require__(26).ProxyErrorListener;
+var ProxyErrorListener = __webpack_require__(27).ProxyErrorListener;
 
 function Recognizer() {
   this._listeners = [ConsoleErrorListener.INSTANCE];
@@ -7809,7 +7825,7 @@ Object.defineProperty(Recognizer.prototype, "state", {
 exports.Recognizer = Recognizer;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 //
@@ -7903,7 +7919,7 @@ exports.ConsoleErrorListener = ConsoleErrorListener;
 exports.ProxyErrorListener = ProxyErrorListener;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -7917,7 +7933,7 @@ exports.ProxyErrorListener = ProxyErrorListener;
 // This default implementation of {@link TokenFactory} creates
 // {@link CommonToken} objects.
 //
-var CommonToken = __webpack_require__(8).CommonToken;
+var CommonToken = __webpack_require__(9).CommonToken;
 
 function TokenFactory() {
   return this;
@@ -7977,7 +7993,7 @@ CommonTokenFactory.prototype.createThin = function (type, text) {
 exports.CommonTokenFactory = CommonTokenFactory;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -7989,7 +8005,7 @@ exports.CommonTokenFactory = CommonTokenFactory;
 //  mismatched input errors. In each case, the parser knows where it is
 //  in the input, where it is in the ATN, the rule invocation stack,
 //  and what kind of problem occurred.
-var PredicateTransition = __webpack_require__(13).PredicateTransition;
+var PredicateTransition = __webpack_require__(14).PredicateTransition;
 
 function RecognitionException(params) {
   Error.call(this);
@@ -8170,7 +8186,7 @@ exports.FailedPredicateException = FailedPredicateException;
 exports.ParseCancellationException = ParseCancellationException;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -8180,11 +8196,11 @@ exports.ParseCancellationException = ParseCancellationException;
  * can be found in the LICENSE.txt file in the project root.
  */
 ///
-var DFAState = __webpack_require__(30).DFAState;
+var DFAState = __webpack_require__(31).DFAState;
 
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var getCachedPredictionContext = __webpack_require__(14).getCachedPredictionContext;
+var getCachedPredictionContext = __webpack_require__(15).getCachedPredictionContext;
 
 function ATNSimulator(atn, sharedContextCache) {
   // The context cache maps all PredictionContext objects that are ==
@@ -8227,7 +8243,7 @@ ATNSimulator.prototype.getCachedContext = function (context) {
 exports.ATNSimulator = ATNSimulator;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -8237,9 +8253,9 @@ exports.ATNSimulator = ATNSimulator;
  * can be found in the LICENSE.txt file in the project root.
  */
 ///
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var Utils = __webpack_require__(7);
+var Utils = __webpack_require__(8);
 
 var Hash = Utils.Hash;
 var Set = Utils.Set; // Map a predicate to a predicted alternative.///
@@ -8383,7 +8399,7 @@ exports.DFAState = DFAState;
 exports.PredPrediction = PredPrediction;
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -8397,16 +8413,16 @@ exports.PredPrediction = PredPrediction;
 // info about the set, with support for combining similar configurations using a
 // graph-structured stack.
 ///
-var ATN = __webpack_require__(5).ATN;
+var ATN = __webpack_require__(6).ATN;
 
-var Utils = __webpack_require__(7);
+var Utils = __webpack_require__(8);
 
 var Hash = Utils.Hash;
 var Set = Utils.Set;
 
-var SemanticContext = __webpack_require__(11).SemanticContext;
+var SemanticContext = __webpack_require__(12).SemanticContext;
 
-var merge = __webpack_require__(14).merge;
+var merge = __webpack_require__(15).merge;
 
 function hashATNConfig(c) {
   return c.hashCodeForConfigSet();
@@ -8648,7 +8664,7 @@ exports.ATNConfigSet = ATNConfigSet;
 exports.OrderedATNConfigSet = OrderedATNConfigSet;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -8664,9 +8680,9 @@ exports.OrderedATNConfigSet = OrderedATNConfigSet;
 // <p>The executor tracks position information for position-dependent lexer actions
 // efficiently, ensuring that actions appearing only at the end of the rule do
 // not cause bloating of the {@link DFA} created for the lexer.</p>
-var hashStuff = __webpack_require__(7).hashStuff;
+var hashStuff = __webpack_require__(8).hashStuff;
 
-var LexerIndexedCustomAction = __webpack_require__(22).LexerIndexedCustomAction;
+var LexerIndexedCustomAction = __webpack_require__(23).LexerIndexedCustomAction;
 
 function LexerActionExecutor(lexerActions) {
   this.lexerActions = lexerActions === null ? [] : lexerActions; // Caches the result of {@link //hashCode} since the hash code is an element
@@ -8826,7 +8842,7 @@ LexerActionExecutor.prototype.equals = function (other) {
 exports.LexerActionExecutor = LexerActionExecutor;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -9063,45 +9079,45 @@ exports.LexerActionExecutor = LexerActionExecutor;
 // both SLL and LL parsing. Erroneous input will therefore require 2 passes over
 // the input.</p>
 //
-var Utils = __webpack_require__(7);
+var Utils = __webpack_require__(8);
 
 var Set = Utils.Set;
 var BitSet = Utils.BitSet;
 var DoubleDict = Utils.DoubleDict;
 
-var ATN = __webpack_require__(5).ATN;
+var ATN = __webpack_require__(6).ATN;
 
-var ATNState = __webpack_require__(10).ATNState;
+var ATNState = __webpack_require__(11).ATNState;
 
-var ATNConfig = __webpack_require__(9).ATNConfig;
+var ATNConfig = __webpack_require__(10).ATNConfig;
 
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var DFAState = __webpack_require__(30).DFAState;
+var DFAState = __webpack_require__(31).DFAState;
 
-var PredPrediction = __webpack_require__(30).PredPrediction;
+var PredPrediction = __webpack_require__(31).PredPrediction;
 
-var ATNSimulator = __webpack_require__(29).ATNSimulator;
+var ATNSimulator = __webpack_require__(30).ATNSimulator;
 
-var PredictionMode = __webpack_require__(34).PredictionMode;
+var PredictionMode = __webpack_require__(35).PredictionMode;
 
-var RuleContext = __webpack_require__(15).RuleContext;
+var RuleContext = __webpack_require__(16).RuleContext;
 
-var ParserRuleContext = __webpack_require__(18).ParserRuleContext;
+var ParserRuleContext = __webpack_require__(19).ParserRuleContext;
 
-var SemanticContext = __webpack_require__(11).SemanticContext;
+var SemanticContext = __webpack_require__(12).SemanticContext;
 
-var StarLoopEntryState = __webpack_require__(10).StarLoopEntryState;
+var StarLoopEntryState = __webpack_require__(11).StarLoopEntryState;
 
-var RuleStopState = __webpack_require__(10).RuleStopState;
+var RuleStopState = __webpack_require__(11).RuleStopState;
 
-var PredictionContext = __webpack_require__(14).PredictionContext;
+var PredictionContext = __webpack_require__(15).PredictionContext;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
-var Transitions = __webpack_require__(13);
+var Transitions = __webpack_require__(14);
 
 var Transition = Transitions.Transition;
 var SetTransition = Transitions.SetTransition;
@@ -9109,11 +9125,11 @@ var NotSetTransition = Transitions.NotSetTransition;
 var RuleTransition = Transitions.RuleTransition;
 var ActionTransition = Transitions.ActionTransition;
 
-var NoViableAltException = __webpack_require__(28).NoViableAltException;
+var NoViableAltException = __webpack_require__(29).NoViableAltException;
 
-var SingletonPredictionContext = __webpack_require__(14).SingletonPredictionContext;
+var SingletonPredictionContext = __webpack_require__(15).SingletonPredictionContext;
 
-var predictionContextFromRuleContext = __webpack_require__(14).predictionContextFromRuleContext;
+var predictionContextFromRuleContext = __webpack_require__(15).predictionContextFromRuleContext;
 
 function ParserATNSimulator(parser, atn, decisionToDFA, sharedContextCache) {
   ATNSimulator.call(this, atn, sharedContextCache);
@@ -10751,7 +10767,7 @@ ParserATNSimulator.prototype.reportAmbiguity = function (dfa, D, startIndex, sto
 exports.ParserATNSimulator = ParserATNSimulator;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -10765,29 +10781,29 @@ exports.ParserATNSimulator = ParserATNSimulator;
 // This enumeration defines the prediction modes available in ANTLR 4 along with
 // utility methods for analyzing configuration sets for conflicts and/or
 // ambiguities.
-var Set = __webpack_require__(7).Set;
+var Set = __webpack_require__(8).Set;
 
-var Map = __webpack_require__(7).Map;
+var Map = __webpack_require__(8).Map;
 
-var BitSet = __webpack_require__(7).BitSet;
+var BitSet = __webpack_require__(8).BitSet;
 
-var AltDict = __webpack_require__(7).AltDict;
+var AltDict = __webpack_require__(8).AltDict;
 
-var ATN = __webpack_require__(5).ATN;
+var ATN = __webpack_require__(6).ATN;
 
-var RuleStopState = __webpack_require__(10).RuleStopState;
+var RuleStopState = __webpack_require__(11).RuleStopState;
 
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var ATNConfig = __webpack_require__(9).ATNConfig;
+var ATNConfig = __webpack_require__(10).ATNConfig;
 
-var SemanticContext = __webpack_require__(11).SemanticContext;
+var SemanticContext = __webpack_require__(12).SemanticContext;
 
-var Hash = __webpack_require__(7).Hash;
+var Hash = __webpack_require__(8).Hash;
 
-var hashStuff = __webpack_require__(7).hashStuff;
+var hashStuff = __webpack_require__(8).hashStuff;
 
-var equalArrays = __webpack_require__(7).equalArrays;
+var equalArrays = __webpack_require__(8).equalArrays;
 
 function PredictionMode() {
   return this;
@@ -11361,7 +11377,7 @@ PredictionMode.getSingleViableAlt = function (altsets) {
 exports.PredictionMode = PredictionMode;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 /*! https://mths.be/codepointat v0.2.0 by @mathias */
@@ -11433,20 +11449,20 @@ if (!String.prototype.codePointAt) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-exports.DFA = __webpack_require__(37).DFA;
-exports.DFASerializer = __webpack_require__(38).DFASerializer;
-exports.LexerDFASerializer = __webpack_require__(38).LexerDFASerializer;
-exports.PredPrediction = __webpack_require__(30).PredPrediction;
+exports.DFA = __webpack_require__(38).DFA;
+exports.DFASerializer = __webpack_require__(39).DFASerializer;
+exports.LexerDFASerializer = __webpack_require__(39).LexerDFASerializer;
+exports.PredPrediction = __webpack_require__(31).PredPrediction;
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -11455,17 +11471,17 @@ exports.PredPrediction = __webpack_require__(30).PredPrediction;
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-var Set = __webpack_require__(7).Set;
+var Set = __webpack_require__(8).Set;
 
-var DFAState = __webpack_require__(30).DFAState;
+var DFAState = __webpack_require__(31).DFAState;
 
-var StarLoopEntryState = __webpack_require__(10).StarLoopEntryState;
+var StarLoopEntryState = __webpack_require__(11).StarLoopEntryState;
 
-var ATNConfigSet = __webpack_require__(31).ATNConfigSet;
+var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
-var DFASerializer = __webpack_require__(38).DFASerializer;
+var DFASerializer = __webpack_require__(39).DFASerializer;
 
-var LexerDFASerializer = __webpack_require__(38).LexerDFASerializer;
+var LexerDFASerializer = __webpack_require__(39).LexerDFASerializer;
 
 function DFA(atnStartState, decision) {
   if (decision === undefined) {
@@ -11615,7 +11631,7 @@ DFA.prototype.toLexerString = function () {
 exports.DFA = DFA;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -11702,7 +11718,7 @@ exports.DFASerializer = DFASerializer;
 exports.LexerDFASerializer = LexerDFASerializer;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 /*! https://mths.be/fromcodepoint v0.2.1 by @mathias */
@@ -11781,22 +11797,6 @@ if (!String.fromCodePoint) {
 }
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-var Tree = __webpack_require__(16);
-
-exports.Trees = __webpack_require__(17).Trees;
-exports.RuleNode = Tree.RuleNode;
-exports.ParseTreeListener = Tree.ParseTreeListener;
-exports.ParseTreeVisitor = Tree.ParseTreeVisitor;
-exports.ParseTreeWalker = Tree.ParseTreeWalker;
-
-/***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11804,17 +11804,33 @@ exports.ParseTreeWalker = Tree.ParseTreeWalker;
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-exports.RecognitionException = __webpack_require__(28).RecognitionException;
-exports.NoViableAltException = __webpack_require__(28).NoViableAltException;
-exports.LexerNoViableAltException = __webpack_require__(28).LexerNoViableAltException;
-exports.InputMismatchException = __webpack_require__(28).InputMismatchException;
-exports.FailedPredicateException = __webpack_require__(28).FailedPredicateException;
-exports.DiagnosticErrorListener = __webpack_require__(42).DiagnosticErrorListener;
-exports.BailErrorStrategy = __webpack_require__(43).BailErrorStrategy;
-exports.ErrorListener = __webpack_require__(26).ErrorListener;
+var Tree = __webpack_require__(17);
+
+exports.Trees = __webpack_require__(18).Trees;
+exports.RuleNode = Tree.RuleNode;
+exports.ParseTreeListener = Tree.ParseTreeListener;
+exports.ParseTreeVisitor = Tree.ParseTreeVisitor;
+exports.ParseTreeWalker = Tree.ParseTreeWalker;
 
 /***/ }),
 /* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+exports.RecognitionException = __webpack_require__(29).RecognitionException;
+exports.NoViableAltException = __webpack_require__(29).NoViableAltException;
+exports.LexerNoViableAltException = __webpack_require__(29).LexerNoViableAltException;
+exports.InputMismatchException = __webpack_require__(29).InputMismatchException;
+exports.FailedPredicateException = __webpack_require__(29).FailedPredicateException;
+exports.DiagnosticErrorListener = __webpack_require__(43).DiagnosticErrorListener;
+exports.BailErrorStrategy = __webpack_require__(44).BailErrorStrategy;
+exports.ErrorListener = __webpack_require__(27).ErrorListener;
+
+/***/ }),
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -11842,11 +11858,11 @@ exports.ErrorListener = __webpack_require__(26).ErrorListener;
 // a truly viable alternative. Two-stage parsing cannot be used for inputs where
 // this situation occurs.</li>
 // </ul>
-var BitSet = __webpack_require__(7).BitSet;
+var BitSet = __webpack_require__(8).BitSet;
 
-var ErrorListener = __webpack_require__(26).ErrorListener;
+var ErrorListener = __webpack_require__(27).ErrorListener;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
 function DiagnosticErrorListener(exactOnly) {
   ErrorListener.call(this);
@@ -11924,7 +11940,7 @@ DiagnosticErrorListener.prototype.getConflictingAlts = function (reportedAlts, c
 exports.DiagnosticErrorListener = DiagnosticErrorListener;
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -11934,20 +11950,20 @@ exports.DiagnosticErrorListener = DiagnosticErrorListener;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Errors = __webpack_require__(28);
+var Errors = __webpack_require__(29);
 
 var NoViableAltException = Errors.NoViableAltException;
 var InputMismatchException = Errors.InputMismatchException;
 var FailedPredicateException = Errors.FailedPredicateException;
 var ParseCancellationException = Errors.ParseCancellationException;
 
-var ATNState = __webpack_require__(10).ATNState;
+var ATNState = __webpack_require__(11).ATNState;
 
-var Interval = __webpack_require__(12).Interval;
+var Interval = __webpack_require__(13).Interval;
 
-var IntervalSet = __webpack_require__(12).IntervalSet;
+var IntervalSet = __webpack_require__(13).IntervalSet;
 
 function ErrorStrategy() {}
 
@@ -12707,7 +12723,7 @@ exports.BailErrorStrategy = BailErrorStrategy;
 exports.DefaultErrorStrategy = DefaultErrorStrategy;
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -12717,10 +12733,10 @@ exports.DefaultErrorStrategy = DefaultErrorStrategy;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var InputStream = __webpack_require__(45).InputStream;
+var InputStream = __webpack_require__(46).InputStream;
 
 var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(46) : null; // Utility functions to create InputStreams from various sources.
+var fs = isNodeJs ? __webpack_require__(47) : null; // Utility functions to create InputStreams from various sources.
 //
 // All returned InputStreams support the full range of Unicode
 // up to U+10FFFF (the default behavior of InputStream only supports
@@ -12781,7 +12797,7 @@ var CharStreams = {
 exports.CharStreams = CharStreams;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -12791,11 +12807,11 @@ exports.CharStreams = CharStreams;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-__webpack_require__(35);
+__webpack_require__(36);
 
-__webpack_require__(39); // Vacuum all input from a string and then treat it like a buffer.
+__webpack_require__(40); // Vacuum all input from a string and then treat it like a buffer.
 
 
 function _loadString(stream) {
@@ -12934,13 +12950,13 @@ InputStream.prototype.toString = function () {
 exports.InputStream = InputStream;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -12954,10 +12970,10 @@ exports.InputStream = InputStream;
 //  This is an InputStream that is loaded from a file all at once
 //  when you construct the object.
 //
-var InputStream = __webpack_require__(45).InputStream;
+var InputStream = __webpack_require__(46).InputStream;
 
 var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(46) : null;
+var fs = isNodeJs ? __webpack_require__(47) : null;
 
 function FileStream(fileName, decodeToUnicodeCodePoints) {
   var data = fs.readFileSync(fileName, "utf8");
@@ -12971,7 +12987,7 @@ FileStream.prototype.constructor = FileStream;
 exports.FileStream = FileStream;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13005,9 +13021,9 @@ exports.FileStream = FileStream;
 // such a rule will not be available as part of the token stream, regardless of
 // channel.</p>
 ///
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var BufferedTokenStream = __webpack_require__(49).BufferedTokenStream;
+var BufferedTokenStream = __webpack_require__(50).BufferedTokenStream;
 
 function CommonTokenStream(lexer, channel) {
   BufferedTokenStream.call(this, lexer);
@@ -13093,7 +13109,7 @@ CommonTokenStream.prototype.getNumberOfOnChannelTokens = function () {
 exports.CommonTokenStream = CommonTokenStream;
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13112,11 +13128,11 @@ exports.CommonTokenStream = CommonTokenStream;
 // channel, such as {@link Token//DEFAULT_CHANNEL} or
 // {@link Token//HIDDEN_CHANNEL}, use a filtering token stream such a
 // {@link CommonTokenStream}.</p>
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var Lexer = __webpack_require__(24).Lexer;
+var Lexer = __webpack_require__(25).Lexer;
 
-var Interval = __webpack_require__(12).Interval; // this is just to keep meaningful parameter types to Parser
+var Interval = __webpack_require__(13).Interval; // this is just to keep meaningful parameter types to Parser
 
 
 function TokenStream() {
@@ -13518,28 +13534,28 @@ BufferedTokenStream.prototype.fill = function () {
 exports.BufferedTokenStream = BufferedTokenStream;
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-var Token = __webpack_require__(8).Token;
+var Token = __webpack_require__(9).Token;
 
-var ParseTreeListener = __webpack_require__(16).ParseTreeListener;
+var ParseTreeListener = __webpack_require__(17).ParseTreeListener;
 
-var Recognizer = __webpack_require__(25).Recognizer;
+var Recognizer = __webpack_require__(26).Recognizer;
 
-var DefaultErrorStrategy = __webpack_require__(43).DefaultErrorStrategy;
+var DefaultErrorStrategy = __webpack_require__(44).DefaultErrorStrategy;
 
-var ATNDeserializer = __webpack_require__(19).ATNDeserializer;
+var ATNDeserializer = __webpack_require__(20).ATNDeserializer;
 
-var ATNDeserializationOptions = __webpack_require__(21).ATNDeserializationOptions;
+var ATNDeserializationOptions = __webpack_require__(22).ATNDeserializationOptions;
 
-var TerminalNode = __webpack_require__(16).TerminalNode;
+var TerminalNode = __webpack_require__(17).TerminalNode;
 
-var ErrorNode = __webpack_require__(16).ErrorNode;
+var ErrorNode = __webpack_require__(17).ErrorNode;
 
 function TraceListener(parser) {
   ParseTreeListener.call(this);
@@ -13842,7 +13858,7 @@ Parser.prototype.getATNWithBypassAlts = function () {
 // </pre>
 
 
-var Lexer = __webpack_require__(24).Lexer;
+var Lexer = __webpack_require__(25).Lexer;
 
 Parser.prototype.compileParseTreePattern = function (pattern, patternRuleIndex, lexer) {
   lexer = lexer || null;
@@ -14264,12 +14280,12 @@ Parser.prototype.setTrace = function (trace) {
 exports.Parser = Parser;
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
-var antlr4 = __webpack_require__(3);
+var antlr4 = __webpack_require__(4);
 
 var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x02?\u01F1\b\x01\x04\x02\t\x02\x04\x03\t\x03\x04", "\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t", "\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04", "\f\t\f\x04\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10", "\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04\x13\t\x13", "\x04\x14\t\x14\x04\x15\t\x15\x04\x16\t\x16\x04\x17", "\t\x17\x04\x18\t\x18\x04\x19\t\x19\x04\x1A\t\x1A", "\x04\x1B\t\x1B\x04\x1C\t\x1C\x04\x1D\t\x1D\x04\x1E", "\t\x1E\x04\x1F\t\x1F\x04 \t \x04!\t!\x04\"\t\"\x04#", "\t#\x04$\t$\x04%\t%\x04&\t&\x04'\t'\x04(\t(\x04)\t)\x04", "*\t*\x04+\t+\x04,\t,\x04-\t-\x04.\t.\x04/\t/\x040\t0\x04", "1\t1\x042\t2\x043\t3\x044\t4\x045\t5\x046\t6\x047\t7\x04", "8\t8\x049\t9\x04:\t:\x04;\t;\x04<\t<\x04=\t=\x04>\t>\x04", "?\t?\x04@\t@\x04A\tA\x04B\tB\x03\x02\x03\x02\x03\x03", "\x03\x03\x03\x04\x03\x04\x03\x05\x03\x05\x03\x06", "\x03\x06\x03\x07\x03\x07\x03\b\x03\b\x03\t\x03\t", "\x03\t\x03\t\x03\n\x03\n\x03\n\x03\n\x03\x0B\x03\x0B", "\x03\f\x03\f\x03\r\x03\r\x03\r\x03\x0E\x03\x0E\x03", "\x0F\x03\x0F\x03\x10\x03\x10\x03\x10\x03\x11\x03", "\x11\x03\x11\x03\x12\x03\x12\x03\x12\x03\x13\x03", "\x13\x03\x14\x03\x14\x03\x15\x03\x15\x03\x15\x03", "\x16\x03\x16\x03\x16\x03\x17\x03\x17\x03\x17\x03", "\x18\x03\x18\x03\x18\x03\x18\x03\x18\x03\x18\x03", "\x18\x03\x18\x03\x18\x03\x19\x03\x19\x03\x19\x03", "\x19\x03\x1A\x03\x1A\x03\x1A\x03\x1B\x03\x1B\x03", "\x1B\x03\x1B\x03\x1C\x03\x1C\x03\x1C\x03\x1C\x03", "\x1C\x03\x1C\x03\x1C\x03\x1C\x03\x1D\x03\x1D\x03", "\x1E\x03\x1E\x03\x1F\x03\x1F\x03 \x03 \x03!\x03", "!\x03!\x03!\x03!\x03\"\x03\"\x03\"\x03\"\x03\"\x03", "\"\x03#\x03#\x03$\x03$\x03$\x03$\x03$\x03$\x03%\x03", "%\x03&\x03&\x03&\x03&\x03&\x03'\x03'\x03'\x03'", "\x03'\x03'\x03(\x03(\x03(\x03(\x03(\x03)\x03)\x03", ")\x03)\x03*\x03*\x03*\x03*\x03*\x03+\x03+\x03+\x03", "+\x03+\x03+\x03+\x03,\x03,\x03,\x03,\x03,\x03,\x03", ",\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03", "-\x03-\x03-\x03.\x03.\x03.\x03.\x03.\x03.\x03/\x03", "/\x03/\x03/\x03/\x03/\x03/\x030\x030\x030\x030\x03", "0\x030\x031\x031\x031\x031\x031\x032\x032\x032\x03", "2\x032\x032\x033\x033\x033\x033\x033\x033\x033\x03", "3\x034\x034\x034\x034\x034\x034\x034\x034\x035\x03", "5\x035\x035\x035\x035\x035\x035\x035\x035\x035\x03", "5\x035\x036\x036\x036\x036\x036\x036\x036\x036\x03", "6\x036\x036\x036\x036\x056\u0171\n6\x056\u0173\n6\x05", "6\u0175\n6\x036\x056\u0178\n6\x037\x037\x037\x037\x03", "8\x038\x038\x038\x038\x038\x038\x038\x038\x038\x06", "8\u0188\n8\r8\x0E8\u0189\x058\u018C\n8\x058\u018E\n8\x058\u0190", "\n8\x038\x038\x038\x038\x038\x038\x038\x058\u0199\n", "8\x039\x059\u019C\n9\x039\x079\u019F\n9\f9\x0E9\u01A2\x0B", "9\x03:\x03:\x03:\x07:\u01A7\n:\f:\x0E:\u01AA\x0B:\x03", ":\x03:\x03;\x03;\x03;\x07;\u01B1\n;\f;\x0E;\u01B4\x0B", ";\x03;\x03;\x03<\x06<\u01B9\n<\r<\x0E<\u01BA\x03<\x03", "<\x06<\u01BF\n<\r<\x0E<\u01C0\x05<\u01C3\n<\x03=\x06=\u01C6", "\n=\r=\x0E=\u01C7\x03=\x03=\x03>\x03>\x03>\x03>\x07", ">\u01D0\n>\f>\x0E>\u01D3\x0B>\x03>\x03>\x03>\x03>\x03", ">\x03?\x03?\x03?\x03?\x07?\u01DE\n?\f?\x0E?\u01E1\x0B", "?\x03?\x03?\x03@\x03@\x03@\x05@\u01E8\n@\x03A\x03A\x03", "A\x03A\x03A\x03A\x03B\x03B\x03\u01D1\x02C\x03\x03", "\x05\x04\x07\x05\t\x06\x0B\x07\r\b\x0F\t\x11\n\x13", "\x0B\x15\f\x17\r\x19\x0E\x1B\x0F\x1D\x10\x1F\x11", "!\x12#\x13%\x14'\x15)\x16+\x17-\x18/\x191\x1A3\x1B", "5\x1C7\x1D9\x1E;\x1F= ?!A\"C#E$G%I&K'M(O)Q*S+U,W-Y.[/]0_1a", "2c3e4g5i6k7m8o\x02q9s:u;w<y={>}?\x7F\x02\x81\x02\x83\x02", "\x03\x02\f\x03\x022;\x04\x02--//\x05\x02C\\aac|\x06", "\x022;C\\aac|\x04\x02$$^^\x03\x02))\x05\x02\x0B\f\x0F", "\x0F\"\"\x04\x02\f\f\x0F\x0F\n\x02$$))11^^hhppttvv\x05", "\x022;CHch\x02\u0202\x02\x03\x03\x02\x02\x02\x02\x05", "\x03\x02\x02\x02\x02\x07\x03\x02\x02\x02\x02\t", "\x03\x02\x02\x02\x02\x0B\x03\x02\x02\x02\x02\r", "\x03\x02\x02\x02\x02\x0F\x03\x02\x02\x02\x02\x11", "\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02\x02\x15", "\x03\x02\x02\x02\x02\x17\x03\x02\x02\x02\x02\x19", "\x03\x02\x02\x02\x02\x1B\x03\x02\x02\x02\x02\x1D", "\x03\x02\x02\x02\x02\x1F\x03\x02\x02\x02\x02!", "\x03\x02\x02\x02\x02#\x03\x02\x02\x02\x02%\x03", "\x02\x02\x02\x02'\x03\x02\x02\x02\x02)\x03\x02", "\x02\x02\x02+\x03\x02\x02\x02\x02-\x03\x02\x02", "\x02\x02/\x03\x02\x02\x02\x021\x03\x02\x02\x02", "\x023\x03\x02\x02\x02\x025\x03\x02\x02\x02\x02", "7\x03\x02\x02\x02\x029\x03\x02\x02\x02\x02;\x03", "\x02\x02\x02\x02=\x03\x02\x02\x02\x02?\x03\x02", "\x02\x02\x02A\x03\x02\x02\x02\x02C\x03\x02\x02", "\x02\x02E\x03\x02\x02\x02\x02G\x03\x02\x02\x02", "\x02I\x03\x02\x02\x02\x02K\x03\x02\x02\x02\x02", "M\x03\x02\x02\x02\x02O\x03\x02\x02\x02\x02Q\x03", "\x02\x02\x02\x02S\x03\x02\x02\x02\x02U\x03\x02", "\x02\x02\x02W\x03\x02\x02\x02\x02Y\x03\x02\x02", "\x02\x02[\x03\x02\x02\x02\x02]\x03\x02\x02\x02", "\x02_\x03\x02\x02\x02\x02a\x03\x02\x02\x02\x02", "c\x03\x02\x02\x02\x02e\x03\x02\x02\x02\x02g\x03", "\x02\x02\x02\x02i\x03\x02\x02\x02\x02k\x03\x02", "\x02\x02\x02m\x03\x02\x02\x02\x02q\x03\x02\x02", "\x02\x02s\x03\x02\x02\x02\x02u\x03\x02\x02\x02", "\x02w\x03\x02\x02\x02\x02y\x03\x02\x02\x02\x02", "{\x03\x02\x02\x02\x02}\x03\x02\x02\x02\x03\x85", "\x03\x02\x02\x02\x05\x87\x03\x02\x02\x02\x07\x89", "\x03\x02\x02\x02\t\x8B\x03\x02\x02\x02\x0B\x8D", "\x03\x02\x02\x02\r\x8F\x03\x02\x02\x02\x0F\x91", "\x03\x02\x02\x02\x11\x93\x03\x02\x02\x02\x13\x97", "\x03\x02\x02\x02\x15\x9B\x03\x02\x02\x02\x17\x9D", "\x03\x02\x02\x02\x19\x9F\x03\x02\x02\x02\x1B\xA2", "\x03\x02\x02\x02\x1D\xA4\x03\x02\x02\x02\x1F\xA6", "\x03\x02\x02\x02!\xA9\x03\x02\x02\x02#\xAC\x03", "\x02\x02\x02%\xAF\x03\x02\x02\x02'\xB1\x03\x02", "\x02\x02)\xB3\x03\x02\x02\x02+\xB6\x03\x02\x02", "\x02-\xB9\x03\x02\x02\x02/\xBC\x03\x02\x02\x02", "1\xC5\x03\x02\x02\x023\xC9\x03\x02\x02\x025\xCC", "\x03\x02\x02\x027\xD0\x03\x02\x02\x029\xD8\x03", "\x02\x02\x02;\xDA\x03\x02\x02\x02=\xDC\x03\x02", "\x02\x02?\xDE\x03\x02\x02\x02A\xE0\x03\x02\x02", "\x02C\xE5\x03\x02\x02\x02E\xEB\x03\x02\x02\x02", "G\xED\x03\x02\x02\x02I\xF3\x03\x02\x02\x02K\xF5", "\x03\x02\x02\x02M\xFA\x03\x02\x02\x02O\u0100\x03", "\x02\x02\x02Q\u0105\x03\x02\x02\x02S\u0109\x03\x02", "\x02\x02U\u010E\x03\x02\x02\x02W\u0115\x03\x02\x02", "\x02Y\u011C\x03\x02\x02\x02[\u0128\x03\x02\x02\x02", "]\u012E\x03\x02\x02\x02_\u0135\x03\x02\x02\x02a\u013B", "\x03\x02\x02\x02c\u0140\x03\x02\x02\x02e\u0146\x03", "\x02\x02\x02g\u014E\x03\x02\x02\x02i\u0156\x03\x02", "\x02\x02k\u0163\x03\x02\x02\x02m\u0179\x03\x02\x02", "\x02o\u017D\x03\x02\x02\x02q\u019B\x03\x02\x02\x02", "s\u01A3\x03\x02\x02\x02u\u01AD\x03\x02\x02\x02w\u01B8", "\x03\x02\x02\x02y\u01C5\x03\x02\x02\x02{\u01CB\x03", "\x02\x02\x02}\u01D9\x03\x02\x02\x02\x7F\u01E4\x03", "\x02\x02\x02\x81\u01E9\x03\x02\x02\x02\x83\u01EF\x03", "\x02\x02\x02\x85\x86\x070\x02\x02\x86\x04\x03", "\x02\x02\x02\x87\x88\x07]\x02\x02\x88\x06\x03", "\x02\x02\x02\x89\x8A\x07_\x02\x02\x8A\b\x03\x02", "\x02\x02\x8B\x8C\x07-\x02\x02\x8C\n\x03\x02\x02", "\x02\x8D\x8E\x07/\x02\x02\x8E\f\x03\x02\x02\x02", "\x8F\x90\x07,\x02\x02\x90\x0E\x03\x02\x02\x02", "\x91\x92\x071\x02\x02\x92\x10\x03\x02\x02\x02", "\x93\x94\x07f\x02\x02\x94\x95\x07k\x02\x02\x95", "\x96\x07x\x02\x02\x96\x12\x03\x02\x02\x02\x97", "\x98\x07o\x02\x02\x98\x99\x07q\x02\x02\x99\x9A", "\x07f\x02\x02\x9A\x14\x03\x02\x02\x02\x9B\x9C", "\x07(\x02\x02\x9C\x16\x03\x02\x02\x02\x9D\x9E", "\x07~\x02\x02\x9E\x18\x03\x02\x02\x02\x9F\xA0", "\x07>\x02\x02\xA0\xA1\x07?\x02\x02\xA1\x1A\x03", "\x02\x02\x02\xA2\xA3\x07>\x02\x02\xA3\x1C\x03", "\x02\x02\x02\xA4\xA5\x07@\x02\x02\xA5\x1E\x03", "\x02\x02\x02\xA6\xA7\x07@\x02\x02\xA7\xA8\x07", "?\x02\x02\xA8 \x03\x02\x02\x02\xA9\xAA\x07k\x02", "\x02\xAA\xAB\x07u\x02\x02\xAB\"\x03\x02\x02\x02", "\xAC\xAD\x07c\x02\x02\xAD\xAE\x07u\x02\x02\xAE", "$\x03\x02\x02\x02\xAF\xB0\x07?\x02\x02\xB0&\x03", "\x02\x02\x02\xB1\xB2\x07\x80\x02\x02\xB2(\x03", "\x02\x02\x02\xB3\xB4\x07#\x02\x02\xB4\xB5\x07", "?\x02\x02\xB5*\x03\x02\x02\x02\xB6\xB7\x07#\x02", "\x02\xB7\xB8\x07\x80\x02\x02\xB8,\x03\x02\x02", "\x02\xB9\xBA\x07k\x02\x02\xBA\xBB\x07p\x02\x02", "\xBB.\x03\x02\x02\x02\xBC\xBD\x07e\x02\x02\xBD", "\xBE\x07q\x02\x02\xBE\xBF\x07p\x02\x02\xBF\xC0", "\x07v\x02\x02\xC0\xC1\x07c\x02\x02\xC1\xC2\x07", "k\x02\x02\xC2\xC3\x07p\x02\x02\xC3\xC4\x07u\x02", "\x02\xC40\x03\x02\x02\x02\xC5\xC6\x07c\x02\x02", "\xC6\xC7\x07p\x02\x02\xC7\xC8\x07f\x02\x02\xC8", "2\x03\x02\x02\x02\xC9\xCA\x07q\x02\x02\xCA\xCB", "\x07t\x02\x02\xCB4\x03\x02\x02\x02\xCC\xCD\x07", "z\x02\x02\xCD\xCE\x07q\x02\x02\xCE\xCF\x07t\x02", "\x02\xCF6\x03\x02\x02\x02\xD0\xD1\x07k\x02\x02", "\xD1\xD2\x07o\x02\x02\xD2\xD3\x07r\x02\x02\xD3", "\xD4\x07n\x02\x02\xD4\xD5\x07k\x02\x02\xD5\xD6", "\x07g\x02\x02\xD6\xD7\x07u\x02\x02\xD78\x03\x02", "\x02\x02\xD8\xD9\x07*\x02\x02\xD9:\x03\x02\x02", "\x02\xDA\xDB\x07+\x02\x02\xDB<\x03\x02\x02\x02", "\xDC\xDD\x07}\x02\x02\xDD>\x03\x02\x02\x02\xDE", "\xDF\x07\x7F\x02\x02\xDF@\x03\x02\x02\x02\xE0", "\xE1\x07v\x02\x02\xE1\xE2\x07t\x02\x02\xE2\xE3", "\x07w\x02\x02\xE3\xE4\x07g\x02\x02\xE4B\x03\x02", "\x02\x02\xE5\xE6\x07h\x02\x02\xE6\xE7\x07c\x02", "\x02\xE7\xE8\x07n\x02\x02\xE8\xE9\x07u\x02\x02", "\xE9\xEA\x07g\x02\x02\xEAD\x03\x02\x02\x02\xEB", "\xEC\x07'\x02\x02\xECF\x03\x02\x02\x02\xED\xEE", "\x07&\x02\x02\xEE\xEF\x07v\x02\x02\xEF\xF0\x07", "j\x02\x02\xF0\xF1\x07k\x02\x02\xF1\xF2\x07u\x02", "\x02\xF2H\x03\x02\x02\x02\xF3\xF4\x07.\x02\x02", "\xF4J\x03\x02\x02\x02\xF5\xF6\x07{\x02\x02\xF6", "\xF7\x07g\x02\x02\xF7\xF8\x07c\x02\x02\xF8\xF9", "\x07t\x02\x02\xF9L\x03\x02\x02\x02\xFA\xFB\x07", "o\x02\x02\xFB\xFC\x07q\x02\x02\xFC\xFD\x07p\x02", "\x02\xFD\xFE\x07v\x02\x02\xFE\xFF\x07j\x02\x02", "\xFFN\x03\x02\x02\x02\u0100\u0101\x07y\x02\x02\u0101", "\u0102\x07g\x02\x02\u0102\u0103\x07g\x02\x02\u0103\u0104", "\x07m\x02\x02\u0104P\x03\x02\x02\x02\u0105\u0106\x07", "f\x02\x02\u0106\u0107\x07c\x02\x02\u0107\u0108\x07{\x02", "\x02\u0108R\x03\x02\x02\x02\u0109\u010A\x07j\x02\x02", "\u010A\u010B\x07q\x02\x02\u010B\u010C\x07w\x02\x02\u010C", "\u010D\x07t\x02\x02\u010DT\x03\x02\x02\x02\u010E\u010F", "\x07o\x02\x02\u010F\u0110\x07k\x02\x02\u0110\u0111\x07", "p\x02\x02\u0111\u0112\x07w\x02\x02\u0112\u0113\x07v\x02", "\x02\u0113\u0114\x07g\x02\x02\u0114V\x03\x02\x02\x02", "\u0115\u0116\x07u\x02\x02\u0116\u0117\x07g\x02\x02\u0117", "\u0118\x07e\x02\x02\u0118\u0119\x07q\x02\x02\u0119\u011A", "\x07p\x02\x02\u011A\u011B\x07f\x02\x02\u011BX\x03\x02", "\x02\x02\u011C\u011D\x07o\x02\x02\u011D\u011E\x07k\x02", "\x02\u011E\u011F\x07n\x02\x02\u011F\u0120\x07n\x02\x02", "\u0120\u0121\x07k\x02\x02\u0121\u0122\x07u\x02\x02\u0122", "\u0123\x07g\x02\x02\u0123\u0124\x07e\x02\x02\u0124\u0125", "\x07q\x02\x02\u0125\u0126\x07p\x02\x02\u0126\u0127\x07", "f\x02\x02\u0127Z\x03\x02\x02\x02\u0128\u0129\x07{\x02", "\x02\u0129\u012A\x07g\x02\x02\u012A\u012B\x07c\x02\x02", "\u012B\u012C\x07t\x02\x02\u012C\u012D\x07u\x02\x02\u012D", "\\\x03\x02\x02\x02\u012E\u012F\x07o\x02\x02\u012F\u0130", "\x07q\x02\x02\u0130\u0131\x07p\x02\x02\u0131\u0132\x07", "v\x02\x02\u0132\u0133\x07j\x02\x02\u0133\u0134\x07u\x02", "\x02\u0134^\x03\x02\x02\x02\u0135\u0136\x07y\x02\x02", "\u0136\u0137\x07g\x02\x02\u0137\u0138\x07g\x02\x02\u0138", "\u0139\x07m\x02\x02\u0139\u013A\x07u\x02\x02\u013A`\x03", "\x02\x02\x02\u013B\u013C\x07f\x02\x02\u013C\u013D\x07", "c\x02\x02\u013D\u013E\x07{\x02\x02\u013E\u013F\x07u\x02", "\x02\u013Fb\x03\x02\x02\x02\u0140\u0141\x07j\x02\x02", "\u0141\u0142\x07q\x02\x02\u0142\u0143\x07w\x02\x02\u0143", "\u0144\x07t\x02\x02\u0144\u0145\x07u\x02\x02\u0145d\x03", "\x02\x02\x02\u0146\u0147\x07o\x02\x02\u0147\u0148\x07", "k\x02\x02\u0148\u0149\x07p\x02\x02\u0149\u014A\x07w\x02", "\x02\u014A\u014B\x07v\x02\x02\u014B\u014C\x07g\x02\x02", "\u014C\u014D\x07u\x02\x02\u014Df\x03\x02\x02\x02\u014E", "\u014F\x07u\x02\x02\u014F\u0150\x07g\x02\x02\u0150\u0151", "\x07e\x02\x02\u0151\u0152\x07q\x02\x02\u0152\u0153\x07", "p\x02\x02\u0153\u0154\x07f\x02\x02\u0154\u0155\x07u\x02", "\x02\u0155h\x03\x02\x02\x02\u0156\u0157\x07o\x02\x02", "\u0157\u0158\x07k\x02\x02\u0158\u0159\x07n\x02\x02\u0159", "\u015A\x07n\x02\x02\u015A\u015B\x07k\x02\x02\u015B\u015C", "\x07u\x02\x02\u015C\u015D\x07g\x02\x02\u015D\u015E\x07", "e\x02\x02\u015E\u015F\x07q\x02\x02\u015F\u0160\x07p\x02", "\x02\u0160\u0161\x07f\x02\x02\u0161\u0162\x07u\x02\x02", "\u0162j\x03\x02\x02\x02\u0163\u0164\x07B\x02\x02\u0164", "\u0165\t\x02\x02\x02\u0165\u0166\t\x02\x02\x02\u0166\u0167", "\t\x02\x02\x02\u0167\u0174\t\x02\x02\x02\u0168\u0169\x07", "/\x02\x02\u0169\u016A\t\x02\x02\x02\u016A\u0172\t\x02\x02", "\x02\u016B\u016C\x07/\x02\x02\u016C\u016D\t\x02\x02\x02", "\u016D\u0170\t\x02\x02\x02\u016E\u016F\x07V\x02\x02\u016F", "\u0171\x05o8\x02\u0170\u016E\x03\x02\x02\x02\u0170\u0171", "\x03\x02\x02\x02\u0171\u0173\x03\x02\x02\x02\u0172\u016B", "\x03\x02\x02\x02\u0172\u0173\x03\x02\x02\x02\u0173\u0175", "\x03\x02\x02\x02\u0174\u0168\x03\x02\x02\x02\u0174\u0175", "\x03\x02\x02\x02\u0175\u0177\x03\x02\x02\x02\u0176\u0178", "\x07\\\x02\x02\u0177\u0176\x03\x02\x02\x02\u0177\u0178", "\x03\x02\x02\x02\u0178l\x03\x02\x02\x02\u0179\u017A", "\x07B\x02\x02\u017A\u017B\x07V\x02\x02\u017B\u017C\x05", "o8\x02\u017Cn\x03\x02\x02\x02\u017D\u017E\t\x02\x02\x02", "\u017E\u018F\t\x02\x02\x02\u017F\u0180\x07<\x02\x02\u0180", "\u0181\t\x02\x02\x02\u0181\u018D\t\x02\x02\x02\u0182\u0183", "\x07<\x02\x02\u0183\u0184\t\x02\x02\x02\u0184\u018B\t\x02", "\x02\x02\u0185\u0187\x070\x02\x02\u0186\u0188\t\x02\x02", "\x02\u0187\u0186\x03\x02\x02\x02\u0188\u0189\x03\x02\x02", "\x02\u0189\u0187\x03\x02\x02\x02\u0189\u018A\x03\x02\x02", "\x02\u018A\u018C\x03\x02\x02\x02\u018B\u0185\x03\x02\x02", "\x02\u018B\u018C\x03\x02\x02\x02\u018C\u018E\x03\x02\x02", "\x02\u018D\u0182\x03\x02\x02\x02\u018D\u018E\x03\x02\x02", "\x02\u018E\u0190\x03\x02\x02\x02\u018F\u017F\x03\x02\x02", "\x02\u018F\u0190\x03\x02\x02\x02\u0190\u0198\x03\x02\x02", "\x02\u0191\u0199\x07\\\x02\x02\u0192\u0193\t\x03\x02\x02", "\u0193\u0194\t\x02\x02\x02\u0194\u0195\t\x02\x02\x02\u0195", "\u0196\x07<\x02\x02\u0196\u0197\t\x02\x02\x02\u0197\u0199", "\t\x02\x02\x02\u0198\u0191\x03\x02\x02\x02\u0198\u0192", "\x03\x02\x02\x02\u0198\u0199\x03\x02\x02\x02\u0199p", "\x03\x02\x02\x02\u019A\u019C\t\x04\x02\x02\u019B\u019A", "\x03\x02\x02\x02\u019C\u01A0\x03\x02\x02\x02\u019D\u019F", "\t\x05\x02\x02\u019E\u019D\x03\x02\x02\x02\u019F\u01A2", "\x03\x02\x02\x02\u01A0\u019E\x03\x02\x02\x02\u01A0\u01A1", "\x03\x02\x02\x02\u01A1r\x03\x02\x02\x02\u01A2\u01A0", "\x03\x02\x02\x02\u01A3\u01A8\x07$\x02\x02\u01A4\u01A7", "\x05\x7F@\x02\u01A5\u01A7\n\x06\x02\x02\u01A6\u01A4\x03", "\x02\x02\x02\u01A6\u01A5\x03\x02\x02\x02\u01A7\u01AA\x03", "\x02\x02\x02\u01A8\u01A6\x03\x02\x02\x02\u01A8\u01A9\x03", "\x02\x02\x02\u01A9\u01AB\x03\x02\x02\x02\u01AA\u01A8\x03", "\x02\x02\x02\u01AB\u01AC\x07$\x02\x02\u01ACt\x03\x02", "\x02\x02\u01AD\u01B2\x07)\x02\x02\u01AE\u01B1\x05\x7F", "@\x02\u01AF\u01B1\n\x07\x02\x02\u01B0\u01AE\x03\x02\x02", "\x02\u01B0\u01AF\x03\x02\x02\x02\u01B1\u01B4\x03\x02\x02", "\x02\u01B2\u01B0\x03\x02\x02\x02\u01B2\u01B3\x03\x02\x02", "\x02\u01B3\u01B5\x03\x02\x02\x02\u01B4\u01B2\x03\x02\x02", "\x02\u01B5\u01B6\x07)\x02\x02\u01B6v\x03\x02\x02\x02", "\u01B7\u01B9\t\x02\x02\x02\u01B8\u01B7\x03\x02\x02\x02", "\u01B9\u01BA\x03\x02\x02\x02\u01BA\u01B8\x03\x02\x02\x02", "\u01BA\u01BB\x03\x02\x02\x02\u01BB\u01C2\x03\x02\x02\x02", "\u01BC\u01BE\x070\x02\x02\u01BD\u01BF\t\x02\x02\x02\u01BE", "\u01BD\x03\x02\x02\x02\u01BF\u01C0\x03\x02\x02\x02\u01C0", "\u01BE\x03\x02\x02\x02\u01C0\u01C1\x03\x02\x02\x02\u01C1", "\u01C3\x03\x02\x02\x02\u01C2\u01BC\x03\x02\x02\x02\u01C2", "\u01C3\x03\x02\x02\x02\u01C3x\x03\x02\x02\x02\u01C4", "\u01C6\t\b\x02\x02\u01C5\u01C4\x03\x02\x02\x02\u01C6\u01C7", "\x03\x02\x02\x02\u01C7\u01C5\x03\x02\x02\x02\u01C7\u01C8", "\x03\x02\x02\x02\u01C8\u01C9\x03\x02\x02\x02\u01C9\u01CA", "\b=\x02\x02\u01CAz\x03\x02\x02\x02\u01CB\u01CC\x071\x02", "\x02\u01CC\u01CD\x07,\x02\x02\u01CD\u01D1\x03\x02\x02", "\x02\u01CE\u01D0\x0B\x02\x02\x02\u01CF\u01CE\x03\x02\x02", "\x02\u01D0\u01D3\x03\x02\x02\x02\u01D1\u01D2\x03\x02\x02", "\x02\u01D1\u01CF\x03\x02\x02\x02\u01D2\u01D4\x03\x02\x02", "\x02\u01D3\u01D1\x03\x02\x02\x02\u01D4\u01D5\x07,\x02", "\x02\u01D5\u01D6\x071\x02\x02\u01D6\u01D7\x03\x02\x02", "\x02\u01D7\u01D8\b>\x02\x02\u01D8|\x03\x02\x02\x02\u01D9", "\u01DA\x071\x02\x02\u01DA\u01DB\x071\x02\x02\u01DB\u01DF", "\x03\x02\x02\x02\u01DC\u01DE\n\t\x02\x02\u01DD\u01DC\x03", "\x02\x02\x02\u01DE\u01E1\x03\x02\x02\x02\u01DF\u01DD\x03", "\x02\x02\x02\u01DF\u01E0\x03\x02\x02\x02\u01E0\u01E2\x03", "\x02\x02\x02\u01E1\u01DF\x03\x02\x02\x02\u01E2\u01E3\b", "?\x02\x02\u01E3~\x03\x02\x02\x02\u01E4\u01E7\x07^\x02", "\x02\u01E5\u01E8\t\n\x02\x02\u01E6\u01E8\x05\x81A\x02\u01E7", "\u01E5\x03\x02\x02\x02\u01E7\u01E6\x03\x02\x02\x02\u01E8", "\x80\x03\x02\x02\x02\u01E9\u01EA\x07w\x02\x02\u01EA", "\u01EB\x05\x83B\x02\u01EB\u01EC\x05\x83B\x02\u01EC\u01ED", "\x05\x83B\x02\u01ED\u01EE\x05\x83B\x02\u01EE\x82\x03", "\x02\x02\x02\u01EF\u01F0\t\x0B\x02\x02\u01F0\x84\x03", "\x02\x02\x02\x1A\x02\u0170\u0172\u0174\u0177\u0189\u018B\u018D", "\u018F\u0198\u019B\u019E\u01A0\u01A6\u01A8\u01B0\u01B2\u01BA\u01C0\u01C2", "\u01C7\u01D1\u01DF\u01E7\x03\x02\x03\x02"].join("");
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -14361,14 +14377,14 @@ FHIRPathLexer.prototype.grammarFileName = "FHIRPath.g4";
 exports.FHIRPathLexer = FHIRPathLexer;
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
-var antlr4 = __webpack_require__(3);
+var antlr4 = __webpack_require__(4);
 
-var FHIRPathListener = __webpack_require__(53).FHIRPathListener;
+var FHIRPathListener = __webpack_require__(54).FHIRPathListener;
 
 var grammarFileName = "FHIRPath.g4";
 var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03?\x93\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x03\x02\x03\x02", "\x03\x02\x03\x02\x05\x02#\n\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x07\x02K\n\x02\f\x02\x0E\x02N\x0B\x02\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05", "\x03W\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x05\x04a\n\x04\x03", "\x05\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x05", "\x06i\n\x06\x03\x07\x03\x07\x03\x07\x05\x07n\n\x07", "\x03\x07\x03\x07\x03\b\x03\b\x03\b\x07\bu\n\b\f\b\x0E", "\bx\x0B\b\x03\t\x03\t\x05\t|\n\t\x03\n\x03\n\x03\n\x05", "\n\x81\n\n\x03\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r", "\x03\x0E\x03\x0E\x03\x0E\x07\x0E\x8C\n\x0E\f\x0E", "\x0E\x0E\x8F\x0B\x0E\x03\x0F\x03\x0F\x03\x0F\x02", "\x03\x02\x10\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16", "\x18\x1A\x1C\x02\x0E\x03\x02\x06\x07\x03\x02\b", "\x0B\x04\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02", "\x14\x17\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02", "\x12\x13\x03\x02\"#\x03\x02'.\x03\x02/6\x05\x02", "\x12\x13\x19\x199:\x02\xA2\x02\"\x03\x02\x02\x02", "\x04V\x03\x02\x02\x02\x06`\x03\x02\x02\x02\bb\x03", "\x02\x02\x02\nh\x03\x02\x02\x02\fj\x03\x02\x02\x02", "\x0Eq\x03\x02\x02\x02\x10y\x03\x02\x02\x02\x12", "\x80\x03\x02\x02\x02\x14\x82\x03\x02\x02\x02\x16", "\x84\x03\x02\x02\x02\x18\x86\x03\x02\x02\x02\x1A", "\x88\x03\x02\x02\x02\x1C\x90\x03\x02\x02\x02\x1E", "\x1F\b\x02\x01\x02\x1F#\x05\x04\x03\x02 !\t\x02", "\x02\x02!#\x05\x02\x02\r\"\x1E\x03\x02\x02\x02\"", " \x03\x02\x02\x02#L\x03\x02\x02\x02$%\f\f\x02\x02", "%&\t\x03\x02\x02&K\x05\x02\x02\r'(\f\x0B\x02\x02", "()\t\x04\x02\x02)K\x05\x02\x02\f*+\f\n\x02\x02+,\x07", "\r\x02\x02,K\x05\x02\x02\x0B-.\f\t\x02\x02./\t\x05", "\x02\x02/K\x05\x02\x02\n01\f\x07\x02\x0212\t\x06\x02", "\x022K\x05\x02\x02\b34\f\x06\x02\x0245\t\x07\x02\x02", "5K\x05\x02\x02\x0767\f\x05\x02\x0278\x07\x1A\x02", "\x028K\x05\x02\x02\x069:\f\x04\x02\x02:;\t\b\x02\x02", ";K\x05\x02\x02\x05<=\f\x03\x02\x02=>\x07\x1D\x02", "\x02>K\x05\x02\x02\x04?@\f\x0F\x02\x02@A\x07\x03", "\x02\x02AK\x05\n\x06\x02BC\f\x0E\x02\x02CD\x07\x04", "\x02\x02DE\x05\x02\x02\x02EF\x07\x05\x02\x02FK\x03", "\x02\x02\x02GH\f\b\x02\x02HI\t\t\x02\x02IK\x05\x18", "\r\x02J$\x03\x02\x02\x02J'\x03\x02\x02\x02J*\x03", "\x02\x02\x02J-\x03\x02\x02\x02J0\x03\x02\x02\x02", "J3\x03\x02\x02\x02J6\x03\x02\x02\x02J9\x03\x02\x02", "\x02J<\x03\x02\x02\x02J?\x03\x02\x02\x02JB\x03\x02", "\x02\x02JG\x03\x02\x02\x02KN\x03\x02\x02\x02LJ\x03", "\x02\x02\x02LM\x03\x02\x02\x02M\x03\x03\x02\x02", "\x02NL\x03\x02\x02\x02OW\x05\n\x06\x02PW\x05\x06", "\x04\x02QW\x05\b\x05\x02RS\x07\x1E\x02\x02ST\x05", "\x02\x02\x02TU\x07\x1F\x02\x02UW\x03\x02\x02\x02", "VO\x03\x02\x02\x02VP\x03\x02\x02\x02VQ\x03\x02\x02", "\x02VR\x03\x02\x02\x02W\x05\x03\x02\x02\x02XY\x07", " \x02\x02Ya\x07!\x02\x02Za\t\n\x02\x02[a\x07;\x02", "\x02\\a\x07<\x02\x02]a\x077\x02\x02^a\x078\x02\x02", "_a\x05\x10\t\x02`X\x03\x02\x02\x02`Z\x03\x02\x02", "\x02`[\x03\x02\x02\x02`\\\x03\x02\x02\x02`]\x03", "\x02\x02\x02`^\x03\x02\x02\x02`_\x03\x02\x02\x02", "a\x07\x03\x02\x02\x02bc\x07$\x02\x02cd\x05\x1C\x0F", "\x02d\t\x03\x02\x02\x02ei\x05\x1C\x0F\x02fi\x05", "\f\x07\x02gi\x07%\x02\x02he\x03\x02\x02\x02hf\x03", "\x02\x02\x02hg\x03\x02\x02\x02i\x0B\x03\x02\x02", "\x02jk\x05\x1C\x0F\x02km\x07\x1E\x02\x02ln\x05\x0E", "\b\x02ml\x03\x02\x02\x02mn\x03\x02\x02\x02no\x03", "\x02\x02\x02op\x07\x1F\x02\x02p\r\x03\x02\x02\x02", "qv\x05\x02\x02\x02rs\x07&\x02\x02su\x05\x02\x02", "\x02tr\x03\x02\x02\x02ux\x03\x02\x02\x02vt\x03\x02", "\x02\x02vw\x03\x02\x02\x02w\x0F\x03\x02\x02\x02", "xv\x03\x02\x02\x02y{\x07<\x02\x02z|\x05\x12\n\x02", "{z\x03\x02\x02\x02{|\x03\x02\x02\x02|\x11\x03\x02", "\x02\x02}\x81\x05\x14\x0B\x02~\x81\x05\x16\f\x02", "\x7F\x81\x07;\x02\x02\x80}\x03\x02\x02\x02\x80", "~\x03\x02\x02\x02\x80\x7F\x03\x02\x02\x02\x81", "\x13\x03\x02\x02\x02\x82\x83\t\x0B\x02\x02\x83", "\x15\x03\x02\x02\x02\x84\x85\t\f\x02\x02\x85\x17", "\x03\x02\x02\x02\x86\x87\x05\x1A\x0E\x02\x87\x19", "\x03\x02\x02\x02\x88\x8D\x05\x1C\x0F\x02\x89\x8A", "\x07\x03\x02\x02\x8A\x8C\x05\x1C\x0F\x02\x8B\x89", "\x03\x02\x02\x02\x8C\x8F\x03\x02\x02\x02\x8D\x8B", "\x03\x02\x02\x02\x8D\x8E\x03\x02\x02\x02\x8E\x1B", "\x03\x02\x02\x02\x8F\x8D\x03\x02\x02\x02\x90\x91", "\t\r\x02\x02\x91\x1D\x03\x02\x02\x02\r\"JLV`hmv{\x80", "\x8D"].join("");
@@ -16766,12 +16782,12 @@ FHIRPathParser.prototype.expression_sempred = function (localctx, predIndex) {
 exports.FHIRPathParser = FHIRPathParser;
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
-var antlr4 = __webpack_require__(3); // This class defines a complete listener for a parse tree produced by FHIRPathParser.
+var antlr4 = __webpack_require__(4); // This class defines a complete listener for a parse tree produced by FHIRPathParser.
 
 
 function FHIRPathListener() {
@@ -17012,7 +17028,7 @@ FHIRPathListener.prototype.exitIdentifier = function (ctx) {};
 exports.FHIRPathListener = FHIRPathListener;
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17106,16 +17122,16 @@ util.arraify = function (x) {
 module.exports = util;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(54);
+var util = __webpack_require__(55);
 
-var filtering = __webpack_require__(56);
+var filtering = __webpack_require__(57);
 
 var engine = {};
 engine.emptyFn = util.isEmpty;
@@ -17294,7 +17310,7 @@ engine.countFn = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17305,7 +17321,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  *  Adds the filtering and projection functions to the given FHIRPath engine.
  */
-var util = __webpack_require__(54);
+var util = __webpack_require__(55);
 
 var engine = {};
 
@@ -17414,13 +17430,13 @@ engine.ofTypeFn = function (coll, type) {
 module.exports = engine;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Combining functions.
 var combineFns = {};
 
-var existence = __webpack_require__(55);
+var existence = __webpack_require__(56);
 
 combineFns.unionOp = function (coll1, coll2) {
   return existence.distinctFn(coll1.concat(coll2));
@@ -17433,12 +17449,12 @@ combineFns.combineFn = function (coll1, coll2) {
 module.exports = combineFns;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(54);
+var util = __webpack_require__(55);
 
 var engine = {};
 
@@ -17535,15 +17551,15 @@ engine.toString = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Math functions.
-var util = __webpack_require__(54);
+var util = __webpack_require__(55);
 
-var deepEqual = __webpack_require__(60);
+var deepEqual = __webpack_require__(61);
 
 var engine = {};
 
@@ -17627,7 +17643,7 @@ engine.gte = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17825,11 +17841,11 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var deepEqual = __webpack_require__(60);
+var deepEqual = __webpack_require__(61);
 
 var engine = {}; // b is assumed to have one element and it tests whether b[0] is in a
 
@@ -17882,7 +17898,7 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports) {
 
 // This file holds code to hande the FHIRPath Math functions.
@@ -17937,7 +17953,7 @@ engine.mod = function (x, y) {
 module.exports = engine;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18000,7 +18016,7 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -18044,7 +18060,7 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18056,7 +18072,7 @@ engine.today = function () {};
 module.exports = engine;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18141,7 +18157,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18149,6 +18165,8 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * A package to handle FHIR DiagnosticReport for LForms
  * https://www.hl7.org/fhir/diagnosticreport.html
+ *
+ * Note that this was written for DSTU2 and has not been updated.
  *
  * It provides the following functions:
  * createDiagnosticReport()
@@ -18212,16 +18230,6 @@ var dr = {
   },
 
   /**
-   * Generate an almost unique ID for a given Observation code
-   * @param itemCode code of the item
-   * @returns {string} a unique id
-   * @private
-   */
-  _getUniqueId: function _getUniqueId(itemCode) {
-    return itemCode + "-" + Math.random().toString(36).substr(2);
-  },
-
-  /**
    * A recursive function that generates the DiagnosticReport content by
    * going through the LForms form data structure
    * @param item an LForms item
@@ -18240,7 +18248,7 @@ var dr = {
       var subItem = item.items[i];
 
       if (subItem) {
-        var obx = this._createObservation(subItem);
+        var obx = this._commonExport._createObservation(subItem, this._commonExport._getUniqueId(subItem.questionCode));
 
         if (subItem.items && subItem.items.length > 0) {
           obx.related = [];
@@ -18267,104 +18275,6 @@ var dr = {
     }
 
     return content;
-  },
-
-  /**
-   * Create an Observation instance from an LForms item object
-   * @param item an LForms item object
-   * @returns {{}} an observation instance
-   * @private
-   */
-  _createObservation: function _createObservation(item) {
-    // get key and value
-    var valueX = {
-      key: "",
-      val: ""
-    };
-    var dataType = item.dataType; // any item has a unit must be a numerical type, let use REAL for now.
-
-    if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
-      dataType = "REAL";
-    }
-
-    switch (dataType) {
-      case "INT":
-      case "REAL":
-        valueX.key = "valueQuantity";
-        valueX.val = {
-          "value": item.value,
-          "unit": item.unit ? item.unit.name : null,
-          "system": item.unit ? item.unit.system : null,
-          "code": item.unit ? item.unit.code : null
-        };
-        break;
-
-      case "DT":
-        valueX.key = "valueDate";
-        valueX.val = item.value;
-        break;
-
-      case "DTM":
-        valueX.key = "valueDateTime";
-        valueX.val = item.value;
-        break;
-
-      case "CNE":
-      case "CWE":
-        valueX.key = "valueCodeableConcept";
-        var max = item.answerCardinality.max;
-
-        if (max && (max === "*" || parseInt(max) > 1)) {
-          var coding = [];
-
-          for (var j = 0, jLen = item.value.length; j < jLen; j++) {
-            coding.push({
-              "system": "http://loinc.org",
-              "code": item.value[j].code,
-              "display": item.value[j].text
-            });
-          }
-
-          valueX.val = {
-            "coding": coding
-          };
-        } else {
-          valueX.val = {
-            "coding": [{
-              "system": "http://loinc.org",
-              "code": item.value.code,
-              "display": item.value.text
-            }],
-            "text": item.value.text
-          };
-        }
-
-        break;
-
-      default:
-        valueX.key = "valueString";
-        valueX.val = item.value;
-    } // create Observation
-
-
-    var obx = {
-      "resourceType": "Observation",
-      "id": this._getUniqueId(item.questionCode),
-      "status": "final",
-      "code": {
-        "coding": [{
-          "system": "http://loinc.org",
-          "code": item.questionCode
-        }],
-        "text": item.question
-      }
-    };
-
-    if (!item.header) {
-      obx[valueX.key] = valueX.val;
-    }
-
-    return obx;
   },
 
   /**
@@ -18508,7 +18418,7 @@ var dr = {
 
       dr = {
         "resourceType": "DiagnosticReport",
-        "id": this._getUniqueId(formAndUserData.code),
+        "id": this._commonExport._getUniqueId(formAndUserData.code),
         "status": "final",
         "code": {
           "coding": [{
@@ -18591,11 +18501,11 @@ var dr = {
           break;
 
         case "DT":
-          item.value = obx.valueDate;
+          item.value = LForms.Util.stringToDTDateISO(obx.valueDate);
           break;
 
         case "DTM":
-          item.value = obx.valueDateTime;
+          item.value = LForms.Util.stringToDate(obx.valueDateTime);
           break;
 
         case "CNE":
@@ -18914,7 +18824,7 @@ var dr = {
 
 
     if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
-      var whenDone = new Date(dr.effectiveDateTime);
+      var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
 
       if (whenDone) {
         newFormData.templateOptions.formHeaderItems[0].value = whenDone;
@@ -18927,7 +18837,139 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 68 */
+/* 69 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+
+
+
+/**
+ *  Defines export functions that are the same across the different FHIR
+ *  versions and that are used by both the SDC and DiagnosticReport exports.
+ */
+
+var self = {
+  /**
+   * Create an Observation instance from an LForms item object
+   * @param item an LForms item object
+   * @param id (optional) an "id" value for the Observation.
+   * @returns {{}} an observation instance
+   * @private
+   */
+  _createObservation: function _createObservation(item, obxID) {
+    // get key and value
+    var valueX = {
+      key: "",
+      val: ""
+    };
+    var dataType = item.dataType; // any item has a unit must be a numerical type, let use REAL for now.
+
+    if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
+      dataType = "REAL";
+    }
+
+    switch (dataType) {
+      case "INT":
+      case "REAL":
+        if (item.unit) {
+          valueX.key = "valueQuantity";
+          valueX.val = {
+            "value": item.value,
+            "unit": item.unit ? item.unit.name : null,
+            "system": item.unit ? item.unit.system : null,
+            "code": item.unit ? item.unit.code : null
+          };
+        } else {
+          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
+          valueX.val = item.value;
+        }
+
+        break;
+
+      case "DT":
+        valueX.key = "valueDate";
+        valueX.val = item.value;
+        break;
+
+      case "DTM":
+        valueX.key = "valueDateTime";
+        valueX.val = item.value;
+        break;
+
+      case "CNE":
+      case "CWE":
+        // TBD -- This is wrong.  Multi-valued list fields should generate an array of Observations, each with one value.
+        valueX.key = "valueCodeableConcept";
+        var max = item.answerCardinality.max;
+        var itemVals;
+        if (max && (max === "*" || parseInt(max) > 1)) itemVals = item.value;else itemVals = [item.value];
+        var coding = [];
+
+        for (var j = 0, jLen = itemVals.length; j < jLen; j++) {
+          var val = itemVals[j];
+          var c = {
+            "code": val.code,
+            "display": val.text
+          };
+          var cSystem = val.system || item.answerCodeSystem;
+
+          if (cSystem) {
+            cSystem = LForms.Util.getCodeSystem(cSystem);
+            c.system = cSystem;
+          }
+
+          coding.push(c);
+        }
+
+        valueX.val = {
+          "coding": coding
+        };
+        if (coding.length === 1) // TBD after the above fix, length should always be 1
+          valueX.val.text = coding[0].display;
+        break;
+
+      default:
+        valueX.key = "valueString";
+        valueX.val = item.value;
+    } // create Observation
+
+
+    var qCodeSystem = !item.questionCodeSystem || item.questionCodeSystem === 'LOINC' ? _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] : item.questionCodeSystem;
+    var obx = {
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "coding": item.codeList,
+        "text": item.question
+      }
+    };
+    if (obxID) obx.id = obxID;
+
+    if (!item.header) {
+      obx[valueX.key] = valueX.val;
+    }
+
+    return obx;
+  },
+
+  /**
+   * Generate an almost unique ID for a given Observation code
+   * @param prefix A prefix for the ID (e.g. a code or resource name)
+   * @returns {string} a unique id
+   * @private
+   */
+  _getUniqueId: function _getUniqueId(prefix) {
+    this._idCtr || (this._idCtr = 0);
+    return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' + Math.random().toString(16).substr(2);
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (self);
+
+/***/ }),
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18958,104 +19000,55 @@ var self = {
   stdQRProfile: 'http://hl7.org/fhir/' + fhirVersionNum + '/StructureDefinition/QuestionnaireResponse',
 
   /**
-   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
    * @param lfData a LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns an array of QuestionnaireResponse and Observations.  The caller may
+   *  wish to put all of the returned resources into a transaction Bundle for
+   *  creating them on a FHIR server.
    */
-  convertLFormsToQuestionnaire: function convertLFormsToQuestionnaire(lfData, noExtensions) {
-    var target = {};
+  convertLFormsToFHIRData: function convertLFormsToFHIRData(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
 
-    if (lfData) {
-      var source = angular.copy(lfData);
+    if (!qr.id) {
+      qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code || qr.identifier || 'QR');
+    }
 
-      this._removeRepeatingItems(source);
+    var qrRef = 'QuestionnaireResponse/' + qr.id;
+    var rtn = [qr];
+    var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
 
-      this._setFormLevelFields(target, source, noExtensions);
+    for (var i = 0, len = lfData.items.length; i < len; ++i) {
+      var item = lfData.items[i];
 
-      if (source.items && Array.isArray(source.items)) {
-        target.item = [];
+      if (item._obsLinkPeriodExt && item.value) {
+        var obs = this._commonExport._createObservation(item); // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
 
-        for (var i = 0, iLen = source.items.length; i < iLen; i++) {
-          var newItem = this._processItem(source.items[i], source, noExtensions);
 
-          target.item.push(newItem);
+        if (qr.basedOn) obs.basedOn = qr.basedOn;
+        if (qr.subject) obs.subject = qr.subject;
+        if (qr.context) obs.context = qr.context;
+
+        if (qr.authored) {
+          obs.effectiveDateTime = qr.authored;
+          obs.issued = qr.authored;
         }
-      }
-    } // FHIR doesn't allow null values, strip them out.
 
-
-    LForms.Util.pruneNulls(target);
-    return target;
-  },
-
-  /**
-   * Remove repeating items in a form data object
-   * @param source a LForms form data object
-   * @private
-   */
-  _removeRepeatingItems: function _removeRepeatingItems(source) {
-    if (source.items && Array.isArray(source.items)) {
-      for (var i = source.items.length - 1; i >= 0; i--) {
-        // if it is a repeating item, whose _id is not 1
-        if (source.items[i]._id > 1) {
-          source.items.splice(i, 1);
-        } else {
-          this._removeRepeatingItems(source.items[i]);
-        }
+        if (qr.author && objPerformers.indexOf(qr.author.type) >= 0) obs.performer = qr.author;
+        rtn.push(obs);
       }
     }
-  },
 
-  /**
-   * Set form level attributes
-   * @param target a Questionnaire object
-   * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @private
-   */
-  _setFormLevelFields: function _setFormLevelFields(target, source, noExtensions) {
-    // resourceType
-    target.resourceType = "Questionnaire"; // status
-
-    target.status = "draft"; // date
-
-    target.date = LForms.Util.dateToDTMString(new Date()); // version, assuming questionnaires are from LOINC forms
-
-    target.version = "2.56"; // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
-    // meta
-
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // title
-
-    target.title = source.name; // name
-
-    target.name = source.name;
-
-    var codeSystem = this._getCodeSystem(source.codeSystem); // "identifier": [
-
-
-    target.identifier = [{
-      "system": codeSystem,
-      "value": source.code
-    }]; // code
-
-    target.code = [{
-      "system": codeSystem,
-      "code": source.code,
-      "display": source.name
-    }]; // subjectType
-
-    target.subjectType = ["Patient", "Person"];
-
-    if (source.id) {
-      target.id = source.id;
-    }
+    return rtn;
   },
 
   /**
@@ -19071,7 +19064,9 @@ var self = {
     var targetItem = {}; // type
 
     targetItem.type = this._getFhirDataType(item); // id (empty for new record)
-    // extension
+    // code
+
+    targetItem.code = item.codeList; // extension
 
     targetItem.extension = []; // required
 
@@ -19120,21 +19115,7 @@ var self = {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
 
-
-    if (item.codingInstructions) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-        "valueCodeableConcept": {
-          "text": item.codingInstructions,
-          "coding": [{
-            "code": item.codingInstructionsFormat,
-            "display": item.codingInstructions
-          }]
-        }
-      });
-    }
 
     if (item._isHidden) {
       targetItem.extension.push({
@@ -19144,21 +19125,7 @@ var self = {
     } // linkId
 
 
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath;
-
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem); // code
-    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-    // don't create a 'code' when converting it back to Questionnaire.
-
-
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    } // text
-
+    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // text
 
     targetItem.text = item.question; // enableWhen
 
@@ -19195,6 +19162,34 @@ var self = {
         var newItem = this._processItem(item.items[i], source, noExtensions);
 
         targetItem.item.push(newItem);
+      }
+    } // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+
+
+    if (item.codingInstructions) {
+      var helpItem = {
+        text: item.codingInstructions,
+        type: "display",
+        linkId: targetItem.linkId + "-help",
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem);
+      } else {
+        targetItem.item = [helpItem];
       }
     } // handle special constraints for "display" item
 
@@ -19327,33 +19322,6 @@ var self = {
   },
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function _getCodeSystem(codeSystemInLForms) {
-    var codeSystem;
-
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-
-      case "CDE": // TBD
-
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-
-        break;
-
-      default:
-        codeSystem = codeSystemInLForms;
-    }
-
-    return codeSystem;
-  },
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -19441,7 +19409,7 @@ var self = {
           });
         }
 
-        if (answer.score) {
+        if (answer.score !== null && answer.score !== undefined) {
           ext.push({
             "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal": parseFloat(answer.score)
@@ -19461,7 +19429,7 @@ var self = {
       };
 
       if (item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -19535,7 +19503,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE') {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
 
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j = 0, jLen = values[i].length; j < jLen; j++) {
@@ -19632,7 +19600,9 @@ var self = {
 
 
       if (dataType === 'CWE' || dataType === 'CNE') {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = null,
+            coding = null;
+        if (item.answerCodeSystem) codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
@@ -19645,18 +19615,20 @@ var self = {
           //   })
           // };
           // pick the first one only
-          targetItem[valueKey] = {
-            "system": codeSystem,
+          coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
           };
+          if (codeSystem) coding.system = codeSystem;
+          targetItem[valueKey] = coding;
         } // single selection, item.defaultAnswer is an object
         else {
-            targetItem[valueKey] = {
-              "system": codeSystem,
+            coding = {
               "code": item.defaultAnswer.code,
               "display": item.defaultAnswer.text
             };
+            if (codeSystem) coding.system = codeSystem;
+            targetItem[valueKey] = coding;
           }
       } // for Quantity,
       // [{
@@ -19794,7 +19766,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19803,7 +19775,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /**
  *  Defines SDC export functions that are the same across the different FHIR
- *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  versions.  The function takes the SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
 function addCommonSDCExportFns(ns) {
@@ -19848,6 +19820,89 @@ function addCommonSDCExportFns(ns) {
     LForms.Util.pruneNulls(target);
     if (subject) target["subject"] = LForms.Util.createLocalFHIRReference(subject);
     return target;
+  };
+  /**
+   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @returns {{}}
+   */
+
+
+  self.convertLFormsToQuestionnaire = function (lfData, noExtensions) {
+    var target = {};
+
+    if (lfData) {
+      var source = angular.copy(lfData);
+
+      if (!(source instanceof LForms.LFormsData)) {
+        source = new LForms.LFormsData(source);
+      }
+
+      this._removeRepeatingItems(source);
+
+      this._setFormLevelFields(target, source, noExtensions);
+
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+
+        for (var i = 0, iLen = source.items.length; i < iLen; i++) {
+          var newItem = this._processItem(source.items[i], source, noExtensions);
+
+          target.item.push(newItem);
+        }
+      }
+    } // FHIR doesn't allow null values, strip them out.
+
+
+    LForms.Util.pruneNulls(target);
+    return target;
+  };
+  /**
+   * Remove repeating items in a form data object
+   * @param source a LForms form data object
+   * @private
+   */
+
+
+  self._removeRepeatingItems = function (source) {
+    if (source.items && Array.isArray(source.items)) {
+      for (var i = source.items.length - 1; i >= 0; i--) {
+        // if it is a repeating item, whose _id is not 1
+        if (source.items[i]._id > 1) {
+          source.items.splice(i, 1);
+        } else {
+          this._removeRepeatingItems(source.items[i]);
+        }
+      }
+    }
+  };
+  /**
+   * Set form level attributes
+   * @param target a Questionnaire object
+   * @param source a LForms form object
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @private
+   */
+
+
+  self._setFormLevelFields = function (target, source, noExtensions) {
+    this.copyFields(source, target, this.formLevelFields);
+    target.code = source.codeList; // If missing, assign title
+
+    if (!target.title) {
+      target.title = target.name;
+    } // resourceType
+
+
+    target.resourceType = "Questionnaire";
+    target.status = target.status ? target.status : "draft"; // meta
+
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
   };
   /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
@@ -20142,7 +20197,7 @@ function addCommonSDCExportFns(ns) {
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
 
     target.identifier = {
-      "system": this._getCodeSystem(source.codeSystem),
+      "system": LForms.Util.getCodeSystem(source.codeSystem),
       "value": source.code
     }; // status, required
     // "in-progress", "completed", "amended"
@@ -20150,11 +20205,15 @@ function addCommonSDCExportFns(ns) {
     target.status = "completed"; // authored, required
 
     target.authored = LForms.Util.dateToDTMString(new Date()); // questionnaire , required
+    // We do not have the ID at this point, so leave it unset for now.  Note
+    // that the fomat has also changed from Reference to canonical in R4.
 
+    /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+    */
   };
   /**
    * Set unit attributes to a given FHIR quantity.
@@ -20242,7 +20301,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20263,6 +20322,7 @@ function addSDCImportFns(ns) {
   "use strict";
 
   var self = ns;
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
    *
@@ -20272,17 +20332,19 @@ function addSDCImportFns(ns) {
    */
 
   self._processFormLevelFields = function (lfData, questionnaire) {
-    lfData.name = questionnaire.title;
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
 
-    var code = self._getCode(questionnaire);
-
-    if (code) {
-      lfData.code = code.code;
-      lfData.codeSystem = code.system;
+    if (lfData.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = lfData.code;
+      delete lfData.code;
     }
 
-    if (questionnaire.id) {
-      lfData.id = questionnaire.id;
+    var codeAndSystemObj = self._getCode(questionnaire);
+
+    if (codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
     }
   };
   /**
@@ -20372,7 +20434,7 @@ function addSDCImportFns(ns) {
 
     self._processDataType(targetItem, qItem);
 
-    _processCodeAndLinkId(targetItem, qItem);
+    self._processCodeAndLinkId(targetItem, qItem);
 
     _processDisplayItemCode(targetItem, qItem);
 
@@ -20386,17 +20448,15 @@ function addSDCImportFns(ns) {
 
     _processRestrictions(targetItem, qItem);
 
-    _processCodingInstructions(targetItem, qItem);
-
     self._processHiddenItem(targetItem, qItem);
 
     _processUnitList(targetItem, qItem);
 
+    _processAnswers(targetItem, qItem, containedVS);
+
     self._processDefaultAnswer(targetItem, qItem);
 
     _processExternallyDefined(targetItem, qItem);
-
-    _processAnswers(targetItem, qItem, containedVS);
 
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
 
@@ -20406,9 +20466,16 @@ function addSDCImportFns(ns) {
       targetItem.items = [];
 
       for (var i = 0; i < qItem.item.length; i++) {
-        var newItem = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+        var help = _processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
 
-        targetItem.items.push(newItem);
+
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+        } else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+
+          targetItem.items.push(item);
+        }
       }
     }
 
@@ -20574,9 +20641,12 @@ function addSDCImportFns(ns) {
           if (optionKey[0] === 'valueCoding') {
             // Only one value[x] is expected
             if (option[optionKey[0]].code !== undefined) answer.code = option[optionKey[0]].code;
-            if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; //Lforms has answer code system at item level, expects all options to have one code system!
+            if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; // TBD- Lforms has answer code system at item level, expects all options to have one code system!
 
-            if (option[optionKey[0]].system !== undefined) lfItem.answerCodeSystem = option[optionKey[0]].system;
+            if (option[optionKey[0]].system !== undefined) {
+              answer.codeSystem = option[optionKey[0]].system;
+              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
+            }
           } else {
             answer.text = option[optionKey[0]].toString();
           }
@@ -20591,7 +20661,7 @@ function addSDCImportFns(ns) {
         lfItem.answers = vs.answers;
 
         if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = _toLfCodeSystem(vs.systems[0]);
+          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
         } else if (vs.hasAnswerCodeSystems) {
           console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s', vs.systems.join(', '));
         }
@@ -20622,7 +20692,8 @@ function addSDCImportFns(ns) {
 
 
   self._processDefaultAnswer = function (lfItem, qItem) {
-    var val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
+    var val = qItem.initialCoding;
+    if (val) val._type = 'Coding';else val = self._getFHIRValueWithPrefixKey(qItem, /^initial/);
 
     if (val) {
       this._processFHIRValues(lfItem, [val], true);
@@ -20748,88 +20819,26 @@ function addSDCImportFns(ns) {
     }
   }
   /**
-   * Parse questionnaire item for code and code system
-   * @param lfItem {object} - LForms item object to assign question code
+   * Parse questionnaire item for coding instructions
+   *
    * @param qItem {object} - Questionnaire item object
    * @private
    */
 
 
-  function _processCodeAndLinkId(lfItem, qItem) {
-    var code = self._getCode(qItem);
+  function _processCodingInstructions(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    var ret = null;
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
 
-    if (code) {
-      lfItem.questionCode = code.code;
-      lfItem.questionCodeSystem = code.system;
-    } // use linkId as questionCode, which should not be exported as code
-    else {
-        lfItem.questionCode = qItem.linkId;
-        lfItem.questionCodeSystem = "LinkId";
-      }
-
-    lfItem.linkId = qItem.linkId;
-  }
-  /**
-   * Convert the given code system to LForms internal code system. Currently
-   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
-   * @param codeSystem
-   * @private
-   */
-
-
-  function _toLfCodeSystem(codeSystem) {
-    var ret = codeSystem;
-
-    switch (codeSystem) {
-      case 'http://loinc.org':
-        ret = 'LOINC';
-        break;
+    if (qItem.type === "display" && ci) {
+      ret = {
+        codingInstructions: qItem.text
+      };
     }
 
     return ret;
-  }
-  /**
-   * Get an object with code and code system
-   *
-   * @param questionnaireItemOrResource {object} - question
-   * @private
-   */
-
-
-  self._getCode = function (questionnaireItemOrResource) {
-    var code = null;
-
-    if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
-      code = {
-        code: questionnaireItemOrResource.code[0].code,
-        system: _toLfCodeSystem(questionnaireItemOrResource.code[0].system)
-      };
-    } // If code is missing look for identifier.
-    else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
-        code = {
-          code: questionnaireItemOrResource.identifier[0].value,
-          system: _toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
-        };
-      }
-
-    return code;
-  };
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param lfItem {object} - LForms item object to assign coding instructions
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processCodingInstructions(lfItem, qItem) {
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCodingInstructions);
-
-    if (ci) {
-      lfItem.codingInstructions = ci.valueCodeableConcept.coding[0].display;
-      lfItem.codingInstructionsFormat = ci.valueCodeableConcept.coding[0].code;
-    }
   }
   /**
    * Parse questionnaire item for restrictions
@@ -21169,7 +21178,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21270,6 +21279,25 @@ function addCommonSDCFns(ns) {
     }
 
     return ret;
+  };
+  /**
+   * Do a shallow copy of specified fields from source to target.
+   *
+   * @param source - Source object
+   * @param target - Target object
+   * @param fieldList - Array of fields to copy from the source. If the field is
+   * not found in the source, it is ignored.
+   */
+
+
+  self.copyFields = function (source, target, fieldList) {
+    if (source && target && fieldList && fieldList.length > 0) {
+      fieldList.forEach(function (field) {
+        if (source.hasOwnProperty(field)) {
+          target[field] = source[field];
+        }
+      });
+    }
   }; // Store the UCUM code system URI
 
 
@@ -21279,7 +21307,7 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21301,15 +21329,20 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+  self.formLevelFields = [// Resource
+  'id', 'meta', 'implicitRules', 'language', // Domain Resource
+  'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
+  'date', 'version', 'title', 'name', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
+  'subjectType', 'derivedFrom', // New in R4
+  'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
+  self.itemLevelIgnoredFields = ['definition', 'prefix'];
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -21333,7 +21366,8 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
 
         for (var i = 0; i < fhirData.item.length; i++) {
-          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap); // no instructions on the questionnaire level
+
 
           target.items.push(item);
         }
@@ -21382,7 +21416,10 @@ function addCommonSDCImportFns(ns) {
     // starts with "value".
     var val = null;
     var lfDataType = lfItem.dataType;
-    var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    var fhirValType = this._lformsTypesToFHIRFields[lfDataType]; // fhirValType is now the FHIR data type for a Questionnaire.  However,
+    // where Questionnaire uses Coding, Observation uses CodeableConcept.
+
+    if (fhirValType == 'Coding') fhirValType = 'CodeableConcept';
     if (fhirValType) val = obs['value' + fhirValType];
 
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -21403,7 +21440,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system; // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
 
-          if (valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
+          if (valSystem && valSystem[valSystem.length - 1] === '/') valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
 
@@ -21432,13 +21469,11 @@ function addCommonSDCImportFns(ns) {
             }
           }
 
-          if (!matchingUnit) unitOkay = false;
+          if (!matchingUnit) unitOkay = false;else lfItem.unit = matchingUnit;
         }
       }
 
       if (unitOkay) {
-        lfItem.unit = matchingUnit;
-
         this._processFHIRValues(lfItem, [val]);
       }
     }
@@ -21463,9 +21498,41 @@ function addCommonSDCImportFns(ns) {
       var answer = null;
 
       if (lfDataType === 'CWE' || lfDataType === 'CNE') {
-        answer = {};
-        if (fhirVal.code !== undefined) answer.code = fhirVal.code;
-        if (fhirVal.display !== undefined) answer.text = fhirVal.display;
+        var codings = null;
+
+        if (fhirVal._type == 'CodeableConcept') {
+          codings = fhirVal.coding;
+        } else if (fhirVal._type == 'Coding') {
+          codings = [fhirVal];
+        }
+
+        if (!codings) {
+          // maybe a string?
+          if (lfDataType === 'CWE') {
+            answer = fhirVal;
+          }
+        } else {
+          // Pick a Coding that is appropriate for this list item.
+          if (lfItem.answers) {
+            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
+            if (itemAnswersFHIRCodeSystem) itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
+            var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
+
+            for (var k = 0, kLen = codings.length; k < kLen && !answer; ++k) {
+              var coding = codings[k];
+
+              for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
+                var system = coding.system;
+                var listAnswer = itemAnswers[j];
+                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
+
+                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                  answer = itemAnswers[j]; // include label in answer text
+                }
+              }
+            }
+          }
+        }
       } else if (fhirVal._type === 'Quantity' && (lfDataType === 'QTY' || lfDataType === 'REAL' || lfDataType === 'INT')) {
         if (fhirVal.value !== undefined) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
@@ -21474,7 +21541,7 @@ function addCommonSDCImportFns(ns) {
         answer = fhirVal;
       }
 
-      answers.push(answer);
+      if (answer) answers.push(answer);
     }
 
     if (isMultiple) {
@@ -21515,6 +21582,28 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
+  };
+  /**
+   * Parse questionnaire item for code and code system
+   * @param lfItem {object} - LForms item object to assign question code
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processCodeAndLinkId = function (lfItem, qItem) {
+    var code = self._getCode(qItem);
+
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    } // use linkId as questionCode, which should not be exported as code
+    else {
+        lfItem.questionCode = qItem.linkId;
+        lfItem.questionCodeSystem = "LinkId";
+      }
+
+    lfItem.linkId = qItem.linkId;
   };
   /**
    * Parse questionnaire item for display control
@@ -21581,7 +21670,7 @@ function addCommonSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
-  }; // QuestionnaireResponse Import
+  }; // ---------------- QuestionnaireResponse Import ---------------
 
 
   var qrImport = self._mergeQR;
@@ -21593,15 +21682,18 @@ function addCommonSDCImportFns(ns) {
    */
 
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData(); // The reference to _mergeQR below is here because this function gets copied to
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      formData = new LForms.LFormsData(formData).getFormData();
+    } // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
+
 
     var qrInfo = qrImport._getQRStructure(qr);
 
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
+    qrImport._processQRItemAndLFormsItem(qrInfo, formData);
 
-    return newFormData;
+    return formData;
   };
   /**
    * Merge data into items on the same level
@@ -21786,6 +21878,51 @@ function addCommonSDCImportFns(ns) {
 
     if (qResource.item) {
       ret = traverse(qResource.item, ret);
+    }
+
+    return ret;
+  };
+  /**
+   * Get an object with code and code system
+   *
+   * @param questionnaireItemOrResource {object} - question
+   * @private
+   */
+
+
+  self._getCode = function (questionnaireItemOrResource) {
+    var code = null;
+
+    if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.code) && questionnaireItemOrResource.code.length) {
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
+    } // If code is missing look for identifier.
+    else if (questionnaireItemOrResource && Array.isArray(questionnaireItemOrResource.identifier) && questionnaireItemOrResource.identifier.length) {
+        code = {
+          code: questionnaireItemOrResource.identifier[0].value,
+          system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+        };
+      }
+
+    return code;
+  };
+  /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+
+
+  self._toLfCodeSystem = function (codeSystem) {
+    var ret = codeSystem;
+
+    switch (codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
     }
 
     return ret;

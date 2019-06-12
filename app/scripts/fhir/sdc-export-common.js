@@ -1,6 +1,6 @@
 /**
  *  Defines SDC export functions that are the same across the different FHIR
- *  versions.  The function takes SDC namespace object defined in the sdc export
+ *  versions.  The function takes the SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
 function addCommonSDCExportFns(ns) {
@@ -43,6 +43,92 @@ function addCommonSDCExportFns(ns) {
 
     return target;
   };
+
+
+  /**
+   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
+   * @param lfData a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @returns {{}}
+   */
+  self.convertLFormsToQuestionnaire = function(lfData, noExtensions) {
+    var target = {};
+
+    if (lfData) {
+      var source = angular.copy(lfData);
+      if(! (source instanceof LForms.LFormsData)) {
+        source = new LForms.LFormsData(source);
+      }
+      this._removeRepeatingItems(source);
+      this._setFormLevelFields(target, source, noExtensions);
+
+      if (source.items && Array.isArray(source.items)) {
+        target.item = [];
+        for (var i=0, iLen=source.items.length; i<iLen; i++) {
+          var newItem = this._processItem(source.items[i], source, noExtensions);
+          target.item.push(newItem);
+        }
+
+      }
+    }
+
+    // FHIR doesn't allow null values, strip them out.
+    LForms.Util.pruneNulls(target);
+    return target;
+  };
+
+
+  /**
+   * Remove repeating items in a form data object
+   * @param source a LForms form data object
+   * @private
+   */
+  self._removeRepeatingItems = function(source) {
+
+    if (source.items && Array.isArray(source.items)) {
+      for (var i= source.items.length-1; i>=0; i--) {
+        // if it is a repeating item, whose _id is not 1
+        if (source.items[i]._id > 1) {
+          source.items.splice(i,1);
+        }
+        else {
+          this._removeRepeatingItems(source.items[i]);
+        }
+      }
+    }
+  };
+
+
+  /**
+   * Set form level attributes
+   * @param target a Questionnaire object
+   * @param source a LForms form object
+   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @private
+   */
+  self._setFormLevelFields = function(target, source, noExtensions) {
+
+    this.copyFields(source, target, this.formLevelFields);
+    target.code = source.codeList;
+
+    // If missing, assign title
+    if(!target.title) {
+      target.title = target.name;
+    }
+
+    // resourceType
+    target.resourceType = "Questionnaire";
+    target.status = target.status ? target.status : "draft";
+
+    // meta
+    var profile = noExtensions ? this.stdQProfile : this.QProfile;
+
+    target.meta = target.meta ? target.meta : {};
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
+  };
+
 
   /**
    * Process itemControl based on LForms item's answerLayout and questionLayout
@@ -351,7 +437,7 @@ function addCommonSDCExportFns(ns) {
 
     // "identifier":
     target.identifier = {
-      "system": this._getCodeSystem(source.codeSystem),
+      "system": LForms.Util.getCodeSystem(source.codeSystem),
       "value": source.code
     };
 
@@ -363,10 +449,14 @@ function addCommonSDCExportFns(ns) {
     target.authored = LForms.Util.dateToDTMString(new Date());
 
     // questionnaire , required
+    // We do not have the ID at this point, so leave it unset for now.  Note
+    // that the fomat has also changed from Reference to canonical in R4.
+    /*
     target.questionnaire = {
       // questionnaireId should be an id of a related existing questionnaire resource stored in the server
       "reference": "Questionnaire/{{questionnaireId}}"
     };
+    */
   };
 
 

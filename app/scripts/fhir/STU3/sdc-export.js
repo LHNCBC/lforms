@@ -25,118 +25,55 @@ var self = {
   stdQProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/Questionnaire',
   stdQRProfile: 'http://hl7.org/fhir/'+fhirVersionNum+'/StructureDefinition/QuestionnaireResponse',
 
+
   /**
-   * Convert LForms form definition to standard FHIR Questionnaire or FHIR SDC Questionnaire
+   *  Convert LForms captured data to a bundle consisting of a FHIR SDC
+   *  QuestionnaireResponse and any extractable resources. (Currently this means
+   *  any Observations that can be extracted via the observationLinkPeriod
+   *  extension).
+   *
    * @param lfData a LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
+   *  The default is false.
+   * @param subject A local FHIR resource that is the subject of the output resource.
+   *  If provided, a reference to this resource will be added to the output FHIR
+   *  resource when applicable.
+   * @returns an array of QuestionnaireResponse and Observations.  The caller may
+   *  wish to put all of the returned resources into a transaction Bundle for
+   *  creating them on a FHIR server.
    */
-  convertLFormsToQuestionnaire: function(lfData, noExtensions) {
-    var target = {};
-
-    if (lfData) {
-      var source = angular.copy(lfData);
-      this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source, noExtensions);
-
-      if (source.items && Array.isArray(source.items)) {
-        target.item = [];
-        for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          var newItem = this._processItem(source.items[i], source, noExtensions);
-          target.item.push(newItem);
+  convertLFormsToFHIRData: function(lfData, noExtensions, subject) {
+    var qr = this.convertLFormsToQuestionnaireResponse(lfData, noExtensions, subject);
+    if (!qr.id) {
+      qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code ||
+        qr.identifier || 'QR')
+    }
+    var qrRef = 'QuestionnaireResponse/'+qr.id;
+    var rtn = [qr];
+    var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
+    for (var i=0, len=lfData.items.length; i<len; ++i) {
+      var item = lfData.items[i];
+      if (item._obsLinkPeriodExt && item.value) {
+        var obs = this._commonExport._createObservation(item);
+        // Following
+        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        if (qr.basedOn)
+          obs.basedOn = qr.basedOn;
+        if (qr.subject)
+          obs.subject = qr.subject;
+        if (qr.context)
+          obs.context = qr.context;
+        if (qr.authored) {
+          obs.effectiveDateTime = qr.authored;
+          obs.issued = qr.authored;
         }
+        if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
+          obs.performer = qr.author;
 
+        rtn.push(obs);
       }
     }
-
-    // FHIR doesn't allow null values, strip them out.
-    LForms.Util.pruneNulls(target);
-    return target;
-  },
-
-
-  /**
-   * Remove repeating items in a form data object
-   * @param source a LForms form data object
-   * @private
-   */
-  _removeRepeatingItems: function(source) {
-
-    if (source.items && Array.isArray(source.items)) {
-      for (var i= source.items.length-1; i>=0; i--) {
-        // if it is a repeating item, whose _id is not 1
-        if (source.items[i]._id > 1) {
-          source.items.splice(i,1);
-        }
-        else {
-          this._removeRepeatingItems(source.items[i]);
-        }
-      }
-    }
-  },
-
-
-  /**
-   * Set form level attributes
-   * @param target a Questionnaire object
-   * @param source a LForms form object
-   * @param noExtensions  a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @private
-   */
-  _setFormLevelFields: function(target, source, noExtensions) {
-
-    // resourceType
-    target.resourceType = "Questionnaire";
-
-    // status
-    target.status = "draft";
-
-    // date
-    target.date = LForms.Util.dateToDTMString(new Date());
-
-    // version, assuming questionnaires are from LOINC forms
-    target.version = "2.56";
-
-    // url
-    // TODO - Commented out until we figure out the right url. -Ajay
-    // target.url = "http://hl7.org/fhir/us/sdc/Questionnaire/" + source.code;
-
-    // meta
-    var profile = noExtensions ? this.stdQProfile : this.QProfile;
-
-    target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
-
-    // title
-    target.title = source.name;
-
-    // name
-    target.name = source.name;
-
-    var codeSystem = this._getCodeSystem(source.codeSystem);
-
-    // "identifier": [
-    target.identifier = [{
-      "system": codeSystem,
-      "value": source.code
-    }];
-
-    // code
-    target.code = [{
-      "system": codeSystem,
-      "code": source.code,
-      "display": source.name
-    }];
-
-    // subjectType
-    target.subjectType = ["Patient", "Person"];
-
-    if(source.id) {
-      target.id = source.id;
-    }
-
+    return rtn;
   },
 
 
@@ -154,8 +91,11 @@ var self = {
 
     // type
     targetItem.type = this._getFhirDataType(item);
-  
+
     // id (empty for new record)
+
+    // code
+    targetItem.code = item.codeList;
 
     // extension
     targetItem.extension = [];
@@ -215,20 +155,6 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
-    if (item.codingInstructions) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory",
-        "valueCodeableConcept": {
-          "text": item.codingInstructions,
-          "coding": [{
-            "code": item.codingInstructionsFormat,
-            "display": item.codingInstructions
-          }]
-        }
-      });
-    }
-
     if(item._isHidden) {
       targetItem.extension.push({
         url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
@@ -238,19 +164,6 @@ var self = {
 
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
-
-    var codeSystem = this._getCodeSystem(item.questionCodeSystem);
-
-    // code
-    // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
-    // don't create a 'code' when converting it back to Questionnaire.
-    if (codeSystem !== 'LinkId') {
-      targetItem.code = [{
-        "system": codeSystem,
-        "code": item.questionCode,
-        "display": item.question
-      }];
-    }
 
     // text
     targetItem.text = item.question;
@@ -287,6 +200,37 @@ var self = {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var newItem = this._processItem(item.items[i], source, noExtensions);
         targetItem.item.push(newItem);
+      }
+    }
+
+    // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
+    if (item.codingInstructions) {
+      let helpItem = {
+        text: item.codingInstructions,
+        type: "display",
+        linkId: targetItem.linkId + "-help",
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      };
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem)
+      }
+      else {
+        targetItem.item = [
+          helpItem
+        ]
       }
     }
 
@@ -421,31 +365,6 @@ var self = {
 
 
   /**
-   * Get a code system based on the code system value used in LForms
-   * @param codeSystemInLForms code system value used in LForms
-   * @private
-   */
-  _getCodeSystem: function(codeSystemInLForms) {
-
-    var codeSystem;
-    switch (codeSystemInLForms) {
-      case "LOINC":
-        codeSystem = "http://loinc.org";
-        break;
-      case "CDE": // TBD
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-        break;
-      default:
-        codeSystem = codeSystemInLForms;
-
-    }
-
-    return codeSystem;
-  },
-
-
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param parentItem a parent item of the item
@@ -533,7 +452,7 @@ var self = {
           });
         }
 
-        if(answer.score) {
+        if (answer.score !== null && answer.score !== undefined) {
           ext.push({
             "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue",
             "valueDecimal" : parseFloat(answer.score)
@@ -551,7 +470,7 @@ var self = {
       };
 
       if(item.answerCodeSystem) {
-        option.valueCoding.system = this._getCodeSystem(item.answerCodeSystem);
+        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
       }
 
       optionArray.push(option);
@@ -629,7 +548,7 @@ var self = {
         // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
           if (this._answerRepeats(item) && Array.isArray(values[i])) {
             for (var j=0, jLen=values[i].length; j<jLen; j++) {
               if (!jQuery.isEmptyObject(values[i][j])) {
@@ -717,14 +636,16 @@ var self = {
     // Attachment, Coding, Quantity, Reference(Resource)
 
     if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
-  
+
       var dataType = this._getAssumedDataTypeForExport(item);
       var valueKey = this._getValueKeyByDataType("initial", item);
       // for Coding
       // multiple selections, item.value is an array
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
-        var codeSystem = this._getCodeSystem(item.questionCodeSystem);
+        var codeSystem = null, coding = null;
+        if (item.answerCodeSystem)
+          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // TBD, defaultAnswer has multiple values
           // targetItem[valueKey] = [];
@@ -737,19 +658,23 @@ var self = {
           // };
 
           // pick the first one only
-          targetItem[valueKey] = {
-            "system": codeSystem,
+          coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
           };
+          if (codeSystem)
+            coding.system = codeSystem;
+          targetItem[valueKey] = coding;
         }
         // single selection, item.defaultAnswer is an object
         else {
-          targetItem[valueKey] = {
-            "system": codeSystem,
+          coding = {
             "code": item.defaultAnswer.code,
             "display": item.defaultAnswer.text
           };
+          if (codeSystem)
+            coding.system = codeSystem;
+          targetItem[valueKey] = coding
         }
       }
       // for Quantity,
@@ -788,7 +713,7 @@ var self = {
     if (item.units && item.units.length > 0) {
       var dataType = this._getAssumedDataTypeForExport(item);
       if(dataType === "REAL" || dataType === "INT") {
-      
+
         targetItem.extension.push({
           "url": this.fhirExtUrlUnit,
           // Datatype with multiple units is quantity. There is only one unit here.

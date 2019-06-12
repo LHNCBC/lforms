@@ -2,9 +2,55 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.4.0] 2019-05-01
+## [15.8.0] 2019-05-01
 ### Added
 - DTM support and datetime picker
+
+## [15.7.1] 2019-06-06
+### Fixed
+- Observation-based prepoluation of list fields now works.
+
+## [15.7.0] 2019-06-03
+### Fixed
+- Used a correct extension for coding instructions in FHIR Questionnaire
+### Added
+- Added support for coding instructions format in FHIR Questionnaire
+
+## [15.6.2] 2019-05-31
+### Fixed
+- Fix an error when creating LFormsData object with empty items.
+
+## [15.6.1] 2019-05-28
+### Fixed
+- Empty Observation records were being saved during data extraction to an STU3
+  FHIR server (for fields without values).
+- Corrected the setting of derivedFrom in extracted obsevations in R4.
+
+## [15.6.0] 2019-05-23
+### Added
+- The %questionnaire variable is now available for FHIRPath expressions.
+
+## [15.5.1] 2019-05-21
+### Fixed
+- Fixed URL in R4 for ordinalValue (score)
+
+## [15.5.0] 2019-04-11
+### Added
+- Support for data extraction via observationLinkPeriod.  If you pass in an
+  "extract" option (set to true) to LForms.Util.getFormFHIRData when
+  "resourceType" is set to QuestionnaireResponse, it will return an array of the
+  QuestionnaireResponse resource and any extracted Observation resources.
+### Fixed
+- Added a check to make sure linked observations do not have focus set to true.
+
+## [15.4.0] 2019-05-09
+### Added
+- Added support for FHIR Questionnaire form level fields.
+- Patched date parsing errors encountered in form builder environment.
+
+## [15.3.2] 2019-05-15
+### Fixed
+- Changed to allow 'label' in answers to be null.
 
 ## [15.3.1] 2019-04-30
 ### Fixed
@@ -27,7 +73,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [15.2.4] 2019-04-19
 ### Fixed
-- Enabled generation of source maps for the FHIR support files.
+- Enabled generation of source maps for the FHIR supported files.
 
 ## [15.2.3] 2019-04-15
 ### Fixed

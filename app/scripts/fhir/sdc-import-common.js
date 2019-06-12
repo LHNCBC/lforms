@@ -14,9 +14,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlItemControl = "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl";
   self.fhirExtUrlUnit = "http://hl7.org/fhir/StructureDefinition/questionnaire-unit";
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
-  self.fhirExtUrlCodingInstructions = "http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = [
     "http://hl7.org/fhir/StructureDefinition/minValue",
@@ -24,13 +22,55 @@ function addCommonSDCImportFns(ns) {
     "http://hl7.org/fhir/StructureDefinition/minLength",
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
-
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
-
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
-
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+
+  self.formLevelFields = [
+    // Resource
+    'id',
+    'meta',
+    'implicitRules',
+    'language',
+
+
+    // Domain Resource
+    'text',
+    'contained',
+    'text',
+    'contained',
+    'extension',
+    'modifiedExtension',
+
+    // Questionnaire
+    'date',
+    'version',
+    'title',
+    'name',
+    'identifier',
+    'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
+    'subjectType',
+    'derivedFrom', // New in R4
+    'status',
+    'experimental',
+    'publisher',
+    'contact',
+    'description',
+    'useContext',
+    'jurisdiction',
+    'purpose',
+    'copyright',
+    'approvalDate',
+    'reviewDate',
+    'effectivePeriod',
+    'url'
+  ];
+
+  self.itemLevelIgnoredFields = [
+    'definition',
+    'prefix'
+  ];
 
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
@@ -51,6 +91,7 @@ function addCommonSDCImportFns(ns) {
         target.items = [];
         for( var i = 0; i < fhirData.item.length; i++) {
           var item = self._processQuestionnaireItem(fhirData.item[i], containedVS, linkIdItemMap);
+          // no instructions on the questionnaire level
           target.items.push(item);
         }
       }
@@ -95,6 +136,10 @@ function addCommonSDCImportFns(ns) {
     var val = null;
     var lfDataType = lfItem.dataType;
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
+    // fhirValType is now the FHIR data type for a Questionnaire.  However,
+    // where Questionnaire uses Coding, Observation uses CodeableConcept.
+    if (fhirValType == 'Coding')
+      fhirValType = 'CodeableConcept';
     if (fhirValType)
       val = obs['value'+fhirValType];
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -103,6 +148,7 @@ function addCommonSDCImportFns(ns) {
       if (val)
         val._type = 'Quantity'
     }
+
     if (val) {
       if (!val._type && typeof val === 'object')
         val._type = fhirValType;
@@ -116,7 +162,7 @@ function addCommonSDCImportFns(ns) {
           var valSystem = val.system;
           // On SMART sandbox, val.system might have a trailing slash (which is wrong, at least
           // for UCUM).  For now, just remove it.
-          if (valSystem[valSystem.length - 1] === '/')
+          if (valSystem && valSystem[valSystem.length - 1] === '/')
             valSystem = valSystem.slice(0, -1);
           var isUCUMUnit = valSystem === self.UCUM_URI;
           var ucumUnit;
@@ -146,10 +192,11 @@ function addCommonSDCImportFns(ns) {
           }
           if (!matchingUnit)
             unitOkay = false;
+          else
+            lfItem.unit = matchingUnit;
         }
       }
       if (unitOkay) {
-        lfItem.unit = matchingUnit;
         this._processFHIRValues(lfItem, [val]);
       }
     }
@@ -172,9 +219,38 @@ function addCommonSDCImportFns(ns) {
       let fhirVal = fhirVals[i];
       var answer = null;
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
-        answer = {};
-        if(fhirVal.code !== undefined) answer.code = fhirVal.code;
-        if(fhirVal.display !== undefined) answer.text = fhirVal.display;
+        var codings = null;
+        if (fhirVal._type == 'CodeableConcept') {
+          codings = fhirVal.coding;
+        }
+        else if (fhirVal._type == 'Coding') {
+          codings = [fhirVal];
+        }
+        if (!codings) { // maybe a string?
+          if (lfDataType === 'CWE') {
+            answer = fhirVal;
+          }
+        }
+        else {
+          // Pick a Coding that is appropriate for this list item.
+          if (lfItem.answers) {
+            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
+            if (itemAnswersFHIRCodeSystem)
+              itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
+            var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
+            for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
+              var coding = codings[k];
+              for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
+                var system = coding.system;
+                var listAnswer = itemAnswers[j];
+                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
+                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                  answer = itemAnswers[j]; // include label in answer text
+                }
+              }
+            }
+          }
+        }
       }
       else if(fhirVal._type === 'Quantity' && (lfDataType === 'QTY' ||
           lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -185,7 +261,8 @@ function addCommonSDCImportFns(ns) {
       else {
         answer = fhirVal;
       }
-      answers.push(answer);
+      if (answer)
+        answers.push(answer);
     }
     if (isMultiple) {
       if (setDefault)
@@ -231,6 +308,29 @@ function addCommonSDCImportFns(ns) {
 
     return ret;
   }
+
+
+  /**
+   * Parse questionnaire item for code and code system
+   * @param lfItem {object} - LForms item object to assign question code
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processCodeAndLinkId = function (lfItem, qItem) {
+    var code = self._getCode(qItem);
+    if (code) {
+      lfItem.questionCode = code.code;
+      lfItem.questionCodeSystem = code.system;
+    }
+    // use linkId as questionCode, which should not be exported as code
+    else {
+      lfItem.questionCode = qItem.linkId;
+      lfItem.questionCodeSystem = "LinkId"
+    }
+
+    lfItem.linkId = qItem.linkId;
+  };
+
 
 
   /**
@@ -281,7 +381,8 @@ function addCommonSDCImportFns(ns) {
   };
 
 
-  // QuestionnaireResponse Import
+  // ---------------- QuestionnaireResponse Import ---------------
+
   var qrImport = self._mergeQR;
 
   /**
@@ -291,13 +392,15 @@ function addCommonSDCImportFns(ns) {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = (new LForms.LFormsData(formData)).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      formData = (new LForms.LFormsData(formData)).getFormData();
+    }
     // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
     var qrInfo = qrImport._getQRStructure(qr);
-    qrImport._processQRItemAndLFormsItem(qrInfo, newFormData);
-    return newFormData;
+    qrImport._processQRItemAndLFormsItem(qrInfo, formData);
+    return formData;
   };
 
 
@@ -463,6 +566,54 @@ function addCommonSDCImportFns(ns) {
     if(qResource.item) {
       ret = traverse(qResource.item, ret);
     }
+    return ret;
+  };
+
+
+  /**
+   * Get an object with code and code system
+   *
+   * @param questionnaireItemOrResource {object} - question
+   * @private
+   */
+  self._getCode = function (questionnaireItemOrResource) {
+    var code = null;
+    if(questionnaireItemOrResource &&
+      Array.isArray(questionnaireItemOrResource.code) &&
+      questionnaireItemOrResource.code.length) {
+      code = {
+        code: questionnaireItemOrResource.code[0].code,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.code[0].system)
+      };
+    }
+    // If code is missing look for identifier.
+    else if(questionnaireItemOrResource &&
+      Array.isArray(questionnaireItemOrResource.identifier) &&
+      questionnaireItemOrResource.identifier.length) {
+      code = {
+        code: questionnaireItemOrResource.identifier[0].value,
+        system: self._toLfCodeSystem(questionnaireItemOrResource.identifier[0].system)
+      };
+    }
+
+    return code;
+  };
+
+
+  /**
+   * Convert the given code system to LForms internal code system. Currently
+   * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
+   * @param codeSystem
+   * @private
+   */
+  self._toLfCodeSystem = function(codeSystem) {
+    var ret = codeSystem;
+    switch(codeSystem) {
+      case 'http://loinc.org':
+        ret = 'LOINC';
+        break;
+    }
+
     return ret;
   };
 

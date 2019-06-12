@@ -474,8 +474,11 @@ angular.module('lformsWidget')
          */
         $scope.getTrustedCodingInstructions = function(item) {
           var ret = '';
-          if (item.codingInstructions) {
-            ret = $sce.trustAsHtml(item.codingInstructions);
+          var instruction = item.codingInstructionsFormat === 'html' ?
+              item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+              : item.codingInstructions;
+          if (instruction) {
+            ret = $sce.trustAsHtml(instruction);
           }
           return ret;
         };
@@ -591,32 +594,28 @@ angular.module('lformsWidget')
           // large forms) check on the whole of the form data for the need to
           // run FHIRPath.
           if (LForms.FHIR) {
-            if (lfData && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
-
-              // Watch for changes that require FHIRPath to run
-              if (lfData.hasFHIRPath) {
-                if ($scope.unwatchFHIRPath)
-                  $scope.unwatchFHIRPath();
-                $scope.unwatchFHIRPath = $scope.$watch(function() {
-                  return JSON.stringify(lfData, function(key, val) {
-                    // In Safari, "key" is a number (not a string) for arrays
-                    key = ""+key; // a little faster than checking the type
-                    // Ignore changes to internal variables and $$hashKey
-                    return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+            if (lfData) { // sometimes set to null to clear the page
+              if (lfData.hasFHIRPath || lfData._hasInitialExpr) {
+                // Watch for changes that require FHIRPath to run
+                if (lfData.hasFHIRPath) {
+                  if ($scope.unwatchFHIRPath)
+                    $scope.unwatchFHIRPath();
+                  $scope.unwatchFHIRPath = $scope.$watch(function() {
+                    return JSON.stringify(lfData, function(key, val) {
+                      // In Safari, "key" is a number (not a string) for arrays
+                      key = ""+key; // a little faster than checking the type
+                      // Ignore changes to internal variables and $$hashKey
+                      return (key.indexOf('_') === 0 || key.indexOf('$$')===0) ? undefined : val;
+                    });
+                  }, function() {
+                    if (lfData)
+                      lfData._expressionProcessor.runCalculations(false);
                   });
-                }, function() {
-                  if (lfData)
-                    lfData._expressionProcessor.runCalculations(false);
-                });
+                }
               }
-
               // Set up a listener for asynchronous change events (triggered by
               // lfData itself).
               if (!lfData._controllerInit) {
-                // TBD: I think there is a race-condition here (though I
-                // have not seen it happen).  Potentially the lfData could
-                // have already notified regarding async changes before
-                // this listener is added.
                 lfData.addAsyncChangeListener(function() {
                   $scope.$apply(function() {
                     if (lfData.hasFHIRPath || lfData._hasInitialExpr)
@@ -624,7 +623,6 @@ angular.module('lformsWidget')
                   });
                 });
               }
-
               // Angular calls this twice for the same lfData.  Set a flag.
               // Note:  For some reason the watches still need to be set up both times.
               lfData._controllerInit = true;
