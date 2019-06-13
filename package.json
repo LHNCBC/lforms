@@ -6,7 +6,6 @@
     "app"
   ],
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.1",
     "@lhncbc/ucum-lhc": "^2.6.1",
     "angular": "1.6.x",
     "angular-animate": "1.6.x",

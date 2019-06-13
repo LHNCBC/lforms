@@ -7,7 +7,6 @@ require("../styles/redmond-theme/theme.css");
 require('angular-ui-bootstrap/dist/ui-bootstrap-csp.css');
 window.angular = require('angular');
 require('./angular-packages.js');
-require('@fortawesome/fontawesome-free');
 require('ngSmoothScroll');
 require('angular-ui-bootstrap');
 require('ui.bootstrap.datetimepicker');

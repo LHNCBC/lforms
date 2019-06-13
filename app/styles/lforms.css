@@ -424,6 +424,7 @@ Override color of select boxes in calendar widget title bar.
   display: table;
   border: 1px solid lightgrey;
   border-radius: 4px;
+  width: 100%;
 }
 
 /* Make the input field and calendar icon look better side by side */
@@ -431,32 +432,6 @@ Override color of select boxes in calendar widget title bar.
   border: none;
   border-radius: 0;
   margin-left: 0;
-}
-
-/* color of the calendar icon in the form/input*/
-
-.lf-dtm-picker-block .input-group-btn {
-  margin-left: 30px;
-  color: #066aa0;
-  background-color: inherit;
-}
-.lf-dtm-picker-block .input-group-btn .btn {
-  margin: 3px;
-  color: #066aa0;
-  background-color: inherit;
-}
-.lf-dtm-picker-block .input-group-btn .btn:hover {
-  color: #0087fd;
-}
-
-.lf-dtm-picker-block > input.form-control,
-.lf-dtm-picker-block .input-group-btn {
-  background-color: white;
-}
-.lf-dtm-picker-block > input.form-control:active,
-.lf-dtm-picker-block > input.form-control:focus,
-.lf-dtm-picker-block > input.form-control:focus ~ span {
-  background-color: #FFF8C6;
 }
 
 /* Overall popup window for both date and time popups*/

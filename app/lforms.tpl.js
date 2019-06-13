@@ -373,6 +373,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "\n" +
     "          <!-- Gillardo boostrap datetime picker -->\n" +
+    "          <!--\n" +
     "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
     "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" +
     "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
@@ -384,6 +385,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <span class=\"input-group-btn\">\n" +
     "              <button type=\"button\" class=\"btn btn-default\" ng-click=\"openUibDtmPicker($event)\"><i class=\"fa fa-calendar\"></i></button>\n" +
     "            </span>\n" +
+    "          </div>\n" +
+    "          -->\n" +
+    "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
+    "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" +
+    "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
+    "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +
+    "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" +
+    "                   datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" +
+    "                   ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
+    "                   ng-blur=\"activeRowOnBlur(item); uibDtmPickerOnBlur('input')\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "            <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" +
     "          </div>\n" +
     "\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +

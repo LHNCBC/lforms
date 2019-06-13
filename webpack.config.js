@@ -107,6 +107,19 @@ function makeConfigs(env) {
         }
       }]
     });
+/*
+    lformsConfig.module.rules.push({
+      test: /fa-.*\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: '[name]_[hash].[ext]',
+          outputPath: 'styles/fonts',
+          publicPath: 'fonts'
+        }
+      }]
+    });
+*/
     lformsConfig.module.rules.push({
       test: /\.(png|svg|jpg|gif)$/,
       use: [{
