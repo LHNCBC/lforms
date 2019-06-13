@@ -55,7 +55,7 @@ var self = {
       var item = lfData.items[i];
       if (item._obsLinkPeriodExt && item.value) {
         var obs = this._commonExport._createObservation(item);
-        for (var j=0, jLen=obx.length; j<jLen; j++) {
+        for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
           // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
           if (qr.basedOn)

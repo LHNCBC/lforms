@@ -575,7 +575,6 @@ var dr = {
         // first repeating obx
         if (obxInfo.total > 1 && obxInfo.index === 0) {
           // add repeating items in form data
-
           this._addRepeatingItems(parentItem, obxInfo.code, obxInfo.total);
         }
 
