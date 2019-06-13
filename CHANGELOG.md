@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [16.0.0] 2019-06-13
+### Fixed
+- Each value of the multiple selected values in CNE/CWE typed item 
+  should be a separate Observation recourse when LForms data is converted 
+  to corresponding FHIR resources.
+
 ## [15.7.1] 2019-06-06
 ### Fixed
 - Observation-based prepoluation of list fields now works.

@@ -18248,16 +18248,17 @@ var dr = {
       var subItem = item.items[i];
 
       if (subItem) {
-        var obx = this._commonExport._createObservation(subItem, this._commonExport._getUniqueId(subItem.questionCode));
+        var obx = this._commonExport._createObservation(subItem, true);
 
         if (subItem.items && subItem.items.length > 0) {
-          obx.related = [];
+          // single obx returned if it is a header item
+          obx[0].related = [];
 
           var ret = this._createDiagnosticReportContent(subItem, contained);
 
           for (var j = 0, jLen = ret.result.length; j < jLen; j++) {
             var subObxRef = ret.result[j];
-            obx.related.push({
+            obx[0].related.push({
               type: "has-member",
               target: {
                 reference: subObxRef.reference
@@ -18266,11 +18267,13 @@ var dr = {
           }
         }
 
-        contained.push(obx);
-        content.result.push({
-          reference: "#" + obx.id
-        });
-        content.resultObj.push(obx);
+        for (var l = 0, lLen = obx.length; l < lLen; l++) {
+          contained.push(obx[l]);
+          content.result.push({
+            reference: "#" + obx[l].id
+          });
+          content.resultObj.push(obx[l]);
+        }
       }
     }
 
@@ -18506,18 +18509,18 @@ var dr = {
 
         case "CNE":
         case "CWE":
-          if (item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            var value = [];
-
-            for (var j = 0, jLen = obx.valueCodeableConcept.coding.length; j < jLen; j++) {
-              var coding = obx.valueCodeableConcept.coding[j];
-              value.push({
-                "code": coding.code,
-                "text": coding.display
+          if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+            if (item.value) {
+              item.value.push({
+                "code": obx.valueCodeableConcept.coding[0].code,
+                "text": obx.valueCodeableConcept.coding[0].display
               });
+            } else {
+              item.value = [{
+                "code": obx.valueCodeableConcept.coding[0].code,
+                "text": obx.valueCodeableConcept.coding[0].display
+              }];
             }
-
-            item.value = value;
           } else {
             item.value = {
               "code": obx.valueCodeableConcept.coding[0].code,
@@ -18666,9 +18669,14 @@ var dr = {
 
     if (parentItem.items) {
       for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          if (idx === index) {
-            item = parentItem.items[i];
+        var subItem = parentItem.items[i];
+
+        if (itemCode === subItem.questionCode) {
+          if ((subItem.dataType === "CNE" || subItem.dataType === "CWE") && subItem.answerCardinality && (subItem.answerCardinality.max === "*" || parseInt(subItem.answerCardinality.max) > 1)) {
+            item = subItem;
+            break;
+          } else if (idx === index) {
+            item = subItem;
             break;
           } else {
             idx += 1;
@@ -18684,7 +18692,7 @@ var dr = {
    * Add repeating items
    * @param parentItem a parent item
    * @param itemCode code of a repeating item
-   * @param total total number of the repeating itme with the same code
+   * @param total total number of the repeating item with the same code
    * @private
    */
   _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
@@ -18697,14 +18705,16 @@ var dr = {
           item = parentItem.items[i];
           break;
         }
-      } // insert new items
+      } // insert new items unless it is a CNE/CWE and has multiple answers.
 
 
       if (item) {
-        while (total > 1) {
-          var newItem = angular.copy(item);
-          parentItem.items.splice(i, 0, newItem);
-          total -= 1;
+        if ((item.dataType === "CNE" || item.dataType === "CWE") && item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {} else {
+          while (total > 1) {
+            var newItem = angular.copy(item);
+            parentItem.items.splice(i, 0, newItem);
+            total -= 1;
+          }
         }
       }
     }
@@ -18849,13 +18859,129 @@ __webpack_require__.r(__webpack_exports__);
 
 var self = {
   /**
-   * Create an Observation instance from an LForms item object
+   * Create an Observation resource from an LForms item object
    * @param item an LForms item object
-   * @param id (optional) an "id" value for the Observation.
-   * @returns {{}} an observation instance
+   * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
+   * @returns {{}} an observation resource
    * @private
    */
-  _createObservation: function _createObservation(item, obxID) {
+  _createObservation: function _createObservation(item, setId) {
+    var values = [];
+    var dataType = item.dataType; // any item has a unit must be a numerical type, let use REAL for now.
+
+    if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
+      dataType = "REAL";
+    }
+
+    switch (dataType) {
+      case "INT":
+      case "REAL":
+        if (item.unit) {
+          values = [{
+            key: "valueQuantity",
+            val: {
+              "value": item.value,
+              "unit": item.unit ? item.unit.name : null,
+              "system": item.unit ? item.unit.system : null,
+              "code": item.unit ? item.unit.code : null
+            }
+          }];
+        } else {
+          values = [{
+            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
+            val: item.value
+          }];
+        }
+
+        break;
+
+      case "DT":
+        values = [{
+          key: "valueDateTime",
+          val: item.value
+        }];
+        break;
+
+      case "CNE":
+      case "CWE":
+        var max = item.answerCardinality.max; // multiple values, each value creates a separate Observation resource
+
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          for (var j = 0, jLen = item.value.length; j < jLen; j++) {
+            var val = item.value[j];
+            var coding = {
+              "code": val.code,
+              "display": val.text
+            };
+            var codeSystem = val.system || item.answerCodeSystem;
+
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+
+            values.push({
+              key: "valueCodeableConcept",
+              val: {
+                "coding": [coding],
+                "text": coding.display
+              }
+            });
+          }
+        } else {
+          var coding = {
+            "code": item.value.code,
+            "display": item.value.text
+          };
+          var codeSystem = item.value.system || item.answerCodeSystem;
+
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
+
+          values = [{
+            key: "valueCodeableConcept",
+            val: {
+              "coding": [coding],
+              "text": coding.display
+            }
+          }];
+        }
+
+        break;
+
+      default:
+        values = [{
+          key: "valueString",
+          val: item.value
+        }];
+    }
+
+    var OBXs = [];
+
+    for (var i = 0, iLen = values.length; i < iLen; i++) {
+      var obx = {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": item.codeList,
+          "text": item.question
+        }
+      };
+
+      if (setId) {
+        obx.id = this._getUniqueId(item.questionCode);
+      }
+
+      if (!item.header) {
+        obx[values[i].key] = values[i].val;
+      }
+
+      OBXs.push(obx);
+    }
+
+    return OBXs;
+  },
+  _createObservation2: function _createObservation2(item, obxID) {
     // get key and value
     var valueX = {
       key: "",
@@ -19021,21 +19147,23 @@ var self = {
       var item = lfData.items[i];
 
       if (item._obsLinkPeriodExt && item.value) {
-        var obs = this._commonExport._createObservation(item); // Following
-        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        var obs = this._commonExport._createObservation(item);
 
+        for (var j = 0, jLen = obx.length; j < jLen; j++) {
+          // Following
+          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+          if (qr.basedOn) obs[j].basedOn = qr.basedOn;
+          if (qr.subject) obs[j].subject = qr.subject;
+          if (qr.context) obs[j].context = qr.context;
 
-        if (qr.basedOn) obs.basedOn = qr.basedOn;
-        if (qr.subject) obs.subject = qr.subject;
-        if (qr.context) obs.context = qr.context;
+          if (qr.authored) {
+            obs[j].effectiveDateTime = qr.authored;
+            obs[j].issued = qr.authored;
+          }
 
-        if (qr.authored) {
-          obs.effectiveDateTime = qr.authored;
-          obs.issued = qr.authored;
+          if (qr.author && objPerformers.indexOf(qr.author.type) >= 0) obs[j].performer = qr.author;
+          rtn.push(obs[j]);
         }
-
-        if (qr.author && objPerformers.indexOf(qr.author.type) >= 0) obs.performer = qr.author;
-        rtn.push(obs);
       }
     }
 

@@ -9,13 +9,124 @@ import {LOINC_URI} from './fhir-common';
 var self = {
 
   /**
-   * Create an Observation instance from an LForms item object
+   * Create an Observation resource from an LForms item object
    * @param item an LForms item object
-   * @param id (optional) an "id" value for the Observation.
-   * @returns {{}} an observation instance
+   * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
+   * @returns {{}} an observation resource
    * @private
    */
-  _createObservation : function(item, obxID) {
+
+
+  _createObservation: function(item, setId) {
+
+    var values = [];
+
+    var dataType = item.dataType;
+    // any item has a unit must be a numerical type, let use REAL for now.
+    if ((!dataType || dataType==="ST") && item.units && item.units.length>0 ) {
+      dataType = "REAL";
+    }
+    switch (dataType) {
+      case "INT":
+      case "REAL":
+        if (item.unit) {
+          values = [{
+            key: "valueQuantity",
+            val: {
+              "value": item.value,
+              "unit": item.unit ? item.unit.name : null,
+              "system": item.unit ? item.unit.system : null,
+              "code": item.unit ? item.unit.code : null
+            }
+          }];
+        }
+        else {
+          values = [{
+            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
+            val: item.value
+          }];
+        }
+        break;
+      case "DT":
+        values = [{
+          key:  "valueDateTime",
+          val: item.value
+        }];
+        break;
+      case "CNE":
+      case "CWE":
+        var max = item.answerCardinality.max;
+        // multiple values, each value creates a separate Observation resource
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          for (var j=0,jLen=item.value.length; j<jLen; j++) {
+            var val = item.value[j];
+            var coding = {
+              "code": val.code,
+              "display": val.text
+            };
+            var codeSystem = val.system || item.answerCodeSystem;
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+            values.push(
+                { key: "valueCodeableConcept",
+                  val: {
+                    "coding" : [coding],
+                    "text": coding.display
+                  }
+                }
+            )
+          }
+        }
+        else {
+          var coding = {
+            "code": item.value.code,
+            "display": item.value.text
+          };
+          var codeSystem = item.value.system || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
+          values = [{
+            key: "valueCodeableConcept",
+            val: {
+              "coding" : [coding],
+              "text": coding.display
+            }
+          }];
+        }
+        break;
+      default:
+        values = [{
+          key: "valueString",
+          val: item.value
+        }];
+    }
+
+
+    var OBXs = [];
+    for(var i=0, iLen=values.length; i<iLen; i++) {
+      var obx = {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": item.codeList,
+          "text": item.question
+        }
+      };
+      if (setId) {
+        obx.id = this._getUniqueId(item.questionCode);
+      }
+      if (!item.header) {
+        obx[values[i].key] = values[i].val;
+      }
+      OBXs.push(obx);
+    }
+    return OBXs;
+  },
+
+
+  _createObservation2 : function(item, obxID) {
 
     // get key and value
     var valueX = {
