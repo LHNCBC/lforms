@@ -995,8 +995,14 @@
         if (!item._readOnly) {
           switch (item.dataType) {
             case this._CONSTANTS.DATA_TYPE.DT:
+              item._toolTip = "MM/DD/YYYY";
+              // process user data
+              if (item.value) {
+                item.value = LForms.Util.stringToDate(item.value);
+              }
+              break;
             case this._CONSTANTS.DATA_TYPE.DTM:
-              item._toolTip = item.dataType === this._CONSTANTS.DATA_TYPE.DT?  "MM/DD/YYYY": "MM/DD/YYYY HH:MM";
+              item._toolTip = "MM/DD/YYYY HH:MM";
               // process user data
               if (item.value) {
                 item.value = LForms.Util.stringToDate(item.value);
