@@ -1560,6 +1560,31 @@ var formWithUserData =
           ]
         }
       ]
+    },
+    // value with unit
+    {
+      answerCardinality: {min: "0", max: "1"},
+      dataType: "REAL",
+      header: false,
+      question: "Weight, with value and unit",
+      questionCardinality: {min: "1", max: "1"},
+      questionCode: "unit1",
+      questionCodeSystem: "LOINC",
+      unit: {name: "kgs"},
+      units: [{name: "lbs"},{name: "kgs"}],
+      value: 123
+    },
+    {
+      answerCardinality: {min: "0", max: "1"},
+      dataType: "REAL",
+      header: false,
+      question: "Weight, with value and unit, and a default unit",
+      questionCardinality: {min: "1", max: "1"},
+      questionCode: "unit2",
+      questionCodeSystem: "LOINC",
+      unit: {name: "kgs"},
+      units: [{name: "lbs", default: true},{name: "kgs"}],
+      value: 456
     }
 
   ]};
