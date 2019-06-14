@@ -347,18 +347,13 @@ var dr = {
         case "CWE":
           if (item.answerCardinality &&
               (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            if (item.value) {
-              item.value.push({
-                "code": obx.valueCodeableConcept.coding[0].code,
-                "text": obx.valueCodeableConcept.coding[0].display
-              })
+            if (!item.value) {
+              item.value = [];
             }
-            else {
-              item.value = [{
-                "code": obx.valueCodeableConcept.coding[0].code,
-                "text": obx.valueCodeableConcept.coding[0].display
-              }];
-            }
+            item.value.push({
+              "code": obx.valueCodeableConcept.coding[0].code,
+              "text": obx.valueCodeableConcept.coding[0].display
+            })
           }
           else {
             item.value = {
@@ -541,19 +536,14 @@ var dr = {
         }
       }
       // insert new items unless it is a CNE/CWE and has multiple answers.
-      if (item) {
-        if ((item.dataType === "CNE" || item.dataType ==="CWE") &&
+      if (item && !((item.dataType === "CNE" || item.dataType ==="CWE") &&
           item.answerCardinality &&
-          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
+        while(total > 1) {
+          var newItem = angular.copy(item);
+          parentItem.items.splice(i, 0, newItem);
+          total -= 1;
         }
-        else {
-          while(total > 1) {
-            var newItem = angular.copy(item);
-            parentItem.items.splice(i, 0, newItem);
-            total -= 1;
-          }
-        }
-
       }
     }
   },
