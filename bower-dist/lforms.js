@@ -15437,7 +15437,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _updateUnitAutocompOptions: function _updateUnitAutocompOptions(item) {
       if (item.units && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE) {
-        // clean up unit autocomp options
+        // add _displayUnit for item.unit if there is a value
+        if (item.unit) {
+          this._setUnitDisplay(item.unit);
+        } // clean up unit autocomp options
+
+
         item._unitAutocompOptions = null;
         var listItems = [],
             answers = item.units; // Modify the label for each unit.

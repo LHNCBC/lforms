@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [15.7.2] 2019-06-14
+### Fixed
+- Selected unit in save user data is loaded correctly into the LForms.
+
 ## [15.7.1] 2019-06-06
 ### Fixed
 - Observation-based prepoluation of list fields now works.
