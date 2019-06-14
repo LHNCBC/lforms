@@ -1,11 +1,4 @@
 var tp = require('./lforms_testpage.po.js');
-function todayZeroHour() {
-  var dateObj = new Date();
-  return [
-    (101 + dateObj.getMonth()).toString().substr(1),
-    (100 + dateObj.getDate()).toString().substr(1),
-    (10000 + dateObj.getFullYear()).toString().substr(1)].join('/') + ' 00:00';
-}
 
 describe('Data Type', function() {
 
@@ -20,7 +13,7 @@ describe('Data Type', function() {
     tp.openFullFeaturedForm();
     element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
     element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
-    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(todayZeroHour());
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
   });
 
 
