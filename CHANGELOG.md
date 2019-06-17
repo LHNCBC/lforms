@@ -2,9 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [16.0.0] 2019-06-17
+### Fixed
+- Each value of the multiple selected values in CNE/CWE typed item 
+  should be a separate Observation resource when LForms data is converted 
+  to corresponding FHIR resources.
+
 ## [15.7.2] 2019-06-14
 ### Fixed
-- Selected unit in save user data is loaded correctly into the LForms.
+- Fixed a bug that user selected units in saved data were not loaded correctly into the LForms.
 
 ## [15.7.1] 2019-06-06
 ### Fixed
