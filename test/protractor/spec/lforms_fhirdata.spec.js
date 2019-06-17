@@ -422,8 +422,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               let [error, fhirData] = callbackData;
               expect(error).toBeNull();
               expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-              expect(fhirData.identifier.value).toBe("54127-6N");
-              expect(fhirData.identifier.system).toBe("http://loinc.org");
+              // Per LF-1183, not to include identifier for exported QuestionnaireResponse
+              // expect(fhirData.identifier.value).toBe("54127-6N");
+              // expect(fhirData.identifier.system).toBe("http://loinc.org");
 
               expect(fhirData.item.length).toBe(1);
               expect(fhirData.item[0].linkId).toBe("/54126-8");

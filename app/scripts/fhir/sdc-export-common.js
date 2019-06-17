@@ -391,11 +391,11 @@ function addCommonSDCExportFns(ns) {
     target.meta = target.meta ? target.meta : {};
     target.meta.profile = target.meta.profile ? target.meta.profile : [profile];
 
-    // "identifier":
-    target.identifier = {
-      "system": LForms.Util.getCodeSystem(source.codeSystem),
-      "value": source.code
-    };
+    // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
+    //target.identifier = {
+    //  "system": LForms.Util.getCodeSystem(source.codeSystem),
+    //  "value": source.code
+    //};
 
     // status, required
     // "in-progress", "completed", "amended"

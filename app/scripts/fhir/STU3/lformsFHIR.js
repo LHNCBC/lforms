@@ -19013,6 +19013,8 @@ var self = {
       qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code || qr.identifier || 'QR');
     }
 
+    delete qr.identifier; // Per LF-1183, no longer setting identifier for QuestionnaireResponse export.
+
     var qrRef = 'QuestionnaireResponse/' + qr.id;
     var rtn = [qr];
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
@@ -20162,12 +20164,12 @@ function addCommonSDCExportFns(ns) {
 
     var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
-
-    target.identifier = {
-      "system": LForms.Util.getCodeSystem(source.codeSystem),
-      "value": source.code
-    }; // status, required
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
+    //target.identifier = {
+    //  "system": LForms.Util.getCodeSystem(source.codeSystem),
+    //  "value": source.code
+    //};
+    // status, required
     // "in-progress", "completed", "amended"
 
     target.status = "completed"; // authored, required

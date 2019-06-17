@@ -49,6 +49,8 @@ var self = {
       qr.id = this._commonExport._getUniqueId(
         qr.identifier && qr.identifier.value || 'QR')
     }
+    delete qr.identifier; // Per LF-1183, no longer setting identifier for QuestionnaireResponse export.
+
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
     for (var i=0, len=lfData.items.length; i<len; ++i) {
