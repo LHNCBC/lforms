@@ -102,7 +102,7 @@
                    aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
                    ng-focus="setActiveRow(cell)" ng-blur="activeRowOnBlur(cell)">
             <!-- Gillardo boostrap datetime picker -->
-            <div ng-switch-when="DTM" class="lf-dtm-picker-block">
+            <div ng-switch-when="DTM" class="lf-dtm-picker-block dropup">
               <input name="{{cell.question}}" type="text" class="form-control"
                      ng-model="cell.value"
                      datetime-picker="{{uibDateTimePickerFormat}}" alt-input-formats="uibDatePickerAltFormats"
