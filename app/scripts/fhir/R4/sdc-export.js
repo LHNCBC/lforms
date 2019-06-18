@@ -14,7 +14,7 @@
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-var sdcVersion = '3.5.0';
+var sdcVersion = '2.7.0';
 var fhirVersionNum = '4.0';
 
 var self = {

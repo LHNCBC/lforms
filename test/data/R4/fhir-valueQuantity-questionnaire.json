@@ -2,7 +2,7 @@
   "resourceType": "Questionnaire",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire"
     ]
   },
   "version": "2.64",

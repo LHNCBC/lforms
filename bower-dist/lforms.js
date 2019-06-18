@@ -11286,7 +11286,7 @@ LForms.Util = {
     if (!fhirVersion) fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
 
     if (!fhirVersion) {
-      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire' + ' (for Questionnaire version 3.5).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 ' + ' (for SDC Questionnaire version 3.5).');
+      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire' + ' (for Questionnaire version 3.5).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7.0 ' + ' (for SDC Questionnaire version 2.7.0).');
     } else fhirVersion = this.validateFHIRVersion(fhirVersion);
 
     return fhirVersion;

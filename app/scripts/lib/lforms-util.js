@@ -246,8 +246,8 @@ LForms.Util = {
         'https://www.hl7.org/fhir/references.html#canonical).  '+
         'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
         ' (for Questionnaire version 3.5).'+
-        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
-        ' (for SDC Questionnaire version 3.5).');
+        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7.0 '+
+        ' (for SDC Questionnaire version 2.7.0).');
     }
     else
       fhirVersion =  this.validateFHIRVersion(fhirVersion);
