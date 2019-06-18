@@ -11,7 +11,7 @@
       },
       "meta": {
         "profile": [
-          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-response"
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse"
         ]
       },
       "item": [

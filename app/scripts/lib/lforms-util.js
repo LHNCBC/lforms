@@ -379,7 +379,7 @@ LForms.Util = {
       var questionnairePattern =
         new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
+        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+\.?\\d+)');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
         var match = profiles[i].match(questionnairePattern);
         if (match)
