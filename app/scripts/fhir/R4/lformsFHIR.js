@@ -19885,7 +19885,7 @@ function addCommonSDCExportFns(ns) {
 
       this._removeRepeatingItems(source);
 
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -20343,10 +20343,9 @@ function addSDCImportFns(ns) {
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
 
-    if (lfData.code) {
+    if (questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
 
     var codeAndSystemObj = self._getCode(questionnaire);
@@ -21678,6 +21677,10 @@ function addCommonSDCImportFns(ns) {
 
 
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    if (qItem.code) {
+      lfItem.codeList = qItem.code;
+    }
+
     var code = self._getCode(qItem);
 
     if (code) {

@@ -317,6 +317,9 @@ function addCommonSDCImportFns(ns) {
    * @private
    */
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    if(qItem.code) {
+      lfItem.codeList = qItem.code;
+    }
     var code = self._getCode(qItem);
     if (code) {
       lfItem.questionCode = code.code;

@@ -19846,7 +19846,7 @@ function addCommonSDCExportFns(ns) {
 
       this._removeRepeatingItems(source);
 
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -21557,6 +21557,10 @@ function addCommonSDCImportFns(ns) {
 
 
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    if (qItem.code) {
+      lfItem.codeList = qItem.code;
+    }
+
     var code = self._getCode(qItem);
 
     if (code) {

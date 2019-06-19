@@ -61,7 +61,7 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
