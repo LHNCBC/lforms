@@ -379,7 +379,7 @@ LForms.Util = {
       var questionnairePattern =
         new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+\.?\\d+)');
+        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
         var match = profiles[i].match(questionnairePattern);
         if (match)
@@ -388,8 +388,15 @@ LForms.Util = {
           match = profiles[i].match(sdcPattern);
           if (match) {
             fhirVersion = match[1];
-            if (fhirVersion == '2.0')
-              fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+            // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            if (fhirVersion == '2.0') {
+              fhirVersion = '3.0';
+            }
+            // use FHIR 4.0 for SDC 2.7
+            else if (fhirVersion == '2.7') {
+              fhirVersion == '4.0';
+            }
           }
         }
       }
