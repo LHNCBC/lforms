@@ -1495,7 +1495,7 @@
         // with empty items, something FHIR Questionnaire supports.
         return;
       }
-      
+
       var iLen = items.length;
       var prevCodePath = '';
       // process all items in the array except the last one
@@ -2288,6 +2288,11 @@
     _updateUnitAutocompOptions: function(item) {
       if (item.units && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
           item.dataType !== this._CONSTANTS.DATA_TYPE.CWE) {
+        // add _displayUnit for item.unit if there is a value
+        if (item.unit) {
+          this._setUnitDisplay(item.unit);
+        }
+
         // clean up unit autocomp options
         item._unitAutocompOptions = null;
 

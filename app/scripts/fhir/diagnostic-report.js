@@ -84,14 +84,14 @@ var dr = {
     for(var i=0, iLen=item.items.length; i<iLen; i++) {
       var subItem = item.items[i];
       if (subItem) {
-        var obx = this._commonExport._createObservation(subItem,
-          this._commonExport._getUniqueId(subItem.questionCode));
+        var obx = this._commonExport._createObservation(subItem, true);
         if (subItem.items && subItem.items.length>0) {
-          obx.related = [];
+          // single obx returned if it is a header item
+          obx[0].related = [];
           var ret = this._createDiagnosticReportContent(subItem, contained);
           for(var j=0, jLen=ret.result.length; j<jLen; j++) {
             var subObxRef = ret.result[j];
-            obx.related.push({
+            obx[0].related.push({
               type: "has-member",
               target: {
                 reference: subObxRef.reference
@@ -99,11 +99,13 @@ var dr = {
             });
           }
         }
-        contained.push(obx);
-        content.result.push({
-          reference: "#" + obx.id
-        });
-        content.resultObj.push(obx);
+        for (var l=0, lLen=obx.length; l<lLen; l++) {
+          contained.push(obx[l]);
+          content.result.push({
+            reference: "#" + obx[l].id
+          });
+          content.resultObj.push(obx[l]);
+        }
       }
     }
     return content;
@@ -343,25 +345,23 @@ var dr = {
           break;
         case "CNE":
         case "CWE":
-          if (item.answerCardinality.max &&
+          // get the value from Observation resource.
+          // for multiple-selected answers/values in LForms, each selected answer is exported as
+          // a separated Observation resource
+          var itemValue = {
+            "code": obx.valueCodeableConcept.coding[0].code,
+            "text": obx.valueCodeableConcept.coding[0].display
+          };
+          if (item.answerCardinality &&
               (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            var value = [];
-            for (var j=0,jLen=obx.valueCodeableConcept.coding.length; j<jLen; j++) {
-              var coding = obx.valueCodeableConcept.coding[j];
-              value.push({
-                "code": coding.code,
-                "text": coding.display
-              });
+            if (!item.value) {
+              item.value = [];
             }
-            item.value = value;
+            item.value.push(itemValue)
           }
           else {
-            item.value = {
-              "code": obx.valueCodeableConcept.coding[0].code,
-              "text": obx.valueCodeableConcept.coding[0].display
-            };
+            item.value = itemValue;
           }
-
           break;
         case "SECTION":
         case "TITLE":
@@ -497,9 +497,16 @@ var dr = {
     var idx = 0;
     if (parentItem.items) {
       for(var i=0, iLen=parentItem.items.length; i<iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          if (idx === index) {
-            item = parentItem.items[i];
+        var subItem = parentItem.items[i];
+        if (itemCode === subItem.questionCode) {
+          if ((subItem.dataType === "CNE" || subItem.dataType === "CWE") &&
+              subItem.answerCardinality && (subItem.answerCardinality.max ==="*" || parseInt(subItem.answerCardinality.max)>1) ) {
+            item = subItem;
+            break;
+
+          }
+          else if (idx === index) {
+            item = subItem;
             break;
           }
           else {
@@ -516,7 +523,7 @@ var dr = {
    * Add repeating items
    * @param parentItem a parent item
    * @param itemCode code of a repeating item
-   * @param total total number of the repeating itme with the same code
+   * @param total total number of the repeating item with the same code
    * @private
    */
   _addRepeatingItems : function(parentItem, itemCode, total) {
@@ -529,8 +536,10 @@ var dr = {
           break;
         }
       }
-      // insert new items
-      if (item) {
+      // insert new items unless it is a CNE/CWE and has multiple answers.
+      if (item && !((item.dataType === "CNE" || item.dataType ==="CWE") &&
+          item.answerCardinality &&
+          (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
         while(total > 1) {
           var newItem = angular.copy(item);
           parentItem.items.splice(i, 0, newItem);

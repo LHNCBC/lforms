@@ -9,19 +9,17 @@ import {LOINC_URI} from './fhir-common';
 var self = {
 
   /**
-   * Create an Observation instance from an LForms item object
+   * Create an Observation resource from an LForms item object
    * @param item an LForms item object
-   * @param id (optional) an "id" value for the Observation.
-   * @returns {{}} an observation instance
+   * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
+   * @returns {{}} an observation resource
    * @private
    */
-  _createObservation : function(item, obxID) {
 
-    // get key and value
-    var valueX = {
-      key: "",
-      val: ""
-    };
+
+  _createObservation: function(item, setId) {
+
+    var values = [];
 
     var dataType = item.dataType;
     // any item has a unit must be a numerical type, let use REAL for now.
@@ -32,79 +30,86 @@ var self = {
       case "INT":
       case "REAL":
         if (item.unit) {
-          valueX.key = "valueQuantity";
-          valueX.val = {
-            "value": item.value,
-            "unit": item.unit ? item.unit.name : null,
-            "system": item.unit ? item.unit.system : null,
-            "code": item.unit ? item.unit.code : null
-          };
+          values = [{
+            key: "valueQuantity",
+            val: {
+              "value": item.value,
+              "unit": item.unit ? item.unit.name : null,
+              "system": item.unit ? item.unit.system : null,
+              "code": item.unit ? item.unit.code : null
+            }
+          }];
         }
         else {
-          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
-          valueX.val = item.value;
+          values = [{
+            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
+            val: item.value
+          }];
         }
         break;
       case "DT":
-        valueX.key = "valueDateTime";
-        valueX.val = item.value;
+        values = [{
+          key:  "valueDateTime",
+          val: item.value
+        }];
         break;
       case "CNE":
       case "CWE":
-        // TBD -- This is wrong.  Multi-valued list fields should generate an array of Observations, each with one value.
-        valueX.key = "valueCodeableConcept";
         var max = item.answerCardinality.max;
-        var itemVals;
-        if (max && (max === "*" || parseInt(max) > 1))
-          itemVals = item.value;
-        else
-          itemVals = [item.value];
-        var coding = [];
-        for (var j=0,jLen=itemVals.length; j<jLen; j++) {
-          var val = itemVals[j];
-          var c = {
+        // multiple values, each value creates a separate Observation resource
+        var itemValues;
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          itemValues = item.value;
+        }
+        else {
+          itemValues = [item.value];
+        }
+        for (var j=0,jLen=itemValues.length; j<jLen; j++) {
+          var val = itemValues[j];
+          var coding = {
             "code": val.code,
             "display": val.text
           };
-          var cSystem = val.system || item.answerCodeSystem;
-          if (cSystem) {
-            cSystem = LForms.Util.getCodeSystem(cSystem);
-            c.system = cSystem;
+          var codeSystem = val.system || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
-          coding.push(c);
+          values.push(
+              { key: "valueCodeableConcept",
+                val: {
+                  "coding" : [coding],
+                  "text": coding.display
+                }
+              }
+          )
         }
-        valueX.val = {
-          "coding": coding
-        }
-        if (coding.length === 1) // TBD after the above fix, length should always be 1
-          valueX.val.text = coding[0].display;
         break;
       default:
-        valueX.key = "valueString";
-        valueX.val = item.value;
+        values = [{
+          key: "valueString",
+          val: item.value
+        }];
     }
 
-    // create Observation
-    var qCodeSystem = (!item.questionCodeSystem || item.questionCodeSystem==='LOINC') ?
-      LOINC_URI : item.questionCodeSystem;
-
-    var obx = {
-      "resourceType": "Observation",
-      "status": "final",
-      "code": {
-        "coding": item.codeList,
-        "text": item.question
+    var obxs = [];
+    for(var i=0, iLen=values.length; i<iLen; i++) {
+      var obx = {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": item.codeList,
+          "text": item.question
+        }
+      };
+      if (setId) {
+        obx.id = this._getUniqueId(item.questionCode);
       }
-    };
-
-    if (obxID)
-      obx.id = obxID;
-
-    if (!item.header) {
-      obx[valueX.key] = valueX.val;
+      if (!item.header) {
+        obx[values[i].key] = values[i].val;
+      }
+      obxs.push(obx);
     }
-
-    return obx;
+    return obxs;
   },
 
 

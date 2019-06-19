@@ -55,22 +55,24 @@ var self = {
       var item = lfData.items[i];
       if (item._obsLinkPeriodExt && item.value) {
         var obs = this._commonExport._createObservation(item);
-        // Following
-        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-        if (qr.basedOn)
-          obs.basedOn = qr.basedOn;
-        if (qr.subject)
-          obs.subject = qr.subject;
-        if (qr.context)
-          obs.context = qr.context;
-        if (qr.authored) {
-          obs.effectiveDateTime = qr.authored;
-          obs.issued = qr.authored;
-        }
-        if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
-          obs.performer = qr.author;
+        for (var j=0, jLen=obs.length; j<jLen; j++) {
+          // Following
+          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+          if (qr.basedOn)
+            obs[j].basedOn = qr.basedOn;
+          if (qr.subject)
+            obs[j].subject = qr.subject;
+          if (qr.context)
+            obs[j].context = qr.context;
+          if (qr.authored) {
+            obs[j].effectiveDateTime = qr.authored;
+            obs[j].issued = qr.authored;
+          }
+          if (qr.author && objPerformers.indexOf(qr.author.type)>=0)
+            obs[j].performer = qr.author;
 
-        rtn.push(obs);
+          rtn.push(obs[j]);
+        }
       }
     }
     return rtn;
