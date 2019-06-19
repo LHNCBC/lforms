@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [16.0.1] 2019-06-19
+### Fixed
+- Fixed missing form level properties in conversion of FHIR questionnaire to lforms.
+- Fixed missing item code list in conversion of FHIR questionnaire to lforms. 
+
 ## [16.0.0] 2019-06-17
 ### Fixed
 - Each value of the multiple selected values in CNE/CWE typed item 

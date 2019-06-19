@@ -168,7 +168,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
-          it('should convert item.code',function () {
+          it('should convert questionnaire.code and item.code',function () {
   
   
             var formCodes = [{
