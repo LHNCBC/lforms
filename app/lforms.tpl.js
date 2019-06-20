@@ -373,7 +373,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "\n" +
     "          <!-- Gillardo boostrap datetime picker -->\n" +
-    "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block dropup\">\n" +
+    "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
     "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" +
     "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
     "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +
@@ -525,7 +525,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" +
     "            <!-- Gillardo boostrap datetime picker -->\n" +
-    "            <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block dropup\">\n" +
+    "            <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
     "              <input name=\"{{cell.question}}\" type=\"text\" class=\"form-control\"\n" +
     "                     ng-model=\"cell.value\"\n" +
     "                     datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +

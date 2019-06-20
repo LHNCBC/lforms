@@ -14,7 +14,7 @@
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
     "fhirpath": "^0.10.1",
-    "jquery": "^3.4.0",
+    "jquery": "~3.3.1",
     "jquery-ui": "^1.12.1",
     "ngSmoothScroll": "^2.0.1",
     "ui.bootstrap.datetimepicker": "^1.0.3"

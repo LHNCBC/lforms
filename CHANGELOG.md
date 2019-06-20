@@ -5,6 +5,8 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [15.8.0] 2019-05-01
 ### Added
 - DTM support and datetime picker
+- Temporarily switch back to jquery 3.3.1 (from 3.4.0) due to a potential bug in
+  jquery 3.4.0 (and the latest version 3.4.1)
 
 ## [15.7.1] 2019-06-06
 ### Fixed
