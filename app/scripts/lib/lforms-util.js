@@ -244,10 +244,10 @@ LForms.Util = {
         'Please make sure it is specified via meta.profile (see '+
         'http://build.fhir.org/versioning.html#mp-version and '+
         'https://www.hl7.org/fhir/references.html#canonical).  '+
-        'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
-        ' (for Questionnaire version 3.5).'+
-        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7.0 '+
-        ' (for SDC Questionnaire version 2.7.0).');
+        'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire'+
+        ' (for Questionnaire version 4.0).'+
+        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 '+
+        ' (for SDC Questionnaire version 2.7).');
     }
     else
       fhirVersion =  this.validateFHIRVersion(fhirVersion);
@@ -377,9 +377,9 @@ LForms.Util = {
       var profiles = fhirData.meta.profile;
       // See http://build.fhir.org/versioning.html#mp-version
       var questionnairePattern =
-        new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
+        new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)');
+        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
         var match = profiles[i].match(questionnairePattern);
         if (match)
