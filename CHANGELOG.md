@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [16.0.1] 2019-06-20
+### Changed
+- Exported FHIR QuestionnaireResponse resources no longer have identifiers. This is
+  not considered a breaking change because FHIR spec governs the protocol here and
+  the identifier field is optional.
+
 ## [16.0.0] 2019-06-17
 ### Fixed
 - Each value of the multiple selected values in CNE/CWE typed item 
