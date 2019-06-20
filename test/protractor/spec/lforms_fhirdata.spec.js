@@ -101,7 +101,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.resourceType).toBe("DiagnosticReport");
                 expect(fhirData.result.length).toBe(1);
                 expect(fhirData.result[0].reference).not.toBe(undefined);
-                expect(fhirData.contained.length).toBe(15);
+                expect(fhirData.contained.length).toBe(16);
                 // name 1
                 expect(fhirData.contained[0].resourceType).toBe("Observation");
                 expect(fhirData.contained[0].id).not.toBe(undefined);
@@ -139,15 +139,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                       code:"LA10608-0",
                       display:"American Indian or Alaska Native",
                       system:"http://loinc.org"
-                    },
+                    }],
+                  "text": "American Indian or Alaska Native"
+                });
+                expect(fhirData.contained[8].valueCodeableConcept).toEqual({
+                  "coding": [
                     {
                       code:"LA6156-9",
                       display:"Asian",
                       system:"http://loinc.org"
-                    }]
+                    }],
+                  "text": "Asian"
                 });
+
                 // Disease
-                expect(fhirData.contained[8].valueCodeableConcept).toEqual({
+                expect(fhirData.contained[9].valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10533-0",
@@ -157,7 +163,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Blood Clots"
                 });
                 // Age at diagnosis
-                expect(fhirData.contained[9].valueCodeableConcept).toEqual({
+                expect(fhirData.contained[10].valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10403-6",
@@ -167,9 +173,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Newborn"
                 });
                 // Your diseases history (sub panel)
-                expect(fhirData.contained[10].related.length).toBe(2);
+                expect(fhirData.contained[11].related.length).toBe(2);
                 // Disease 2
-                expect(fhirData.contained[11].valueCodeableConcept).toEqual({
+                expect(fhirData.contained[12].valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10572-8",
@@ -179,7 +185,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "-- Blood Clot in Leg"
                 });
                 // Age at diagnosis 2
-                expect(fhirData.contained[12].valueCodeableConcept).toEqual({
+                expect(fhirData.contained[13].valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10394-7",
@@ -189,9 +195,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Infancy"
                 });
                 // Your diseases history (sub panel) 2
-                expect(fhirData.contained[13].related.length).toBe(2);
+                expect(fhirData.contained[14].related.length).toBe(2);
                 // Your health information
-                expect(fhirData.contained[14].related.length).toBe(10);
+                expect(fhirData.contained[15].related.length).toBe(11);
               });
             });
           });
@@ -259,7 +265,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 [error, fhirData] = callbackData;
                 expect(error).toBeNull();
                 expect(fhirData.resourceType).toBe("Bundle");
-                expect(fhirData.entry.length).toBe(16);
+                expect(fhirData.entry.length).toBe(17);
                 expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
                 expect(fhirData.entry[0].resource.result.length).toBe(1);
                 expect(fhirData.entry[0].resource.result[0].reference).not.toBe(undefined);
@@ -299,15 +305,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                       code:"LA10608-0",
                       display:"American Indian or Alaska Native",
                       system:"http://loinc.org"
-                    },
+                    }],
+                  "text": "American Indian or Alaska Native"
+                });
+                expect(fhirData.entry[9].resource.valueCodeableConcept).toEqual({
+                  "coding": [
                     {
                       code:"LA6156-9",
                       display:"Asian",
                       system:"http://loinc.org"
-                    }]
+                    }],
+                  "text": "Asian"
                 });
                 // Disease
-                expect(fhirData.entry[9].resource.valueCodeableConcept).toEqual({
+                expect(fhirData.entry[10].resource.valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10533-0",
@@ -317,7 +328,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Blood Clots"
                 });
                 // Age at diagnosis
-                expect(fhirData.entry[10].resource.valueCodeableConcept).toEqual({
+                expect(fhirData.entry[11].resource.valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10403-6",
@@ -327,9 +338,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Newborn"
                 });
                 // Your diseases history (sub panel)
-                expect(fhirData.entry[11].resource.related.length).toBe(2);
+                expect(fhirData.entry[12].resource.related.length).toBe(2);
                 // Disease 2
-                expect(fhirData.entry[12].resource.valueCodeableConcept).toEqual({
+                expect(fhirData.entry[13].resource.valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10572-8",
@@ -339,7 +350,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "-- Blood Clot in Leg"
                 });
                 // Age at diagnosis 2
-                expect(fhirData.entry[13].resource.valueCodeableConcept).toEqual({
+                expect(fhirData.entry[14].resource.valueCodeableConcept).toEqual({
                   "coding": [
                     {
                       code:"LA10394-7",
@@ -349,9 +360,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   "text": "Infancy"
                 });
                 // Your diseases history (sub panel) 2
-                expect(fhirData.entry[14].resource.related.length).toBe(2);
+                expect(fhirData.entry[15].resource.related.length).toBe(2);
                 // Your health information
-                expect(fhirData.entry[15].resource.related.length).toBe(10);
+                expect(fhirData.entry[16].resource.related.length).toBe(11);
 
               });
             });
@@ -584,6 +595,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
             tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
 

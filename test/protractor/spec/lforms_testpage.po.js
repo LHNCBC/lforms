@@ -239,7 +239,11 @@ var TestPage = function() {
       rpSrc2: element(by.id('/rpSource2/1')),
       rpTarget2a: element(by.id('/repeatingSection1/rpTargetItem2/1/1')),
       rpTarget2b: element(by.id('/repeatingSection1/rpTargetItem2/2/1')),
-      rpAdd: element(by.id('add-/repeatingSection1/1'))
+      rpAdd: element(by.id('add-/repeatingSection1/1')),
+      unit1: element(by.id('/unit1/1')),
+      unit1_unit: element(by.id('unit_/unit1/1')),
+      unit2: element(by.id('/unit2/1')),
+      unit2_unit: element(by.id('unit_/unit2/1'))
     },
 
     /**

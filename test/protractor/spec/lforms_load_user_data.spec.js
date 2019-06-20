@@ -27,6 +27,13 @@ describe('load saved user data', function() {
 
   });
 
+  it('should load unit value', function(){
+    expect(ff.unit1.getAttribute('value')).toBe('123');
+    expect(ff.unit1_unit.getAttribute('value')).toBe('kgs');
+    expect(ff.unit2.getAttribute('value')).toBe('456');
+    expect(ff.unit2_unit.getAttribute('value')).toBe('kgs');
+  });
+
   it('skip logic should work with loaded user data', function() {
     expect(ff.src.getAttribute('value')).toBe('2');
     expect(ff.t1.isPresent()).toBeFalsy();

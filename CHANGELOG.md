@@ -2,11 +2,22 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [15.8.0] 2019-05-01
+## [16.1.0] 2019-06-20
 ### Added
 - DTM support and datetime picker
+### Changed
 - Temporarily switch back to jquery 3.3.1 (from 3.4.0) due to a potential bug in
   jquery 3.4.0 (and the latest version 3.4.1)
+
+## [16.0.0] 2019-06-17
+### Fixed
+- Each value of the multiple selected values in CNE/CWE typed item 
+  should be a separate Observation resource when LForms data is converted 
+  to corresponding FHIR resources.
+
+## [15.7.2] 2019-06-14
+### Fixed
+- Fixed a bug that user selected units in saved data were not loaded correctly into the LForms.
 
 ## [15.7.1] 2019-06-06
 ### Fixed
