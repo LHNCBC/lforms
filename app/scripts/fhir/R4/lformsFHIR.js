@@ -18248,16 +18248,17 @@ var dr = {
       var subItem = item.items[i];
 
       if (subItem) {
-        var obx = this._commonExport._createObservation(subItem, this._commonExport._getUniqueId(subItem.questionCode));
+        var obx = this._commonExport._createObservation(subItem, true);
 
         if (subItem.items && subItem.items.length > 0) {
-          obx.related = [];
+          // single obx returned if it is a header item
+          obx[0].related = [];
 
           var ret = this._createDiagnosticReportContent(subItem, contained);
 
           for (var j = 0, jLen = ret.result.length; j < jLen; j++) {
             var subObxRef = ret.result[j];
-            obx.related.push({
+            obx[0].related.push({
               type: "has-member",
               target: {
                 reference: subObxRef.reference
@@ -18266,11 +18267,13 @@ var dr = {
           }
         }
 
-        contained.push(obx);
-        content.result.push({
-          reference: "#" + obx.id
-        });
-        content.resultObj.push(obx);
+        for (var l = 0, lLen = obx.length; l < lLen; l++) {
+          contained.push(obx[l]);
+          content.result.push({
+            reference: "#" + obx[l].id
+          });
+          content.resultObj.push(obx[l]);
+        }
       }
     }
 
@@ -18506,23 +18509,22 @@ var dr = {
 
         case "CNE":
         case "CWE":
-          if (item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
-            var value = [];
+          // get the value from Observation resource.
+          // for multiple-selected answers/values in LForms, each selected answer is exported as
+          // a separated Observation resource
+          var itemValue = {
+            "code": obx.valueCodeableConcept.coding[0].code,
+            "text": obx.valueCodeableConcept.coding[0].display
+          };
 
-            for (var j = 0, jLen = obx.valueCodeableConcept.coding.length; j < jLen; j++) {
-              var coding = obx.valueCodeableConcept.coding[j];
-              value.push({
-                "code": coding.code,
-                "text": coding.display
-              });
+          if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
+            if (!item.value) {
+              item.value = [];
             }
 
-            item.value = value;
+            item.value.push(itemValue);
           } else {
-            item.value = {
-              "code": obx.valueCodeableConcept.coding[0].code,
-              "text": obx.valueCodeableConcept.coding[0].display
-            };
+            item.value = itemValue;
           }
 
           break;
@@ -18666,9 +18668,14 @@ var dr = {
 
     if (parentItem.items) {
       for (var i = 0, iLen = parentItem.items.length; i < iLen; i++) {
-        if (itemCode === parentItem.items[i].questionCode) {
-          if (idx === index) {
-            item = parentItem.items[i];
+        var subItem = parentItem.items[i];
+
+        if (itemCode === subItem.questionCode) {
+          if ((subItem.dataType === "CNE" || subItem.dataType === "CWE") && subItem.answerCardinality && (subItem.answerCardinality.max === "*" || parseInt(subItem.answerCardinality.max) > 1)) {
+            item = subItem;
+            break;
+          } else if (idx === index) {
+            item = subItem;
             break;
           } else {
             idx += 1;
@@ -18684,7 +18691,7 @@ var dr = {
    * Add repeating items
    * @param parentItem a parent item
    * @param itemCode code of a repeating item
-   * @param total total number of the repeating itme with the same code
+   * @param total total number of the repeating item with the same code
    * @private
    */
   _addRepeatingItems: function _addRepeatingItems(parentItem, itemCode, total) {
@@ -18697,10 +18704,10 @@ var dr = {
           item = parentItem.items[i];
           break;
         }
-      } // insert new items
+      } // insert new items unless it is a CNE/CWE and has multiple answers.
 
 
-      if (item) {
+      if (item && !((item.dataType === "CNE" || item.dataType === "CWE") && item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1))) {
         while (total > 1) {
           var newItem = angular.copy(item);
           parentItem.items.splice(i, 0, newItem);
@@ -18849,18 +18856,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var self = {
   /**
-   * Create an Observation instance from an LForms item object
+   * Create an Observation resource from an LForms item object
    * @param item an LForms item object
-   * @param id (optional) an "id" value for the Observation.
-   * @returns {{}} an observation instance
+   * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
+   * @returns {{}} an observation resource
    * @private
    */
-  _createObservation: function _createObservation(item, obxID) {
-    // get key and value
-    var valueX = {
-      key: "",
-      val: ""
-    };
+  _createObservation: function _createObservation(item, setId) {
+    var values = [];
     var dataType = item.dataType; // any item has a unit must be a numerical type, let use REAL for now.
 
     if ((!dataType || dataType === "ST") && item.units && item.units.length > 0) {
@@ -18871,79 +18874,97 @@ var self = {
       case "INT":
       case "REAL":
         if (item.unit) {
-          valueX.key = "valueQuantity";
-          valueX.val = {
-            "value": item.value,
-            "unit": item.unit ? item.unit.name : null,
-            "system": item.unit ? item.unit.system : null,
-            "code": item.unit ? item.unit.code : null
-          };
+          values = [{
+            key: "valueQuantity",
+            val: {
+              "value": item.value,
+              "unit": item.unit ? item.unit.name : null,
+              "system": item.unit ? item.unit.system : null,
+              "code": item.unit ? item.unit.code : null
+            }
+          }];
         } else {
-          value.key = dataType == 'INT' ? valueInteger : valueDecimal;
-          valueX.val = item.value;
+          values = [{
+            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
+            val: item.value
+          }];
         }
 
         break;
 
       case "DT":
-        valueX.key = "valueDateTime";
-        valueX.val = item.value;
+        values = [{
+          key: "valueDateTime",
+          val: item.value
+        }];
         break;
 
       case "CNE":
       case "CWE":
-        // TBD -- This is wrong.  Multi-valued list fields should generate an array of Observations, each with one value.
-        valueX.key = "valueCodeableConcept";
-        var max = item.answerCardinality.max;
-        var itemVals;
-        if (max && (max === "*" || parseInt(max) > 1)) itemVals = item.value;else itemVals = [item.value];
-        var coding = [];
+        var max = item.answerCardinality.max; // multiple values, each value creates a separate Observation resource
 
-        for (var j = 0, jLen = itemVals.length; j < jLen; j++) {
-          var val = itemVals[j];
-          var c = {
+        var itemValues;
+
+        if (max && (max === "*" || parseInt(max) > 1)) {
+          itemValues = item.value;
+        } else {
+          itemValues = [item.value];
+        }
+
+        for (var j = 0, jLen = itemValues.length; j < jLen; j++) {
+          var val = itemValues[j];
+          var coding = {
             "code": val.code,
             "display": val.text
           };
-          var cSystem = val.system || item.answerCodeSystem;
+          var codeSystem = val.system || item.answerCodeSystem;
 
-          if (cSystem) {
-            cSystem = LForms.Util.getCodeSystem(cSystem);
-            c.system = cSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
 
-          coding.push(c);
+          values.push({
+            key: "valueCodeableConcept",
+            val: {
+              "coding": [coding],
+              "text": coding.display
+            }
+          });
         }
 
-        valueX.val = {
-          "coding": coding
-        };
-        if (coding.length === 1) // TBD after the above fix, length should always be 1
-          valueX.val.text = coding[0].display;
         break;
 
       default:
-        valueX.key = "valueString";
-        valueX.val = item.value;
-    } // create Observation
-
-
-    var qCodeSystem = !item.questionCodeSystem || item.questionCodeSystem === 'LOINC' ? _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] : item.questionCodeSystem;
-    var obx = {
-      "resourceType": "Observation",
-      "status": "final",
-      "code": {
-        "coding": item.codeList,
-        "text": item.question
-      }
-    };
-    if (obxID) obx.id = obxID;
-
-    if (!item.header) {
-      obx[valueX.key] = valueX.val;
+        values = [{
+          key: "valueString",
+          val: item.value
+        }];
     }
 
-    return obx;
+    var obxs = [];
+
+    for (var i = 0, iLen = values.length; i < iLen; i++) {
+      var obx = {
+        "resourceType": "Observation",
+        "status": "final",
+        "code": {
+          "coding": item.codeList,
+          "text": item.question
+        }
+      };
+
+      if (setId) {
+        obx.id = this._getUniqueId(item.questionCode);
+      }
+
+      if (!item.header) {
+        obx[values[i].key] = values[i].val;
+      }
+
+      obxs.push(obx);
+    }
+
+    return obxs;
   },
 
   /**
@@ -19024,25 +19045,27 @@ var self = {
       var item = lfData.items[i];
 
       if (item._obsLinkPeriodExt && item.value) {
-        var obs = this._commonExport._createObservation(item); // Following
-        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+        var obs = this._commonExport._createObservation(item);
 
+        for (var j = 0, jLen = obs.length; j < jLen; j++) {
+          // Following
+          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+          if (qr.basedOn) obs[j].basedOn = qr.basedOn;
+          if (qr.partOf) obs[j].partOf = qr.partOf;
+          if (qr.subject) obs[j].subject = qr.subject;
+          if (qr.encounter) obs[j].encounter = qr.encounter;
 
-        if (qr.basedOn) obs.basedOn = qr.basedOn;
-        if (qr.partOf) obs.partOf = qr.partOf;
-        if (qr.subject) obs.subject = qr.subject;
-        if (qr.encounter) obs.encounter = qr.encounter;
+          if (qr.authored) {
+            obs[j].effectiveDateTime = qr.authored;
+            obs[j].issued = qr.authored;
+          }
 
-        if (qr.authored) {
-          obs.effectiveDateTime = qr.authored;
-          obs.issued = qr.authored;
+          if (qr.author) obs[j].performer = qr.author;
+          obs[j].derivedFrom = [{
+            reference: qrRef
+          }];
+          rtn.push(obs[j]);
         }
-
-        if (qr.author) obs.performer = qr.author;
-        obs.derivedFrom = [{
-          reference: qrRef
-        }];
-        rtn.push(obs);
       }
     }
 
