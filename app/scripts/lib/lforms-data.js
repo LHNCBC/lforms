@@ -250,7 +250,6 @@
      *  should be set to false (which is the default).
      */
     loadFHIRResources: function(prepopulate) {
-console.log("%%% called loadFHIRResources with prepop="+prepopulate);
       if (!LForms.fhirContext) {
         throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
       }
