@@ -4,8 +4,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [16.0.1] 2019-06-20
 ### Changed
-- Exported FHIR QuestionnaireResponse resources no longer have identifiers. This is
-  not considered a breaking change because FHIR spec governs the protocol here and
+- Removed generated identifiers from the exported FHIR QuestionnaireResponse resources.
+  The generated identifiers as they are now are not unique and do not serve specific purposes.
+  The identifiers from previously imported QuestionnaireResponse resources will be preserved.
+  This is not considered a breaking change because FHIR spec governs the protocol here and
   the identifier field is optional.
 
 ## [16.0.0] 2019-06-17

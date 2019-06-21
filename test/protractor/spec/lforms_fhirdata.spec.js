@@ -436,6 +436,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               // Per LF-1183, not to include identifier for exported QuestionnaireResponse
               // expect(fhirData.identifier.value).toBe("54127-6N");
               // expect(fhirData.identifier.system).toBe("http://loinc.org");
+              expect(!!fhirData.identifier).toBe(false);
 
               expect(fhirData.item.length).toBe(1);
               expect(fhirData.item[0].linkId).toBe("/54126-8");
