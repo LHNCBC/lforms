@@ -55,25 +55,28 @@ var self = {
       var item = lfData.items[i];
       if (item._obsLinkPeriodExt && item.value) {
         var obs = this._commonExport._createObservation(item);
-        // Following
-        // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
-        if (qr.basedOn)
-          obs.basedOn = qr.basedOn;
-        if (qr.partOf)
-          obs.partOf = qr.partOf;
-        if (qr.subject)
-          obs.subject = qr.subject;
-        if (qr.encounter)
-          obs.encounter = qr.encounter;
-        if (qr.authored) {
-          obs.effectiveDateTime = qr.authored;
-          obs.issued = qr.authored;
-        }
-        if (qr.author)
-          obs.performer = qr.author;
-        obs.derivedFrom = [{reference: qrRef}];
+        for (var j=0, jLen=obs.length; j<jLen; j++) {
+          // Following
+          // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
+          if (qr.basedOn)
+            obs[j].basedOn = qr.basedOn;
+          if (qr.partOf)
+            obs[j].partOf = qr.partOf;
+          if (qr.subject)
+            obs[j].subject = qr.subject;
+          if (qr.encounter)
+            obs[j].encounter = qr.encounter;
+          if (qr.authored) {
+            obs[j].effectiveDateTime = qr.authored;
+            obs[j].issued = qr.authored;
+          }
+          if (qr.author)
+            obs[j].performer = qr.author;
+          obs[j].derivedFrom = [{reference: qrRef}];
 
-        rtn.push(obs);
+          rtn.push(obs[j]);
+
+        }
       }
     }
     return rtn;
