@@ -19034,8 +19034,6 @@ var self = {
       qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code || qr.identifier || 'QR');
     }
 
-    delete qr.identifier; // Per LF-1183, no longer setting identifier for QuestionnaireResponse export.
-
     var qrRef = 'QuestionnaireResponse/' + qr.id;
     var rtn = [qr];
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
