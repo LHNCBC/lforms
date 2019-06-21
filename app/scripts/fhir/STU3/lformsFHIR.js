@@ -19002,7 +19002,7 @@ __webpack_require__.r(__webpack_exports__);
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-var sdcVersion = '2.0.0';
+var sdcVersion = '2.0';
 var fhirVersionNum = '3.0';
 var self = {
   SDCVersion: sdcVersion,
