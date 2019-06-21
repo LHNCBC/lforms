@@ -2,6 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.0.0] 2019-06-21
+### Changed (for FHIR forms only)
+- This contains a breaking change that only affects forms imported from FHIR
+  Questionnaires.  The loading of external FHIR resources no longer happens when
+  an LFormsData object is constructed.  Instead, after constructing LFormsData,
+  one must call (on the instance) loadFHIRResources(), which will return a
+  promise that resolves when the resources are loaded.  Similarly, if using
+  LForms.Util.addFormToPage(), that will also return a promise that resolves
+  when external FHIR resources had been loaded.  (See the
+  [documentation](https://lhncbc.github.io/lforms/index.html#fhirQueries).)
+
 ## [15.7.1] 2019-06-06
 ### Fixed
 - Observation-based prepoluation of list fields now works.
