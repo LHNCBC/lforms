@@ -39,7 +39,8 @@ LForms.Util = {
     formContainer.html(
       '<div ng-controller="'+controller+'">'+
         '<lforms lf-data="myFormData"></lforms>'+
-      '</div>'+
+      '</div>'
+    );
       '<script>'+
         'angular.module("'+appName+'", ["lformsWidget"])'+
         '.controller("'+controller+'", ["$scope", function ($scope) {'+
@@ -55,7 +56,19 @@ LForms.Util = {
         '    $scope.myFormData = myFormData;'+
         '}]);'+
       '</'+'script>'
-    );
+    angular.module(appName, ["lformsWidget"])
+      .controller(controller, ["$scope", function ($scope) {
+        var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+        if (LForms.fhirContext) {
+          myFormData.loadFHIRResources(prepop).then(function() {
+            $scope.$apply(function() {
+              $scope.myFormData = myFormData;
+            })
+          });
+        }
+        else
+          $scope.myFormData = myFormData;
+      }]);
     // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
     var isInitialized = formContainer.injector && formContainer.injector();
