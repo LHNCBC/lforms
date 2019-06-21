@@ -8291,11 +8291,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
         if (!lfData._controllerInit) {
-          lfData.addAsyncChangeListener(function () {
-            $scope.$apply(function () {
-              if (lfData.hasFHIRPath || lfData._hasInitialExpr) lfData._expressionProcessor.runCalculations(true);
-            });
-          });
+          //                lfData.addAsyncChangeListener(function() {
+          //                  $scope.$apply(function() {
+          if (lfData.hasFHIRPath || lfData._hasInitialExpr) lfData._expressionProcessor.runCalculations(true); //                  });
+          //                });
         } // Angular calls this twice for the same lfData.  Set a flag.
         // Note:  For some reason the watches still need to be set up both times.
 
@@ -11078,8 +11077,11 @@ LForms.Util = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
+   * @param options A hash of options (currently just one):
+   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
+   *     the form was an imported FHIR Questionnaire).
    */
-  addFormToPage: function addFormToPage(formDataDef, formContainer) {
+  addFormToPage: function addFormToPage(formDataDef, formContainer, options) {
     var formContainer = typeof formContainer === 'string' ? $('#' + formContainer) : $(formContainer);
 
     if (typeof formDataDef === 'string') {
@@ -11094,7 +11096,8 @@ LForms.Util = {
     if (!LForms.addedFormDefs) LForms.addedFormDefs = [];
     var formIndex = LForms.addedFormDefs.length;
     LForms.addedFormDefs.push(formDataDef);
-    formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>' + '<script>' + 'angular.module("' + appName + '", ["lformsWidget"])' + '.controller("' + controller + '", ["$scope", function ($scope) {' + '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs[' + formIndex + ']);' + '}]);' + '</' + 'script>'); // Bootstrap the element if needed
+    var prepop = options && options.prepopulate === true;
+    formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>' + '<script>' + 'angular.module("' + appName + '", ["lformsWidget"])' + '.controller("' + controller + '", ["$scope", function ($scope) {' + '  var myFormData = new LForms.LFormsData(LForms.addedFormDefs[' + formIndex + ']);' + '  if (LForms.fhirContext) {' + '    myFormData.loadFHIRResources(' + prepop + ').then(function() {' + '      $scope.$apply(function() {' + '        $scope.myFormData = myFormData;' + '      })' + '    });' + '  }' + '  else' + '    $scope.myFormData = myFormData;' + '}]);' + '</' + 'script>'); // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
 
     var isInitialized = formContainer.injector && formContainer.injector();
@@ -13362,41 +13365,82 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+    },
 
-      if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
+    /**
+     *  Loads FHIR resources necessary to show the form.  These are loaded
+     *  asynchronously.  When the asynchous requests have completed, if
+     *  "prepoluate" is set to true, the form will be partially filled in with
+     *  values from the resources as extensions indicate (e.g.
+     *  observationLinkPeriod and initialExpression).
+     *  Prior to calling this, LForms.Util.setFHIRContext() should have been
+     *  called, so that communication with the FHIR server can take place.
+     * @param prepopulate whether or not to peform prepoluation.  If the form
+     *  being showed is going to include previously saved user data, this flag
+     *  should be set to false (which is the default).
+     */
+    loadFHIRResources: function loadFHIRResources(prepopulate) {
+      var _this = this;
 
-        for (var i = 0, len = contextItems.length; i < len; ++i) {
-          var contextItemExt = contextItems[i].extension;
-          var name;
-          var typeList = [];
+      console.log("%%% called loadFHIRResources with prepop=" + prepopulate);
 
-          for (var j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
-            var fieldExt = contextItemExt[j];
+      if (!LForms.fhirContext) {
+        throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      }
 
-            if (!name && fieldExt.url === 'name') {
-              name = fieldExt.valueId;
+      var lfData = this;
+      var pendingPromises = []; // launchContext
 
-              this._checkFHIRVarName(name); // might throw
+      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
 
-            } else if (fieldExt.url === 'type') typeList.push(fieldExt.valueCode);
-          }
+      var _loop = function _loop() {
+        var contextItemExt = contextItems[i].extension;
+        var name = void 0;
+        var typeList = [];
 
-          if (name && typeList.length > 0) {
-            this._asyncLoadCounter++; // Enforce that this is truly asynchronous with setTimeout.
+        for (j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
+          fieldExt = contextItemExt[j];
+
+          if (!name && fieldExt.url === 'name') {
+            name = fieldExt.valueId;
+
+            _this._checkFHIRVarName(name); // might throw
+
+          } else if (fieldExt.url === 'type') typeList.push(fieldExt.valueCode);
+        }
+
+        if (name && typeList.length > 0) {
+          pendingPromises.push(new Promise(function (resolve, reject) {
+            // Enforce that this is truly asynchronous with setTimeout.
             // Some implementations of getCurrent (e.g in testing) might be
             // synchronous.
-
             setTimeout(function () {
-              LForms.fhirContext.getCurrent(typeList, function (resource) {
-                lfData._asyncLoadCounter--;
-                if (resource) lfData._fhirVariables[name] = resource;
-                if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-              });
+              try {
+                LForms.fhirContext.getCurrent(typeList, function (resource) {
+                  if (resource) lfData._fhirVariables[name] = resource;
+                  resolve();
+                });
+              } catch (e) {
+                reject(e);
+              }
             }, 1);
-          }
+          }));
         }
+      };
+
+      for (var i = 0, len = contextItems.length; i < len; ++i) {
+        var j, jLen;
+        var fieldExt;
+
+        _loop();
       }
+
+      if (prepopulate) pendingPromises.push(this._requestLinkedObs());
+      return Promise.all(pendingPromises).then(function () {
+        console.log("%%% calling async change listener");
+
+        lfData._notifyAsyncChangeListeners();
+      });
     },
 
     /**
@@ -13455,39 +13499,46 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       this._checkFormControls();
-
-      if (this._fhir) this._requestLinkedObs();
     },
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-population.
+     *  resources for pre-population.  When the resources have been retrieved,
+     *  prepoluation will be performed.
+     * @return a promise resolving after the resources have been retrieved and
+     *  any prepopulation has been performed.
      */
     _requestLinkedObs: function _requestLinkedObs() {
+      var _this2 = this;
+
       if (LForms.fhirContext && this._fhir) {
         // We will need to know what version of FHIR the server is using.  Make
         // sure that is available before continuing.
         var lfData = this;
 
         if (!LForms._serverFHIRReleaseID) {
-          LForms.Util.getServerFHIRReleaseID(function () {
-            lfData._requestLinkedObs();
+          // Go fetch the server's FHIR version first before continuing
+          return new Promise(function (resolve, reject) {
+            LForms.Util.getServerFHIRReleaseID(function (relID) {
+              if (!relID) reject("Unable to obtain the server's FHIR version");else resolve(lfData._requestLinkedObs());
+            });
           });
         } else {
+          var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
 
-          for (var i = 0, len = this.items.length; i < len; ++i) {
-            var item = this.items[i];
+          var _loop2 = function _loop2() {
+            var item = _this2.items[i];
 
             if (item._obsLinkPeriodExt) {
-              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+              duration = item._obsLinkPeriodExt.valueDuration; // optional
 
-              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              itemCodeSystem = item.questionCodeSystem || _this2.codeSystem;
               if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
-              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
 
-              var queryParams = {
+              queryParams = {
                 type: 'Observation',
                 query: {
                   code: itemCodeSystem + '|' + item.questionCode,
@@ -13505,17 +13556,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
-                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+                result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
 
                 if (result.status === 'succeeded') {
-                  var date = new Date(new Date() - result.toVal);
+                  date = new Date(new Date() - result.toVal);
                   queryParams.query._lastUpdated = 'gt' + date.toISOString();
                 }
-              }
+              } // I'm not sure why, but fhirjs.search.then() returns an already
+              // resolved promise.  Wrap it in a Promise object.
 
-              this._asyncLoadCounter++;
-              fhirjs.search(queryParams).then(function (itemI) {
-                return function (successData) {
+
+              pendingPromises.push(new Promise(function (resolve, reject) {
+                fhirjs.search(queryParams).then(function (successData) {
                   var bundle = successData.data;
 
                   if (bundle.entry) {
@@ -13526,23 +13578,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
                       if (!obs.focus) {
                         // in case we couldn't use focus:missing above
-                        foundObs = true;
-                        serverFHIR.SDC.importObsValue(itemI, obs);
-                        if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                        serverFHIR.SDC.importObsValue(item, obs);
+                        if (item.value) foundObs = true;
+                        if (item.unit) lfData._setUnitDisplay(item.unit);
                       }
                     }
                   }
 
-                  lfData._asyncLoadCounter--;
-                  if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-                };
-              }(item), function (errorData) {
-                console.log(errorData);
-                lfData._asyncLoadCounter--;
-                if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-              });
+                  resolve(item.questionCode); // code is not needed, but useful for debugging
+                });
+              }));
             }
+          };
+
+          for (var i = 0, len = this.items.length; i < len; ++i) {
+            var duration;
+            var itemCodeSystem;
+            var fhirjs;
+            var queryParams;
+            var result;
+            var date;
+
+            _loop2();
           }
+
+          return Promise.all(pendingPromises);
         }
       }
     },
