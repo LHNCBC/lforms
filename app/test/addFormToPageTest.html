@@ -60,8 +60,13 @@
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire")
                   importedData = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
+                // addFormToPage returns a promise that resolves when FHIR
+                // resources have finished loading.  Put that a flag on window
+                // so we can test that the promise is working.
+                window.addFormToPageDone = false;
                 LForms.Util.addFormToPage(importedData, 'formContainer2',
-                  {prepopulate: window.prepopulateFHIR});
+                  {prepopulate: window.prepopulateFHIR}).then(function() {
+                   window.addFormToPageDone = true});
               };
               reader.readAsText(item._file);
             };

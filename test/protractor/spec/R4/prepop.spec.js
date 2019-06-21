@@ -137,6 +137,10 @@ describe('Form pre-population', function() {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(true);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+          // Check the promise from the addFormToPage (called by
+          // loadFromTestData).
+          browser.wait(function() {return browser.executeScript('return ' +
+            'window.addFormToPageDone')}, 2000);
           browser.sleep(20); // give asynchronous prepopulation a chance to happen
           var weightField = element(by.id('/29463-7/1'));
           expect(weightField.getAttribute('value')).toEqual('95');

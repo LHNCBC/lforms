@@ -11080,6 +11080,9 @@ LForms.Util = {
    * @param options A hash of options (currently just one):
    *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
    *     the form was an imported FHIR Questionnaire).
+   * @return a Promise that will resolve after any needed external FHIR
+   *  resources have been loaded (if the form was imported from a FHIR
+   *  Questionnaire).
    */
   addFormToPage: function addFormToPage(formDataDef, formContainer, options) {
     var formContainer = typeof formContainer === 'string' ? $('#' + formContainer) : $(formContainer);
@@ -11098,22 +11101,28 @@ LForms.Util = {
     LForms.addedFormDefs.push(formDataDef);
     var prepop = options && options.prepopulate === true;
     formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>');
-    '<script>' + 'angular.module("' + appName + '", ["lformsWidget"])' + '.controller("' + controller + '", ["$scope", function ($scope) {' + '  var myFormData = new LForms.LFormsData(LForms.addedFormDefs[' + formIndex + ']);' + '  if (LForms.fhirContext) {' + '    myFormData.loadFHIRResources(' + prepop + ').then(function() {' + '      $scope.$apply(function() {' + '        $scope.myFormData = myFormData;' + '      })' + '    });' + '  }' + '  else' + '    $scope.myFormData = myFormData;' + '}]);' + '</' + 'script>';
-    angular.module(appName, ["lformsWidget"]).controller(controller, ["$scope", function ($scope) {
-      var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+    var rtnPromise = new Promise(function (resolve, reject) {
+      angular.module(appName, ["lformsWidget"]).controller(controller, ["$scope", function ($scope) {
+        var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
 
-      if (LForms.fhirContext) {
-        myFormData.loadFHIRResources(prepop).then(function () {
-          $scope.$apply(function () {
-            $scope.myFormData = myFormData;
+        if (LForms.fhirContext) {
+          myFormData.loadFHIRResources(prepop).then(function () {
+            $scope.$apply(function () {
+              $scope.myFormData = myFormData;
+              resolve();
+            });
           });
-        });
-      } else $scope.myFormData = myFormData;
-    }]); // Bootstrap the element if needed
+        } else {
+          $scope.myFormData = myFormData;
+          resolve();
+        }
+      }]);
+    }); // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
 
     var isInitialized = formContainer.injector && formContainer.injector();
     if (!isInitialized) angular.bootstrap(formContainer.children(':first'), [appName]);
+    return rtnPromise;
   },
 
   /**
@@ -13449,9 +13458,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       if (prepopulate) pendingPromises.push(this._requestLinkedObs());
       return Promise.all(pendingPromises).then(function () {
-        console.log("%%% calling async change listener");
+        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
 
-        lfData._notifyAsyncChangeListeners();
       });
     },
 

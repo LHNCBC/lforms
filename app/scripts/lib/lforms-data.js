@@ -300,8 +300,7 @@ console.log("%%% called loadFHIRResources with prepop="+prepopulate);
         pendingPromises.push(this._requestLinkedObs());
 
       return Promise.all(pendingPromises).then(function() {
-console.log("%%% calling async change listener");
-        lfData._notifyAsyncChangeListeners()
+        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
       });
     },
 
