@@ -11332,7 +11332,7 @@ LForms.Util = {
     if (!fhirVersion) fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
 
     if (!fhirVersion) {
-      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire' + ' (for Questionnaire version 3.5).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 ' + ' (for SDC Questionnaire version 3.5).');
+      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire' + ' (for Questionnaire version 4.0).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 ' + ' (for SDC Questionnaire version 2.7).');
     } else fhirVersion = this.validateFHIRVersion(fhirVersion);
 
     return fhirVersion;
@@ -11454,8 +11454,8 @@ LForms.Util = {
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile; // See http://build.fhir.org/versioning.html#mp-version
 
-      var questionnairePattern = new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
-      var sdcPattern = new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
+      var questionnairePattern = new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
+      var sdcPattern = new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
 
       for (var i = 0, len = profiles.length && !fhirVersion; i < len; ++i) {
         var match = profiles[i].match(questionnairePattern);
@@ -11463,8 +11463,15 @@ LForms.Util = {
           match = profiles[i].match(sdcPattern);
 
           if (match) {
-            fhirVersion = match[1];
-            if (fhirVersion == '2.0') fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            fhirVersion = match[1]; // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+            // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+
+            if (fhirVersion == '2.0') {
+              fhirVersion = '3.0';
+            } // use FHIR 4.0 for SDC version >= 2.1
+            else if (parseFloat(fhirVersion) >= 2.1) {
+                fhirVersion == '4.0';
+              }
           }
         }
       }

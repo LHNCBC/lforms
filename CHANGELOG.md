@@ -9,6 +9,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Temporarily switch back to jquery 3.3.1 (from 3.4.0) due to a potential bug in
   jquery 3.4.0 (and the latest version 3.4.1)
 
+## [16.0.1] 2019-06-18
+### Fixed
+- Fixed extension URLs for SDC Questionnaire
+
 ## [16.0.0] 2019-06-17
 ### Fixed
 - Each value of the multiple selected values in CNE/CWE typed item 

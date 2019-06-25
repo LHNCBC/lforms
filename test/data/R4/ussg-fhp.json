@@ -5,7 +5,7 @@
   "version": "2.56",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire"
     ]
   },
   "title": "US Surgeon General family health portrait",
