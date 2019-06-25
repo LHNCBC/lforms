@@ -13,6 +13,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   when external FHIR resources had been loaded.  (See the
   [documentation](https://lhncbc.github.io/lforms/index.html#fhirQueries).)
 
+## [16.0.1] 2019-06-18
+### Fixed
+- Fixed extension URLs for SDC Questionnaire
+
 ## [16.0.0] 2019-06-17
 ### Fixed
 - Each value of the multiple selected values in CNE/CWE typed item
