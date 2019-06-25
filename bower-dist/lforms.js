@@ -8286,15 +8286,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
               if (lfData) lfData._expressionProcessor.runCalculations(false);
             });
           }
-        } // Set up a listener for asynchronous change events (triggered by
-        // lfData itself).
+        }
 
-
-        if (!lfData._controllerInit) {
-          //                lfData.addAsyncChangeListener(function() {
-          //                  $scope.$apply(function() {
-          if (lfData.hasFHIRPath || lfData._hasInitialExpr) lfData._expressionProcessor.runCalculations(true); //                  });
-          //                });
+        if (!lfData._controllerInit && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
+          lfData._expressionProcessor.runCalculations(true);
         } // Angular calls this twice for the same lfData.  Set a flag.
         // Note:  For some reason the watches still need to be set up both times.
 
@@ -13402,8 +13397,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     loadFHIRResources: function loadFHIRResources(prepopulate) {
       var _this = this;
-
-      console.log("%%% called loadFHIRResources with prepop=" + prepopulate);
 
       if (!LForms.fhirContext) {
         throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
