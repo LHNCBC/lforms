@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "16.0.1",
+  "version": "17.0.0",
   "main": "app/scripts/index.js",
   "files": [
     "app"
@@ -13,6 +13,7 @@
     "autocomplete-lhc": "^18.0.1",
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
+    "es6-promise": "^4.2.8",
     "fhirpath": "^0.10.1",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",

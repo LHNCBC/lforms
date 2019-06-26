@@ -13,8 +13,14 @@ LForms.Util = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
+   * @param options A hash of options (currently just one):
+   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
+   *     the form was an imported FHIR Questionnaire).
+   * @return a Promise that will resolve after any needed external FHIR
+   *  resources have been loaded (if the form was imported from a FHIR
+   *  Questionnaire).
    */
-  addFormToPage: function(formDataDef, formContainer) {
+  addFormToPage: function(formDataDef, formContainer, options) {
     var formContainer = typeof formContainer === 'string' ?
       $('#'+formContainer) : $(formContainer);
     if (typeof formDataDef === 'string') {
@@ -32,22 +38,38 @@ LForms.Util = {
       LForms.addedFormDefs = [];
     var formIndex = LForms.addedFormDefs.length;
     LForms.addedFormDefs.push(formDataDef);
+    var prepop = options && options.prepopulate===true;
     formContainer.html(
       '<div ng-controller="'+controller+'">'+
         '<lforms lf-data="myFormData"></lforms>'+
-      '</div>'+
-      '<script>'+
-        'angular.module("'+appName+'", ["lformsWidget"])'+
-        '.controller("'+controller+'", ["$scope", function ($scope) {'+
-        '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs['+formIndex+']);'+
-        '}]);'+
-      '</'+'script>'
+      '</div>'
     );
+    var rtnPromise = new Promise(function(resolve, reject) {
+      angular.module(appName, ["lformsWidget"])
+        .controller(controller, ["$scope", function ($scope) {
+          var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+          if (LForms.fhirContext) {
+            myFormData.loadFHIRResources(prepop).then(function() {
+              $scope.$apply(function() {
+                $scope.myFormData = myFormData;
+                resolve();
+              })
+            });
+          }
+          else {
+            $scope.myFormData = myFormData;
+            resolve();
+          }
+        }]);
+    });
+
     // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
     var isInitialized = formContainer.injector && formContainer.injector();
     if (!isInitialized)
       angular.bootstrap(formContainer.children(':first'), [appName]);
+
+    return rtnPromise;
   },
 
 

@@ -1,10 +1,12 @@
-var fhirVersion = 'R4';
+var fhirVersion = 'R4'; // for questionnaire resources
 
+var po = require('../addFormToPageTest.po');
 var tp = require('../lforms_testpage.po.js');
 var mockFHIRContext = require('./fhir_context');
 
 /**
- *  Sets up a mock server FHIR context.
+ *  Sets up a mock server FHIR context.  This will also set the page to do
+ *  prepopulation.  (If that is not desired, call setFHIRPropulation(false).
  * @param fhirVersion the FHIR version number (as a string) for the mock server.
  * @param weightQuantity the quantity to return from a search for a weight.
  */
@@ -19,7 +21,18 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
       console.log(e);
     }
   }, fhirVersion, mockFHIRContext, weightQuantity);
+  setFHIRPrepopulation(true);
 }
+
+/**
+ *  Enables or disables prepopulation (from the mock FHIR context) when a Questionnaire is
+ *  loaded.
+ * @param enable whether the prepopulation should be enabled.
+ */
+function setFHIRPrepopulation(enable) {
+  browser.executeScript('window.prepopulateFHIR = '+enable);
+}
+
 
 describe('Form pre-population', function() {
   for (let serverFHIRNum of ['3.0', '4.0']) {
@@ -68,18 +81,29 @@ describe('Form pre-population', function() {
     for (let serverFHIRNum of ['3.0', '4.0']) {
       describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
-        it('should load values from observationLinkPeriod for server FHIR version '+
-           serverFHIRNum, function() {
+        it('should load values from observationLinkPeriod', function() {
+          tp.openBaseTestPage();
           setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
+          browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
+            return val == '95'
+          })}, 1000);
           expect(weightField.getAttribute('value')).toBe('95');
           var unitField = element(by.id('unit_/29463-7/1'));
           expect(unitField.getAttribute('value')).toBe('kg');
         });
 
-        it('should convert values from observationLinkPeriod for server FHIR version '+
-           serverFHIRNum, function() {
+        it('should not load values from observationLinkPeriod if prepopulation is disabled', function() {
+          setServerFHIRContext(serverFHIRNum);
+          setFHIRPrepopulation(false);
+          tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+          browser.sleep(20); // give asynchronous prepopulation a chance to happen
+          var weightField = element(by.id('/29463-7/1'));
+          expect(weightField.getAttribute('value')).toEqual('');
+        });
+
+        it('should convert values from observationLinkPeriod', function() {
           setServerFHIRContext(serverFHIRNum, {
             "value": 140,
             "unit": "[lb_av]",
@@ -92,6 +116,34 @@ describe('Form pre-population', function() {
           expect(weightField.getAttribute('value')).toBe('63.5');
           var unitField = element(by.id('unit_/29463-7/1'));
           expect(unitField.getAttribute('value')).toBe('kg');
+        });
+      });
+
+      describe('addFormToPage', function() {
+        it('should not load values from observationLinkPeriod if prepopulation '+
+           'is disabled, with server FHIR version '+serverFHIRNum, function() {
+          po.openPage();
+          setServerFHIRContext(serverFHIRNum);
+          setFHIRPrepopulation(false);
+          tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+          browser.sleep(20); // give asynchronous prepopulation a chance to happen
+          var weightField = element(by.id('/29463-7/1'));
+          expect(weightField.getAttribute('value')).toEqual('');
+        });
+
+        it('should load values from observationLinkPeriod if prepopulation '+
+           'is enabled, with server FHIR version '+serverFHIRNum, function() {
+          po.openPage();
+          setServerFHIRContext(serverFHIRNum);
+          setFHIRPrepopulation(true);
+          tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
+          // Check the promise from the addFormToPage (called by
+          // loadFromTestData).
+          browser.wait(function() {return browser.executeScript('return ' +
+            'window.addFormToPageDone')}, 2000);
+          browser.sleep(20); // give asynchronous prepopulation a chance to happen
+          var weightField = element(by.id('/29463-7/1'));
+          expect(weightField.getAttribute('value')).toEqual('95');
         });
       });
     }
@@ -107,6 +159,7 @@ describe('Form pre-population', function() {
       var unitField = element(by.id('unit_/29463-7/1'));
       expect(unitField.getAttribute('value')).toBe('kg');
     });
+
   });
 });
 
