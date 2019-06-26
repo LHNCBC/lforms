@@ -3,6 +3,7 @@ var fhirVersion = 'R4'; // for questionnaire resources
 var po = require('../addFormToPageTest.po');
 var tp = require('../lforms_testpage.po.js');
 var mockFHIRContext = require('./fhir_context');
+var EC = protractor.ExpectedConditions;
 
 /**
  *  Sets up a mock server FHIR context.  This will also set the page to do
@@ -79,13 +80,14 @@ describe('Form pre-population', function() {
 
 
     for (let serverFHIRNum of ['3.0', '4.0']) {
-      describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
+      fdescribe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
         it('should load values from observationLinkPeriod', function() {
           tp.openBaseTestPage();
           setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
           browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
             return val == '95'
           })}, 1000);
