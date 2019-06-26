@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics (project-specific) -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-75410768-5"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -31,43 +31,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>
       /* CSS for adding the version column */
-      #sidebar {
+      #versionList {
         float: left;
         margin-left: 1em;
         margin-right: 1em;
         margin-top: 10em;
-        position: fixed;
       }
-      #sidebar p {
+      #versionList p {
         margin: 0;
-      }
-      ul ul {
-        margin: 0;
-      }
-      .wrapper {
-        margin-left: 25em;
       }
       @media screen and (max-width: 1125px) {
-        #sidebar {
-          margin-top: 5em;
-          position: static;
+        #versionList {
+          margin-top: 15em;
         }
         .wrapper {
           float: left;
-          margin-left: 1em;
-        }
-        section {
-          padding-top: 0;
-          margin-top: 0;
         }
       }
       @media screen and (max-width: 970px) {
-        #sidebar {
+        #versionList {
           width: 100%;
           margin-top: 5em;
         }
         .wrapper {
           float: left;
+        }
+        section {
+          padding-top: 0;
+          margin-top: 0;
         }
       }
     </style>
@@ -78,40 +69,15 @@
     height="0" width="0" style="display:none;visibility:hidden" title="googletagmanager"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
-    <div id="sidebar">
-      <div id=versionList>
-        <p>Documentation by version:</p>
-        <ul>
-          <li>Current (>=17.x)</li>
-          <li><a href="versions/13.x/index.html">13-16</a></li>
-          <li><a href="versions/11.x/index.html">11-12</a></li>
-          <li><a href="versions/7.x/index.html">7-10</a></li>
-          <li><a href="versions/6.x/index.html">6.x</a></li>
-          <li><a href="versions/5.5/index.html">5.5</a></li>
-        </ul>
-      </div>
-
-      <p>Contents:</p>
+    <div id=versionList>
+      <p>Documentation by version:</p>
       <ul>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#installation">Installation</a></li>
-        <li><a href="#usage">Usage</a></li>
-        <ul>
-          <li><a href="#usageNonAngularJS">Rendering without AngularJS</a></li>
-          <li><a href="#usageAngularJS">Rendering using AngularJS</a></li>
-          <li><a href="#userData">Retrieving user-entered data</a></li>
-        </ul>
-        <li><a href="#fhirSupport">FHIR support</a></li>
-        <ul>
-          <li><a href="#fhirScripts">JavaScript files</a></li>
-          <li><a href="#retrieving-fhir-data">Exporting FHIR</a></li>
-          <li><a href="#convert-fhir-data">Importing Questionnaire</a></li>
-          <ul>
-            <li><a href="#fhirQueries">FHIR Queries</a></li>
-          </ul>
-          <li><a href="#convert-fhir-data">Importing Questionnaire</a></li>
-          <li><a href="#merge-fhir-data">Importing QuestionnaireResponse</a></li>
-        </ul>
+        <li><a href="../../index.html">Current (>=17.x)</a></li>
+        <li>13-16 (this version)</a></li>
+        <li><a href="../11.x/index.html">11-12</a></li>
+        <li><a href="../7.x/index.html">7-10</a></li>
+        <li><a href="../6.x/index.html">6.x</a></li>
+        <li><a href="../5.5/index.html">5.5</a></li>
       </ul>
     </div>
 
@@ -129,6 +95,7 @@
 
       <section>
         <div id="title">
+          <li>Current (>=17.x)</li>
           <h1>LHC-Forms</h1>
           <p>A widget for rendering feature-rich forms defined in JSON definition files</p>
           <hr>
@@ -148,7 +115,7 @@ Health (<a href="https://www.nih.gov">NIH</a>), with the collaboration and suppo
 <a href="https://www.regenstrief.org/">Regenstrief Institute</a>, Inc. and the
 <a href="https://loinc.org/">LOINC</a> Committee.</p>
 
-<h2><a id="features"></a>Features</h2>
+<h2>Features</h2>
 See the <a href="demos.html">demos</a> for a step-by-step introduction.
 Features include:
 <ul>
@@ -178,11 +145,11 @@ clinicaltables.nlm.nih.gov.  The
 URLs for the JavaScript and the CSS are:
 </p>
 <dl>
-  <dt>JavaScript</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/lforms.min.js</dd>
-  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/styles/lforms.min.css</dd>
+  <dt>JavaScript</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/13.6.0/lforms.min.js</dd>
+  <dt>CSS</dt><dd>https://clinicaltables.nlm.nih.gov/lforms-versions/13.6.0/styles/lforms.min.css</dd>
 </dl>
 
-<p>(Note that the URLs contain a release version number, 17.0.0, for which you
+<p>(Note that the URLs contain a release version number, 13.6.0, for which you
 can substitute any of the other prebuilt versions available at
 https://clinicaltables.nlm.nih.gov/lforms-versions).</p>
 
@@ -193,7 +160,7 @@ https://clinicaltables.nlm.nih.gov/lforms-versions).</p>
 AngularJS projects, you do not need to know anything about AngularJS to use
 it.</p>
 
-<h3><a id="usageNonAngularJS"></a>Rendering a Form (Without AngularJS)</h3>
+<h3>Rendering a Form (Without AngularJS)</h3>
 <p>In your HTML, create a an element to hold the form.  You will pass a
 reference to this element or its ID to a utility function load the form.</p>
 
@@ -206,20 +173,20 @@ header:</p>
 
 <pre><code>
 &lt;link
- href="https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/styles/lforms.min.css"
+ href="https://clinicaltables.nlm.nih.gov/lforms-versions/13.6.0/styles/lforms.min.css"
  media="screen" rel="stylesheet" /&gt;
 </code></pre>
 
 And with your other JavaScript:
 
 <pre><code>&lt;script
- src="https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/lforms.min.js"
+ src="https://clinicaltables.nlm.nih.gov/lforms-versions/13.6.0/lforms.min.js"
  &gt;&lt;/script&gt;
 </code></pre>
 
 <h4>JavaScript (without AngularJS)</h4>
 
-<pre><code>LForms.Util.addFormToPage(formDefinition, 'myFormContainer', options);
+<pre><code>LForms.Util.addFormToPage(formDefinition, 'myFormContainer');
 </code></pre>
 
 Parameters:
@@ -228,11 +195,9 @@ Parameters:
    a parsed object)</li>
   <li>formContainer - An element (or its ID, as in this example) into which the
    form should be placed</li>
-  <li>options - A map of options.  If you are using FHIR and want prepopulation
-   to occur, pass {prepopulate: true}.</li>
 </ol>
 
-<h3><a id="usageAngularJS"></a>Rendering a Form (AngularJS Method)</h3>
+<h3>Rendering a Form (AngularJS Method)</h3>
 
 <p>As in the non-Angular method, you will need to include the LHC-Forms CSS and
 JavaScript (possibly using bower and wiredep, if you are using those).</p>
@@ -269,7 +234,7 @@ For example:</p>
 </code></pre>
 
 <h3>
-<a id="userData" class="anchor" href="#retrieving-user-entered-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieving User-Entered Data</h3>
+<a id="retrieving-user-entered-data" class="anchor" href="#retrieving-user-entered-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieving User-Entered Data</h3>
 
 <p>After the user fills out a form, the data they have entered and things like
 codes for coded answer lists will be stored in the data model.  To retrieve that
@@ -374,12 +339,12 @@ user to save the form so it can be redisplayed later for completion or editing.<
    resources.  Also, there is partial support for importing and exporting
    DiagnosticReports (but those need to be generated by LHC-Forms).</p>
 
-  <h3><a id="fhirScripts"></a>Files for FHIR Support</h3>
+  <h3>Files for FHIR Support</h3>
   <p>Because adding support for FHIR (and multiple versions of FHIR) would
   increase the size of the LHC-Forms library, support for FHIR is added through
   separate files.  If you are using one of the prebuilt versions, you can
   include:
-<pre><code>&lt;script src="https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/fhir/R4/lformsFHIR.min.js"&gt;&lt;/script&gt;</code></pre>
+<pre><code>&lt;script src="https://clinicaltables.nlm.nih.gov/lforms-versions/13.6.0/fhir/R4/lformsFHIR.min.js"&gt;&lt;/script&gt;</code></pre>
   for FHIR version "R4", or for version "STU3", replace the "R4" in the URL with
   "STU3".  It is safe to include both versions if your application needs
   both.</p>
@@ -457,71 +422,13 @@ user to save the form so it can be redisplayed later for completion or editing.<
   </ol>
 
   <p>The return value is a form definition in the <a
-   href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">LHC-Forms format</a>.</p>
-
-  <h4><a name="fhirQueries"></a>FHIR Queries</h4>
-  <p>If the Questionnaire referenced external FHIR resources, those will still
-   need to be loaded.  Before that can happen, you will need to tell LForms about
-   the connection to the FHIR server, via
-   <pre><code>LForms.Util.setFHIRContext(fhirContext)</code></pre>.
-   The "fhirContext" parameter should
-   be an object implementing the following functions:</p>
-  <ul>
-    <li>getCurrent(typeList, callback):  "typeList" is a list of desired
-      FHIR resource types for which there is conceptually a "current" on in
-      the FHIR context (e.g., Patient, or Practitioner).  Only one resource
-      from the requested list will be returned, and the result will be null if
-      none of the requested resource types are available.  Because retrieving
-      the resource will generally be an asynchronous operation, the resource
-      will be returned via the first argument to the provided "callback"
-      function.</li>
-    <li>getFHIRAPI():  Should return an instance of fhir.js for interacting with
-      the FHIR server.</li>
-  </ul>
-
-  <p>If rendering using <a
-  href="#usageNonAngularJS">LForms.Util.addFormtoPage()</a>, the external FHIR
-  resources will be loded when that is called, and if you have passed in the
-  prepopulate=true as an option, prepoluation will also be performed when the
-  resources are loaded.  Note that you probably do not want prepopulation to
-  happen if you are planning to <a href="#merge-fhir-data">merge</a> in a saved
-  QuestionnaireResponse.  The addFormToPage function returns a promise that will resolve
-  after all external FHIR resources have been loaded (at which point the form
-  should be visible).</p>
-
-  <p>If using the <a href="#usageAngularJS">AngularJS</a> approach, then
-  after the LFormsData instance is created, you will need to tell it to load the
-  FHIR resources, passing in a flag to determine whether prepopulation should be
-  done, like:</p>
-  <pre><code>
-     // AngularJS example
-     var myFormData = new LForms.LFormsData(myFormDefinition);
-     myFormData.loadFHIRResources(true);
-  </code></pre>
-  <p>The "loadFHIRResources" function returns a Promise that will resolve when
-  the referenced FHIR resources have finished loading, and the form is ready to
-  display.  This lets the application put up a spinner or some notice for the
-  user, in case the loading takes a few seconds.  For example:</p>
-  <pre><code>
-     // AngularJS example with spinner
-     $('.spinner').show();
-     var lfData = new LForms.LFormsData(questionnaire);
-     // Next call assumes LForms.Util.setFHIRContext(...) has been called.
-     lfData.loadFHIRResources(true).then(function() {
-       $('.spinner').hide();
-       $scope.$apply(function() {
-         // assign lfData to property of $scope
-       });
-     });
-  </code></pre>
-
+   href="https://github.com/lhncbc/lforms">LHC-Forms format</a>.</p>
 
   <h3>
     <a id="merge-fhir-data" class="anchor" href="#merge-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
-    Merging FHIR QuestionnaireRepsonse into an LHC-Forms Form
+    Merging FHIR Resources into an LHC-Forms Form
   </h3>
-  <p>FHIR QuestionnaireResponses (and also a DSTU2 version of DiagnosticReports,
-   if generated by LHC-Forms)
+  <p>FHIR DiagnosticReports (if generated by LHC-Forms) and FHIR QuestionnaireResponses
    can be loaded into an LHC-Forms form definition to produce a structure that can be
    loaded into the LHC-Forms widget (using the same methods as for JSON form
    defintions described above) to show the form along with the user data.
