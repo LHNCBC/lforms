@@ -34,6 +34,7 @@ LForms.HL7 = (function() {
       "PT":	"Processing type",
       //Date/Time
       "DT":	"Date",
+      "DTM": "Date/Time",
       "TM":	"Time",
       "TS":	"Time stamp",
       //Code Values
@@ -384,7 +385,8 @@ LForms.HL7 = (function() {
       return rtn;
     },
 
-
+    _DT_FMT: 'yyyyMMdd',
+    _DTM_FMT: 'yyyyMMddHHmmss',
     /**
      * Convert an item to one or more HL7 v2 OBX records.
      * @param item an item in LForms form data
@@ -472,8 +474,9 @@ LForms.HL7 = (function() {
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
               itemObxArray[5] = this._generateOBX5(val, item.dataType, answerCS);
             }
-            else if (item.dataType === 'DT') {
-              itemObxArray[5] = val.toString("yyyyMMddHHmmss");
+            else if (item.dataType === 'DT' || item.dataType === 'DTM') {
+              var dv = (typeof val === 'string')? LForms.Util.stringToDate(val): val;
+              itemObxArray[5] = dv.toString(item.dataType === 'DT'? this._DT_FMT: this._DTM_FMT);
             }
             else {
               itemObxArray[5] = val.toString();

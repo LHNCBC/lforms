@@ -302,24 +302,10 @@ var self = {
           // }
           case "minExclusive":
           case "minInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-              dataType === "REAL" || dataType === "INT" ) {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/minValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-            break;
           // http://hl7.org/fhir/StructureDefinition/maxValue
           case "maxExclusive":
           case "maxInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-              dataType === "REAL" || dataType === "INT" ) {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/maxValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
+            extValue = this._exportMinMax(dataType, value, valueKey, key);
             break;
           // http://hl7.org/fhir/StructureDefinition/minLength
           case "minLength":

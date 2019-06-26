@@ -3,11 +3,9 @@ var tp = require('./lforms_testpage.po.js');
 var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
 
-  it('should load ST, DT, INT, answer lists', function() {
+  it('should load ST, DT, DTM, INT, answer lists', function() {
 
     tp.openFormWithUserData();
-
-
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');
     expect(ff.q3.getAttribute('value')).toBe('user input value');
@@ -18,6 +16,7 @@ describe('load saved user data', function() {
 
     expect(ff.q8.getAttribute('value')).toBe('');
     expect(ff.q9.getAttribute('value')).toBe('');
+    expect(ff.q99.getAttribute('value')).toBe('11/20/2015 10:10'); //DTM
     expect(ff.multiAnswers.count()).toBe(6);
     expect(ff.multiAnswers.get(0).getText()).toBe('×Answer 1');
     expect(ff.multiAnswers.get(1).getText()).toBe('×Answer 3');

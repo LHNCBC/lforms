@@ -524,6 +524,36 @@ LForms.Util = {
     return formObj;
   },
 
+  /**
+   * This function and stringToDTDateISO are meant to work as a pair on DT (or FHIR date) data type.
+   * The idea is that DT/date type does not have timezone info, as a result, the string value could be
+   * off by a day during either way of conversion depending on the time zone the code is executed.
+   * The solution here is to keep the literal values of the year, month, and date components remain
+   * unchanged regardless of the time zones.
+   * Convert the given date object into a DT type date string, in "yyyy-mm-dd" format, where the
+   * year, month, and date are based on the "local time zone" as the users can see on the display.
+   * @param dateObj the date object to be converted.
+   * @return date string in yyyy-mm-dd format with year, month, and date values corresponding to that
+   * at the local timezone.
+   */
+  dateToDTStringISO: function (dateObj) {
+    return (! dateObj || isNaN(dateObj.getTime()))? undefined: [
+      (10000 + dateObj.getFullYear()).toString().substr(1),
+      (101 + dateObj.getMonth()).toString().substr(1),
+      (100 + dateObj.getDate()).toString().substr(1) ].join('-');
+  },
+
+  /**
+   * Parse the given iso date string, that is, a string of format "yyyy[-mm[-dd]]", into a Date object,
+   * and then, adjust the year, month, and day so that when displayed (as local date) the literal values of
+   * the year, month, and date components remain unchanged.
+   * See the comments/docs for function dateToDTStringISO().
+   * @param isoDateString
+   */
+  stringToDTDateISO: function(isoDateString) {
+    var d = new Date(isoDateString);
+    return isNaN(d.getTime())? undefined: new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  },
 
   /**
    * Get a formatted date string from a date object
@@ -531,12 +561,11 @@ LForms.Util = {
    * @param objDate a date object
    * @returns a formatted date string
    */
-  dateToString: function(objDate) {
+  dateToDTMString: function(objDate) {
     var offset = objDate.getUTCOffset();
     offset = offset.slice(0,-2) + ":" + offset.slice(-2);
     return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
   },
-
 
   /**
    * Parse a formatted date string and create a date object
@@ -544,6 +573,10 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function(strDate) {
+    if(! strDate || (typeof strDate) != 'string') { // maybe already a date object.
+      return strDate;
+    }
+
     var matches, millis = null, ret = null;
 
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
@@ -583,29 +616,37 @@ LForms.Util = {
    */
   isItemValueEmpty: function(value) {
     var empty = true;
-    if (typeof value !== 'undefined') {
-      // object
-      if (angular.isObject(value)) {
-        var keys = Object.keys(value);
-        for(var i=0, iLen=keys.length; i<iLen; i++) {
-          var val = value[keys[i]];
-          if (val !== null && val !== "" ) {
+    if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
+      if(typeof value === 'string' || value instanceof String) {
+        empty = value.trim() === '';
+      }
+      else if(Array.isArray(value)) {
+        for(var i=0; i < value.length; ++i) {
+          if(! this.isItemValueEmpty(value[i])) {
             empty = false;
             break;
           }
         }
       }
-      // array
-      else if (angular.isArray(value)) {
-        if (value.length > 0) {
+      else if(typeof value === 'object') {
+        var keys = Object.keys(value);
+        if(keys.length > 0) {
+          for(var i=0, iLen=keys.length; i<iLen; i++) {
+            if(! this.isItemValueEmpty(value[keys[i]])) {
+              empty = false;
+              break;
+            }
+          }
+        }
+        else if(value.constructor !== Object) { // e.g., a Date object has zero length keys
           empty = false;
         }
       }
-      // other
-      else if (value !== null && value !== "") {
+      else {
         empty = false;
       }
     }
+
     return empty;
   },
 
