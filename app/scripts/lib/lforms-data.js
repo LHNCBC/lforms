@@ -34,6 +34,7 @@
         ST:     "ST",
         TX:     "TX",
         DT:     "DT",
+        DTM:    "DTM",
         TM:     "TM",
         CNE:    "CNE",
         CWE:    "CWE",
@@ -49,7 +50,6 @@
         QTY:    "QTY",
         BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
-        // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
       },
       DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
@@ -834,7 +834,7 @@
       if (this.templateOptions.formHeaderItems) {
         for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
           var item = this.templateOptions.formHeaderItems[i];
-          if (item.value && item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+          if (item.value && (item.dataType === this._CONSTANTS.DATA_TYPE.DT || item.dataType === this._CONSTANTS.DATA_TYPE.DTM)) {
               item.value = LForms.Util.stringToDate(item.value);
           }
         }
@@ -1041,6 +1041,13 @@
                 item.value = LForms.Util.stringToDate(item.value);
               }
               break;
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              item._toolTip = "MM/DD/YYYY HH:MM";
+              // process user data
+              if (item.value) {
+                item.value = LForms.Util.stringToDate(item.value);
+              }
+              break;
             case this._CONSTANTS.DATA_TYPE.CNE:
               if (item.externallyDefined)
                 item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
@@ -1078,7 +1085,9 @@
             (item.dataType !== this._CONSTANTS.DATA_TYPE.ST &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.TX &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.CWE &&
-             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
+             item.dataType !== this._CONSTANTS.DATA_TYPE.DTM)) { // datetime picker controls input.
           item._hasValidation = true;
         }
 
@@ -1465,7 +1474,10 @@
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
-              retValue = LForms.Util.dateToString(value);
+              retValue = LForms.Util.dateToDTStringISO(value);
+              break;
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              retValue = LForms.Util.dateToDTMString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
             case this._CONSTANTS.DATA_TYPE.CWE:

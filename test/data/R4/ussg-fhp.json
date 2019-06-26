@@ -159,7 +159,7 @@
             }
           ],
           "text": "Birth Date",
-          "type": "dateTime"
+          "type": "date"
         },
         {
           "extension": [
@@ -1264,7 +1264,7 @@
                 }
               ],
               "text": "Date of Birth",
-              "type": "dateTime",
+              "type": "date",
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",

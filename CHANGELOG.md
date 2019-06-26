@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.1.1] 2019-06-26
+### Fixed
+- Fixed a bug in FHIR/SDC Questionnaire version detection.
+
+## [17.1.0] 2019-06-20
+### Added
+- DTM support and datetime picker
+
 ## [17.0.0] 2019-06-21
 ### Changed (for FHIR forms only)
 - This contains a breaking change that only affects forms imported from FHIR

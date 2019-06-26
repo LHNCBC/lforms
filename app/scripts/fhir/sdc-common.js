@@ -16,8 +16,8 @@ function addCommonSDCFns(ns) {
     "BL": 'boolean',
     "REAL": 'decimal',
     "INT": 'integer',
-    "DT": 'dateTime',
-    "DTM": 'dateTime', // not supported yet
+    "DT": 'date',
+    "DTM": 'dateTime',
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',
@@ -31,7 +31,7 @@ function addCommonSDCFns(ns) {
   self._lformsTypesToFHIRFields = {
     "INT": 'Integer',
     "REAL": 'Decimal',
-    "DT": 'DateTime',
+    "DT": 'Date',
     "DTM": 'DateTime',
     "TM": 'Time',
     "ST": 'String',

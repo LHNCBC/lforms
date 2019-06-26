@@ -28,6 +28,12 @@ describe('addFormToPage test page', function() {
     }, tp.WAIT_TIMEOUT_1);
   });
 
+  it('DTM datetime picker should work', function () {
+    po.openPage();
+    element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
+    element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
+  });
 
   describe('addFormToPage', function () {
     it('should be able to called a second time with a new form for the same form '+
