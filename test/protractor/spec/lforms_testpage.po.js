@@ -7,6 +7,7 @@ var TestPage = function() {
   var directiveTestUrl = testDirURL + '/directiveTest.html';
   var testPageUrl = testDirURL + '/lforms_testpage.html';
   var buildFHIRPathURL = testDirURL + '/build_test_fhirpath.html';
+  var addFormToPageTest = testDirURL + '/addFormToPageTest.html';
 
 
   /**

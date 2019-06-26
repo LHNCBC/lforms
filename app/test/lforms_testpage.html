@@ -370,7 +370,18 @@
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
                   var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-                  $scope.lfData2 = new LForms.LFormsData(questionnaire);
+                  var lfData2 = new LForms.LFormsData(questionnaire);
+                  // The prepopulateFHIR variable below is a hack for the test code to signal
+                  // prepopulation is desired.
+                  if (LForms.fhirContext) {
+                    lfData2.loadFHIRResources(window.prepopulateFHIR).then(function() {
+                      $scope.$apply(function() {
+                        $scope.lfData2 = lfData2;
+                      })
+                    });
+                  }
+                  else
+                    $scope.lfData2 = lfData2;
                 }
                 // in the internal LForms format
                 else {

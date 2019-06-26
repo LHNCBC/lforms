@@ -613,15 +613,8 @@ angular.module('lformsWidget')
                   });
                 }
               }
-              // Set up a listener for asynchronous change events (triggered by
-              // lfData itself).
-              if (!lfData._controllerInit) {
-                lfData.addAsyncChangeListener(function() {
-                  $scope.$apply(function() {
-                    if (lfData.hasFHIRPath || lfData._hasInitialExpr)
-                      lfData._expressionProcessor.runCalculations(true);
-                  });
-                });
+              if (!lfData._controllerInit && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
+                lfData._expressionProcessor.runCalculations(true);
               }
               // Angular calls this twice for the same lfData.  Set a flag.
               // Note:  For some reason the watches still need to be set up both times.
