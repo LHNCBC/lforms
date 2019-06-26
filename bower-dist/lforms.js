@@ -11486,7 +11486,7 @@ LForms.Util = {
               fhirVersion = '3.0';
             } // use FHIR 4.0 for SDC version >= 2.1
             else if (parseFloat(fhirVersion) >= 2.1) {
-                fhirVersion == '4.0';
+                fhirVersion = '4.0';
               }
           }
         }
