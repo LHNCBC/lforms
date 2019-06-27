@@ -18189,7 +18189,7 @@ var dr = {
    */
   _getFormattedDate: function _getFormattedDate(dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    return dateObj ? LForms.Util.dateToString(dateObj) : "";
+    return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
   /**
@@ -18504,7 +18504,11 @@ var dr = {
           break;
 
         case "DT":
-          item.value = obx.valueDateTime;
+          item.value = LForms.Util.stringToDTDateISO(obx.valueDate);
+          break;
+
+        case "DTM":
+          item.value = LForms.Util.stringToDate(obx.valueDateTime);
           break;
 
         case "CNE":
@@ -18894,6 +18898,13 @@ var self = {
 
       case "DT":
         values = [{
+          key: "valueDate",
+          val: item.value
+        }];
+        break;
+
+      case "DTM":
+        values = [{
           key: "valueDateTime",
           val: item.value
         }];
@@ -19002,7 +19013,7 @@ __webpack_require__.r(__webpack_exports__);
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-var sdcVersion = '3.5.0';
+var sdcVersion = '2.7';
 var fhirVersionNum = '4.0';
 var self = {
   SDCVersion: sdcVersion,
@@ -19286,26 +19297,11 @@ var self = {
           //   "valueInteger" : <integer>, // R! Value of extension
           // }
           case "minExclusive":
-          case "minInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
-              extValue = {
-                "url": "http://hl7.org/fhir/StructureDefinition/minValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-
-            break;
-          // http://hl7.org/fhir/StructureDefinition/maxValue
+          case "minInclusive": // http://hl7.org/fhir/StructureDefinition/maxValue
 
           case "maxExclusive":
           case "maxInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
-              extValue = {
-                "url": "http://hl7.org/fhir/StructureDefinition/maxValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-
+            extValue = this._exportMinMax(dataType, value, valueKey, key);
             break;
           // http://hl7.org/fhir/StructureDefinition/minLength
 
@@ -19844,6 +19840,8 @@ var self = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -20181,6 +20179,42 @@ function addCommonSDCExportFns(ns) {
     return prefix + valueKey;
   };
   /**
+   * Convert the minInclusive/minExclusive, maxInclusive/maxExclusive to FHIR. See the
+   * the function _handleRestrictions() in sdc-export.js for more details on the context.
+   * @param dataType Lforms data type, currently supporting DT, DTM, TM, REAL, and INT.
+   * @param value the value (in the lforms system, either a number or a string).
+   * @param valueKey the valueKey in FHIR minValue/maxValue extension (e.g., valueInteger)
+   * @param minMaxKey must be one of minInclusive, minExclusive, maxInclusive, maxExclusive
+   * @return The FHIR extension element. Specifically, undefined is returned if:
+   *         - the given value is null or undefined, or
+   *         - the dataType is not one of those listed above, or
+   *         - the minMaxKey is not one of those listed above
+   * @private
+   */
+
+
+  self._MIN_MAX_TYPES = ['DT', 'DTM', 'TM', 'REAL', 'INT'].reduce(function (map, t) {
+    map[t] = t;
+    return map;
+  }, {});
+  self._MIN_MAX_KEYS = ['minExclusive', 'minInclusive', 'maxExclusive', 'maxInclusive'].reduce(function (map, t) {
+    map[t] = t;
+    return map;
+  }, {});
+
+  self._exportMinMax = function (dataType, value, valueKey, minMaxKey) {
+    if (value === null || value === undefined || !self._MIN_MAX_TYPES[dataType] || !self._MIN_MAX_KEYS[minMaxKey]) {
+      return undefined;
+    }
+
+    var isoDateStr = dataType === "DT" || dataType === "DTM" ? new Date(value).toISOString() : dataType == "TM" ? new Date('1970-01-01T' + value + 'Z').toISOString() : null;
+    var fhirValue = dataType === "DT" ? isoDateStr.substring(0, 10) : dataType === "DTM" ? isoDateStr : dataType === "TM" ? isoDateStr.substring(11, isoDateStr.length - 1) : dataType === "REAL" ? parseFloat(value) : parseInt(value);
+    var fhirExtUrl = minMaxKey.indexOf('min') === 0 ? 'http://hl7.org/fhir/StructureDefinition/minValue' : 'http://hl7.org/fhir/StructureDefinition/maxValue';
+    return _defineProperty({
+      url: fhirExtUrl
+    }, valueKey, fhirValue);
+  };
+  /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
    * @param answerKey - The answer[x] string
@@ -20239,7 +20273,7 @@ function addCommonSDCExportFns(ns) {
 
     target.status = "completed"; // authored, required
 
-    target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
+    target.authored = LForms.Util.dateToDTMString(new Date()); // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note
     // that the fomat has also changed from Reference to canonical in R4.
 
@@ -21217,6 +21251,10 @@ function addSDCImportFns(ns) {
             break;
 
           case "DT":
+            item.value = qrValue.valueDate;
+            break;
+
+          case "DTM":
             item.value = qrValue.valueDateTime;
             break;
 
@@ -21287,9 +21325,8 @@ function addCommonSDCFns(ns) {
     "BL": 'boolean',
     "REAL": 'decimal',
     "INT": 'integer',
-    "DT": 'dateTime',
+    "DT": 'date',
     "DTM": 'dateTime',
-    // not supported yet
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',
@@ -21302,7 +21339,7 @@ function addCommonSDCFns(ns) {
   self._lformsTypesToFHIRFields = {
     "INT": 'Integer',
     "REAL": 'Decimal',
-    "DT": 'DateTime',
+    "DT": 'Date',
     "DTM": 'DateTime',
     "TM": 'Time',
     "ST": 'String',
@@ -21885,9 +21922,13 @@ function addCommonSDCImportFns(ns) {
         type = 'BL';
         break;
 
-      case "dateTime":
+      case "date":
         //dataType = 'date';
         type = 'DT';
+        break;
+
+      case "dateTime":
+        type = 'DTM';
         break;
 
       case "time":

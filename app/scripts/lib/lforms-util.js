@@ -13,8 +13,14 @@ LForms.Util = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
+   * @param options A hash of options (currently just one):
+   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
+   *     the form was an imported FHIR Questionnaire).
+   * @return a Promise that will resolve after any needed external FHIR
+   *  resources have been loaded (if the form was imported from a FHIR
+   *  Questionnaire).
    */
-  addFormToPage: function(formDataDef, formContainer) {
+  addFormToPage: function(formDataDef, formContainer, options) {
     var formContainer = typeof formContainer === 'string' ?
       $('#'+formContainer) : $(formContainer);
     if (typeof formDataDef === 'string') {
@@ -32,22 +38,38 @@ LForms.Util = {
       LForms.addedFormDefs = [];
     var formIndex = LForms.addedFormDefs.length;
     LForms.addedFormDefs.push(formDataDef);
+    var prepop = options && options.prepopulate===true;
     formContainer.html(
       '<div ng-controller="'+controller+'">'+
         '<lforms lf-data="myFormData"></lforms>'+
-      '</div>'+
-      '<script>'+
-        'angular.module("'+appName+'", ["lformsWidget"])'+
-        '.controller("'+controller+'", ["$scope", function ($scope) {'+
-        '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs['+formIndex+']);'+
-        '}]);'+
-      '</'+'script>'
+      '</div>'
     );
+    var rtnPromise = new Promise(function(resolve, reject) {
+      angular.module(appName, ["lformsWidget"])
+        .controller(controller, ["$scope", function ($scope) {
+          var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+          if (LForms.fhirContext) {
+            myFormData.loadFHIRResources(prepop).then(function() {
+              $scope.$apply(function() {
+                $scope.myFormData = myFormData;
+                resolve();
+              })
+            });
+          }
+          else {
+            $scope.myFormData = myFormData;
+            resolve();
+          }
+        }]);
+    });
+
     // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
     var isInitialized = formContainer.injector && formContainer.injector();
     if (!isInitialized)
       angular.bootstrap(formContainer.children(':first'), [appName]);
+
+    return rtnPromise;
   },
 
 
@@ -244,10 +266,10 @@ LForms.Util = {
         'Please make sure it is specified via meta.profile (see '+
         'http://build.fhir.org/versioning.html#mp-version and '+
         'https://www.hl7.org/fhir/references.html#canonical).  '+
-        'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire'+
-        ' (for Questionnaire version 3.5).'+
-        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 '+
-        ' (for SDC Questionnaire version 3.5).');
+        'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire'+
+        ' (for Questionnaire version 4.0).'+
+        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 '+
+        ' (for SDC Questionnaire version 2.7).');
     }
     else
       fhirVersion =  this.validateFHIRVersion(fhirVersion);
@@ -379,9 +401,9 @@ LForms.Util = {
       var profiles = fhirData.meta.profile;
       // See http://build.fhir.org/versioning.html#mp-version
       var questionnairePattern =
-        new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
+        new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
       var sdcPattern =
-        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
+        new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
       for (var i=0, len=profiles.length && !fhirVersion; i<len; ++i) {
         var match = profiles[i].match(questionnairePattern);
         if (match)
@@ -390,8 +412,15 @@ LForms.Util = {
           match = profiles[i].match(sdcPattern);
           if (match) {
             fhirVersion = match[1];
-            if (fhirVersion == '2.0')
-              fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+            // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            if (fhirVersion == '2.0') {
+              fhirVersion = '3.0';
+            }
+            // use FHIR 4.0 for SDC version >= 2.1
+            else if (parseFloat(fhirVersion) >= 2.1) {
+              fhirVersion = '4.0';
+            }
           }
         }
       }
@@ -497,6 +526,36 @@ LForms.Util = {
     return formObj;
   },
 
+  /**
+   * This function and stringToDTDateISO are meant to work as a pair on DT (or FHIR date) data type.
+   * The idea is that DT/date type does not have timezone info, as a result, the string value could be
+   * off by a day during either way of conversion depending on the time zone the code is executed.
+   * The solution here is to keep the literal values of the year, month, and date components remain
+   * unchanged regardless of the time zones.
+   * Convert the given date object into a DT type date string, in "yyyy-mm-dd" format, where the
+   * year, month, and date are based on the "local time zone" as the users can see on the display.
+   * @param dateObj the date object to be converted.
+   * @return date string in yyyy-mm-dd format with year, month, and date values corresponding to that
+   * at the local timezone.
+   */
+  dateToDTStringISO: function (dateObj) {
+    return (! dateObj || isNaN(dateObj.getTime()))? undefined: [
+      (10000 + dateObj.getFullYear()).toString().substr(1),
+      (101 + dateObj.getMonth()).toString().substr(1),
+      (100 + dateObj.getDate()).toString().substr(1) ].join('-');
+  },
+
+  /**
+   * Parse the given iso date string, that is, a string of format "yyyy[-mm[-dd]]", into a Date object,
+   * and then, adjust the year, month, and day so that when displayed (as local date) the literal values of
+   * the year, month, and date components remain unchanged.
+   * See the comments/docs for function dateToDTStringISO().
+   * @param isoDateString
+   */
+  stringToDTDateISO: function(isoDateString) {
+    var d = new Date(isoDateString);
+    return isNaN(d.getTime())? undefined: new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  },
 
   /**
    * Get a formatted date string from a date object
@@ -504,12 +563,11 @@ LForms.Util = {
    * @param objDate a date object
    * @returns a formatted date string
    */
-  dateToString: function(objDate) {
+  dateToDTMString: function(objDate) {
     var offset = objDate.getUTCOffset();
     offset = offset.slice(0,-2) + ":" + offset.slice(-2);
     return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
   },
-
 
   /**
    * Parse a formatted date string and create a date object
@@ -517,6 +575,10 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function(strDate) {
+    if(! strDate || (typeof strDate) != 'string') { // maybe already a date object.
+      return strDate;
+    }
+
     var matches, millis = null, ret = null;
 
     // This date parsing (from Datejs) fails to parse string that includes milliseconds.
@@ -556,29 +618,37 @@ LForms.Util = {
    */
   isItemValueEmpty: function(value) {
     var empty = true;
-    if (typeof value !== 'undefined') {
-      // object
-      if (angular.isObject(value)) {
-        var keys = Object.keys(value);
-        for(var i=0, iLen=keys.length; i<iLen; i++) {
-          var val = value[keys[i]];
-          if (val !== null && val !== "" ) {
+    if(value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
+      if(typeof value === 'string' || value instanceof String) {
+        empty = value.trim() === '';
+      }
+      else if(Array.isArray(value)) {
+        for(var i=0; i < value.length; ++i) {
+          if(! this.isItemValueEmpty(value[i])) {
             empty = false;
             break;
           }
         }
       }
-      // array
-      else if (angular.isArray(value)) {
-        if (value.length > 0) {
+      else if(typeof value === 'object') {
+        var keys = Object.keys(value);
+        if(keys.length > 0) {
+          for(var i=0, iLen=keys.length; i<iLen; i++) {
+            if(! this.isItemValueEmpty(value[keys[i]])) {
+              empty = false;
+              break;
+            }
+          }
+        }
+        else if(value.constructor !== Object) { // e.g., a Date object has zero length keys
           empty = false;
         }
       }
-      // other
-      else if (value !== null && value !== "") {
+      else {
         empty = false;
       }
     }
+
     return empty;
   },
 

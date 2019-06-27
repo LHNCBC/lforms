@@ -11,7 +11,7 @@
       },
       "meta": {
         "profile": [
-          "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-response"
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaireresponse"
         ]
       },
       "item": [
@@ -55,7 +55,7 @@
               "text": "Date of Birth",
               "answer": [
                 {
-                  "valueDateTime": "2016-10-27T00:00:00-04:00"
+                  "valueDate": "2016-10-27"
                 }
               ]
             },

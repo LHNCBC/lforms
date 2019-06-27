@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+
     <!-- bower:css -->
     <link rel="stylesheet" href="../bower_components/jquery-ui/themes/redmond/jquery-ui.min.css" />
     <link rel="stylesheet" href="../bower_components/autocomplete-lhc/source/auto_completion.css" />
@@ -81,6 +82,7 @@
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="../bower_components/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
     <script src="../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
+    <script src="../bower_components/bootstrap-ui-datetime-picker/dist/datetime-picker.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/polyfill.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/prototype_api.js"></script>
     <script src="../bower_components/autocomplete-lhc/source/jqueryLite.js"></script>
@@ -368,7 +370,18 @@
                 // if the imported data is in FHIR Questionnaire format
                 if (importedData.resourceType && importedData.resourceType === "Questionnaire") {
                   var questionnaire = getFHIR().SDC.convertQuestionnaireToLForms(importedData);
-                  $scope.lfData2 = new LForms.LFormsData(questionnaire);
+                  var lfData2 = new LForms.LFormsData(questionnaire);
+                  // The prepopulateFHIR variable below is a hack for the test code to signal
+                  // prepopulation is desired.
+                  if (LForms.fhirContext) {
+                    lfData2.loadFHIRResources(window.prepopulateFHIR).then(function() {
+                      $scope.$apply(function() {
+                        $scope.lfData2 = lfData2;
+                      })
+                    });
+                  }
+                  else
+                    $scope.lfData2 = lfData2;
                 }
                 // in the internal LForms format
                 else {

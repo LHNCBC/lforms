@@ -49,6 +49,12 @@ var self = {
         break;
       case "DT":
         values = [{
+          key:  "valueDate",
+          val: item.value
+        }];
+        break;
+      case "DTM":
+        values = [{
           key:  "valueDateTime",
           val: item.value
         }];

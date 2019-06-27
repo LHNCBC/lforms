@@ -55,7 +55,7 @@
               "text": "Date of Birth",
               "answer": [
                 {
-                  "valueDateTime": "2016-10-27T00:00:00-04:00"
+                  "valueDate": "2016-10-27"
                 }
               ]
             },
