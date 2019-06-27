@@ -327,8 +327,9 @@
       // run the all form controls
       this._checkFormControls();
 
-      if (this._fhir)
+      if (this._fhir) {
         this._requestLinkedObs();
+      }
     },
 
 
@@ -918,7 +919,6 @@
           }
         }
 
-
         this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id
@@ -1101,6 +1101,19 @@
       // answerCardinality
       if (!item.answerCardinality) {
         item.answerCardinality = {"min":"0", "max":"1"};
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      }
+
+      // answer code system
+      if (item.answerCodeSystem && item.answers) {
+        for (var i=0, iLen = item.answers.length; i<iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       }
 
       // set up flags for question and answer cardinality
@@ -2345,13 +2358,8 @@
 
           // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            }
-            else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           }
 
           // reset the modified answers (for the display text)

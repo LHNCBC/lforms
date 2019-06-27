@@ -11309,6 +11309,8 @@ LForms.Util = {
    *    the FHIR server.
    */
   setFHIRContext: function setFHIRContext(fhirContext) {
+    console.log("set fhir context");
+    console.log(fhirContext);
     LForms.fhirContext = fhirContext;
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
@@ -12622,7 +12624,6 @@ LForms.HL7 = function () {
      * Constructs an OBX5 for a list item (CNE/CWE)
      * @param itemVal a value for a list item
      * @param dataType the data type of the item (CNE or CWE)
-     * @param answerCS the answer code system
      * @return the OBX5 field string
      */
     _generateOBX5: function _generateOBX5(itemVal, dataType, answerCS) {
@@ -12633,6 +12634,7 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
+        var answerCS = !itemVal.codeSystem || itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
@@ -12702,9 +12704,9 @@ LForms.HL7 = function () {
               }
 
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
-            }
+            } // var answerCS = (!item.answerCodeSystem || item.answerCodeSystem == 'LOINC' ||
+            //   item.answerCodeSystem == LOINC_URI) ? this.LOINC_CS : item.answerCodeSystem;
 
-            var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
 
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
@@ -12718,7 +12720,7 @@ LForms.HL7 = function () {
 
 
               if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                itemObxArray[5] = this._generateOBX5(val, item.dataType, answerCS);
+                itemObxArray[5] = this._generateOBX5(val, item.dataType);
               } else if (item.dataType === 'DT') {
                 itemObxArray[5] = val.toString("yyyyMMddHHmmss");
               } else {
@@ -13456,7 +13458,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this._checkFormControls();
 
-      if (this._fhir) this._requestLinkedObs();
+      if (this._fhir) {
+        this._requestLinkedObs();
+      }
     },
 
     /**
@@ -14236,6 +14240,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           "min": "0",
           "max": "1"
         };
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      } // answer code system
+
+
+      if (item.answerCodeSystem && item.answers) {
+        for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       } // set up flags for question and answer cardinality
 
 
@@ -15494,12 +15511,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var answers = []; // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
 
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            } else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           } // reset the modified answers (for the display text)
 
 

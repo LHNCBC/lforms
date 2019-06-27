@@ -234,17 +234,14 @@ function addCommonSDCImportFns(ns) {
         else {
           // Pick a Coding that is appropriate for this list item.
           if (lfItem.answers) {
-            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
-            if (itemAnswersFHIRCodeSystem)
-              itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
             var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
             for (var k=0, kLen=codings.length; k<kLen && !answer; ++k) {
               var coding = codings[k];
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
-                var system = coding.system;
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
-                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
+                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) &&
+                    coding.code == listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }

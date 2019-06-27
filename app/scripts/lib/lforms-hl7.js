@@ -367,7 +367,6 @@ LForms.HL7 = (function() {
      * Constructs an OBX5 for a list item (CNE/CWE)
      * @param itemVal a value for a list item
      * @param dataType the data type of the item (CNE or CWE)
-     * @param answerCS the answer code system
      * @return the OBX5 field string
      */
     _generateOBX5: function(itemVal, dataType, answerCS) {
@@ -378,6 +377,8 @@ LForms.HL7 = (function() {
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       }
       else {
+        var answerCS = (!itemVal.codeSystem || itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === LOINC_URI) ?
+            this.LOINC_CS : itemVal.codeSystem;
         rtn = code + this.delimiters.component +
           itemVal.text + this.delimiters.component + answerCS;
       }
@@ -456,8 +457,8 @@ LForms.HL7 = (function() {
             itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
           }
 
-          var answerCS = (!item.answerCodeSystem || item.answerCodeSystem == 'LOINC' ||
-            item.answerCodeSystem == LOINC_URI) ? this.LOINC_CS : item.answerCodeSystem;
+          // var answerCS = (!item.answerCodeSystem || item.answerCodeSystem == 'LOINC' ||
+          //   item.answerCodeSystem == LOINC_URI) ? this.LOINC_CS : item.answerCodeSystem;
           for (var i=0, len=vals.length; i<len; ++i) {
             var val = vals[i];
             // OBX4 - sub id
@@ -470,7 +471,7 @@ LForms.HL7 = (function() {
 
             // OBX5 (answer value)
             if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-              itemObxArray[5] = this._generateOBX5(val, item.dataType, answerCS);
+              itemObxArray[5] = this._generateOBX5(val, item.dataType);
             }
             else if (item.dataType === 'DT') {
               itemObxArray[5] = val.toString("yyyyMMddHHmmss");

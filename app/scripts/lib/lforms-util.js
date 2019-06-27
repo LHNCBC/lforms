@@ -272,6 +272,8 @@ LForms.Util = {
    *    the FHIR server.
    */
   setFHIRContext: function(fhirContext) {
+    console.log("set fhir context");
+    console.log(fhirContext)
     LForms.fhirContext = fhirContext;
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
