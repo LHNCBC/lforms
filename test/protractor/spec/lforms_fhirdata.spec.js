@@ -8,6 +8,7 @@ var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 var EC = protractor.ExpectedConditions;
 
+
 /**
  *  Returns a promise that will resolve to an array of two elements, the first
  *  of which will be an error message (if any), and the second of which will be
@@ -124,7 +125,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[2].code.text).toBe("Gender");
                 expect(fhirData.contained[2].valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
                 // DOB
-                expect(fhirData.contained[3].valueDateTime).toBe("2016-10-27T00:00:00-04:00");
+                expect(fhirData.contained[3].valueDate).toBe("2016-10-27");
                 // Height
                 expect(fhirData.contained[4].valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
@@ -290,7 +291,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.entry[3].resource.code.text).toBe("Gender");
                 expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
                 // DOB
-                expect(fhirData.entry[4].resource.valueDateTime).toBe("2016-10-27T00:00:00-04:00");
+                expect(fhirData.entry[4].resource.valueDate).toBe("2016-10-27");
                 // Height
                 expect(fhirData.entry[5].resource.valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
@@ -459,7 +460,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[2].text).toBe("Date of Birth");
               expect(fhirData.item[0].item[2].linkId).toBe("/54126-8/21112-8");
               expect(fhirData.item[0].item[2].answer.length).toBe(1);
-              expect(fhirData.item[0].item[2].answer[0].valueDateTime).toBe("2016-10-27T00:00:00-04:00");
+              expect(fhirData.item[0].item[2].answer[0].valueDate).toBe("2016-10-27");
               // Height
               expect(fhirData.item[0].item[3].text).toBe("Height");
               expect(fhirData.item[0].item[3].linkId).toBe("/54126-8/8302-2");
@@ -563,6 +564,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should merge all DiagnosticReport (contained) data back into the form', function() {
 
             tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
             browser.waitForAngular();
@@ -593,6 +595,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
             tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
 

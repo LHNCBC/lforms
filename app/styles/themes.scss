@@ -191,6 +191,72 @@
   .ui-datepicker-trigger:hover {
     color: $darkHighlightColor;
   }
+
+
+  /* start ==== styles for uib datetime picker */
+  /* color of the calendar icon in the form/input*/
+  .lf-dtm-picker-block .input-group-btn .btn {
+    color: $baseColor;
+  }
+  .lf-dtm-picker-block .input-group-btn .btn:hover {
+    color: $highlightColor;
+  }
+
+  /* The calendar header (month and prev/next arrow) */
+  .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th * {
+    background-color: $baseColor;
+    color: white;
+  }
+  .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th *:hover {
+    color: black;
+    background-color: $lightBaseColor;
+  }
+  /* the real controls in the header (month, prev/next) */
+  .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button *,
+  .datetime-picker-dropdown > li.date-picker-menu thead tr:first-child th button *:hover {
+    background-color: inherit;
+    color: inherit;
+  }
+
+
+  /* Calendar date cells */
+  .datetime-picker-dropdown > li.date-picker-menu div > table .btn-default {
+    background: $lightBaseColor;
+    color: black;
+  }
+  .datetime-picker-dropdown .btn-default:hover,
+  .datetime-picker-dropdown > li.time-picker-menu .btn-default:hover,
+  .datetime-picker-dropdown > li.date-picker-menu tbody .btn-default:hover {
+    background: $baseColor;
+    color: white;
+  }
+
+
+  /* selected date */
+  .datetime-picker-dropdown > li.date-picker-menu div > table .btn-default.active {
+    color: $baseColor;
+    background-color: white;
+  }
+  .datetime-picker-dropdown > li.date-picker-menu div > table .btn-default.active:hover {
+    color: white;
+    background-color: $baseColor;
+  }
+
+  /* calendar/time bottom buttons and time AM/PM button */
+  .datetime-picker-dropdown .btn-group > .btn-sm,
+  .datetime-picker-dropdown > li.time-picker-menu div table button {
+    background: $lightBaseColor;
+    color: black;
+  }
+  .datetime-picker-dropdown .btn-group > .btn-sm:hover,
+  .datetime-picker-dropdown > li.time-picker-menu div table button:hover {
+    background-color: $baseColor;
+    color: white;
+  }
+
+  /* end ==== styles for uib datetime picker */
+
+
 }
 
 /*************************** MC Theme *****************************************/

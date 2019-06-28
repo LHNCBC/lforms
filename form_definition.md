@@ -1,7 +1,9 @@
 # Form Definition Format
 
 The forms rendered by the LForms widget are defined in a JSON format, an example
-of which can be seen in [sample-data.js](app/data/sample-data.js).  The
+of which can be seen in [sample-data.js](app/data/sample-data.js).  Note that
+LForms also provides APIs for importing forms defined in the FHIR Questionnaire
+format.  (See the [documentation](http://lhncbc.github.io/lforms/) for details.)  The
 basic structure (some of which is optional) is shown below, followed by comments
 about the meaning of each key:
 
