@@ -11371,8 +11371,6 @@ LForms.Util = {
    *    the FHIR server.
    */
   setFHIRContext: function setFHIRContext(fhirContext) {
-    console.log("set fhir context");
-    console.log(fhirContext);
     LForms.fhirContext = fhirContext;
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
@@ -12814,9 +12812,7 @@ LForms.HL7 = function () {
               }
 
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
-            } // var answerCS = (!item.answerCodeSystem || item.answerCodeSystem == 'LOINC' ||
-            //   item.answerCodeSystem == LOINC_URI) ? this.LOINC_CS : item.answerCodeSystem;
-
+            }
 
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
@@ -14174,11 +14170,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
+        var item = items[i]; // If the form level code syste is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
 
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        if (this.type === "LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item); // set default dataType
@@ -14421,7 +14423,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       } // answer code system
 
 
-      if (item.answerCodeSystem && item.answers) {
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
         for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
           if (item.answers[i] && !item.answers[i].codeSystem) {
             item.answers[i].codeSystem = item.answerCodeSystem;

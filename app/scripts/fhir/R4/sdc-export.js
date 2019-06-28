@@ -648,14 +648,14 @@ var self = {
         var codeSystem = null, coding = null;
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
+          // defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
             coding = {"code": item.defaultAnswer[i].code};
             if(item.defaultAnswer[i].text !== undefined) {
               coding.display = item.defaultAnswer[i].text;
             }
             // code system
-            codeSystem = item.defaultAnswer[i].system || item.answerCodeSystem;
+            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
@@ -672,7 +672,7 @@ var self = {
             coding.display = item.defaultAnswer.text;
           }
           // code system
-          codeSystem = item.defaultAnswer.system || item.answerCodeSystem;
+          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
           }

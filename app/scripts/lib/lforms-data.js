@@ -910,10 +910,15 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
-        // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
-        if (this.type ==="LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        // If the form level code syste is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
+        if (this.type ==="LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item);
@@ -1157,7 +1162,7 @@
       }
 
       // answer code system
-      if (item.answerCodeSystem && item.answers) {
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
         for (var i=0, iLen = item.answers.length; i<iLen; i++) {
           if (item.answers[i] && !item.answers[i].codeSystem) {
             item.answers[i].codeSystem = item.answerCodeSystem;

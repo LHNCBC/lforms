@@ -19629,22 +19629,14 @@ var self = {
             coding = null;
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
-          // targetItem[valueKey] = [];
-          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-          //   targetItem[valueKey].push({
-          //     "system": codeSystem,
-          //     "code": item.defaultAnswer[i].code,
-          //     "display": item.defaultAnswer[i].text
-          //   })
-          // };
+          // defaultAnswer has multiple values
           // pick the first one only
           coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
           }; // code system
 
-          codeSystem = item.defaultAnswer[i].system || item.answerCodeSystem;
+          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
 
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
@@ -19658,7 +19650,7 @@ var self = {
               "display": item.defaultAnswer.text
             }; // code system
 
-            codeSystem = item.defaultAnswer.system || item.answerCodeSystem;
+            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
 
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);

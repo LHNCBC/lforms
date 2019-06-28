@@ -25,7 +25,7 @@ var FHTData = {
       // level 2
       "items": [
         {"questionCode": "54125-0", "questionCardinality": {"min": "1", "max": "*"}, "question": "Name", "answers": "", "dataType": "TX", "units": "", "header": false},
-        {"questionCode": "54131-8", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
+        {"questionCode": "54131-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Gender", "answers": [
           {"text": "Male", "code": "LA2-8"},
           {"text": "Female", "code": "LA3-6"},
           {"text": "Other", "code": "LA46-8", "other": "Please Specify"}
@@ -33,8 +33,8 @@ var FHTData = {
         {"questionCode": "21112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
           "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>",
           "codingInstructionsFormat": "html"},
-        {"questionCode": "54132-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "54128-4", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
+        {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
+        {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54125-0", "trigger": {"value": "Alex"}}],
             "action": "show"}
         },
