@@ -168,6 +168,86 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
+          it('should convert questionnaire.code and item.code',function () {
+  
+  
+            var formCodes = [{
+              system: 'http://form-example1.com',
+              version: '1.0',
+              code: 'formcode1',
+              display: 'Form Code 1',
+              userSelected: true
+            }, {
+              system: 'http://form-example2.com',
+              version: '2.0',
+              code: 'formcode2',
+              display: 'Form Code 2',
+              userSelected: false
+            }, {
+              system: 'http://form-example3.com',
+              version: '3.0',
+              code: 'formcode3',
+              display: 'Form Code 3',
+              userSelected: false
+            }];
+
+            var itemCodes = [{
+              system: 'http://example1.com',
+              version: '1.0',
+              code: 'code1',
+              display: 'Code 1',
+              userSelected: true
+            }, {
+              system: 'http://example2.com',
+              version: '2.0',
+              code: 'code2',
+              display: 'Code 2',
+              userSelected: false
+            }, {
+              system: 'http://example3.com',
+              version: '3.0',
+              code: 'code3',
+              display: 'Code 3',
+              userSelected: false
+            }];
+  
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              version: '0.0.1',
+              resourceType: 'Questionnaire',
+              "meta": {
+                "profile": [
+                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+                ]
+              },
+              status: 'draft',
+              code: formCodes,
+              item: [{
+                required: true,
+                text: 'FHIR Item with multiple codes',
+                linkId: '12345',
+                type: 'string',
+                code: itemCodes
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfData.code, 'formcode1');
+            assert.equal(lfData.codeSystem, 'http://form-example1.com');
+            assert.equal(lfData.title, 'test title');
+            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.version, '0.0.1');
+            assert.equal(lfData.codeList, formCodes);
+
+            assert.equal(lfData.items[0].questionCode, 'code1');
+            assert.equal(lfData.items[0].questionCodeSystem, 'http://example1.com');
+            assert.equal(lfData.items[0].codeList, itemCodes);
+  
+            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData, fhirData);
+            assert.deepEqual(fhirData, convertedFhirData);
+            
+          });
+
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);

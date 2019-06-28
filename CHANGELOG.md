@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.1.2] 2019-06-28
+### Fixed
+- Fixed missing form level properties in conversion of FHIR questionnaire to lforms.
+- Fixed missing item code list in conversion of FHIR questionnaire to lforms. 
+
 ## [17.1.1] 2019-06-26
 ### Fixed
 - Fixed a bug in FHIR/SDC Questionnaire version detection.
