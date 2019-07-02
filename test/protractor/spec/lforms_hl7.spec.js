@@ -115,7 +115,7 @@ describe('HL7 data', function() {
       callback(hl7Data);
     }).then(function (hl7Data) {
       var hl7 = hl7Data.replace(/\r/g,'');
-      expect(hl7).toBe("OBR|1|X-001^RxTerms Demo^LN|OBX|1|CNE|nameAndRoute^Drug Name^LN|1a|ASPERCREME (Topical)^ASPERCREME (Topical)^LN|");
+      expect(hl7).toBe("OBR|1|X-001^RxTerms Demo^LN|OBX|1|CNE|nameAndRoute^Drug Name^LN|1a|ASPERCREME (Topical)^ASPERCREME (Topical)^|");
     });
   });
 

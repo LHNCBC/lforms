@@ -31,10 +31,9 @@ function addSDCImportFns(ns) {
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(lfData.code) {
+    if(questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
     var codeAndSystemObj = self._getCode(questionnaire);
     if(codeAndSystemObj) {

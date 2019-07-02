@@ -12740,7 +12740,7 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
-        var answerCS = !itemVal.codeSystem || itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
+        var answerCS = !itemVal.codeSystem ? "" : itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
@@ -14170,7 +14170,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // If the form level code syste is LOINC, assume the default code system for the item code and answer code
+        var item = items[i]; // If the form level code system is LOINC, assume the default code system for the item code and answer code
         // are of LOINC, unless specified otherwise.
 
         if (this.type === "LOINC") {

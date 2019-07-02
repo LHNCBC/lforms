@@ -10,7 +10,7 @@ describe('HL7 library', function() {
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
           'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-          '^LN||'+itemData.value.code+'^'+itemData.value.text+'^LN|');
+          '^LN||'+itemData.value.code+'^'+itemData.value.text+'^|');
     });
 
 
