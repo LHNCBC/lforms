@@ -910,7 +910,7 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
-        // If the form level code syste is LOINC, assume the default code system for the item code and answer code
+        // If the form level code system is LOINC, assume the default code system for the item code and answer code
         // are of LOINC, unless specified otherwise.
         if (this.type ==="LOINC") {
           if (!item.questionCodeSystem) {
