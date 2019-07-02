@@ -471,8 +471,8 @@ var self = {
           "display": answer.text
       };
 
-      if(item.answerCodeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
+      if (answer.codeSystem) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
       }
 
       optionArray.push(option);
@@ -646,26 +646,18 @@ var self = {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
-        if (item.answerCodeSystem)
-          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
-          // targetItem[valueKey] = [];
-          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-          //   targetItem[valueKey].push({
-          //     "system": codeSystem,
-          //     "code": item.defaultAnswer[i].code,
-          //     "display": item.defaultAnswer[i].text
-          //   })
-          // };
-
+          // defaultAnswer has multiple values
           // pick the first one only
           coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
           };
-          if (codeSystem)
-            coding.system = codeSystem;
+          // code system
+          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
           targetItem[valueKey] = coding;
         }
         // single selection, item.defaultAnswer is an object
@@ -674,8 +666,11 @@ var self = {
             "code": item.defaultAnswer.code,
             "display": item.defaultAnswer.text
           };
-          if (codeSystem)
-            coding.system = codeSystem;
+          // code system
+          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
           targetItem[valueKey] = coding
         }
       }

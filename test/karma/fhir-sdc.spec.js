@@ -624,9 +624,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(lfData.items[0].answers.length, json.item[0].answerOption.length);
                   assert.equal(lfData.items[0].answers[0].score, 0);
                   assert.equal(lfData.items[0].answers[0].text, "Not at all");
+                  assert.equal(lfData.items[0].answers[0].codeSystem, "http://loinc.org");
                   assert.equal(lfData.items[0].answers[1].score, "1");
                   assert.equal(lfData.items[0].answers[1].text, "Several days");
-                  assert.equal(lfData.items[0].answerCodeSystem, "http://loinc.org");
+                  assert.equal(lfData.items[0].answers[1].codeSystem, "http://loinc.org");
 
                   // convert it back to SDC Questionnaire
                   var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);

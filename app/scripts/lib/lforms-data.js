@@ -360,6 +360,7 @@
 
       // run the all form controls
       this._checkFormControls();
+
     },
 
 
@@ -909,10 +910,15 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
-        // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
-        if (this.type ==="LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        // If the form level code system is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
+        if (this.type ==="LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item);
@@ -957,7 +963,6 @@
             item.displayControl.answerLayout =angular.copy(this.templateOptions.defaultAnswerLayout.answerLayout);
           }
         }
-
 
         this._updateItemAttrs(item);
 
@@ -1150,6 +1155,19 @@
       // answerCardinality
       if (!item.answerCardinality) {
         item.answerCardinality = {"min":"0", "max":"1"};
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      }
+
+      // answer code system
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+        for (var i=0, iLen = item.answers.length; i<iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       }
 
       // set up flags for question and answer cardinality
@@ -2397,13 +2415,8 @@
 
           // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            }
-            else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           }
 
           // reset the modified answers (for the display text)

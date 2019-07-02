@@ -1,5 +1,5 @@
 var STU3_cneDataTypeFixture = {
-  
+
   input: {
     "questionCode": "54131-8",
     "questionCardinality": {"min": "1","max": "1"},
@@ -15,7 +15,7 @@ var STU3_cneDataTypeFixture = {
     "_codePath": "/54126-8/54131-8",
     "_idPath": "/1/1"
   },
-  
+
   output: {
     required: undefined,
     linkId: "/54126-8/54131-8",
@@ -34,13 +34,13 @@ var STU3_cneDataTypeFixture = {
       },
       {
         valueCoding: {code: "LA3-6",display: "Female"}
-        
+
       },
       {
         valueCoding: {code: "LA46-8",display: "Other"}
       }
     ]
-    
+
   }
 };
 
@@ -52,9 +52,8 @@ var STU3_alWithCodeSystemFixture = {
     "questionCode": "qc",
     "question": "dummy",
     "questionCardinality": {"min": "1","max": "1"},
-    "answers": [{"text": "X","code": "x"},{"text": "Y","code": "y"},{"text": "Z","code": "z","other": "Please Specify"}],
+    "answers": [{"text": "X","code": "x", "codeSystem": "LOINC"},{"text": "Y","code": "y", "codeSystem": "LOINC"},{"text": "Z","code": "z","other": "Please Specify", "codeSystem": "LOINC"}],
     "dataType": "CNE",
-    "answerCodeSystem": "LOINC",
     "_codePath": "/a/a",
     "_idPath": "/1/1"
   },

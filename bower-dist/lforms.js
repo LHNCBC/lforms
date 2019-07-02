@@ -12730,7 +12730,6 @@ LForms.HL7 = function () {
      * Constructs an OBX5 for a list item (CNE/CWE)
      * @param itemVal a value for a list item
      * @param dataType the data type of the item (CNE or CWE)
-     * @param answerCS the answer code system
      * @return the OBX5 field string
      */
     _generateOBX5: function _generateOBX5(itemVal, dataType, answerCS) {
@@ -12741,6 +12740,7 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
+        var answerCS = !itemVal.codeSystem ? "" : itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
@@ -12814,8 +12814,6 @@ LForms.HL7 = function () {
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
             }
 
-            var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
-
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
 
@@ -12828,7 +12826,7 @@ LForms.HL7 = function () {
 
 
               if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                itemObxArray[5] = this._generateOBX5(val, item.dataType, answerCS);
+                itemObxArray[5] = this._generateOBX5(val, item.dataType);
               } else if (item.dataType === 'DT' || item.dataType === 'DTM') {
                 var dv = typeof val === 'string' ? LForms.Util.stringToDate(val) : val;
                 itemObxArray[5] = dv.toString(item.dataType === 'DT' ? this._DT_FMT : this._DTM_FMT);
@@ -14172,11 +14170,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
+        var item = items[i]; // If the form level code system is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
 
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        if (this.type === "LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item); // set default dataType
@@ -14412,6 +14416,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           "min": "0",
           "max": "1"
         };
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      } // answer code system
+
+
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+        for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       } // set up flags for question and answer cardinality
 
 
@@ -15674,12 +15691,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var answers = []; // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
 
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            } else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           } // reset the modified answers (for the display text)
 
 
