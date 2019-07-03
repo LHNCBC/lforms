@@ -13639,7 +13639,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             if (item._obsLinkPeriodExt) {
               duration = item._obsLinkPeriodExt.valueDuration; // optional
 
-              itemCodeSystem = item.questionCodeSystem || _this2.codeSystem;
+              itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
               fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
 
@@ -14172,18 +14172,15 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // If the form level code system is LOINC, assume the default code system for the item code and answer code
-        // are of LOINC, unless specified otherwise.
-
-        if (this.type === "LOINC") {
-          if (!item.questionCodeSystem) {
-            item.questionCodeSystem = "LOINC";
-          }
-
-          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
-            item.answerCodeSystem = "LOINC";
-          }
-        }
+        var item = items[i]; // item's code system is optional
+        // if (this.type ==="LOINC") {
+        //   if (!item.questionCodeSystem) {
+        //     item.questionCodeSystem = "LOINC";
+        //   }
+        //   if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+        //     item.answerCodeSystem = "LOINC";
+        //   }
+        // }
 
         LForms.Util.initializeCodes(item); // set default dataType
 
@@ -14355,7 +14352,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // add a link to external site for item's definition
 
 
-        if (item.questionCodeSystem === "LOINC") {
+        if (item.questionCodeSystem === "LOINC" || this.codeSystem === "LOINC") {
           item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
         } // process the sub items
 

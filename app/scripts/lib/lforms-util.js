@@ -878,7 +878,7 @@ LForms.Util = {
         if(isItem) {
           // questionCode is required, so this shouldn't happen??
           formOrItem.questionCode = formOrItem.codeList[0].code;
-          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system
         }
         else {
           formOrItem.code = formOrItem.codeList[0].code;

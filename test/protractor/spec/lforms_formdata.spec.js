@@ -17,7 +17,7 @@ describe('formdata: ', function() {
         expect(formData.itemsData.length).toBe(2);
         expect(formData.itemsData[0].items.length).toBe(13);
         expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
-        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11); // name
+        expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         // #2 above fields have values, except dob is still empty
         ff.comment.sendKeys("Some comments");
         ff.name.sendKeys("Not Empty");
@@ -51,7 +51,7 @@ describe('formdata: ', function() {
           expect(formData.itemsData.length).toBe(2);
           expect(formData.itemsData[0].items.length).toBe(13);
           expect(formData.itemsData[0].items[0].value).toBe("Not Empty"); // name
-          expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(12); // name
+          expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(11); // name
           expect(formData.itemsData[0].items[1].value.text).toBe("Male"); // gender
           expect(formData.itemsData[0].items[2].value).toBe(undefined); // dob
           expect(formData.itemsData[0].items[6].value).toBe(70); // height
@@ -234,7 +234,7 @@ describe('formdata: ', function() {
         // console.log(formData);
         expect(formData.items.length).toBe(3);
         expect(formData.items[0].question).toBe("With data type CNE");
-        expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2",codeSystem: "LOINC"});
+        expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
   });

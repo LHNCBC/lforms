@@ -14,7 +14,7 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item.length).toBe(2);
   expect(fhirData.item[0].code[0].code).toBe("54126-8");
   expect(fhirData.item[0].code[0].display).toBe("Your health information");
-  expect(fhirData.item[0].code[0].system).toBe("http://loinc.org");
+  expect(fhirData.item[0].code[0].system).toBe(undefined);
   expect(fhirData.item[0].text).toBe("Your health information");
   expect(fhirData.item[0].required).toBe(false);
   expect(fhirData.item[0].linkId).toBe("/54126-8");
@@ -29,7 +29,7 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item[0].item[0].linkId).toBe("/54126-8/54125-0");
   expect(fhirData.item[0].item[0].code[0].code).toBe("54125-0");
   expect(fhirData.item[0].item[0].code[0].display).toBe("Name");
-  expect(fhirData.item[0].item[0].code[0].system).toBe("http://loinc.org");
+  expect(fhirData.item[0].item[0].code[0].system).toBe(undefined);
 
   expect(fhirData.item[0].item[12].text).toBe("Your diseases history");
   expect(fhirData.item[0].item[12].type).toBe("group");
@@ -58,7 +58,7 @@ function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.item[1].item.length).toBe(9);
   expect(fhirData.item[1].code[0].code).toBe("54114-4");
   expect(fhirData.item[1].code[0].display).toBe("Family member health information");
-  expect(fhirData.item[1].code[0].system).toBe("http://loinc.org");
+  expect(fhirData.item[1].code[0].system).toBe(undefined);
   expect(fhirData.item[1].text).toBe("Family member health information");
   expect(fhirData.item[1].required).toBe(false);
   expect(fhirData.item[1].linkId).toBe("/54114-4");
