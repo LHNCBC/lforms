@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.1] 2019-07-03
+### Added
+- Fixed bug in parsing ISO date and time string.
+
 ## [17.2.0] 2019-07-03
 ### Added
 - Added support for multiple code system in answers.

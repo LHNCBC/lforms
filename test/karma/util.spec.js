@@ -74,5 +74,23 @@ describe('Util library', function() {
       assert.equal(item.linkId, 'bb1');
     });
   });
+  
+  describe('Date conversions', function () {
+    
+    var str = '2019-05-06T04:00:00.000Z';
+    var dt = LForms.Util.stringToDate(str);
+    
+    it('stringToDate()', function () {
+      assert.equal(dt.getTime(), LForms.Util.stringToDate('Mon May 06 2019 00:00:00 GMT-0400 (Eastern Daylight Time)').getTime());
+      assert.equal(str, LForms.Util.dateToDTMString(dt));
+      assert.equal(LForms.Util.dateToDTStringISO(dt), '2019-05-06');
+    });
+
+    it('formatDate()', function () {
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DTM_FMT), '20190506000000');
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190506');
+      assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '000000-0400');
+    });
+  })
 });
 

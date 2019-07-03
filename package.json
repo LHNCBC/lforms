@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "17.2.0",
+  "version": "17.2.1",
   "main": "app/scripts/index.js",
   "files": [
     "app"
@@ -17,6 +17,7 @@
     "fhirpath": "^0.10.1",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
+    "moment": "^2.24.0",
     "ngSmoothScroll": "^2.0.1",
     "ui.bootstrap.datetimepicker": "^1.0.3"
   },

@@ -3,6 +3,8 @@
  */
 var LForms = require('../../lforms');
 
+const moment = require('moment');
+
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
@@ -562,9 +564,7 @@ LForms.Util = {
    * @returns a formatted date string
    */
   dateToDTMString: function(objDate) {
-    var offset = objDate.getUTCOffset();
-    offset = offset.slice(0,-2) + ":" + offset.slice(-2);
-    return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
+    return objDate.toISOString();
   },
 
   /**
@@ -577,37 +577,22 @@ LForms.Util = {
       return strDate;
     }
 
-    var matches, millis = null, ret = null;
-
-    // This date parsing (from Datejs) fails to parse string that includes milliseconds.
-    // If the input is in ISO format, remove millis from the string before parsing and add it after
-    // constructing the date object.
-    if((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
-      strDate = strDate.substring(0, matches.index) + matches[2];
-      millis = parseInt(matches[1]);
-    }
-    else if((matches = strDate.match(/\s*\(.*\)$/)) !== null){
-      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
-      // It has problem with content in the parenthesis at the end. Remove it before parsing.
-      strDate = strDate.substring(0, matches.index);
-    }
-
-
-    if(strDate) {
-      ret = Date.parse(strDate);
-      if (ret === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
-        ret = new Date(strDate);
-      }
-    }
-
-    if(ret && millis !== null) {
-      ret.addMilliseconds(millis);
-    }
-
-    return ret;
+    return moment(strDate).toDate();
   },
-
-
+  
+  /**
+   * Format a date object with given format. Refer to moment.js documentation for
+   * format specification.
+   *
+   * @param date - Date object
+   * @param format - Format string
+   * @returns {string}
+   */
+  formatDate: function(date, format) {
+    return moment(date).format(format);
+  },
+  
+  
   /**
    * Check if an item's value is empty, where the data has no meaningful use.
    * @param value the value to be tested
