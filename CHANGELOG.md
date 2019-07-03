@@ -2,7 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.2.0] 2019-07-03
+## [17.2.1] 2019-07-03
+### Changed
+- Removed unnecessary default code system value 
+
+## [17.2.0] 2019-07-02
 ### Added
 - Added support for multiple code system in answers.
 

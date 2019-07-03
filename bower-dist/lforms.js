@@ -11879,8 +11879,7 @@ LForms.Util = {
   },
 
   /**
-   * We are transitioning lforms fields representing code (form.code, form.questionCode,
-   * items[x].questionCode
+   * We are transitioning lforms fields representing code (form.code, items[x].questionCode
    * and items[x].questionCodeSystem) to FHIR definition of Coding type.
    * In lforms, these fields are string type and FHIR Coding is an array of
    * objects encapsulating multiple codes
@@ -11902,7 +11901,7 @@ LForms.Util = {
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
-    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
+    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem); // if there is code
 
     if (code) {
       if (!formOrItem.codeList) {
@@ -11913,7 +11912,7 @@ LForms.Util = {
       var found = false;
 
       for (var i = 0; i < codeList.length; i++) {
-        if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
+        if (code === codeList[i].code && (!codeSystemUrl && !codeList[i].system || codeSystemUrl === codeList[i].system)) {
           found = true;
           break;
         }
@@ -11922,24 +11921,32 @@ LForms.Util = {
 
 
       if (!found && codeSystemUrl !== 'LinkId') {
-        codeList.unshift({
-          system: codeSystemUrl,
-          code: code,
-          display: display
-        });
-      }
-    } else {
-      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
-        if (isItem) {
-          // questionCode is required, so this shouldn't happen??
-          formOrItem.questionCode = formOrItem.codeList[0].code;
-          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+        if (!codeSystemUrl) {
+          codeList.unshift({
+            code: code,
+            display: display
+          });
         } else {
-          formOrItem.code = formOrItem.codeList[0].code;
-          formOrItem.codeSystem = formOrItem.codeList[0].system;
+          codeList.unshift({
+            system: codeSystemUrl,
+            code: code,
+            display: display
+          });
         }
       }
-    }
+    } // if there is a codeList
+    else {
+        if (formOrItem.codeList && formOrItem.codeList.length > 0) {
+          if (isItem) {
+            // questionCode is required, so this shouldn't happen??
+            formOrItem.questionCode = formOrItem.codeList[0].code;
+            formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+          } else {
+            formOrItem.code = formOrItem.codeList[0].code;
+            formOrItem.codeSystem = formOrItem.codeList[0].system;
+          }
+        }
+      }
 
     return formOrItem;
   },
@@ -11984,11 +11991,6 @@ LForms.Util = {
     switch (codeSystemInLForms) {
       case "LOINC":
         codeSystem = "http://loinc.org";
-        break;
-
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-
         break;
 
       default:

@@ -58,6 +58,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.linkId, "/weight");
             assert.equal(out.type, "quantity");
+            assert.equal(out.code[0].system, "ad-hoc");
+            assert.equal(out.code[0].code,"12345");
+
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
@@ -169,8 +172,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert questionnaire.code and item.code',function () {
-  
-  
+
+
             var formCodes = [{
               system: 'http://form-example1.com',
               version: '1.0',
@@ -210,7 +213,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               display: 'Code 3',
               userSelected: false
             }];
-  
+
             var fhirData = {
               title: 'test title',
               name: 'test name',
@@ -242,10 +245,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(lfData.items[0].questionCode, 'code1');
             assert.equal(lfData.items[0].questionCodeSystem, 'http://example1.com');
             assert.equal(lfData.items[0].codeList, itemCodes);
-  
+
             var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData, fhirData);
             assert.deepEqual(fhirData, convertedFhirData);
-            
+
           });
 
           it('should convert FHTData to lforms', function () {

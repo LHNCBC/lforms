@@ -840,6 +840,7 @@ LForms.Util = {
     var display = isItem ? formOrItem.question : formOrItem.name;
     var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
 
+    // if there is code
     if(code) {
       if(!formOrItem.codeList) {
         formOrItem.codeList = [];
@@ -847,7 +848,7 @@ LForms.Util = {
       var codeList = formOrItem.codeList;
       var found = false;
       for(var i = 0; i < codeList.length; i++) {
-        if(code === codeList[i].code && codeSystemUrl === codeList[i].system) {
+        if(code === codeList[i].code && (!codeSystemUrl && !codeList[i].system || codeSystemUrl === codeList[i].system)) {
           found = true;
           break;
         }
@@ -856,13 +857,22 @@ LForms.Util = {
       // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
       if(!found && codeSystemUrl !== 'LinkId') {
-        codeList.unshift({
-          system: codeSystemUrl,
-          code: code,
-          display: display
-        });
+        if (!codeSystemUrl) {
+          codeList.unshift({
+            code: code,
+            display: display
+          });
+        }
+        else {
+          codeList.unshift({
+            system: codeSystemUrl,
+            code: code,
+            display: display
+          });
+        }
       }
     }
+    // if there is a codeList
     else {
       if(formOrItem.codeList && formOrItem.codeList.length > 0) {
         if(isItem) {
@@ -924,9 +934,6 @@ LForms.Util = {
     switch (codeSystemInLForms) {
       case "LOINC":
         codeSystem = "http://loinc.org";
-        break;
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
         break;
       default:
         codeSystem = codeSystemInLForms;
