@@ -41,7 +41,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [16.0.1] 2019-06-18
 ### Fixed
 - Fixed extension URLs for SDC Questionnaire
->>>>>>> master
 
 ## [16.0.0] 2019-06-17
 ### Fixed
