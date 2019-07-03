@@ -48,6 +48,7 @@ var self = {
       qr.id = this._commonExport._getUniqueId(qr.code && qr.code[0] && qr.code[0].code ||
         qr.identifier || 'QR')
     }
+
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
