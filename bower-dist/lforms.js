@@ -9795,6 +9795,15 @@ LForms.Util = {
 
     return moment(strDate).toDate();
   },
+
+  /**
+   * Format a date object with given format. Refer to moment.js documentation for
+   * format specification.
+   *
+   * @param date - Date object
+   * @param format - Format string
+   * @returns {string}
+   */
   formatDate: function formatDate(date, format) {
     return moment(date).format(format);
   },
@@ -28359,7 +28368,6 @@ LForms.HL7 = function () {
       }; // get form data with questions that have no values
 
       var formData = lfData.getFormData(false, true, true);
-      console.log(JSON.stringify(formData, null, 2));
 
       this._generateOBX4(formData); // form level info
 

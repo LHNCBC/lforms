@@ -2,9 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.2.1] 2019-07-03
-### Added
+## [17.2.2] 2019-07-03
+### Fixed
 - Fixed bug in parsing ISO date and time string.
+
+## [17.2.1] 2019-07-03
+### Changed
+- Removed generated identifiers from the exported FHIR QuestionnaireResponse resources.
+  The generated identifiers as they are now are not unique and do not serve specific purposes.
+  The identifiers from previously imported QuestionnaireResponse resources will be preserved.
+  This is not considered a breaking change because FHIR spec governs the protocol here and
+  the identifier field is optional.
 
 ## [17.2.0] 2019-07-03
 ### Added

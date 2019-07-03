@@ -1042,10 +1042,8 @@ var parse = function parse(path) {
   var node;
   var parentStack = [ast];
 
-  var _arr = Object.keys(Listener.prototype);
-
   var _loop = function _loop() {
-    var p = _arr[_i];
+    var p = _Object$keys[_i];
 
     if (p.startsWith("enter")) {
       PathListener.prototype[p] = function (ctx) {
@@ -1098,7 +1096,7 @@ var parse = function parse(path) {
     }
   };
 
-  for (var _i = 0; _i < _arr.length; _i++) {
+  for (var _i = 0, _Object$keys = Object.keys(Listener.prototype); _i < _Object$keys.length; _i++) {
     _loop();
   }
 
@@ -20222,12 +20220,12 @@ function addCommonSDCExportFns(ns) {
 
     var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
-
-    target.identifier = {
-      "system": LForms.Util.getCodeSystem(source.codeSystem),
-      "value": source.code
-    }; // status, required
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
+    //target.identifier = {
+    //  "system": LForms.Util.getCodeSystem(source.codeSystem),
+    //  "value": source.code
+    //};
+    // status, required
     // "in-progress", "completed", "amended"
 
     target.status = "completed"; // authored, required
