@@ -815,8 +815,7 @@ LForms.Util = {
 
 
   /**
-   * We are transitioning lforms fields representing code (form.code, form.questionCode,
-   * items[x].questionCode
+   * We are transitioning lforms fields representing code (form.code, items[x].questionCode
    * and items[x].questionCodeSystem) to FHIR definition of Coding type.
    * In lforms, these fields are string type and FHIR Coding is an array of
    * objects encapsulating multiple codes
