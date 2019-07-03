@@ -61,7 +61,7 @@ function addCommonSDCExportFns(ns) {
         source = new LForms.LFormsData(source);
       }
       this._removeRepeatingItems(source);
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -340,6 +340,50 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
+   * Convert the minInclusive/minExclusive, maxInclusive/maxExclusive to FHIR. See the
+   * the function _handleRestrictions() in sdc-export.js for more details on the context.
+   * @param dataType Lforms data type, currently supporting DT, DTM, TM, REAL, and INT.
+   * @param value the value (in the lforms system, either a number or a string).
+   * @param valueKey the valueKey in FHIR minValue/maxValue extension (e.g., valueInteger)
+   * @param minMaxKey must be one of minInclusive, minExclusive, maxInclusive, maxExclusive
+   * @return The FHIR extension element. Specifically, undefined is returned if:
+   *         - the given value is null or undefined, or
+   *         - the dataType is not one of those listed above, or
+   *         - the minMaxKey is not one of those listed above
+   * @private
+   */
+  self._MIN_MAX_TYPES = ['DT', 'DTM', 'TM', 'REAL', 'INT']
+    .reduce((map, t) => {map[t] = t; return map;}, {});
+  self._MIN_MAX_KEYS = ['minExclusive', 'minInclusive', 'maxExclusive', 'maxInclusive']
+    .reduce((map, t) => {map[t] = t; return map;}, {});
+
+  self._exportMinMax = function(dataType, value, valueKey, minMaxKey) {
+    if(value === null || value === undefined
+      || ! self._MIN_MAX_TYPES[dataType] || ! self._MIN_MAX_KEYS[minMaxKey]) {
+      return undefined;
+    }
+
+    var isoDateStr = (dataType === "DT" || dataType === "DTM")? new Date(value).toISOString():
+      dataType == "TM"? new Date('1970-01-01T' + value + 'Z').toISOString(): null;
+
+    var fhirValue =
+      dataType === "DT"? isoDateStr.substring(0, 10):
+      dataType === "DTM"? isoDateStr:
+      dataType === "TM"? isoDateStr.substring(11, isoDateStr.length-1):
+      dataType === "REAL"? parseFloat(value): parseInt(value);
+
+    var fhirExtUrl = minMaxKey.indexOf('min') === 0?
+      'http://hl7.org/fhir/StructureDefinition/minValue':
+      'http://hl7.org/fhir/StructureDefinition/maxValue';
+
+    return {
+      url: fhirExtUrl,
+      [valueKey]: fhirValue
+    };
+  };
+
+
+  /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
    * @param answerKey - The answer[x] string
@@ -402,7 +446,7 @@ function addCommonSDCExportFns(ns) {
     target.status = "completed";
 
     // authored, required
-    target.authored = LForms.Util.dateToString(new Date());
+    target.authored = LForms.Util.dateToDTMString(new Date());
 
     // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note

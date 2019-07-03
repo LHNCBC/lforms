@@ -1,7 +1,9 @@
 # Form Definition Format
 
 The forms rendered by the LForms widget are defined in a JSON format, an example
-of which can be seen in [sample-data.js](app/data/sample-data.js).  The
+of which can be seen in [sample-data.js](app/data/sample-data.js).  Note that
+LForms also provides APIs for importing forms defined in the FHIR Questionnaire
+format.  (See the [documentation](http://lhncbc.github.io/lforms/) for details.)  The
 basic structure (some of which is optional) is shown below, followed by comments
 about the meaning of each key:
 
@@ -194,6 +196,8 @@ about the meaning of each key:
           be unique within the list.
         * code - (optional) an identifier for the list item.  This can be
           omitted if you do not need coded answers.
+        * codeSystem - (optional) a code system for the answer's code. If not
+          present, the item's answerCodeSystem is used as the default code system.  
         * label - (optional) Some lists have a label for each list item, such as
           'a', 'b', etc.  This is an array of such labels, corresponding to the
           items in the "text" array.  When this is present, the automatic number
@@ -205,8 +209,8 @@ about the meaning of each key:
           which get summed into a total field.  See TOTALSCORE under <a
           href="#calculationMethod">calculationMethod</a> below for how to
           specify which field holds the total.
-    * answerCodeSystem - The code system for the answer list (specified either in
-      "answers" or in "externallyDefined").
+    * answerCodeSystem - The default code system for the answer list 
+      (specified either in "answers" or in "externallyDefined").
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
       which it would not be practical to include the whole list with the form.

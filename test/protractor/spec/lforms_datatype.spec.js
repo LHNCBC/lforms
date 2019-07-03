@@ -9,6 +9,13 @@ describe('Data Type', function() {
     expect(typeTitle.isDisplayed()).toBe(true);
   });
 
+  it('DTM datetime picker should work', function () {
+    tp.openFullFeaturedForm();
+    element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
+    element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
+  });
+
 
   describe('Button Type', function() {
 

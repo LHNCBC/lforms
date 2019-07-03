@@ -5,7 +5,7 @@
   "version": "2.56",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire"
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire"
     ]
   },
   "title": "US Surgeon General family health portrait",
@@ -159,7 +159,7 @@
             }
           ],
           "text": "Birth Date",
-          "type": "dateTime"
+          "type": "date"
         },
         {
           "extension": [
@@ -1264,7 +1264,7 @@
                 }
               ],
               "text": "Date of Birth",
-              "type": "dateTime",
+              "type": "date",
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",

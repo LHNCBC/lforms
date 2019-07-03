@@ -34,6 +34,7 @@
         ST:     "ST",
         TX:     "TX",
         DT:     "DT",
+        DTM:    "DTM",
         TM:     "TM",
         CNE:    "CNE",
         CWE:    "CWE",
@@ -49,7 +50,6 @@
         QTY:    "QTY",
         BL:     "BL"    // not fully supported yet
         // BIN:    "BIN",   // not supported yet
-        // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
       },
       DISPLAY_MODE: ['lg', 'md', 'sm', 'auto']
@@ -234,39 +234,73 @@
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
-      if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
-          "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-        for (var i=0, len=contextItems.length; i<len; ++i) {
-          var contextItemExt = contextItems[i].extension;
-          var name;
-          var typeList = [];
-          for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
-            var fieldExt = contextItemExt[j];
-            if (!name && fieldExt.url === 'name') {
-              name = fieldExt.valueId;
-              this._checkFHIRVarName(name); // might throw
-            }
-            else if (fieldExt.url === 'type')
-              typeList.push(fieldExt.valueCode)
+    },
+
+
+    /**
+     *  Loads FHIR resources necessary to show the form.  These are loaded
+     *  asynchronously.  When the asynchous requests have completed, if
+     *  "prepoluate" is set to true, the form will be partially filled in with
+     *  values from the resources as extensions indicate (e.g.
+     *  observationLinkPeriod and initialExpression).
+     *  Prior to calling this, LForms.Util.setFHIRContext() should have been
+     *  called, so that communication with the FHIR server can take place.
+     * @param prepopulate whether or not to peform prepoluation.  If the form
+     *  being showed is going to include previously saved user data, this flag
+     *  should be set to false (which is the default).
+     */
+    loadFHIRResources: function(prepopulate) {
+      if (!LForms.fhirContext) {
+        throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      }
+      var lfData = this;
+
+      var pendingPromises = [];
+
+      // launchContext
+      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
+        "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
+      for (var i=0, len=contextItems.length; i<len; ++i) {
+        let contextItemExt = contextItems[i].extension;
+        let name;
+
+        let typeList = [];
+        for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
+          var fieldExt = contextItemExt[j];
+          if (!name && fieldExt.url === 'name') {
+            name = fieldExt.valueId;
+            this._checkFHIRVarName(name); // might throw
           }
-          if (name && typeList.length > 0) {
-            this._asyncLoadCounter++;
+          else if (fieldExt.url === 'type')
+            typeList.push(fieldExt.valueCode)
+        }
+        if (name && typeList.length > 0) {
+          pendingPromises.push(new Promise(function(resolve, reject) {
             // Enforce that this is truly asynchronous with setTimeout.
             // Some implementations of getCurrent (e.g in testing) might be
             // synchronous.
             setTimeout(function() {
-              LForms.fhirContext.getCurrent(typeList, function(resource) {
-                lfData._asyncLoadCounter--;
-                if (resource)
-                  lfData._fhirVariables[name] = resource;
-                if (lfData._asyncLoadCounter === 0)
-                  lfData._notifyAsyncChangeListeners()
-              });
+              try {
+                LForms.fhirContext.getCurrent(typeList, function(resource) {
+                  if (resource)
+                    lfData._fhirVariables[name] = resource;
+                  resolve();
+                });
+              }
+              catch(e) {
+                reject(e);
+              }
             }, 1);
-          }
+          }));
         }
       }
+
+      if (prepopulate)
+        pendingPromises.push(this._requestLinkedObs());
+
+      return Promise.all(pendingPromises).then(function() {
+        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
+      });
     },
 
 
@@ -327,14 +361,15 @@
       // run the all form controls
       this._checkFormControls();
 
-      if (this._fhir)
-        this._requestLinkedObs();
     },
 
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-population.
+     *  resources for pre-population.  When the resources have been retrieved,
+     *  prepoluation will be performed.
+     * @return a promise resolving after the resources have been retrieved and
+     *  any prepopulation has been performed.
      */
     _requestLinkedObs: function() {
       if (LForms.fhirContext && this._fhir) {
@@ -342,13 +377,22 @@
         // sure that is available before continuing.
         var lfData = this;
         if (!LForms._serverFHIRReleaseID) {
-          LForms.Util.getServerFHIRReleaseID(function() {lfData._requestLinkedObs()});
+          // Go fetch the server's FHIR version first before continuing
+          return new Promise(function(resolve, reject) {
+            LForms.Util.getServerFHIRReleaseID(function(relID) {
+              if (!relID)
+                reject("Unable to obtain the server's FHIR version");
+              else
+                resolve(lfData._requestLinkedObs());
+            });
+          });
         }
         else {
+          var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
           for (var i=0, len=this.items.length; i<len; ++i) {
-            var item = this.items[i];
+            let item = this.items[i];
             if (item._obsLinkPeriodExt) {
               var duration = item._obsLinkPeriodExt.valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
@@ -373,33 +417,30 @@
                   queryParams.query._lastUpdated = 'gt'+date.toISOString();
                 }
               }
-              this._asyncLoadCounter++;
-              fhirjs.search(queryParams).then((function(itemI) {return function(successData) {
-                var bundle = successData.data;
-                if (bundle.entry) {
-                  var foundObs;
-                  for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
-                    var obs = bundle.entry[j].resource;
-                    if (!obs.focus) { // in case we couldn't use focus:missing above
-                      foundObs = true;
-                      serverFHIR.SDC.importObsValue(itemI, obs);
-                      if (itemI.unit)
-                        lfData._setUnitDisplay(itemI.unit);
+              // I'm not sure why, but fhirjs.search.then() returns an already
+              // resolved promise.  Wrap it in a Promise object.
+              pendingPromises.push(new Promise(function(resolve, reject) {
+                fhirjs.search(queryParams).then(function(successData) {
+                  var bundle = successData.data;
+                  if (bundle.entry) {
+                    var foundObs;
+                    for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
+                      var obs = bundle.entry[j].resource;
+                      if (!obs.focus) { // in case we couldn't use focus:missing above
+                        serverFHIR.SDC.importObsValue(item, obs);
+                        if (item.value)
+                          foundObs = true;
+                        if (item.unit)
+                          lfData._setUnitDisplay(item.unit);
+                      }
                     }
                   }
-                }
-                lfData._asyncLoadCounter--;
-                if (lfData._asyncLoadCounter === 0)
-                  lfData._notifyAsyncChangeListeners()
-              }})(item),
-              function(errorData) {
-                console.log(errorData);
-                lfData._asyncLoadCounter--;
-                if (lfData._asyncLoadCounter === 0)
-                  lfData._notifyAsyncChangeListeners()
-              });
+                  resolve(item.questionCode); // code is not needed, but useful for debugging
+                })
+              }));
             }
           }
+          return Promise.all(pendingPromises);
         }
       }
     },
@@ -794,7 +835,7 @@
       if (this.templateOptions.formHeaderItems) {
         for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
           var item = this.templateOptions.formHeaderItems[i];
-          if (item.value && item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+          if (item.value && (item.dataType === this._CONSTANTS.DATA_TYPE.DT || item.dataType === this._CONSTANTS.DATA_TYPE.DTM)) {
               item.value = LForms.Util.stringToDate(item.value);
           }
         }
@@ -869,10 +910,15 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
-        // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
-        if (this.type ==="LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        // If the form level code system is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
+        if (this.type ==="LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item);
@@ -917,7 +963,6 @@
             item.displayControl.answerLayout =angular.copy(this.templateOptions.defaultAnswerLayout.answerLayout);
           }
         }
-
 
         this._updateItemAttrs(item);
 
@@ -1001,6 +1046,13 @@
                 item.value = LForms.Util.stringToDate(item.value);
               }
               break;
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              item._toolTip = "MM/DD/YYYY HH:MM";
+              // process user data
+              if (item.value) {
+                item.value = LForms.Util.stringToDate(item.value);
+              }
+              break;
             case this._CONSTANTS.DATA_TYPE.CNE:
               if (item.externallyDefined)
                 item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";
@@ -1038,7 +1090,9 @@
             (item.dataType !== this._CONSTANTS.DATA_TYPE.ST &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.TX &&
              item.dataType !== this._CONSTANTS.DATA_TYPE.CWE &&
-             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+             item.dataType !== this._CONSTANTS.DATA_TYPE.CNE &&
+             item.dataType !== this._CONSTANTS.DATA_TYPE.DTM)) { // datetime picker controls input.
           item._hasValidation = true;
         }
 
@@ -1101,6 +1155,19 @@
       // answerCardinality
       if (!item.answerCardinality) {
         item.answerCardinality = {"min":"0", "max":"1"};
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      }
+
+      // answer code system
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+        for (var i=0, iLen = item.answers.length; i<iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       }
 
       // set up flags for question and answer cardinality
@@ -1425,7 +1492,10 @@
               retValue = parseFloat(value);
               break;
             case this._CONSTANTS.DATA_TYPE.DT:
-              retValue = LForms.Util.dateToString(value);
+              retValue = LForms.Util.dateToDTStringISO(value);
+              break;
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              retValue = LForms.Util.dateToDTMString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
             case this._CONSTANTS.DATA_TYPE.CWE:
@@ -2345,13 +2415,8 @@
 
           // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            }
-            else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           }
 
           // reset the modified answers (for the display text)

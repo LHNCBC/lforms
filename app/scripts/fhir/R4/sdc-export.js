@@ -14,7 +14,7 @@
  * convertLFormsToQuestionnaireResponse()
  * -- Generate FHIR (standard or SDC) QuestionnaireResponse data from captured data in LForms
  */
-var sdcVersion = '3.5.0';
+var sdcVersion = '2.7';
 var fhirVersionNum = '4.0';
 
 var self = {
@@ -325,24 +325,10 @@ var self = {
           // }
           case "minExclusive":
           case "minInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-                dataType === "REAL" || dataType === "INT" ) {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/minValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-            break;
           // http://hl7.org/fhir/StructureDefinition/maxValue
           case "maxExclusive":
           case "maxInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-                dataType === "REAL" || dataType === "INT" ) {
-              extValue = {
-                "url":"http://hl7.org/fhir/StructureDefinition/maxValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
+            extValue = this._exportMinMax(dataType, value, valueKey, key);
             break;
           // http://hl7.org/fhir/StructureDefinition/minLength
           case "minLength":
@@ -484,8 +470,8 @@ var self = {
           "display": answer.text
       };
 
-      if(item.answerCodeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
+      if (answer.codeSystem) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
       }
 
       optionArray.push(option);
@@ -661,20 +647,20 @@ var self = {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
-        if (item.answerCodeSystem)
-          codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
+          // defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
             coding = {"code": item.defaultAnswer[i].code};
             if(item.defaultAnswer[i].text !== undefined) {
               coding.display = item.defaultAnswer[i].text;
             }
-
-            if(codeSystem) {
-              coding.system = codeSystem;
+            // code system
+            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
+
             answer = {};
             answer[valueKey] = coding;
             targetItem.initial.push(answer);
@@ -686,8 +672,10 @@ var self = {
           if(item.defaultAnswer.text !== undefined) {
             coding.display = item.defaultAnswer.text;
           }
-          if(codeSystem) {
-            coding.system = codeSystem;
+          // code system
+          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
           answer = {};
           answer[valueKey] = coding;

@@ -48,7 +48,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
               "effectiveDateTime": "2016-06-29T19:14:57-04:00",
               "issued": "2016-06-29T19:14:57-04:00",
             }
-          }
+          };
           switch(queryParams.query.code) {
             case 'http://loinc.org|29463-7':
               entry.resource.code = {
@@ -85,20 +85,21 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
                 "text": "Not at all"
               }
               break;
+            default:
+              entry = null;
+              break;
           }
 
           return {
             then: function(callback) {
+              var data = {
+                "resourceType": "Bundle",
+                "type": "searchset",
+              };
+              if (entry)
+                data.entry = [entry];
               setTimeout(function() { // preserve expected async behavior
-                callback({
-                  "data": {
-                    "resourceType": "Bundle",
-                    "type": "searchset",
-                    "entry": [
-                      entry
-                    ]
-                  }
-                });
+                callback({data: data});
               });
             }
           };

@@ -2,9 +2,12 @@
 (function() {
   'use strict';
   var Def = require('autocomplete-lhc');
-  var widgetDeps = ['smoothScroll','autocompleteLhcMod'];
+  var widgetDeps = [
+    'smoothScroll',
+    'autocompleteLhcMod',
+    'ui.bootstrap.datetimepicker'];
   if (Def._tooltip)
-    widgetDeps = [Def._animate, Def._popover, Def._tooltip].concat(widgetDeps);
+    widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);
   else
     widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps)

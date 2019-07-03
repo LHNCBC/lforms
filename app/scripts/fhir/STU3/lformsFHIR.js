@@ -18189,7 +18189,7 @@ var dr = {
    */
   _getFormattedDate: function _getFormattedDate(dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    return dateObj ? LForms.Util.dateToString(dateObj) : "";
+    return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
   /**
@@ -18504,7 +18504,11 @@ var dr = {
           break;
 
         case "DT":
-          item.value = obx.valueDateTime;
+          item.value = LForms.Util.stringToDTDateISO(obx.valueDate);
+          break;
+
+        case "DTM":
+          item.value = LForms.Util.stringToDate(obx.valueDateTime);
           break;
 
         case "CNE":
@@ -18894,6 +18898,13 @@ var self = {
 
       case "DT":
         values = [{
+          key: "valueDate",
+          val: item.value
+        }];
+        break;
+
+      case "DTM":
+        values = [{
           key: "valueDateTime",
           val: item.value
         }];
@@ -18917,7 +18928,7 @@ var self = {
             "code": val.code,
             "display": val.text
           };
-          var codeSystem = val.system || item.answerCodeSystem;
+          var codeSystem = val.codeSystem;
 
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
@@ -19270,26 +19281,11 @@ var self = {
           //   "valueInteger" : <integer>, // R! Value of extension
           // }
           case "minExclusive":
-          case "minInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
-              extValue = {
-                "url": "http://hl7.org/fhir/StructureDefinition/minValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-
-            break;
-          // http://hl7.org/fhir/StructureDefinition/maxValue
+          case "minInclusive": // http://hl7.org/fhir/StructureDefinition/maxValue
 
           case "maxExclusive":
           case "maxInclusive":
-            if (dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "REAL" || dataType === "INT") {
-              extValue = {
-                "url": "http://hl7.org/fhir/StructureDefinition/maxValue"
-              };
-              extValue[valueKey] = parseInt(value);
-            }
-
+            extValue = this._exportMinMax(dataType, value, valueKey, key);
             break;
           // http://hl7.org/fhir/StructureDefinition/minLength
 
@@ -19457,8 +19453,8 @@ var self = {
         "display": answer.text
       };
 
-      if (item.answerCodeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
+      if (answer.codeSystem) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
       }
 
       optionArray.push(option);
@@ -19631,32 +19627,35 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE') {
         var codeSystem = null,
             coding = null;
-        if (item.answerCodeSystem) codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
-          // targetItem[valueKey] = [];
-          // for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-          //   targetItem[valueKey].push({
-          //     "system": codeSystem,
-          //     "code": item.defaultAnswer[i].code,
-          //     "display": item.defaultAnswer[i].text
-          //   })
-          // };
+          // defaultAnswer has multiple values
           // pick the first one only
           coding = {
             "code": item.defaultAnswer[0].code,
             "display": item.defaultAnswer[0].text
-          };
-          if (codeSystem) coding.system = codeSystem;
+          }; // code system
+
+          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
+
           targetItem[valueKey] = coding;
         } // single selection, item.defaultAnswer is an object
         else {
             coding = {
               "code": item.defaultAnswer.code,
               "display": item.defaultAnswer.text
-            };
-            if (codeSystem) coding.system = codeSystem;
+            }; // code system
+
+            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+
             targetItem[valueKey] = coding;
           }
       } // for Quantity,
@@ -19800,6 +19799,8 @@ var self = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  *  Defines SDC export functions that are the same across the different FHIR
  *  versions.  The function takes the SDC namespace object defined in the sdc export
@@ -19869,7 +19870,7 @@ function addCommonSDCExportFns(ns) {
 
       this._removeRepeatingItems(source);
 
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -20137,6 +20138,42 @@ function addCommonSDCExportFns(ns) {
     return prefix + valueKey;
   };
   /**
+   * Convert the minInclusive/minExclusive, maxInclusive/maxExclusive to FHIR. See the
+   * the function _handleRestrictions() in sdc-export.js for more details on the context.
+   * @param dataType Lforms data type, currently supporting DT, DTM, TM, REAL, and INT.
+   * @param value the value (in the lforms system, either a number or a string).
+   * @param valueKey the valueKey in FHIR minValue/maxValue extension (e.g., valueInteger)
+   * @param minMaxKey must be one of minInclusive, minExclusive, maxInclusive, maxExclusive
+   * @return The FHIR extension element. Specifically, undefined is returned if:
+   *         - the given value is null or undefined, or
+   *         - the dataType is not one of those listed above, or
+   *         - the minMaxKey is not one of those listed above
+   * @private
+   */
+
+
+  self._MIN_MAX_TYPES = ['DT', 'DTM', 'TM', 'REAL', 'INT'].reduce(function (map, t) {
+    map[t] = t;
+    return map;
+  }, {});
+  self._MIN_MAX_KEYS = ['minExclusive', 'minInclusive', 'maxExclusive', 'maxInclusive'].reduce(function (map, t) {
+    map[t] = t;
+    return map;
+  }, {});
+
+  self._exportMinMax = function (dataType, value, valueKey, minMaxKey) {
+    if (value === null || value === undefined || !self._MIN_MAX_TYPES[dataType] || !self._MIN_MAX_KEYS[minMaxKey]) {
+      return undefined;
+    }
+
+    var isoDateStr = dataType === "DT" || dataType === "DTM" ? new Date(value).toISOString() : dataType == "TM" ? new Date('1970-01-01T' + value + 'Z').toISOString() : null;
+    var fhirValue = dataType === "DT" ? isoDateStr.substring(0, 10) : dataType === "DTM" ? isoDateStr : dataType === "TM" ? isoDateStr.substring(11, isoDateStr.length - 1) : dataType === "REAL" ? parseFloat(value) : parseInt(value);
+    var fhirExtUrl = minMaxKey.indexOf('min') === 0 ? 'http://hl7.org/fhir/StructureDefinition/minValue' : 'http://hl7.org/fhir/StructureDefinition/maxValue';
+    return _defineProperty({
+      url: fhirExtUrl
+    }, valueKey, fhirValue);
+  };
+  /**
    * A single condition in lforms translates to two enableWhen rules in core FHIR.
    *
    * @param answerKey - The answer[x] string
@@ -20195,7 +20232,7 @@ function addCommonSDCExportFns(ns) {
 
     target.status = "completed"; // authored, required
 
-    target.authored = LForms.Util.dateToString(new Date()); // questionnaire , required
+    target.authored = LForms.Util.dateToDTMString(new Date()); // questionnaire , required
     // We do not have the ID at this point, so leave it unset for now.  Note
     // that the fomat has also changed from Reference to canonical in R4.
 
@@ -20325,10 +20362,9 @@ function addSDCImportFns(ns) {
   self._processFormLevelFields = function (lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
 
-    if (lfData.code) {
+    if (questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
 
     var codeAndSystemObj = self._getCode(questionnaire);
@@ -20345,8 +20381,6 @@ function addSDCImportFns(ns) {
    *         followed by the ValueSet id) to the answers options object, which, in turn, is a hash with 4 entries:
    *         - "answers" is the list of LF answers converted from the value set.
    *         - "systems" is the list of code systems for each answer item; and
-   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
    *         returns undefined if no contained value set is present.
    * @private
    */
@@ -20360,15 +20394,15 @@ function addSDCImportFns(ns) {
       questionnaire.contained.forEach(function (vs) {
         if (vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var lfVS = {
-            answers: [],
-            systems: []
+            answers: []
           };
           var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
 
           vs.expansion.contains.forEach(function (vsItem) {
             var answer = {
               code: vsItem.code,
-              text: vsItem.display
+              text: vsItem.display,
+              codeSystem: self._toLfCodeSystem(vsItem.system)
             };
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
 
@@ -20377,23 +20411,7 @@ function addSDCImportFns(ns) {
             }
 
             lfVS.answers.push(answer);
-            lfVS.systems.push(vsItem.system);
-
-            if (theCodeSystem === '#placeholder#') {
-              theCodeSystem = vsItem.system;
-            } else if (theCodeSystem !== vsItem.system) {
-              theCodeSystem = null;
-            }
-
-            if (vsItem.system) {
-              lfVS.hasAnswerCodeSystems = true;
-            }
-          }); // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-
-          if (theCodeSystem && theCodeSystem !== '#placeholder#') {
-            lfVS.isSameCodeSystem = true;
-          } // support both id and url based lookup. STU3 reference is quite vague.
-
+          }); // support both id and url based lookup. STU3 reference is quite vague.
 
           if (vs.id !== undefined) {
             answersVS['#' + vs.id] = lfVS;
@@ -20636,7 +20654,6 @@ function addSDCImportFns(ns) {
 
             if (option[optionKey[0]].system !== undefined) {
               answer.codeSystem = option[optionKey[0]].system;
-              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
             }
           } else {
             answer.text = option[optionKey[0]].toString();
@@ -20650,12 +20667,6 @@ function addSDCImportFns(ns) {
 
       if (vs) {
         lfItem.answers = vs.answers;
-
-        if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
-        } else if (vs.hasAnswerCodeSystems) {
-          console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s', vs.systems.join(', '));
-        }
       }
     }
   }
@@ -21117,6 +21128,10 @@ function addSDCImportFns(ns) {
             break;
 
           case "DT":
+            item.value = qrValue.valueDate;
+            break;
+
+          case "DTM":
             item.value = qrValue.valueDateTime;
             break;
 
@@ -21187,9 +21202,8 @@ function addCommonSDCFns(ns) {
     "BL": 'boolean',
     "REAL": 'decimal',
     "INT": 'integer',
-    "DT": 'dateTime',
+    "DT": 'date',
     "DTM": 'dateTime',
-    // not supported yet
     "TM": 'time',
     "TX": 'text',
     "URL": 'url',
@@ -21202,7 +21216,7 @@ function addCommonSDCFns(ns) {
   self._lformsTypesToFHIRFields = {
     "INT": 'Integer',
     "REAL": 'Decimal',
-    "DT": 'DateTime',
+    "DT": 'Date',
     "DTM": 'DateTime',
     "TM": 'Time',
     "ST": 'String',
@@ -21502,19 +21516,16 @@ function addCommonSDCImportFns(ns) {
         } else {
           // Pick a Coding that is appropriate for this list item.
           if (lfItem.answers) {
-            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
-            if (itemAnswersFHIRCodeSystem) itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
             var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
 
             for (var k = 0, kLen = codings.length; k < kLen && !answer; ++k) {
               var coding = codings[k];
 
               for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
-                var system = coding.system;
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
+                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
 
-                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) && coding.code == listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -21580,6 +21591,10 @@ function addCommonSDCImportFns(ns) {
 
 
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    if (qItem.code) {
+      lfItem.codeList = qItem.code;
+    }
+
     var code = self._getCode(qItem);
 
     if (code) {
@@ -21788,9 +21803,13 @@ function addCommonSDCImportFns(ns) {
         type = 'BL';
         break;
 
-      case "dateTime":
+      case "date":
         //dataType = 'date';
         type = 'DT';
+        break;
+
+      case "dateTime":
+        type = 'DTM';
         break;
 
       case "time":

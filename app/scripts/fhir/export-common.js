@@ -49,6 +49,12 @@ var self = {
         break;
       case "DT":
         values = [{
+          key:  "valueDate",
+          val: item.value
+        }];
+        break;
+      case "DTM":
+        values = [{
           key:  "valueDateTime",
           val: item.value
         }];
@@ -70,7 +76,7 @@ var self = {
             "code": val.code,
             "display": val.text
           };
-          var codeSystem = val.system || item.answerCodeSystem;
+          var codeSystem = val.codeSystem;
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
           }

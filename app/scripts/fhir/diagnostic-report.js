@@ -27,7 +27,7 @@ var dr = {
    */
   _getFormattedDate : function (dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    return dateObj ? LForms.Util.dateToString(dateObj) : "";
+    return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
 
@@ -341,7 +341,10 @@ var dr = {
           item.unit = {name: obx.valueQuantity.code};
           break;
         case "DT":
-          item.value = obx.valueDateTime;
+          item.value = LForms.Util.stringToDTDateISO(obx.valueDate);
+          break;
+        case "DTM":
+          item.value = LForms.Util.stringToDate(obx.valueDateTime);
           break;
         case "CNE":
         case "CWE":

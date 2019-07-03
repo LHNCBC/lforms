@@ -156,8 +156,8 @@ module.exports = LForms;
 
   var Def = __webpack_require__(3);
 
-  var widgetDeps = ['smoothScroll', 'autocompleteLhcMod'];
-  if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
+  var widgetDeps = ['smoothScroll', 'autocompleteLhcMod', 'ui.bootstrap.datetimepicker'];
+  if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps).config(['$animateProvider', function ($animateProvider) {
     $animateProvider.classNameFilter(/has-ng-animate/);
   }]).directive('lforms', function () {
@@ -7725,7 +7725,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
   // avoid using image files from html templates, therefore using base64
   // encoding for a 1x1 blank gif file.
 
-  $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL; // Default option for calendar
+  $scope.blankGifDataUrl = LF_CONSTANTS.BLANK_GIF_DATAURL; // Default option for calendar - for the JQuery datepicker
 
   $scope.dateOptions = {
     changeYear: true,
@@ -7737,10 +7737,50 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     selectOtherMonths: true,
     showMonthAfterYear: true,
     buttonText: "Show date picker"
+  }; // uib booststrap datetime picker, https://github.com/Gillardo/bootstrap-ui-datetime-picker
+
+  $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
+  $scope.uibDatePickerAltFormats = ['yyyy', 'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM', 'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy', "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm", "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH:mm"];
+  $scope.uibDatePickerOptions = {
+    showWeeks: false
+  };
+  $scope.uibTimePickerOptions = {
+    arrowkeys: true //showSeconds: false
+
+  }; // open the uib bootstrap datetime picker
+
+  $scope.openUibDtmPicker = function (e) {
+    this.isOpen = true;
+  };
+
+  $scope.uibDtmPickerButtonBar = {
+    // specify the class for the close button so that we can locate the element.
+    // must specify each button but each button's conf fall back to system default if not specified.
+    show: true,
+    now: {},
+    today: {},
+    clear: {},
+    date: {},
+    time: {},
+    close: {
+      cls: 'btn-sm btn-default lf-dtmpk-close'
+    },
+    cancel: {}
+  }; // Close the uib bootstrap datetime picker if the input field loses focus -
+  // if the input loses focus due to clicking on the calendar icon, it will open fine.
+  // not intended to use on other fields but having the eleName param make it useful for troubleshooting
+
+  $scope.uibDtmPickerOnBlur = function (eleName) {
+    if (eleName === 'input' && this.isOpen) {
+      setTimeout(function () {
+        document.getElementsByClassName('lf-dtmpk-close')[0].click();
+      });
+    }
   };
   /**
    * Check the current view's width
    */
+
 
   $scope.checkViewWidth = function () {
     // the $element is where the controller is set on
@@ -8286,16 +8326,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
               if (lfData) lfData._expressionProcessor.runCalculations(false);
             });
           }
-        } // Set up a listener for asynchronous change events (triggered by
-        // lfData itself).
+        }
 
-
-        if (!lfData._controllerInit) {
-          lfData.addAsyncChangeListener(function () {
-            $scope.$apply(function () {
-              if (lfData.hasFHIRPath || lfData._hasInitialExpr) lfData._expressionProcessor.runCalculations(true);
-            });
-          });
+        if (!lfData._controllerInit && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
+          lfData._expressionProcessor.runCalculations(true);
         } // Angular calls this twice for the same lfData.  Set a flag.
         // Note:  For some reason the watches still need to be set up both times.
 
@@ -8389,6 +8423,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
   $scope.getRowClass = function (item) {
     var eleClass = 'level' + item._displayLevel;
+    eleClass += ' lf-datatype-' + item.dataType;
 
     if (item._answerRequired) {
       eleClass += ' lf-answer-required';
@@ -8980,6 +9015,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             };
 
             opts.beforeShow = function () {
+              element.click(); // without this, the UIB datetime picker does not close (if it were open)
+
               showing = true;
             };
 
@@ -11078,8 +11115,14 @@ LForms.Util = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
+   * @param options A hash of options (currently just one):
+   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
+   *     the form was an imported FHIR Questionnaire).
+   * @return a Promise that will resolve after any needed external FHIR
+   *  resources have been loaded (if the form was imported from a FHIR
+   *  Questionnaire).
    */
-  addFormToPage: function addFormToPage(formDataDef, formContainer) {
+  addFormToPage: function addFormToPage(formDataDef, formContainer, options) {
     var formContainer = typeof formContainer === 'string' ? $('#' + formContainer) : $(formContainer);
 
     if (typeof formDataDef === 'string') {
@@ -11094,11 +11137,30 @@ LForms.Util = {
     if (!LForms.addedFormDefs) LForms.addedFormDefs = [];
     var formIndex = LForms.addedFormDefs.length;
     LForms.addedFormDefs.push(formDataDef);
-    formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>' + '<script>' + 'angular.module("' + appName + '", ["lformsWidget"])' + '.controller("' + controller + '", ["$scope", function ($scope) {' + '  $scope.myFormData = new LForms.LFormsData(LForms.addedFormDefs[' + formIndex + ']);' + '}]);' + '</' + 'script>'); // Bootstrap the element if needed
+    var prepop = options && options.prepopulate === true;
+    formContainer.html('<div ng-controller="' + controller + '">' + '<lforms lf-data="myFormData"></lforms>' + '</div>');
+    var rtnPromise = new Promise(function (resolve, reject) {
+      angular.module(appName, ["lformsWidget"]).controller(controller, ["$scope", function ($scope) {
+        var myFormData = new LForms.LFormsData(LForms.addedFormDefs[formIndex]);
+
+        if (LForms.fhirContext) {
+          myFormData.loadFHIRResources(prepop).then(function () {
+            $scope.$apply(function () {
+              $scope.myFormData = myFormData;
+              resolve();
+            });
+          });
+        } else {
+          $scope.myFormData = myFormData;
+          resolve();
+        }
+      }]);
+    }); // Bootstrap the element if needed
     // Following http://stackoverflow.com/a/34501500/360782
 
     var isInitialized = formContainer.injector && formContainer.injector();
     if (!isInitialized) angular.bootstrap(formContainer.children(':first'), [appName]);
+    return rtnPromise;
   },
 
   /**
@@ -11286,7 +11348,7 @@ LForms.Util = {
     if (!fhirVersion) fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
 
     if (!fhirVersion) {
-      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/3.5/StructureDefinition/Questionnaire' + ' (for Questionnaire version 3.5).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|3.5.0 ' + ' (for SDC Questionnaire version 3.5).');
+      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire' + ' (for Questionnaire version 4.0).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 ' + ' (for SDC Questionnaire version 2.7).');
     } else fhirVersion = this.validateFHIRVersion(fhirVersion);
 
     return fhirVersion;
@@ -11408,8 +11470,8 @@ LForms.Util = {
     if (fhirData.meta && fhirData.meta.profile) {
       var profiles = fhirData.meta.profile; // See http://build.fhir.org/versioning.html#mp-version
 
-      var questionnairePattern = new RegExp('http://hl7.org/fhir/(\\d+\.?\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
-      var sdcPattern = new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.?\\d+)');
+      var questionnairePattern = new RegExp('http://hl7.org/fhir/(\\d+\.\\d+)([\\.\\d]+)?/StructureDefinition/Questionnaire');
+      var sdcPattern = new RegExp('http://hl7.org/fhir/u./sdc/StructureDefinition/sdc-questionnaire\\|(\\d+\.\\d+)(\.\\d+)?');
 
       for (var i = 0, len = profiles.length && !fhirVersion; i < len; ++i) {
         var match = profiles[i].match(questionnairePattern);
@@ -11417,8 +11479,15 @@ LForms.Util = {
           match = profiles[i].match(sdcPattern);
 
           if (match) {
-            fhirVersion = match[1];
-            if (fhirVersion == '2.0') fhirVersion = '3.0'; // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+            fhirVersion = match[1]; // See http://www.hl7.org/fhir/uv/sdc/history.cfml
+            // Use FHIR 3.0 for SDC 2.0; There was no SDC 3.0
+
+            if (fhirVersion == '2.0') {
+              fhirVersion = '3.0';
+            } // use FHIR 4.0 for SDC version >= 2.1
+            else if (parseFloat(fhirVersion) >= 2.1) {
+                fhirVersion = '4.0';
+              }
           }
         }
       }
@@ -11525,12 +11594,40 @@ LForms.Util = {
   },
 
   /**
+   * This function and stringToDTDateISO are meant to work as a pair on DT (or FHIR date) data type.
+   * The idea is that DT/date type does not have timezone info, as a result, the string value could be
+   * off by a day during either way of conversion depending on the time zone the code is executed.
+   * The solution here is to keep the literal values of the year, month, and date components remain
+   * unchanged regardless of the time zones.
+   * Convert the given date object into a DT type date string, in "yyyy-mm-dd" format, where the
+   * year, month, and date are based on the "local time zone" as the users can see on the display.
+   * @param dateObj the date object to be converted.
+   * @return date string in yyyy-mm-dd format with year, month, and date values corresponding to that
+   * at the local timezone.
+   */
+  dateToDTStringISO: function dateToDTStringISO(dateObj) {
+    return !dateObj || isNaN(dateObj.getTime()) ? undefined : [(10000 + dateObj.getFullYear()).toString().substr(1), (101 + dateObj.getMonth()).toString().substr(1), (100 + dateObj.getDate()).toString().substr(1)].join('-');
+  },
+
+  /**
+   * Parse the given iso date string, that is, a string of format "yyyy[-mm[-dd]]", into a Date object,
+   * and then, adjust the year, month, and day so that when displayed (as local date) the literal values of
+   * the year, month, and date components remain unchanged.
+   * See the comments/docs for function dateToDTStringISO().
+   * @param isoDateString
+   */
+  stringToDTDateISO: function stringToDTDateISO(isoDateString) {
+    var d = new Date(isoDateString);
+    return isNaN(d.getTime()) ? undefined : new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  },
+
+  /**
    * Get a formatted date string from a date object
    * for example: "2016-10-31T14:42:12-04:00"
    * @param objDate a date object
    * @returns a formatted date string
    */
-  dateToString: function dateToString(objDate) {
+  dateToDTMString: function dateToDTMString(objDate) {
     var offset = objDate.getUTCOffset();
     offset = offset.slice(0, -2) + ":" + offset.slice(-2);
     return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
@@ -11542,6 +11639,11 @@ LForms.Util = {
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate) {
+    if (!strDate || typeof strDate != 'string') {
+      // maybe already a date object.
+      return strDate;
+    }
+
     var matches,
         millis = null,
         ret = null; // This date parsing (from Datejs) fails to parse string that includes milliseconds.
@@ -11582,28 +11684,33 @@ LForms.Util = {
   isItemValueEmpty: function isItemValueEmpty(value) {
     var empty = true;
 
-    if (typeof value !== 'undefined') {
-      // object
-      if (angular.isObject(value)) {
-        var keys = Object.keys(value);
-
-        for (var i = 0, iLen = keys.length; i < iLen; i++) {
-          var val = value[keys[i]];
-
-          if (val !== null && val !== "") {
+    if (value !== null && value !== undefined && value !== '' && typeof value !== 'function') {
+      if (typeof value === 'string' || value instanceof String) {
+        empty = value.trim() === '';
+      } else if (Array.isArray(value)) {
+        for (var i = 0; i < value.length; ++i) {
+          if (!this.isItemValueEmpty(value[i])) {
             empty = false;
             break;
           }
         }
-      } // array
-      else if (angular.isArray(value)) {
-          if (value.length > 0) {
-            empty = false;
+      } else if (_typeof(value) === 'object') {
+        var keys = Object.keys(value);
+
+        if (keys.length > 0) {
+          for (var i = 0, iLen = keys.length; i < iLen; i++) {
+            if (!this.isItemValueEmpty(value[keys[i]])) {
+              empty = false;
+              break;
+            }
           }
-        } // other
-        else if (value !== null && value !== "") {
-            empty = false;
-          }
+        } else if (value.constructor !== Object) {
+          // e.g., a Date object has zero length keys
+          empty = false;
+        }
+      } else {
+        empty = false;
+      }
     }
 
     return empty;
@@ -12001,6 +12108,7 @@ LForms.HL7 = function () {
       "PT": "Processing type",
       //Date/Time
       "DT": "Date",
+      "DTM": "Date/Time",
       "TM": "Time",
       "TS": "Time stamp",
       //Code Values
@@ -12622,7 +12730,6 @@ LForms.HL7 = function () {
      * Constructs an OBX5 for a list item (CNE/CWE)
      * @param itemVal a value for a list item
      * @param dataType the data type of the item (CNE or CWE)
-     * @param answerCS the answer code system
      * @return the OBX5 field string
      */
     _generateOBX5: function _generateOBX5(itemVal, dataType, answerCS) {
@@ -12633,11 +12740,14 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
+        var answerCS = !itemVal.codeSystem ? "" : itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
       return rtn;
     },
+    _DT_FMT: 'yyyyMMdd',
+    _DTM_FMT: 'yyyyMMddHHmmss',
 
     /**
      * Convert an item to one or more HL7 v2 OBX records.
@@ -12704,8 +12814,6 @@ LForms.HL7 = function () {
               itemObxArray[6] = unitName + this.delimiters.component + unitName + this.delimiters.component + this.LOINC_CS;
             }
 
-            var answerCS = !item.answerCodeSystem || item.answerCodeSystem == 'LOINC' || item.answerCodeSystem == _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : item.answerCodeSystem;
-
             for (var i = 0, len = vals.length; i < len; ++i) {
               var val = vals[i]; // OBX4 - sub id
 
@@ -12718,9 +12826,10 @@ LForms.HL7 = function () {
 
 
               if (item.dataType === 'CNE' || item.dataType === 'CWE') {
-                itemObxArray[5] = this._generateOBX5(val, item.dataType, answerCS);
-              } else if (item.dataType === 'DT') {
-                itemObxArray[5] = val.toString("yyyyMMddHHmmss");
+                itemObxArray[5] = this._generateOBX5(val, item.dataType);
+              } else if (item.dataType === 'DT' || item.dataType === 'DTM') {
+                var dv = typeof val === 'string' ? LForms.Util.stringToDate(val) : val;
+                itemObxArray[5] = dv.toString(item.dataType === 'DT' ? this._DT_FMT : this._DTM_FMT);
               } else {
                 itemObxArray[5] = val.toString();
               } // ignore ending empty fields
@@ -12941,7 +13050,7 @@ LForms.Validations = {
 
         case "ST": // not needed
 
-        case "DTM": // TBD
+        case "DTM": // dataTime, handled by the datetime directive (datetime picker)
 
         case "RTO": // TBD
 
@@ -13132,6 +13241,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         ST: "ST",
         TX: "TX",
         DT: "DT",
+        DTM: "DTM",
         TM: "TM",
         CNE: "CNE",
         CWE: "CWE",
@@ -13147,7 +13257,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         QTY: "QTY",
         BL: "BL" // not fully supported yet
         // BIN:    "BIN",   // not supported yet
-        // DTM:    "DTM",   // not supported yet
         // RTO:    "RTO",   // not supported yet
 
       },
@@ -13362,41 +13471,79 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+    },
 
-      if (LForms.fhirContext) {
-        var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
+    /**
+     *  Loads FHIR resources necessary to show the form.  These are loaded
+     *  asynchronously.  When the asynchous requests have completed, if
+     *  "prepoluate" is set to true, the form will be partially filled in with
+     *  values from the resources as extensions indicate (e.g.
+     *  observationLinkPeriod and initialExpression).
+     *  Prior to calling this, LForms.Util.setFHIRContext() should have been
+     *  called, so that communication with the FHIR server can take place.
+     * @param prepopulate whether or not to peform prepoluation.  If the form
+     *  being showed is going to include previously saved user data, this flag
+     *  should be set to false (which is the default).
+     */
+    loadFHIRResources: function loadFHIRResources(prepopulate) {
+      var _this = this;
 
-        for (var i = 0, len = contextItems.length; i < len; ++i) {
-          var contextItemExt = contextItems[i].extension;
-          var name;
-          var typeList = [];
+      if (!LForms.fhirContext) {
+        throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
+      }
 
-          for (var j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
-            var fieldExt = contextItemExt[j];
+      var lfData = this;
+      var pendingPromises = []; // launchContext
 
-            if (!name && fieldExt.url === 'name') {
-              name = fieldExt.valueId;
+      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
 
-              this._checkFHIRVarName(name); // might throw
+      var _loop = function _loop() {
+        var contextItemExt = contextItems[i].extension;
+        var name = void 0;
+        var typeList = [];
 
-            } else if (fieldExt.url === 'type') typeList.push(fieldExt.valueCode);
-          }
+        for (j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
+          fieldExt = contextItemExt[j];
 
-          if (name && typeList.length > 0) {
-            this._asyncLoadCounter++; // Enforce that this is truly asynchronous with setTimeout.
+          if (!name && fieldExt.url === 'name') {
+            name = fieldExt.valueId;
+
+            _this._checkFHIRVarName(name); // might throw
+
+          } else if (fieldExt.url === 'type') typeList.push(fieldExt.valueCode);
+        }
+
+        if (name && typeList.length > 0) {
+          pendingPromises.push(new Promise(function (resolve, reject) {
+            // Enforce that this is truly asynchronous with setTimeout.
             // Some implementations of getCurrent (e.g in testing) might be
             // synchronous.
-
             setTimeout(function () {
-              LForms.fhirContext.getCurrent(typeList, function (resource) {
-                lfData._asyncLoadCounter--;
-                if (resource) lfData._fhirVariables[name] = resource;
-                if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-              });
+              try {
+                LForms.fhirContext.getCurrent(typeList, function (resource) {
+                  if (resource) lfData._fhirVariables[name] = resource;
+                  resolve();
+                });
+              } catch (e) {
+                reject(e);
+              }
             }, 1);
-          }
+          }));
         }
+      };
+
+      for (var i = 0, len = contextItems.length; i < len; ++i) {
+        var j, jLen;
+        var fieldExt;
+
+        _loop();
       }
+
+      if (prepopulate) pendingPromises.push(this._requestLinkedObs());
+      return Promise.all(pendingPromises).then(function () {
+        lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
+
+      });
     },
 
     /**
@@ -13455,39 +13602,46 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       this._checkFormControls();
-
-      if (this._fhir) this._requestLinkedObs();
     },
 
     /**
      *  Starts the (likely asynchronous) requests to retrieve linked Observation
-     *  resources for pre-population.
+     *  resources for pre-population.  When the resources have been retrieved,
+     *  prepoluation will be performed.
+     * @return a promise resolving after the resources have been retrieved and
+     *  any prepopulation has been performed.
      */
     _requestLinkedObs: function _requestLinkedObs() {
+      var _this2 = this;
+
       if (LForms.fhirContext && this._fhir) {
         // We will need to know what version of FHIR the server is using.  Make
         // sure that is available before continuing.
         var lfData = this;
 
         if (!LForms._serverFHIRReleaseID) {
-          LForms.Util.getServerFHIRReleaseID(function () {
-            lfData._requestLinkedObs();
+          // Go fetch the server's FHIR version first before continuing
+          return new Promise(function (resolve, reject) {
+            LForms.Util.getServerFHIRReleaseID(function (relID) {
+              if (!relID) reject("Unable to obtain the server's FHIR version");else resolve(lfData._requestLinkedObs());
+            });
           });
         } else {
+          var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
 
-          for (var i = 0, len = this.items.length; i < len; ++i) {
-            var item = this.items[i];
+          var _loop2 = function _loop2() {
+            var item = _this2.items[i];
 
             if (item._obsLinkPeriodExt) {
-              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+              duration = item._obsLinkPeriodExt.valueDuration; // optional
 
-              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              itemCodeSystem = item.questionCodeSystem || _this2.codeSystem;
               if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
-              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
 
-              var queryParams = {
+              queryParams = {
                 type: 'Observation',
                 query: {
                   code: itemCodeSystem + '|' + item.questionCode,
@@ -13505,17 +13659,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
-                var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
+                result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
 
                 if (result.status === 'succeeded') {
-                  var date = new Date(new Date() - result.toVal);
+                  date = new Date(new Date() - result.toVal);
                   queryParams.query._lastUpdated = 'gt' + date.toISOString();
                 }
-              }
+              } // I'm not sure why, but fhirjs.search.then() returns an already
+              // resolved promise.  Wrap it in a Promise object.
 
-              this._asyncLoadCounter++;
-              fhirjs.search(queryParams).then(function (itemI) {
-                return function (successData) {
+
+              pendingPromises.push(new Promise(function (resolve, reject) {
+                fhirjs.search(queryParams).then(function (successData) {
                   var bundle = successData.data;
 
                   if (bundle.entry) {
@@ -13526,23 +13681,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
                       if (!obs.focus) {
                         // in case we couldn't use focus:missing above
-                        foundObs = true;
-                        serverFHIR.SDC.importObsValue(itemI, obs);
-                        if (itemI.unit) lfData._setUnitDisplay(itemI.unit);
+                        serverFHIR.SDC.importObsValue(item, obs);
+                        if (item.value) foundObs = true;
+                        if (item.unit) lfData._setUnitDisplay(item.unit);
                       }
                     }
                   }
 
-                  lfData._asyncLoadCounter--;
-                  if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-                };
-              }(item), function (errorData) {
-                console.log(errorData);
-                lfData._asyncLoadCounter--;
-                if (lfData._asyncLoadCounter === 0) lfData._notifyAsyncChangeListeners();
-              });
+                  resolve(item.questionCode); // code is not needed, but useful for debugging
+                });
+              }));
             }
+          };
+
+          for (var i = 0, len = this.items.length; i < len; ++i) {
+            var duration;
+            var itemCodeSystem;
+            var fhirjs;
+            var queryParams;
+            var result;
+            var date;
+
+            _loop2();
           }
+
+          return Promise.all(pendingPromises);
         }
       }
     },
@@ -13938,7 +14101,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         for (var i = 0, iLen = this.templateOptions.formHeaderItems.length; i < iLen; i++) {
           var item = this.templateOptions.formHeaderItems[i];
 
-          if (item.value && item.dataType === this._CONSTANTS.DATA_TYPE.DT) {
+          if (item.value && (item.dataType === this._CONSTANTS.DATA_TYPE.DT || item.dataType === this._CONSTANTS.DATA_TYPE.DTM)) {
             item.value = LForms.Util.stringToDate(item.value);
           }
         }
@@ -14007,11 +14170,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // question coding system. If form level code system is LOINC, assume all
-        // child items are of LOINC, unless specified otherwise.
+        var item = items[i]; // If the form level code system is LOINC, assume the default code system for the item code and answer code
+        // are of LOINC, unless specified otherwise.
 
-        if (this.type === "LOINC" && !item.questionCodeSystem) {
-          item.questionCodeSystem = "LOINC";
+        if (this.type === "LOINC") {
+          if (!item.questionCodeSystem) {
+            item.questionCodeSystem = "LOINC";
+          }
+
+          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+            item.answerCodeSystem = "LOINC";
+          }
         }
 
         LForms.Util.initializeCodes(item); // set default dataType
@@ -14138,6 +14307,15 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
               break;
 
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              item._toolTip = "MM/DD/YYYY HH:MM"; // process user data
+
+              if (item.value) {
+                item.value = LForms.Util.stringToDate(item.value);
+              }
+
+              break;
+
             case this._CONSTANTS.DATA_TYPE.CNE:
               if (item.externallyDefined) item._toolTip = item._multipleAnswers ? "Search for values" : "Search for value";else item._toolTip = item._multipleAnswers ? "Select one or more" : "Select one";
               break;
@@ -14168,7 +14346,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // set up validation flag
 
 
-        if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && item.dataType !== this._CONSTANTS.DATA_TYPE.CNE) {
+        if (item._answerRequired || item.restrictions || item.dataType !== this._CONSTANTS.DATA_TYPE.ST && item.dataType !== this._CONSTANTS.DATA_TYPE.TX && item.dataType !== this._CONSTANTS.DATA_TYPE.CWE && //item.dataType !== this._CONSTANTS.DATA_TYPE.CNE)) {
+        item.dataType !== this._CONSTANTS.DATA_TYPE.CNE && item.dataType !== this._CONSTANTS.DATA_TYPE.DTM) {
+          // datetime picker controls input.
           item._hasValidation = true;
         } // add a link to external site for item's definition
 
@@ -14236,6 +14416,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           "min": "0",
           "max": "1"
         };
+      }
+
+      if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
+        item.answers = this.answerLists[item.answers];
+      } // answer code system
+
+
+      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+        for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
+          if (item.answers[i] && !item.answers[i].codeSystem) {
+            item.answers[i].codeSystem = item.answerCodeSystem;
+          }
+        }
       } // set up flags for question and answer cardinality
 
 
@@ -14549,7 +14742,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
               break;
 
             case this._CONSTANTS.DATA_TYPE.DT:
-              retValue = LForms.Util.dateToString(value);
+              retValue = LForms.Util.dateToDTStringISO(value);
+              break;
+
+            case this._CONSTANTS.DATA_TYPE.DTM:
+              retValue = LForms.Util.dateToDTMString(value);
               break;
 
             case this._CONSTANTS.DATA_TYPE.CNE:
@@ -15494,12 +15691,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var answers = []; // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
 
-          if (item.answers) {
-            if (angular.isArray(item.answers)) {
-              answers = item.answers;
-            } else if (item.answers !== "" && this.answerLists) {
-              answers = this.answerLists[item.answers];
-            }
+          if (Array.isArray(item.answers)) {
+            answers = item.answers;
           } // reset the modified answers (for the display text)
 
 
@@ -16411,7 +16604,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (item.items && item._varChanged) {
           item._varChanged = false; // clear flag
 
-          changeOnly = false; // process all child items
+          changesOnly = false; // process all child items
         }
       } else if (!changesOnly) {
         // process this and all child items
@@ -16610,11 +16803,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var oldVal = item.value;
       if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
-        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          var d = new LForms.Util.stringToDate(fhirPathVal); // Convert to local time, so the date does not get shifted for negative
-          // local timezones.
-
-          item.value = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
+          item.value = new Date(fhirPathVal);
+        } else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
+          item.value = LForms.Util.stringToDTDateISO(fhirPathVal);
         } else item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
 
       }
@@ -16649,8 +16841,8 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
   $templateCache.put('form-title.html', "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" + "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\">{{lfData.name}}</span>\n" + "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ lfData.code }}]</a>\n" + "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" + "      </span>\n" + "  <button ng-if=\"lfData.copyrightNotice\" id=\"copyright-{{lfData.code}}\" type=\"button\"\n" + "          class=\"lf-copyright-button btn-sm\" uib-popover=\"{{lfData.copyrightNotice}}\"\n" + "          popover-trigger=\"focus\" popover-placement=\"right\"\n" + "          popover-title=\"Copyright\" aria-label=\"Copyright notice\"\n" + "          aria-describedby=\"label-{{ lfData.code }}\">\n" + "    <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "  </button>\n" + "  <button ng-if=\"lfData.templateOptions.showFormOptionPanelButton\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "          ng-click=\"hideShowFormOptionPanel()\" aria-label=\"Form Option Panel\">\n" + "    <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "  </button>\n" + "\n" + "</div>\n");
   $templateCache.put('form-view.html', "<div class=\"lf-form-view {{getViewModeClass()}}\" ng-controller=\"LFormsCtrl\" ng-switch on=\"lfData.template\">\n" + "  <div ng-switch-when=\"table\">\n" + "    <div ng-include=\"'template-table.html'\"></div>\n" + "  </div>\n" + "  <!-- default is 'table' -->\n" + "  <div ng-switch-default>\n" + "    <div ng-include=\"'template-table.html'\"></div>\n" + "  </div>\n" + "\n" + "  <!--debugging-->\n" + "  <button type=\"button\" ng-if=\"debug\" ng-click=\"onclick()\">Click to debug Panel Controller</button>\n" + "\n" + "</div>\n");
   $templateCache.put('item-options.html', "<div ng-if=\"item._showItemOptionPanel\">\n" + "\n" + "  <div class=\"lf-item-options lf-section-options\"  ng-if=\"item.dataType==='SECTION'\">\n" + "    <div class=\"lf-item-option\">\n" + "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'vertical'}}\"\n" + "             ng-model=\"item.displayControl.questionLayout\" value=\"vertical\" name=\"{{item._elementId}} +'option'\">\n" + "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'vertical'}}\">Vertical</label>\n" + "    </div>\n" + "    <div class=\"lf-item-option\" ng-if=\"isQuestionLayoutAllowed(item, 'horizontal')\">\n" + "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'horizontal'}}\"\n" + "             ng-model=\"item.displayControl.questionLayout\" value=\"horizontal\" name=\"{{item._elementId}} +'option'\">\n" + "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'horizontal'}}\">Horizontal</label>\n" + "    </div>\n" + "    <div class=\"lf-item-option\" ng-if=\"isQuestionLayoutAllowed(item, 'matrix')\">\n" + "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'matrix'}}\"\n" + "             ng-model=\"item.displayControl.questionLayout\" value=\"matrix\" name=\"{{item._elementId}} +'option'\">\n" + "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'matrix'}}\">Matrix</label>\n" + "    </div>\n" + "\n" + "  </div>\n" + "\n" + "  <div class=\"lf-item-options\" ng-if=\"item.answers && (item.dataType==='CWE' || item.dataType==='CNE')\">\n" + "    <div class=\"lf-item-option\">\n" + "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'combo'}}\"\n" + "             ng-model=\"item.displayControl.answerLayout.type\" value=\"COMBO_BOX\" name=\"{{item._elementId}} +'option'\">\n" + "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'combo'}}\">Combo box</label>\n" + "    </div>\n" + "    <div class=\"lf-item-option\">\n" + "      <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + 'list'}}\"\n" + "             ng-model=\"item.displayControl.answerLayout.type\" value=\"RADIO_CHECKBOX\" name=\"{{item._elementId}} +'option'\">\n" + "      <label class=\"lf-answer-label\" for=\"{{item._elementId + 'list'}}\">{{item._multipleAnswers ? \"Checkboxes\" : \"Radio buttons\"}}</label>\n" + "    </div>\n" + "    <div class=\"lf-item-option\" ng-if=\"item.displayControl.answerLayout.type==='RADIO_CHECKBOX'\">\n" + "      <label for=\"{{item._elementId + 'columns'}}\"> Display format:</label>\n" + "      <select name=\"{{item._elementId + 'columns'}}\" id=\"{{item._elementId + 'columns'}}\" ng-model=\"item.displayControl.answerLayout.columns\">\n" + "        <option value=\"\">---Please select---</option> <!-- not selected / blank option -->\n" + "        <option value=\"0\">Compact</option>\n" + "        <option value=\"1\">In 1 column</option>\n" + "        <option value=\"2\">In 2 columns</option>\n" + "        <option value=\"3\">In 3 columns</option>\n" + "        <option value=\"4\">In 4 columns</option>\n" + "        <option value=\"5\">In 5 columns</option>\n" + "        <option value=\"6\">In 6 columns</option>\n" + "      </select>\n" + "    </div>\n" + "  </div>\n" + "\n" + "</div>\n");
-  $templateCache.put('item.html', "<div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + " ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + " class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" + "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" + "  <div class=\"lf-de-label-button\">\n" + "    <!-- label -->\n" + "    <div class=\"lf-de-label\">\n" + "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" + "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" + "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover-content.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "      <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "              class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "              aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "              ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <!-- TBD -->\n" + "      <lf-item-options></lf-item-options>\n" + "    </div>\n" + "\n" + "    <!-- button -->\n" + "    <div class=\"lf-de-button\">\n" + "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" + "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" + "              title='Remove this \"{{ item.question }}\"'>-</button>\n" + "    </div>\n" + "  </div>\n" + "\n" + "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" + "    <!-- input field -->\n" + "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" + "      <ng-form name=\"innerForm2\">\n" + "        <div class=\"lf-form-item-data tooltipContainer\">\n" + "          <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" + "          <div ng-switch-when=\"CNE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "          <div ng-switch-when=\"CWE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "\n" + "          <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" + "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" + "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" + "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          </textarea>\n" + "          <input ng-switch-when=\"BL\" name=\"{{item.question}}\" type=\"checkbox\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "        </div>\n" + "      </ng-form>\n" + "    </div>\n" + "\n" + "    <!--unit-->\n" + "    <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">\n" + "      <lf-units item=\"item\"></lf-units>\n" + "    </div>\n" + "\n" + "    <!-- extra question -->\n" + "    <div ng-if=\"needExtra(item)\" class=\"lf-de-unit\">\n" + "      <input class=\"lf-extra-field\" ng-model=\"item.valueOther\" placeholder=\"Please specify\"\n" + "             ng-disabled=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" + "    </div>\n" + "  </div>\n" + "\n" + "\n" + "</div>\n" + "\n");
-  $templateCache.put('layout-horizontal.html', "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "\n" + "  <table class=\"lf-form-horizontal-table\">\n" + "    <colgroup>\n" + "      <col class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "      <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "           ng-style=\"getTableColumnStyle(col)\">\n" + "    </colgroup>\n" + "    <thead>\n" + "    <tr>\n" + "      <th class=\"lf-form-horizontal-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" + "      <th ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "          class=\"lf-form-horizontal-table-header\"\n" + "          id=\"{{col.id}}\">{{col.label}}</th>\n" + "    </tr>\n" + "    </thead>\n" + "    <tbody id=\"\" class=\"\">\n" + "    <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index\"\n" + "        class=\"data-row has-ng-animate\">\n" + "      <td class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "        <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" + "                id=\"del-{{row.header._elementId}}\"\n" + "                class=\"lf-float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" + "                title='Remove this row of \"{{ row.header.question }}\"'>-</button>\n" + "      </td>\n" + "\n" + "      <td ng-repeat=\"cell in row.cells\"\n" + "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" + "          ng-switch on=\"cell.dataType\">\n" + "        <ng-form name=\"innerForm2\">\n" + "          <div class=\"lf-form-item-data tooltipContainer\">\n" + "            <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" + "            <span ng-switch-when=\"\" > </span>\n" + "            <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" + "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                      id=\"{{cell._elementId}}\"\n" + "                      aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                      ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" + "                      ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" + "            <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "          </div>\n" + "        </ng-form>\n" + "      </td>\n" + "    </tr>\n" + "    </tbody>\n" + "  </table>\n" + "\n" + "  <div ng-if=\"item._questionRepeatable && targetShown(item) \"\n" + "       class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "    <div class=\"has-popover-warning\">\n" + "      <button type=\"button\"\n" + "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "              ng-click=\"addOneRepeatingItem(item, true)\"\n" + "              ng-blur=\"hideUnusedItemWarning(item)\"\n" + "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" + "              popover-placement=\"top-left\"\n" + "              popover-trigger=\"none\"\n" + "              popover-is-open=\"item._showUnusedItemWarning\">\n" + "        + Add another \"{{item.question}}\"\n" + "      </button>\n" + "    </div>\n" + "  </div>\n" + "</div>\n" + "\n");
+  $templateCache.put('item.html', "<div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + " ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + " class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" + "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" + "  <div class=\"lf-de-label-button\">\n" + "    <!-- label -->\n" + "    <div class=\"lf-de-label\">\n" + "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" + "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" + "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover-content.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "      <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "              class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "              aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "              ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <!-- TBD -->\n" + "      <lf-item-options></lf-item-options>\n" + "    </div>\n" + "\n" + "    <!-- button -->\n" + "    <div class=\"lf-de-button\">\n" + "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" + "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" + "              title='Remove this \"{{ item.question }}\"'>-</button>\n" + "    </div>\n" + "  </div>\n" + "\n" + "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" + "    <!-- input field -->\n" + "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" + "      <ng-form name=\"innerForm2\">\n" + "        <div class=\"lf-form-item-data tooltipContainer\">\n" + "          <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" + "          <div ng-switch-when=\"CNE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "          <div ng-switch-when=\"CWE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "\n" + "          <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" + "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "\n" + "          <!-- Gillardo boostrap datetime picker -->\n" + "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" + "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" + "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" + "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" + "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" + "                   datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" + "                   ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                   ng-blur=\"activeRowOnBlur(item); uibDtmPickerOnBlur('input')\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "            <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" + "          </div>\n" + "\n" + "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" + "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" + "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          </textarea>\n" + "          <input ng-switch-when=\"BL\" name=\"{{item.question}}\" type=\"checkbox\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "        </div>\n" + "      </ng-form>\n" + "    </div>\n" + "\n" + "    <!--unit-->\n" + "    <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">\n" + "      <lf-units item=\"item\"></lf-units>\n" + "    </div>\n" + "\n" + "    <!-- extra question -->\n" + "    <div ng-if=\"needExtra(item)\" class=\"lf-de-unit\">\n" + "      <input class=\"lf-extra-field\" ng-model=\"item.valueOther\" placeholder=\"Please specify\"\n" + "             ng-disabled=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" + "    </div>\n" + "  </div>\n" + "\n" + "\n" + "</div>\n" + "\n");
+  $templateCache.put('layout-horizontal.html', "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "\n" + "  <table class=\"lf-form-horizontal-table\">\n" + "    <colgroup>\n" + "      <col class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "      <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "           ng-style=\"getTableColumnStyle(col)\">\n" + "    </colgroup>\n" + "    <thead>\n" + "    <tr>\n" + "      <th class=\"lf-form-horizontal-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" + "      <th ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "          class=\"lf-form-horizontal-table-header\"\n" + "          id=\"{{col.id}}\">{{col.label}}</th>\n" + "    </tr>\n" + "    </thead>\n" + "    <tbody id=\"\" class=\"\">\n" + "    <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index\"\n" + "        class=\"data-row has-ng-animate\">\n" + "      <td class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "        <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" + "                id=\"del-{{row.header._elementId}}\"\n" + "                class=\"lf-float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" + "                title='Remove this row of \"{{ row.header.question }}\"'>-</button>\n" + "      </td>\n" + "\n" + "      <td ng-repeat=\"cell in row.cells\"\n" + "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" + "          ng-switch on=\"cell.dataType\">\n" + "        <ng-form name=\"innerForm2\">\n" + "          <div class=\"lf-form-item-data tooltipContainer\">\n" + "            <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" + "            <span ng-switch-when=\"\" > </span>\n" + "            <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <!-- Gillardo boostrap datetime picker -->\n" + "            <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" + "              <input name=\"{{cell.question}}\" type=\"text\" class=\"form-control\"\n" + "                     ng-model=\"cell.value\"\n" + "                     datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" + "                     is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" + "                     datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" + "                     placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                     id=\"{{cell._elementId}}\"\n" + "                     aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                     ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell); uibDtmPickerOnBlur('input')\">\n" + "              <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" + "            </div>\n" + "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" + "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                      id=\"{{cell._elementId}}\"\n" + "                      aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                      ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" + "                      ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" + "            <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "          </div>\n" + "        </ng-form>\n" + "      </td>\n" + "    </tr>\n" + "    </tbody>\n" + "  </table>\n" + "\n" + "  <div ng-if=\"item._questionRepeatable && targetShown(item) \"\n" + "       class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "    <div class=\"has-popover-warning\">\n" + "      <button type=\"button\"\n" + "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "              ng-click=\"addOneRepeatingItem(item, true)\"\n" + "              ng-blur=\"hideUnusedItemWarning(item)\"\n" + "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" + "              popover-placement=\"top-left\"\n" + "              popover-trigger=\"none\"\n" + "              popover-is-open=\"item._showUnusedItemWarning\">\n" + "        + Add another \"{{item.question}}\"\n" + "      </button>\n" + "    </div>\n" + "  </div>\n" + "</div>\n" + "\n");
   $templateCache.put('layout-matrix.html', "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-matrix-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "    </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "    </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{item._elementId}}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "  <table class=\"lf-form-matrix-table lf-form-table\">\n" + "      <colgroup>\n" + "        <col class=\"lf-question\">\n" + "        <col ng-repeat=\"answer in item.items[0].answers\">\n" + "        <col class=\"other-answer\" ng-if=\"item.items[0].dataType ==='CWE'\">\n" + "      </colgroup>\n" + "      <thead>\n" + "      <tr class=\"lf-\">\n" + "        <th class=\"lf-question lf-form-table-header\"></th>\n" + "        <th ng-repeat=\"answer in item.items[0].answers\"\n" + "            class=\"lf-form-matrix-cell lf-form-table-header\"\n" + "            id=\"answer-{{$index}}\">{{answer.text}}</th>\n" + "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\"\n" + "         id=\"otherAnswer\">Other</th>\n" + "      </tr>\n" + "      </thead>\n" + "      <tbody>\n" + "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" + "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" + "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" + "        <td class=\"lf-question\">\n" + "          <div class=\"lf-de-label\">\n" + "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" + "             for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" + "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" + "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" + "            </span>\n" + "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" + "              <span ng-switch-when=\"inline-html\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" + "              <span ng-switch-when=\"inline-escaped\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" + "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\"\n" + "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\" aria-label=\"Help\"\n" + "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "            </span>\n" + "            <button ng-if=\"subItem.copyrightNotice\" id=\"copyright-{{subItem._elementId}}\" type=\"button\"\n" + "                    class=\"lf-copyright-button btn-sm\" uib-popover=\"{{subItem.copyrightNotice}}\"\n" + "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "                    aria-label=\"Copyright notice\"\n" + "                    aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "              <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "            </button>\n" + "          </div>\n" + "        </td>\n" + "        <td ng-repeat=\"answer in item.items[0].answers\"\n" + "         class=\"lf-form-matrix-cell\">\n" + "          <span class=\"lf-form-matrix-answer\">\n" + "            <label ng-if=\"subItem._multipleAnswers\">\n" + "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(subItem, answer)\" aria-labeledby=\"answer-{{$index}}\">\n" + "            </label>\n" + "            <label ng-if=\"!subItem._multipleAnswers\">\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               aria-labeledby=\"answer-{{$index}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" + "                     name=\"{{subItem._elementId}}\" ng-click=\"updateRadioList(subItem)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\"\n" + "         aria-labeledby=otherAnswer>\n" + "          <!--for multiple answers-->\n" + "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" + "                     id=\"{{subItem._elementId + '_other'}}\"\n" + "                     ng-click=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" ng-model=\"subItem.valueOther\"\n" + "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" + "            </label>\n" + "          </span>\n" + "          <!--for single answer-->\n" + "          <span ng-if=\"!subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" + "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" + "                     ng-click=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subItem.valueOther\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "      </tr>\n" + "      </tbody>\n" + "    </table>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>\n" + "\n");
   $templateCache.put('popover-content.html', "<div class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n");
   $templateCache.put('repeating-button.html', "<!--a button at the end of each repeating section-->\n" + "<div ng-if=\"item._lastRepeatingItem && targetShown(item) \"\n" + "     class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "  <div class=\"has-popover-warning\">\n" + "    <button type=\"button\"\n" + "            class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "            ng-click=\"addOneRepeatingItem(item)\"\n" + "            ng-blur=\"hideUnusedItemWarning(item)\"\n" + "            uib-popover='{{item._unusedItemWarning}}'\n" + "            popover-placement=\"top-left\"\n" + "            popover-trigger=\"none\"\n" + "            popover-is-open=\"item._showUnusedItemWarning\">\n" + "      + Add another \"{{item.question}}\"\n" + "    </button>\n" + "  </div>\n" + "</div>\n");

@@ -7,6 +7,7 @@ var TestPage = function() {
   var directiveTestUrl = testDirURL + '/directiveTest.html';
   var testPageUrl = testDirURL + '/lforms_testpage.html';
   var buildFHIRPathURL = testDirURL + '/build_test_fhirpath.html';
+  var addFormToPageTest = testDirURL + '/addFormToPageTest.html';
 
 
   /**
@@ -191,6 +192,7 @@ var TestPage = function() {
       q7: element(by.id('/q7/1')),
       q8: element(by.id('/q8/1')),
       q9: element(by.id('/q9/1')),
+      q99: element(by.id('/q99/1')),
 
       multiAnswers: element.all(by.css('.autocomp_selected li')),
 
