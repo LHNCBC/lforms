@@ -2,13 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.2.1] 2019-07-03
+## [17.2.2] 2019-07-03
 ### Changed
 - Removed unnecessary default code system value 
 
-## [17.2.0] 2019-07-02
+## [17.2.1] 2019-07-03
 ### Added
 - Added support for multiple code system in answers.
+
+## [17.2.0] 2019-07-02
+- Removed generated identifiers from the exported FHIR QuestionnaireResponse resources.
+  The generated identifiers as they are now are not unique and do not serve specific purposes.
+  The identifiers from previously imported QuestionnaireResponse resources will be preserved.
+  This is not considered a breaking change because FHIR spec governs the protocol here and
+  the identifier field is optional.
 
 ## [17.1.2] 2019-06-28
 ### Fixed

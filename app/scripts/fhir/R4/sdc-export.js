@@ -49,6 +49,7 @@ var self = {
       qr.id = this._commonExport._getUniqueId(
         qr.identifier && qr.identifier.value || 'QR')
     }
+
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
     for (var i=0, len=lfData.items.length; i<len; ++i) {

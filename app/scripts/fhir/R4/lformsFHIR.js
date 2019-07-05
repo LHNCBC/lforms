@@ -20263,12 +20263,12 @@ function addCommonSDCExportFns(ns) {
 
     var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
-
-    target.identifier = {
-      "system": LForms.Util.getCodeSystem(source.codeSystem),
-      "value": source.code
-    }; // status, required
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
+    //target.identifier = {
+    //  "system": LForms.Util.getCodeSystem(source.codeSystem),
+    //  "value": source.code
+    //};
+    // status, required
     // "in-progress", "completed", "amended"
 
     target.status = "completed"; // authored, required
