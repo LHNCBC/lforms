@@ -857,19 +857,14 @@ LForms.Util = {
       // if form data is converted from a FHIR Questionnaire that has no 'code' on items,
       // don't create a 'code' when converting it back to Questionnaire.
       if(!found && codeSystemUrl !== 'LinkId') {
-        if (!codeSystemUrl) {
-          codeList.unshift({
-            code: code,
-            display: display
-          });
+        var code = {
+          code: code,
+          display: display
+        };
+        if (codeSystemUrl) {
+          code.system = codeSystemUrl;
         }
-        else {
-          codeList.unshift({
-            system: codeSystemUrl,
-            code: code,
-            display: display
-          });
-        }
+        codeList.unshift(code);
       }
     }
     // if there is a codeList
@@ -878,7 +873,7 @@ LForms.Util = {
         if(isItem) {
           // questionCode is required, so this shouldn't happen??
           formOrItem.questionCode = formOrItem.codeList[0].code;
-          formOrItem.questionCodeSystem = formOrItem.codeList[0].system
+          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
         }
         else {
           formOrItem.code = formOrItem.codeList[0].code;

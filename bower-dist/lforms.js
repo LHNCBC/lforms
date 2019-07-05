@@ -11921,18 +11921,16 @@ LForms.Util = {
 
 
       if (!found && codeSystemUrl !== 'LinkId') {
-        if (!codeSystemUrl) {
-          codeList.unshift({
-            code: code,
-            display: display
-          });
-        } else {
-          codeList.unshift({
-            system: codeSystemUrl,
-            code: code,
-            display: display
-          });
+        var code = {
+          code: code,
+          display: display
+        };
+
+        if (codeSystemUrl) {
+          code.system = codeSystemUrl;
         }
+
+        codeList.unshift(code);
       }
     } // if there is a codeList
     else {
