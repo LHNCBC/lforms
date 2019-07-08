@@ -3,7 +3,8 @@
  */
 var LForms = require('../../lforms');
 
-const moment = require('moment');
+const dateParse = require('date-fns/parse');
+const dateFormat = require('date-fns/format');
 
 LForms.Util = {
   /**
@@ -559,7 +560,7 @@ LForms.Util = {
 
   /**
    * Get a formatted date string from a date object
-   * for example: "2016-10-31T14:42:12-04:00"
+   * for example: "2016-10-31T14:42:12Z"
    * @param objDate a date object
    * @returns a formatted date string
    */
@@ -577,11 +578,11 @@ LForms.Util = {
       return strDate;
     }
 
-    return moment(strDate).toDate();
+    return dateParse(strDate);
   },
   
   /**
-   * Format a date object with given format. Refer to moment.js documentation for
+   * Format a date object with given format. Refer to date-fns.js documentation for
    * format specification.
    *
    * @param date - Date object
@@ -589,7 +590,7 @@ LForms.Util = {
    * @returns {string}
    */
   formatDate: function(date, format) {
-    return moment(date).format(format);
+    return dateFormat(date, format);
   },
   
   

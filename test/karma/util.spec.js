@@ -77,19 +77,20 @@ describe('Util library', function() {
   
   describe('Date conversions', function () {
     
-    var str = '2019-05-06T04:00:00.000Z';
+    var str = '2019-05-06T03:00:00.000Z';
     var dt = LForms.Util.stringToDate(str);
     
     it('stringToDate()', function () {
-      assert.equal(dt.getTime(), LForms.Util.stringToDate('Mon May 06 2019 00:00:00 GMT-0400 (Eastern Daylight Time)').getTime());
+      assert.equal(dt.getTime(), LForms.Util.stringToDate('Mon May 05 2019 23:00:00 GMT-0400 (Eastern Daylight Time)').getTime());
+      assert.equal(dt.getTime(), LForms.Util.stringToDate('Mon May 05 2019 22:00:00 GMT-0500 (Central Daylight Time)').getTime());
       assert.equal(str, LForms.Util.dateToDTMString(dt));
-      assert.equal(LForms.Util.dateToDTStringISO(dt), '2019-05-06');
+      assert.equal(LForms.Util.dateToDTStringISO(dt), '2019-05-05');
     });
 
     it('formatDate()', function () {
-      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DTM_FMT), '20190506000000');
-      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190506');
-      assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '000000-0400');
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DTM_FMT), '20190505230000');
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190505');
+      assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '230000-0400');
     });
   })
 });
