@@ -11879,8 +11879,7 @@ LForms.Util = {
   },
 
   /**
-   * We are transitioning lforms fields representing code (form.code, form.questionCode,
-   * items[x].questionCode
+   * We are transitioning lforms fields representing code (form.code, items[x].questionCode
    * and items[x].questionCodeSystem) to FHIR definition of Coding type.
    * In lforms, these fields are string type and FHIR Coding is an array of
    * objects encapsulating multiple codes
@@ -11902,7 +11901,7 @@ LForms.Util = {
     var code = isItem ? formOrItem.questionCode : formOrItem.code;
     var codeSystem = isItem ? formOrItem.questionCodeSystem : formOrItem.codeSystem;
     var display = isItem ? formOrItem.question : formOrItem.name;
-    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem);
+    var codeSystemUrl = LForms.Util.getCodeSystem(codeSystem); // if there is code
 
     if (code) {
       if (!formOrItem.codeList) {
@@ -11913,7 +11912,7 @@ LForms.Util = {
       var found = false;
 
       for (var i = 0; i < codeList.length; i++) {
-        if (code === codeList[i].code && codeSystemUrl === codeList[i].system) {
+        if (code === codeList[i].code && (!codeSystemUrl && !codeList[i].system || codeSystemUrl === codeList[i].system)) {
           found = true;
           break;
         }
@@ -11922,24 +11921,30 @@ LForms.Util = {
 
 
       if (!found && codeSystemUrl !== 'LinkId') {
-        codeList.unshift({
-          system: codeSystemUrl,
+        var code = {
           code: code,
           display: display
-        });
+        };
+
+        if (codeSystemUrl) {
+          code.system = codeSystemUrl;
+        }
+
+        codeList.unshift(code);
       }
-    } else {
-      if (formOrItem.codeList && formOrItem.codeList.length > 0) {
-        if (isItem) {
-          // questionCode is required, so this shouldn't happen??
-          formOrItem.questionCode = formOrItem.codeList[0].code;
-          formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
-        } else {
-          formOrItem.code = formOrItem.codeList[0].code;
-          formOrItem.codeSystem = formOrItem.codeList[0].system;
+    } // if there is a codeList
+    else {
+        if (formOrItem.codeList && formOrItem.codeList.length > 0) {
+          if (isItem) {
+            // questionCode is required, so this shouldn't happen??
+            formOrItem.questionCode = formOrItem.codeList[0].code;
+            formOrItem.questionCodeSystem = formOrItem.codeList[0].system;
+          } else {
+            formOrItem.code = formOrItem.codeList[0].code;
+            formOrItem.codeSystem = formOrItem.codeList[0].system;
+          }
         }
       }
-    }
 
     return formOrItem;
   },
@@ -11984,11 +11989,6 @@ LForms.Util = {
     switch (codeSystemInLForms) {
       case "LOINC":
         codeSystem = "http://loinc.org";
-        break;
-
-      case undefined:
-        codeSystem = "http://unknown"; // temp solution. as code system is required for coding
-
         break;
 
       default:
@@ -13637,7 +13637,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             if (item._obsLinkPeriodExt) {
               duration = item._obsLinkPeriodExt.valueDuration; // optional
 
-              itemCodeSystem = item.questionCodeSystem || _this2.codeSystem;
+              itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
               fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
 
@@ -14170,18 +14170,15 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // If the form level code system is LOINC, assume the default code system for the item code and answer code
-        // are of LOINC, unless specified otherwise.
-
-        if (this.type === "LOINC") {
-          if (!item.questionCodeSystem) {
-            item.questionCodeSystem = "LOINC";
-          }
-
-          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
-            item.answerCodeSystem = "LOINC";
-          }
-        }
+        var item = items[i]; // item's code system is optional
+        // if (this.type ==="LOINC") {
+        //   if (!item.questionCodeSystem) {
+        //     item.questionCodeSystem = "LOINC";
+        //   }
+        //   if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+        //     item.answerCodeSystem = "LOINC";
+        //   }
+        // }
 
         LForms.Util.initializeCodes(item); // set default dataType
 
@@ -14353,7 +14350,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // add a link to external site for item's definition
 
 
-        if (item.questionCodeSystem === "LOINC") {
+        if (item.questionCodeSystem === "LOINC" || this.codeSystem === "LOINC" && !item.questionCodeSystem) {
           item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
         } // process the sub items
 

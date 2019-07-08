@@ -58,6 +58,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.linkId, "/weight");
             assert.equal(out.type, "quantity");
+            assert.equal(out.code[0].system, "ad-hoc");
+            assert.equal(out.code[0].code,"12345");
+
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
@@ -168,9 +171,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
-          it('should convert questionnaire.code and item.code',function () {
-  
-  
+          it('should convert questionnaire.code and item.code with code system',function () {
+
+
             var formCodes = [{
               system: 'http://form-example1.com',
               version: '1.0',
@@ -210,7 +213,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               display: 'Code 3',
               userSelected: false
             }];
-  
+
             var fhirData = {
               title: 'test title',
               name: 'test name',
@@ -225,6 +228,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               code: formCodes,
               item: [{
                 required: true,
+                extension: [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+                  "valueInteger": 1
+                }],
                 text: 'FHIR Item with multiple codes',
                 linkId: '12345',
                 type: 'string',
@@ -242,10 +249,92 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(lfData.items[0].questionCode, 'code1');
             assert.equal(lfData.items[0].questionCodeSystem, 'http://example1.com');
             assert.equal(lfData.items[0].codeList, itemCodes);
-  
-            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData, fhirData);
+
+            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
             assert.deepEqual(fhirData, convertedFhirData);
-            
+
+          });
+          it('should convert questionnaire.code and item.code, without code system',function () {
+
+
+            var formCodes = [{
+              version: '1.0',
+              code: 'formcode1',
+              display: 'Form Code 1',
+              userSelected: true
+            }, {
+              version: '2.0',
+              code: 'formcode2',
+              display: 'Form Code 2',
+              userSelected: false
+            }, {
+              system: 'http://form-example3.com',
+              version: '3.0',
+              code: 'formcode3',
+              display: 'Form Code 3',
+              userSelected: false
+            }];
+
+            var itemCodes = [{
+              version: '1.0',
+              code: 'code1',
+              display: 'Code 1',
+              userSelected: true
+            }, {
+              version: '2.0',
+              code: 'code2',
+              display: 'Code 2',
+              userSelected: false
+            }, {
+              system: 'http://example3.com',
+              version: '3.0',
+              code: 'code3',
+              display: 'Code 3',
+              userSelected: false
+            }];
+
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              version: '0.0.1',
+              resourceType: 'Questionnaire',
+              "meta": {
+                "profile": [
+                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+                ]
+              },
+              status: 'draft',
+              code: formCodes,
+              item: [{
+                required: true,
+                extension: [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+                  "valueInteger": 1
+                }],
+                text: 'FHIR Item with multiple codes',
+                linkId: '12345',
+                type: 'string',
+                code: itemCodes
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfData.code, 'formcode1');
+            assert.equal(lfData.codeSystem, undefined);
+            assert.equal(lfData.title, 'test title');
+            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.version, '0.0.1');
+            assert.equal(lfData.codeList, formCodes);
+
+            assert.equal(lfData.items[0].questionCode, 'code1');
+            assert.equal(lfData.items[0].questionCodeSystem, undefined);
+            assert.equal(lfData.items[0].codeList, itemCodes);
+
+            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+
+            // console.log( JSON.stringify(convertedFhirData))
+            // console.log( JSON.stringify(fhirData))
+            assert.deepEqual(fhirData, convertedFhirData);
+
           });
 
           it('should convert FHTData to lforms', function () {
@@ -263,21 +352,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items.length, 2);
             assert.equal(convertedLfData.items[0].question, "Your health information");
             assert.equal(convertedLfData.items[0].questionCode, "54126-8");
-            assert.equal(convertedLfData.items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].codeList.length, 1);
             assert.equal(convertedLfData.items[0].codeList[0].display, "Your health information");
             assert.equal(convertedLfData.items[0].codeList[0].code, "54126-8");
-            assert.equal(convertedLfData.items[0].codeList[0].system, "http://loinc.org");
+            assert.equal(convertedLfData.items[0].codeList[0].system, undefined);
             assert.equal(convertedLfData.items[0].dataType, 'SECTION');
             assert.equal(convertedLfData.items[0].header, true);
             assert.equal(convertedLfData.items[0].items.length, 13);
 
             assert.equal(convertedLfData.items[0].items[0].question, "Name");
             assert.equal(convertedLfData.items[0].items[0].questionCode, "54125-0");
-            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.max, "*");
-            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].items[0].dataType, 'TX');
 
             assert.equal(convertedLfData.items[0].items[1].answers.length, 3);

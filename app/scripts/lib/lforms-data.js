@@ -395,7 +395,7 @@
             let item = this.items[i];
             if (item._obsLinkPeriodExt) {
               var duration = item._obsLinkPeriodExt.valueDuration; // optional
-              var itemCodeSystem = item.questionCodeSystem || this.codeSystem;
+              var itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC')
                 itemCodeSystem = serverFHIR.LOINC_URI;
               var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
@@ -910,16 +910,15 @@
       for (var i=0; i<iLen; i++) {
         var item = items[i];
 
-        // If the form level code system is LOINC, assume the default code system for the item code and answer code
-        // are of LOINC, unless specified otherwise.
-        if (this.type ==="LOINC") {
-          if (!item.questionCodeSystem) {
-            item.questionCodeSystem = "LOINC";
-          }
-          if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
-            item.answerCodeSystem = "LOINC";
-          }
-        }
+        // item's code system is optional
+        // if (this.type ==="LOINC") {
+        //   if (!item.questionCodeSystem) {
+        //     item.questionCodeSystem = "LOINC";
+        //   }
+        //   if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
+        //     item.answerCodeSystem = "LOINC";
+        //   }
+        // }
 
         LForms.Util.initializeCodes(item);
 
@@ -1097,7 +1096,7 @@
         }
 
         // add a link to external site for item's definition
-        if (item.questionCodeSystem === "LOINC") {
+        if (item.questionCodeSystem === "LOINC" || (this.codeSystem === "LOINC" && !item.questionCodeSystem)) {
           item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
         }
 
