@@ -1096,7 +1096,7 @@
         }
 
         // add a link to external site for item's definition
-        if (item.questionCodeSystem === "LOINC" || this.codeSystem === "LOINC") {
+        if (item.questionCodeSystem === "LOINC" || (this.codeSystem === "LOINC" && !item.questionCodeSystem)) {
           item._linkToDef = "http://s.details.loinc.org/LOINC/" + item.questionCode + ".html";
         }
 
