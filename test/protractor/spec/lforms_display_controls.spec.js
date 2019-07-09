@@ -96,8 +96,8 @@ describe('display controls demo', function() {
 
     // third answer list
     item3answer1.evaluate("item.value").then(function (value) {
-      expect(value).toEqual([{"code": "c2", "text": "Answer Y", "_displayText": "Answer Y", "codeSystem": "LOINC"},
-        {"code": "c3", "text": "Answer Z", "_displayText": "Answer Z", "codeSystem": "LOINC"}]); // default values
+      expect(value).toEqual([{"code": "c2", "text": "Answer Y", "_displayText": "Answer Y"},
+        {"code": "c3", "text": "Answer Z", "_displayText": "Answer Z"}]); // default values
     });
 
     item3answer1.click(); // appends first answer

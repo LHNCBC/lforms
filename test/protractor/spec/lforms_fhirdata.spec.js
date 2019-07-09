@@ -106,7 +106,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[0].resourceType).toBe("Observation");
                 expect(fhirData.contained[0].id).not.toBe(undefined);
                 expect(fhirData.contained[0].code.coding[0].code).toBe("54125-0");
-                expect(fhirData.contained[0].code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.contained[0].code.coding[0].system).toBe(undefined);
                 expect(fhirData.contained[0].code.text).toBe("Name");
                 expect(fhirData.contained[0].valueString).toBe("name 1");
 
@@ -114,16 +114,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.contained[1].resourceType).toBe("Observation");
                 expect(fhirData.contained[1].id).not.toBe(undefined);
                 expect(fhirData.contained[1].code.coding[0].code).toBe("54125-0");
-                expect(fhirData.contained[1].code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.contained[1].code.coding[0].system).toBe(undefined);
                 expect(fhirData.contained[1].code.text).toBe("Name");
                 expect(fhirData.contained[1].valueString).toBe("name 2");
                 // gender
                 expect(fhirData.contained[2].resourceType).toBe("Observation");
                 expect(fhirData.contained[2].id).not.toBe(undefined);
                 expect(fhirData.contained[2].code.coding[0].code).toBe("54131-8");
-                expect(fhirData.contained[2].code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.contained[2].code.coding[0].system).toBe(undefined);
                 expect(fhirData.contained[2].code.text).toBe("Gender");
-                expect(fhirData.contained[2].valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
+                expect(fhirData.contained[2].valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male"}], "text": "Male"});
                 // DOB
                 expect(fhirData.contained[3].valueDate).toBe("2016-10-27");
                 // Height
@@ -273,23 +273,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 expect(fhirData.entry[1].resource.resourceType).toBe("Observation");
                 expect(fhirData.entry[1].resource.id).not.toBe(undefined);
                 expect(fhirData.entry[1].resource.code.coding[0].code).toBe("54125-0");
-                expect(fhirData.entry[1].resource.code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.entry[1].resource.code.coding[0].system).toBe(undefined);
                 expect(fhirData.entry[1].resource.code.text).toBe("Name");
                 expect(fhirData.entry[1].resource.valueString).toBe("name 1");
                 // name 2
                 expect(fhirData.entry[2].resource.resourceType).toBe("Observation");
                 expect(fhirData.entry[2].resource.id).not.toBe(undefined);
                 expect(fhirData.entry[2].resource.code.coding[0].code).toBe("54125-0");
-                expect(fhirData.entry[2].resource.code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.entry[2].resource.code.coding[0].system).toBe(undefined);
                 expect(fhirData.entry[2].resource.code.text).toBe("Name");
                 expect(fhirData.entry[2].resource.valueString).toBe("name 2");
                 // gender
                 expect(fhirData.entry[3].resource.resourceType).toBe("Observation");
                 expect(fhirData.entry[3].resource.id).not.toBe(undefined);
                 expect(fhirData.entry[3].resource.code.coding[0].code).toBe("54131-8");
-                expect(fhirData.entry[3].resource.code.coding[0].system).toBe("http://loinc.org");
+                expect(fhirData.entry[3].resource.code.coding[0].system).toBe(undefined);
                 expect(fhirData.entry[3].resource.code.text).toBe("Gender");
-                expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male", "system": "http://loinc.org"}], "text": "Male"});
+                expect(fhirData.entry[3].resource.valueCodeableConcept).toEqual({"coding": [{"code": "LA2-8", "display": "Male"}], "text": "Male"});
                 // DOB
                 expect(fhirData.entry[4].resource.valueDate).toBe("2016-10-27");
                 // Height
@@ -457,7 +457,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[1].answer.length).toBe(1);
               expect(fhirData.item[0].item[1].answer[0].valueCoding.code).toBe("LA2-8");
               expect(fhirData.item[0].item[1].answer[0].valueCoding.display).toBe("Male");
-              expect(fhirData.item[0].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
+              expect(fhirData.item[0].item[1].answer[0].valueCoding.system).toBe(undefined);
               // DOB
               expect(fhirData.item[0].item[2].text).toBe("Date of Birth");
               expect(fhirData.item[0].item[2].linkId).toBe("/54126-8/21112-8");
@@ -486,10 +486,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[6].answer.length).toBe(2);
               expect(fhirData.item[0].item[6].answer[0].valueCoding.code).toBe("LA10608-0");
               expect(fhirData.item[0].item[6].answer[0].valueCoding.display).toBe("American Indian or Alaska Native");
-              expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe("http://loinc.org");
+              expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe(undefined);
               expect(fhirData.item[0].item[6].answer[1].valueCoding.code).toBe("LA6156-9");
               expect(fhirData.item[0].item[6].answer[1].valueCoding.display).toBe("Asian");
-              expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe("http://loinc.org");
+              expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe(undefined);
               // Disease history #1
               expect(fhirData.item[0].item[7].text).toBe("Your diseases history");
               expect(fhirData.item[0].item[7].linkId).toBe("/54126-8/54137-5");
@@ -507,7 +507,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[7].item[1].answer.length).toBe(1);
               expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.code).toBe("LA10403-6");
               expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.display).toBe("Newborn");
-              expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
+              expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe(undefined);
 
               // Disease history #2
               expect(fhirData.item[0].item[8].text).toBe("Your diseases history");
@@ -526,7 +526,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[8].item[1].answer.length).toBe(1);
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe("LA10394-7");
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe("Infancy");
-              expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
+              expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe(undefined);
             });
           });
 
@@ -552,7 +552,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.contained[0].resourceType).toBe("Observation");
               expect(fhirData.contained[0].id).not.toBe(undefined);
               expect(fhirData.contained[0].code.coding[0].code).toBe("nameAndRoute");
-              expect(fhirData.contained[0].code.coding[0].system).toBe("http://loinc.org");
+              expect(fhirData.contained[0].code.coding[0].system).toBe(undefined);
               expect(fhirData.contained[0].code.text).toBe("Drug Name");
               expect(fhirData.contained[0].valueCodeableConcept).toEqual({"coding": [{"code": "ASPERCREME (Topical)", "display": "ASPERCREME (Topical)"}], "text": "ASPERCREME (Topical)"});
             });
