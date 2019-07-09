@@ -3,9 +3,6 @@
  */
 var LForms = require('../../lforms');
 
-const dateParse = require('date-fns/parse');
-const dateFormat = require('date-fns/format');
-
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
@@ -578,7 +575,7 @@ LForms.Util = {
       return strDate;
     }
 
-    return dateParse(strDate);
+    return dateFns.parse(strDate);
   },
   
   /**
@@ -590,7 +587,7 @@ LForms.Util = {
    * @returns {string}
    */
   formatDate: function(date, format) {
-    return dateFormat(date, format);
+    return dateFns.format(date, format);
   },
   
   
