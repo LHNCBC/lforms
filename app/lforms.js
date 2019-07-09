@@ -1,7 +1,6 @@
 // Use IIFE so that strict mode is not at the file level
 (function() {
   'use strict';
-  var Def = require('autocomplete-lhc');
   var widgetDeps = [
     'smoothScroll',
     'autocompleteLhcMod',

@@ -2434,6 +2434,12 @@
     },
 
 
+   /**
+    *  This is an alternative search mechanism to work around a problem with
+    *  HAPI FHIR, which does support $expand with both url and filter.
+    */
+    _fhirClientSearchByValidSetID: function() {},
+
     /**
      * Update an item's autocomplete options
      * @param item an item on the form
@@ -2472,6 +2478,77 @@
             // Escape HTML tags to prevent them from rendering
             for (var i=0, len=h.length; i<len; ++i)
               h[i] = h[i].replace(/</g, '&lt;');
+          }
+        }
+        else if (item.isSearchAutocomplete && item.answerValueSet) {
+          var valueSetUri = item.answerValueSet;
+          // See if there is a terminology server in this or a parent item.
+          var terminologyServer = item.terminologyServer;
+          var parent = item.parent;
+          while (!terminologyServer && parent) {
+            terminologyServer = parent.terminologyServer;
+            parent = parent._parentItem;
+          }
+          if (item.terminologyServer) {
+            // TBD - We might need to log in to some terminology servers.  Not
+            // supporting that case yet.
+            // Skip the fhirContext, and go directly to the terminology server
+            // for the autocompletion requests.
+            options.url = terminologyServer + '/ValueSet/$expand?url='+
+              item.answerValueSet;
+            options.fhir = true;
+          }
+          if (LForms.fhirContext) {
+            options.fhir = {search: function(fieldVal, count) {
+              var fhirClient = LForms.fhirContext.getFHIRAPI();
+              return fhirClient.search({type: 'ValueSet/$expand',
+                query: {_format: 'application/json', count: count,
+                        filter: fieldVal, url: item.answerValueSet}
+              }).then(function(successData) {
+                return [count, successData.data];
+              }, function (errorData) {
+                // HAPI does not support (maybe just because of a bug) $expand
+                // when both "url" and "filter" parameters are present.  In that
+                // case, it says, ""ValueSet contains include criteria with no
+                // system defined".  Check for this, and then do a work around
+                // that tries to $expand via the ValueSet's ID (for which we'll
+                // need to first download the ValueSet).
+                try {
+                  if (errorData.data.responseJSON.issue[0].diagnostics ==
+                      'ValueSet contains include criteria with no system defined') {
+                    // Fetch the ValueSet
+                    var failMsg = "Could not retrieve the ValueSet definition for "+
+                          item.answerValueSet;
+                    return fhirClient.search({type: 'ValueSet',
+                        query: {_format: 'application/json', url: item.answerValueSet,
+                                _total: 'accurate'}})
+                      .then(function(response) {
+                        var data = response.data;
+                        if (data.total === 1) {
+                          var valueSetID = data.entry[0].resource.id;
+                          return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
+                            query: {_format: 'application/json', count: count,
+                            filter: fieldVal}}).then(function(response) {
+                              return [count, response.data];
+                            });
+                        }
+                        else {
+                          console.log(failMsg);
+                          return Promise.reject(failMsg);
+                        }
+                      },
+                      function(errorData) {
+                        console.log(failMsg);
+                        return Promise.reject(failMsg);
+                      });
+                  }
+                }
+                catch (e) { // in case that really long structure didn't exist
+                  console.log("Unknown other error during search.");
+                  console.log(errorData.data);
+                }
+              });
+            }};
           }
         }
         else {

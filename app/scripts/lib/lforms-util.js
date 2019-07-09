@@ -295,6 +295,8 @@ LForms.Util = {
    */
   setFHIRContext: function(fhirContext) {
     LForms.fhirContext = fhirContext;
+    LForms.fhirCache = {}; // a resource cache
+    LForms.fhirCapabilities = {}; // our own flags about what the server can do
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
 

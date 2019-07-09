@@ -19170,7 +19170,7 @@ var self = {
     } // option, for answer list
     else if (item.answers) {
         targetItem.option = this._handleAnswers(item, noExtensions);
-      } // initialValue, for default values
+      } else if (item.answerValueSet) targetItem.options = item.answerValueSet; // initialValue, for default values
 
 
     this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Handle units after handling initial values.
@@ -20679,8 +20679,8 @@ function addSDCImportFns(ns) {
 
         lfItem.answers.push(answer);
       }
-    } else if (qItem.options && containedVS) {
-      var vs = containedVS[qItem.options.reference];
+    } else if (qItem.options) {
+      if (containedVS) var vs = containedVS[qItem.options.reference];
 
       if (vs) {
         lfItem.answers = vs.answers;
@@ -20690,7 +20690,7 @@ function addSDCImportFns(ns) {
         } else if (vs.hasAnswerCodeSystems) {
           console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s', vs.systems.join(', '));
         }
-      }
+      } else lfItem.answerValueSet = qItem.options;
     }
   }
   /**
@@ -21651,6 +21651,8 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
 
         case 'autocomplete':
+          lfItem.isSearchAutocomplete = true;
+
         case 'drop-down':
           displayControl.answerLayout = {
             type: 'COMBO_BOX'
