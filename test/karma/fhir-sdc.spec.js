@@ -133,9 +133,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
             if (fhirVersion === "R4") {
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].url,
                   "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].valueString,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].valueString,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>")
             }
           });

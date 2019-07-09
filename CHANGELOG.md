@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.3] 2019-07-09
+### Fixed
+- Fixed a bug that help instructions are not exported correctly in R4 Questionnaire. 
+
 ## [17.2.2] 2019-07-05
 ### Changed
 - Removed unnecessary default code system value 

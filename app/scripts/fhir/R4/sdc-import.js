@@ -526,18 +526,31 @@ function addSDCImportFns(ns) {
     // which in LForms is an attribute of the parent item, not a separate item.
     let ret = null;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    if ( qItem.type === "display" && ci ) {
-      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      ret = {
-        codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text",
+    let xhtmlFormat;
+    if ( qItem.type === "display" && ci) {
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      }
 
-      };
+      // there is a xhtml extenstion
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsFormat: "html",
+          codingInstructionsXHTML: xhtmlFormat.valueString
+        };
+      }
+      // no xhtml extension, defaul to 'text'
+      else {
+        ret = {
+          codingInstructions: qItem.text,
+          codingInstructionsFormat: "text"
+        };
 
-      if (format) {
-        ret.codingInstructionsXHTML = format.valueString
       }
     }
+
     return ret;
   }
 

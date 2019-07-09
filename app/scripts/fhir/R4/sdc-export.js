@@ -224,10 +224,10 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
     if (item.codingInstructions) {
       let helpItem = {
-        text: item.codingInstructions,
-        type: "display",
-        linkId: targetItem.linkId + "-help",
-        extension: [{
+        "text": item.codingInstructions,
+        "type": "display",
+        "linkId": targetItem.linkId + "-help",
+        "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
             "text": "Help-Button",
@@ -242,10 +242,12 @@ var self = {
 
       // format could be 'html' or 'text'
       if (item.codingInstructionsFormat === 'html') {
-        helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
-        })
+        helpItem["_text"] = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+          }]
+        }
       }
 
       if (Array.isArray(targetItem.item)) {
