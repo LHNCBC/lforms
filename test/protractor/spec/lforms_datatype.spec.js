@@ -16,6 +16,37 @@ describe('Data Type', function() {
     expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
   });
 
+  it('DT data type should work', function () {
+    tp.openFullFeaturedForm();
+    let dtEl = element(by.id('/type6/1'));
+    let otherEl = element(by.id('/type5/1')); // Use for creating blur event
+
+    let dateStr = '02/032019';
+    dtEl.clear();
+    dtEl.sendKeys(dateStr);
+    otherEl.click();
+    expect(dtEl.getAttribute('value')).not.toEqual(dateStr); // Invalid date defaults to current date
+
+    dateStr = '02/03/2019';
+    dtEl.clear();
+    dtEl.sendKeys(dateStr);
+    otherEl.click();
+    expect(dtEl.getAttribute('value')).toEqual(dateStr);
+    expect(dtEl.getAttribute('class')).toContain('ng-valid-parse');
+  });
+  
+  
+  it('DTM data type should work', function () {
+    tp.openFullFeaturedForm();
+    let dtmEl = element(by.id('/type7/1'));
+    dtmEl.clear();
+    dtmEl.sendKeys('02/03/201923:59');
+    expect(dtmEl.getAttribute('class')).toContain('ng-invalid-datetime');
+    
+    dtmEl.clear();
+    dtmEl.sendKeys('02/03/2019 23:59');
+    expect(dtmEl.getAttribute('class')).toContain('ng-valid-datetime');
+  });
 
   describe('Button Type', function() {
 
