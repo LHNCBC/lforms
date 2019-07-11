@@ -20960,19 +20960,21 @@ function addSDCImportFns(ns) {
       // only "redering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      } // regular coding instructions is in text
+      } // there is a xhtml extension
 
-
-      ret = {
-        codingInstructions: qItem.text
-      }; // there is a xhtml extension
 
       if (xhtmlFormat) {
-        ret.codingInstructionsFormat = "html";
-        ret.codingInstructionsXHTML = xhtmlFormat.valueString;
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsXHTML: xhtmlFormat.valueString
+        };
       } // no xhtml extension, defaul to 'text'
       else {
-          ret.codingInstructionsFormat = "text";
+          ret = {
+            codingInstructionsFormat: "text",
+            codingInstructions: qItem.text
+          };
         }
     }
 
