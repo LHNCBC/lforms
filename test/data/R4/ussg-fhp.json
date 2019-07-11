@@ -159,7 +159,7 @@
           ],
           "item": [
             {
-              "text": "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An text instruction on Gender. HTML should be escaped.</a>",
+              "text": "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>",
               "type": "display",
               "linkId": "/54126-8/54131-8-help",
               "extension": [
