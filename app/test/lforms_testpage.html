@@ -388,6 +388,11 @@
                   $scope.lfData2 = new LForms.LFormsData(importedData);
                   $('#fileAnchor')[0].value = '';
                 }
+
+                $scope.lfOption2 = {
+                  allowHTMLInInstructions: true
+                }
+
                 $scope.$apply();
                 // Reset the field with the filename we can load the same file again if needed.
                 $('#fileAnchor')[0].value = '';

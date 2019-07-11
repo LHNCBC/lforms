@@ -242,7 +242,9 @@ var self = {
 
       // format could be 'html' or 'text'
       if (item.codingInstructionsFormat === 'html') {
-        helpItem["_text"] = {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions

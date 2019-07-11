@@ -19220,7 +19220,9 @@ var self = {
       }; // format could be 'html' or 'text'
 
       if (item.codingInstructionsFormat === 'html') {
-        helpItem["_text"] = {
+        // add a "_text" field to contain the extension for the string valye in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
             "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
@@ -20522,7 +20524,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          if (help.codingInstructionsXHTML) targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
         } else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
@@ -20942,6 +20944,7 @@ function addSDCImportFns(ns) {
    * Parse questionnaire item for coding instructions
    *
    * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
    * @private
    */
 
@@ -20957,21 +20960,19 @@ function addSDCImportFns(ns) {
       // only "redering-xhtml" is supported. others are default to text
       if (qItem._text) {
         xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      } // there is a xhtml extenstion
+      } // regular coding instructions is in text
 
+
+      ret = {
+        codingInstructions: qItem.text
+      }; // there is a xhtml extension
 
       if (xhtmlFormat) {
-        ret = {
-          codingInstructions: xhtmlFormat.valueString,
-          codingInstructionsFormat: "html",
-          codingInstructionsXHTML: xhtmlFormat.valueString
-        };
+        ret.codingInstructionsFormat = "html";
+        ret.codingInstructionsXHTML = xhtmlFormat.valueString;
       } // no xhtml extension, defaul to 'text'
       else {
-          ret = {
-            codingInstructions: qItem.text,
-            codingInstructionsFormat: "text"
-          };
+          ret.codingInstructionsFormat = "text";
         }
     }
 

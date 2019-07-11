@@ -169,5 +169,32 @@ describe('popover buttons', function() {
 
     });
 
+    it('should be display HTML/Text formatted coding instructions from FHIR R4 Questionnaire', function() {
+      tp.loadFromTestData('ussg-fhp.json', 'R4');
+
+      var nameHelpButton = element(by.id("helpButton-/54126-8/54125-0/1/1"));
+      var genderHelpButton = element(by.id("helpButton-/54126-8/54131-8/1/1"));
+      var gender = element(by.id("/54126-8/54131-8/1/1"));
+      var popverHTMLLink = element(by.css('a[href="http://google.com"]'));
+
+      expect(nameHelpButton.isDisplayed()).toBe(true);
+      expect(genderHelpButton.isDisplayed()).toBe(true);
+
+      // HTML formatted coding instructions
+      nameHelpButton.click();
+      waitForDisplayed(popover);
+      expect(popover.isDisplayed()).toBe(true);
+      expect(popverHTMLLink.isDisplayed()).toBe(true);
+
+      gender.click()
+
+      // Text coding instructions
+      genderHelpButton.click();
+      waitForDisplayed(popover);
+      expect(popover.isDisplayed()).toBe(true);
+      expect(popverHTMLLink.isPresent()).toBe(false);
+
+    });
+
   });
 });
