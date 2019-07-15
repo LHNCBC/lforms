@@ -314,7 +314,6 @@
             $scope.testMergeQR2LForms = function() {
               // use the first form
               $scope.getFhirResource(getFHIRVersion(), 'fhir-sdc-response-ussgfht.json').then(function (fhirData) {
-                var formData = angular.copy(FHTData);
 
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   'QuestionnaireResponse', fhirData, angular.copy(FHTData),

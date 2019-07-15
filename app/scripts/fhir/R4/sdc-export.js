@@ -224,7 +224,7 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
     if (item.codingInstructions) {
       let helpItem = {
-        "text": item.codingInstructions,
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
         "type": "display",
         "linkId": targetItem.linkId + "-help",
         "extension": [{
@@ -242,12 +242,13 @@ var self = {
 
       // format could be 'html' or 'text'
       if (item.codingInstructionsFormat === 'html') {
+        helpItem.text = item.codingInstructions;
         // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
         helpItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+            "valueString": item.codingInstructions
           }]
         }
       }

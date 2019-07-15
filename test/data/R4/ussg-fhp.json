@@ -80,7 +80,7 @@
           ],
           "item": [
             {
-              "text": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name </a>",
+              "text": "A plain text instruction on Name",
               "type": "display",
               "linkId": "/54126-8/54125-0-help",
               "extension": [

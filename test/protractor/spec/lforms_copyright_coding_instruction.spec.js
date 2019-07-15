@@ -177,6 +177,20 @@ describe('popover buttons', function() {
       var gender = element(by.id("/54126-8/54131-8/1/1"));
       var popverHTMLLink = element(by.css('a[href="http://google.com"]'));
 
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        var fData = LForms.Util.getFormData();
+        callback(fData);
+      }).then(function (formData) {
+        expect(formData.items[0].items[0].codingInstructions).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+        expect(formData.items[0].items[0].codingInstructionsFormat).toBe("html");
+        expect(formData.items[0].items[0].codingInstructionsPlain).toBe("A plain text instruction on Name");
+
+        expect(formData.items[0].items[1].codingInstructions).toBe("<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+        expect(formData.items[0].items[1].codingInstructionsFormat).toBe("text");
+        expect(formData.items[0].items[1].codingInstructionsPlain).toBe("<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+      });
+
       expect(nameHelpButton.isDisplayed()).toBe(true);
       expect(genderHelpButton.isDisplayed()).toBe(true);
 

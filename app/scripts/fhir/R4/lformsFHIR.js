@@ -19203,7 +19203,7 @@ var self = {
 
     if (item.codingInstructions) {
       var helpItem = {
-        "text": item.codingInstructions,
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
         "type": "display",
         "linkId": targetItem.linkId + "-help",
         "extension": [{
@@ -19220,12 +19220,13 @@ var self = {
       }; // format could be 'html' or 'text'
 
       if (item.codingInstructionsFormat === 'html') {
-        // add a "_text" field to contain the extension for the string value in the 'text' field
+        helpItem.text = item.codingInstructions; // add a "_text" field to contain the extension for the string value in the 'text' field
         // see http://hl7.org/fhir/R4/json.html#primitive
+
         helpItem._text = {
           "extension": [{
             "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-            "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
+            "valueString": item.codingInstructions
           }]
         };
       }
@@ -20524,7 +20525,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          if (help.codingInstructionsXHTML) targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         } else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
@@ -20967,13 +20968,16 @@ function addSDCImportFns(ns) {
         ret = {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
-          codingInstructionsXHTML: xhtmlFormat.valueString
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
         };
-      } // no xhtml extension, defaul to 'text'
+      } // no xhtml extension, default to 'text'
       else {
           ret = {
             codingInstructionsFormat: "text",
-            codingInstructions: qItem.text
+            codingInstructions: qItem.text,
+            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
           };
         }
     }

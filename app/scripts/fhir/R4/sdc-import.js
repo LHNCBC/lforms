@@ -124,8 +124,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          if (help.codingInstructionsXHTML)
-            targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         }
         else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
@@ -540,14 +539,15 @@ function addSDCImportFns(ns) {
         ret = {
           codingInstructionsFormat: "html",
           codingInstructions: xhtmlFormat.valueString,
-          codingInstructionsXHTML: xhtmlFormat.valueString
+          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
         };
       }
-      // no xhtml extension, defaul to 'text'
+      // no xhtml extension, default to 'text'
       else {
         ret = {
           codingInstructionsFormat: "text",
-          codingInstructions: qItem.text
+          codingInstructions: qItem.text,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
         };
       }
     }
