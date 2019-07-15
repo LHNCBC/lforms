@@ -1,6 +1,17 @@
 /**
  * LForms Utility tools
  */
+var dateParse, dateFormat;
+
+if(typeof dateFns === 'undefined') {
+  dateParse = require('date-fns/parse');
+  dateFormat = require('date-fns/format');
+}
+else {
+  dateParse = dateFns.parse;
+  dateFormat = dateFns.format;
+}
+
 var LForms = require('../../lforms');
 
 LForms.Util = {
@@ -575,7 +586,7 @@ LForms.Util = {
       return strDate;
     }
 
-    return dateFns.parse(strDate);
+    return dateParse(strDate);
   },
   
   /**
@@ -587,7 +598,7 @@ LForms.Util = {
    * @returns {string}
    */
   formatDate: function(date, format) {
-    return dateFns.format(date, format);
+    return dateFormat(date, format);
   },
   
   
