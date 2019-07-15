@@ -4,13 +4,10 @@
 var dateParse, dateFormat;
 
 if(typeof dateFns === 'undefined') {
-  dateParse = require('date-fns/parse');
-  dateFormat = require('date-fns/format');
+  dateFns = require('date-fns');
 }
-else {
-  dateParse = dateFns.parse;
-  dateFormat = dateFns.format;
-}
+dateParse = dateFns.parse;
+dateFormat = dateFns.format;
 
 var LForms = require('../../lforms');
 

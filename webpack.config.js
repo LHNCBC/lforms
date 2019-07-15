@@ -61,7 +61,7 @@ function makeConfigs(env) {
     bowerConfig.output.library = 'LForms';
     bowerConfig.devtool = 'source-map';
     bowerConfig.mode = 'none';
-    bowerConfig.externals = {dateFns: 'dateFns'};
+    bowerConfig.externals = {'date-fns': 'dateFns'};
     configs.push(bowerConfig);
 
     // The browser-ready dist package needs all of the dependencies in a single file
