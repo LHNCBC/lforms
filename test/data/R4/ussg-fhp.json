@@ -1196,7 +1196,8 @@
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
                   "valueCoding": {
                     "system": "http://unitsofmeasure.org",
-                    "code": "kg"
+                    "code": "a",
+                    "display": "year"
                   }
                 }
               ],

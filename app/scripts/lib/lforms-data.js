@@ -2438,7 +2438,35 @@
     *  This is an alternative search mechanism to work around a problem with
     *  HAPI FHIR, which does support $expand with both url and filter.
     */
-    _fhirClientSearchByValidSetID: function() {},
+    _fhirClientSearchByValidSetID: function(item, fieldVal, count) {
+      // Fetch the ValueSet
+      var failMsg = "Could not retrieve the ValueSet definition for "+
+            item.answerValueSet;
+      var fhirClient = LForms.fhirContext.getFHIRAPI();
+      return fhirClient.search({type: 'ValueSet',
+          query: {_format: 'application/json', url: item.answerValueSet,
+                  _total: 'accurate'}})
+        .then(function(response) {
+          var data = response.data;
+          if (data.total === 1) {
+            var valueSetID = data.entry[0].resource.id;
+            return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
+              query: {_format: 'application/json', count: count,
+              filter: fieldVal}}).then(function(response) {
+                return [count, response.data];
+              });
+          }
+          else {
+            console.log(failMsg);
+            return Promise.reject(failMsg);
+          }
+        },
+        function(errorData) {
+          console.log(failMsg);
+          return Promise.reject(failMsg);
+        });
+    },
+
 
     /**
      * Update an item's autocomplete options
@@ -2499,55 +2527,29 @@
             options.fhir = true;
           }
           if (LForms.fhirContext) {
+            var self = this;
             options.fhir = {search: function(fieldVal, count) {
-              var fhirClient = LForms.fhirContext.getFHIRAPI();
-              return fhirClient.search({type: 'ValueSet/$expand',
-                query: {_format: 'application/json', count: count,
-                        filter: fieldVal, url: item.answerValueSet}
-              }).then(function(successData) {
-                return [count, successData.data];
-              }, function (errorData) {
-                // HAPI does not support (maybe just because of a bug) $expand
-                // when both "url" and "filter" parameters are present.  In that
-                // case, it says, ""ValueSet contains include criteria with no
-                // system defined".  Check for this, and then do a work around
-                // that tries to $expand via the ValueSet's ID (for which we'll
-                // need to first download the ValueSet).
-                try {
-                  if (errorData.data.responseJSON.issue[0].diagnostics ==
-                      'ValueSet contains include criteria with no system defined') {
-                    // Fetch the ValueSet
-                    var failMsg = "Could not retrieve the ValueSet definition for "+
-                          item.answerValueSet;
-                    return fhirClient.search({type: 'ValueSet',
-                        query: {_format: 'application/json', url: item.answerValueSet,
-                                _total: 'accurate'}})
-                      .then(function(response) {
-                        var data = response.data;
-                        if (data.total === 1) {
-                          var valueSetID = data.entry[0].resource.id;
-                          return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
-                            query: {_format: 'application/json', count: count,
-                            filter: fieldVal}}).then(function(response) {
-                              return [count, response.data];
-                            });
-                        }
-                        else {
-                          console.log(failMsg);
-                          return Promise.reject(failMsg);
-                        }
-                      },
-                      function(errorData) {
-                        console.log(failMsg);
-                        return Promise.reject(failMsg);
-                      });
-                  }
-                }
-                catch (e) { // in case that really long structure didn't exist
-                  console.log("Unknown other error during search.");
-                  console.log(errorData.data);
-                }
-              });
+              if (LForms.fhirCapabilities.urlExpandBroken)
+                return self._fhirClientSearchByValidSetID(item, fieldVal, count);
+              else {
+                var fhirClient = LForms.fhirContext.getFHIRAPI();
+                return fhirClient.search({type: 'ValueSet/$expand',
+                  query: {_format: 'application/json', count: count,
+                          filter: fieldVal, url: item.answerValueSet}
+                }).then(function(successData) {
+                  return [count, successData.data];
+                }, function (errorData) {
+                  LForms.fhirCapabilities.urlExpandBroken = true;
+                  // HAPI does not support (maybe just because of a bug) $expand
+                  // when both "url" and "filter" parameters are present.  In that
+                  // case, it says, ""ValueSet contains include criteria with no
+                  // system defined".
+                  //if (errorData.data.responseJSON.issue[0].diagnostics ==
+                  //  'ValueSet contains include criteria with no system defined') {
+                  // For now, just always try the alternative.
+                  return self._fhirClientSearchByValidSetID(item, fieldVal, count);
+                });
+              }
             }};
           }
         }
