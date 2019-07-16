@@ -181,14 +181,35 @@ describe('popover buttons', function() {
         var callback = arguments[arguments.length - 1];
         var fData = LForms.Util.getFormData();
         callback(fData);
+        window._fData = fData;
       }).then(function (formData) {
+        // name
         expect(formData.items[0].items[0].codingInstructions).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
         expect(formData.items[0].items[0].codingInstructionsFormat).toBe("html");
         expect(formData.items[0].items[0].codingInstructionsPlain).toBe("A plain text instruction on Name");
-
+        // gender
         expect(formData.items[0].items[1].codingInstructions).toBe("<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
         expect(formData.items[0].items[1].codingInstructionsFormat).toBe("text");
         expect(formData.items[0].items[1].codingInstructionsPlain).toBe("<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+
+        browser.driver.executeAsyncScript(function () {
+          var callback = arguments[arguments.length - 1];
+          var qData = LForms.Util.getFormFHIRData("Questionnaire", "R4", window._fData);
+          callback(qData);
+        }).then(function (qData) {
+          // name
+          expect(qData.item[0].item[0].item[0].text).toBe("A plain text instruction on Name");
+          expect(qData.item[0].item[0].item[0].type).toBe("display");
+          expect(qData.item[0].item[0].item[0].extension[0].url).toBe("http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+          expect(qData.item[0].item[0].item[0]._text.extension[0].url).toBe("http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+          expect(qData.item[0].item[0].item[0]._text.extension[0].valueString).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+          // gender
+          expect(qData.item[0].item[1].item[0].text).toBe("<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+          expect(qData.item[0].item[1].item[0].type).toBe("display");
+          expect(qData.item[0].item[1].item[0].extension[0].url).toBe("http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+          expect(qData.item[0].item[1].item[0]._text).toBe(undefined);
+        });
+
       });
 
       expect(nameHelpButton.isDisplayed()).toBe(true);
