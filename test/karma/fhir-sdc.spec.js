@@ -133,9 +133,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
             if (fhirVersion === "R4") {
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].url,
                   "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].valueString,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].valueString,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>")
             }
           });
@@ -391,23 +391,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, "html");
-              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML,
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsPlain,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, undefined);
-              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML, undefined);
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsPlain, undefined);
             }
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, "text");
-              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, null);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsPlain, "Try to type 10, 12, 15, 16, 25");
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, undefined);
-              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, undefined);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsPlain, undefined);
             }
 
             // TODO units[x].code is not supported.
@@ -740,6 +740,47 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 done(err);
               });
             });
+
+            it('should convert coding instructions between R4 SDC Questionnaire and LForm format', function (done) {
+
+              var file = 'test/data/R4/ussg-fhp.json';
+              $.get(file, function (json) {
+                try {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+
+                  // name
+                  assert.equal(lfData.items[0].items[0].codingInstructions, "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+                  assert.equal(lfData.items[0].items[0].codingInstructionsFormat, "html");
+                  assert.equal(lfData.items[0].items[0].codingInstructionsPlain, "A plain text instruction on Name");
+                  // gender
+                  assert.equal(lfData.items[0].items[1].codingInstructions, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+                  assert.equal(lfData.items[0].items[1].codingInstructionsFormat, "text");
+                  assert.equal(lfData.items[0].items[1].codingInstructionsPlain, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+
+                  var qData = LForms.Util.getFormFHIRData("Questionnaire", "R4", lfData);
+                  // name
+                  assert.equal(qData.item[0].item[0].item[0].text, "A plain text instruction on Name");
+                  assert.equal(qData.item[0].item[0].item[0].type, "display");
+                  assert.equal(qData.item[0].item[0].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+                  assert.equal(qData.item[0].item[0].item[0]._text.extension[0].url, "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+                  assert.equal(qData.item[0].item[0].item[0]._text.extension[0].valueString, "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+                  // gender
+                  assert.equal(qData.item[0].item[1].item[0].text, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+                  assert.equal(qData.item[0].item[1].item[0].type, "display");
+                  assert.equal(qData.item[0].item[1].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+                  assert.equal(qData.item[0].item[1].item[0]._text, undefined);
+                }
+                catch(err) {
+                  done(err)
+                }
+              }).done(function () {
+                done();
+              }).fail(function (err) {
+                console.log(': Unable to load ' + file);
+                done(err);
+              });
+            });
+
           });
         }
 

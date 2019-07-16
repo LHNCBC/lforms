@@ -77,6 +77,34 @@
                 "expression": "%patient.name[0].select(given.first() + ' ' +  family)"
               }
             }
+          ],
+          "item": [
+            {
+              "text": "A plain text instruction on Name",
+              "type": "display",
+              "linkId": "/54126-8/54125-0-help",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "text": "Help-Button",
+                    "coding": [
+                      {
+                        "code": "help",
+                        "display": "Help-Button",
+                        "system": "http://hl7.org/fhir/questionnaire-item-control"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_text": {
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+                  "valueString": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>"
+                }]
+              }
+            }
           ]
         },
         {
@@ -127,6 +155,28 @@
                 "code": "LA46-8",
                 "display": "Other"
               }
+            }
+          ],
+          "item": [
+            {
+              "text": "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>",
+              "type": "display",
+              "linkId": "/54126-8/54131-8-help",
+              "extension": [
+                {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                    "text": "Help-Button",
+                    "coding": [
+                      {
+                        "code": "help",
+                        "display": "Help-Button",
+                        "system": "http://hl7.org/fhir/questionnaire-item-control"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },

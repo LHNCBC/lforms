@@ -19203,10 +19203,10 @@ var self = {
 
     if (item.codingInstructions) {
       var helpItem = {
-        text: item.codingInstructions,
-        type: "display",
-        linkId: targetItem.linkId + "-help",
-        extension: [{
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
+        "type": "display",
+        "linkId": targetItem.linkId + "-help",
+        "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
             "text": "Help-Button",
@@ -19220,10 +19220,14 @@ var self = {
       }; // format could be 'html' or 'text'
 
       if (item.codingInstructionsFormat === 'html') {
-        helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
-        });
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.codingInstructions
+          }]
+        };
       }
 
       if (Array.isArray(targetItem.item)) {
@@ -20520,7 +20524,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         } else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
@@ -20940,6 +20944,7 @@ function addSDCImportFns(ns) {
    * Parse questionnaire item for coding instructions
    *
    * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
    * @private
    */
 
@@ -20949,17 +20954,31 @@ function addSDCImportFns(ns) {
     // which in LForms is an attribute of the parent item, not a separate item.
     var ret = null;
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    var xhtmlFormat;
 
     if (qItem.type === "display" && ci) {
-      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      ret = {
-        codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text"
-      };
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      } // there is a xhtml extension
 
-      if (format) {
-        ret.codingInstructionsXHTML = format.valueString;
-      }
+
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+        };
+      } // no xhtml extension, default to 'text'
+      else {
+          ret = {
+            codingInstructionsFormat: "text",
+            codingInstructions: qItem.text,
+            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+          };
+        }
     }
 
     return ret;
