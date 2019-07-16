@@ -1,5 +1,5 @@
-import parse from 'date-fns/parse';
-import format from 'date-fns/format';
+import {parse} from 'date-fns';
+import {format} from 'date-fns';
 
 let extractedFns = {
   parse: parse,
