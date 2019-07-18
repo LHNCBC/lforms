@@ -601,11 +601,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-bundle-dr")).click();
 
+            // sometimes ff.name is "not attached to the page document"
+            var name = element(by.id('/54126-8/54125-0/1/1'));
             browser.wait(function() {
-              return ff.name.isDisplayed();
+              return name.isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
-            expect(ff.name.getAttribute('value')).toBe("12");
+            expect(name.getAttribute('value')).toBe("12");
             expect(ff.gender.getAttribute('value')).toBe("Male");
             expect(ff.dob.getAttribute('value')).toBe("01/10/2018");
 
