@@ -9026,7 +9026,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
               var valid_date = LForms.Util.stringToDate(this.value);
 
               if (valid_date) {
-                controller.$setViewValue(this.value);
+                controller.$setViewValue(valid_date);
                 element.datepicker("setDate", valid_date);
               }
 

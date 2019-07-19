@@ -761,7 +761,7 @@ var allInOne =
       "answers": "",
       "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {"colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]},
-      "defaultAnswer": "t"
+      "defaultAnswer": "01/01/1999"
     }, {
       "question": "Time Done",
       "questionCode": "time_done",
@@ -6175,7 +6175,7 @@ var defaultAnswerForm = {
         "max": "1"
       },
       "dataType": "DT",
-      "defaultAnswer": "t",
+      "defaultAnswer": "01/01/1999",
       "displayControl": {},
       "questionCodeSystem": "LOINC"
     },
@@ -6374,7 +6374,7 @@ var defaultAnswerForm = {
       "answers": "",
       "answerCardinality": {"min": "1", "max": "1"},
       "displayControl": {"colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]},
-      "defaultAnswer": "t"
+      "defaultAnswer": "01/01/1999"
     }, {
       "question": "Time Done",
       "questionCode": "time_done",

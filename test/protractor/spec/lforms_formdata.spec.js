@@ -248,21 +248,7 @@ describe('formdata: ', function() {
       expect(element(by.id('/decField/1')).getAttribute('value')).toBe("3.14159");
       expect(element(by.id('/strField/1')).getAttribute('value')).toBe("Green");
 
-      // Test date field default (with value of "t" -- today)
-      var now = new Date();
-      /**
-       *  Returns a string version of the given number, zero padded on the left to
-       *  be at least two characters.
-       */
-      function zeroPad(num) {
-        var rtn = "" + num;
-        if (rtn.length === 1)
-          rtn = "0" + rtn;
-        return rtn;
-      }
-      var today = zeroPad(now.getMonth()+1) + "/" + zeroPad(now.getDate()) +
-        "/" + now.getFullYear();
-      expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual(today);
+      expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual('01/01/1999');
 
       expect(element(by.id('/ansLabelDefault/1')).getAttribute('value')).toEqual('ii. Blue');
       expect(element(by.id('/ansCodeDefault/1')).getAttribute('value')).toEqual('ii. Blue');
@@ -329,7 +315,7 @@ describe('formdata: ', function() {
 
       // Also test the date field default in the templateOptions, to make sure
       // those are getting processed.
-      expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
+      expect(element(by.id('date_done')).getAttribute('value')).toEqual('01/01/1999');
     });
   });
 
