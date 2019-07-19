@@ -124,7 +124,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         }
         else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
@@ -519,6 +519,7 @@ function addSDCImportFns(ns) {
    * Parse questionnaire item for coding instructions
    *
    * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
    * @private
    */
   function _processCodingInstructions(qItem) {
@@ -526,18 +527,31 @@ function addSDCImportFns(ns) {
     // which in LForms is an attribute of the parent item, not a separate item.
     let ret = null;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    if ( qItem.type === "display" && ci ) {
-      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      ret = {
-        codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text",
+    let xhtmlFormat;
+    if ( qItem.type === "display" && ci) {
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      }
 
-      };
-
-      if (format) {
-        ret.codingInstructionsXHTML = format.valueString
+      // there is a xhtml extension
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
+        };
+      }
+      // no xhtml extension, default to 'text'
+      else {
+        ret = {
+          codingInstructionsFormat: "text",
+          codingInstructions: qItem.text,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+        };
       }
     }
+
     return ret;
   }
 

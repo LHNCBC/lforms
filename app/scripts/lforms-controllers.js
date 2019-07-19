@@ -473,14 +473,7 @@ angular.module('lformsWidget')
          * @returns {string}
          */
         $scope.getTrustedCodingInstructions = function(item) {
-          var ret = '';
-          var instruction = item.codingInstructionsFormat === 'html' ?
-              item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
-              : item.codingInstructions;
-          if (instruction) {
-            ret = $sce.trustAsHtml(instruction);
-          }
-          return ret;
+          return item.codingInstructions ? $sce.trustAsHtml(item.codingInstructions) : ''
         };
 
         /**

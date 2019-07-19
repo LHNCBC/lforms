@@ -8180,14 +8180,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.getTrustedCodingInstructions = function (item) {
-    var ret = '';
-    var instruction = item.codingInstructionsFormat === 'html' ? item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions : item.codingInstructions;
-
-    if (instruction) {
-      ret = $sce.trustAsHtml(instruction);
-    }
-
-    return ret;
+    return item.codingInstructions ? $sce.trustAsHtml(item.codingInstructions) : '';
   };
   /**
    * Get the sequence number for the current repeating item

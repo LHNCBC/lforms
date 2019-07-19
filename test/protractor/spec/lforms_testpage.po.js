@@ -70,6 +70,60 @@ var TestPage = function() {
     })(formToIndex[f]);
   }
 
+  var USSGFHTVertical = {
+    comment: element(by.id('comment')), // comment, template data
+    nameID: '/54126-8/54125-0/1/1', // string
+    gender: element(by.id('/54126-8/54131-8/1/1')), // answer
+    race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers
+    dob: element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
+    height: element(by.id('/54126-8/8302-2/1/1')), // number
+    weight: element(by.id('/54126-8/29463-7/1/1')), // number
+    bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
+
+    height1: element(by.id('/54126-8/8302-2/1/1')),
+    weight1: element(by.id('/54126-8/29463-7/1/1')),
+    bmi1: element(by.id('/54126-8/39156-5/1/1')),
+    heightUnit1: element(by.id('unit_/54126-8/8302-2/1/1')),
+    weightUnit1: element(by.id('unit_/54126-8/29463-7/1/1')),
+    height2: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
+    weight2: element(by.id('/54114-4/54117-7/29463-7/1/1/1')),
+    bmi2: element(by.id('/54114-4/54117-7/39156-5/1/1/1')),
+
+    name2: element(by.id('/54126-8/54125-0/1/2')),
+    name3: element(by.id('/54126-8/54125-0/1/3')),
+    name4: element(by.id('/54126-8/54125-0/1/4')),
+    btnName: element(by.id('add-/54126-8/54125-0/1/1')),
+    btnName2: element(by.id('add-/54126-8/54125-0/1/2')),
+    btnName3: element(by.id('add-/54126-8/54125-0/1/3')),
+    btnDelName2: element(by.id('del-/54126-8/54125-0/1/2')),
+
+    disease: element(by.id('/54126-8/54137-5/54140-9/1/1/1')),
+    ageAtDiag: element(by.id('/54126-8/54137-5/54130-0/1/1/1')),
+    btnDiseasesHist: element(by.id('add-/54126-8/54137-5/1/1')),
+    disease2: element(by.id('/54126-8/54137-5/54140-9/1/2/1')),
+    ageAtDiag2: element(by.id('/54126-8/54137-5/54130-0/1/2/1')),
+    btnDiseasesHist2: element(by.id('add-/54126-8/54137-5/1/2')),
+    disease3: element(by.id('/54126-8/54137-5/54140-9/1/3/1')),
+    ageAtDiag3: element(by.id('/54126-8/54137-5/54130-0/1/3/1')),
+    btnDiseasesHist3: element(by.id('add-/54126-8/54137-5/1/3')),
+    mockSubItem2: element(by.id('/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1')),
+
+    fmName: element(by.id('/54114-4/54138-3/1/1')),
+    fmNameB: element(by.id('/54114-4/54138-3/1/2')),
+    fmNameC: element(by.id('/54114-4/54138-3/1/3')),
+    fmNameD: element(by.id('/54114-4/54138-3/1/4')),
+    fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
+    btnAnotherFamily: element(by.id('add-/54114-4/1')),
+    btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
+
+    fmName2: element(by.id('/54114-4/54138-3/2/1')),
+    fmDisease2: element(by.id('/54114-4/54117-7/54116-9/2/1/1')),
+    btnAnotherFamily2: element(by.id('add-/54114-4/2')),
+    btnAnotherDiseasesHist2: element(by.id('add-/54114-4/54117-7/2/1')),
+  };
+  USSGFHTVertical.name = element(by.id('/54126-8/54125-0/1/1'));
+
+
   Object.assign(rtnObj, {
     WAIT_TIMEOUT_1: 20000,
     WAIT_TIMEOUT_2: 40000,
@@ -92,57 +146,7 @@ var TestPage = function() {
       helpers: autoCompHelpers
     },
 
-    USSGFHTVertical: {
-      comment: element(by.id('comment')), // comment, template data
-      name: element(by.id('/54126-8/54125-0/1/1')), // string
-      gender: element(by.id('/54126-8/54131-8/1/1')), // answer
-      race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers
-      dob: element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
-      height: element(by.id('/54126-8/8302-2/1/1')), // number
-      weight: element(by.id('/54126-8/29463-7/1/1')), // number
-      bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
-
-      height1: element(by.id('/54126-8/8302-2/1/1')),
-      weight1: element(by.id('/54126-8/29463-7/1/1')),
-      bmi1: element(by.id('/54126-8/39156-5/1/1')),
-      heightUnit1: element(by.id('unit_/54126-8/8302-2/1/1')),
-      weightUnit1: element(by.id('unit_/54126-8/29463-7/1/1')),
-      height2: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
-      weight2: element(by.id('/54114-4/54117-7/29463-7/1/1/1')),
-      bmi2: element(by.id('/54114-4/54117-7/39156-5/1/1/1')),
-
-      name2: element(by.id('/54126-8/54125-0/1/2')),
-      name3: element(by.id('/54126-8/54125-0/1/3')),
-      name4: element(by.id('/54126-8/54125-0/1/4')),
-      btnName: element(by.id('add-/54126-8/54125-0/1/1')),
-      btnName2: element(by.id('add-/54126-8/54125-0/1/2')),
-      btnName3: element(by.id('add-/54126-8/54125-0/1/3')),
-      btnDelName2: element(by.id('del-/54126-8/54125-0/1/2')),
-
-      disease: element(by.id('/54126-8/54137-5/54140-9/1/1/1')),
-      ageAtDiag: element(by.id('/54126-8/54137-5/54130-0/1/1/1')),
-      btnDiseasesHist: element(by.id('add-/54126-8/54137-5/1/1')),
-      disease2: element(by.id('/54126-8/54137-5/54140-9/1/2/1')),
-      ageAtDiag2: element(by.id('/54126-8/54137-5/54130-0/1/2/1')),
-      btnDiseasesHist2: element(by.id('add-/54126-8/54137-5/1/2')),
-      disease3: element(by.id('/54126-8/54137-5/54140-9/1/3/1')),
-      ageAtDiag3: element(by.id('/54126-8/54137-5/54130-0/1/3/1')),
-      btnDiseasesHist3: element(by.id('add-/54126-8/54137-5/1/3')),
-      mockSubItem2: element(by.id('/54126-8/54137-5/54137-5XA/54140-9XA/1/2/1/1')),
-
-      fmName: element(by.id('/54114-4/54138-3/1/1')),
-      fmNameB: element(by.id('/54114-4/54138-3/1/2')),
-      fmNameC: element(by.id('/54114-4/54138-3/1/3')),
-      fmNameD: element(by.id('/54114-4/54138-3/1/4')),
-      fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
-      btnAnotherFamily: element(by.id('add-/54114-4/1')),
-      btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
-
-      fmName2: element(by.id('/54114-4/54138-3/2/1')),
-      fmDisease2: element(by.id('/54114-4/54117-7/54116-9/2/1/1')),
-      btnAnotherFamily2: element(by.id('add-/54114-4/2')),
-      btnAnotherDiseasesHist2: element(by.id('add-/54114-4/54117-7/2/1')),
-    },
+    USSGFHTVertical: USSGFHTVertical,
 
     FullFeaturedForm: {
       cneField: element(by.id('/type9/1')),
