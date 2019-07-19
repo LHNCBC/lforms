@@ -27,10 +27,9 @@ function addSDCImportFns(ns) {
    */
   self._processFormLevelFields = function (lfData, questionnaire) {
     self.copyFields(questionnaire, lfData, self.formLevelFields);
-    if(lfData.code) {
+    if(questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
     var codeAndSystemObj = self._getCode(questionnaire);
     if(codeAndSystemObj) {
@@ -46,8 +45,6 @@ function addSDCImportFns(ns) {
    *         followed by the ValueSet id) to the answers options object, which, in turn, is a hash with 4 entries:
    *         - "answers" is the list of LF answers converted from the value set.
    *         - "systems" is the list of code systems for each answer item; and
-   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
    *         returns undefined if no contained value set is present.
    * @private
    */
@@ -58,33 +55,17 @@ function addSDCImportFns(ns) {
       answersVS = {};
       questionnaire.contained.forEach(function(vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = {answers: [], systems:[]};
+          var lfVS = {answers: []};
           var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
           vs.expansion.contains.forEach(function (vsItem) {
-            var answer = {code: vsItem.code, text: vsItem.display};
+            var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
               "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
             if(ordExt) {
               answer.score = ordExt.valueDecimal;
             }
             lfVS.answers.push(answer);
-            lfVS.systems.push(vsItem.system);
-
-            if(theCodeSystem === '#placeholder#') {
-              theCodeSystem = vsItem.system;
-            }
-            else if(theCodeSystem !== vsItem.system) {
-              theCodeSystem = null;
-            }
-            if(vsItem.system) {
-              lfVS.hasAnswerCodeSystems = true;
-            }
           });
-
-          // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-          if(theCodeSystem && theCodeSystem !== '#placeholder#' ) {
-            lfVS.isSameCodeSystem = true;
-          }
 
           // support both id and url based lookup. STU3 reference is quite vague.
           if(vs.id !== undefined) {
@@ -284,7 +265,6 @@ function addSDCImportFns(ns) {
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
             if(option[optionKey[0]].system  !== undefined) {
               answer.codeSystem = option[optionKey[0]].system;
-              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
             }
           }
           else {
@@ -299,13 +279,6 @@ function addSDCImportFns(ns) {
       var vs = containedVS[qItem.options.reference];
       if(vs) {
         lfItem.answers = vs.answers;
-        if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
-        }
-        else if(vs.hasAnswerCodeSystems) {
-          console.log('WARNING: unable to handle different answer code systems within a question (ignored): %s',
-                      vs.systems.join(', '));
-        }
       }
     }
   }

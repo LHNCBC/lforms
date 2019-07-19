@@ -2,6 +2,31 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.3] 2019-07-09
+### Fixed
+- Fixed a bug that help instructions are not exported correctly in R4 Questionnaire. 
+
+## [17.2.2] 2019-07-05
+### Changed
+- Removed unnecessary default code system value 
+
+## [17.2.1] 2019-07-03
+### Changed
+- Removed generated identifiers from the exported FHIR QuestionnaireResponse resources.
+  The generated identifiers as they are now are not unique and do not serve specific purposes.
+  The identifiers from previously imported QuestionnaireResponse resources will be preserved.
+  This is not considered a breaking change because FHIR spec governs the protocol here and
+  the identifier field is optional.
+
+## [17.2.0] 2019-07-03
+### Added
+- Added support for multiple code system in answers.
+
+## [17.1.2] 2019-06-28
+### Fixed
+- Fixed missing form level properties in conversion of FHIR questionnaire to lforms.
+- Fixed missing item code list in conversion of FHIR questionnaire to lforms. 
+
 ## [17.1.1] 2019-06-26
 ### Fixed
 - Fixed a bug in FHIR/SDC Questionnaire version detection.

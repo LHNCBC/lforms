@@ -18928,7 +18928,7 @@ var self = {
             "code": val.code,
             "display": val.text
           };
-          var codeSystem = val.system || item.answerCodeSystem;
+          var codeSystem = val.codeSystem;
 
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
@@ -19203,10 +19203,10 @@ var self = {
 
     if (item.codingInstructions) {
       var helpItem = {
-        text: item.codingInstructions,
-        type: "display",
-        linkId: targetItem.linkId + "-help",
-        extension: [{
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
+        "type": "display",
+        "linkId": targetItem.linkId + "-help",
+        "extension": [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
             "text": "Help-Button",
@@ -19220,10 +19220,14 @@ var self = {
       }; // format could be 'html' or 'text'
 
       if (item.codingInstructionsFormat === 'html') {
-        helpItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
-          "valueString": item.codingInstructionsXHTML ? item.codingInstructionsXHTML : item.codingInstructions
-        });
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.codingInstructions
+          }]
+        };
       }
 
       if (Array.isArray(targetItem.item)) {
@@ -19449,8 +19453,8 @@ var self = {
         "display": answer.text
       };
 
-      if (item.answerCodeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(item.answerCodeSystem);
+      if (answer.codeSystem) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
       }
 
       optionArray.push(option);
@@ -19626,10 +19630,9 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE') {
         var codeSystem = null,
             coding = null;
-        if (item.answerCodeSystem) codeSystem = LForms.Util.getCodeSystem(item.answerCodeSystem);
 
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // TBD, defaultAnswer has multiple values
+          // defaultAnswer has multiple values
           for (var i = 0, iLen = item.defaultAnswer.length; i < iLen; i++) {
             coding = {
               "code": item.defaultAnswer[i].code
@@ -19637,10 +19640,13 @@ var self = {
 
             if (item.defaultAnswer[i].text !== undefined) {
               coding.display = item.defaultAnswer[i].text;
-            }
+            } // code system
+
+
+            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
 
             if (codeSystem) {
-              coding.system = codeSystem;
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
 
             answer = {};
@@ -19655,10 +19661,13 @@ var self = {
 
             if (item.defaultAnswer.text !== undefined) {
               coding.display = item.defaultAnswer.text;
-            }
+            } // code system
+
+
+            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
 
             if (codeSystem) {
-              coding.system = codeSystem;
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
 
             answer = {};
@@ -19906,7 +19915,7 @@ function addCommonSDCExportFns(ns) {
 
       this._removeRepeatingItems(source);
 
-      this._setFormLevelFields(target, source, noExtensions);
+      this._setFormLevelFields(target, lfData, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
         target.item = [];
@@ -20258,12 +20267,12 @@ function addCommonSDCExportFns(ns) {
 
     var profile = noExtensions ? this.stdQRProfile : this.QRProfile;
     target.meta = target.meta ? target.meta : {};
-    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier":
-
-    target.identifier = {
-      "system": LForms.Util.getCodeSystem(source.codeSystem),
-      "value": source.code
-    }; // status, required
+    target.meta.profile = target.meta.profile ? target.meta.profile : [profile]; // "identifier": - not including identifier in QuestionnaireResponse per LF-1183
+    //target.identifier = {
+    //  "system": LForms.Util.getCodeSystem(source.codeSystem),
+    //  "value": source.code
+    //};
+    // status, required
     // "in-progress", "completed", "amended"
 
     target.status = "completed"; // authored, required
@@ -20400,10 +20409,9 @@ function addSDCImportFns(ns) {
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
 
-    if (lfData.code) {
+    if (questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
 
     var codeAndSystemObj = self._getCode(questionnaire);
@@ -20424,8 +20432,6 @@ function addSDCImportFns(ns) {
    *         options object, which, in turn, is a hash with 4 entries:
    *         - "answers" is the list of LF answers converted from the value set.
    *         - "systems" is the list of code systems for each answer item; and
-   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
    *         returns undefined if no contained value set is present.
    * @private
    */
@@ -20439,15 +20445,13 @@ function addSDCImportFns(ns) {
       questionnaire.contained.forEach(function (vs) {
         if (vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
           var lfVS = answersVS[vs.url] = {
-            answers: [],
-            systems: []
+            answers: []
           };
-          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
-
           vs.expansion.contains.forEach(function (vsItem) {
             var answer = {
               code: vsItem.code,
-              text: vsItem.display
+              text: vsItem.display,
+              codeSystem: self._toLfCodeSystem(vsItem.system)
             };
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
 
@@ -20456,22 +20460,7 @@ function addSDCImportFns(ns) {
             }
 
             lfVS.answers.push(answer);
-            lfVS.systems.push(vsItem.system);
-
-            if (theCodeSystem === '#placeholder#') {
-              theCodeSystem = vsItem.system;
-            } else if (theCodeSystem !== vsItem.system) {
-              theCodeSystem = null;
-            }
-
-            if (vsItem.system) {
-              lfVS.hasAnswerCodeSystems = true;
-            }
-          }); // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-
-          if (theCodeSystem && theCodeSystem !== '#placeholder#') {
-            lfVS.isSameCodeSystem = true;
-          }
+          });
         }
       });
     }
@@ -20535,7 +20524,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         } else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
 
@@ -20779,7 +20768,6 @@ function addSDCImportFns(ns) {
 
             if (option[optionKey[0]].system !== undefined) {
               answer.codeSystem = option[optionKey[0]].system;
-              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
             }
           } else {
             answer.text = option[optionKey[0]].toString();
@@ -20793,12 +20781,6 @@ function addSDCImportFns(ns) {
 
       if (vs) {
         lfItem.answers = vs.answers;
-
-        if (vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
-        } else if (vs.hasAnswerCodeSystems) {
-          console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s', lfItem.linkId, vs.systems.join(', '));
-        }
       }
     }
   };
@@ -20962,6 +20944,7 @@ function addSDCImportFns(ns) {
    * Parse questionnaire item for coding instructions
    *
    * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
    * @private
    */
 
@@ -20971,17 +20954,31 @@ function addSDCImportFns(ns) {
     // which in LForms is an attribute of the parent item, not a separate item.
     var ret = null;
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    var xhtmlFormat;
 
     if (qItem.type === "display" && ci) {
-      var format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      ret = {
-        codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text"
-      };
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      } // there is a xhtml extension
 
-      if (format) {
-        ret.codingInstructionsXHTML = format.valueString;
-      }
+
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+        };
+      } // no xhtml extension, default to 'text'
+      else {
+          ret = {
+            codingInstructionsFormat: "text",
+            codingInstructions: qItem.text,
+            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+          };
+        }
     }
 
     return ret;
@@ -21660,19 +21657,16 @@ function addCommonSDCImportFns(ns) {
         } else {
           // Pick a Coding that is appropriate for this list item.
           if (lfItem.answers) {
-            var itemAnswersFHIRCodeSystem = lfItem.answerCodeSystem;
-            if (itemAnswersFHIRCodeSystem) itemAnswersFHIRCodeSystem = LForms.Util.getCodeSystem(itemAnswersFHIRCodeSystem);
             var itemAnswers = lfItem._modifiedAnswers || lfItem.answers; // _modified contains _displayText
 
             for (var k = 0, kLen = codings.length; k < kLen && !answer; ++k) {
               var coding = codings[k];
 
               for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
-                var system = coding.system;
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.system || itemAnswersFHIRCodeSystem;
+                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
 
-                if (system == listAnswerSystem && coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) && coding.code == listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -21738,6 +21732,10 @@ function addCommonSDCImportFns(ns) {
 
 
   self._processCodeAndLinkId = function (lfItem, qItem) {
+    if (qItem.code) {
+      lfItem.codeList = qItem.code;
+    }
+
     var code = self._getCode(qItem);
 
     if (code) {

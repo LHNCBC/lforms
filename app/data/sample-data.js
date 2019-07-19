@@ -50,7 +50,7 @@ var formBuilder =
     "dataType": "CNE",
     "answers": "codingSystemC",
     "header": false
-  },
+    },
     {
     "questionCode": "questionHeaderC",
     "question": "Question",
@@ -61,7 +61,7 @@ var formBuilder =
       "question": "Label",
       "dataType": "ST",
       "header": false
-    },
+      },
       {
       "questionCode": "questionCardinalityC",
       "question": "Question cardinality",

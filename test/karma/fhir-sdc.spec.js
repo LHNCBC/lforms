@@ -58,6 +58,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.linkId, "/weight");
             assert.equal(out.type, "quantity");
+            assert.equal(out.code[0].system, "ad-hoc");
+            assert.equal(out.code[0].code,"12345");
+
           });
 
           it('should convert an item with CNE data type without answerCodeSystem', function () {
@@ -130,9 +133,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].code, "help");
             assert.equal(fhirQ.item[0].item[2].item[0].extension[0].valueCodeableConcept.coding[0].system, "http://hl7.org/fhir/questionnaire-item-control");
             if (fhirVersion === "R4") {
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].url,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].url,
                   "http://hl7.org/fhir/StructureDefinition/rendering-xhtml")
-              assert.equal(fhirQ.item[0].item[2].item[0].extension[1].valueString,
+              assert.equal(fhirQ.item[0].item[2].item[0]._text.extension[0].valueString,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>")
             }
           });
@@ -168,6 +171,172 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
           });
 
+          it('should convert questionnaire.code and item.code with code system',function () {
+
+
+            var formCodes = [{
+              system: 'http://form-example1.com',
+              version: '1.0',
+              code: 'formcode1',
+              display: 'Form Code 1',
+              userSelected: true
+            }, {
+              system: 'http://form-example2.com',
+              version: '2.0',
+              code: 'formcode2',
+              display: 'Form Code 2',
+              userSelected: false
+            }, {
+              system: 'http://form-example3.com',
+              version: '3.0',
+              code: 'formcode3',
+              display: 'Form Code 3',
+              userSelected: false
+            }];
+
+            var itemCodes = [{
+              system: 'http://example1.com',
+              version: '1.0',
+              code: 'code1',
+              display: 'Code 1',
+              userSelected: true
+            }, {
+              system: 'http://example2.com',
+              version: '2.0',
+              code: 'code2',
+              display: 'Code 2',
+              userSelected: false
+            }, {
+              system: 'http://example3.com',
+              version: '3.0',
+              code: 'code3',
+              display: 'Code 3',
+              userSelected: false
+            }];
+
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              version: '0.0.1',
+              resourceType: 'Questionnaire',
+              "meta": {
+                "profile": [
+                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+                ]
+              },
+              status: 'draft',
+              code: formCodes,
+              item: [{
+                required: true,
+                extension: [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+                  "valueInteger": 1
+                }],
+                text: 'FHIR Item with multiple codes',
+                linkId: '12345',
+                type: 'string',
+                code: itemCodes
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfData.code, 'formcode1');
+            assert.equal(lfData.codeSystem, 'http://form-example1.com');
+            assert.equal(lfData.title, 'test title');
+            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.version, '0.0.1');
+            assert.equal(lfData.codeList, formCodes);
+
+            assert.equal(lfData.items[0].questionCode, 'code1');
+            assert.equal(lfData.items[0].questionCodeSystem, 'http://example1.com');
+            assert.equal(lfData.items[0].codeList, itemCodes);
+
+            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.deepEqual(fhirData, convertedFhirData);
+
+          });
+          it('should convert questionnaire.code and item.code, without code system',function () {
+
+
+            var formCodes = [{
+              version: '1.0',
+              code: 'formcode1',
+              display: 'Form Code 1',
+              userSelected: true
+            }, {
+              version: '2.0',
+              code: 'formcode2',
+              display: 'Form Code 2',
+              userSelected: false
+            }, {
+              system: 'http://form-example3.com',
+              version: '3.0',
+              code: 'formcode3',
+              display: 'Form Code 3',
+              userSelected: false
+            }];
+
+            var itemCodes = [{
+              version: '1.0',
+              code: 'code1',
+              display: 'Code 1',
+              userSelected: true
+            }, {
+              version: '2.0',
+              code: 'code2',
+              display: 'Code 2',
+              userSelected: false
+            }, {
+              system: 'http://example3.com',
+              version: '3.0',
+              code: 'code3',
+              display: 'Code 3',
+              userSelected: false
+            }];
+
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              version: '0.0.1',
+              resourceType: 'Questionnaire',
+              "meta": {
+                "profile": [
+                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+                ]
+              },
+              status: 'draft',
+              code: formCodes,
+              item: [{
+                required: true,
+                extension: [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+                  "valueInteger": 1
+                }],
+                text: 'FHIR Item with multiple codes',
+                linkId: '12345',
+                type: 'string',
+                code: itemCodes
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(lfData.code, 'formcode1');
+            assert.equal(lfData.codeSystem, undefined);
+            assert.equal(lfData.title, 'test title');
+            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.version, '0.0.1');
+            assert.equal(lfData.codeList, formCodes);
+
+            assert.equal(lfData.items[0].questionCode, 'code1');
+            assert.equal(lfData.items[0].questionCodeSystem, undefined);
+            assert.equal(lfData.items[0].codeList, itemCodes);
+
+            var convertedFhirData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+
+            // console.log( JSON.stringify(convertedFhirData))
+            // console.log( JSON.stringify(fhirData))
+            assert.deepEqual(fhirData, convertedFhirData);
+
+          });
+
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -183,21 +352,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items.length, 2);
             assert.equal(convertedLfData.items[0].question, "Your health information");
             assert.equal(convertedLfData.items[0].questionCode, "54126-8");
-            assert.equal(convertedLfData.items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].codeList.length, 1);
             assert.equal(convertedLfData.items[0].codeList[0].display, "Your health information");
             assert.equal(convertedLfData.items[0].codeList[0].code, "54126-8");
-            assert.equal(convertedLfData.items[0].codeList[0].system, "http://loinc.org");
+            assert.equal(convertedLfData.items[0].codeList[0].system, undefined);
             assert.equal(convertedLfData.items[0].dataType, 'SECTION');
             assert.equal(convertedLfData.items[0].header, true);
             assert.equal(convertedLfData.items[0].items.length, 13);
 
             assert.equal(convertedLfData.items[0].items[0].question, "Name");
             assert.equal(convertedLfData.items[0].items[0].questionCode, "54125-0");
-            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[0].questionCardinality.max, "*");
-            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, "LOINC");
+            assert.equal(convertedLfData.items[0].items[0].questionCodeSystem, undefined);
             assert.equal(convertedLfData.items[0].items[0].dataType, 'TX');
 
             assert.equal(convertedLfData.items[0].items[1].answers.length, 3);
@@ -222,23 +391,23 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, "html");
-              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML,
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsPlain,
                   "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>coding instruction</a>");
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[2].codingInstructionsFormat, undefined);
-              assert.equal(convertedLfData.items[0].items[2].codingInstructionsXHTML, undefined);
+              assert.equal(convertedLfData.items[0].items[2].codingInstructionsPlain, undefined);
             }
 
             assert.equal(convertedLfData.items[0].items[6].answerCardinality.min, "1");
             assert.equal(convertedLfData.items[0].items[6].codingInstructions, "Try to type 10, 12, 15, 16, 25");
             if (fhirVersion === 'R4') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, "text");
-              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, null);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsPlain, "Try to type 10, 12, 15, 16, 25");
             }
             else if (fhirVersion === 'STU3') {
               assert.equal(convertedLfData.items[0].items[6].codingInstructionsFormat, undefined);
-              assert.equal(convertedLfData.items[0].items[6].codingInstructionsXHTML, undefined);
+              assert.equal(convertedLfData.items[0].items[6].codingInstructionsPlain, undefined);
             }
 
             // TODO units[x].code is not supported.
@@ -544,9 +713,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(lfData.items[0].answers.length, json.item[0].answerOption.length);
                   assert.equal(lfData.items[0].answers[0].score, 0);
                   assert.equal(lfData.items[0].answers[0].text, "Not at all");
+                  assert.equal(lfData.items[0].answers[0].codeSystem, "http://loinc.org");
                   assert.equal(lfData.items[0].answers[1].score, "1");
                   assert.equal(lfData.items[0].answers[1].text, "Several days");
-                  assert.equal(lfData.items[0].answerCodeSystem, "http://loinc.org");
+                  assert.equal(lfData.items[0].answers[1].codeSystem, "http://loinc.org");
 
                   // convert it back to SDC Questionnaire
                   var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);
@@ -570,6 +740,47 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 done(err);
               });
             });
+
+            it('should convert coding instructions between R4 SDC Questionnaire and LForm format', function (done) {
+
+              var file = 'test/data/R4/ussg-fhp.json';
+              $.get(file, function (json) {
+                try {
+                  var lfData = LForms.Util.convertFHIRQuestionnaireToLForms(json, fhirVersion);
+
+                  // name
+                  assert.equal(lfData.items[0].items[0].codingInstructions, "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+                  assert.equal(lfData.items[0].items[0].codingInstructionsFormat, "html");
+                  assert.equal(lfData.items[0].items[0].codingInstructionsPlain, "A plain text instruction on Name");
+                  // gender
+                  assert.equal(lfData.items[0].items[1].codingInstructions, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+                  assert.equal(lfData.items[0].items[1].codingInstructionsFormat, "text");
+                  assert.equal(lfData.items[0].items[1].codingInstructionsPlain, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+
+                  var qData = LForms.Util.getFormFHIRData("Questionnaire", "R4", lfData);
+                  // name
+                  assert.equal(qData.item[0].item[0].item[0].text, "A plain text instruction on Name");
+                  assert.equal(qData.item[0].item[0].item[0].type, "display");
+                  assert.equal(qData.item[0].item[0].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+                  assert.equal(qData.item[0].item[0].item[0]._text.extension[0].url, "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+                  assert.equal(qData.item[0].item[0].item[0]._text.extension[0].valueString, "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An html instruction on Name</a>");
+                  // gender
+                  assert.equal(qData.item[0].item[1].item[0].text, "<code>Text</code> instructions, with a <button>button</button> and a link <a href='http://google.com'>An plain text instruction on Gender. HTML should be escaped.</a>");
+                  assert.equal(qData.item[0].item[1].item[0].type, "display");
+                  assert.equal(qData.item[0].item[1].item[0].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+                  assert.equal(qData.item[0].item[1].item[0]._text, undefined);
+                }
+                catch(err) {
+                  done(err)
+                }
+              }).done(function () {
+                done();
+              }).fail(function (err) {
+                console.log(': Unable to load ' + file);
+                done(err);
+              });
+            });
+
           });
         }
 
