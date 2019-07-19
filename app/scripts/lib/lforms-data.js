@@ -2453,7 +2453,7 @@
             return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
               query: {_format: 'application/json', count: count,
               filter: fieldVal}}).then(function(response) {
-                return [count, response.data];
+                return response.data;
               });
           }
           else {
@@ -2537,7 +2537,7 @@
                   query: {_format: 'application/json', count: count,
                           filter: fieldVal, url: item.answerValueSet}
                 }).then(function(successData) {
-                  return [count, successData.data];
+                  return successData.data;
                 }, function (errorData) {
                   LForms.fhirCapabilities.urlExpandBroken = true;
                   // HAPI does not support (maybe just because of a bug) $expand

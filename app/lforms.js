@@ -5,6 +5,7 @@
     'smoothScroll',
     'autocompleteLhcMod',
     'ui.bootstrap.datetimepicker'];
+  var Def = require('autocomplete-lhc');
   if (Def._tooltip)
     widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);
   else
