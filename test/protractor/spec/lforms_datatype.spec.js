@@ -25,7 +25,7 @@ describe('Data Type', function() {
     dtEl.clear();
     dtEl.sendKeys(dateStr);
     otherEl.click();
-    expect(dtEl.getAttribute('value')).not.toEqual(dateStr); // Invalid date defaults to current date
+    expect(dtEl.getCssValue('border-color')).toEqual('rgb(255, 0, 0)'); // Red border
 
     dateStr = '02/03/2019';
     dtEl.clear();

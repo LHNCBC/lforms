@@ -35,7 +35,7 @@ angular.module('lformsWidget')
         $scope.uibDateTimePickerFormat = "MM/dd/yyyy HH:mm";
         $scope.uibDatePickerAltFormats = [
           'yyyy',
-          'MMM yyyy', 'MMMM yyyy', 'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM',
+          'M/yyyy', 'MM/yyyy', 'yyyy/M', 'yyyy/MM',
           'M/d/yyyy', 'MM/d/yyyy', 'M/dd/yyyy', 'MM/dd/yyyy',
           "M/d/yyyy HH:mm", "MM/d/yyyy HH:mm", "M/dd/yyyy HH:mm",
           "yyyy-MM", "yyyy-MM-dd", "yyyy-MM-dd HH:mm"

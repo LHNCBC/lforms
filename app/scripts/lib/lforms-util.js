@@ -2,9 +2,32 @@
  * LForms Utility tools
  */
 
-if(typeof dateFns === 'undefined') {
-  dateFns = require('../date-index').default;
-}
+//if(typeof dateFns === 'undefined') {
+//  dateFns = require('../date-index').default;
+//}
+
+let moment = require('moment');
+// Acceptable date formats
+
+// Strict parsing -
+var parseDateFormats = [
+  'M/D/YYYY',
+  'M/D/YY',
+  'M/D',
+  'M-D-YYYY',
+  'M-D-YY',
+  'M-D',
+  'YYYY',
+  'YYYY-M-D',
+  'YYYY/M/D',
+  moment.ISO_8601,
+  'M/D/YYYY HH:mm',
+  'M/D/YY HH:mm',
+  'M/D HH:mm',
+  'M-D-YYYY HH:mm',
+  'M-D-YY HH:mm',
+  'M-D HH:mm',
+];
 
 var LForms = require('../../lforms');
 
@@ -542,7 +565,7 @@ LForms.Util = {
    * at the local timezone.
    */
   dateToDTStringISO: function (dateObj) {
-    return (! dateObj || isNaN(dateObj.getTime()))? undefined: [
+    return (! dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime()))? undefined: [
       (10000 + dateObj.getFullYear()).toString().substr(1),
       (101 + dateObj.getMonth()).toString().substr(1),
       (100 + dateObj.getDate()).toString().substr(1) ].join('-');
@@ -573,15 +596,36 @@ LForms.Util = {
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
+   * @param looseParsing {boolean} - Do not use date formats. Intended to parse
+   * Date object's toString() output, typically from programmatic output from widgets etc.
    * @returns a date object
    */
-  stringToDate: function(strDate) {
+  stringToDate: function(strDate, looseParsing) {
     if(! strDate || (typeof strDate) != 'string') { // maybe already a date object.
       return strDate;
     }
-
-    return dateFns.parse(strDate);
+    
+    let m;
+    if(looseParsing) {
+      m = moment(strDate);
+    }
+    else {
+      m = moment(strDate, parseDateFormats, true);
+    }
+    return m.isValid() ? m.toDate() : null;
   },
+  
+  
+  /**
+   * Validate date object or date string. If string, check to see if it is in acceptable formats.
+   * See stringToDate() for acceptable formats.
+   * @param date {Date | string} - Potential date object or date string
+   * @returns boolean
+   */
+  isValidDate: function(date) {
+    return !!(LForms.Util.stringToDate(date));
+  },
+  
   
   /**
    * Format a date object with given format. Refer to date-fns.js documentation for
@@ -592,7 +636,7 @@ LForms.Util = {
    * @returns {string}
    */
   formatDate: function(date, format) {
-    return dateFns.format(date, format);
+    return moment(date).format(format);
   },
   
   

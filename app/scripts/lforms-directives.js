@@ -105,7 +105,7 @@
                     controller.$setViewValue(valid_date);
                     element.datepicker("setDate", valid_date);
                   }
-                  if ( !showing ) {
+                  if ( !showing && valid_date) {
                     scope.$apply(function() {
                       element.datepicker("setDate", element.datepicker("getDate"));
                       controller.$setViewValue(element.datepicker("getDate"));
@@ -121,7 +121,7 @@
                   }
                   // convert saved user data into date
                   else if (typeof(date) === "string") {
-                    date = LForms.Util.stringToDate(date);
+                    date = LForms.Util.stringToDate(date, true);
                   }
                   element.datepicker("setDate", date);
                 };
