@@ -2,10 +2,6 @@
  * LForms Utility tools
  */
 
-//if(typeof dateFns === 'undefined') {
-//  dateFns = require('../date-index').default;
-//}
-
 var moment = require('moment');
 // Acceptable date formats
 
