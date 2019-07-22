@@ -26,6 +26,7 @@ module.exports = function(config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/autocomplete-lhc/source/autoCompBase.js',
       'bower_components/element-resize-detector/dist/element-resize-detector.js',
+      'bower_components/moment/moment.js',
       'bower-dist/lforms.js',
       'app/scripts/fhir/*/lformsFHIR.js',
       'test/karma/*.js',

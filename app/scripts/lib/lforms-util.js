@@ -6,7 +6,7 @@
 //  dateFns = require('../date-index').default;
 //}
 
-let moment = require('moment');
+var moment = require('moment');
 // Acceptable date formats
 
 // Strict parsing -
