@@ -9785,8 +9785,8 @@ LForms.Util = {
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
-   * @param looseParsing {boolean} - Do not use date formats. Intended to parse
-   * Date object's toString() output, typically from programmatic output from widgets etc.
+   * @param looseParsing {boolean} - If wanted to other default parsing. Intended to parse
+   * Date object's toString() output, typically from programmatic output from widgets. Default is false.
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate, looseParsing) {
@@ -9795,12 +9795,11 @@ LForms.Util = {
       return strDate;
     }
 
-    var m;
+    var m = moment(strDate, parseDateFormats, true);
 
-    if (looseParsing) {
+    if (looseParsing && !m.isValid()) {
+      // Make another attempt for loose parsing.
       m = moment(strDate);
-    } else {
-      m = moment(strDate, parseDateFormats, true);
     }
 
     return m.isValid() ? m.toDate() : null;
