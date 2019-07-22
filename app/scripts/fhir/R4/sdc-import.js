@@ -32,10 +32,9 @@ function addSDCImportFns(ns) {
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(lfData.code) {
+    if(questionnaire.code) {
       // Rename questionnaire code to codeList
-      lfData.codeList = lfData.code;
-      delete lfData.code;
+      lfData.codeList = questionnaire.code;
     }
     var codeAndSystemObj = self._getCode(questionnaire);
     if(codeAndSystemObj) {
@@ -58,8 +57,6 @@ function addSDCImportFns(ns) {
    *         options object, which, in turn, is a hash with 4 entries:
    *         - "answers" is the list of LF answers converted from the value set.
    *         - "systems" is the list of code systems for each answer item; and
-   *         - "isSameCodeSystem" is a boolean flag, true IFF the code systems for all answers in the list are the same.
-   *         - "hasAnswerCodeSystems" is a boolean flag, true IFF at least one answer has code system.
    *         returns undefined if no contained value set is present.
    * @private
    */
@@ -70,33 +67,16 @@ function addSDCImportFns(ns) {
       answersVS = {};
       questionnaire.contained.forEach(function (vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = answersVS[vs.url] = {answers: [], systems:[]};
-          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
+          var lfVS = answersVS[vs.url] = {answers: []};
           vs.expansion.contains.forEach(function (vsItem) {
-            var answer = {code: vsItem.code, text: vsItem.display};
+            var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
             var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
               "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
             if(ordExt) {
               answer.score = ordExt.valueDecimal;
             }
             lfVS.answers.push(answer);
-            lfVS.systems.push(vsItem.system);
-
-            if(theCodeSystem === '#placeholder#') {
-              theCodeSystem = vsItem.system;
-            }
-            else if(theCodeSystem !== vsItem.system) {
-              theCodeSystem = null;
-            }
-            if(vsItem.system) {
-              lfVS.hasAnswerCodeSystems = true;
-            }
           });
-
-          // set a flag if all the answers have identical code system, e.g., for use in LF item.answerCodeSystem
-          if(theCodeSystem && theCodeSystem !== '#placeholder#' ) {
-            lfVS.isSameCodeSystem = true;
-          }
         }
       });
     }
@@ -146,7 +126,7 @@ function addSDCImportFns(ns) {
         if (help !== null) {
           targetItem.codingInstructions = help.codingInstructions;
           targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsXHTML = help.codingInstructionsXHTML;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
         }
         else {
           var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
@@ -379,7 +359,6 @@ function addSDCImportFns(ns) {
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
             if(option[optionKey[0]].system  !== undefined) {
               answer.codeSystem = option[optionKey[0]].system;
-              lfItem.answerCodeSystem = answer.codeSystem; // TBD - one day this should go away
             }
           }
           else {
@@ -395,13 +374,6 @@ function addSDCImportFns(ns) {
         var vs = containedVS[qItem.answerValueSet];
       if(vs) { // contained
         lfItem.answers = vs.answers;
-        if(vs.isSameCodeSystem) {
-          lfItem.answerCodeSystem = self._toLfCodeSystem(vs.systems[0]);
-        }
-        else if(vs.hasAnswerCodeSystems) {
-          console.log('WARNING (unsupported feature): answers for item.linkId=%s have different code systems: %s',
-                      lfItem.linkId, vs.systems.join(', '));
-        }
       }
       else
         lfItem.answerValueSet = qItem.answerValueSet; // a URI for a ValueSet
@@ -567,6 +539,7 @@ function addSDCImportFns(ns) {
    * Parse questionnaire item for coding instructions
    *
    * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
    * @private
    */
   function _processCodingInstructions(qItem) {
@@ -574,18 +547,31 @@ function addSDCImportFns(ns) {
     // which in LForms is an attribute of the parent item, not a separate item.
     let ret = null;
     let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    if ( qItem.type === "display" && ci ) {
-      let format = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      ret = {
-        codingInstructions: qItem.text,
-        codingInstructionsFormat: format ? "html" : "text",
+    let xhtmlFormat;
+    if ( qItem.type === "display" && ci) {
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      }
 
-      };
-
-      if (format) {
-        ret.codingInstructionsXHTML = format.valueString
+      // there is a xhtml extension
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
+        };
+      }
+      // no xhtml extension, default to 'text'
+      else {
+        ret = {
+          codingInstructionsFormat: "text",
+          codingInstructions: qItem.text,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+        };
       }
     }
+
     return ret;
   }
 

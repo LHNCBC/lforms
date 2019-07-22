@@ -45,10 +45,10 @@ describe('Form pre-population', function() {
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));
       browser.wait(function() {return firstQ.getAttribute('value')}, 2000)
-      expect(firstQ.getAttribute('value')).not.toBe('');
+      expect(firstQ.getAttribute('value')).toBe('0. Not at all - 0');
       var sum = element(by.id('/44261-6/1'));
       browser.wait(function() {return sum.getAttribute('value')}, 2000)
-      expect(sum.getAttribute('value')).not.toBe('');
+      expect(sum.getAttribute('value')).toBe('0');
     });
   }
 

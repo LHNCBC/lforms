@@ -10,15 +10,15 @@ describe('HL7 library', function() {
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
           'OBX|1|CWE|'+itemData.questionCode+'^'+itemData.question+
-          '^LN||'+itemData.value.code+'^'+itemData.value.text+'^LN|');
+          '^LN||'+itemData.value.code+'^'+itemData.value.text+'^|');
     });
 
 
-    it('should use answerCodeSystem when provided', function() {
+    it('should use answer.codeSystem when provided', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
-        'answerCodeSystem': 'AA',
-        'value': {'text': 'United States', 'code': 'USA'}, 'dataType': 'CWE',
+        'answerCodeSystem': 'BB',
+        'value': {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}, 'dataType': 'CWE',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -30,8 +30,8 @@ describe('HL7 library', function() {
     it('should put uncoded CWE answers into OBX5.9', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
-        'answerCodeSystem': 'AA',
-        'value': {'text': 'United States'}, 'dataType': 'CWE',
+        'answerCodeSystem': 'BB',
+        'value': {'text': 'United States', "codeSystem": "AA"}, 'dataType': 'CWE',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -40,8 +40,8 @@ describe('HL7 library', function() {
       // Try a multi-answer field
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
-        'answerCodeSystem': 'AA',
-        'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA'}],
+        'answerCodeSystem': 'BB',
+        'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}],
         'dataType': 'CWE', '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -57,8 +57,8 @@ describe('HL7 library', function() {
       // should be distinct.
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
-        'answerCodeSystem': 'AA',
-        'value': [{'text': 'Canada', 'code': 'CA'}, {'text': 'United States', 'code': 'USA'}],
+        'answerCodeSystem': 'BB',
+        'value': [{'text': 'Canada', 'code': 'CA', 'codeSystem': 'AA'}, {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}],
         'dataType': 'CWE', '_obx4': '2'};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),

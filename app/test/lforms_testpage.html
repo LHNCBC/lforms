@@ -314,7 +314,6 @@
             $scope.testMergeQR2LForms = function() {
               // use the first form
               $scope.getFhirResource(getFHIRVersion(), 'fhir-sdc-response-ussgfht.json').then(function (fhirData) {
-                var formData = angular.copy(FHTData);
 
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
                   'QuestionnaireResponse', fhirData, angular.copy(FHTData),
@@ -388,6 +387,11 @@
                   $scope.lfData2 = new LForms.LFormsData(importedData);
                   $('#fileAnchor')[0].value = '';
                 }
+
+                $scope.lfOption2 = {
+                  allowHTMLInInstructions: true
+                }
+
                 $scope.$apply();
                 // Reset the field with the filename we can load the same file again if needed.
                 $('#fileAnchor')[0].value = '';

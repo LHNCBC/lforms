@@ -76,7 +76,7 @@ var self = {
             "code": val.code,
             "display": val.text
           };
-          var codeSystem = val.system || item.answerCodeSystem;
+          var codeSystem = val.codeSystem;
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
           }

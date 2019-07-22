@@ -114,12 +114,12 @@ describe('Visual effect tests', function() {
       // form's code should not have a link
       expect(titleCodeLink.isPresent()).toBe(false);
 
-      var itemCodeLink0 = element.all(by.css(".lf-de-label .lf-item-code a")).get(4);
-      // the 5th question's code should have a link
+      var itemCodeLink0 = element.all(by.css(".lf-de-label .lf-item-code a")).get(0);
+      // should have a link
       expect(itemCodeLink0.getText()).toBe("[type0]");
       var itemCode1 = element.all(by.css(".lf-de-label .lf-item-code span")).get(0);
-      // the 6th question's code should not have a link
-      expect(itemCode1.getText()).toBe("[type1]");
+      // should not have a link
+      expect(itemCode1.getText()).toBe("[q_lg]");
     });
 
   });

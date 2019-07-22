@@ -48,7 +48,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
               "effectiveDateTime": "2016-06-29T19:14:57-04:00",
               "issued": "2016-06-29T19:14:57-04:00",
             }
-          }
+          };
           switch(queryParams.query.code) {
             case 'http://loinc.org|29463-7':
               entry.resource.code = {
