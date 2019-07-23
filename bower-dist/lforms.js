@@ -8239,43 +8239,65 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
+     *  Uses the FHIR client to search the given ValueSet for the string
+     *  fieldVal.
+     * @param
+     * @return a Promise that will resolve to the ValueSet expansion.
+     */
+    _fhirClientSearchByValueSetID: function _fhirClientSearchByValueSetID(valueSetID, fieldVal, count) {
+      var fhirClient = LForms.fhirContext.getFHIRAPI();
+      return fhirClient.search({
+        type: 'ValueSet/' + valueSetID + '/$expand',
+        query: {
+          _format: 'application/json',
+          count: count,
+          filter: fieldVal
+        }
+      }).then(function (response) {
+        return response.data;
+      });
+    },
+
+    /**
      *  This is an alternative search mechanism to work around a problem with
      *  HAPI FHIR, which does support $expand with both url and filter.
      */
-    _fhirClientSearchByValidSetID: function _fhirClientSearchByValidSetID(item, fieldVal, count) {
+    _findValueSetIDAndSearch: function _findValueSetIDAndSearch(item, fieldVal, count) {
       // Fetch the ValueSet
       var failMsg = "Could not retrieve the ValueSet definition for " + item.answerValueSet;
-      var fhirClient = LForms.fhirContext.getFHIRAPI();
-      return fhirClient.search({
-        type: 'ValueSet',
-        query: {
-          _format: 'application/json',
-          url: item.answerValueSet,
-          _total: 'accurate'
-        }
-      }).then(function (response) {
-        var data = response.data;
+      var fhirClient = LForms.fhirContext.getFHIRAPI(); // Cache the lookup of ValueSet IDs, which should not change.  (A page
+      // reload will clear the cache.)
 
-        if (data.total === 1) {
-          var valueSetID = data.entry[0].resource.id;
-          return fhirClient.search({
-            type: 'ValueSet/' + valueSetID + '/$expand',
-            query: {
-              _format: 'application/json',
-              count: count,
-              filter: fieldVal
-            }
-          }).then(function (response) {
-            return response.data;
-          });
-        } else {
+      if (!LForms._valueSetUrlToID) LForms._valueSetUrlToID = {};
+      var valueSetID = LForms._valueSetUrlToID[item.answerValueSet];
+
+      if (valueSetID) {
+        return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+      } else {
+        var self = this;
+        return fhirClient.search({
+          type: 'ValueSet',
+          query: {
+            _format: 'application/json',
+            url: item.answerValueSet,
+            _total: 'accurate'
+          }
+        }).then(function (response) {
+          var data = response.data;
+
+          if (data.total === 1) {
+            var valueSetID = data.entry[0].resource.id;
+            LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
+            return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+          } else {
+            console.log(failMsg);
+            return Promise.reject(failMsg);
+          }
+        }, function (errorData) {
           console.log(failMsg);
           return Promise.reject(failMsg);
-        }
-      }, function (errorData) {
-        console.log(failMsg);
-        return Promise.reject(failMsg);
-      });
+        });
+      }
     },
 
     /**
@@ -8329,20 +8351,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             parent = parent._parentItem;
           }
 
-          if (item.terminologyServer) {
+          if (terminologyServer) {
             // TBD - We might need to log in to some terminology servers.  Not
             // supporting that case yet.
             // Skip the fhirContext, and go directly to the terminology server
             // for the autocompletion requests.
             options.url = terminologyServer + '/ValueSet/$expand?url=' + item.answerValueSet;
             options.fhir = true;
-          }
-
-          if (LForms.fhirContext) {
+          } else if (LForms.fhirContext) {
             var self = this;
             options.fhir = {
               search: function search(fieldVal, count) {
-                if (LForms.fhirCapabilities.urlExpandBroken) return self._fhirClientSearchByValidSetID(item, fieldVal, count);else {
+                if (LForms.fhirCapabilities.urlExpandBroken) return self._findValueSetIDAndSearch(item, fieldVal, count);else {
                   var fhirClient = LForms.fhirContext.getFHIRAPI();
                   return fhirClient.search({
                     type: 'ValueSet/$expand',
@@ -8363,7 +8383,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                     //  'ValueSet contains include criteria with no system defined') {
                     // For now, just always try the alternative.
 
-                    return self._fhirClientSearchByValidSetID(item, fieldVal, count);
+                    return self._findValueSetIDAndSearch(item, fieldVal, count);
                   });
                 }
               }

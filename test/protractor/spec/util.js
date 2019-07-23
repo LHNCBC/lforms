@@ -2,6 +2,19 @@
 
 var util = {
   /**
+   *  Returns a function that returns a promise for the given element.
+   * @param elemLoc either a string for the ID of an element or a protractor
+   *  locator.
+   */
+  elementFactory: function (elemLoc) {
+    if (typeof elemLoc === 'string')
+      elemLoc = by.id(elemLoc);
+    return function () {
+      return element(elemLoc);
+    }
+  },
+
+  /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */
   clickAddRemoveButton: function (button) {

@@ -192,6 +192,7 @@ describe('popover buttons', function() {
 
       // Text coding instructions
       genderHelpButton.click();
+      popover = element(by.css('.lf-de-label .popover-content')); // refresh
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
       expect(popverHTMLLink.isPresent()).toBe(false);
