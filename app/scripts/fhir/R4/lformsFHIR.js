@@ -1042,10 +1042,8 @@ var parse = function parse(path) {
   var node;
   var parentStack = [ast];
 
-  var _arr = Object.keys(Listener.prototype);
-
   var _loop = function _loop() {
-    var p = _arr[_i];
+    var p = _Object$keys[_i];
 
     if (p.startsWith("enter")) {
       PathListener.prototype[p] = function (ctx) {
@@ -1098,7 +1096,7 @@ var parse = function parse(path) {
     }
   };
 
-  for (var _i = 0; _i < _arr.length; _i++) {
+  for (var _i = 0, _Object$keys = Object.keys(Listener.prototype); _i < _Object$keys.length; _i++) {
     _loop();
   }
 

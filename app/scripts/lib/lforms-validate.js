@@ -145,6 +145,8 @@ LForms.Validations = {
           valid = regex.test(value);
           break;
         case "DT":  // date, handled by date directive
+          valid = LForms.Util.isValidDate(value);
+          break;
         case "ST":  // not needed
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
         case "RTO": // TBD

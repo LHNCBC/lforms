@@ -1367,10 +1367,10 @@ var formWithUserData =
     {"questionCode": "q3", "dataType": "ST", "header": false, "units": null, "codingInstructions": null, "value": "user input value",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "Wed Nov 17 2015 00:00:00 GMT-0500 (EST)",
+    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015 10:10",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "q99", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null, "value": "Wed Nov 20 2015 10:10:10 GMT-0500 (EST)",
+    {"questionCode": "q99", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null, "value": "11/20/2015 10:10",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, default answer

@@ -74,5 +74,50 @@ describe('Util library', function() {
       assert.equal(item.linkId, 'bb1');
     });
   });
+  
+  describe('Date conversions', function () {
+    
+    
+    it('stringToDate()', function () {
+  
+      var dt_format = 'YYYY-MM-DD';
+      // Date type
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('01/02/2018'), dt_format), '2018-01-02');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('3/4/2018'), dt_format), '2018-03-04');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('05-6-2018'), dt_format), '2018-05-06');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('07-08-2018'), dt_format), '2018-07-08');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('2018-09-10'), dt_format), '2018-09-10');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('2018/11/12'), dt_format), '2018-11-12');
+      // Without year, should default to current year
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('05/06'), dt_format), new Date().getFullYear()+'-05-06');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('5/6'), dt_format), new Date().getFullYear()+'-05-06');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('05-06'), dt_format), new Date().getFullYear()+'-05-06');
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('5-6'), dt_format), new Date().getFullYear()+'-05-06');
+      // Only  year, should default to Jan 1st.
+      assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('2018'), dt_format), '2018-01-01');
+  
+      // DateTime type
+      // ISO parsing
+      assert.equal(LForms.Util.stringToDate('2018-01-02T12:34:56.789').toISOString(), '2018-01-02T17:34:56.789Z');
+      assert.equal(LForms.Util.stringToDate('2018-03-04T12:34:56.789Z').toISOString(), '2018-03-04T12:34:56.789Z');
+      assert.equal(LForms.Util.stringToDate('2018-05-06T12:34:56').toISOString(), '2018-05-06T16:34:56.000Z');
+      assert.equal(LForms.Util.stringToDate('2018-07-08T12').toISOString(), '2018-07-08T16:00:00.000Z');
+      assert.equal(LForms.Util.stringToDate('2018-09-10 12:34').toISOString(), '2018-09-10T16:34:00.000Z');
+      // US datetime
+      assert.equal(LForms.Util.stringToDate('10/11/2018 12:34').toISOString(), '2018-10-11T16:34:00.000Z');
+      assert.equal(LForms.Util.stringToDate('12-13-2018 12:34').toISOString(), '2018-12-13T17:34:00.000Z');
+      assert.equal(LForms.Util.stringToDate('1/3 12:34').toISOString(), new Date().getFullYear()+'-01-03T17:34:00.000Z');
+      assert.equal(LForms.Util.stringToDate('02/04 12:34').toISOString(), new Date().getFullYear()+'-02-04T17:34:00.000Z');
+      assert.equal(LForms.Util.stringToDate('3-5 12:34').toISOString(), new Date().getFullYear()+'-03-05T17:34:00.000Z');
+    });
+
+    it('formatDate()', function () {
+      var str = '2019-05-06T03:00:00.000Z';
+      var dt = LForms.Util.stringToDate(str);
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DTM_FMT), '20190505230000');
+      assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190505');
+      assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '230000-0400');
+    });
+  })
 });
 
