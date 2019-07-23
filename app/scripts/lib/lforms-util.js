@@ -601,6 +601,10 @@ LForms.Util = {
       return strDate;
     }
     
+    if(strDate.trim() === 't') {
+      return new Date();
+    }
+    
     let m = moment(strDate, parseDateFormats, true);
     if(looseParsing && !m.isValid()) { // Make another attempt for loose parsing.
       m = moment(strDate);

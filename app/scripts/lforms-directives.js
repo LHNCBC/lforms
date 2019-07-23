@@ -104,12 +104,12 @@
                   if(valid_date) {
                     controller.$setViewValue(valid_date);
                     element.datepicker("setDate", valid_date);
-                  }
-                  if ( !showing && valid_date) {
-                    scope.$apply(function() {
-                      element.datepicker("setDate", element.datepicker("getDate"));
-                      controller.$setViewValue(element.datepicker("getDate"));
-                    });
+                    if ( !showing ) {
+                      scope.$apply(function() {
+                        element.datepicker("setDate", element.datepicker("getDate"));
+                        controller.$setViewValue(element.datepicker("getDate"));
+                      });
+                    }
                   }
                 });
 

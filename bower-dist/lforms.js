@@ -9021,13 +9021,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
               if (valid_date) {
                 controller.$setViewValue(valid_date);
                 element.datepicker("setDate", valid_date);
-              }
 
-              if (!showing && valid_date) {
-                scope.$apply(function () {
-                  element.datepicker("setDate", element.datepicker("getDate"));
-                  controller.$setViewValue(element.datepicker("getDate"));
-                });
+                if (!showing) {
+                  scope.$apply(function () {
+                    element.datepicker("setDate", element.datepicker("getDate"));
+                    controller.$setViewValue(element.datepicker("getDate"));
+                  });
+                }
               }
             }); // Update the date picker when the model changes
 
@@ -9790,6 +9790,10 @@ LForms.Util = {
     if (!strDate || typeof strDate != 'string') {
       // maybe already a date object.
       return strDate;
+    }
+
+    if (strDate.trim() === 't') {
+      return new Date();
     }
 
     var m = moment(strDate, parseDateFormats, true);
