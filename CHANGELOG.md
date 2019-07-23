@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.4] 2019-07-19
+### Fixed
+- Fixed bug in parsing ISO date and time string.
+
 ## [17.2.3] 2019-07-09
 ### Fixed
 - Fixed a bug that help instructions are not exported correctly in R4 Questionnaire. 
