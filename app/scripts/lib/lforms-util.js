@@ -1,6 +1,30 @@
 /**
  * LForms Utility tools
  */
+
+var moment = require('moment');
+// Acceptable date formats
+
+// Strict parsing -
+var parseDateFormats = [
+  'M/D/YYYY',
+  'M/D/YY',
+  'M/D',
+  'M-D-YYYY',
+  'M-D-YY',
+  'M-D',
+  'YYYY',
+  'YYYY-M-D',
+  'YYYY/M/D',
+  moment.ISO_8601,
+  'M/D/YYYY HH:mm',
+  'M/D/YY HH:mm',
+  'M/D HH:mm',
+  'M-D-YYYY HH:mm',
+  'M-D-YY HH:mm',
+  'M-D HH:mm',
+];
+
 var LForms = require('../../lforms');
 
 LForms.Util = {
@@ -537,7 +561,7 @@ LForms.Util = {
    * at the local timezone.
    */
   dateToDTStringISO: function (dateObj) {
-    return (! dateObj || isNaN(dateObj.getTime()))? undefined: [
+    return (! dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime()))? undefined: [
       (10000 + dateObj.getFullYear()).toString().substr(1),
       (101 + dateObj.getMonth()).toString().substr(1),
       (100 + dateObj.getDate()).toString().substr(1) ].join('-');
@@ -557,57 +581,62 @@ LForms.Util = {
 
   /**
    * Get a formatted date string from a date object
-   * for example: "2016-10-31T14:42:12-04:00"
+   * for example: "2016-10-31T14:42:12Z"
    * @param objDate a date object
    * @returns a formatted date string
    */
   dateToDTMString: function(objDate) {
-    var offset = objDate.getUTCOffset();
-    offset = offset.slice(0,-2) + ":" + offset.slice(-2);
-    return objDate.toString("yyyy-MM-ddTHH:mm:ss") + offset;
+    return objDate.toISOString();
   },
 
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
+   * @param looseParsing {boolean} - Do default parsing. Intended to parse output
+   * from native date object, typically from programmatic output from widgets. Default is false.
    * @returns a date object
    */
-  stringToDate: function(strDate) {
+  stringToDate: function(strDate, looseParsing) {
     if(! strDate || (typeof strDate) != 'string') { // maybe already a date object.
       return strDate;
     }
-
-    var matches, millis = null, ret = null;
-
-    // This date parsing (from Datejs) fails to parse string that includes milliseconds.
-    // If the input is in ISO format, remove millis from the string before parsing and add it after
-    // constructing the date object.
-    if((matches = strDate.match(/\.(\d+)(Z|[+-](((0[\d]|1[0-3]):[0-5][\d])|14:00))$/)) !== null) {
-      strDate = strDate.substring(0, matches.index) + matches[2];
-      millis = parseInt(matches[1]);
+    
+    if(strDate.trim() === 't') {
+      return new Date();
     }
-    else if((matches = strDate.match(/\s*\(.*\)$/)) !== null){
-      // Check for pattern like "Thu May 02 2019 15:11:57 GMT-0400 (Eastern Daylight Time)".
-      // It has problem with content in the parenthesis at the end. Remove it before parsing.
-      strDate = strDate.substring(0, matches.index);
+    
+    let m = moment(strDate, parseDateFormats, true);
+    if(looseParsing && !m.isValid()) { // Make another attempt for loose parsing.
+      m = moment(strDate);
     }
-
-
-    if(strDate) {
-      ret = Date.parse(strDate);
-      if (ret === null) { // which is what date.js would return for strings like 'Wed Nov 17 2015 00:00:00 GMT-0500 (EST)'
-        ret = new Date(strDate);
-      }
-    }
-
-    if(ret && millis !== null) {
-      ret.addMilliseconds(millis);
-    }
-
-    return ret;
+    return m.isValid() ? m.toDate() : null;
   },
-
-
+  
+  
+  /**
+   * Validate date object or date string. If string, check to see if it is in acceptable formats.
+   * See stringToDate() for acceptable formats.
+   * @param date {Date | string} - Potential date object or date string
+   * @returns boolean
+   */
+  isValidDate: function(date) {
+    return !!(LForms.Util.stringToDate(date));
+  },
+  
+  
+  /**
+   * Format a date object with given format. Refer to momentjs documentation for
+   * format specification.
+   *
+   * @param date - Date object
+   * @param format - Format string
+   * @returns {string}
+   */
+  formatDate: function(date, format) {
+    return moment(date).format(format);
+  },
+  
+  
   /**
    * Check if an item's value is empty, where the data has no meaningful use.
    * @param value the value to be tested

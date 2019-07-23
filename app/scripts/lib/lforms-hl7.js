@@ -228,7 +228,7 @@ LForms.HL7 = (function() {
         for (var i= 0, iLen=formData.templateOptions.formHeaderItems.length; i< iLen; i++) {
           if (formData.templateOptions.formHeaderItems[i].questionCode === "date_done" &&
               formData.templateOptions.formHeaderItems[i].value) {
-            formObrArray[7] = formData.templateOptions.formHeaderItems[i].value.toString("yyyyMMddHHmmss");
+            formObrArray[7] = LForms.Util.formatDate(formData.templateOptions.formHeaderItems[i].value, this._DTM_FMT);
           }
           else if (formData.templateOptions.formHeaderItems[i].questionCode === "where_done" &&
               formData.templateOptions.formHeaderItems[i].value) {
@@ -386,8 +386,8 @@ LForms.HL7 = (function() {
       return rtn;
     },
 
-    _DT_FMT: 'yyyyMMdd',
-    _DTM_FMT: 'yyyyMMddHHmmss',
+    _DT_FMT: 'YYYYMMDD',
+    _DTM_FMT: 'YYYYMMDDHHmmss',
     /**
      * Convert an item to one or more HL7 v2 OBX records.
      * @param item an item in LForms form data
@@ -475,7 +475,7 @@ LForms.HL7 = (function() {
             }
             else if (item.dataType === 'DT' || item.dataType === 'DTM') {
               var dv = (typeof val === 'string')? LForms.Util.stringToDate(val): val;
-              itemObxArray[5] = dv.toString(item.dataType === 'DT'? this._DT_FMT: this._DTM_FMT);
+              itemObxArray[5] = LForms.Util.formatDate(dv, item.dataType === 'DT'? this._DT_FMT: this._DTM_FMT);
             }
             else {
               itemObxArray[5] = val.toString();

@@ -572,8 +572,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             browser.waitForAngular();
 
             browser.wait(function() {
-              return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
-             // return element(by.id('/54126-8/54125-0/1/1')).isDisplayed();
+              // return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
+              return element(by.id('/54126-8/54125-0/1/1')).isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
             expect(ff.name.getAttribute('value')).toBe("name 1");

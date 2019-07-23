@@ -7,7 +7,6 @@ require("./lforms-config.js");
 require("./lforms-controllers.js");
 require("./lforms-directives.js");
 require("./bootstrap-decorators.js");
-require("./lib/date.js");
 require("./lib/cross_browser.js");
 require("./lib/lforms-util.js");
 require("./lib/polyfill.js");
