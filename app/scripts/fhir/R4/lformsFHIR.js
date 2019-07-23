@@ -20014,7 +20014,7 @@ function addCommonSDCExportFns(ns) {
 
       if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
         // search field
-        if (item.externallyDefined) {
+        if (item.externallyDefined || item.answerValueSet) {
           itemControlType = "autocomplete";
           itemControlDisplay = "Auto-complete";
         } // prefetch list
