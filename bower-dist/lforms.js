@@ -9245,9 +9245,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  * LForms Utility tools
  */
-//if(typeof dateFns === 'undefined') {
-//  dateFns = require('../date-index').default;
-//}
 var moment = __webpack_require__(27); // Acceptable date formats
 // Strict parsing -
 
@@ -9785,8 +9782,8 @@ LForms.Util = {
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
-   * @param looseParsing {boolean} - If wanted to other default parsing. Intended to parse
-   * Date object's toString() output, typically from programmatic output from widgets. Default is false.
+   * @param looseParsing {boolean} - Do default parsing. Intended to parse output
+   * from native date object, typically from programmatic output from widgets. Default is false.
    * @returns a date object
    */
   stringToDate: function stringToDate(strDate, looseParsing) {
@@ -9816,7 +9813,7 @@ LForms.Util = {
   },
 
   /**
-   * Format a date object with given format. Refer to date-fns.js documentation for
+   * Format a date object with given format. Refer to momentjs documentation for
    * format specification.
    *
    * @param date - Date object

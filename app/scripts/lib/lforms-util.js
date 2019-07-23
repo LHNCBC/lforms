@@ -592,8 +592,8 @@ LForms.Util = {
   /**
    * Parse a formatted date string and create a date object
    * @param strDate a formatted date string
-   * @param looseParsing {boolean} - If wanted to other default parsing. Intended to parse
-   * Date object's toString() output, typically from programmatic output from widgets. Default is false.
+   * @param looseParsing {boolean} - Do default parsing. Intended to parse output
+   * from native date object, typically from programmatic output from widgets. Default is false.
    * @returns a date object
    */
   stringToDate: function(strDate, looseParsing) {
@@ -621,7 +621,7 @@ LForms.Util = {
   
   
   /**
-   * Format a date object with given format. Refer to date-fns.js documentation for
+   * Format a date object with given format. Refer to momentjs documentation for
    * format specification.
    *
    * @param date - Date object

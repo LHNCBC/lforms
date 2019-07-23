@@ -248,7 +248,7 @@ describe('formdata: ', function() {
       expect(element(by.id('/decField/1')).getAttribute('value')).toBe("3.14159");
       expect(element(by.id('/strField/1')).getAttribute('value')).toBe("Green");
 
-      expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual('01/01/1999');
+      expect(element(by.id('/dateField/1')).getAttribute('value')).toEqual('03/04/1999');
 
       expect(element(by.id('/ansLabelDefault/1')).getAttribute('value')).toEqual('ii. Blue');
       expect(element(by.id('/ansCodeDefault/1')).getAttribute('value')).toEqual('ii. Blue');
@@ -315,7 +315,7 @@ describe('formdata: ', function() {
 
       // Also test the date field default in the templateOptions, to make sure
       // those are getting processed.
-      expect(element(by.id('date_done')).getAttribute('value')).toEqual('01/01/1999');
+      expect(element(by.id('date_done')).getAttribute('value')).toEqual('05/06/1999');
     });
   });
 
