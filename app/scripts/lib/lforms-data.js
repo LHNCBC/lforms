@@ -2467,7 +2467,7 @@
 
     /**
      *  This is an alternative search mechanism to work around a problem with
-     *  HAPI FHIR, which does support $expand with both url and filter.
+     *  HAPI FHIR, which does not support $expand with both url and filter.
      * @param item an item on the form
      * @param fieldVal the value on which to filter the ValueSet
      * @param count the maximum count to return
@@ -2555,7 +2555,7 @@
           var valueSetUri = item.answerValueSet;
           // See if there is a terminology server in this or a parent item.
           var terminologyServer = item.terminologyServer;
-          var parent = item.parent;
+          var parent = item._parentItem;
           while (!terminologyServer && parent) {
             terminologyServer = parent.terminologyServer;
             parent = parent._parentItem;
