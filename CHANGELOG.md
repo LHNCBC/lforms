@@ -11,6 +11,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Modified a test Questionnaire, test/data/R4/ussg-fhp.json, to contain examples
   of this new support.
+### Fixed
+- An issue that prevented observationLinkPeriod from working on fields that were
+  not top-level.
 
 ## [17.2.4] 2019-07-19
 ### Fixed
