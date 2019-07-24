@@ -2,7 +2,12 @@ var tp = require('./lforms_testpage.po.js');
 
 function waitForDisplayed(ele) {
   browser.wait(function() {
-    return ele.isDisplayed();
+    return ele.isDisplayed().then(null, function(err) {
+      // Probably a stale element reference.  Get a new promise.
+      console.log("Got error on isDisplayed(); refreshing element promise");
+      ele = element(ele.locator());
+      return ele.isDisplayed();
+    });
   }, tp.WAIT_TIMEOUT_1);
 }
 
