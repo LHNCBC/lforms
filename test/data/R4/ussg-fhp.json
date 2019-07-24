@@ -636,7 +636,7 @@
                 },
                 {
                   "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
-                  "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R3"
+                  "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
                 }
               ],
               "required": false,
@@ -650,7 +650,7 @@
               ],
               "text": "History of diseases",
               "type": "choice",
-              "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/conditions"
+              "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
             },
             {
               "extension": [
