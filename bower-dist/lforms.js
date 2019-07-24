@@ -4318,7 +4318,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
 
           var _loop2 = function _loop2() {
-            var item = _this2.items[i];
+            var item = _this2.itemList[i];
 
             if (item._obsLinkPeriodExt) {
               duration = item._obsLinkPeriodExt.valueDuration; // optional
@@ -4380,7 +4380,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             }
           };
 
-          for (var i = 0, len = this.items.length; i < len; ++i) {
+          for (var i = 0, len = this.itemList.length; i < len; ++i) {
             var duration;
             var itemCodeSystem;
             var fhirjs;
@@ -6429,7 +6429,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
     /**
      *  This is an alternative search mechanism to work around a problem with
-     *  HAPI FHIR, which does support $expand with both url and filter.
+     *  HAPI FHIR, which does not support $expand with both url and filter.
      * @param item an item on the form
      * @param fieldVal the value on which to filter the ValueSet
      * @param count the maximum count to return
@@ -6517,7 +6517,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var valueSetUri = item.answerValueSet; // See if there is a terminology server in this or a parent item.
 
           var terminologyServer = item.terminologyServer;
-          var parent = item.parent;
+          var parent = item._parentItem;
 
           while (!terminologyServer && parent) {
             terminologyServer = parent.terminologyServer;

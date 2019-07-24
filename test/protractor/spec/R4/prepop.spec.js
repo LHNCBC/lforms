@@ -96,6 +96,18 @@ describe('Form pre-population', function() {
           expect(unitField.getAttribute('value')).toBe('kg');
         });
 
+        it('should populate dobservationLinkPeriod fields that are not top-level', function() {
+          //tp.openBaseTestPage();
+          //setServerFHIRContext(serverFHIRNum);
+          tp.loadFromTestData('ussg-fhp.json', 'R4');
+          var weightField = element(by.id('/54126-8/29463-7/1/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
+          browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
+            return val == '95'
+          })}, 1000);
+          expect(weightField.getAttribute('value')).toBe('95');
+        });
+
         it('should not load values from observationLinkPeriod if prepopulation is disabled', function() {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(false);

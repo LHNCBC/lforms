@@ -391,8 +391,8 @@
           var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-          for (var i=0, len=this.items.length; i<len; ++i) {
-            let item = this.items[i];
+          for (var i=0, len=this.itemList.length; i<len; ++i) {
+            let item = this.itemList[i];
             if (item._obsLinkPeriodExt) {
               var duration = item._obsLinkPeriodExt.valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem;

@@ -358,6 +358,15 @@
                 "system": "http://unitsofmeasure.org",
                 "code": "[in_i]"
               }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
+              }
             }
           ],
           "required": false,
@@ -379,6 +388,15 @@
               "valueCoding": {
                 "system": "http://unitsofmeasure.org",
                 "code": "kg"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
               }
             }
           ],
