@@ -582,7 +582,7 @@ LForms.Util = {
   /**
    * Get a formatted date string from a date object
    * for example: "2016-10-31T14:42:12Z"
-   * @param objDate a date object
+   * @param objDate a date object, or a valid string representation of date.
    * @returns a formatted date string
    */
   dateToDTMString: function(objDate) {
