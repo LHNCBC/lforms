@@ -2,9 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.5] 2019-07-26
+### Fixed
+- Fixed a bug that multiple repeating items are added when the "add" button is clicked, 
+  if the form with user data that contains multiple repeating items is loaded.
+  
 ## [17.2.4] 2019-07-19
 ### Fixed
-- Fixed bug in parsing ISO date and time string.
+- Fixed a bug in parsing ISO date and time string.
 
 ## [17.2.3] 2019-07-09
 ### Fixed

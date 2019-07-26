@@ -143,5 +143,25 @@ describe('load saved user data', function() {
     expect(ff.multiAnswers.get(6).getText()).toBe('×User created answer');
   });
 
+  it('adding a repeating section that has repeating sub items with user data should show just show one repeating item', function() {
+
+    var addSectionButton = element(by.id("add-/rp-q2/2")),
+        section3Label = element(by.id("label-/rp-q2/3")),
+        section31Label = element(by.id("label-/rp-q2/rp-q4/3/1")),
+        item31 = element(by.id("/rp-q2/rp-q3/3/1")),
+        item311 = element(by.id("/rp-q2/rp-q4/rp-q5/3/1/1")),
+        item312 = element(by.id("/rp-q2/rp-q4/rp-q5/3/1/2"));
+
+    addSectionButton.click();
+
+    expect(section3Label.isDisplayed()).toBe(true);
+    expect(section31Label.isDisplayed()).toBe(true);
+    expect(item31.isDisplayed()).toBe(true);
+    expect(item31.getAttribute('value')).toBe('');
+    expect(item311.isDisplayed()).toBe(true);
+    expect(item311.getAttribute('value')).toBe('');
+    expect(item312.isPresent()).toBe(false);
+
+  });
 
 });

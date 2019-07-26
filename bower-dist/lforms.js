@@ -7716,7 +7716,7 @@ var LForms = __webpack_require__(2);
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
 
-  $scope.debug = false;
+  $scope.debug = true;
   $scope.hasUnused = false;
   $scope.repeatingSectionStatus = {};
   $scope.validationInitialShowTime = LF_CONSTANTS.VALIDATION_MESSAGE_INITIAL_SHOW_TIME; // Provide blank image to satisfy img tag. Bower packaging forces us to
@@ -12521,12 +12521,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           this._setTreeNodes(item.items, item);
         } // keep a copy of the repeatable items, only for the first of the same repeating items
         // before the parentItem is added to avoid circular reference that make the angular.copy really slow
+        // Note: this must be processed after its sub items are processed.
 
 
         if (item._questionRepeatable && item._id === 1) {
           var itemRepeatable = angular.copy(item); // remove user data
 
-          this._removeUserData(itemRepeatable);
+          this._removeUserDataAndRepeatingSubItems(itemRepeatable);
 
           this._repeatableItems[item._codePath] = itemRepeatable;
         } // set a reference to its parent item
@@ -12539,17 +12540,25 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Remove user data on an item or on all items in a section
+     * Remove user data and the repeating sub items (except for the first one)
+     * on an item or on all its sub items
      * @param item an item
      * @private
      */
-    _removeUserData: function _removeUserData(item) {
+    _removeUserDataAndRepeatingSubItems: function _removeUserDataAndRepeatingSubItems(item) {
       item.value = null;
       item.unit = null;
 
       if (item.items && item.items.length > 0) {
-        for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-          this._removeUserData(item.items[i]);
+        for (var i = 0; i < item.items.length; i++) {
+          var subItem = item.items[i];
+
+          if (subItem._questionRepeatable && subItem._id != 1) {
+            item.items.splice(i, 1);
+            i--;
+          } else {
+            this._removeUserDataAndRepeatingSubItems(subItem);
+          }
         }
       }
     },
@@ -12651,7 +12660,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           delete item._parentItem;
           var itemRepeatable = angular.copy(item); // remove user data
 
-          this._removeUserData(itemRepeatable);
+          this._removeUserDataAndRepeatingSubItems(itemRepeatable);
 
           this._repeatableItems[item._codePath] = itemRepeatable;
         }
