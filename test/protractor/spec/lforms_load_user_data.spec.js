@@ -143,7 +143,7 @@ describe('load saved user data', function() {
     expect(ff.multiAnswers.get(6).getText()).toBe('×User created answer');
   });
 
-  it('adding a repeating section that has repeating sub items with user data should show just show one repeating item', function() {
+  it('adding a repeating section that has repeating sub items with user data should show just one repeating item', function() {
 
     var addSectionButton = element(by.id("add-/rp-q2/2")),
         section3Label = element(by.id("label-/rp-q2/3")),
