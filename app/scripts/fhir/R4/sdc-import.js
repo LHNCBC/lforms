@@ -15,6 +15,7 @@ function addSDCImportFns(ns) {
 
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
 
 
   /**
@@ -111,6 +112,7 @@ function addSDCImportFns(ns) {
     self._processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     self._processExternallyDefined(targetItem, qItem);
+    self._processTerminologyServer(targetItem, qItem);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self._processCopiedItemExtensions(targetItem, qItem);
 
@@ -294,6 +296,21 @@ function addSDCImportFns(ns) {
 
 
   /**
+   *  Processes the terminology server setting, if any.
+   *
+   * @param lfItem - LForms item object to assign externallyDefined
+   * @param qItem - Questionnaire item object
+   * @private
+   */
+  self._processTerminologyServer = function (lfItem, qItem) {
+    var tServer = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtTerminologyServer);
+    if (tServer && tServer.valueUrl) {
+      lfItem.terminologyServer = tServer.valueUrl;
+    }
+  };
+
+
+  /**
    * Parse questionnaire item for "hidden" extension
    *
    * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
@@ -352,11 +369,14 @@ function addSDCImportFns(ns) {
         lfItem.answers.push(answer);
       }
     }
-    else if(qItem.answerValueSet && containedVS) {
-      var vs = containedVS[qItem.answerValueSet];
-      if(vs) {
+    else if (qItem.answerValueSet) {
+      if (containedVS)
+        var vs = containedVS[qItem.answerValueSet];
+      if(vs) { // contained
         lfItem.answers = vs.answers;
       }
+      else
+        lfItem.answerValueSet = qItem.answerValueSet; // a URI for a ValueSet
     }
   };
 

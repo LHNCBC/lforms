@@ -25,32 +25,33 @@ describe('guessFHIRVersion', function() {
 
 describe('_fhirVersionToRelease', function() {
   it('should correctly convert FHIR version number strings to FHIR releases', function() {
-    assert.equal('STU3', LForms.Util._fhirVersionToRelease('3.0.0'));
-    assert.equal('STU3', LForms.Util._fhirVersionToRelease('3.0.1'));
-    assert.equal('STU3', LForms.Util._fhirVersionToRelease('3.0'));
-    assert.equal('R4', LForms.Util._fhirVersionToRelease('3.1.0'));
-    assert.equal('R4', LForms.Util._fhirVersionToRelease('4.0.0'));
-    assert.equal('R4', LForms.Util._fhirVersionToRelease('4.0.1'));
-    assert.equal('R4', LForms.Util._fhirVersionToRelease('4.0'));
+    assert.equal(LForms.Util._fhirVersionToRelease('3.0.0'), 'STU3');
+    assert.equal(LForms.Util._fhirVersionToRelease('3.0.1'), 'STU3');
+    assert.equal(LForms.Util._fhirVersionToRelease('3.0'), 'STU3');
+    assert.equal(LForms.Util._fhirVersionToRelease('3.1.0'), 'R4');
+    assert.equal(LForms.Util._fhirVersionToRelease('4.0.0'), 'R4');
+    assert.equal(LForms.Util._fhirVersionToRelease('4.0.1'), 'R4');
+    assert.equal(LForms.Util._fhirVersionToRelease('4.0'), 'R4');
 
   });
 
   it('should return the argument if the version number cannot be mapped', function () {
-    assert.equal('abc', LForms.Util._fhirVersionToRelease('abc'));
-    assert.equal('0.1.2', LForms.Util._fhirVersionToRelease('0.1.2'));
+    assert.equal(LForms.Util._fhirVersionToRelease('abc'), 'abc');
+    assert.equal(LForms.Util._fhirVersionToRelease('0.1.2'), '0.1.2');
   });
 });
 
 describe('detectFHIRVersion', function() {
-  it('should correctly detect FHIR/SDC version from FHIR resource', function() {
+  it('should correctly detect FHIR/SDC version from FHIR resource', function(done) {
     $.get('/test/data/R4/phq9.json', function(q) {
-      assert.equal('R4', LForms.Util.detectFHIRVersion(q));
-    });
-    $.get('/test/data/R4/ussg-fhp.json', function(q) {
-      assert.equal(undefined, LForms.Util.detectFHIRVersion(q));
-    });
-    $.get('/test/data/STU3/weightHeightQuestionnaire.json', function(q) {
-      assert.equal('STU3', LForms.Util.detectFHIRVersion(q));
+      assert.equal(LForms.Util.detectFHIRVersion(q), 'R4');
+      $.get('/test/data/R4/variable-scope-test.json', function(q) {
+        assert.equal(LForms.Util.detectFHIRVersion(q), undefined);
+        $.get('/test/data/STU3/weightHeightQuestionnaire.json', function(q) {
+          assert.equal(LForms.Util.detectFHIRVersion(q), 'STU3');
+          done();
+        });
+      });
     });
   })
 });

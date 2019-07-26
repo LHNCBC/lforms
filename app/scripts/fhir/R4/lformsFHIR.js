@@ -19171,12 +19171,14 @@ var self = {
     } // an extension for the search url of the auto-complete field.
 
 
-    if (item.externallyDefined) {
-      this._handleExternallyDefined(targetItem, item);
-    } // option, for answer list
-    else if (item.answers) {
-        targetItem.answerOption = this._handleAnswers(item, noExtensions);
-      } // initialValue, for default values
+    this._handleExternallyDefined(targetItem, item);
+
+    this._handleTerminologyServer(targetItem, item); // option, for answer list
+
+
+    if (item.answers) {
+      targetItem.answerOption = this._handleAnswers(item, noExtensions);
+    } else if (item.answerValueSet) targetItem.answerValueSet = item.answerValueSet; // initialValue, for default values
 
 
     this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Process units after handling initial values.
@@ -19403,6 +19405,22 @@ var self = {
       targetItem.extension.push({
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
         "valueUri": item.externallyDefined
+      });
+    }
+  },
+
+  /**
+   * Process an item's terminology server setting.
+   * @param targetItem a QuestionnaireResponse object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  _handleTerminologyServer: function _handleTerminologyServer(targetItem, item) {
+    if (item.terminologyServer) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+        "valueUrl": item.terminologyServer
       });
     }
   },
@@ -19994,7 +20012,7 @@ function addCommonSDCExportFns(ns) {
 
       if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
         // search field
-        if (item.externallyDefined) {
+        if (item.externallyDefined || item.answerValueSet) {
           itemControlType = "autocomplete";
           itemControlDisplay = "Auto-complete";
         } // prefetch list
@@ -20393,6 +20411,7 @@ function addSDCImportFns(ns) {
 
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
   /**
    * Parse form level fields from FHIR questionnaire and assign to LForms object.
    *
@@ -20505,6 +20524,8 @@ function addSDCImportFns(ns) {
     self._processDefaultAnswer(targetItem, qItem);
 
     self._processExternallyDefined(targetItem, qItem);
+
+    self._processTerminologyServer(targetItem, qItem);
 
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
 
@@ -20705,6 +20726,22 @@ function addSDCImportFns(ns) {
     }
   };
   /**
+   *  Processes the terminology server setting, if any.
+   *
+   * @param lfItem - LForms item object to assign externallyDefined
+   * @param qItem - Questionnaire item object
+   * @private
+   */
+
+
+  self._processTerminologyServer = function (lfItem, qItem) {
+    var tServer = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtTerminologyServer);
+
+    if (tServer && tServer.valueUrl) {
+      lfItem.terminologyServer = tServer.valueUrl;
+    }
+  };
+  /**
    * Parse questionnaire item for "hidden" extension
    *
    * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
@@ -20774,12 +20811,14 @@ function addSDCImportFns(ns) {
 
         lfItem.answers.push(answer);
       }
-    } else if (qItem.answerValueSet && containedVS) {
-      var vs = containedVS[qItem.answerValueSet];
+    } else if (qItem.answerValueSet) {
+      if (containedVS) var vs = containedVS[qItem.answerValueSet];
 
       if (vs) {
+        // contained
         lfItem.answers = vs.answers;
-      }
+      } else lfItem.answerValueSet = qItem.answerValueSet; // a URI for a ValueSet
+
     }
   };
   /**
@@ -21768,6 +21807,8 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
 
         case 'autocomplete':
+          lfItem.isSearchAutocomplete = true;
+
         case 'drop-down':
           displayControl.answerLayout = {
             type: 'COMBO_BOX'

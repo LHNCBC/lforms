@@ -5,7 +5,7 @@
   "version": "2.56",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire"
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
     ]
   },
   "title": "US Surgeon General family health portrait",
@@ -358,6 +358,15 @@
                 "system": "http://unitsofmeasure.org",
                 "code": "[in_i]"
               }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
+              }
             }
           ],
           "required": false,
@@ -370,7 +379,7 @@
             }
           ],
           "text": "Body height",
-          "type": "string"
+          "type": "decimal"
         },
         {
           "extension": [
@@ -379,6 +388,15 @@
               "valueCoding": {
                 "system": "http://unitsofmeasure.org",
                 "code": "kg"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
               }
             }
           ],
@@ -392,7 +410,7 @@
             }
           ],
           "text": "Weight",
-          "type": "string"
+          "type": "decimal"
         },
         {
           "extension": [
@@ -566,11 +584,11 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "drop-down",
-                    "display": "Drop down"
+                    "code": "autocomplete",
+                    "display": "Auto-complete"
                   }
                 ],
-                "text": "Drop down"
+                "text": "Auto-complete"
               }
             }
           ],
@@ -585,92 +603,7 @@
           ],
           "text": "Ethnicity",
           "type": "choice",
-          "answerOption": [
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA6214-6",
-                "display": "Hispanic or Latino"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10599-1",
-                "display": "-- Central American"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10600-7",
-                "display": "-- Cuban"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10601-5",
-                "display": "-- Dominican(Republic)"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10602-3",
-                "display": "-- Mexican"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10605-6",
-                "display": "-- Puerto Rican"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10606-4",
-                "display": "-- South American"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10604-9",
-                "display": "-- Other Latin American"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10603-1",
-                "display": "-- Other Hispanic/Latino/Spanish"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10597-5",
-                "display": "Non-Hispanic or Latino"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10598-3",
-                "display": "Ashkenazi Jewish"
-              }
-            },
-            {
-              "valueCoding": {
-                "system": "http://loinc.org",
-                "code": "LA10607-2",
-                "display": "Unknown/No answer"
-              }
-            }
-          ]
+          "answerValueSet": "http://terminology.hl7.org/ValueSet/v3-Ethnicity"
         },
         {
           "required": false,
@@ -702,8 +635,8 @@
                   }
                 },
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
-                  "valueUri": "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search"
+                  "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
+                  "valueUrl": "https://clinicaltables.nlm.nih.gov/fhir/R4"
                 }
               ],
               "required": false,
@@ -716,7 +649,8 @@
                 }
               ],
               "text": "History of diseases",
-              "type": "choice"
+              "type": "choice",
+              "answerValueSet": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
             },
             {
               "extension": [
@@ -1330,7 +1264,8 @@
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
                   "valueCoding": {
                     "system": "http://unitsofmeasure.org",
-                    "code": "kg"
+                    "code": "a",
+                    "display": "year"
                   }
                 }
               ],

@@ -1,4 +1,5 @@
 let util = require('./util.js');
+const elementFactory = util.elementFactory;
 
 var TestPage = function() {
 
@@ -75,6 +76,7 @@ var TestPage = function() {
     nameID: '/54126-8/54125-0/1/1', // string
     gender: element(by.id('/54126-8/54131-8/1/1')), // answer
     race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers
+    ethnicity: elementFactory('/54126-8/54133-4/1/1'),
     dob: element(by.id('/54126-8/21112-8/1/1')), // for empty value comparison
     height: element(by.id('/54126-8/8302-2/1/1')), // number
     weight: element(by.id('/54126-8/29463-7/1/1')), // number
