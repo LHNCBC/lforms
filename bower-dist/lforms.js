@@ -9776,6 +9776,10 @@ LForms.Util = {
    * @returns a formatted date string
    */
   dateToDTMString: function dateToDTMString(objDate) {
+    if (typeof objDate === 'string') {
+      objDate = LForms.Util.stringToDate(objDate, true);
+    }
+
     return objDate.toISOString();
   },
 

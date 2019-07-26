@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.2.5] 2019-07-26
+### Fixed
+- Fixed bug in LForms.Util.dateToDTMString()
+
 ## [17.2.4] 2019-07-19
 ### Fixed
 - Fixed bug in parsing ISO date and time string.
