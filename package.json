@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "17.2.5",
+  "version": "17.3.1",
   "main": "app/scripts/index.js",
   "files": [
     "app"
@@ -79,7 +79,7 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.standalone 3.141.59",
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update",
     "start": "grunt serve"
   }
 }

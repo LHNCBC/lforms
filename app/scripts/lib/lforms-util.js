@@ -319,6 +319,7 @@ LForms.Util = {
    */
   setFHIRContext: function(fhirContext) {
     LForms.fhirContext = fhirContext;
+    LForms.fhirCapabilities = {}; // our own flags about what the server can do
     delete LForms._serverFHIRReleaseID; // in case the version changed
   },
 
@@ -603,19 +604,19 @@ LForms.Util = {
     if(! strDate || (typeof strDate) != 'string') { // maybe already a date object.
       return strDate;
     }
-    
+
     if(strDate.trim() === 't') {
       return new Date();
     }
-    
+
     let m = moment(strDate, parseDateFormats, true);
     if(looseParsing && !m.isValid()) { // Make another attempt for loose parsing.
       m = moment(strDate);
     }
     return m.isValid() ? m.toDate() : null;
   },
-  
-  
+
+
   /**
    * Validate date object or date string. If string, check to see if it is in acceptable formats.
    * See stringToDate() for acceptable formats.
@@ -625,8 +626,8 @@ LForms.Util = {
   isValidDate: function(date) {
     return !!(LForms.Util.stringToDate(date));
   },
-  
-  
+
+
   /**
    * Format a date object with given format. Refer to momentjs documentation for
    * format specification.
@@ -638,8 +639,8 @@ LForms.Util = {
   formatDate: function(date, format) {
     return moment(date).format(format);
   },
-  
-  
+
+
   /**
    * Check if an item's value is empty, where the data has no meaningful use.
    * @param value the value to be tested
