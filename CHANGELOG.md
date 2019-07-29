@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.3.1] 2019-07-26
+### Fixed
+- Fixed bug in LForms.Util.dateToDTMString()
+
 ## [17.3.0] 2019-07-24
 ### Added
 - Support for FHIR Questionnaire items of itemControl type 'autocomplete'.
