@@ -190,6 +190,8 @@ var self = {
     else if (item.answers) {
       targetItem.option = this._handleAnswers(item, noExtensions);
     }
+    else if (item.answerValueSet)
+      targetItem.options = item.answerValueSet;
 
     // initialValue, for default values
     this._handleInitialValues(targetItem, item);

@@ -19168,7 +19168,7 @@ var self = {
     } // option, for answer list
     else if (item.answers) {
         targetItem.option = this._handleAnswers(item, noExtensions);
-      } // initialValue, for default values
+      } else if (item.answerValueSet) targetItem.options = item.answerValueSet; // initialValue, for default values
 
 
     this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Handle units after handling initial values.
@@ -19949,7 +19949,7 @@ function addCommonSDCExportFns(ns) {
 
       if (item.displayControl.answerLayout && (dataType === "CNE" || dataType === "CWE")) {
         // search field
-        if (item.externallyDefined) {
+        if (item.externallyDefined || item.answerValueSet) {
           itemControlType = "autocomplete";
           itemControlDisplay = "Auto-complete";
         } // prefetch list
@@ -20660,12 +20660,12 @@ function addSDCImportFns(ns) {
 
         lfItem.answers.push(answer);
       }
-    } else if (qItem.options && containedVS) {
-      var vs = containedVS[qItem.options.reference];
+    } else if (qItem.options) {
+      if (containedVS) var vs = containedVS[qItem.options.reference];
 
       if (vs) {
         lfItem.answers = vs.answers;
-      }
+      } else lfItem.answerValueSet = qItem.options;
     }
   }
   /**
@@ -21627,6 +21627,8 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
 
         case 'autocomplete':
+          lfItem.isSearchAutocomplete = true;
+
         case 'drop-down':
           displayControl.answerLayout = {
             type: 'COMBO_BOX'

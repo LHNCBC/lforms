@@ -3,7 +3,7 @@ exports.config = {
   port: port,
   baseUrl: 'http://localhost.nlm.nih.gov:' + (process.env.PORT || port),
 
-  //directConnect: true,
+  directConnect: true,
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
     'browserName': 'chrome',

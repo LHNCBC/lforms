@@ -118,6 +118,13 @@ describe('Util library', function() {
       assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190505');
       assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '230000-0400');
     });
+    
+    it('dateToDTMString()', function () {
+      var str = '2019-05-06T03:00:00.000Z';
+      var dt = LForms.Util.dateToDTMString(str);
+      assert.equal(dt, str);
+      assert.equal(LForms.Util.dateToDTMString(new Date(str)), str);
+    });
   })
 });
 

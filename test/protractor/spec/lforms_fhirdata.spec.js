@@ -572,8 +572,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             browser.waitForAngular();
 
             browser.wait(function() {
-              // return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
-              return element(by.id('/54126-8/54125-0/1/1')).isDisplayed();
+              try {
+                return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
+              }
+              catch (e) {
+                // Try to refresh the element
+                ff.name = element(ff.name.locator())
+              }
             }, tp.WAIT_TIMEOUT_1);
 
             expect(ff.name.getAttribute('value')).toBe("name 1");
@@ -736,3 +741,25 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     });
   })(fhirVersions[i]);
 }
+
+describe('USSG-FHP R4 Questionnare', function () {
+  beforeAll(function() {
+    tp.openBaseTestPage();
+    tp.setFHIRVersion('R4');
+    tp.loadFromTestData('ussg-fhp.json', 'R4');
+  });
+
+  it('should be able to search via ValueSet expansion', function () {
+    /* Can't really test this one, unless we set up a FHIR client.
+    var ethnicity = ff.ethnicity;
+    ethnicity().sendKeys('ar');
+    tp.Autocomp.helpers.waitForSearchResults();
+    tp.Autocomp.helpers.firstSearchRes.click();
+    expect(ethnicity().getAttribute('value')).toBe('Argentinean');
+    */
+    ff.disease.sendKeys('ar');
+    tp.Autocomp.helpers.waitForSearchResults();
+    tp.Autocomp.helpers.firstSearchRes.click();
+    expect(ff.disease.getAttribute('value')).toBe('Arm pain');
+  });
+});

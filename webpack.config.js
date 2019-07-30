@@ -30,7 +30,7 @@ function commonConfig() {
 }
 
 function makeConfigs(env) {
-  
+
   const MomentLocalesPlugin = require('moment-locales-webpack-plugin'); // Excludes momentjs locales.
   let configs = [];
   let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
@@ -62,7 +62,10 @@ function makeConfigs(env) {
     bowerConfig.output.library = 'LForms';
     bowerConfig.devtool = 'source-map';
     bowerConfig.mode = 'none';
-    bowerConfig.externals = {'moment': 'moment'};
+    bowerConfig.externals = {
+      'autocomplete-lhc': 'Def', // excludes autocomplete-lhc from build
+      'moment': 'moment'
+    };
     configs.push(bowerConfig);
 
     // The browser-ready dist package needs all of the dependencies in a single file

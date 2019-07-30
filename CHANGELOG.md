@@ -2,22 +2,39 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.2.5] 2019-07-26
+## [17.3.2] 2019-07-30
 ### Fixed
 - Fixed a bug that multiple repeating items are added when the "add" button is clicked, 
   if the form with user data that contains multiple repeating items is loaded.
   
+## [17.3.1] 2019-07-26
+### Fixed
+- Fixed bug in LForms.Util.dateToDTMString()
+
+## [17.3.0] 2019-07-24
+### Added
+- Support for FHIR Questionnaire items of itemControl type 'autocomplete'.
+- Support for the terminology-server extension that specifies the FHIR server
+  from which ValueSet expansions should be done.  (Currently, this assumes the
+  terminology server does not require a login.)
+### Changed
+- Modified a test Questionnaire, test/data/R4/ussg-fhp.json, to contain examples
+  of this new support.
+### Fixed
+- An issue that prevented observationLinkPeriod from working on fields that were
+  not top-level.
+
 ## [17.2.4] 2019-07-19
 ### Fixed
 - Fixed a bug in parsing ISO date and time string.
 
 ## [17.2.3] 2019-07-09
 ### Fixed
-- Fixed a bug that help instructions are not exported correctly in R4 Questionnaire. 
+- Fixed a bug that help instructions are not exported correctly in R4 Questionnaire.
 
 ## [17.2.2] 2019-07-05
 ### Changed
-- Removed unnecessary default code system value 
+- Removed unnecessary default code system value
 
 ## [17.2.1] 2019-07-03
 ### Changed
@@ -34,7 +51,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [17.1.2] 2019-06-28
 ### Fixed
 - Fixed missing form level properties in conversion of FHIR questionnaire to lforms.
-- Fixed missing item code list in conversion of FHIR questionnaire to lforms. 
+- Fixed missing item code list in conversion of FHIR questionnaire to lforms.
 
 ## [17.1.1] 2019-06-26
 ### Fixed

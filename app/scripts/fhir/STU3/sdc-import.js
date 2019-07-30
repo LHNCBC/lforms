@@ -275,11 +275,14 @@ function addSDCImportFns(ns) {
         lfItem.answers.push(answer);
       }
     }
-    else if(qItem.options && containedVS) {
-      var vs = containedVS[qItem.options.reference];
+    else if (qItem.options) {
+      if (containedVS)
+        var vs = containedVS[qItem.options.reference];
       if(vs) {
         lfItem.answers = vs.answers;
       }
+      else
+        lfItem.answerValueSet = qItem.options;
     }
   }
 

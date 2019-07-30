@@ -391,8 +391,8 @@
           var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
-          for (var i=0, len=this.items.length; i<len; ++i) {
-            let item = this.items[i];
+          for (var i=0, len=this.itemList.length; i<len; ++i) {
+            let item = this.itemList[i];
             if (item._obsLinkPeriodExt) {
               var duration = item._obsLinkPeriodExt.valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem;
@@ -2456,6 +2456,71 @@
     },
 
 
+
+    /**
+     *  Uses the FHIR client to search the given ValueSet for the string
+     *  fieldVal.
+     * @param valueSetID the ID of the ValueSet to search (expand)
+     * @param fieldVal the value on which to filter the ValueSet
+     * @param count the maximum count to return
+     * @return a Promise that will resolve to the ValueSet expansion.
+     */
+    _fhirClientSearchByValueSetID: function(valueSetID, fieldVal, count) {
+      var fhirClient = LForms.fhirContext.getFHIRAPI();
+      return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
+        query: {_format: 'application/json', count: count,
+        filter: fieldVal}}).then(function(response) {
+          return response.data;
+        });
+    },
+
+
+    /**
+     *  This is an alternative search mechanism to work around a problem with
+     *  HAPI FHIR, which does not support $expand with both url and filter.
+     * @param item an item on the form
+     * @param fieldVal the value on which to filter the ValueSet
+     * @param count the maximum count to return
+     * @return a Promise that will resolve to the ValueSet expansion.
+     */
+     _findValueSetIDAndSearch: function(item, fieldVal, count) {
+       // Fetch the ValueSet
+       var failMsg = "Could not retrieve the ValueSet definition for "+
+             item.answerValueSet;
+       var fhirClient = LForms.fhirContext.getFHIRAPI();
+       // Cache the lookup of ValueSet IDs, which should not change.  (A page
+       // reload will clear the cache.)
+       if (!LForms._valueSetUrlToID)
+         LForms._valueSetUrlToID = {}
+       var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
+       if (valueSetID) {
+         return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+       }
+       else {
+         var self = this;
+         return fhirClient.search({type: 'ValueSet',
+            query: {_format: 'application/json', url: item.answerValueSet,
+                    _total: 'accurate'}})
+           .then(function(response) {
+             var data = response.data;
+             if (data.total === 1) {
+               var valueSetID = data.entry[0].resource.id;
+               LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
+               return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+             }
+             else {
+               console.log(failMsg);
+               return Promise.reject(failMsg);
+             }
+           },
+           function(errorData) {
+             console.log(failMsg);
+             return Promise.reject(failMsg);
+           });
+      }
+    },
+
+
     /**
      * Update an item's autocomplete options
      * @param item an item on the form
@@ -2494,6 +2559,51 @@
             // Escape HTML tags to prevent them from rendering
             for (var i=0, len=h.length; i<len; ++i)
               h[i] = h[i].replace(/</g, '&lt;');
+          }
+        }
+        else if (item.isSearchAutocomplete && item.answerValueSet) {
+          var valueSetUri = item.answerValueSet;
+          // See if there is a terminology server in this or a parent item.
+          var terminologyServer = item.terminologyServer;
+          var parent = item._parentItem;
+          while (!terminologyServer && parent) {
+            terminologyServer = parent.terminologyServer;
+            parent = parent._parentItem;
+          }
+          if (terminologyServer) {
+            // TBD - We might need to log in to some terminology servers.  Not
+            // supporting that case yet.
+            // Skip the fhirContext, and go directly to the terminology server
+            // for the autocompletion requests.
+            options.url = terminologyServer + '/ValueSet/$expand?url='+
+              item.answerValueSet;
+            options.fhir = true;
+          }
+          else if (LForms.fhirContext) {
+            var self = this;
+            options.fhir = {search: function(fieldVal, count) {
+              if (LForms.fhirCapabilities.urlExpandBroken)
+                return self._findValueSetIDAndSearch(item, fieldVal, count);
+              else {
+                var fhirClient = LForms.fhirContext.getFHIRAPI();
+                return fhirClient.search({type: 'ValueSet/$expand',
+                  query: {_format: 'application/json', count: count,
+                          filter: fieldVal, url: item.answerValueSet}
+                }).then(function(successData) {
+                  return successData.data;
+                }, function (errorData) {
+                  LForms.fhirCapabilities.urlExpandBroken = true;
+                  // HAPI does not support (maybe just because of a bug) $expand
+                  // when both "url" and "filter" parameters are present.  In that
+                  // case, it says, ""ValueSet contains include criteria with no
+                  // system defined".
+                  //if (errorData.data.responseJSON.issue[0].diagnostics ==
+                  //  'ValueSet contains include criteria with no system defined') {
+                  // For now, just always try the alternative.
+                  return self._findValueSetIDAndSearch(item, fieldVal, count);
+                });
+              }
+            }};
           }
         }
         else {

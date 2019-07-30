@@ -349,6 +349,7 @@ function addCommonSDCImportFns(ns) {
         case 'Lookup': // backward-compatibility with old export
         case 'Combo-box': // backward-compatibility with old export
         case 'autocomplete':
+          lfItem.isSearchAutocomplete = true;
         case 'drop-down':
           displayControl.answerLayout = {type: 'COMBO_BOX'};
           break;

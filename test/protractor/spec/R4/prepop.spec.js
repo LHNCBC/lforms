@@ -3,6 +3,7 @@ var fhirVersion = 'R4'; // for questionnaire resources
 var po = require('../addFormToPageTest.po');
 var tp = require('../lforms_testpage.po.js');
 var mockFHIRContext = require('./fhir_context');
+var EC = protractor.ExpectedConditions;
 
 /**
  *  Sets up a mock server FHIR context.  This will also set the page to do
@@ -86,12 +87,25 @@ describe('Form pre-population', function() {
           setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
           browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
             return val == '95'
           })}, 1000);
           expect(weightField.getAttribute('value')).toBe('95');
           var unitField = element(by.id('unit_/29463-7/1'));
           expect(unitField.getAttribute('value')).toBe('kg');
+        });
+
+        it('should populate dobservationLinkPeriod fields that are not top-level', function() {
+          //tp.openBaseTestPage();
+          //setServerFHIRContext(serverFHIRNum);
+          tp.loadFromTestData('ussg-fhp.json', 'R4');
+          var weightField = element(by.id('/54126-8/29463-7/1/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
+          browser.wait(function() {return weightField.getAttribute('value').then(function(val) {
+            return val == '95'
+          })}, 1000);
+          expect(weightField.getAttribute('value')).toBe('95');
         });
 
         it('should not load values from observationLinkPeriod if prepopulation is disabled', function() {
