@@ -1,3 +1,27 @@
+/**
+ * Create link id using other than _codePath.
+ *
+ * @param lfItems
+ * @param codeList
+ */
+function createLinkId(lfItems, codeList) {
+  if(!lfItems || !lfItems.length > 0) {
+    return;
+  }
+
+  if(!codeList) {
+    codeList = [];
+  }
+  
+  lfItems.forEach(function(item){
+    codeList.push(item.questionCode);
+    item.linkId = codeList.join('_');
+    createLinkId(item.items, codeList);
+    codeList.pop();
+  });
+}
+
+
 // Tests for FHIR SDC library
 var fhirVersions = Object.keys(LForms.Util.FHIRSupport);
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
@@ -338,7 +362,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should convert FHTData to lforms', function () {
-            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
+            var fhtClone = angular.copy(FHTData);
+            createLinkId(fhtClone.items);
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, fhtClone);
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
             convertedLfData = new LForms.LFormsData(convertedLfData);
 
@@ -380,11 +406,20 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
             // Only skip logic 'value' works in STU3
-            assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, FHTData.items[0].items[4].skipLogic);
-            assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, FHTData.items[0].items[12].items[2].skipLogic);
+            var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
+  
+            assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, fhtClone.items[0].items[4].skipLogic);
+            assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, fhtClone.items[0].items[12].items[2].skipLogic);
+  
+            assert.deepEqual(reConvertedFhirQ.item[0].item[4].enableWhen, fhirQ.item[0].item[4].enableWhen);
+            assert.deepEqual(reConvertedFhirQ.item[0].item[12].item[2].enableWhen, fhirQ.item[0].item[12].item[2].enableWhen);
+  
             if(fhirVersion !== 'STU3') {
-              assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, FHTData.items[0].items[6].items[1].skipLogic);
-              assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, FHTData.items[0].items[6].items[2].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, fhtClone.items[0].items[6].items[1].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, fhtClone.items[0].items[6].items[2].skipLogic);
+  
+              assert.deepEqual(reConvertedFhirQ.item[0].item[6].item[1].enableWhen, fhirQ.item[0].item[6].item[1].enableWhen);
+              assert.deepEqual(reConvertedFhirQ.item[0].item[6].item[2].enableWhen, fhirQ.item[0].item[6].item[2].enableWhen);
             }
 
             assert.equal(convertedLfData.items[0].items[2].codingInstructions,
@@ -411,10 +446,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
 
             // TODO units[x].code is not supported.
-            assert.equal(convertedLfData.items[0].items[6].units.length, FHTData.items[0].items[6].units.length);
-            assert.equal(convertedLfData.items[0].items[6].units[0].default, FHTData.items[0].items[6].units[0].default);
-            assert.equal(convertedLfData.items[0].items[6].units[0].name, FHTData.items[0].items[6].units[0].name);
-            assert.equal(convertedLfData.items[0].items[6].units[1].name, FHTData.items[0].items[6].units[1].name);
+            assert.equal(convertedLfData.items[0].items[6].units.length, fhtClone.items[0].items[6].units.length);
+            assert.equal(convertedLfData.items[0].items[6].units[0].default, fhtClone.items[0].items[6].units[0].default);
+            assert.equal(convertedLfData.items[0].items[6].units[0].name, fhtClone.items[0].items[6].units[0].name);
+            assert.equal(convertedLfData.items[0].items[6].units[1].name, fhtClone.items[0].items[6].units[1].name);
 
             // Display control
             fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(displayControlsDemo));

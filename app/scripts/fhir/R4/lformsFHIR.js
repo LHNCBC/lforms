@@ -19796,7 +19796,7 @@ var self = {
         var sourceItem = source._getSkipLogicSourceItem(item, condition.source);
 
         var enableWhenRules = [{
-          "question": sourceItem._codePath
+          "question": sourceItem.linkId
         }]; // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
         // Attachment, Coding, Quantity, Reference(Resource)
@@ -20852,6 +20852,8 @@ function addSDCImportFns(ns) {
     var vals = [];
     qItem.initial.forEach(function (elem) {
       var answer = null;
+      elem = angular.copy(elem); // Use a clone to avoid changing the original
+
       var val = elem.valueCoding;
       if (val) val._type = 'Coding';else val = self._getFHIRValueWithPrefixKey(elem, /^value/);
       if (val) vals.push(val);
@@ -21751,7 +21753,8 @@ function addCommonSDCImportFns(ns) {
         var matchData = key.match(keyRegex);
 
         if (matchData) {
-          ret = obj[key];
+          ret = angular.copy(obj[key]); // Work with clone
+
           if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
           break;
         }

@@ -295,7 +295,7 @@ function addCommonSDCImportFns(ns) {
       for(var key in obj) {
         var matchData = key.match(keyRegex);
         if (matchData) {
-          ret = obj[key];
+          ret = angular.copy(obj[key]); // Work with clone
           if (typeof ret === 'object')
             ret._type = key.substring(matchData[0].length);
           break;
@@ -304,7 +304,7 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
-  }
+  };
 
 
   /**
