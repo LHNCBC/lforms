@@ -866,7 +866,7 @@ var allInOne =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": {'text': 'Answer 2'}, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
       {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
@@ -1380,7 +1380,7 @@ var formWithUserData =
       {"code": "c2", "text": "Answer 2", "other": null},
       {"code": "c3", "text": "Answer 3", "other": null},
       {"code": "c4", "text": "Other:", "other": true}],
-      "skipLogic": null, "editable": null, "defaultAnswer": 'Answer 2', "displayControl": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": {'text':'Answer 2'}, "displayControl": null, "calculationMethod": null, "items": null},
     // answer list, user selected value
     {"questionCode": "q6", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
       "value": {"code": "c2", "text": "Answer 2", "other": null, label: null, score: null},
@@ -1588,7 +1588,114 @@ var formWithUserData =
       unit: {name: "kgs"},
       units: [{name: "lbs", default: true},{name: "kgs"}],
       value: 456
-    }
+    },
+    // user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes
+    {
+      "questionCode": "cwe-checkbox-user-value",
+      "question": "CHECKBOX --CWE, with user typed value",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": [{"text": "user typed value"}]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer-code",
+      "question": "CHECKBOX --CWE, with user typed value and an answer by code",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": [{"text": "user typed value"}, {"code": "c1"}]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer-text",
+      "question": "CHECKBOX --CWE, with user typed value and an answer by text",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": [{"text": "user typed value"}, {"text": "Answer B"}]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer",
+      "question": "CHECKBOX --CWE, with user typed value and an answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": [{"text": "user typed value"}, {"code": "c3", "text": "Answer C"}]
+    },
+
+    {
+      "questionCode": "cwe-checkbox-default-answer",
+      "question": "CHECKBOX --CWE, with user typed default answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "defaultAnswer": [{"text": "user typed default answer"}]
+    },
+    {
+      "questionCode": "cwe-radio-user-value",
+      "question": "RADIO layout --CWE, with user typed value",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": {"text": "user typed value"}
+    },
+    {
+      "questionCode": "cwe-radio-default-answer",
+      "question": "RADIO layout --CWE, with user typed default answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "defaultAnswer": {"text": "user typed default answer"}
+    },
 
   ]};
 

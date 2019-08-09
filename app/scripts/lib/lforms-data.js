@@ -358,7 +358,7 @@
       // for skip logic, data controls and formulas
       this._setupSourceToTargetMap();
 
-      // run the all form controls
+      // run the form controls
       this._checkFormControls();
 
     },
@@ -977,34 +977,8 @@
         // one or more answer options as equal to the values.
         this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
-        if (item.answers) {
-          var vals = item.value || item.defaultAnswer;
-          if (vals) {
-            vals = angular.isArray(vals) ? vals : [vals];
-            var listVals = [];
-            for (var k=0, kLen=vals.length; k<kLen; ++k) {
-              var val = vals[k];
-              var valKey = val.label !== undefined && val.label !== null ? 'label' :
-                val.code !== undefined && val.code !== null ? 'code' : 'text';
-              // val should be a hash, but to preserve current behavior, a string is allowed.
-              var valValue = typeof val === 'string' ? val : val[valKey];
-              var found = false;
-              for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
-                var ans = item.answers[j];
-                if (valValue == ans[valKey]) {
-                  listVals.push(item._modifiedAnswers[j]);
-                  found = true;
-                }
-              }
-              // a saved value not in the list
-              if (item.value && !found) {
-                val._displayText = val.text;
-                listVals.push(val);
-              }
-            }
-            item.value = item._multipleAnswers ? listVals : listVals[0];
-          }
-        }
+        // reset item.value with modified answers if the item has a value (or an array of values)
+        this._resetItemValueWithModifiedAnswers(item)
 
         // normalize unit value if there is one, needed by calculationMethod
         if (item.unit && !item.unit.text) {
@@ -1364,6 +1338,8 @@
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
         var itemData = {};
+        // for user typed data of a CWE item, _answerOther is already in item.value as {text: _answerOther}
+        // for 'other' in answer that requires an extra text input, the user typed data is kept in item.valueOther
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
@@ -1378,7 +1354,6 @@
           if (!item.header) {
             if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
             if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
-            if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
           }
         }
         // otherwise include form definition data
@@ -1507,7 +1482,10 @@
               retValue = LForms.Util.dateToDTMString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
+              retValue = this._getObjectValue(value, true);
+              break;
             case this._CONSTANTS.DATA_TYPE.CWE:
+              // for CWE, it should handle the case where 'OTHER' is selected
               retValue = this._getObjectValue(value, true);
               break;
             case this._CONSTANTS.DATA_TYPE.BL:
@@ -2456,6 +2434,75 @@
     },
 
 
+    /**
+     * Reset item.value with modified answers if the item has a value (or an array of values)
+     * @param item the item for which it has an item.value and/or item.defaultAnswers
+     * @private
+     */
+    _resetItemValueWithModifiedAnswers: function(item) {
+
+      if (item._modifiedAnswers) {
+        // item.value has the priority over item.defaultAnswer
+        var userValues = item.value || item.defaultAnswer;
+        if (userValues) {
+          userValues = angular.isArray(userValues) ? userValues : [userValues];
+          var listVals = [];
+          for (var k=0, kLen=userValues.length; k<kLen; ++k) {
+            var userValue = userValues[k];
+            // // fieldKey is code, text, or label (code is unique if present. text and label are not required to be unique)
+            // var fieldKey = userValue.code !== undefined && userValue.code !== null ? 'code' :
+            //     userValue.text !== undefined && userValue.text !== null ? 'text' : 'label';
+            // // userValue should be a hash, but to preserve current behavior, a string is allowed.
+            // var fieldValue = typeof userValue === 'string' ? userValue : userValue[fieldKey];
+            var found = false;
+            for (var j=0, jLen=item._modifiedAnswers.length; !found && j<jLen; ++j) {
+              //var ans = item.answers[j];
+              if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j])) {
+              //if (fieldValue == ans[fieldKey]) {
+                listVals.push(item._modifiedAnswers[j]);
+                found = true;
+              }
+            }
+            // a saved value not in the list (default answer must be one of the answer items)
+            if (item.value && !found) {
+              userValue._displayText = userValue.text;
+              listVals.push(userValue);
+              // for radio button/checkbox display, an "Other" option is displayed
+              item._answerOther = userValue.text;
+              item._otherValueChecked = true;
+            }
+          }
+          item.value = item._multipleAnswers ? listVals : listVals[0];
+        }
+      }
+    },
+
+
+    /**
+     * Check if two answers can be treated as same
+     * @param answer an answer item that could have part of the attributes set
+     * @param completeAnswer an answer item that have the complete attributes set
+     * @private
+     */
+    _areTwoAnswersSame: function(answer, completeAnswer) {
+      // check code, text and label if they have the same code system
+      // (code is unique if present and in the same code system, text and label are not required to be unique)
+      var same = false;
+      // if no codeSystem or same codeSystem
+      if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswer.codeSystem) {
+        // check all fields in answer
+        same = true;
+        var fields = Object.keys(answer);
+        for (var i= 0, iLen=fields.length; i<iLen; i++) {
+          if (answer[fields[i]] !== completeAnswer[fields[i]]) {
+            same = false;
+            break;
+          }
+        }
+      }
+      return same;
+    },
+
 
     /**
      *  Uses the FHIR client to search the given ValueSet for the string
@@ -3028,19 +3075,16 @@
     needExtra: function(item) {
       var extra = false;
       if (item && item.value) {
-        if (Array.isArray(item.value)) {
-          jQuery.each(item.value, function(index, answer) {
-            if (answer.other) {
-              extra = true;
-              // break
-              return false;
-            }
-          });
-        }
-        else {
-          if (item.value.other) {
-            extra = true;
-          }
+        // NOT to support 'other' when multiple answers are allowed.
+        // if (Array.isArray(item.value)) {
+        //   jQuery.each(item.value, function(index, answer) {
+        //     if (answer.other) {
+        //       extra = true;
+        //     }
+        //   });
+        // }
+        if (!Array.isArray(item.value) && item.value.other) {
+          extra = true;
         }
       }
       return extra;

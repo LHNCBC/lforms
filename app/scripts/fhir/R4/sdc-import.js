@@ -410,7 +410,6 @@ function addSDCImportFns(ns) {
 
     var vals = [];
     qItem.initial.forEach(function(elem) {
-      var answer = null;
       var val = elem.valueCoding;
       if (val)
         val._type = 'Coding';

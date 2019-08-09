@@ -115,12 +115,12 @@
             <label>
               <input type="checkbox" ng-model="subItem._otherValueChecked"
                      id="{{subItem._elementId + '_other'}}"
-                     ng-click="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+                     ng-click="updateCheckboxListForOther(subItem, {'text':subitem._answerOther})">
             </label>
             <label>
-              <input type="text" ng-model="subItem.valueOther"
+              <input type="text" ng-model="subitem._answerOther"
                      id="{{subItem._elementId + '_otherValue'}}"
-                     ng-change="updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+                     ng-change="updateCheckboxListForOther(subItem, {'text':subitem._answerOther})">
             </label>
           </span>
           <!--for single answer-->
@@ -128,11 +128,11 @@
             <label>
               <input type="radio" id="{{subItem._elementId + '_other'}}" ng-model="subItem._otherValueChecked"
                      ng-value="true" name="{{subItem._elementId}}"
-                     ng-click="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+                     ng-click="updateRadioListForOther(subItem, {'text':subitem._answerOther})">
             </label>
             <label>
-              <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subItem.valueOther"
-                     ng-change="updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})">
+              <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subitem._answerOther"
+                     ng-change="updateRadioListForOther(subItem, {'text':subitem._answerOther})">
             </label>
           </span>
         </td>

@@ -469,10 +469,9 @@ var self = {
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
-      option.valueCoding = {
-          "code": answer.code,
-          "display": answer.text
-      };
+      option.valueCoding = {};
+      if (answer.code) option.valueCoding.code = answer.code;
+      if (answer.text) option.valueCoding.display = answer.text;
 
       if (answer.codeSystem) {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);

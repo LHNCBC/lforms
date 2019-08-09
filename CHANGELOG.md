@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.3.3] 2019-08-09
+### Fixed
+- Fixed a bug that on CWE items, user typed answers that is not in the answer list are 
+  not display in the "OTHER" fields, when answer list is displayed as radio buttons or 
+  checkboxes.
+  
 ## [17.3.2] 2019-07-30
 ### Fixed
 - Fixed a bug that multiple repeating items are added when the "add" button is clicked, 

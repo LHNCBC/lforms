@@ -164,4 +164,59 @@ describe('load saved user data', function() {
 
   });
 
+  it('should display user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes', function() {
+
+    var cwe1Other = element(by.id("/cwe-checkbox-user-value/1_other")),
+        cwe1OtherValue = element(by.id("/cwe-checkbox-user-value/1_otherValue")),
+
+        cwe2Ans1 = element(by.id("/cwe-checkbox-user-value-and-answer-code/1c1")),
+        cwe2Other = element(by.id("/cwe-checkbox-user-value-and-answer-code/1_other")),
+        cwe2OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer-code/1_otherValue")),
+
+        cwe3Ans2 = element(by.id("/cwe-checkbox-user-value-and-answer-text/1c2")),
+        cwe3Other = element(by.id("/cwe-checkbox-user-value-and-answer-text/1_other")),
+        cwe3OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer-text/1_otherValue")),
+
+        cwe4Ans3 = element(by.id("/cwe-checkbox-user-value-and-answer/1c3")),
+        cwe4Other = element(by.id("/cwe-checkbox-user-value-and-answer/1_other")),
+        cwe4OtherValue = element(by.id("/cwe-checkbox-user-value-and-answer/1_otherValue")),
+
+        cwe5Other = element(by.id("/cwe-checkbox-default-answer/1_other")),
+        cwe5OtherValue = element(by.id("/cwe-checkbox-default-answer/1_otherValue")),
+
+        cwe6Other = element(by.id("/cwe-radio-user-value/1_other")),
+        cwe6OtherValue = element(by.id("/cwe-radio-user-value/1_otherValue")),
+
+        cwe7Other = element(by.id("/cwe-radio-default-answer/1_other")),
+        cwe7OtherValue = element(by.id("/cwe-radio-default-answer/1_otherValue"));
+
+
+    // OTHER in checkbox display with the user value not in the answer list
+    expect(cwe1Other.isSelected()).toBe(true);
+    expect(cwe1OtherValue.getAttribute('value')).toBe('user typed value');
+    // OTHER and an answer by code,in checkbox display with the user value not in the answer list
+    expect(cwe2Ans1.isSelected()).toBe(true);
+    expect(cwe2Other.isSelected()).toBe(true);
+    expect(cwe2OtherValue.getAttribute('value')).toBe('user typed value');
+    // OTHER and an answer by text,in checkbox display with the user value not in the answer list
+    expect(cwe3Ans2.isSelected()).toBe(true);
+    expect(cwe3Other.isSelected()).toBe(true);
+    expect(cwe3OtherValue.getAttribute('value')).toBe('user typed value');
+    // OTHER and an answer by code and text,in checkbox display with the user value not in the answer list
+    expect(cwe4Ans3.isSelected()).toBe(true);
+    expect(cwe4Other.isSelected()).toBe(true);
+    expect(cwe4OtherValue.getAttribute('value')).toBe('user typed value');
+    // default answer is not in the answer list, checkbox display, not shown
+    expect(cwe5Other.isSelected()).not.toBe(true);
+    expect(cwe5OtherValue.isPresent()).toBe(false);
+    // OTHER, in radiobutton display with the user value not in the answer list
+    expect(cwe6Other.isSelected()).toBe(true);
+    expect(cwe6OtherValue.getAttribute('value')).toBe('user typed value');
+    // default answer is not in the answer list, radiobutton display, not shown
+    expect(cwe7Other.isSelected()).not.toBe(true);
+    expect(cwe7OtherValue.isPresent()).toBe(false);
+
+  });
+
+
 });

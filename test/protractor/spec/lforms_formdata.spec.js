@@ -325,7 +325,8 @@ describe('formdata: ', function() {
 
       // Also test specifying by answer text, to preserve the current behavior,
       // even though that is not in the LHC-Forms form specification.
-      expect(element(by.id('/ansTextDefault/1')).getAttribute('value')).toEqual('Blue');
+      // Update: It is on longer supported. expected to be '', insteadof "Blue"
+      expect(element(by.id('/ansTextDefault/1')).getAttribute('value')).toEqual('');
 
       // Also test the date field default in the templateOptions, to make sure
       // those are getting processed.

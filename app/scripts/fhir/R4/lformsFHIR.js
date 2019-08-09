@@ -19140,8 +19140,7 @@ var self = {
     if (item._obsLinkPeriodExt) targetItem.extension.push(item._obsLinkPeriodExt);
     if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
-    this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
-    // check restrictions
+    this._handleItemControl(targetItem, item); // check restrictions
 
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
@@ -19464,10 +19463,9 @@ var self = {
       // for LForms, all answers are Coding
 
 
-      option.valueCoding = {
-        "code": answer.code,
-        "display": answer.text
-      };
+      option.valueCoding = {};
+      if (answer.code) option.valueCoding.code = answer.code;
+      if (answer.text) option.valueCoding.display = answer.text;
 
       if (answer.codeSystem) {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
@@ -20851,7 +20849,6 @@ function addSDCImportFns(ns) {
 
     var vals = [];
     qItem.initial.forEach(function (elem) {
-      var answer = null;
       var val = elem.valueCoding;
       if (val) val._type = 'Coding';else val = self._getFHIRValueWithPrefixKey(elem, /^value/);
       if (val) vals.push(val);
