@@ -407,19 +407,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
             // Only skip logic 'value' works in STU3
             var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
+            assert.deepEqual(reConvertedFhirQ, fhirQ);
   
             assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, fhtClone.items[0].items[4].skipLogic);
             assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, fhtClone.items[0].items[12].items[2].skipLogic);
   
-            assert.deepEqual(reConvertedFhirQ.item[0].item[4].enableWhen, fhirQ.item[0].item[4].enableWhen);
-            assert.deepEqual(reConvertedFhirQ.item[0].item[12].item[2].enableWhen, fhirQ.item[0].item[12].item[2].enableWhen);
-  
             if(fhirVersion !== 'STU3') {
               assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, fhtClone.items[0].items[6].items[1].skipLogic);
               assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, fhtClone.items[0].items[6].items[2].skipLogic);
-  
-              assert.deepEqual(reConvertedFhirQ.item[0].item[6].item[1].enableWhen, fhirQ.item[0].item[6].item[1].enableWhen);
-              assert.deepEqual(reConvertedFhirQ.item[0].item[6].item[2].enableWhen, fhirQ.item[0].item[6].item[2].enableWhen);
             }
 
             assert.equal(convertedLfData.items[0].items[2].codingInstructions,
