@@ -367,7 +367,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, fhtClone);
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
             convertedLfData = new LForms.LFormsData(convertedLfData);
-
+            var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
+            assert.deepEqual(reConvertedFhirQ, fhirQ);
+  
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
             assert.equal(convertedLfData.codeSystem, 'LOINC');
@@ -406,12 +408,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // TODO - skip logic triggers for min/max inclusive/exclusive are not supported.
             // Only skip logic 'value' works in STU3
-            var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
-            assert.deepEqual(reConvertedFhirQ, fhirQ);
-  
             assert.deepEqual(convertedLfData.items[0].items[4].skipLogic, fhtClone.items[0].items[4].skipLogic);
             assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, fhtClone.items[0].items[12].items[2].skipLogic);
-  
             if(fhirVersion !== 'STU3') {
               assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, fhtClone.items[0].items[6].items[1].skipLogic);
               assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, fhtClone.items[0].items[6].items[2].skipLogic);
