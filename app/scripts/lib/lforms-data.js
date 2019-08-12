@@ -2436,7 +2436,7 @@
 
     /**
      * Reset item.value with modified answers if the item has a value (or an array of values)
-     * @param item the item for which it has an item.value and/or item.defaultAnswers
+     * @param item the item for which it has an item.value or item.defaultAnswers
      * @private
      */
     _resetItemValueWithModifiedAnswers: function(item) {
@@ -2449,16 +2449,9 @@
           var listVals = [];
           for (var k=0, kLen=userValues.length; k<kLen; ++k) {
             var userValue = userValues[k];
-            // // fieldKey is code, text, or label (code is unique if present. text and label are not required to be unique)
-            // var fieldKey = userValue.code !== undefined && userValue.code !== null ? 'code' :
-            //     userValue.text !== undefined && userValue.text !== null ? 'text' : 'label';
-            // // userValue should be a hash, but to preserve current behavior, a string is allowed.
-            // var fieldValue = typeof userValue === 'string' ? userValue : userValue[fieldKey];
             var found = false;
             for (var j=0, jLen=item._modifiedAnswers.length; !found && j<jLen; ++j) {
-              //var ans = item.answers[j];
               if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j])) {
-              //if (fieldValue == ans[fieldKey]) {
                 listVals.push(item._modifiedAnswers[j]);
                 found = true;
               }
@@ -2485,8 +2478,9 @@
      * @private
      */
     _areTwoAnswersSame: function(answer, completeAnswer) {
-      // check code, text and label if they have the same code system
-      // (code is unique if present and in the same code system, text and label are not required to be unique)
+      // check answers' attributes if they have the same code system
+      // code is unique if present and in the same code system; text, label and other attributes are not required
+      // to be unique
       var same = false;
       // if no codeSystem or same codeSystem
       if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswer.codeSystem) {
