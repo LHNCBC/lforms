@@ -21571,9 +21571,14 @@ function addCommonSDCImportFns(ns) {
         var matchData = key.match(keyRegex);
 
         if (matchData) {
-          ret = angular.copy(obj[key]); // Work with clone
+          ret = obj[key]; // Work with clone
 
-          if (_typeof(ret) === 'object') ret._type = key.substring(matchData[0].length);
+          if (ret && _typeof(ret) === 'object') {
+            ret = angular.copy(ret); // Work with clone
+
+            ret._type = key.substring(matchData[0].length);
+          }
+
           break;
         }
       }
