@@ -21753,7 +21753,7 @@ function addCommonSDCImportFns(ns) {
         var matchData = key.match(keyRegex);
 
         if (matchData) {
-          ret = obj[key]; // Work with clone
+          ret = obj[key];
 
           if (ret && _typeof(ret) === 'object') {
             ret = angular.copy(ret); // Work with clone
