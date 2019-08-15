@@ -923,7 +923,7 @@
         LForms.Util.initializeCodes(item);
 
         // set display text for the item
-        item._text = item.prefix && item.dataType !== "TITLE" ? item.prefix + " " + item.question : item.question;
+        item._text = item.prefix ? item.prefix + " " + item.question : item.question;
 
         // set default dataType
         if (item.header) {
