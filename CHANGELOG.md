@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.4.0] 2019-08-15
+### Added
+- Added support for 'prefix' in FHIR Questionnaire and in LForms.
+
 ## [17.3.3] 2019-08-09
 ### Fixed
 - Fixed a bug that on CWE items, user typed answers that is not in the answer list are 
