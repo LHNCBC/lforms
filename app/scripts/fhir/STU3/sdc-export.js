@@ -168,6 +168,11 @@ var self = {
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
+    // prefix
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    }
+
     // text
     targetItem.text = item.question;
 

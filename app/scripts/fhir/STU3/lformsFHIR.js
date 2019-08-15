@@ -19148,7 +19148,12 @@ var self = {
     } // linkId
 
 
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // text
+    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // prefix
+
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    } // text
+
 
     targetItem.text = item.question; // enableWhen
 
@@ -20435,7 +20440,10 @@ function addSDCImportFns(ns) {
 
 
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    var targetItem = {};
+    var targetItem = {}; // prefix
+
+    if (qItem.prefix) targetItem.prefix = qItem.prefix; // text
+
     targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
     self._processDataType(targetItem, qItem);

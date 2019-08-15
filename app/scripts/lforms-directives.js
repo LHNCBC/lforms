@@ -251,7 +251,7 @@
               ctrl.$setValidity('lf-required', valid3);
 
               for (var i=0, len=item._validationErrors.length; i<len; ++i)
-                scope.$parent.sendMsgToScreenReader('"'+item.question+'"'+item._validationErrors[i]);
+                scope.$parent.sendMsgToScreenReader('"'+item._text+'"'+item._validationErrors[i]);
 
               return valid1 && valid2 && valid3
             };
