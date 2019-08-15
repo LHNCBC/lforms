@@ -4872,7 +4872,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         LForms.Util.initializeCodes(item); // set display text for the item
 
-        item._text = item.prefix && item.dataType !== "TITLE" ? item.prefix + " " + item.question : item.question; // set default dataType
+        item._text = item.prefix ? item.prefix + " " + item.question : item.question; // set default dataType
 
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE) item.dataType = this._CONSTANTS.DATA_TYPE.SECTION;
