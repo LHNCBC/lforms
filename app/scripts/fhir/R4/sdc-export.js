@@ -197,10 +197,10 @@ var self = {
     // an extension for the search url of the auto-complete field.
     this._handleExternallyDefined(targetItem, item);
 
-    this._handleTerminologyServer(targetItem, item);
+    self._handleTerminologyServer(targetItem, item);
 
     // option, for answer list
-    if (item.answers) {
+    if (item.answers && !item.answerValueSet) {
       targetItem.answerOption = this._handleAnswers(item, noExtensions);
     }
     else if (item.answerValueSet)
@@ -431,23 +431,6 @@ var self = {
       targetItem.extension.push({
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
         "valueUri": item.externallyDefined
-      });
-    }
-  },
-
-
-  /**
-   * Process an item's terminology server setting.
-   * @param targetItem a QuestionnaireResponse object
-   * @param item an item in the LForms form object
-   * @returns {*}
-   * @private
-   */
-  _handleTerminologyServer: function(targetItem, item) {
-    if (item.terminologyServer) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/terminology-server",
-        "valueUrl": item.terminologyServer
       });
     }
   },

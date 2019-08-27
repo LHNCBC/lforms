@@ -38,6 +38,7 @@ function addSDCImportFns(ns) {
     }
   };
 
+
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
@@ -55,19 +56,12 @@ function addSDCImportFns(ns) {
       answersVS = {};
       questionnaire.contained.forEach(function(vs) {
         if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = {answers: []};
-          var theCodeSystem = '#placeholder#'; // the code system if all answers have the same code systems, or "null"
-          vs.expansion.contains.forEach(function (vsItem) {
-            var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
-            var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-              "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
-            if(ordExt) {
-              answer.score = ordExt.valueDecimal;
-            }
-            lfVS.answers.push(answer);
-          });
+          var answers = self.answersFromVS(vs);
+          if (!answers)
+            answers = []; // continuing with previous default; not sure if needed
 
           // support both id and url based lookup. STU3 reference is quite vague.
+          var lfVS = {answers: answers};
           if(vs.id !== undefined) {
             answersVS['#' + vs.id] = lfVS;
           }
@@ -108,6 +102,7 @@ function addSDCImportFns(ns) {
     _processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
+    self._processTerminologyServer(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
 
