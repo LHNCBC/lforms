@@ -6,11 +6,15 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.
 
-## [17.3.3] 2019-08-09
+## [17.3.4] 2019-08-09
 ### Fixed
 - Fixed a bug that on CWE items, user typed answers that is not in the answer list are 
   not display in the "OTHER" fields, when answer list is displayed as radio buttons or 
   checkboxes.
+  
+## [17.3.3] 2019-08-09
+### Fixed
+- Fixed a bug which was overwriting linkid with codepath in Questionnaire's item.enableWhen.question.
   
 ## [17.3.2] 2019-07-30
 ### Fixed

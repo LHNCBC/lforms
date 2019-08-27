@@ -765,7 +765,7 @@ var self = {
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
 
         var enableWhenRule = {
-          "question": sourceItem._codePath
+          "question": sourceItem.linkId
         };
         // dataTypes:
         // boolean, decimal, integer, date, dateTime, instant, time, string, uri,

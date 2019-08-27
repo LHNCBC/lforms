@@ -2482,8 +2482,6 @@
      */
     _areTwoAnswersSame: function(answer, completeAnswer) {
       // check answers' attributes if they have the same code system
-      // code is unique if present and in the same code system; text, label and other attributes are not required
-      // to be unique
       var same = false;
       // if no codeSystem or same codeSystem
       if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswer.codeSystem) {

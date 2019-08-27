@@ -414,6 +414,8 @@ function addSDCImportFns(ns) {
 
     var vals = [];
     qItem.initial.forEach(function(elem) {
+      var answer = null;
+      elem = angular.copy(elem); // Use a clone to avoid changing the original
       var val = elem.valueCoding;
       if (val)
         val._type = 'Coding';
