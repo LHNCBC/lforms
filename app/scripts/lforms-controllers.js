@@ -739,7 +739,7 @@ angular.module('lformsWidget')
             if (anyEmpty && item._showUnusedItemWarning) {
               if (!item._unusedItemWarning)
                 item._unusedItemWarning = 'Please enter info in the blank "' +
-                  item.question+'"';
+                  item._text+'"';
               $scope.sendMsgToScreenReader(item._unusedItemWarning);
             }
           }

@@ -337,6 +337,35 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should covert prefix of an item', function () {
+            var fhirData = {
+              title: 'test title',
+              name: 'test name',
+              version: '0.0.1',
+              resourceType: 'Questionnaire',
+              "meta": {
+                "profile": [
+                  "http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire"
+                ]
+              },
+              status: 'draft',
+              item: [{
+                text: 'item a',
+                linkId: '1',
+                type: 'string',
+                prefix: "A:"
+              },
+                {
+                  text: 'item b',
+                  linkId: '2',
+                  type: 'string'
+                }]
+            };
+            var out = fhir.SDC.convertQuestionnaireToLForms(fhirData);
+            assert.equal(out.items[0].prefix, "A:");
+            assert.equal(out.items[1].prefix, undefined);
+          });
+
           it('should convert FHTData to lforms', function () {
             var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, angular.copy(FHTData));
             var convertedLfData = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQ, fhirVersion);
@@ -660,6 +689,18 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             assert.equal(fhirQ.toString().match(/extension/), undefined);
 
+          });
+
+          it('should covert a prefix of an item', function () {
+            var item = {
+              "questionCode": "12345",
+              "prefix": "A:",
+              "question": "fill in weight",
+              "dataType": "ST"
+            };
+            var out = fhir.SDC._processItem(item, {});
+            assert.equal(out.prefix, "A:");
+            assert.equal(out.text, "fill in weight");
           });
 
           if(fhirVersion === 'STU3') {

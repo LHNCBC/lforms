@@ -93,6 +93,10 @@ function addSDCImportFns(ns) {
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
 
     var targetItem = {};
+    // prefix
+    if (qItem.prefix)
+      targetItem.prefix = qItem.prefix;
+    // text
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     self._processDataType(targetItem, qItem);

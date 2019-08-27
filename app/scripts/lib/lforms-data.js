@@ -700,7 +700,7 @@
     _setSkipLogicStatusValue: function(item, newStatus, noLog) {
       if (item._skipLogicStatus !== newStatus) {
         if (item._skipLogicStatus) {
-          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item.question : 'Showing ' + item.question;
+          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item._text : 'Showing ' + item._text;
           if (!noLog)
             this._actionLogs.push(msg);
         }
@@ -921,6 +921,9 @@
         // }
 
         LForms.Util.initializeCodes(item);
+
+        // set display text for the item
+        item._text = item.prefix ? item.prefix + " " + item.question : item.question;
 
         // set default dataType
         if (item.header) {
@@ -1621,7 +1624,7 @@
      *    headerItem._horizontalTableId : {
      *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
      *      tableEndIndex:   lastItemIndex,
-     *      columnHeaders:   [ { label: item.question, id: 'col' + item._elementId, displayControl: item.displayControl },
+     *      columnHeaders:   [ { label: item._text, id: 'col' + item._elementId, displayControl: item.displayControl },
      *                       ...],
      *      tableHeaders:    [headerItem1, headerItem2, ...]
      *      tableRows:       [{ header: headerItem1, cells : [rowItem11, rowItem12,...]},
@@ -1660,7 +1663,7 @@
 
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-              columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
+              columnHeaders.push({label: itemsInRow[j]._text, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
               // indicate the item is in a horizontal table
               itemsInRow[j]._inHorizontalTable = true;
             }

@@ -181,6 +181,11 @@ var self = {
     // text
     targetItem.text = item.question;
 
+    // prefix
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    }
+
     // enableWhen
     if (item.skipLogic) {
       this._handleSkipLogic(targetItem, item, source)

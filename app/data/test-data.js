@@ -1134,7 +1134,7 @@ var allInOne =
         }
       ],
       "items":[
-        {"questionCode": "colA", "question": "A ST", "dataType": "ST",
+        {"questionCode": "colA", "question": "A ST", "dataType": "ST", "prefix": "Pre. A:",
           "displayControl": {
             "colCSS": [{"name": "width", "value":"25%"},
                     {"name": "min-width", "value":"10%"}]
@@ -1238,6 +1238,14 @@ var allInOne =
         {"code": "c2", "text": "Answer 2", "other": null},
         {"code": "c3", "text": "Answer 3", "other": null},
         {"code": "c4", "text": "Other:", "other": true}]
+    },
+    // an item with prefix
+    {
+      "questionCode": "with_prefix",
+      "dataType": "ST",
+      "header": false,
+      "prefix": "Prefix A:",
+      "question": "Question display text"
     },
 
 
