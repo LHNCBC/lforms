@@ -7,6 +7,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Support for prefetched lists (FHIR item control type = 'dropdown') whose
   source comes from external FHIR ValueSets.
 
+## [17.3.3] 2019-08-09
+### Fixed
+- Fixed a bug which was overwriting linkid with codepath in Questionnaire's item.enableWhen.question.
+
 ## [17.3.2] 2019-07-30
 ### Fixed
 - Fixed a bug that multiple repeating items are added when the "add" button is clicked,

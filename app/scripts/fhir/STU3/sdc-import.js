@@ -306,7 +306,7 @@ function addSDCImportFns(ns) {
    */
   self._processDefaultAnswer = function (lfItem, qItem) {
 
-    var val = qItem.initialCoding;
+    var val = angular.copy(qItem.initialCoding);
     if (val)
       val._type = 'Coding';
     else
