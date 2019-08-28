@@ -2,11 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.4.0] 2019-08-28
+### Added
+- Support for prefetched lists (FHIR item control type = 'dropdown') whose
+  source comes from external FHIR ValueSets.
+
 ## [17.3.2] 2019-07-30
 ### Fixed
-- Fixed a bug that multiple repeating items are added when the "add" button is clicked, 
+- Fixed a bug that multiple repeating items are added when the "add" button is clicked,
   if the form with user data that contains multiple repeating items is loaded.
-  
+
 ## [17.3.1] 2019-07-26
 ### Fixed
 - Fixed bug in LForms.Util.dateToDTMString()
