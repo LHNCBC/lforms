@@ -584,8 +584,8 @@
                 "coding": [
                   {
                     "system": "http://hl7.org/fhir/questionnaire-item-control",
-                    "code": "autocomplete",
-                    "display": "Auto-complete"
+                    "code": "drop-down",
+                    "display": "Drop down"
                   }
                 ],
                 "text": "Auto-complete"
