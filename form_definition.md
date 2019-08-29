@@ -91,7 +91,7 @@ about the meaning of each key:
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
     * showColumnHeaders - a boolean that controls whether to show the header row
-      with the "Name", "Value", and "Unit" column labels.
+      with the "Name", "Value", and "Unit" column labels.  The default is true.
     * showQuestionCode - a boolean that controls whether to show question codes.
       The default is false.
     * showCodingInstruction - a boolean that controls whether to show coding
