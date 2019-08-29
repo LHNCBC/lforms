@@ -90,6 +90,8 @@ about the meaning of each key:
   'table' (default) is the only template supported. More supported templates would be added.
 * **templateOptions** - a hash of options for the template.  This can be
   omitted, but supported values are below.
+    * showColumnHeaders - a boolean that controls whether to show the header row
+      with the "Name", "Value", and "Unit" column labels.
     * showQuestionCode - a boolean that controls whether to show question codes.
       The default is false.
     * showCodingInstruction - a boolean that controls whether to show coding
@@ -197,7 +199,7 @@ about the meaning of each key:
         * code - (optional) an identifier for the list item.  This can be
           omitted if you do not need coded answers.
         * codeSystem - (optional) a code system for the answer's code. If not
-          present, the item's answerCodeSystem is used as the default code system.  
+          present, the item's answerCodeSystem is used as the default code system.
         * label - (optional) Some lists have a label for each list item, such as
           'a', 'b', etc.  This is an array of such labels, corresponding to the
           items in the "text" array.  When this is present, the automatic number
@@ -209,7 +211,7 @@ about the meaning of each key:
           which get summed into a total field.  See TOTALSCORE under <a
           href="#calculationMethod">calculationMethod</a> below for how to
           specify which field holds the total.
-    * answerCodeSystem - The default code system for the answer list 
+    * answerCodeSystem - The default code system for the answer list
       (specified either in "answers" or in "externallyDefined").
     * externallyDefined - List fields can be configured to obtain their lists
       from a URL as the user types.  This is usually used for larger lists for
