@@ -192,11 +192,13 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     }
     // option, for answer list
-    else if (item.answers) {
+    else if (item.answers && !item.answerValueSet) {
       targetItem.option = this._handleAnswers(item, noExtensions);
     }
     else if (item.answerValueSet)
       targetItem.options = item.answerValueSet;
+
+    self._handleTerminologyServer(targetItem, item);
 
     // initialValue, for default values
     this._handleInitialValues(targetItem, item);

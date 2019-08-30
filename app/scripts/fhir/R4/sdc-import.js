@@ -15,7 +15,6 @@ function addSDCImportFns(ns) {
 
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
-  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
 
 
   /**
@@ -66,17 +65,11 @@ function addSDCImportFns(ns) {
     if(questionnaire.contained && questionnaire.contained.length > 0) {
       answersVS = {};
       questionnaire.contained.forEach(function (vs) {
-        if(vs.resourceType === 'ValueSet' && vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-          var lfVS = answersVS[vs.url] = {answers: []};
-          vs.expansion.contains.forEach(function (vsItem) {
-            var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
-            var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-              "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
-            if(ordExt) {
-              answer.score = ordExt.valueDecimal;
-            }
-            lfVS.answers.push(answer);
-          });
+        if(vs.resourceType === 'ValueSet') {
+          var answers = self.answersFromVS(vs);
+          if (!answers)
+            answers = []; // continuing with previous default; not sure if needed
+          answersVS[vs.url] = {answers: answers};
         }
       });
     }
@@ -295,21 +288,6 @@ function addSDCImportFns(ns) {
     var externallyDefined = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlExternallyDefined);
     if (externallyDefined && externallyDefined.valueUri) {
       lfItem.externallyDefined = externallyDefined.valueUri;
-    }
-  };
-
-
-  /**
-   *  Processes the terminology server setting, if any.
-   *
-   * @param lfItem - LForms item object to assign externallyDefined
-   * @param qItem - Questionnaire item object
-   * @private
-   */
-  self._processTerminologyServer = function (lfItem, qItem) {
-    var tServer = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtTerminologyServer);
-    if (tServer && tServer.valueUrl) {
-      lfItem.terminologyServer = tServer.valueUrl;
     }
   };
 

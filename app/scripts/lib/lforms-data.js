@@ -1,6 +1,8 @@
+
 /**
  * LForms class for form definition data
  */
+
 (function() {
   "use strict";
 
@@ -227,13 +229,34 @@
      */
     _initializeFormFHIRData: function(data) {
       var lfData = this;
-      this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+    },
+
+
+    /**
+     *   Returns the object containing the FHIR support.  If this LFormsData
+     *   does not have fhirVersion set or if support for that version is not
+     *   loaded, then a support object for some FHIR version will be returned,
+     *   if any is loaded.  (In some cases, we do not care which version is
+     *   used.)  If no fhir support is loaded, then an exception will be thrown.
+     */
+    _getFHIRSupport: function() {
+      var rtn = this._fhir;
+      if (!rtn) {
+        var loadedVersions = Object.keys(LForms.FHIR);
+        if (loadedVersions.length > 0)
+          rtn = LForms.FHIR[loadedVersions[0]];
+        if (!rtn)
+          throw new Error('The LHC-Forms FHIR support file was not loaded.');
+        else
+          this._fhir = rtn;
+      }
+      return rtn;
     },
 
 
@@ -294,6 +317,13 @@
           }));
         }
       }
+
+      // answerValueSet (for prefetched lists)
+      // For this import, we don't actually care which version of FHIR;
+      // the implementation is common.  If either support file is loaded use
+      // that (for both the terminology server case and the FHIR server case).
+      var sdc = this._getFHIRSupport().SDC;
+      pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
 
       if (prepopulate)
         pendingPromises.push(this._requestLinkedObs());
@@ -2422,8 +2452,12 @@
 
           // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
-          if (Array.isArray(item.answers)) {
+          if (Array.isArray(item.answers))
             answers = item.answers;
+          else if (item._answerValueSetKey) {
+            var vsAnswers = LForms._valueSetAnswerCache[item._answerValueSetKey];
+            if (vsAnswers)
+              answers = vsAnswers;
           }
 
           // reset the modified answers (for the display text)
@@ -2622,20 +2656,14 @@
         }
         else if (item.isSearchAutocomplete && item.answerValueSet) {
           var valueSetUri = item.answerValueSet;
-          // See if there is a terminology server in this or a parent item.
-          var terminologyServer = item.terminologyServer;
-          var parent = item._parentItem;
-          while (!terminologyServer && parent) {
-            terminologyServer = parent.terminologyServer;
-            parent = parent._parentItem;
-          }
-          if (terminologyServer) {
+          // See if there is a terminology server for expanding this valueset
+          var expURL = this._getFHIRSupport().SDC._getExpansionURL(item);
+          if (expURL) {  // undefined unless there is a terminology server
             // TBD - We might need to log in to some terminology servers.  Not
             // supporting that case yet.
             // Skip the fhirContext, and go directly to the terminology server
             // for the autocompletion requests.
-            options.url = terminologyServer + '/ValueSet/$expand?url='+
-              item.answerValueSet;
+            options.url = expURL;
             options.fhir = true;
           }
           else if (LForms.fhirContext) {
@@ -2663,6 +2691,12 @@
                 });
               }
             }};
+          }
+          else {
+            throw new Error('Cannot properly initialize the list for field "'+
+              item.question+'" because it requires either a terminology '+
+              'server to be specified or LForms.Util.setFHIRContext(...) '+
+              'to have been called to provide access to a FHIR server.');
           }
         }
         else {

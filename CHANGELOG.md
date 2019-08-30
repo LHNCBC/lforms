@@ -2,25 +2,29 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.4.0] 2019-08-15
+<<<<<<< HEAD
+## [17.5.0] 2019-08-30
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.
-
-## [17.3.4] 2019-08-09
 ### Fixed
 - Fixed a bug that on CWE items, user typed answers that is not in the answer list are 
   not display in the "OTHER" fields, when answer list is displayed as radio buttons or 
   checkboxes.
   
+## [17.4.0] 2019-08-28
+### Added
+- Support for prefetched lists (FHIR item control type = 'dropdown') whose
+  source comes from external FHIR ValueSets.
+
 ## [17.3.3] 2019-08-09
 ### Fixed
 - Fixed a bug which was overwriting linkid with codepath in Questionnaire's item.enableWhen.question.
-  
+
 ## [17.3.2] 2019-07-30
 ### Fixed
-- Fixed a bug that multiple repeating items are added when the "add" button is clicked, 
+- Fixed a bug that multiple repeating items are added when the "add" button is clicked,
   if the form with user data that contains multiple repeating items is loaded.
-  
+
 ## [17.3.1] 2019-07-26
 ### Fixed
 - Fixed bug in LForms.Util.dateToDTMString()

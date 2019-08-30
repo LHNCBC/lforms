@@ -147,7 +147,7 @@ function addCommonSDCExportFns(ns) {
       if (item.displayControl.answerLayout &&
         (dataType === "CNE" || dataType === "CWE")) {
         // search field
-        if (item.externallyDefined || item.answerValueSet) {
+        if (item.externallyDefined || (item.answerValueSet && item.isSearchAutocomplete)) {
           itemControlType = "autocomplete";
           itemControlDisplay = "Auto-complete";
         }
@@ -206,6 +206,23 @@ function addCommonSDCExportFns(ns) {
       }
     }
   };
+
+
+  /**
+   * Process an item's terminology server setting.
+   * @param targetItem a QuestionnaireResponse object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleTerminologyServer = function(targetItem, item) {
+    if (item.terminologyServer) {
+      targetItem.extension.push({
+        "url": self.fhirExtTerminologyServer,
+        "valueUrl": item.terminologyServer
+      });
+    }
+  },
 
 
 

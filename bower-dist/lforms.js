@@ -89,9 +89,557 @@ var LForms =
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(1);
+module.exports = __webpack_require__(2);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Headers", function() { return Headers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Request", function() { return Request; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Response", function() { return Response; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DOMException", function() { return DOMException; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetch", function() { return fetch; });
+var support = {
+  searchParams: 'URLSearchParams' in self,
+  iterable: 'Symbol' in self && 'iterator' in Symbol,
+  blob: 'FileReader' in self && 'Blob' in self && function () {
+    try {
+      new Blob();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }(),
+  formData: 'FormData' in self,
+  arrayBuffer: 'ArrayBuffer' in self
+};
+
+function isDataView(obj) {
+  return obj && DataView.prototype.isPrototypeOf(obj);
+}
+
+if (support.arrayBuffer) {
+  var viewClasses = ['[object Int8Array]', '[object Uint8Array]', '[object Uint8ClampedArray]', '[object Int16Array]', '[object Uint16Array]', '[object Int32Array]', '[object Uint32Array]', '[object Float32Array]', '[object Float64Array]'];
+
+  var isArrayBufferView = ArrayBuffer.isView || function (obj) {
+    return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1;
+  };
+}
+
+function normalizeName(name) {
+  if (typeof name !== 'string') {
+    name = String(name);
+  }
+
+  if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name)) {
+    throw new TypeError('Invalid character in header field name');
+  }
+
+  return name.toLowerCase();
+}
+
+function normalizeValue(value) {
+  if (typeof value !== 'string') {
+    value = String(value);
+  }
+
+  return value;
+} // Build a destructive iterator for the value list
+
+
+function iteratorFor(items) {
+  var iterator = {
+    next: function next() {
+      var value = items.shift();
+      return {
+        done: value === undefined,
+        value: value
+      };
+    }
+  };
+
+  if (support.iterable) {
+    iterator[Symbol.iterator] = function () {
+      return iterator;
+    };
+  }
+
+  return iterator;
+}
+
+function Headers(headers) {
+  this.map = {};
+
+  if (headers instanceof Headers) {
+    headers.forEach(function (value, name) {
+      this.append(name, value);
+    }, this);
+  } else if (Array.isArray(headers)) {
+    headers.forEach(function (header) {
+      this.append(header[0], header[1]);
+    }, this);
+  } else if (headers) {
+    Object.getOwnPropertyNames(headers).forEach(function (name) {
+      this.append(name, headers[name]);
+    }, this);
+  }
+}
+
+Headers.prototype.append = function (name, value) {
+  name = normalizeName(name);
+  value = normalizeValue(value);
+  var oldValue = this.map[name];
+  this.map[name] = oldValue ? oldValue + ', ' + value : value;
+};
+
+Headers.prototype['delete'] = function (name) {
+  delete this.map[normalizeName(name)];
+};
+
+Headers.prototype.get = function (name) {
+  name = normalizeName(name);
+  return this.has(name) ? this.map[name] : null;
+};
+
+Headers.prototype.has = function (name) {
+  return this.map.hasOwnProperty(normalizeName(name));
+};
+
+Headers.prototype.set = function (name, value) {
+  this.map[normalizeName(name)] = normalizeValue(value);
+};
+
+Headers.prototype.forEach = function (callback, thisArg) {
+  for (var name in this.map) {
+    if (this.map.hasOwnProperty(name)) {
+      callback.call(thisArg, this.map[name], name, this);
+    }
+  }
+};
+
+Headers.prototype.keys = function () {
+  var items = [];
+  this.forEach(function (value, name) {
+    items.push(name);
+  });
+  return iteratorFor(items);
+};
+
+Headers.prototype.values = function () {
+  var items = [];
+  this.forEach(function (value) {
+    items.push(value);
+  });
+  return iteratorFor(items);
+};
+
+Headers.prototype.entries = function () {
+  var items = [];
+  this.forEach(function (value, name) {
+    items.push([name, value]);
+  });
+  return iteratorFor(items);
+};
+
+if (support.iterable) {
+  Headers.prototype[Symbol.iterator] = Headers.prototype.entries;
+}
+
+function consumed(body) {
+  if (body.bodyUsed) {
+    return Promise.reject(new TypeError('Already read'));
+  }
+
+  body.bodyUsed = true;
+}
+
+function fileReaderReady(reader) {
+  return new Promise(function (resolve, reject) {
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+
+    reader.onerror = function () {
+      reject(reader.error);
+    };
+  });
+}
+
+function readBlobAsArrayBuffer(blob) {
+  var reader = new FileReader();
+  var promise = fileReaderReady(reader);
+  reader.readAsArrayBuffer(blob);
+  return promise;
+}
+
+function readBlobAsText(blob) {
+  var reader = new FileReader();
+  var promise = fileReaderReady(reader);
+  reader.readAsText(blob);
+  return promise;
+}
+
+function readArrayBufferAsText(buf) {
+  var view = new Uint8Array(buf);
+  var chars = new Array(view.length);
+
+  for (var i = 0; i < view.length; i++) {
+    chars[i] = String.fromCharCode(view[i]);
+  }
+
+  return chars.join('');
+}
+
+function bufferClone(buf) {
+  if (buf.slice) {
+    return buf.slice(0);
+  } else {
+    var view = new Uint8Array(buf.byteLength);
+    view.set(new Uint8Array(buf));
+    return view.buffer;
+  }
+}
+
+function Body() {
+  this.bodyUsed = false;
+
+  this._initBody = function (body) {
+    this._bodyInit = body;
+
+    if (!body) {
+      this._bodyText = '';
+    } else if (typeof body === 'string') {
+      this._bodyText = body;
+    } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+      this._bodyBlob = body;
+    } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+      this._bodyFormData = body;
+    } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+      this._bodyText = body.toString();
+    } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+      this._bodyArrayBuffer = bufferClone(body.buffer); // IE 10-11 can't handle a DataView body.
+
+      this._bodyInit = new Blob([this._bodyArrayBuffer]);
+    } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+      this._bodyArrayBuffer = bufferClone(body);
+    } else {
+      this._bodyText = body = Object.prototype.toString.call(body);
+    }
+
+    if (!this.headers.get('content-type')) {
+      if (typeof body === 'string') {
+        this.headers.set('content-type', 'text/plain;charset=UTF-8');
+      } else if (this._bodyBlob && this._bodyBlob.type) {
+        this.headers.set('content-type', this._bodyBlob.type);
+      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+      }
+    }
+  };
+
+  if (support.blob) {
+    this.blob = function () {
+      var rejected = consumed(this);
+
+      if (rejected) {
+        return rejected;
+      }
+
+      if (this._bodyBlob) {
+        return Promise.resolve(this._bodyBlob);
+      } else if (this._bodyArrayBuffer) {
+        return Promise.resolve(new Blob([this._bodyArrayBuffer]));
+      } else if (this._bodyFormData) {
+        throw new Error('could not read FormData body as blob');
+      } else {
+        return Promise.resolve(new Blob([this._bodyText]));
+      }
+    };
+
+    this.arrayBuffer = function () {
+      if (this._bodyArrayBuffer) {
+        return consumed(this) || Promise.resolve(this._bodyArrayBuffer);
+      } else {
+        return this.blob().then(readBlobAsArrayBuffer);
+      }
+    };
+  }
+
+  this.text = function () {
+    var rejected = consumed(this);
+
+    if (rejected) {
+      return rejected;
+    }
+
+    if (this._bodyBlob) {
+      return readBlobAsText(this._bodyBlob);
+    } else if (this._bodyArrayBuffer) {
+      return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer));
+    } else if (this._bodyFormData) {
+      throw new Error('could not read FormData body as text');
+    } else {
+      return Promise.resolve(this._bodyText);
+    }
+  };
+
+  if (support.formData) {
+    this.formData = function () {
+      return this.text().then(decode);
+    };
+  }
+
+  this.json = function () {
+    return this.text().then(JSON.parse);
+  };
+
+  return this;
+} // HTTP methods whose capitalization should be normalized
+
+
+var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT'];
+
+function normalizeMethod(method) {
+  var upcased = method.toUpperCase();
+  return methods.indexOf(upcased) > -1 ? upcased : method;
+}
+
+function Request(input, options) {
+  options = options || {};
+  var body = options.body;
+
+  if (input instanceof Request) {
+    if (input.bodyUsed) {
+      throw new TypeError('Already read');
+    }
+
+    this.url = input.url;
+    this.credentials = input.credentials;
+
+    if (!options.headers) {
+      this.headers = new Headers(input.headers);
+    }
+
+    this.method = input.method;
+    this.mode = input.mode;
+    this.signal = input.signal;
+
+    if (!body && input._bodyInit != null) {
+      body = input._bodyInit;
+      input.bodyUsed = true;
+    }
+  } else {
+    this.url = String(input);
+  }
+
+  this.credentials = options.credentials || this.credentials || 'same-origin';
+
+  if (options.headers || !this.headers) {
+    this.headers = new Headers(options.headers);
+  }
+
+  this.method = normalizeMethod(options.method || this.method || 'GET');
+  this.mode = options.mode || this.mode || null;
+  this.signal = options.signal || this.signal;
+  this.referrer = null;
+
+  if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+    throw new TypeError('Body not allowed for GET or HEAD requests');
+  }
+
+  this._initBody(body);
+}
+
+Request.prototype.clone = function () {
+  return new Request(this, {
+    body: this._bodyInit
+  });
+};
+
+function decode(body) {
+  var form = new FormData();
+  body.trim().split('&').forEach(function (bytes) {
+    if (bytes) {
+      var split = bytes.split('=');
+      var name = split.shift().replace(/\+/g, ' ');
+      var value = split.join('=').replace(/\+/g, ' ');
+      form.append(decodeURIComponent(name), decodeURIComponent(value));
+    }
+  });
+  return form;
+}
+
+function parseHeaders(rawHeaders) {
+  var headers = new Headers(); // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+  // https://tools.ietf.org/html/rfc7230#section-3.2
+
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ');
+  preProcessedHeaders.split(/\r?\n/).forEach(function (line) {
+    var parts = line.split(':');
+    var key = parts.shift().trim();
+
+    if (key) {
+      var value = parts.join(':').trim();
+      headers.append(key, value);
+    }
+  });
+  return headers;
+}
+
+Body.call(Request.prototype);
+function Response(bodyInit, options) {
+  if (!options) {
+    options = {};
+  }
+
+  this.type = 'default';
+  this.status = options.status === undefined ? 200 : options.status;
+  this.ok = this.status >= 200 && this.status < 300;
+  this.statusText = 'statusText' in options ? options.statusText : 'OK';
+  this.headers = new Headers(options.headers);
+  this.url = options.url || '';
+
+  this._initBody(bodyInit);
+}
+Body.call(Response.prototype);
+
+Response.prototype.clone = function () {
+  return new Response(this._bodyInit, {
+    status: this.status,
+    statusText: this.statusText,
+    headers: new Headers(this.headers),
+    url: this.url
+  });
+};
+
+Response.error = function () {
+  var response = new Response(null, {
+    status: 0,
+    statusText: ''
+  });
+  response.type = 'error';
+  return response;
+};
+
+var redirectStatuses = [301, 302, 303, 307, 308];
+
+Response.redirect = function (url, status) {
+  if (redirectStatuses.indexOf(status) === -1) {
+    throw new RangeError('Invalid status code');
+  }
+
+  return new Response(null, {
+    status: status,
+    headers: {
+      location: url
+    }
+  });
+};
+
+var DOMException = self.DOMException;
+
+try {
+  new DOMException();
+} catch (err) {
+  DOMException = function DOMException(message, name) {
+    this.message = message;
+    this.name = name;
+    var error = Error(message);
+    this.stack = error.stack;
+  };
+
+  DOMException.prototype = Object.create(Error.prototype);
+  DOMException.prototype.constructor = DOMException;
+}
+
+function fetch(input, init) {
+  return new Promise(function (resolve, reject) {
+    var request = new Request(input, init);
+
+    if (request.signal && request.signal.aborted) {
+      return reject(new DOMException('Aborted', 'AbortError'));
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    function abortXhr() {
+      xhr.abort();
+    }
+
+    xhr.onload = function () {
+      var options = {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+      };
+      options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL');
+      var body = 'response' in xhr ? xhr.response : xhr.responseText;
+      resolve(new Response(body, options));
+    };
+
+    xhr.onerror = function () {
+      reject(new TypeError('Network request failed'));
+    };
+
+    xhr.ontimeout = function () {
+      reject(new TypeError('Network request failed'));
+    };
+
+    xhr.onabort = function () {
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+
+    xhr.open(request.method, request.url, true);
+
+    if (request.credentials === 'include') {
+      xhr.withCredentials = true;
+    } else if (request.credentials === 'omit') {
+      xhr.withCredentials = false;
+    }
+
+    if ('responseType' in xhr && support.blob) {
+      xhr.responseType = 'blob';
+    }
+
+    request.headers.forEach(function (value, name) {
+      xhr.setRequestHeader(name, value);
+    });
+
+    if (request.signal) {
+      request.signal.addEventListener('abort', abortXhr);
+
+      xhr.onreadystatechange = function () {
+        // DONE (success or failure)
+        if (xhr.readyState === 4) {
+          request.signal.removeEventListener('abort', abortXhr);
+        }
+      };
+    }
+
+    xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit);
+  });
+}
+fetch.polyfill = true;
+
+if (!self.fetch) {
+  self.fetch = fetch;
+  self.Headers = Headers;
+  self.Request = Request;
+  self.Response = Response;
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // This is the entry point for the bower version of LForms.  It does not include
 // any of the bower dependencies.
-var LForms = __webpack_require__(1);
+var LForms = __webpack_require__(3);
 
 LForms.Def = Def; // from the bower autocomplete-lhc package
 
@@ -105,17 +653,13 @@ LForms._elementResizeDetectorMaker = elementResizeDetectorMaker; // bower packag
 module.exports = LForms;
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // A list of files from the lforms package itself to be combined with webpack.
 // For the full list for the bower or npm package, see bower-index.js or
 // index.js.
-var LForms = __webpack_require__(2);
-
-__webpack_require__(4);
-
-__webpack_require__(5);
+var LForms = __webpack_require__(4);
 
 __webpack_require__(6);
 
@@ -127,25 +671,29 @@ __webpack_require__(9);
 
 __webpack_require__(10);
 
+__webpack_require__(11);
+
 __webpack_require__(12);
 
-__webpack_require__(13);
+__webpack_require__(14);
 
 __webpack_require__(15);
 
-__webpack_require__(16);
+__webpack_require__(17);
 
 __webpack_require__(18);
 
-LForms.Util.FHIRSupport = __webpack_require__(19);
-
 __webpack_require__(20);
 
-LForms._elementResizeDetectorMaker = __webpack_require__(21);
+LForms.Util.FHIRSupport = __webpack_require__(21);
+
+__webpack_require__(22);
+
+LForms._elementResizeDetectorMaker = __webpack_require__(23);
 module.exports = LForms;
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Use IIFE so that strict mode is not at the file level
@@ -154,7 +702,7 @@ module.exports = LForms;
 
   var widgetDeps = ['smoothScroll', 'autocompleteLhcMod', 'ui.bootstrap.datetimepicker'];
 
-  var Def = __webpack_require__(3);
+  var Def = __webpack_require__(5);
 
   if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps).config(['$animateProvider', function ($animateProvider) {
@@ -191,13 +739,13 @@ var LForms = {};
 module.exports = LForms;
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = Def;
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports) {
 
 /*
@@ -211,7 +759,7 @@ angular.module('lformsWidget').constant('LF_CONSTANTS', {
 });
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($animate) {
@@ -228,12 +776,12 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 }]);
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(2);
+var LForms = __webpack_require__(4);
 
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
@@ -1429,7 +1977,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 }]);
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1437,7 +1985,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 (function () {
   'use strict';
 
-  var LForms = __webpack_require__(2); //  var angular = require('angular');
+  var LForms = __webpack_require__(4); //  var angular = require('angular');
 
 
   angular.module('lformsWidget').factory('RecursionHelper', ['$compile', function ($compile) {
@@ -1713,7 +2261,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports) {
 
 // Based on https://stackoverflow.com/a/26339919/360782
@@ -1744,7 +2292,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 }]);
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 /**
@@ -1766,7 +2314,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 })();
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1774,13 +2322,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  * LForms Utility tools
  */
-var moment = __webpack_require__(11); // Acceptable date formats
+var moment = __webpack_require__(13); // Acceptable date formats
 // Strict parsing -
 
 
 var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D', 'YYYY', 'YYYY-M-D', 'YYYY/M/D', moment.ISO_8601, 'M/D/YYYY HH:mm', 'M/D/YY HH:mm', 'M/D HH:mm', 'M-D-YYYY HH:mm', 'M-D-YY HH:mm', 'M-D HH:mm'];
 
-var LForms = __webpack_require__(2);
+var LForms = __webpack_require__(4);
 
 LForms.Util = {
   /**
@@ -2688,13 +3236,13 @@ LForms.Util = {
 };
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports = moment;
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 // HTML5 polyfills
@@ -2760,16 +3308,16 @@ if (!String.prototype.repeat) {
 }
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
+/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /**
  * A package to generate HL7 messgages from LForms form data
  */
-var LForms = __webpack_require__(2);
+var LForms = __webpack_require__(4);
 
 
 
@@ -3574,7 +4122,7 @@ LForms.HL7 = function () {
 }();
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3584,13 +4132,13 @@ __webpack_require__.r(__webpack_exports__);
 var LOINC_URI = 'http://loinc.org';
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * A package to process user data validations in LForms
  */
-var LForms = __webpack_require__(2);
+var LForms = __webpack_require__(4);
 
 LForms.Validations = {
   // supported keys in restrictions
@@ -3894,7 +4442,7 @@ LForms.Validations = {
 };
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3905,9 +4453,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 (function () {
   "use strict";
 
-  var LForms = __webpack_require__(2);
+  var LForms = __webpack_require__(4);
 
-  var Class = __webpack_require__(17);
+  var Class = __webpack_require__(19);
 
   LForms.LFormsData = Class.extend({
     // constants
@@ -4161,13 +4709,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
-      this._asyncLoadCounter = 0;
       this.fhirVersion = data.fhirVersion;
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+    },
+
+    /**
+     *   Returns the object containing the FHIR support.  If this LFormsData
+     *   does not have fhirVersion set or if support for that version is not
+     *   loaded, then a support object for some FHIR version will be returned,
+     *   if any is loaded.  (In some cases, we do not care which version is
+     *   used.)  If no fhir support is loaded, then an exception will be thrown.
+     */
+    _getFHIRSupport: function _getFHIRSupport() {
+      var rtn = this._fhir;
+
+      if (!rtn) {
+        var loadedVersions = Object.keys(LForms.FHIR);
+        if (loadedVersions.length > 0) rtn = LForms.FHIR[loadedVersions[0]];
+        if (!rtn) throw new Error('The LHC-Forms FHIR support file was not loaded.');else this._fhir = rtn;
+      }
+
+      return rtn;
     },
 
     /**
@@ -4234,8 +4800,15 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var fieldExt;
 
         _loop();
-      }
+      } // answerValueSet (for prefetched lists)
+      // For this import, we don't actually care which version of FHIR;
+      // the implementation is common.  If either support file is loaded use
+      // that (for both the terminology server case and the FHIR server case).
 
+
+      var sdc = this._getFHIRSupport().SDC;
+
+      pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
       if (prepopulate) pendingPromises.push(this._requestLinkedObs());
       return Promise.all(pendingPromises).then(function () {
         lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
@@ -6386,10 +6959,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           var answers = []; // 'answers' might be null even for CWE
           // need to recheck answers in case its value has been changed by data control
 
-          if (Array.isArray(item.answers)) {
-            answers = item.answers;
+          if (Array.isArray(item.answers)) answers = item.answers;else if (item._answerValueSetKey) {
+            var vsAnswers = LForms._valueSetAnswerCache[item._answerValueSetKey];
+            if (vsAnswers) answers = vsAnswers;
           } // reset the modified answers (for the display text)
-
 
           item._modifiedAnswers = [];
           item._hasOneAnswerLabel = false;
@@ -6592,22 +7165,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             }
           }
         } else if (item.isSearchAutocomplete && item.answerValueSet) {
-          var valueSetUri = item.answerValueSet; // See if there is a terminology server in this or a parent item.
+          var valueSetUri = item.answerValueSet; // See if there is a terminology server for expanding this valueset
 
-          var terminologyServer = item.terminologyServer;
-          var parent = item._parentItem;
+          var expURL = this._getFHIRSupport().SDC._getExpansionURL(item);
 
-          while (!terminologyServer && parent) {
-            terminologyServer = parent.terminologyServer;
-            parent = parent._parentItem;
-          }
-
-          if (terminologyServer) {
+          if (expURL) {
+            // undefined unless there is a terminology server
             // TBD - We might need to log in to some terminology servers.  Not
             // supporting that case yet.
             // Skip the fhirContext, and go directly to the terminology server
             // for the autocompletion requests.
-            options.url = terminologyServer + '/ValueSet/$expand?url=' + item.answerValueSet;
+            options.url = expURL;
             options.fhir = true;
           } else if (LForms.fhirContext) {
             var self = this;
@@ -6639,6 +7207,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 }
               }
             };
+          } else {
+            throw new Error('Cannot properly initialize the list for field "' + item.question + '" because it requires either a terminology ' + 'server to be specified or LForms.Util.setFHIRContext(...) ' + 'to have been called to provide access to a FHIR server.');
           }
         } else {
           options.listItems = item._modifiedAnswers;
@@ -7305,7 +7875,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports) {
 
 /* Simple JavaScript Inheritance
@@ -7366,14 +7936,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Processes FHIR Expression Extensions
 (function () {
   "use strict"; // A class whose instances handle the running of FHIR expressions.
 
-  var LForms = __webpack_require__(2);
+  var LForms = __webpack_require__(4);
   /**
    *   Constructor.
    *  @param lfData an instance of LForms.LFormsData
@@ -7692,7 +8262,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains information about the supported FHIR versions.
@@ -7703,7 +8273,7 @@ var FHIRSupport = {
 if (true) module.exports = FHIRSupport;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').run(['$templateCache', function ($templateCache) {
@@ -7729,34 +8299,34 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
 }]);
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach = __webpack_require__(22).forEach;
+var forEach = __webpack_require__(24).forEach;
 
-var elementUtilsMaker = __webpack_require__(23);
+var elementUtilsMaker = __webpack_require__(25);
 
-var listenerHandlerMaker = __webpack_require__(24);
+var listenerHandlerMaker = __webpack_require__(26);
 
-var idGeneratorMaker = __webpack_require__(25);
+var idGeneratorMaker = __webpack_require__(27);
 
-var idHandlerMaker = __webpack_require__(26);
+var idHandlerMaker = __webpack_require__(28);
 
-var reporterMaker = __webpack_require__(27);
+var reporterMaker = __webpack_require__(29);
 
-var browserDetector = __webpack_require__(28);
+var browserDetector = __webpack_require__(30);
 
-var batchProcessorMaker = __webpack_require__(29);
+var batchProcessorMaker = __webpack_require__(31);
 
-var stateHandler = __webpack_require__(31); //Detection strategies.
+var stateHandler = __webpack_require__(33); //Detection strategies.
 
 
-var objectStrategyMaker = __webpack_require__(32);
+var objectStrategyMaker = __webpack_require__(34);
 
-var scrollStrategyMaker = __webpack_require__(33);
+var scrollStrategyMaker = __webpack_require__(35);
 
 function isCollection(obj) {
   return Array.isArray(obj) || obj.length !== undefined;
@@ -8065,7 +8635,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8091,7 +8661,7 @@ utils.forEach = function (collection, callback) {
 };
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8152,7 +8722,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8224,7 +8794,7 @@ module.exports = function (idHandler) {
 };
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8248,7 +8818,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8300,7 +8870,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8350,7 +8920,7 @@ module.exports = function (quiet) {
 };
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8394,13 +8964,13 @@ detector.isLegacyOpera = function () {
 };
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(32);
 
 module.exports = function batchProcessorMaker(options) {
   options = options || {};
@@ -8543,7 +9113,7 @@ function Batch() {
 }
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8563,7 +9133,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8591,7 +9161,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8601,7 +9171,7 @@ module.exports = {
  */
 
 
-var browserDetector = __webpack_require__(28);
+var browserDetector = __webpack_require__(30);
 
 module.exports = function (options) {
   options = options || {};
@@ -8807,7 +9377,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8817,7 +9387,7 @@ module.exports = function (options) {
  */
 
 
-var forEach = __webpack_require__(22).forEach;
+var forEach = __webpack_require__(24).forEach;
 
 module.exports = function (options) {
   options = options || {};
