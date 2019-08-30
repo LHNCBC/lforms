@@ -570,48 +570,23 @@ var self = {
       }
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
-
         // for Coding
-        // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
-          if (this._answerRepeats(item) && Array.isArray(values[i])) {
-            for (var j=0, jLen=values[i].length; j<jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
-                answer.push({
-                  "valueCoding" : {
-                    "system": codeSystem,
-                    "code": values[i][j].code,
-                    "display": values[i][j].text
-                  }
-                })
-              }
-              // empty answer ??
-              else {
-                answer.push({
-                  "valueCoding" : {}
-                })
-              }
-            }
+        if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i]) ) {
+          if (dataType === 'CWE' && values[i]._notOnList) {
+            answer.push({
+              "valueString" : values[i].text
+            })
           }
-          // single selection, item.value is an object
           else {
-            if (!jQuery.isEmptyObject(values[i])) {
-              answer.push({
-                "valueCoding" : {
-                  "system": codeSystem,
-                  "code": values[i].code,
-                  "display": values[i].text
-                }
-              })
-            }
-            // empty answer ??
-            else {
-              answer.push({
-                "valueCoding" : {}
-              })
-            }
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            })
           }
         }
         // for Quantity,

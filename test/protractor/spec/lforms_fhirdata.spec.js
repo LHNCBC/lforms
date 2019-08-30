@@ -486,10 +486,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[6].answer.length).toBe(2);
               expect(fhirData.item[0].item[6].answer[0].valueCoding.code).toBe("LA10608-0");
               expect(fhirData.item[0].item[6].answer[0].valueCoding.display).toBe("American Indian or Alaska Native");
-              expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe(undefined);
+              expect(fhirData.item[0].item[6].answer[0].valueCoding.system).toBe("http://loinc.org");
               expect(fhirData.item[0].item[6].answer[1].valueCoding.code).toBe("LA6156-9");
               expect(fhirData.item[0].item[6].answer[1].valueCoding.display).toBe("Asian");
-              expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe(undefined);
+              expect(fhirData.item[0].item[6].answer[1].valueCoding.system).toBe("http://loinc.org");
               // Disease history #1
               expect(fhirData.item[0].item[7].text).toBe("Your diseases history");
               expect(fhirData.item[0].item[7].linkId).toBe("/54126-8/54137-5");
@@ -507,7 +507,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[7].item[1].answer.length).toBe(1);
               expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.code).toBe("LA10403-6");
               expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.display).toBe("Newborn");
-              expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe(undefined);
+              expect(fhirData.item[0].item[7].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
 
               // Disease history #2
               expect(fhirData.item[0].item[8].text).toBe("Your diseases history");
@@ -526,7 +526,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item[0].item[8].item[1].answer.length).toBe(1);
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.code).toBe("LA10394-7");
               expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.display).toBe("Infancy");
-              expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe(undefined);
+              expect(fhirData.item[0].item[8].item[1].answer[0].valueCoding.system).toBe("http://loinc.org");
             });
           });
 
@@ -659,6 +659,53 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(ff.fmNameB.getAttribute('value')).toBe("another name 2");
             expect(ff.fmNameC.getAttribute('value')).toBe("another name 3");
             expect(ff.fmNameD.getAttribute('value')).toBe("another name 4");
+
+          });
+
+          it('should merge FHIR SDC QuestionnaireResponse with User Data on CWE fields back into the form', function() {
+            tp.openFullFeaturedForm();
+            tp.setFHIRVersion(fhirVersion);
+
+            element(by.id("merge-qr-cwe")).click();
+
+            var cwe = element(by.id('/type10/1'));
+            var cweRepeats = element(by.id('/multiSelectCWE/1'));
+
+            browser.wait(function() {
+              return cwe.isDisplayed();
+            }, tp.WAIT_TIMEOUT_1);
+
+            expect(cwe.getAttribute('value')).toBe("user typed value");
+            cwe.evaluate('item.value').then(function(val) {
+              expect(val.code).toEqual(undefined);
+              expect(val.text).toEqual('user typed value');
+              expect(val._displayText).toEqual('user typed value');
+            });
+
+            var cweRepeatsValues = element.all(by.css('.autocomp_selected li'));
+            expect(cweRepeatsValues.get(0).getText()).toBe('×Answer 1');
+            expect(cweRepeatsValues.get(1).getText()).toBe('×Answer 2');
+            expect(cweRepeatsValues.get(2).getText()).toBe('×user value1');
+            expect(cweRepeatsValues.get(3).getText()).toBe('×user value2');
+            cweRepeats.evaluate('item.value').then(function(val) {
+              expect(val.length).toEqual(4);
+              expect(val[0].code).toEqual('c1');
+              expect(val[0].text).toEqual('Answer 1');
+              expect(val[0]._displayText).toEqual('Answer 1');
+              expect(val[0].codeSystem).toEqual(undefined);
+              expect(val[1].code).toEqual('c2');
+              expect(val[1].text).toEqual('Answer 2');
+              expect(val[1]._displayText).toEqual('Answer 2');
+              expect(val[1].codeSystem).toEqual(undefined);
+              expect(val[2].code).toEqual(undefined);
+              expect(val[2].text).toEqual('user value1');
+              expect(val[2]._displayText).toEqual('user value1');
+              expect(val[2].codeSystem).toEqual(undefined);
+              expect(val[3].code).toEqual(undefined);
+              expect(val[3].text).toEqual('user value2');
+              expect(val[3]._displayText).toEqual('user value2');
+              expect(val[3].codeSystem).toEqual(undefined);
+            });
 
           });
         });

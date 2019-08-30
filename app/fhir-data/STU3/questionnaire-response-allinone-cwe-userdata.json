@@ -1,0 +1,70 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"
+    ]
+  },
+  "status": "completed",
+  "authored": "2019-08-30T19:36:11.138Z",
+  "item": [
+    {
+      "linkId": "/type10",
+      "text": "With data type CWE",
+      "answer": [
+        {
+          "valueString": "user typed value"
+        }
+      ]
+    },
+    {
+      "linkId": "/multiSelectCWE",
+      "text": "Multi Selection on CWE",
+      "answer": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        },
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        },
+        {
+          "valueString": "user value1"
+        },
+        {
+          "valueString": "user value2"
+        }
+      ]
+    },
+    {
+      "linkId": "/readonlyCNE-s",
+      "text": "editable='0' data type CNE, single selection",
+      "answer": [
+        {
+          "valueCoding": {
+            "code": "c1",
+            "display": "Answer 1"
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "/readonlyCNE-sb",
+      "text": "editable='0' data type CNE, single selection, radio button",
+      "answer": [
+        {
+          "valueCoding": {
+            "code": "c2",
+            "display": "Answer 2"
+          }
+        }
+      ]
+    }
+  ]
+}
+

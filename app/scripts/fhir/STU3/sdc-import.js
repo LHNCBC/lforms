@@ -742,18 +742,36 @@ function addSDCImportFns(ns) {
               var value = [];
               for (var j=0,jLen=answer.length; j<jLen; j++) {
                 var coding = answer[j];
-                value.push({
-                  "code": coding.valueCoding.code,
-                  "text": coding.valueCoding.display
-                });
+                // a valueCoding, which is one of the answers
+                if (coding.valueCoding) {
+                  value.push({
+                    "code": coding.valueCoding.code,
+                    "text": coding.valueCoding.display
+                  });
+                }
+                // a valueString, which is a user supplied value that is not in the answers
+                else if (coding.valueString) {
+                  value.push({
+                    "text": coding.valueString
+                  })
+                }
               }
               item.value = value;
             }
             else {
-              item.value = {
-                "code": qrValue.valueCoding.code,
-                "text": qrValue.valueCoding.display
-              };
+              // a valueCoding, which is one of the answers
+              if (qrValue.valueCoding) {
+                item.value = {
+                  "code": qrValue.valueCoding.code,
+                  "text": qrValue.valueCoding.display
+                };
+              }
+              // a valueString, which is a user supplied value that is not in the answers
+              else if (qrValue.valueString) {
+                item.value = {
+                  "text": qrValue.valueString
+                };
+              }
             }
             break;
           case "ST":

@@ -12,7 +12,7 @@ function createLinkId(lfItems, codeList) {
   if(!codeList) {
     codeList = [];
   }
-  
+
   lfItems.forEach(function(item){
     codeList.push(item.questionCode);
     item.linkId = codeList.join('_');
@@ -398,7 +398,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             convertedLfData = new LForms.LFormsData(convertedLfData);
             var reConvertedFhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, convertedLfData);
             assert.deepEqual(reConvertedFhirQ, fhirQ);
-  
+
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
             assert.equal(convertedLfData.codeSystem, 'LOINC');
@@ -923,7 +923,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
         });
-
       });
     });
   })(fhirVersions[i]);

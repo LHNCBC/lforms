@@ -56,6 +56,7 @@
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
           <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
+          <button id="merge-qr-cwe" class="btn btn-primary" ng-click="testMergeQR2LForms_CWE()">Merge QuestionnaireResponse to LForms (Full-Featured, w/ CWE user data)</button>
           <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
           <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
           <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
@@ -330,7 +331,25 @@
               });
             };
 
-            $scope.testSearchOnFHIRServer = function() {
+              $scope.testMergeQR2LForms_CWE = function() {
+                // use the first form
+                $scope.getFhirResource(getFHIRVersion(), 'questionnaire-response-allinone-cwe-userdata.json').then(function (fhirData) {
+
+                  var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                          'QuestionnaireResponse', fhirData, angular.copy(allInOne),
+                          getFHIRVersion());
+                  mergedFormData = new LForms.LFormsData(mergedFormData);
+
+                  $scope.lfData2 = mergedFormData;
+                  $scope.lfOption2 = {
+                    useAnimation: !window._INTESTING_
+                  };
+                }, function (err) {
+                  window.alert('Unable to load '+getFHIRVersion()+': questionnaire-response-allinone-cwe-userdata.json');
+                });
+              };
+
+              $scope.testSearchOnFHIRServer = function() {
 //              var dataURL = "http://fhirtest.uhn.ca/baseDstu3/DiagnosticReport?_id=663968&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
               var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
 

@@ -718,7 +718,7 @@ LForms.Util = {
    * Only returns the first matched object in the array.
    *
    * @param targetObjects - Array of objects to search using key and value
-   * @param key - Key of the the target object to match the value.
+   * @param key - Key of the target object to match the value.
    * @param matchingValue - Matching value of the specified key.
    * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
    *   The absolute value should be less than the length of items in the array. If not

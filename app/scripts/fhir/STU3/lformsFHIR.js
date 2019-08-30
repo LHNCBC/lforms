@@ -19527,45 +19527,22 @@ var self = {
 
       for (var i = 0, iLen = values.length; i < iLen; i++) {
         // for Coding
-        // multiple selections, item.value is an array
         // Note: NO support of multiple selections in FHIR SDC
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
-
-          if (this._answerRepeats(item) && Array.isArray(values[i])) {
-            for (var j = 0, jLen = values[i].length; j < jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
-                answer.push({
-                  "valueCoding": {
-                    "system": codeSystem,
-                    "code": values[i][j].code,
-                    "display": values[i][j].text
-                  }
-                });
-              } // empty answer ??
-              else {
-                  answer.push({
-                    "valueCoding": {}
-                  });
-                }
-            }
-          } // single selection, item.value is an object
-          else {
-              if (!jQuery.isEmptyObject(values[i])) {
-                answer.push({
-                  "valueCoding": {
-                    "system": codeSystem,
-                    "code": values[i].code,
-                    "display": values[i].text
-                  }
-                });
-              } // empty answer ??
-              else {
-                  answer.push({
-                    "valueCoding": {}
-                  });
-                }
-            }
+        if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i])) {
+          if (dataType === 'CWE' && values[i]._notOnList) {
+            answer.push({
+              "valueString": values[i].text
+            });
+          } else {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            });
+          }
         } // for Quantity,
         // [{
         //   // from Element: extension
@@ -19827,7 +19804,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = lfData.getFormData(true, true, true, true);
+      var source = lfData.getFormData(true, true, true, true, true);
 
       this._processRepeatingItemValues(source);
 
@@ -21146,19 +21123,35 @@ function addSDCImportFns(ns) {
               var value = [];
 
               for (var j = 0, jLen = answer.length; j < jLen; j++) {
-                var coding = answer[j];
-                value.push({
-                  "code": coding.valueCoding.code,
-                  "text": coding.valueCoding.display
-                });
+                var coding = answer[j]; // a valueCoding, which is one of the answers
+
+                if (coding.valueCoding) {
+                  value.push({
+                    "code": coding.valueCoding.code,
+                    "text": coding.valueCoding.display
+                  });
+                } // a valueString, which is a user supplied value that is not in the answers
+                else if (coding.valueString) {
+                    value.push({
+                      "text": coding.valueString
+                    });
+                  }
               }
 
               item.value = value;
             } else {
-              item.value = {
-                "code": qrValue.valueCoding.code,
-                "text": qrValue.valueCoding.display
-              };
+              // a valueCoding, which is one of the answers
+              if (qrValue.valueCoding) {
+                item.value = {
+                  "code": qrValue.valueCoding.code,
+                  "text": qrValue.valueCoding.display
+                };
+              } // a valueString, which is a user supplied value that is not in the answers
+              else if (qrValue.valueString) {
+                  item.value = {
+                    "text": qrValue.valueString
+                  };
+                }
             }
 
             break;

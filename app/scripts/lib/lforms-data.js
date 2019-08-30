@@ -1266,12 +1266,14 @@
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @return {{}} form definition JSON object
      */
-    getFormData: function(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    getFormData: function(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag) {
 
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag);
 
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
@@ -1300,16 +1302,18 @@
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
-    getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag) {
       var ret = {};
       ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem,
-          keepIdPath, keepCodePath);
+          keepIdPath, keepCodePath, keepNotOnListFlag);
       // template options could be optional. Include them, only if they are present
       if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
         ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue,
-            noHiddenItem, keepIdPath, keepCodePath);
+            noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag);
       }
       // return a deep copy of the data
       return angular.copy(ret);
@@ -1333,10 +1337,13 @@
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @returns {Array} form data on one tree level
      * @private
      */
-    _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath,
+                                  keepNotOnListFlag) {
       var itemsData = [];
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
@@ -1355,7 +1362,8 @@
           itemData.questionCode = item.questionCode;
           // not a header
           if (!item.header) {
-            if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
+            if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType,
+                keepNotOnListFlag);
             if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
           }
         }
@@ -1365,7 +1373,7 @@
           for (var field in item) {
             // special handling for user input values
             if (field === "value") {
-              itemData[field] = this._getOriginalValue(item[field], item.dataType);
+              itemData[field] = this._getOriginalValue(item[field], item.dataType, keepNotOnListFlag);
             }
             else if (field === "unit") {
               itemData[field] = this._getOriginalValue(item[field]);
@@ -1404,15 +1412,20 @@
      * @param obj either an answer object or a unit object
      * @param autocompleteData optional, a flag indicates it is the data
      * handled by autocomplete-lhc. default is false.
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @returns {{}}  a new object with the internal attributes removed.
      * @private
      */
-    _filterInternalData: function(obj, autocompleteData) {
+    _filterInternalData: function(obj, autocompleteData, keepNotOnListFlag) {
       var objReturn = {};
 
       // special handling for the user-typed value for CWE data type
       if (autocompleteData && obj._notOnList && obj._displayText) {
         objReturn = {text: obj._displayText};
+        if (keepNotOnListFlag) {
+          objReturn._notOnList = obj._notOnList;
+        }
       }
       else {
         for (var field in obj) {
@@ -1430,10 +1443,12 @@
      * @param value the captured value
      * @param autocompleteData optional, a flag indicates it is the data
      * handled by autocomplete-lhc. default is false.
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @returns {*}
      * @private
      */
-    _getObjectValue: function(value, autocompleteData) {
+    _getObjectValue: function(value, autocompleteData, keepNotOnListFlag) {
       var retValue =null;
       if (value) {
         // an array
@@ -1441,7 +1456,7 @@
           var answers = [];
           for (var j = 0, jLen = value.length; j < jLen; j++) {
             if (angular.isObject(value[j])) {
-              answers.push(this._filterInternalData(value[j], autocompleteData));
+              answers.push(this._filterInternalData(value[j], autocompleteData, keepNotOnListFlag));
             }
             // for primitive data type (multiple values not supported yet)
             //else {
@@ -1452,7 +1467,7 @@
         }
         // an object
         else if (angular.isObject(value)) {
-          retValue = this._filterInternalData(value, autocompleteData);
+          retValue = this._filterInternalData(value, autocompleteData, keepNotOnListFlag);
         }
       }
       return retValue;
@@ -1463,9 +1478,11 @@
      * Special handling for user input values, to get the original answer or unit object if there is one
      * @param value the data object of the selected answer
      * @param dataType optional, the data type of the value
+     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
+     * the default is false
      * @private
      */
-    _getOriginalValue: function(value, dataType) {
+    _getOriginalValue: function(value, dataType, keepNotOnListFlag) {
       var retValue;
       if (value !== undefined && value !== null) {
         // has a data type
@@ -1489,7 +1506,7 @@
               break;
             case this._CONSTANTS.DATA_TYPE.CWE:
               // for CWE, it should handle the case where 'OTHER' is selected
-              retValue = this._getObjectValue(value, true);
+              retValue = this._getObjectValue(value, true, keepNotOnListFlag);
               break;
             case this._CONSTANTS.DATA_TYPE.BL:
               retValue = value ? true : false;
@@ -3070,7 +3087,7 @@
     needExtra: function(item) {
       var extra = false;
       if (item && item.value) {
-        // NOT to support 'other' when multiple answers are allowed.
+        // NOT to support multiple values of 'other' when multiple answers are allowed.
         // if (Array.isArray(item.value)) {
         //   jQuery.each(item.value, function(index, answer) {
         //     if (answer.other) {
