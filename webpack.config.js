@@ -35,9 +35,10 @@ function makeConfigs(env) {
   let configs = [];
   let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
   let versionedDist = 'lforms-'+require('./package.json').version;
+  var allFHIREntryFiles = [];
   for (let version of fhirVersions) {
     let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
-
+    allFHIREntryFiles.push(entryFile);
     let nonMinConfig = commonConfig();
     nonMinConfig.entry = entryFile;
     nonMinConfig.output.filename = './app/scripts/fhir/'+version+'/lformsFHIR.js';
@@ -52,12 +53,20 @@ function makeConfigs(env) {
     configs.push(minConfig);
   }
 
+  // All FHIR versions together
+  let allFHIRConfig = commonConfig();
+  allFHIRConfig.entry = allFHIREntryFiles;
+  allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js',
+  allFHIRConfig.mode = 'production';
+  allFHIRConfig.devtool = 'source-map';
+  configs.push(allFHIRConfig);
+
   if (!env || !env.fhirOnly) {
     // LForms and dependencies
     // The Bower package needs a single, transpiled lforms.js file that does
     // not include other bower packages (angular, etc.)
     let bowerConfig = commonConfig();
-    bowerConfig.entry = './app/scripts/bower-index.js';
+    bowerConfig.entry = ['whatwg-fetch', './app/scripts/bower-index.js']; // includes fetch polyfill
     bowerConfig.output.filename = './bower-dist/lforms.js';
     bowerConfig.output.library = 'LForms';
     bowerConfig.devtool = 'source-map';
@@ -71,7 +80,7 @@ function makeConfigs(env) {
     // The browser-ready dist package needs all of the dependencies in a single file
     // (except for the versioned FHIR files).
     let lformsConfig = commonConfig();
-    lformsConfig.entry = './app/scripts/index.js';
+    lformsConfig.entry = ['whatwg-fetch', './app/scripts/index.js'];
     lformsConfig.output.path = require('path').resolve(__dirname, 'dist/'+versionedDist);
     lformsConfig.output.filename = 'lforms.min.js';
     lformsConfig.output.library = 'LForms';
