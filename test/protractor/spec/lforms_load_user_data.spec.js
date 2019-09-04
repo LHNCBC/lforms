@@ -206,15 +206,15 @@ describe('load saved user data', function() {
     expect(cwe4Ans3.isSelected()).toBe(true);
     expect(cwe4Other.isSelected()).toBe(true);
     expect(cwe4OtherValue.getAttribute('value')).toBe('user typed value');
-    // default answer is not in the answer list, checkbox display, not shown
-    expect(cwe5Other.isSelected()).not.toBe(true);
-    expect(cwe5OtherValue.isPresent()).toBe(false);
+    // default answer is not in the answer list, checkbox display, other value set
+    expect(cwe5Other.isSelected()).toBe(true);
+    expect(cwe5OtherValue.getAttribute('value')).toBe('user typed default answer');
     // OTHER, in radiobutton display with the user value not in the answer list
     expect(cwe6Other.isSelected()).toBe(true);
     expect(cwe6OtherValue.getAttribute('value')).toBe('user typed value');
-    // default answer is not in the answer list, radiobutton display, not shown
-    expect(cwe7Other.isSelected()).not.toBe(true);
-    expect(cwe7OtherValue.isPresent()).toBe(false);
+    // default answer is not in the answer list, radiobutton display, other value set
+    expect(cwe7Other.isSelected()).toBe(true);
+    expect(cwe7OtherValue.getAttribute('value')).toBe('user typed default answer');
 
   });
 

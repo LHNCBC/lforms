@@ -786,5 +786,153 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
       });
     });
+
+    fdescribe('initial[x] in Questionnaire', function() {
+      beforeAll(function() {
+        tp.openBaseTestPage();
+        tp.setFHIRVersion(fhirVersion);
+        tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);
+      });
+
+      it('should display initial[x] values correctly', function() {
+      });
+
+      it('should keep the initial[x] values when converted back to Questionnaire', function() {
+        if (fhirVersion === "R4") {
+          getFHIRResource("Questionnaire", fhirVersion).
+          then(function(callbackData) {
+            let [error, fhirData] = callbackData;
+            expect(error).toBeNull();
+            // boolean
+            expect(fhirData.item[0].initial).toEqual([
+              {
+                "valueBoolean": true
+              }
+            ]);
+            // integer
+            expect(fhirData.item[1].initial).toEqual([
+              {
+                "valueInteger": 123
+              }
+            ]);
+            // decimal
+            expect(fhirData.item[2].initial).toEqual([
+              {
+                "valueDecimal": 123.45
+              }
+            ]);
+
+            // string
+            expect(fhirData.item[3].initial).toEqual([
+              {
+                "valueString": "abc123"
+              }
+            ]);
+
+            // date
+            expect(fhirData.item[4].initial).toEqual([
+              {
+                "valueDate": "2019-09-03"
+              }
+            ]);
+
+            // dateTime
+            expect(fhirData.item[5].initial).toEqual([
+              {
+                "valueDateTime": "2015-02-07T13:28:17-05:00"
+              }
+            ]);
+
+            // time
+            expect(fhirData.item[6].initial).toEqual([
+              {
+                "valueTime": "13:28:17"
+              }
+            ]);
+            // choice
+            expect(fhirData.item[7].initial).toEqual([
+              {
+                "valueCoding": {
+                  "code": "c2",
+                  "display": "Answer 2"
+                }
+              }
+            ]);
+            // open-choice
+            expect(fhirData.item[8].initial).toEqual([
+              {
+                "valueString":"User typed answer"
+              }
+            ]);
+
+
+            // choice, multiple selection
+            expect(fhirData.item[9].initial).toEqual([
+              {
+                "valueCoding": {
+                  "code": "c1",
+                  "display": "Answer 1"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c3",
+                  "display": "Answer 3"
+                }
+              }
+            ]);
+            // open-choice, multiple selection
+            expect(fhirData.item[10].initial).toEqual([
+              {
+                "valueCoding": {
+                  "code": "c1",
+                  "display": "Answer 1"
+                }
+              },
+              {
+                "valueCoding": {
+                  "code": "c3",
+                  "display": "Answer 3"
+                }
+              },
+              { "valueString" :  "User typed answer a"},
+              { "valueString" :  "User typed answer b"}
+            ]);
+          });
+        }
+
+        if (fhirVersion === "STU3") {
+          getFHIRResource("Questionnaire", fhirVersion).
+          then(function(callbackData) {
+            let [error, fhirData] = callbackData;
+            expect(error).toBeNull();
+            // boolean
+            expect(fhirData.item[0].initialBoolean).toBe(true);
+            // integer
+            expect(fhirData.item[1].initialInteger).toBe(123);
+            // decimal
+            expect(fhirData.item[2].initialDecimal).toBe(123.45);
+            // string
+            expect(fhirData.item[3].initialString).toBe("abc123");
+            // date
+            expect(fhirData.item[4].initialDate).toBe( "2019-09-03");
+            // dateTime
+            expect(fhirData.item[5].initialDateTime).toBe("2015-02-07T13:28:17-05:00");
+            // time
+            expect(fhirData.item[6].initialTime).toBe("13:28:17");
+            // choice
+            expect(fhirData.item[7].initialCoding).toEqual({
+              "code": "c2",
+              "display": "Answer 2"
+            });
+            // open-choice
+            expect(fhirData.item[8].initialString).toBe("User typed answer");
+          });
+        }
+
+
+      });
+    });
+
   })(fhirVersions[i]);
 }

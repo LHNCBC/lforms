@@ -227,7 +227,8 @@ function addCommonSDCImportFns(ns) {
         else if (fhirVal._type == 'Coding') {
           codings = [fhirVal];
         }
-        if (!codings) { // maybe a string?
+        if (!codings) {
+          // the value or the default value could be a string for 'open-choice'/CWE
           if (lfDataType === 'CWE') {
             answer = fhirVal;
           }

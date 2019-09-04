@@ -635,35 +635,51 @@ var self = {
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // defaultAnswer has multiple values
           for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-            coding = {"code": item.defaultAnswer[i].code};
-            if(item.defaultAnswer[i].text !== undefined) {
-              coding.display = item.defaultAnswer[i].text;
+            if (typeof item.defaultAnswer[i] === 'object') {
+              coding = {"code": item.defaultAnswer[i].code};
+              if(item.defaultAnswer[i].text !== undefined) {
+                coding.display = item.defaultAnswer[i].text;
+              }
+              // code system
+              codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+              if (codeSystem) {
+                coding.system = LForms.Util.getCodeSystem(codeSystem);
+              }
+
+              answer = {};
+              answer[valueKey] = coding;
+              targetItem.initial.push(answer);
+            }
+            // user typed answer that is not on the answer list.
+            else if (typeof item.defaultAnswer[i] === 'string') {
+              targetItem.initial.push({
+                "valueString": item.defaultAnswer[i]
+              })
+            }
+          }
+        }
+        // single selection, item.defaultAnswer is not an array
+        else {
+          if (typeof item.defaultAnswer === 'object') {
+            coding = {"code": item.defaultAnswer.code};
+            if(item.defaultAnswer.text !== undefined) {
+              coding.display = item.defaultAnswer.text;
             }
             // code system
-            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
-
             answer = {};
             answer[valueKey] = coding;
             targetItem.initial.push(answer);
           }
-        }
-        // single selection, item.defaultAnswer is an object
-        else {
-          coding = {"code": item.defaultAnswer.code};
-          if(item.defaultAnswer.text !== undefined) {
-            coding.display = item.defaultAnswer.text;
+          // user typed answer that is not on the answer list.
+          else if (typeof item.defaultAnswer === 'string') {
+            targetItem.initial.push({
+              "valueString": item.defaultAnswer
+            })
           }
-          // code system
-          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-          answer = {};
-          answer[valueKey] = coding;
-          targetItem.initial.push(answer);
         }
       }
       // for Quantity,
@@ -690,7 +706,7 @@ var self = {
         }
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-      else if (dataType === "INT" ||
+      else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
         dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
         dataType === "ST" || dataType === "TX" || dataType === "URL") {
         if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {

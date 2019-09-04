@@ -633,29 +633,40 @@ var self = {
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // defaultAnswer has multiple values
           // pick the first one only
-          coding = {
-            "code": item.defaultAnswer[0].code,
-            "display": item.defaultAnswer[0].text
-          };
-          // code system
-          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          if (typeof item.defaultAnswer[0] === 'object') {
+            coding = {
+              "code": item.defaultAnswer[0].code,
+              "display": item.defaultAnswer[0].text
+            };
+            // code system
+            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+            targetItem[valueKey] = coding;
           }
-          targetItem[valueKey] = coding;
+          // user typed answer that is not on the answer list.
+          else if (typeof item.defaultAnswer[0] === 'string') {
+            targetItem["initialString"] = item.defaultAnswer[0]
+          }
         }
         // single selection, item.defaultAnswer is an object
         else {
-          coding = {
-            "code": item.defaultAnswer.code,
-            "display": item.defaultAnswer.text
-          };
-          // code system
-          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          if (typeof item.defaultAnswer === 'object') {
+            coding = {
+              "code": item.defaultAnswer.code,
+              "display": item.defaultAnswer.text
+            };
+            // code system
+            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+            targetItem[valueKey] = coding;
           }
-          targetItem[valueKey] = coding
+          else if (typeof item.defaultAnswer === 'string') {
+            targetItem["initialString"] = item.defaultAnswer
+          }
         }
       }
       // for Quantity,

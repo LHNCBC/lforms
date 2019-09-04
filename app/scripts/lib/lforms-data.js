@@ -2496,10 +2496,40 @@
     _resetItemValueWithModifiedAnswers: function(item) {
 
       if (item._modifiedAnswers) {
-        // item.value has the priority over item.defaultAnswer
-        var userValues = item.value || item.defaultAnswer;
+        // default answer could be a string value, for CWE types
+        var defaultValue = item.defaultAnswer;
+        var modifiedDefaultValue;
+        if (defaultValue) {
+          modifiedDefaultValue = [];
+          // there could be multiple user typed, not-on-list default values
+          if (item._multipleAnswers && Array.isArray(defaultValue)) {
+            for (var i=0, iLen=defaultValue.length; i < iLen; ++i) {
+              if (typeof defaultValue[i] === "string" || typeof defaultValue[i] === "number") {
+                if (item.dataType === 'CWE') {
+                  modifiedDefaultValue.push({"text": defaultValue[i], "_notOnList" : true});
+                }
+              }
+              else {
+                modifiedDefaultValue.push(defaultValue[i]);
+              }
+            }
+          }
+          // one default value
+          else {
+            if (typeof defaultValue === "string" || typeof defaultValue[i] === "number") {
+              if (item.dataType === 'CWE') {
+                modifiedDefaultValue.push({"text": defaultValue, "_notOnList": true});
+              }
+            } else {
+              modifiedDefaultValue.push(defaultValue);
+            }
+          }
+        }
+
+        // item.value has the priority over item.defaultValue
+        var userValues = item.value || modifiedDefaultValue;
         if (userValues) {
-          userValues = angular.isArray(userValues) ? userValues : [userValues];
+          userValues = Array.isArray(userValues) ? userValues : [userValues];
           var listVals = [];
           for (var k=0, kLen=userValues.length; k<kLen; ++k) {
             var userValue = userValues[k];
@@ -2510,9 +2540,10 @@
                 found = true;
               }
             }
-            // a saved value not in the list (default answer must be one of the answer items)
-            if (item.value && !found) {
+            // a saved value or a default value is not in the list (default answer must be one of the answer items)
+            if (userValue && !found) {
               userValue._displayText = userValue.text;
+              userValue._notOnList = true;
               listVals.push(userValue);
               // for radio button/checkbox display, an "Other" option is displayed
               item._answerOther = userValue.text;

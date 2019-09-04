@@ -18995,6 +18995,8 @@ var self = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
  *
@@ -19614,45 +19616,59 @@ var self = {
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // defaultAnswer has multiple values
           for (var i = 0, iLen = item.defaultAnswer.length; i < iLen; i++) {
-            coding = {
-              "code": item.defaultAnswer[i].code
-            };
+            if (_typeof(item.defaultAnswer[i]) === 'object') {
+              coding = {
+                "code": item.defaultAnswer[i].code
+              };
 
-            if (item.defaultAnswer[i].text !== undefined) {
-              coding.display = item.defaultAnswer[i].text;
-            } // code system
+              if (item.defaultAnswer[i].text !== undefined) {
+                coding.display = item.defaultAnswer[i].text;
+              } // code system
 
 
-            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+              codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
 
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
+              if (codeSystem) {
+                coding.system = LForms.Util.getCodeSystem(codeSystem);
+              }
 
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
+              answer = {};
+              answer[valueKey] = coding;
+              targetItem.initial.push(answer);
+            } // user typed answer that is not on the answer list.
+            else if (typeof item.defaultAnswer[i] === 'string') {
+                targetItem.initial.push({
+                  "valueString": item.defaultAnswer[i]
+                });
+              }
           }
-        } // single selection, item.defaultAnswer is an object
+        } // single selection, item.defaultAnswer is not an array
         else {
-            coding = {
-              "code": item.defaultAnswer.code
-            };
+            if (_typeof(item.defaultAnswer) === 'object') {
+              coding = {
+                "code": item.defaultAnswer.code
+              };
 
-            if (item.defaultAnswer.text !== undefined) {
-              coding.display = item.defaultAnswer.text;
-            } // code system
+              if (item.defaultAnswer.text !== undefined) {
+                coding.display = item.defaultAnswer.text;
+              } // code system
 
 
-            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+              codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
 
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
+              if (codeSystem) {
+                coding.system = LForms.Util.getCodeSystem(codeSystem);
+              }
 
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
+              answer = {};
+              answer[valueKey] = coding;
+              targetItem.initial.push(answer);
+            } // user typed answer that is not on the answer list.
+            else if (typeof item.defaultAnswer === 'string') {
+                targetItem.initial.push({
+                  "valueString": item.defaultAnswer
+                });
+              }
           }
       } // for Quantity,
       // [{
@@ -19677,7 +19693,7 @@ var self = {
             targetItem.initial.push(answer);
           }
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
             if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
               for (var k = 0; k < item.defaultAnswer.length; k++) {
                 answer = {};
@@ -21659,7 +21675,7 @@ function addCommonSDCImportFns(ns) {
         }
 
         if (!codings) {
-          // maybe a string?
+          // the value or the default value could be a string for 'open-choice'/CWE
           if (lfDataType === 'CWE') {
             answer = fhirVal;
           }

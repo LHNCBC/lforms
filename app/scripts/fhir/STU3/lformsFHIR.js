@@ -18995,6 +18995,8 @@ var self = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
  *
@@ -19612,32 +19614,41 @@ var self = {
         if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
           // defaultAnswer has multiple values
           // pick the first one only
-          coding = {
-            "code": item.defaultAnswer[0].code,
-            "display": item.defaultAnswer[0].text
-          }; // code system
-
-          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
-
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-
-          targetItem[valueKey] = coding;
-        } // single selection, item.defaultAnswer is an object
-        else {
+          if (_typeof(item.defaultAnswer[0]) === 'object') {
             coding = {
-              "code": item.defaultAnswer.code,
-              "display": item.defaultAnswer.text
+              "code": item.defaultAnswer[0].code,
+              "display": item.defaultAnswer[0].text
             }; // code system
 
-            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
 
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
 
             targetItem[valueKey] = coding;
+          } // user typed answer that is not on the answer list.
+          else if (typeof item.defaultAnswer[0] === 'string') {
+              targetItem["initialString"] = item.defaultAnswer[0];
+            }
+        } // single selection, item.defaultAnswer is an object
+        else {
+            if (_typeof(item.defaultAnswer) === 'object') {
+              coding = {
+                "code": item.defaultAnswer.code,
+                "display": item.defaultAnswer.text
+              }; // code system
+
+              codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+
+              if (codeSystem) {
+                coding.system = LForms.Util.getCodeSystem(codeSystem);
+              }
+
+              targetItem[valueKey] = coding;
+            } else if (typeof item.defaultAnswer === 'string') {
+              targetItem["initialString"] = item.defaultAnswer;
+            }
           }
       } // for Quantity,
       // [{
@@ -21514,7 +21525,7 @@ function addCommonSDCImportFns(ns) {
         }
 
         if (!codings) {
-          // maybe a string?
+          // the value or the default value could be a string for 'open-choice'/CWE
           if (lfDataType === 'CWE') {
             answer = fhirVal;
           }
