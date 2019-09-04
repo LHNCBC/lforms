@@ -787,7 +787,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       });
     });
 
-    fdescribe('initial[x] in Questionnaire', function() {
+    describe('initial[x] in Questionnaire', function() {
       beforeAll(function() {
         tp.openBaseTestPage();
         tp.setFHIRVersion(fhirVersion);
@@ -795,6 +795,148 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       });
 
       it('should display initial[x] values correctly', function() {
+        var typeBoolean = element(by.id('/type-boolean/1')),
+            typeInteger = element(by.id('/type-integer/1')),
+            typeDecimal = element(by.id('/type-decimal/1')),
+            typeString = element(by.id('/type-string/1')),
+            typeDate = element(by.id('/type-date/1')),
+            typeDateTime = element(by.id('/type-dateTime/1')),
+            typeTime = element(by.id('/type-time/1')),
+            typeChoice = element(by.id('/type-choice/1')),
+            typeOpenChoice = element(by.id('/type-open-choice/1')),
+            typeChoiceMulti = element(by.id('/type-choice-m/1')),
+            typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
+
+        browser.wait(function() {
+          return typeBoolean.isDisplayed();
+        }, tp.WAIT_TIMEOUT_1);
+
+        if (fhirVersion === "R4") {
+
+          expect(typeBoolean.getAttribute('value')).toBe('on');
+          typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(true);
+          });
+
+          expect(typeInteger.getAttribute('value')).toBe('123');
+          typeInteger.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(123);
+          });
+
+          expect(typeDecimal.getAttribute('value')).toBe('123.45');
+          typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(123.45);
+          });
+
+          expect(typeString.getAttribute('value')).toBe("abc123");
+          typeString.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("abc123");
+          });
+
+          expect(typeDate.getAttribute('value')).toBe("09/03/2019");
+          typeDate.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("2019-09-03");
+          });
+
+          // initial[x] valueDateTime does not work yet
+          //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
+          typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("2015-02-07T13:28:17-05:00");
+          });
+
+          expect(typeTime.getAttribute('value')).toBe("13:28:17");
+          typeTime.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("13:28:17");
+          });
+
+          expect(typeChoice.getAttribute('value')).toBe("Answer 2");
+          typeChoice.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val.code).toEqual("c2");
+            expect(val.text).toEqual('Answer 2');
+          });
+
+          expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
+          typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("User typed answer");
+
+          });
+
+          var repeatsElements = element.all(by.css('.autocomp_selected li'));
+          expect(repeatsElements.get(0).getText()).toBe('×Answer 1');
+          expect(repeatsElements.get(1).getText()).toBe('×Answer 3');
+          typeChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val.length).toEqual(2);
+            expect(val[0].code).toEqual('c1');
+            expect(val[0].text).toEqual('Answer 1');
+            expect(val[1].code).toEqual('c3');
+            expect(val[1].text).toEqual('Answer 3');
+          });
+
+          expect(repeatsElements.get(2).getText()).toBe('×Answer 1');
+          expect(repeatsElements.get(3).getText()).toBe('×Answer 3');
+          expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
+          expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
+          typeOpenChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val.length).toEqual(4);
+            expect(val[0].code).toEqual('c1');
+            expect(val[0].text).toEqual('Answer 1');
+            expect(val[1].code).toEqual('c3');
+            expect(val[1].text).toEqual('Answer 3');
+            expect(val[2]).toEqual('User typed answer a');
+            expect(val[3]).toEqual('User typed answer b');
+          });
+
+        }
+        if (fhirVersion === "STU3") {
+          expect(typeBoolean.getAttribute('value')).toBe('on');
+          typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(true);
+          });
+
+          expect(typeInteger.getAttribute('value')).toBe('123');
+          typeInteger.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(123);
+          });
+
+          expect(typeDecimal.getAttribute('value')).toBe('123.45');
+          typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual(123.45);
+          });
+
+          expect(typeString.getAttribute('value')).toBe("abc123");
+          typeString.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("abc123");
+          });
+
+          expect(typeDate.getAttribute('value')).toBe("09/03/2019");
+          typeDate.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("2019-09-03");
+          });
+
+          // initial[x] valueDateTime does not work yet
+          //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
+          typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("2015-02-07T13:28:17-05:00");
+          });
+
+          expect(typeTime.getAttribute('value')).toBe("13:28:17");
+          typeTime.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("13:28:17");
+          });
+
+          expect(typeChoice.getAttribute('value')).toBe("Answer 2");
+          typeChoice.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val.code).toEqual("c2");
+            expect(val.text).toEqual('Answer 2');
+          });
+
+          expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
+          typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
+            expect(val).toEqual("User typed answer");
+
+          });
+
+        }
       });
 
       it('should keep the initial[x] values when converted back to Questionnaire', function() {

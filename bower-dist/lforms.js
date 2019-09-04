@@ -786,7 +786,7 @@ var LForms = __webpack_require__(4);
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
 
-  $scope.debug = true;
+  $scope.debug = false;
   $scope.hasUnused = false;
   $scope.repeatingSectionStatus = {};
   $scope.validationInitialShowTime = LF_CONSTANTS.VALIDATION_MESSAGE_INITIAL_SHOW_TIME; // Provide blank image to satisfy img tag. Bower packaging forces us to
