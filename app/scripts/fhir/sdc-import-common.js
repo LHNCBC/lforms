@@ -26,6 +26,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
+  self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
 
   self.formLevelFields = [
     // Resource
@@ -604,6 +605,28 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   *  Converts the given ValueSet into an array of answers that can be used with a prefetch autocompleter.
+   * @return the array of answers, or null if the extraction cannot be done.
+   */
+  self.answersFromVS = function (valueSet) {
+    var vs = valueSet;
+    var rtn = [];
+    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
+      vs.expansion.contains.forEach(function (vsItem) {
+        var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
+        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
+          "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+        if(ordExt) {
+          answer.score = ordExt.valueDecimal;
+        }
+        rtn.push(answer);
+      });
+    }
+    return rtn.length > 0 ? rtn : null;
+  };
+
+
+  /**
    * Convert the given code system to LForms internal code system. Currently
    * only converts 'http://loinc.org' to 'LOINC' and returns all other input as is.
    * @param codeSystem
@@ -623,6 +646,114 @@ function addCommonSDCImportFns(ns) {
 
   // Copy the main merge function to preserve the same API usage.
   self.mergeQuestionnaireResponseToLForms = qrImport.mergeQuestionnaireResponseToLForms;
+
+  /**
+   *  Processes the terminology server setting, if any.
+   *
+   * @param lfItem - LForms item object to assign externallyDefined
+   * @param qItem - Questionnaire item object
+   * @private
+   */
+  self._processTerminologyServer = function (lfItem, qItem) {
+    var tServer = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtTerminologyServer);
+    if (tServer && tServer.valueUrl) {
+      lfItem.terminologyServer = tServer.valueUrl;
+    }
+  };
+
+
+  /**
+   *  Finds the terminology server URL (if any) for the given item.
+   * @param item a question, title, or group in the form (in the LFormsData
+   *  structure, not the Questionnaire).
+   * @return the base terminology server URL, or undefined if there isn't one
+   *  for this item.
+   */
+  self._getTerminologyServer = function(item) {
+    var terminologyServer = item.terminologyServer;
+    var parent = item._parentItem;
+    while (!terminologyServer && parent) {
+      terminologyServer = parent.terminologyServer;
+      parent = parent._parentItem;
+    }
+    return terminologyServer;
+  },
+
+
+  /**
+   *  Returns the URL for performing a ValueSet expansion for the given item,
+   *  if the given item has a terminology server and answerValueSet
+   *  configured; otherwise it returns undefined.
+   * @param item a question, title, or group in the form
+   */
+  self._getExpansionURL = function(item) {
+    var rtn;
+    if (item.answerValueSet) {
+      var terminologyServer = this._getTerminologyServer(item);
+      if (terminologyServer)
+        rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
+    }
+    return rtn;
+  }
+
+
+  /**
+   *  Loads answerValueSets for prefetched lists.
+   * @param lfData the LFormsData for the form
+   * @return an array of promise objects which resolve when the answer valuesets
+   * have been loaded and imported.
+   */
+  self.loadAnswerValueSets = function (lfData) {
+    var pendingPromises = [];
+    var items = lfData.itemList;
+    for (var i=0, len=items.length; i<len; ++i) {
+      let item = items[i];
+      if (item.answerValueSet && !item.isSearchAutocomplete) {
+        let expURL = this._getExpansionURL(item);
+        let vsKey = expURL ? expURL : item.answerValueSet;
+        item._answerValueSetKey = vsKey;
+        if (!LForms._valueSetAnswerCache)
+          LForms._valueSetAnswerCache = {};
+        let answers = LForms._valueSetAnswerCache[vsKey];
+        if (answers) {
+          item.answers = answers;
+          lfData._updateAutocompOptions(item, true);
+        }
+        else { // if not already loaded
+          if (expURL) {
+            pendingPromises.push(fetch(expURL).then(function(response) {
+              return response.json();
+            }).then(function(parsedJSON) {
+              answers = self.answersFromVS(parsedJSON);
+              if (answers) {
+                LForms._valueSetAnswerCache[expURL] = answers;
+                item.answers = answers;
+                lfData._updateAutocompOptions(item, true);
+              }
+            }, function fail() {
+              throw new Error("Unable to load ValueSet from "+expURL);
+            }));
+          }
+          else { // use FHIR context
+            var fhirClient = LForms.fhirContext.getFHIRAPI();
+            pendingPromises.push(fhirClient.search({type: 'ValueSet/$expand',
+              query: {_format: 'application/json', url: item.answerValueSet}}).then(function(response) {
+                var valueSet = response.data;
+                var answers = self.answersFromVS(valueSet);
+                if (answers) {
+                  LForms._valueSetAnswerCache[vsKey] = answers;
+                  item.answers = answers;
+                  lfData._updateAutocompOptions(item, true);
+                }
+              }, function fail() {
+                throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+              }));
+          }
+        }
+      }
+    }
+    return pendingPromises;
+  }
 }
 
 export default addCommonSDCImportFns;

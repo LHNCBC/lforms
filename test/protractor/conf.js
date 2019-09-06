@@ -7,7 +7,10 @@ exports.config = {
   //Capabilities to be passed to the webdriver instance.
   capabilities: {
     'browserName': 'chrome',
-    'loggingPrefs': {'browser': 'ALL'}
+    'loggingPrefs': {'browser': 'ALL'},
+    chromeOptions: {
+      args: ['disable-infobars', 'allow-insecure-localhost', 'window-size=1600,1300']
+    }
   },
   specs: 'spec/**/*.spec.js',
   exclude: ['spec/lforms_keyboard_navi.spec.js'],
