@@ -2,11 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.3.4] 2019-09-06
+### Fixed
+- Fixed a bug in conversion of restrictions to corresponding FHIR extensions.
+  
 ## [17.3.3] 2019-08-09
 ### Fixed
 - Fixed a bug which was overwriting linkid with codepath in Questionnaire's item.enableWhen.question.
   
-
 ## [17.3.2] 2019-07-30
 ### Fixed
 - Fixed a bug that multiple repeating items are added when the "add" button is clicked, 
