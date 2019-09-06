@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.4.1] 2019-09-06
+### Fixed
+- Fixed a bug in conversion of restrictions to corresponding FHIR extensions.
+  
 ## [17.4.0] 2019-08-28
 ### Added
 - Support for prefetched lists (FHIR item control type = 'dropdown') whose
