@@ -2,13 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-<<<<<<< HEAD
 ## [17.5.0] 2019-08-30
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.
 ### Fixed
-- Fixed a bug that on CWE items, user typed answers that is not in the answer list are 
-  not display in the "OTHER" fields, when answer list is displayed as radio buttons or 
+- Fixed a bug that on CWE items, user typed answers that are not in the answer list are 
+  not displayed in the "OTHER" fields, when answer list is displayed as radio buttons or 
   checkboxes.
   
 ## [17.4.0] 2019-08-28

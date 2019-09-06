@@ -344,7 +344,7 @@ describe('formdata: ', function() {
 
   describe('item.prefix', function() {
 
-    it('should be display', function () {
+    it('should be displayed', function () {
       tp.openFullFeaturedForm();
       browser.wait(function () {
         return element(by.id('/type0/1')).isPresent();

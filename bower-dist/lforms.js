@@ -5853,8 +5853,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       for (var i = 0, iLen = items.length; i < iLen; i++) {
         var item = items[i];
-        var itemData = {}; // for user typed data of a CWE item, _answerOther is already in item.value as {text: _answerOther}
-        // for 'other' in answer that requires an extra text input, the user typed data is kept in item.valueOther
+        var itemData = {}; // for user typed data of a CWE item, _answerOther is already in item.value as {text: _answerOther}.
+        // for 'other' in answer that requires an extra text input, the user typed data is kept in item.valueOther.
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
 

@@ -19531,7 +19531,6 @@ var self = {
 
       for (var i = 0, iLen = values.length; i < iLen; i++) {
         // for Coding
-        // Note: NO support of multiple selections in FHIR SDC
         if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i])) {
           if (dataType === 'CWE' && values[i]._notOnList) {
             answer.push({

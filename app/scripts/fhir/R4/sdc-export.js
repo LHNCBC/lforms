@@ -632,52 +632,30 @@ var self = {
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
 
-        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // defaultAnswer has multiple values
-          for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-            if (typeof item.defaultAnswer[i] === 'object') {
-              coding = {"code": item.defaultAnswer[i].code};
-              if(item.defaultAnswer[i].text !== undefined) {
-                coding.display = item.defaultAnswer[i].text;
-              }
-              // code system
-              codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
-              if (codeSystem) {
-                coding.system = LForms.Util.getCodeSystem(codeSystem);
-              }
-
-              answer = {};
-              answer[valueKey] = coding;
-              targetItem.initial.push(answer);
-            }
-            // user typed answer that is not on the answer list.
-            else if (typeof item.defaultAnswer[i] === 'string') {
-              targetItem.initial.push({
-                "valueString": item.defaultAnswer[i]
-              })
-            }
-          }
-        }
-        // single selection, item.defaultAnswer is not an array
-        else {
-          if (typeof item.defaultAnswer === 'object') {
-            coding = {"code": item.defaultAnswer.code};
-            if(item.defaultAnswer.text !== undefined) {
-              coding.display = item.defaultAnswer.text;
+        // item.defaultAnswer could be an array of multiple default values or a single value
+        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+            item.defaultAnswer : [item.defaultAnswer];
+        // go through each default value, which could be a code object or a string
+        for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
+          if (typeof defaultAnswers[i] === 'object') {
+            coding = {"code": defaultAnswers[i].code};
+            if(defaultAnswers[i].text !== undefined) {
+              coding.display = defaultAnswers[i].text;
             }
             // code system
-            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
+            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
+
             answer = {};
             answer[valueKey] = coding;
             targetItem.initial.push(answer);
           }
           // user typed answer that is not on the answer list.
-          else if (typeof item.defaultAnswer === 'string') {
+          else if (typeof defaultAnswers[i] === 'string') {
             targetItem.initial.push({
-              "valueString": item.defaultAnswer
+              "valueString": defaultAnswers[i]
             })
           }
         }

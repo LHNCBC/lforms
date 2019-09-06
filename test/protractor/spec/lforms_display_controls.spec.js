@@ -84,12 +84,14 @@ describe('display controls demo', function() {
     });
     item2OtherValue.sendKeys('other values');
     item2answer1.evaluate("item.value").then(function (value) {
+      // user typed data is now only stored in text, not in code
       expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values');
     });
     item2OtherValue.clear();
     item2OtherValue.sendKeys('other values again');
     item2answer1.evaluate("item.value").then(function (value) {
+      // user typed data is now only stored in text, not in code
       expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values again');
     });
