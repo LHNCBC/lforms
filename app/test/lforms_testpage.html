@@ -313,13 +313,12 @@
               });
             };
 
-            $scope.testMergeQR2LForms = function() {
-              // use the first form
-              $scope.getFhirResource(getFHIRVersion(), 'fhir-sdc-response-ussgfht.json').then(function (fhirData) {
+            $scope.loadFHIRDataFile = function(fileName, lfData) {
+              $scope.getFhirResource(getFHIRVersion(), fileName).then(function (fhirData) {
 
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                  'QuestionnaireResponse', fhirData, angular.copy(FHTData),
-                  getFHIRVersion());
+                        'QuestionnaireResponse', fhirData, angular.copy(lfData),
+                        getFHIRVersion());
                 mergedFormData = new LForms.LFormsData(mergedFormData);
 
                 $scope.lfData2 = mergedFormData;
@@ -327,29 +326,23 @@
                   useAnimation: !window._INTESTING_
                 };
               }, function (err) {
-                window.alert('Unable to load '+getFHIRVersion()+': fhir-sdc-response-ussgfht.json');
+                window.alert('Unable to load '+getFHIRVersion()+': fileName');
               });
+
             };
 
-              $scope.testMergeQR2LForms_CWE = function() {
-                // use the first form
-                $scope.getFhirResource(getFHIRVersion(), 'questionnaire-response-allinone-cwe-userdata.json').then(function (fhirData) {
 
-                  var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                          'QuestionnaireResponse', fhirData, angular.copy(allInOne),
-                          getFHIRVersion());
-                  mergedFormData = new LForms.LFormsData(mergedFormData);
+            $scope.testMergeQR2LForms = function() {
+              $scope.loadFHIRDataFile('fhir-sdc-response-ussgfht.json', FHTData);
+            };
 
-                  $scope.lfData2 = mergedFormData;
-                  $scope.lfOption2 = {
-                    useAnimation: !window._INTESTING_
-                  };
-                }, function (err) {
-                  window.alert('Unable to load '+getFHIRVersion()+': questionnaire-response-allinone-cwe-userdata.json');
-                });
-              };
 
-              $scope.testSearchOnFHIRServer = function() {
+            $scope.testMergeQR2LForms_CWE = function() {
+              $scope.loadFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', allInOne)
+            };
+
+
+            $scope.testSearchOnFHIRServer = function() {
 //              var dataURL = "http://fhirtest.uhn.ca/baseDstu3/DiagnosticReport?_id=663968&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
               var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
 

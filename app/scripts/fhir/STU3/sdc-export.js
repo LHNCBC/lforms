@@ -629,43 +629,28 @@ var self = {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
-        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // defaultAnswer has multiple values
-          // pick the first one only
-          if (typeof item.defaultAnswer[0] === 'object') {
-            coding = {
-              "code": item.defaultAnswer[0].code,
-              "display": item.defaultAnswer[0].text
-            };
-            // code system
-            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
-            targetItem[valueKey] = coding;
+
+        // item.defaultAnswer could be an array of multiple default values or a single value.
+        // in STU3 'initial[x]' is a single value. pick the first one if defaultAnswer is an array.
+        var defaultAnswer = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+            item.defaultAnswer[0] : item.defaultAnswer;
+        if (typeof defaultAnswer === 'object') {
+          coding = {
+            "code": defaultAnswer.code,
+          };
+          if(defaultAnswer !== undefined) {
+            coding.display = defaultAnswer.text;
           }
-          // user typed answer that is not on the answer list.
-          else if (typeof item.defaultAnswer[0] === 'string') {
-            targetItem["initialString"] = item.defaultAnswer[0]
+          // code system
+          codeSystem = defaultAnswer.codeSystem || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
+          targetItem[valueKey] = coding;
         }
-        // single selection, item.defaultAnswer is an object
-        else {
-          if (typeof item.defaultAnswer === 'object') {
-            coding = {
-              "code": item.defaultAnswer.code,
-              "display": item.defaultAnswer.text
-            };
-            // code system
-            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
-            targetItem[valueKey] = coding;
-          }
-          else if (typeof item.defaultAnswer === 'string') {
-            targetItem["initialString"] = item.defaultAnswer
-          }
+        // user typed answer that is not on the answer list.
+        else if (typeof defaultAnswer === 'string') {
+          targetItem["initialString"] = defaultAnswer
         }
       }
       // for Quantity,

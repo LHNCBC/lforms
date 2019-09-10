@@ -2497,31 +2497,21 @@
 
       if (item._modifiedAnswers) {
         // default answer could be a string value, for CWE types
-        var defaultValue = item.defaultAnswer;
         var modifiedDefaultValue;
-        if (defaultValue) {
+        if (!item.value && item.defaultAnswer) {
           modifiedDefaultValue = [];
-          // there could be multiple user typed, not-on-list default values
-          if (item._multipleAnswers && Array.isArray(defaultValue)) {
-            for (var i=0, iLen=defaultValue.length; i < iLen; ++i) {
-              if (typeof defaultValue[i] === "string" || typeof defaultValue[i] === "number") {
-                if (item.dataType === 'CWE') {
-                  modifiedDefaultValue.push({"text": defaultValue[i], "_notOnList" : true});
-                }
-              }
-              else {
-                modifiedDefaultValue.push(defaultValue[i]);
+          // item.defaultAnswer could be an array of multiple default values or a single value
+          var defaultValue = (item._multipleAnswers && Array.isArray(item.defaultAnswer)) ?
+              item.defaultAnswer : [item.defaultAnswer];
+          // go through each default value, there could be multiple user typed, not-on-list default values
+          for (var i=0, iLen=defaultValue.length; i < iLen; ++i) {
+            if (typeof defaultValue[i] === "string" || typeof defaultValue[i] === "number") {
+              if (item.dataType === 'CWE') {
+                modifiedDefaultValue.push({"text": defaultValue[i], "_notOnList" : true});
               }
             }
-          }
-          // one default value
-          else {
-            if (typeof defaultValue === "string" || typeof defaultValue[i] === "number") {
-              if (item.dataType === 'CWE') {
-                modifiedDefaultValue.push({"text": defaultValue, "_notOnList": true});
-              }
-            } else {
-              modifiedDefaultValue.push(defaultValue);
+            else {
+              modifiedDefaultValue.push(defaultValue[i]);
             }
           }
         }

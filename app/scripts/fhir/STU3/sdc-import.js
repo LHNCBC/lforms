@@ -736,36 +736,17 @@ function addSDCImportFns(ns) {
             if (ns._answerRepeats(item)) {
               var value = [];
               for (var j=0,jLen=answer.length; j<jLen; j++) {
-                var coding = answer[j];
-                // a valueCoding, which is one of the answers
-                if (coding.valueCoding) {
-                  value.push({
-                    "code": coding.valueCoding.code,
-                    "text": coding.valueCoding.display
-                  });
-                }
-                // a valueString, which is a user supplied value that is not in the answers
-                else if (coding.valueString) {
-                  value.push({
-                    "text": coding.valueString
-                  })
+                var val = ns._processCWECNEValueInQR(answer[j]);
+                if (val) {
+                  value.push(val);
                 }
               }
               item.value = value;
             }
             else {
-              // a valueCoding, which is one of the answers
-              if (qrValue.valueCoding) {
-                item.value = {
-                  "code": qrValue.valueCoding.code,
-                  "text": qrValue.valueCoding.display
-                };
-              }
-              // a valueString, which is a user supplied value that is not in the answers
-              else if (qrValue.valueString) {
-                item.value = {
-                  "text": qrValue.valueString
-                };
+              var val = ns._processCWECNEValueInQR(qrValue);
+              if (val) {
+                item.value = val;
               }
             }
             break;

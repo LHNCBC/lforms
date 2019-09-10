@@ -194,15 +194,15 @@ describe('load saved user data', function() {
     // OTHER in checkbox display with the user value not in the answer list
     expect(cwe1Other.isSelected()).toBe(true);
     expect(cwe1OtherValue.getAttribute('value')).toBe('user typed value');
-    // OTHER and an answer by code,in checkbox display with the user value not in the answer list
+    // OTHER and an answer that has only a 'code', in checkbox display with the user value not in the answer list
     expect(cwe2Ans1.isSelected()).toBe(true);
     expect(cwe2Other.isSelected()).toBe(true);
     expect(cwe2OtherValue.getAttribute('value')).toBe('user typed value');
-    // OTHER and an answer by text,in checkbox display with the user value not in the answer list
+    // OTHER and an answer that has only a 'text', in checkbox display with the user value not in the answer list
     expect(cwe3Ans2.isSelected()).toBe(true);
     expect(cwe3Other.isSelected()).toBe(true);
     expect(cwe3OtherValue.getAttribute('value')).toBe('user typed value');
-    // OTHER and an answer by code and text,in checkbox display with the user value not in the answer list
+    // OTHER and an answer that has a 'code and a 'text', in checkbox display with the user value not in the answer list
     expect(cwe4Ans3.isSelected()).toBe(true);
     expect(cwe4Other.isSelected()).toBe(true);
     expect(cwe4OtherValue.getAttribute('value')).toBe('user typed value');

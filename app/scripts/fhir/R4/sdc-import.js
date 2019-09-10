@@ -842,7 +842,7 @@ function addSDCImportFns(ns) {
             if (ns._answerRepeats(item)) {
               var value = [];
               for (var j=0,jLen=answer.length; j<jLen; j++) {
-                var val = this._processCWECNEValue(answer[j]);
+                var val = ns._processCWECNEValueInQR(answer[j]);
                 if (val) {
                   value.push(val);
                 }
@@ -850,7 +850,7 @@ function addSDCImportFns(ns) {
               item.value = value;
             }
             else {
-              var val = this._processCWECNEValue(qrValue);
+              var val = ns._processCWECNEValueInQR(qrValue);
               if (val) {
                 item.value = val;
               }
@@ -869,31 +869,9 @@ function addSDCImportFns(ns) {
             item.value = qrValue.valueString;
         }
       }
-    },
-
-    /**
-     * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
-     * @param qrItemValue a value of item in QuestionnaireResponse
-     * @returns {{code: *, text: *}}
-     * @private
-     */
-    _processCWECNEValue : function(qrItemValue) {
-      var retValue;
-      // a valueCoding, which is one of the answers
-      if (qrItemValue.valueCoding) {
-        retValue = {
-          "code": qrItemValue.valueCoding.code,
-          "text": qrItemValue.valueCoding.display
-        };
-      }
-      // a valueString, which is a user supplied value that is not in the answers
-      else if (qrItemValue.valueString) {
-        retValue = {
-          "text": qrItemValue.valueString
-        };
-      }
-      return retValue
     }
+
+
   }
 
 }

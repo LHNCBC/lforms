@@ -755,6 +755,31 @@ function addCommonSDCImportFns(ns) {
     }
     return pendingPromises;
   }
+
+
+  /**
+   * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
+   * @param qrItemValue a value of item in QuestionnaireResponse
+   * @returns {{code: *, text: *}}
+   * @private
+   */
+  self._processCWECNEValueInQR = function(qrItemValue) {
+    var retValue;
+    // a valueCoding, which is one of the answers
+    if (qrItemValue.valueCoding) {
+      retValue = {
+        "code": qrItemValue.valueCoding.code,
+        "text": qrItemValue.valueCoding.display
+      };
+    }
+    // a valueString, which is a user supplied value that is not in the answers
+    else if (qrItemValue.valueString) {
+      retValue = {
+        "text": qrItemValue.valueString
+      };
+    }
+    return retValue
+  }
 }
 
 export default addCommonSDCImportFns;
