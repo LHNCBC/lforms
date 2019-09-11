@@ -14,6 +14,7 @@ var FHTData = {
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
+  title: "USSG-FHT, (with mock-up items for skip logic demo) - Title",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
   template: "table",
   // template configuration data. optional, if not provided, a default configuration will be used for the

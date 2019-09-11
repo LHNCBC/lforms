@@ -169,19 +169,9 @@
      */
     init: function(data) {
 
-      this.items = data.items;
-      this.code = data.code;
-      this.codeList = data.codeList;
-      this.identifier = data.identifier;
-      this.name = data.name;
-      this.type = data.type;
-      this.codeSystem = data.codeSystem;
-      this.hasUserData = data.hasUserData;
-      this.template = data.template;
+      jQuery.extend(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
-      this.answerLists = data.answerLists;
-      this.copyrightNotice = data.copyrightNotice;
 
       // when the skip logic rule says the form is done
       this._formDone = false;

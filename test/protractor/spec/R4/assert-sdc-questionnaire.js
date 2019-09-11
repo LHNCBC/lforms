@@ -1,7 +1,7 @@
 function assertFHTQuestionnaire(fhirData) {
   expect(fhirData.resourceType).toBe("Questionnaire");
   expect(fhirData.name).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
-  expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo)");
+  expect(fhirData.title).toBe("USSG-FHT, (with mock-up items for skip logic demo) - Title");
   expect(fhirData.meta.profile[0]).toBe("http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7");
   // No URL conversion for now. -Ajay
   //expect(fhirData.url).toBe("http://hl7.org/fhir/us/sdc/Questionnaire/54127-6N");

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "17.4.1",
+  "version": "17.4.2",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -87,7 +87,7 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update",
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome=2.41",
     "start": "grunt serve"
   }
 }

@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [17.4.2] 2019-09-06
+### Changed
+- Changed form title to title field, if present, otherwise name field.
+### Fixed
+- Fixed missing form level fields related to FHIR Questionnaire. All form level fields are preserved. 
+  
 ## [17.4.1] 2019-09-06
 ### Fixed
 - Fixed a bug in conversion of restrictions to corresponding FHIR extensions.
