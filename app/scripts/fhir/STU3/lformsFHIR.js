@@ -19287,7 +19287,7 @@ var self = {
     if (item.restrictions) {
       for (var key in item.restrictions) {
         var value = item.restrictions[key];
-        var extValue;
+        var extValue = null;
 
         var dataType = this._getAssumedDataTypeForExport(item);
 

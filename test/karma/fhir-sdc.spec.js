@@ -686,6 +686,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(convertedLfData.items[22].restrictions.maxLength, 10);
           });
 
+          it('should convert only valid restrictions', function () {
+            var lforms = angular.copy(window['restrictions_lforms']);
+            var expected_fhirQ = angular.copy(window['restrictions_fhirQ'])
+            var fhirQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lforms);
+            assert.deepEqual(fhirQ.item[0].extension, expected_fhirQ.item[0].extension);
+            assert.deepEqual(fhirQ.item[1].extension, expected_fhirQ.item[1].extension);
+            assert.equal(fhirQ.item[1].maxLength, expected_fhirQ.item[1].maxLength);
+          });
+
           it('should convert externally defined', function () {
             var optionsRes = validationTestForm.items[23].externallyDefined;
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(validationTestForm));
