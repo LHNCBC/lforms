@@ -620,7 +620,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(races.get(0).getText()).toBe('×American Indian or Alaska Native');
             expect(races.get(1).getText()).toBe('×Asian');
 
-            expect(ff.disease.getAttribute('value')).toBe("Hemolytic-uremic syndrome (HUS)");
+            expect(ff.disease.getAttribute('value')).toBe("Hypertension");
             expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
           });
 

@@ -72,22 +72,33 @@ var self = {
         }
         for (var j=0,jLen=itemValues.length; j<jLen; j++) {
           var val = itemValues[j];
-          var coding = {
-            "code": val.code,
-            "display": val.text
-          };
-          var codeSystem = val.codeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-          values.push(
-              { key: "valueCodeableConcept",
-                val: {
-                  "coding" : [coding],
-                  "text": coding.display
+          if (typeof val === "object") {
+            var coding = {
+              "code": val.code,
+              "display": val.text
+            };
+            var codeSystem = val.codeSystem;
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
+            }
+            values.push(
+                { key: "valueCodeableConcept",
+                  val: {
+                    "coding" : [coding],
+                    "text": coding.display
+                  }
                 }
-              }
-          )
+            )
+          }
+          else if (typeof val === "string") {
+            if (val !== "") {
+              values.push(
+                  { key: "valueString",
+                    val: val
+                  }
+              )
+            }
+          }
         }
         break;
       default:

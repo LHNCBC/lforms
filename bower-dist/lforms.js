@@ -5779,13 +5779,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
      * @return {{}} form definition JSON object
      */
-    getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag) {
+    getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -5811,16 +5809,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
-    getUserData: function getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag) {
+    getUserData: function getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       var ret = {};
-      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag); // template options could be optional. Include them, only if they are present
+      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // template options could be optional. Include them, only if they are present
 
       if (this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems) {
-        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag);
+        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
       } // return a deep copy of the data
 
 
@@ -5843,12 +5839,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
      * @param keepIdPath optional, to keep _idPath field on item, the default is false
      * @param keepCodePath optional, to keep _codePath field on item, the default is false
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
      * @returns {Array} form data on one tree level
      * @private
      */
-    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath, keepNotOnListFlag) {
+    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       var itemsData = [];
 
       for (var i = 0, iLen = items.length; i < iLen; i++) {
@@ -5867,7 +5861,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           itemData.questionCode = item.questionCode; // not a header
 
           if (!item.header) {
-            if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType, keepNotOnListFlag);
+            if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
             if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
           }
         } // otherwise include form definition data
@@ -5876,7 +5870,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             for (var field in item) {
               // special handling for user input values
               if (field === "value") {
-                itemData[field] = this._getOriginalValue(item[field], item.dataType, keepNotOnListFlag);
+                itemData[field] = this._getOriginalValue(item[field], item.dataType);
               } else if (field === "unit") {
                 itemData[field] = this._getOriginalValue(item[field]);
               } // ignore the internal lforms data and angular data
@@ -5914,24 +5908,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * Process values for a user selected/typed answer or unit.
      * Also remove internal data whose field/key names start with _.
      * @param obj either an answer object or a unit object
-     * @param autocompleteData optional, a flag indicates it is the data
-     * handled by autocomplete-lhc. default is false.
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
+     * @param typeCWE optional, a flag indicates the item type is CWE, where data is
+     * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
      * @returns {{}}  a new object with the internal attributes removed.
      * @private
      */
-    _filterInternalData: function _filterInternalData(obj, autocompleteData, keepNotOnListFlag) {
+    _filterInternalData: function _filterInternalData(obj, typeCWE) {
       var objReturn = {}; // special handling for the user-typed value for CWE data type
 
-      if (autocompleteData && obj._notOnList && obj._displayText) {
-        objReturn = {
-          text: obj._displayText
-        };
-
-        if (keepNotOnListFlag) {
-          objReturn._notOnList = obj._notOnList;
-        }
+      if (typeCWE && obj._notOnList && obj._displayText) {
+        // return a string value
+        objReturn = obj._displayText;
       } else {
         for (var field in obj) {
           if (!field.match(/^[_\$]/)) {
@@ -5946,14 +5933,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Process value where it is an object or an array of objects
      * @param value the captured value
-     * @param autocompleteData optional, a flag indicates it is the data
-     * handled by autocomplete-lhc. default is false.
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
+     * @param typeCWE optional, a flag indicates the item type is CWE, where data is
+     * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
      * @returns {*}
      * @private
      */
-    _getObjectValue: function _getObjectValue(value, autocompleteData, keepNotOnListFlag) {
+    _getObjectValue: function _getObjectValue(value, typeCWE) {
       var retValue = null;
 
       if (value) {
@@ -5963,7 +5948,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
           for (var j = 0, jLen = value.length; j < jLen; j++) {
             if (angular.isObject(value[j])) {
-              answers.push(this._filterInternalData(value[j], autocompleteData, keepNotOnListFlag));
+              answers.push(this._filterInternalData(value[j], typeCWE));
             } // for primitive data type (multiple values not supported yet)
             //else {
             //  answers.push(value[j]);
@@ -5974,7 +5959,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           retValue = answers;
         } // an object
         else if (angular.isObject(value)) {
-            retValue = this._filterInternalData(value, autocompleteData, keepNotOnListFlag);
+            retValue = this._filterInternalData(value, typeCWE);
           }
       }
 
@@ -5985,11 +5970,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * Special handling for user input values, to get the original answer or unit object if there is one
      * @param value the data object of the selected answer
      * @param dataType optional, the data type of the value
-     * @param keepNotOnListFlag optional, to keep the _notOnList flag on answers that are not on the answers list,
-     * the default is false
      * @private
      */
-    _getOriginalValue: function _getOriginalValue(value, dataType, keepNotOnListFlag) {
+    _getOriginalValue: function _getOriginalValue(value, dataType) {
       var retValue;
 
       if (value !== undefined && value !== null) {
@@ -6014,12 +5997,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
               break;
 
             case this._CONSTANTS.DATA_TYPE.CNE:
-              retValue = this._getObjectValue(value, true);
+              retValue = this._getObjectValue(value);
               break;
 
             case this._CONSTANTS.DATA_TYPE.CWE:
               // for CWE, it should handle the case where 'OTHER' is selected
-              retValue = this._getObjectValue(value, true, keepNotOnListFlag);
+              retValue = this._getObjectValue(value, true);
               break;
 
             case this._CONSTANTS.DATA_TYPE.BL:
@@ -6031,7 +6014,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         } // it is for units when there is no dataType
         else {
-            retValue = this._getObjectValue(value, true);
+            retValue = this._getObjectValue(value);
           }
       }
 
@@ -6997,55 +6980,59 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _resetItemValueWithModifiedAnswers: function _resetItemValueWithModifiedAnswers(item) {
       if (item._modifiedAnswers) {
-        // default answer could be a string value, for CWE types
-        var modifiedDefaultValue;
+        // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
+        var modifiedValue = null; // item.value has the priority over item.defaultAnswer
 
-        if (!item.value && item.defaultAnswer) {
-          modifiedDefaultValue = []; // item.defaultAnswer could be an array of multiple default values or a single value
+        var answerValue = item.value || item.defaultAnswer;
 
-          var defaultValue = item._multipleAnswers && Array.isArray(item.defaultAnswer) ? item.defaultAnswer : [item.defaultAnswer]; // go through each default value, there could be multiple user typed, not-on-list default values
+        if (answerValue) {
+          modifiedValue = []; // could be an array of multiple default values or a single value
 
-          for (var i = 0, iLen = defaultValue.length; i < iLen; ++i) {
-            if (typeof defaultValue[i] === "string" || typeof defaultValue[i] === "number") {
+          var answerValueArray = item._multipleAnswers && Array.isArray(answerValue) ? answerValue : [answerValue]; // go through each value, there could be multiple not-on-list values
+
+          for (var i = 0, iLen = answerValueArray.length; i < iLen; ++i) {
+            if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+              // string value is allowed only if it is CWE
               if (item.dataType === 'CWE') {
-                modifiedDefaultValue.push({
-                  "text": defaultValue[i],
+                modifiedValue.push({
+                  "text": answerValueArray[i],
+                  "_displayText": answerValueArray[i],
                   "_notOnList": true
-                });
+                }); // for radio button/checkbox display, an "Other" option is displayed
+
+                item._answerOther = answerValueArray[i];
+                item._otherValueChecked = true;
               }
             } else {
-              modifiedDefaultValue.push(defaultValue[i]);
+              modifiedValue.push(answerValueArray[i]);
             }
           }
-        } // item.value has the priority over item.defaultValue
+        }
 
-
-        var userValues = item.value || modifiedDefaultValue;
-
-        if (userValues) {
-          userValues = Array.isArray(userValues) ? userValues : [userValues];
+        if (modifiedValue) {
           var listVals = [];
 
-          for (var k = 0, kLen = userValues.length; k < kLen; ++k) {
-            var userValue = userValues[k];
-            var found = false;
+          for (var k = 0, kLen = modifiedValue.length; k < kLen; ++k) {
+            var userValue = modifiedValue[k];
+            var found = false; // for search field, assume the user values are valid answers
 
-            for (var j = 0, jLen = item._modifiedAnswers.length; !found && j < jLen; ++j) {
-              if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j])) {
-                listVals.push(item._modifiedAnswers[j]);
-                found = true;
+            if (item.externallyDefined) {
+              listVals = modifiedValue;
+            } // for item has a answer list
+            else {
+                for (var j = 0, jLen = item._modifiedAnswers.length; !found && j < jLen; ++j) {
+                  if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j], item)) {
+                    listVals.push(item._modifiedAnswers[j]);
+                    found = true;
+                  }
+                } // a saved value or a default value is not on the list (default answer must be one of the answer items).
+                // non-matching value objects are no longer treated as a not-on-list, user supplied value.
+
+
+                if (userValue && !found && userValue._notOnList) {
+                  listVals.push(userValue);
+                }
               }
-            } // a saved value or a default value is not in the list (default answer must be one of the answer items)
-
-
-            if (userValue && !found) {
-              userValue._displayText = userValue.text;
-              userValue._notOnList = true;
-              listVals.push(userValue); // for radio button/checkbox display, an "Other" option is displayed
-
-              item._answerOther = userValue.text;
-              item._otherValueChecked = true;
-            }
           }
 
           item.value = item._multipleAnswers ? listVals : listVals[0];
@@ -7057,19 +7044,35 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * Check if two answers can be treated as same
      * @param answer an answer item that could have part of the attributes set
      * @param completeAnswer an answer item that have the complete attributes set
+     * @param item the lforms item that has the comleteAnswer as a one in the answer list
      * @private
      */
-    _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer) {
-      // check answers' attributes if they have the same code system
+    _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
+      // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+      var completeAnswerCodeSystem = completeAnswer.codeSystem;
+
+      if (!completeAnswer.codeSystem) {
+        var codeSystem = item.answerCodeSystem || this.codeSystem;
+
+        if (codeSystem) {
+          if (codeSystem === "LOINC") {
+            completeAnswerCodeSystem = "http://loinc.org";
+          } else {
+            completeAnswerCodeSystem = codeSystem;
+          }
+        }
+      } // check answers' attributes if they have the same code system
+
+
       var same = false; // if no codeSystem or same codeSystem
 
-      if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswer.codeSystem) {
+      if (!answer.codeSystem && !completeAnswerCodeSystem || !answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswerCodeSystem) {
         // check all fields in answer
         same = true;
         var fields = Object.keys(answer);
 
         for (var i = 0, iLen = fields.length; i < iLen; i++) {
-          if (answer[fields[i]] !== completeAnswer[fields[i]]) {
+          if (fields[i] !== "codeSystem" && answer[fields[i]] !== completeAnswer[fields[i]]) {
             same = false;
             break;
           }

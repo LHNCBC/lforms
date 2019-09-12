@@ -769,14 +769,13 @@ function addCommonSDCImportFns(ns) {
     if (qrItemValue.valueCoding) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
-        "text": qrItemValue.valueCoding.display
+        "text": qrItemValue.valueCoding.display,
+        "codeSystem": qrItemValue.valueCoding.system
       };
     }
     // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
-      retValue = {
-        "text": qrItemValue.valueString
-      };
+      retValue = qrItemValue.valueString;
     }
     return retValue
   }

@@ -554,14 +554,16 @@ var self = {
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
         // for Coding
-        // Note: NO support of multiple selections in FHIR SDC
-        if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i]) ) {
-          if (dataType === 'CWE' && values[i]._notOnList) {
-            answer.push({
-              "valueString" : values[i].text
-            })
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString" : values[i]
+              })
+            }
           }
-          else {
+          else if (!jQuery.isEmptyObject(values[i])) {
             var oneAnswer = {};
             var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
             if (codeSystem) oneAnswer.system = codeSystem;
@@ -627,8 +629,6 @@ var self = {
       var dataType = this._getAssumedDataTypeForExport(item);
       var valueKey = this._getValueKeyByDataType("value", item);
       // for Coding
-      // multiple selections, item.value is an array
-      // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
 

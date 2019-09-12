@@ -555,13 +555,16 @@ var self = {
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
         // for Coding
-        if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i]) ) {
-          if (dataType === 'CWE' && values[i]._notOnList) {
-            answer.push({
-              "valueString" : values[i].text
-            })
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString" : values[i]
+              })
+            }
           }
-          else {
+          else if (!jQuery.isEmptyObject(values[i])) {
             var oneAnswer = {};
             var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
             if (codeSystem) oneAnswer.system = codeSystem;

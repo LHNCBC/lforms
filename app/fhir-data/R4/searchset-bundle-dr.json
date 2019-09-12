@@ -360,12 +360,12 @@
         "valueCodeableConcept": {
           "coding": [
             {
-              "system": "http://loinc.org",
-              "code": "10724",
-              "display": "Hemolytic-uremic syndrome (HUS)"
+              "code": "LA7444-8",
+              "display": "Hypertension",
+              "system": "http://loinc.org"
             }
           ],
-          "text": "Hemolytic-uremic syndrome (HUS)"
+          "text": "Hypertension"
         }
       },
       "search": {

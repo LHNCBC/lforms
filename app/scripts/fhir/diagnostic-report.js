@@ -351,10 +351,18 @@ var dr = {
           // get the value from Observation resource.
           // for multiple-selected answers/values in LForms, each selected answer is exported as
           // a separated Observation resource
-          var itemValue = {
-            "code": obx.valueCodeableConcept.coding[0].code,
-            "text": obx.valueCodeableConcept.coding[0].display
-          };
+          var itemValue;
+          if (obx.valueCodeableConcept) {
+            itemValue = {
+              "code": obx.valueCodeableConcept.coding[0].code,
+              "text": obx.valueCodeableConcept.coding[0].display,
+              "codeSystem": obx.valueCodeableConcept.coding[0].system
+            };
+          }
+          else if (obx.valueString) {
+            itemValue = obx.valueString;
+          }
+
           if (item.answerCardinality &&
               (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
             if (!item.value) {

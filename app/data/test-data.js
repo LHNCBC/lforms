@@ -1424,15 +1424,15 @@ var formWithUserData =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     // multi-select CWE, with a mix of selected answers and user typed data
     {"questionCode": "q9", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
-      "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
+      "value": [{"code": "c2", "text": "Answer 2"},"User created answer"],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
       {"code": "c1", "text": "Answer 1"},
       {"code": "c2", "text": "Answer 2"},
       {"code": "c3", "text": "Answer 3"},
       {"code": "c4", "text": "Answer 4"}],
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    // multi-select CWE with a search autocomplter
-    {"questionCode": "q10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},{"text": "User created answer"}],
+    // multi-select CWE with a search autocompleter
+    {"questionCode": "q10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},"User created answer"],
       "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE, a search field",
       "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
@@ -1611,7 +1611,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "value": [{"text": "user typed value"}]
+      "value": ["user typed value"]
     },
     {
       "questionCode": "cwe-checkbox-user-value-and-answer-code",
@@ -1626,7 +1626,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "value": [{"text": "user typed value"}, {"code": "c1"}]
+      "value": ["user typed value", {"code": "c1"}]
     },
     {
       "questionCode": "cwe-checkbox-user-value-and-answer-text",
@@ -1641,7 +1641,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "value": [{"text": "user typed value"}, {"text": "Answer B"}]
+      "value": ["user typed value", {"text": "Answer B"}]
     },
     {
       "questionCode": "cwe-checkbox-user-value-and-answer",
@@ -1656,7 +1656,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "value": [{"text": "user typed value"}, {"code": "c3", "text": "Answer C"}]
+      "value": ["user typed value", {"code": "c3", "text": "Answer C"}]
     },
 
     {
@@ -1672,7 +1672,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "defaultAnswer": [{"text": "user typed default answer"}]
+      "defaultAnswer": ["user typed default answer"]
     },
     {
       "questionCode": "cwe-radio-user-value",
@@ -1687,7 +1687,22 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "value": {"text": "user typed value"}
+      "value": "user typed value"
+    },
+    {
+      "questionCode": "cwe-radio-user-value-nodisplay",
+      "question": "RADIO layout --CWE, with user typed value, no-matching",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "value": {"text": "user typed value"} // no matching, not to be displayed
     },
     {
       "questionCode": "cwe-radio-default-answer",
@@ -1702,7 +1717,22 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "defaultAnswer": {"text": "user typed default answer"}
+      "defaultAnswer": "user typed default answer"
+    },
+    {
+      "questionCode": "cwe-radio-default-answer-nodisplay",
+      "question": "RADIO layout --CWE, with user typed default answer, no-matching",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"},
+      ],
+      "defaultAnswer": {"text": "user typed default answer"} // no matching, not to be displayed
     },
 
   ]};
@@ -6460,7 +6490,7 @@ var defaultAnswerForm = {
       "defaultAnswer": {"code": "B"}
     },
     {
-      "question": "List via answer text (not in specification)",
+      "question": "CWE not-on-list value",
       "questionCode": "ansTextDefault",
       "questionCardinality": {
         "min": "1",

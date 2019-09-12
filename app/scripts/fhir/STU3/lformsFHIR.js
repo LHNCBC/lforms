@@ -18514,10 +18514,17 @@ var dr = {
           // get the value from Observation resource.
           // for multiple-selected answers/values in LForms, each selected answer is exported as
           // a separated Observation resource
-          var itemValue = {
-            "code": obx.valueCodeableConcept.coding[0].code,
-            "text": obx.valueCodeableConcept.coding[0].display
-          };
+          var itemValue;
+
+          if (obx.valueCodeableConcept) {
+            itemValue = {
+              "code": obx.valueCodeableConcept.coding[0].code,
+              "text": obx.valueCodeableConcept.coding[0].display,
+              "codeSystem": obx.valueCodeableConcept.coding[0].system
+            };
+          } else if (obx.valueString) {
+            itemValue = obx.valueString;
+          }
 
           if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
             if (!item.value) {
@@ -18850,6 +18857,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 /**
  *  Defines export functions that are the same across the different FHIR
@@ -18922,23 +18931,33 @@ var self = {
 
         for (var j = 0, jLen = itemValues.length; j < jLen; j++) {
           var val = itemValues[j];
-          var coding = {
-            "code": val.code,
-            "display": val.text
-          };
-          var codeSystem = val.codeSystem;
 
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
+          if (_typeof(val) === "object") {
+            var coding = {
+              "code": val.code,
+              "display": val.text
+            };
+            var codeSystem = val.codeSystem;
 
-          values.push({
-            key: "valueCodeableConcept",
-            val: {
-              "coding": [coding],
-              "text": coding.display
+            if (codeSystem) {
+              coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
-          });
+
+            values.push({
+              key: "valueCodeableConcept",
+              val: {
+                "coding": [coding],
+                "text": coding.display
+              }
+            });
+          } else if (typeof val === "string") {
+            if (val !== "") {
+              values.push({
+                key: "valueString",
+                val: val
+              });
+            }
+          }
         }
 
         break;
@@ -19531,12 +19550,15 @@ var self = {
 
       for (var i = 0, iLen = values.length; i < iLen; i++) {
         // for Coding
-        if ((dataType === 'CWE' || dataType === 'CNE') && !jQuery.isEmptyObject(values[i])) {
-          if (dataType === 'CWE' && values[i]._notOnList) {
-            answer.push({
-              "valueString": values[i].text
-            });
-          } else {
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString": values[i]
+              });
+            }
+          } else if (!jQuery.isEmptyObject(values[i])) {
             var oneAnswer = {};
             var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
             if (codeSystem) oneAnswer.system = codeSystem;
@@ -22101,13 +22123,12 @@ function addCommonSDCImportFns(ns) {
     if (qrItemValue.valueCoding) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
-        "text": qrItemValue.valueCoding.display
+        "text": qrItemValue.valueCoding.display,
+        "codeSystem": qrItemValue.valueCoding.system
       };
     } // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
-        retValue = {
-          "text": qrItemValue.valueString
-        };
+        retValue = qrItemValue.valueString;
       }
 
     return retValue;
