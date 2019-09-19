@@ -118,11 +118,10 @@ about the meaning of each key:
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
       question.  For an answer list, it can be an answer label, text, code or 
-      their combination, using the syntax:  {"code": "B12"}, or {"label: "A"}. 
+      their combination, using the syntax:  {"code": "B12"}, or {"label: "A"}.
+      For "CWE" answer lists, off-list answers need to be specified as a string.
       For a date field, it can be a date shortcut (like "t" for today). 
       For other field types, it can be a text string or a number. 
-      A special case for "CWE" typed, where a user typed value that is not on the answer list
-      must be stored as a string. 
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:

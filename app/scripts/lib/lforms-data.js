@@ -2489,11 +2489,14 @@
           // could be an array of multiple default values or a single value
           var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
               answerValue : [answerValue];
-          // go through each value, there could be multiple not-on-list values
-          for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
-            if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+          if (item.dataType !== 'CWE') {
+            modifiedValue = answerValueArray;
+          }
+          else {
+            // go through each value, there could be multiple not-on-list values
+            for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
               // string value is allowed only if it is CWE
-              if (item.dataType === 'CWE') {
+              if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
                 modifiedValue.push({
                   "text": answerValueArray[i],
                   "_displayText": answerValueArray[i],
@@ -2502,9 +2505,9 @@
                 item._answerOther = answerValueArray[i];
                 item._otherValueChecked = true;
               }
-            }
-            else {
-              modifiedValue.push(answerValueArray[i]);
+              else {
+                modifiedValue.push(answerValueArray[i]);
+              }
             }
           }
         }
@@ -2551,20 +2554,12 @@
       var completeAnswerCodeSystem = completeAnswer.codeSystem;
       if (!completeAnswer.codeSystem) {
         var codeSystem = item.answerCodeSystem || this.codeSystem;
-        if (codeSystem) {
-          if (codeSystem === "LOINC") {
-            completeAnswerCodeSystem = "http://loinc.org";
-          }
-          else {
-            completeAnswerCodeSystem = codeSystem;
-          }
-        }
+        completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
       }
       // check answers' attributes if they have the same code system
       var same = false;
       // if no codeSystem or same codeSystem
-      if (!answer.codeSystem && !completeAnswerCodeSystem ||
-          !answer.codeSystem && !completeAnswer.codeSystem ||
+      if (!answer.codeSystem && !completeAnswer.codeSystem ||
           answer.codeSystem === completeAnswerCodeSystem) {
         // check all fields in answer
         same = true;
