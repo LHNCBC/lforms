@@ -293,6 +293,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 // DOB
                 expect(fhirData.entry[4].resource.valueDate).toBe("2016-10-27");
                 // Height
+                console.log(fhirData.entry[5].resource.valueQuantity)
                 expect(fhirData.entry[5].resource.valueQuantity).toEqual({"unit":"inches","value":70});
                 // Weight
                 expect(fhirData.entry[6].resource.valueQuantity).toEqual({"unit":"lbs","value":170});

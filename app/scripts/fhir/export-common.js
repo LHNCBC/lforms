@@ -30,14 +30,16 @@ var self = {
       case "INT":
       case "REAL":
         if (item.unit) {
+          var valValue = {"value": item.value};
+          if (item.unit) {
+            if (item.unit.name) valValue.unit = item.unit.name;
+            if (item.unit.code) valValue.code = item.unit.code;
+            if (item.unit.system) valValue.system = item.unit.system;
+          }
+
           values = [{
             key: "valueQuantity",
-            val: {
-              "value": item.value,
-              "unit": item.unit ? item.unit.name : null,
-              "system": item.unit ? item.unit.system : null,
-              "code": item.unit ? item.unit.code : null
-            }
+            val: valValue
           }];
         }
         else {
