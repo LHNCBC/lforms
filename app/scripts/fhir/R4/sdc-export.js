@@ -161,8 +161,6 @@ var self = {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
 
-    // questionnaire-choiceOrientation , not supported yet
-
     // check restrictions
     this._handleRestrictions(targetItem, item);
 
@@ -182,6 +180,11 @@ var self = {
 
     // text
     targetItem.text = item.question;
+
+    // prefix
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    }
 
     // enableWhen
     if (item.skipLogic) {
@@ -472,10 +475,9 @@ var self = {
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
-      option.valueCoding = {
-          "code": answer.code,
-          "display": answer.text
-      };
+      option.valueCoding = {};
+      if (answer.code) option.valueCoding.code = answer.code;
+      if (answer.text) option.valueCoding.display = answer.text;
 
       if (answer.codeSystem) {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
@@ -551,48 +553,25 @@ var self = {
       }
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
-
         // for Coding
-        // multiple selections, item.value is an array
-        // Note: NO support of multiple selections in FHIR SDC
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
-          if (this._answerRepeats(item) && Array.isArray(values[i])) {
-            for (var j=0, jLen=values[i].length; j<jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
-                answer.push({
-                  "valueCoding" : {
-                    "system": codeSystem,
-                    "code": values[i][j].code,
-                    "display": values[i][j].text
-                  }
-                })
-              }
-              // empty answer ??
-              else {
-                answer.push({
-                  "valueCoding" : {}
-                })
-              }
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString" : values[i]
+              })
             }
           }
-          // single selection, item.value is an object
-          else {
-            if (!jQuery.isEmptyObject(values[i])) {
-              answer.push({
-                "valueCoding" : {
-                  "system": codeSystem,
-                  "code": values[i].code,
-                  "display": values[i].text
-                }
-              })
-            }
-            // empty answer ??
-            else {
-              answer.push({
-                "valueCoding" : {}
-              })
-            }
+          else if (!jQuery.isEmptyObject(values[i])) {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            })
           }
         }
         // for Quantity,
@@ -650,20 +629,21 @@ var self = {
       var dataType = this._getAssumedDataTypeForExport(item);
       var valueKey = this._getValueKeyByDataType("value", item);
       // for Coding
-      // multiple selections, item.value is an array
-      // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
 
-        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // defaultAnswer has multiple values
-          for(var i=0, iLen=item.defaultAnswer.length; i<iLen; i++ ) {
-            coding = {"code": item.defaultAnswer[i].code};
-            if(item.defaultAnswer[i].text !== undefined) {
-              coding.display = item.defaultAnswer[i].text;
+        // item.defaultAnswer could be an array of multiple default values or a single value
+        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+            item.defaultAnswer : [item.defaultAnswer];
+        // go through each default value, which could be a code object or a string
+        for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
+          if (typeof defaultAnswers[i] === 'object') {
+            coding = {"code": defaultAnswers[i].code};
+            if(defaultAnswers[i].text !== undefined) {
+              coding.display = defaultAnswers[i].text;
             }
             // code system
-            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
             }
@@ -672,21 +652,12 @@ var self = {
             answer[valueKey] = coding;
             targetItem.initial.push(answer);
           }
-        }
-        // single selection, item.defaultAnswer is an object
-        else {
-          coding = {"code": item.defaultAnswer.code};
-          if(item.defaultAnswer.text !== undefined) {
-            coding.display = item.defaultAnswer.text;
+          // user typed answer that is not on the answer list.
+          else if (typeof defaultAnswers[i] === 'string') {
+            targetItem.initial.push({
+              "valueString": defaultAnswers[i]
+            })
           }
-          // code system
-          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-          answer = {};
-          answer[valueKey] = coding;
-          targetItem.initial.push(answer);
         }
       }
       // for Quantity,
@@ -713,7 +684,7 @@ var self = {
         }
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-      else if (dataType === "INT" ||
+      else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
         dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
         dataType === "ST" || dataType === "TX" || dataType === "URL") {
         if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {

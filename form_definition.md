@@ -117,10 +117,11 @@ about the meaning of each key:
     * useAnimation - a boolean that controls whether to use animation on the form.
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
-      question.  For an answer list, it can be an answer label or code, using
-      the syntax:  {"code": "B12"}, or {"label: "A"}.  For a
-      date field, it can be a date shortcut (like "t" for today).  For other
-      field types, it can be a text string or a number.
+      question.  For an answer list, it can be an answer label, text, code or 
+      their combination, using the syntax:  {"code": "B12"}, or {"label: "A"}.
+      For "CWE" answer lists, off-list answers need to be specified as a string.
+      For a date field, it can be a date shortcut (like "t" for today). 
+      For other field types, it can be a text string or a number. 
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
@@ -276,7 +277,7 @@ about the meaning of each key:
               key, or some combination of minExclusive, minInclusive, maxExclusive,
               or maxInclusive.  The meaning of the keys is as follows:
                 * value - a value which the value for question "source" must
-                * exactly match.  For questions with lists, the can either be
+                  exactly match.  For questions with lists, the can either be
                   the text of the answer, its code, or its label.
                 * minExclusive - a value which the source question's value must exceed
                 * minInclusive - a value which the source question's value must equal

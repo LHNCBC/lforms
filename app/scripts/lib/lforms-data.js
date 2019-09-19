@@ -388,7 +388,7 @@
       // for skip logic, data controls and formulas
       this._setupSourceToTargetMap();
 
-      // run the all form controls
+      // run the form controls
       this._checkFormControls();
 
     },
@@ -730,7 +730,7 @@
     _setSkipLogicStatusValue: function(item, newStatus, noLog) {
       if (item._skipLogicStatus !== newStatus) {
         if (item._skipLogicStatus) {
-          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item.question : 'Showing ' + item.question;
+          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item._text : 'Showing ' + item._text;
           if (!noLog)
             this._actionLogs.push(msg);
         }
@@ -952,6 +952,9 @@
 
         LForms.Util.initializeCodes(item);
 
+        // set display text for the item
+        item._text = item.prefix ? item.prefix + " " + item.question : item.question;
+
         // set default dataType
         if (item.header) {
           if (item.dataType !== this._CONSTANTS.DATA_TYPE.TITLE)
@@ -1007,34 +1010,8 @@
         // one or more answer options as equal to the values.
         this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
-        if (item.answers) {
-          var vals = item.value || item.defaultAnswer;
-          if (vals) {
-            vals = angular.isArray(vals) ? vals : [vals];
-            var listVals = [];
-            for (var k=0, kLen=vals.length; k<kLen; ++k) {
-              var val = vals[k];
-              var valKey = val.label !== undefined && val.label !== null ? 'label' :
-                val.code !== undefined && val.code !== null ? 'code' : 'text';
-              // val should be a hash, but to preserve current behavior, a string is allowed.
-              var valValue = typeof val === 'string' ? val : val[valKey];
-              var found = false;
-              for (var j=0, jLen=item.answers.length; !found && j<jLen; ++j) {
-                var ans = item.answers[j];
-                if (valValue == ans[valKey]) {
-                  listVals.push(item._modifiedAnswers[j]);
-                  found = true;
-                }
-              }
-              // a saved value not in the list
-              if (item.value && !found) {
-                val._displayText = val.text;
-                listVals.push(val);
-              }
-            }
-            item.value = item._multipleAnswers ? listVals : listVals[0];
-          }
-        }
+        // reset item.value with modified answers if the item has a value (or an array of values)
+        this._resetItemValueWithModifiedAnswers(item)
 
         // normalize unit value if there is one, needed by calculationMethod
         if (item.unit && !item.unit.text) {
@@ -1394,6 +1371,8 @@
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
         var itemData = {};
+        // for user typed data of a CWE item, _answerOther is already in item.value as {text: _answerOther}.
+        // for 'other' in answer that requires an extra text input, the user typed data is kept in item.valueOther.
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
@@ -1408,7 +1387,6 @@
           if (!item.header) {
             if (item.value !== undefined) itemData.value = this._getOriginalValue(item.value, item.dataType);
             if (item.unit) itemData.unit = this._getOriginalValue(item.unit);
-            if (item.valueOther) itemData.valueOther = item.valueOther; // "other value" is a string value
           }
         }
         // otherwise include form definition data
@@ -1454,17 +1432,18 @@
      * Process values for a user selected/typed answer or unit.
      * Also remove internal data whose field/key names start with _.
      * @param obj either an answer object or a unit object
-     * @param autocompleteData optional, a flag indicates it is the data
-     * handled by autocomplete-lhc. default is false.
+     * @param typeCWE optional, a flag indicates the item type is CWE, where data is
+     * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
      * @returns {{}}  a new object with the internal attributes removed.
      * @private
      */
-    _filterInternalData: function(obj, autocompleteData) {
+    _filterInternalData: function(obj, typeCWE) {
       var objReturn = {};
 
       // special handling for the user-typed value for CWE data type
-      if (autocompleteData && obj._notOnList && obj._displayText) {
-        objReturn = {text: obj._displayText};
+      if (typeCWE && obj._notOnList && obj._displayText) {
+        // return a string value
+        objReturn = obj._displayText;
       }
       else {
         for (var field in obj) {
@@ -1480,12 +1459,12 @@
     /**
      * Process value where it is an object or an array of objects
      * @param value the captured value
-     * @param autocompleteData optional, a flag indicates it is the data
-     * handled by autocomplete-lhc. default is false.
+     * @param typeCWE optional, a flag indicates the item type is CWE, where data is
+     * handled by autocomplete-lhc or radio buttons/checkboxes. default is false
      * @returns {*}
      * @private
      */
-    _getObjectValue: function(value, autocompleteData) {
+    _getObjectValue: function(value, typeCWE) {
       var retValue =null;
       if (value) {
         // an array
@@ -1493,7 +1472,7 @@
           var answers = [];
           for (var j = 0, jLen = value.length; j < jLen; j++) {
             if (angular.isObject(value[j])) {
-              answers.push(this._filterInternalData(value[j], autocompleteData));
+              answers.push(this._filterInternalData(value[j], typeCWE));
             }
             // for primitive data type (multiple values not supported yet)
             //else {
@@ -1504,7 +1483,7 @@
         }
         // an object
         else if (angular.isObject(value)) {
-          retValue = this._filterInternalData(value, autocompleteData);
+          retValue = this._filterInternalData(value, typeCWE);
         }
       }
       return retValue;
@@ -1537,7 +1516,10 @@
               retValue = LForms.Util.dateToDTMString(value);
               break;
             case this._CONSTANTS.DATA_TYPE.CNE:
+              retValue = this._getObjectValue(value);
+              break;
             case this._CONSTANTS.DATA_TYPE.CWE:
+              // for CWE, it should handle the case where 'OTHER' is selected
               retValue = this._getObjectValue(value, true);
               break;
             case this._CONSTANTS.DATA_TYPE.BL:
@@ -1549,7 +1531,7 @@
         }
         // it is for units when there is no dataType
         else {
-          retValue = this._getObjectValue(value, true);
+          retValue = this._getObjectValue(value);
         }
       }
       return retValue;
@@ -1673,7 +1655,7 @@
      *    headerItem._horizontalTableId : {
      *      tableStartIndex: firstItemIndex (=== firstHeaderItemIndex === h1),
      *      tableEndIndex:   lastItemIndex,
-     *      columnHeaders:   [ { label: item.question, id: 'col' + item._elementId, displayControl: item.displayControl },
+     *      columnHeaders:   [ { label: item._text, id: 'col' + item._elementId, displayControl: item.displayControl },
      *                       ...],
      *      tableHeaders:    [headerItem1, headerItem2, ...]
      *      tableRows:       [{ header: headerItem1, cells : [rowItem11, rowItem12,...]},
@@ -1712,7 +1694,7 @@
 
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-              columnHeaders.push({label: itemsInRow[j].question, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
+              columnHeaders.push({label: itemsInRow[j]._text, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
               // indicate the item is in a horizontal table
               itemsInRow[j]._inHorizontalTable = true;
             }
@@ -2490,6 +2472,108 @@
     },
 
 
+    /**
+     * Reset item.value with modified answers if the item has a value (or an array of values)
+     * @param item the item for which it has an item.value or item.defaultAnswers
+     * @private
+     */
+    _resetItemValueWithModifiedAnswers: function(item) {
+
+      if (item._modifiedAnswers) {
+        // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
+        var modifiedValue = null;
+        // item.value has the priority over item.defaultAnswer
+        var answerValue = item.value || item.defaultAnswer;
+        if (answerValue) {
+          modifiedValue = [];
+          // could be an array of multiple default values or a single value
+          var answerValueArray = (item._multipleAnswers && Array.isArray(answerValue)) ?
+              answerValue : [answerValue];
+          if (item.dataType !== 'CWE') {
+            modifiedValue = answerValueArray;
+          }
+          else {
+            // go through each value, there could be multiple not-on-list values
+            for (var i=0, iLen=answerValueArray.length; i < iLen; ++i) {
+              // string value is allowed only if it is CWE
+              if (typeof answerValueArray[i] === "string" || typeof answerValueArray[i] === "number") {
+                modifiedValue.push({
+                  "text": answerValueArray[i],
+                  "_displayText": answerValueArray[i],
+                  "_notOnList" : true});
+                // for radio button/checkbox display, an "Other" option is displayed
+                item._answerOther = answerValueArray[i];
+                item._otherValueChecked = true;
+              }
+              else {
+                modifiedValue.push(answerValueArray[i]);
+              }
+            }
+          }
+        }
+
+        if (modifiedValue) {
+          var listVals = [];
+          for (var k=0, kLen=modifiedValue.length; k<kLen; ++k) {
+            var userValue = modifiedValue[k];
+            var found = false;
+            // for search field, assume the user values are valid answers
+            if (item.externallyDefined) {
+              listVals = modifiedValue;
+            }
+            // for item has a answer list
+            else {
+              for (var j=0, jLen=item._modifiedAnswers.length; !found && j<jLen; ++j) {
+                if (this._areTwoAnswersSame(userValue, item._modifiedAnswers[j], item)) {
+                  listVals.push(item._modifiedAnswers[j]);
+                  found = true;
+                }
+              }
+              // a saved value or a default value is not on the list (default answer must be one of the answer items).
+              // non-matching value objects are no longer treated as a not-on-list, user supplied value.
+              if (userValue && !found && userValue._notOnList) {
+                listVals.push(userValue);
+              }
+            }
+          }
+          item.value = item._multipleAnswers ? listVals : listVals[0];
+        }
+      }
+    },
+
+
+    /**
+     * Check if two answers can be treated as same
+     * @param answer an answer item that could have part of the attributes set
+     * @param completeAnswer an answer in the answer list that usually has more attributes set
+     * @param item the lforms item that has the completeAnswer in the answer list
+     * @private
+     */
+    _areTwoAnswersSame: function(answer, completeAnswer, item) {
+      // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+      var completeAnswerCodeSystem = completeAnswer.codeSystem;
+      if (!completeAnswer.codeSystem) {
+        var codeSystem = item.answerCodeSystem || this.codeSystem;
+        completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
+      }
+      // check answers' attributes if they have the same code system
+      var same = false;
+      // if no codeSystem or same codeSystem
+      if (!answer.codeSystem && !completeAnswer.codeSystem ||
+          answer.codeSystem === completeAnswerCodeSystem) {
+        // check all fields in answer
+        same = true;
+        var fields = Object.keys(answer);
+        for (var i= 0, iLen=fields.length; i<iLen; i++) {
+          if (fields[i] !== "codeSystem" && answer[fields[i]] !== completeAnswer[fields[i]]) {
+            same = false;
+            break;
+          }
+        }
+      }
+      return same;
+    },
+
 
     /**
      *  Uses the FHIR client to search the given ValueSet for the string
@@ -3062,19 +3146,16 @@
     needExtra: function(item) {
       var extra = false;
       if (item && item.value) {
-        if (Array.isArray(item.value)) {
-          jQuery.each(item.value, function(index, answer) {
-            if (answer.other) {
-              extra = true;
-              // break
-              return false;
-            }
-          });
-        }
-        else {
-          if (item.value.other) {
-            extra = true;
-          }
+        // NOT to support multiple values of 'other' when multiple answers are allowed.
+        // if (Array.isArray(item.value)) {
+        //   jQuery.each(item.value, function(index, answer) {
+        //     if (answer.other) {
+        //       extra = true;
+        //     }
+        //   });
+        // }
+        if (!Array.isArray(item.value) && item.value.other) {
+          extra = true;
         }
       }
       return extra;

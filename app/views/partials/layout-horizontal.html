@@ -2,7 +2,7 @@
   <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
        ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
        class="lf-form-horizontal-table-title lf-de-label">
-    <span class="lf-question"><label id="label-{{ item._elementId }}">{{item.question}}</label></span>
+    <span class="lf-question"><label id="label-{{ item._elementId }}">{{item._text}}</label></span>
     <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
         <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
         <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
@@ -139,11 +139,11 @@
               class="lf-float-button" id="add-{{item._elementId}}"
               ng-click="addOneRepeatingItem(item, true)"
               ng-blur="hideUnusedItemWarning(item)"
-              uib-popover='Please enter info in the blank "{{ item.question }}".'
+              uib-popover='Please enter info in the blank "{{ item._text }}".'
               popover-placement="top-left"
               popover-trigger="none"
               popover-is-open="item._showUnusedItemWarning">
-        + Add another "{{item.question}}"
+        + Add another "{{item._text}}"
       </button>
     </div>
   </div>

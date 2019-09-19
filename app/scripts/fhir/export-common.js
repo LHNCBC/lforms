@@ -30,14 +30,16 @@ var self = {
       case "INT":
       case "REAL":
         if (item.unit) {
+          var valValue = {"value": item.value};
+          if (item.unit) {
+            if (item.unit.name) valValue.unit = item.unit.name;
+            if (item.unit.code) valValue.code = item.unit.code;
+            if (item.unit.system) valValue.system = item.unit.system;
+          }
+
           values = [{
             key: "valueQuantity",
-            val: {
-              "value": item.value,
-              "unit": item.unit ? item.unit.name : null,
-              "system": item.unit ? item.unit.system : null,
-              "code": item.unit ? item.unit.code : null
-            }
+            val: valValue
           }];
         }
         else {
@@ -72,22 +74,30 @@ var self = {
         }
         for (var j=0,jLen=itemValues.length; j<jLen; j++) {
           var val = itemValues[j];
-          var coding = {
-            "code": val.code,
-            "display": val.text
-          };
-          var codeSystem = val.codeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-          values.push(
-              { key: "valueCodeableConcept",
-                val: {
-                  "coding" : [coding],
-                  "text": coding.display
+          if (typeof val === "object") {
+            var coding = {};
+            if (val.code) coding.code = val.code;
+            if (val.text) coding.display = val.text;
+            var codeSystem = val.codeSystem;
+            if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
+            values.push(
+                { key: "valueCodeableConcept",
+                  val: {
+                    "coding" : [coding],
+                    "text": coding.display
+                  }
                 }
-              }
-          )
+            )
+          }
+          else if (typeof val === "string") {
+            if (val !== "") {
+              values.push(
+                  { key: "valueString",
+                    val: val
+                  }
+              )
+            }
+          }
         }
         break;
       default:

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "17.4.1",
+  "version": "18.0.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -45,7 +45,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-karma": "^3.0.1",
     "grunt-newer": "^1.1.0",
-    "grunt-protractor-runner": "^5",
+    "grunt-protractor-runner": "^5.0.0",
     "grunt-wiredep": "^3.0.1",
     "jasmine-core": "^2.3.4",
     "jasmine-spec-reporter": "^2.7.0",

@@ -21,7 +21,7 @@ function addCommonSDCExportFns(ns) {
   self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
     var target = {};
     if (lfData) {
-      var source = lfData.getFormData(true,true,true,true);
+      var source = lfData.getFormData(true,true,true,true,true);
       this._processRepeatingItemValues(source);
       this._setResponseFormLevelFields(target, source, noExtensions);
 
