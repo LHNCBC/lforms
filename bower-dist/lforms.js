@@ -3093,6 +3093,8 @@ LForms.Util = {
           collectionObj.splice(i, 1);
         } else if (typeof collectionObj[i] === 'Array') {
           LForms.Util.pruneNulls(collectionObj[key]);
+        } else if (_typeof(collectionObj[i]) === 'object') {
+          LForms.Util.pruneNulls(collectionObj[i]);
         }
       }
     } else if (collectionObj && _typeof(collectionObj) === 'object') {

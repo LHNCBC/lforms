@@ -32,13 +32,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('External autocomplete answerValueSets', function() {
         it('should be able to search via ValueSet expansion', function () {
           var ethnicity = ff.ethnicity;
-          ethnicity().sendKeys('ar');
+          ethnicity().sendKeys('arg');
           tp.Autocomp.helpers.waitForSearchResults();
           expect(tp.Autocomp.helpers.firstSearchRes.getText()).toBe('Argentinean');
 
           ff.disease.click();
           tp.Autocomp.helpers.waitForNoSearchResults();
-          ff.disease.sendKeys('ar');
+          ff.disease.sendKeys('arm');
           tp.Autocomp.helpers.waitForSearchResults();
           tp.Autocomp.helpers.firstSearchRes.click();
           expect(ff.disease.getAttribute('value')).toBe('Arm pain');

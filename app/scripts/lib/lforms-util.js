@@ -831,6 +831,9 @@ LForms.Util = {
         else if(typeof collectionObj[i] === 'Array') {
           LForms.Util.pruneNulls(collectionObj[key]);
         }
+        else if(typeof collectionObj[i] === 'object') {
+          LForms.Util.pruneNulls(collectionObj[i]);
+        }
       }
     }
     else if (collectionObj && typeof collectionObj === 'object') {

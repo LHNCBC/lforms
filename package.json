@@ -63,6 +63,7 @@
     "moment-locales-webpack-plugin": "^1.0.7",
     "node-sass": "^4.12.0",
     "phantomjs-prebuilt": "^2.1.16",
+    "protractor": "^5.4.2",
     "requirejs": "^2.3.2",
     "serve-static": "^1.13.2",
     "style-loader": "^0.23.1",
@@ -87,7 +88,7 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome=2.41",
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update",
     "start": "grunt serve"
   }
 }
