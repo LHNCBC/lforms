@@ -7043,8 +7043,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Check if two answers can be treated as same
      * @param answer an answer item that could have part of the attributes set
-     * @param completeAnswer an answer item that have the complete attributes set
-     * @param item the lforms item that has the comleteAnswer as a one in the answer list
+     * @param completeAnswer an answer in the answer list that usually has more attributes set
+     * @param item the lforms item that has the completeAnswer in the answer list
      * @private
      */
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {

@@ -1661,7 +1661,7 @@ var formWithUserData =
 
     {
       "questionCode": "cwe-checkbox-default-answer",
-      "question": "CHECKBOX --CWE, with user typed default answer",
+      "question": "CHECKBOX --CWE, with off-list default answer",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "*"},
       "displayControl": {
@@ -1672,7 +1672,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "defaultAnswer": ["user typed default answer"]
+      "defaultAnswer": ["off-list default answer"]
     },
     {
       "questionCode": "cwe-radio-user-value",
@@ -1706,7 +1706,7 @@ var formWithUserData =
     },
     {
       "questionCode": "cwe-radio-default-answer",
-      "question": "RADIO layout --CWE, with user typed default answer",
+      "question": "RADIO layout --CWE, with off-list default answer",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "1"},
       "displayControl": {
@@ -1717,11 +1717,11 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "defaultAnswer": "user typed default answer"
+      "defaultAnswer": "off-list default answer"
     },
     {
       "questionCode": "cwe-radio-default-answer-nodisplay",
-      "question": "RADIO layout --CWE, with user typed default answer, no-matching",
+      "question": "RADIO layout --CWE, with off-list default answer, no-matching",
       "dataType": "CWE",
       "answerCardinality": {"min": "0", "max": "1"},
       "displayControl": {
@@ -1732,7 +1732,7 @@ var formWithUserData =
         {"code": "c2", "text": "Answer B"},
         {"code": "c3", "text": "Answer C"},
       ],
-      "defaultAnswer": {"text": "user typed default answer"} // no matching, not to be displayed
+      "defaultAnswer": {"text": "off-list default answer"} // no matching, not to be displayed
     },
 
   ]};

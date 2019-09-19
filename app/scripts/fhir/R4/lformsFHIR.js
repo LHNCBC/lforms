@@ -18933,16 +18933,11 @@ var self = {
           var val = itemValues[j];
 
           if (_typeof(val) === "object") {
-            var coding = {
-              "code": val.code,
-              "display": val.text
-            };
+            var coding = {};
+            if (val.code) coding.code = val.code;
+            if (val.text) coding.display = val.text;
             var codeSystem = val.codeSystem;
-
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
-
+            if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
             values.push({
               key: "valueCodeableConcept",
               val: {

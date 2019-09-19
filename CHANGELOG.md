@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [17.5.0] 2019-09-12
+## [18.0.0] 2019-09-12
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.
 ### Fixed

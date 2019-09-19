@@ -208,13 +208,13 @@ describe('load saved user data', function() {
     expect(cwe4OtherValue.getAttribute('value')).toBe('user typed value');
     // default answer is not in the answer list, checkbox display, other value set
     expect(cwe5Other.isSelected()).toBe(true);
-    expect(cwe5OtherValue.getAttribute('value')).toBe('user typed default answer');
+    expect(cwe5OtherValue.getAttribute('value')).toBe('off-list default answer');
     // OTHER, in radiobutton display with the user value not in the answer list
     expect(cwe6Other.isSelected()).toBe(true);
     expect(cwe6OtherValue.getAttribute('value')).toBe('user typed value');
     // default answer is not in the answer list, radiobutton display, other value set
     expect(cwe7Other.isSelected()).toBe(true);
-    expect(cwe7OtherValue.getAttribute('value')).toBe('user typed default answer');
+    expect(cwe7OtherValue.getAttribute('value')).toBe('off-list default answer');
 
   });
 
