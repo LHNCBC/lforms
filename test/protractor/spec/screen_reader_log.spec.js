@@ -61,6 +61,7 @@ describe('508', function() {
       var minusButtonCSS =
         "button[title=\"Remove this row of \\\"This family member's history of disease\\\"\"]";
       element.all(by.css(minusButtonCSS)).first().click();
+      browser.sleep(1000);
       expect(tp.readerLogEntries.getText()).toEqual(['Added row', 'Removed row']);
     });
     it('should add an entry when a question is added or removed', function () {
