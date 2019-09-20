@@ -6,7 +6,7 @@
     <!-- label -->
     <div class="lf-de-label">
       <span ng-show="item._questionRepeatable" class="lf-sn">{{getRepeatingSN(item) }}</span>
-      <span class="lf-question"><label id="label-{{ item._elementId }}" for="{{item._elementId}}">{{item.question}}</label></span>
+      <span class="lf-question"><label id="label-{{ item._elementId }}" for="{{item._elementId}}">{{item._text}}</label></span>
       <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
         <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
         <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
@@ -50,7 +50,7 @@
     <div class="lf-de-button">
       <button ng-if="!hasOneRepeatingItem(item)" class="lf-float-button" type="button"
               ng-click="removeOneRepeatingItem(item)" id="del-{{item._elementId}}"
-              title='Remove this "{{ item.question }}"'>-</button>
+              title='Remove this "{{ item._text }}"'>-</button>
     </div>
   </div>
 
@@ -67,14 +67,14 @@
             <lf-answers item="item"></lf-answers>
           </div>
 
-          <input ng-switch-when="DT" name="{{item.question}}" type="text"
+          <input ng-switch-when="DT" name="{{item._text}}" type="text"
                  ng-model="item.value" lf-date="dateOptions" placeholder="{{item._toolTip}}"
                  ng-disabled="item._readOnly" id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
 
           <!-- Gillardo boostrap datetime picker -->
           <div ng-switch-when="DTM" class="lf-dtm-picker-block">
-            <input name="{{item.question}}" type="text" class="form-control"
+            <input name="{{item._text}}" type="text" class="form-control"
                    ng-model="item.value" placeholder="{{item._toolTip}}"
                    datetime-picker="{{uibDateTimePickerFormat}}" alt-input-formats="uibDatePickerAltFormats"
                    is-open="isOpen" enable-time="true" close-on-date-selection="true" button-bar="uibDtmPickerButtonBar"
@@ -84,17 +84,17 @@
             <button type="button" class="ui-datepicker-trigger" ng-click="openUibDtmPicker($event)"></button>
           </div>
 
-          <textarea ng-switch-when="TX" name="{{item.question}}"
+          <textarea ng-switch-when="TX" name="{{item._text}}"
                     ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                     id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="activeRowOnBlur(item);autoExpand($event)" rows="1"
                     ng-focus="setActiveRow(item)" aria-describedby="help-{{ item._elementId }}">
           </textarea>
-          <input ng-switch-when="BL" name="{{item.question}}" type="checkbox"
+          <input ng-switch-when="BL" name="{{item._text}}" type="checkbox"
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-true-value="true" ng-false-value="false"
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
-          <input ng-switch-default name="{{item.question}}" type="text"
+          <input ng-switch-default name="{{item._text}}" type="text"
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">

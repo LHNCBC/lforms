@@ -227,7 +227,8 @@ function addCommonSDCImportFns(ns) {
         else if (fhirVal._type == 'Coding') {
           codings = [fhirVal];
         }
-        if (!codings) { // maybe a string?
+        if (!codings) {
+          // the value or the default value could be a string for 'open-choice'/CWE
           if (lfDataType === 'CWE') {
             answer = fhirVal;
           }
@@ -753,6 +754,30 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
+  }
+
+
+  /**
+   * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
+   * @param qrItemValue a value of item in QuestionnaireResponse
+   * @returns {{code: *, text: *}}
+   * @private
+   */
+  self._processCWECNEValueInQR = function(qrItemValue) {
+    var retValue;
+    // a valueCoding, which is one of the answers
+    if (qrItemValue.valueCoding) {
+      retValue = {
+        "code": qrItemValue.valueCoding.code,
+        "text": qrItemValue.valueCoding.display,
+        "codeSystem": qrItemValue.valueCoding.system
+      };
+    }
+    // a valueString, which is a user supplied value that is not in the answers
+    else if (qrItemValue.valueString) {
+      retValue = qrItemValue.valueString;
+    }
+    return retValue
   }
 }
 

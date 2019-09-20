@@ -113,7 +113,7 @@ describe('Form level Matrix layout', function() {
       expect(value[0].text).toBe('Answer 1');
       expect(value[1].code).toBe('c2');
       expect(value[1].text).toBe('Answer 2');
-      expect(value[2].code).toBe('other values');
+      expect(value[2].code).toBe(undefined);
       expect(value[2].text).toBe('other values');
     });
 
@@ -126,7 +126,7 @@ describe('Form level Matrix layout', function() {
       expect(value[0].text).toBe('Answer 1');
       expect(value[1].code).toBe('c2');
       expect(value[1].text).toBe('Answer 2');
-      expect(value[2].code).toBe('other values again');
+      expect(value[2].code).toBe(undefined);
       expect(value[2].text).toBe('other values again');
     });
 
@@ -167,7 +167,7 @@ describe('Form level Matrix layout', function() {
       expect(value[0].text).toBe('Answer 1');
       expect(value[1].code).toBe('c4');
       expect(value[1].text).toBe('Answer 4');
-      expect(value[2].code).toBe('others');
+      expect(value[2].code).toBe(undefined);
       expect(value[2].text).toBe('others');
     });
 
@@ -178,7 +178,7 @@ describe('Form level Matrix layout', function() {
       expect(value[0].text).toBe('Answer 1');
       expect(value[1].code).toBe('c2');
       expect(value[1].text).toBe('Answer 2');
-      expect(value[2].code).toBe('other values again');
+      expect(value[2].code).toBe(undefined);
       expect(value[2].text).toBe('other values again');
     });
 

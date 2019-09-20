@@ -18514,10 +18514,17 @@ var dr = {
           // get the value from Observation resource.
           // for multiple-selected answers/values in LForms, each selected answer is exported as
           // a separated Observation resource
-          var itemValue = {
-            "code": obx.valueCodeableConcept.coding[0].code,
-            "text": obx.valueCodeableConcept.coding[0].display
-          };
+          var itemValue;
+
+          if (obx.valueCodeableConcept) {
+            itemValue = {
+              "code": obx.valueCodeableConcept.coding[0].code,
+              "text": obx.valueCodeableConcept.coding[0].display,
+              "codeSystem": obx.valueCodeableConcept.coding[0].system
+            };
+          } else if (obx.valueString) {
+            itemValue = obx.valueString;
+          }
 
           if (item.answerCardinality && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)) {
             if (!item.value) {
@@ -18850,6 +18857,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 /**
  *  Defines export functions that are the same across the different FHIR
@@ -18876,14 +18885,19 @@ var self = {
       case "INT":
       case "REAL":
         if (item.unit) {
+          var valValue = {
+            "value": item.value
+          };
+
+          if (item.unit) {
+            if (item.unit.name) valValue.unit = item.unit.name;
+            if (item.unit.code) valValue.code = item.unit.code;
+            if (item.unit.system) valValue.system = item.unit.system;
+          }
+
           values = [{
             key: "valueQuantity",
-            val: {
-              "value": item.value,
-              "unit": item.unit ? item.unit.name : null,
-              "system": item.unit ? item.unit.system : null,
-              "code": item.unit ? item.unit.code : null
-            }
+            val: valValue
           }];
         } else {
           values = [{
@@ -18922,23 +18936,28 @@ var self = {
 
         for (var j = 0, jLen = itemValues.length; j < jLen; j++) {
           var val = itemValues[j];
-          var coding = {
-            "code": val.code,
-            "display": val.text
-          };
-          var codeSystem = val.codeSystem;
 
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-
-          values.push({
-            key: "valueCodeableConcept",
-            val: {
-              "coding": [coding],
-              "text": coding.display
+          if (_typeof(val) === "object") {
+            var coding = {};
+            if (val.code) coding.code = val.code;
+            if (val.text) coding.display = val.text;
+            var codeSystem = val.codeSystem;
+            if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
+            values.push({
+              key: "valueCodeableConcept",
+              val: {
+                "coding": [coding],
+                "text": coding.display
+              }
+            });
+          } else if (typeof val === "string") {
+            if (val !== "") {
+              values.push({
+                key: "valueString",
+                val: val
+              });
             }
-          });
+          }
         }
 
         break;
@@ -18995,6 +19014,8 @@ var self = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  * A package to handle FHIR Questionnaire and SDC (STU2) Questionnaire and QuestionnaireResponse for LForms
  *
@@ -19140,8 +19161,7 @@ var self = {
     if (item._obsLinkPeriodExt) targetItem.extension.push(item._obsLinkPeriodExt);
     if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
-    this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
-    // check restrictions
+    this._handleItemControl(targetItem, item); // check restrictions
 
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
@@ -19158,7 +19178,12 @@ var self = {
 
     targetItem.linkId = item.linkId ? item.linkId : item._codePath; // text
 
-    targetItem.text = item.question; // enableWhen
+    targetItem.text = item.question; // prefix
+
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    } // enableWhen
+
 
     if (item.skipLogic) {
       this._handleSkipLogic(targetItem, item, source);
@@ -19448,10 +19473,9 @@ var self = {
       // for LForms, all answers are Coding
 
 
-      option.valueCoding = {
-        "code": answer.code,
-        "display": answer.text
-      };
+      option.valueCoding = {};
+      if (answer.code) option.valueCoding.code = answer.code;
+      if (answer.text) option.valueCoding.display = answer.text;
 
       if (answer.codeSystem) {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
@@ -19525,45 +19549,24 @@ var self = {
 
       for (var i = 0, iLen = values.length; i < iLen; i++) {
         // for Coding
-        // multiple selections, item.value is an array
-        // Note: NO support of multiple selections in FHIR SDC
         if (dataType === 'CWE' || dataType === 'CNE') {
-          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
-
-          if (this._answerRepeats(item) && Array.isArray(values[i])) {
-            for (var j = 0, jLen = values[i].length; j < jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
-                answer.push({
-                  "valueCoding": {
-                    "system": codeSystem,
-                    "code": values[i][j].code,
-                    "display": values[i][j].text
-                  }
-                });
-              } // empty answer ??
-              else {
-                  answer.push({
-                    "valueCoding": {}
-                  });
-                }
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString": values[i]
+              });
             }
-          } // single selection, item.value is an object
-          else {
-              if (!jQuery.isEmptyObject(values[i])) {
-                answer.push({
-                  "valueCoding": {
-                    "system": codeSystem,
-                    "code": values[i].code,
-                    "display": values[i].text
-                  }
-                });
-              } // empty answer ??
-              else {
-                  answer.push({
-                    "valueCoding": {}
-                  });
-                }
-            }
+          } else if (!jQuery.isEmptyObject(values[i])) {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            });
+          }
         } // for Quantity,
         // [{
         //   // from Element: extension
@@ -19623,27 +19626,26 @@ var self = {
       var dataType = this._getAssumedDataTypeForExport(item);
 
       var valueKey = this._getValueKeyByDataType("value", item); // for Coding
-      // multiple selections, item.value is an array
-      // NO support of multiple selections in FHIR SDC, just pick one
 
 
       if (dataType === 'CWE' || dataType === 'CNE') {
         var codeSystem = null,
-            coding = null;
+            coding = null; // item.defaultAnswer could be an array of multiple default values or a single value
 
-        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // defaultAnswer has multiple values
-          for (var i = 0, iLen = item.defaultAnswer.length; i < iLen; i++) {
+        var defaultAnswers = this._answerRepeats(item) && Array.isArray(item.defaultAnswer) ? item.defaultAnswer : [item.defaultAnswer]; // go through each default value, which could be a code object or a string
+
+        for (var i = 0, iLen = defaultAnswers.length; i < iLen; i++) {
+          if (_typeof(defaultAnswers[i]) === 'object') {
             coding = {
-              "code": item.defaultAnswer[i].code
+              "code": defaultAnswers[i].code
             };
 
-            if (item.defaultAnswer[i].text !== undefined) {
-              coding.display = item.defaultAnswer[i].text;
+            if (defaultAnswers[i].text !== undefined) {
+              coding.display = defaultAnswers[i].text;
             } // code system
 
 
-            codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
 
             if (codeSystem) {
               coding.system = LForms.Util.getCodeSystem(codeSystem);
@@ -19652,28 +19654,13 @@ var self = {
             answer = {};
             answer[valueKey] = coding;
             targetItem.initial.push(answer);
-          }
-        } // single selection, item.defaultAnswer is an object
-        else {
-            coding = {
-              "code": item.defaultAnswer.code
-            };
-
-            if (item.defaultAnswer.text !== undefined) {
-              coding.display = item.defaultAnswer.text;
-            } // code system
-
-
-            codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
+          } // user typed answer that is not on the answer list.
+          else if (typeof defaultAnswers[i] === 'string') {
+              targetItem.initial.push({
+                "valueString": defaultAnswers[i]
+              });
             }
-
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
-          }
+        }
       } // for Quantity,
       // [{
       //   // from Element: extension
@@ -19697,7 +19684,7 @@ var self = {
             targetItem.initial.push(answer);
           }
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
             if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
               for (var k = 0; k < item.defaultAnswer.length; k++) {
                 answer = {};
@@ -19870,7 +19857,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = lfData.getFormData(true, true, true, true);
+      var source = lfData.getFormData(true, true, true, true, true);
 
       this._processRepeatingItemValues(source);
 
@@ -20477,7 +20464,10 @@ function addSDCImportFns(ns) {
 
 
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    var targetItem = {};
+    var targetItem = {}; // prefix
+
+    if (qItem.prefix) targetItem.prefix = qItem.prefix; // text
+
     targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
 
     self._processDataType(targetItem, qItem);
@@ -21286,19 +21276,20 @@ function addSDCImportFns(ns) {
               var value = [];
 
               for (var j = 0, jLen = answer.length; j < jLen; j++) {
-                var coding = answer[j];
-                value.push({
-                  "code": coding.valueCoding.code,
-                  "text": coding.valueCoding.display
-                });
+                var val = ns._processCWECNEValueInQR(answer[j]);
+
+                if (val) {
+                  value.push(val);
+                }
               }
 
               item.value = value;
             } else {
-              item.value = {
-                "code": qrValue.valueCoding.code,
-                "text": qrValue.valueCoding.display
-              };
+              var val = ns._processCWECNEValueInQR(qrValue);
+
+              if (val) {
+                item.value = val;
+              }
             }
 
             break;
@@ -21655,7 +21646,7 @@ function addCommonSDCImportFns(ns) {
         }
 
         if (!codings) {
-          // maybe a string?
+          // the value or the default value could be a string for 'open-choice'/CWE
           if (lfDataType === 'CWE') {
             answer = fhirVal;
           }
@@ -22247,6 +22238,30 @@ function addCommonSDCImportFns(ns) {
     }
 
     return pendingPromises;
+  };
+  /**
+   * Handle the item.value in QuestionnaireResponse for CWE/CNE typed items
+   * @param qrItemValue a value of item in QuestionnaireResponse
+   * @returns {{code: *, text: *}}
+   * @private
+   */
+
+
+  self._processCWECNEValueInQR = function (qrItemValue) {
+    var retValue; // a valueCoding, which is one of the answers
+
+    if (qrItemValue.valueCoding) {
+      retValue = {
+        "code": qrItemValue.valueCoding.code,
+        "text": qrItemValue.valueCoding.display,
+        "codeSystem": qrItemValue.valueCoding.system
+      };
+    } // a valueString, which is a user supplied value that is not in the answers
+    else if (qrItemValue.valueString) {
+        retValue = qrItemValue.valueString;
+      }
+
+    return retValue;
   };
 }
 

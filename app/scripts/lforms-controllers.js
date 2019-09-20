@@ -739,7 +739,7 @@ angular.module('lformsWidget')
             if (anyEmpty && item._showUnusedItemWarning) {
               if (!item._unusedItemWarning)
                 item._unusedItemWarning = 'Please enter info in the blank "' +
-                  item.question+'"';
+                  item._text+'"';
               $scope.sendMsgToScreenReader(item._unusedItemWarning);
             }
           }
@@ -1008,12 +1008,13 @@ angular.module('lformsWidget')
          * Updates the value for an item with the user typed data.
          * The item's answers are displayed as a list of checkboxes, and users have an option to type their own answer.
          * Update the item.value based on selection of extra data input by users
+         * Note: In the checkbox display layout only one "OTHER" value is allowed, while in autocomplete multiple
+         * "OTHER" values are allowed.
          * @param item a form item that has an answer list and supports multiple selections and user typed data.
-         * @param otherValue the value object of the other value checkbox
+         * @param otherValue the user typed string value for the "OTHER" checkbox
          */
         $scope.updateCheckboxListForOther = function(item, otherValue) {
-          // set the other value flag
-          otherValue._otherValue = true;
+          var other = {"text": otherValue, "_notOnList": true};
 
           // add/update the other value
           if (item._otherValueChecked) {
@@ -1021,8 +1022,8 @@ angular.module('lformsWidget')
             if (item.value && angular.isArray(item.value)) {
               var found = false;
               for(var i= 0,iLen=item.value.length; i<iLen; i++) {
-                if (item.value[i]._otherValue) {
-                  item.value[i] = otherValue;
+                if (item.value[i]._notOnList) {
+                  item.value[i] = other;
                   found = true;
                   break;
                 }
@@ -1030,13 +1031,13 @@ angular.module('lformsWidget')
               // if the other value is not already in the list
               if (!found) {
                 // add the other value to the list
-                item.value.push(otherValue);
+                item.value.push(other);
               }
             }
             // the list is empty
             else {
               // add the other value to the list
-              item.value = [otherValue];
+              item.value = [other];
             }
           }
           // remove other value
@@ -1044,7 +1045,7 @@ angular.module('lformsWidget')
             if (item.value && angular.isArray(item.value)) {
               var index, found = false;
               for(var i= 0,iLen=item.value.length; i<iLen; i++) {
-                if (item.value[i]._otherValue) {
+                if (item.value[i]._notOnList) {
                   found = true;
                   index = i;
                   break;
@@ -1071,13 +1072,13 @@ angular.module('lformsWidget')
         /**
          * Update the item.value based on selection of extra data input by users
          * @param item a form item that has an answer list and support single selections
-         * @param otherValue the value object of the other value radio button
+         * @param otherValue the user typed string value for the "OTHER" radio button
          */
         $scope.updateRadioListForOther = function(item, otherValue) {
 
           // add/update the other value
           if (item._otherValueChecked) {
-            item.value = otherValue;
+            item.value = { "text": otherValue, "_notOnList": true};
           }
         };
 

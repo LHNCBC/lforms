@@ -84,13 +84,15 @@ describe('display controls demo', function() {
     });
     item2OtherValue.sendKeys('other values');
     item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('other values');
+      // user typed data is now only stored in text, not in code
+      expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values');
     });
     item2OtherValue.clear();
     item2OtherValue.sendKeys('other values again');
     item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('other values again');
+      // user typed data is now only stored in text, not in code
+      expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values again');
     });
 
@@ -140,7 +142,7 @@ describe('display controls demo', function() {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
       expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe('other values');
+      expect(value[1].code).toBe(undefined);
       expect(value[1].text).toBe('other values');
     });
 
@@ -151,7 +153,7 @@ describe('display controls demo', function() {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
       expect(value[0].text).toBe('Answer X');
-      expect(value[1].code).toBe('other values again');
+      expect(value[1].code).toBe(undefined);
       expect(value[1].text).toBe('other values again');
     });
 
@@ -161,7 +163,7 @@ describe('display controls demo', function() {
       expect(value.text).toBe('Extra long answer text 123456789 Answer Z');
     });
     item2answer1.evaluate("item.value").then(function (value) {
-      expect(value.code).toBe('other values again');
+      expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values again');
     });
     item3answer1.evaluate("item.value").then(function (value) {

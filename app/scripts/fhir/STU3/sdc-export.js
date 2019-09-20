@@ -168,6 +168,11 @@ var self = {
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
+    // prefix
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    }
+
     // text
     targetItem.text = item.question;
 
@@ -471,10 +476,9 @@ var self = {
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
-      option.valueCoding = {
-          "code": answer.code,
-          "display": answer.text
-      };
+      option.valueCoding = {};
+      if (answer.code) option.valueCoding.code = answer.code;
+      if (answer.text) option.valueCoding.display = answer.text;
 
       if (answer.codeSystem) {
         option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
@@ -550,48 +554,25 @@ var self = {
       }
 
       for (var i=0, iLen= values.length; i<iLen; i++) {
-
         // for Coding
-        // multiple selections, item.value is an array
-        // Note: NO support of multiple selections in FHIR SDC
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          var codeSystem = LForms.Util.getCodeSystem(item.questionCodeSystem);
-          if (this._answerRepeats(item) && Array.isArray(values[i])) {
-            for (var j=0, jLen=values[i].length; j<jLen; j++) {
-              if (!jQuery.isEmptyObject(values[i][j])) {
-                answer.push({
-                  "valueCoding" : {
-                    "system": codeSystem,
-                    "code": values[i][j].code,
-                    "display": values[i][j].text
-                  }
-                })
-              }
-              // empty answer ??
-              else {
-                answer.push({
-                  "valueCoding" : {}
-                })
-              }
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString" : values[i]
+              })
             }
           }
-          // single selection, item.value is an object
-          else {
-            if (!jQuery.isEmptyObject(values[i])) {
-              answer.push({
-                "valueCoding" : {
-                  "system": codeSystem,
-                  "code": values[i].code,
-                  "display": values[i].text
-                }
-              })
-            }
-            // empty answer ??
-            else {
-              answer.push({
-                "valueCoding" : {}
-              })
-            }
+          else if (!jQuery.isEmptyObject(values[i])) {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            })
           }
         }
         // for Quantity,
@@ -651,32 +632,28 @@ var self = {
       // NO support of multiple selections in FHIR SDC, just pick one
       if (dataType === 'CWE' || dataType === 'CNE' ) {
         var codeSystem = null, coding = null;
-        if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          // defaultAnswer has multiple values
-          // pick the first one only
+
+        // item.defaultAnswer could be an array of multiple default values or a single value.
+        // in STU3 'initial[x]' is a single value. pick the first one if defaultAnswer is an array.
+        var defaultAnswer = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+            item.defaultAnswer[0] : item.defaultAnswer;
+        if (typeof defaultAnswer === 'object') {
           coding = {
-            "code": item.defaultAnswer[0].code,
-            "display": item.defaultAnswer[0].text
+            "code": defaultAnswer.code,
           };
+          if(defaultAnswer !== undefined) {
+            coding.display = defaultAnswer.text;
+          }
           // code system
-          codeSystem = item.defaultAnswer[i].codeSystem || item.answerCodeSystem;
+          codeSystem = defaultAnswer.codeSystem || item.answerCodeSystem;
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
           targetItem[valueKey] = coding;
         }
-        // single selection, item.defaultAnswer is an object
-        else {
-          coding = {
-            "code": item.defaultAnswer.code,
-            "display": item.defaultAnswer.text
-          };
-          // code system
-          codeSystem = item.defaultAnswer.codeSystem || item.answerCodeSystem;
-          if (codeSystem) {
-            coding.system = LForms.Util.getCodeSystem(codeSystem);
-          }
-          targetItem[valueKey] = coding
+        // user typed answer that is not on the answer list.
+        else if (typeof defaultAnswer === 'string') {
+          targetItem["initialString"] = defaultAnswer
         }
       }
       // for Quantity,

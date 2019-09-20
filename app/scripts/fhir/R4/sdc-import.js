@@ -90,6 +90,10 @@ function addSDCImportFns(ns) {
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
 
     var targetItem = {};
+    // prefix
+    if (qItem.prefix)
+      targetItem.prefix = qItem.prefix;
+    // text
     targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     self._processDataType(targetItem, qItem);
@@ -838,19 +842,18 @@ function addSDCImportFns(ns) {
             if (ns._answerRepeats(item)) {
               var value = [];
               for (var j=0,jLen=answer.length; j<jLen; j++) {
-                var coding = answer[j];
-                value.push({
-                  "code": coding.valueCoding.code,
-                  "text": coding.valueCoding.display
-                });
+                var val = ns._processCWECNEValueInQR(answer[j]);
+                if (val) {
+                  value.push(val);
+                }
               }
               item.value = value;
             }
             else {
-              item.value = {
-                "code": qrValue.valueCoding.code,
-                "text": qrValue.valueCoding.display
-              };
+              var val = ns._processCWECNEValueInQR(qrValue);
+              if (val) {
+                item.value = val;
+              }
             }
             break;
           case "ST":
@@ -867,6 +870,8 @@ function addSDCImportFns(ns) {
         }
       }
     }
+
+
   }
 
 }

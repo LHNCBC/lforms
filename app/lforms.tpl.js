@@ -30,12 +30,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" +
     "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" +
     "                 id=\"{{item._elementId + '_other'}}\" ng-disabled=\"item._readOnly\"\n" +
-    "                 ng-click=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
-    "                 ng-checked=\"checkAnswer(item,{'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "                 ng-click=\"updateCheckboxListForOther(item, item._answerOther)\"\n" +
+    "                 ng-checked=\"checkAnswer(item,{'text':item._answerOther})\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
-    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item.valueOther\"\n" +
+    "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item._answerOther\"\n" +
     "                 id=\"{{item._elementId + '_otherValue'}}\" ng-disabled=\"item._readOnly\"\n" +
-    "                 ng-change=\"updateCheckboxListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "                 ng-change=\"updateCheckboxListForOther(item, item._answerOther)\">\n" +
     "      </div>\n" +
     "\n" +
     "      <!--radio buttons for single selection-->\n" +
@@ -43,11 +43,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\"\n" +
     "                 ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" +
     "                 name=\"{{item._elementId}}\" ng-disabled=\"item._readOnly\"\n" +
-    "                 ng-click=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\">\n" +
+    "                 ng-click=\"updateRadioListForOther(item, item._answerOther)\">\n" +
     "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" +
     "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\"\n" +
-    "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item.valueOther\"\n" +
-    "                 ng-change=\"updateRadioListForOther(item, {'code':item.valueOther,'text':item.valueOther})\"\n" +
+    "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item._answerOther\"\n" +
+    "                 ng-change=\"updateRadioListForOther(item, item._answerOther)\"\n" +
     "                 ng-disabled=\"item._readOnly\">\n" +
     "      </div>\n" +
     "    </span>\n" +
@@ -56,7 +56,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" +
-    "    <input name=\"{{item.question +'_'+ $id}}\" type=\"text\"\n" +
+    "    <input name=\"{{item._text +'_'+ $id}}\" type=\"text\"\n" +
     "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" +
     "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" +
     "           id=\"{{item._elementId}}\"\n" +
@@ -306,7 +306,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
     "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" +
-    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item.question}}</label></span>\n" +
+    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item._text}}</label></span>\n" +
     "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -350,7 +350,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <div class=\"lf-de-button\">\n" +
     "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" +
     "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" +
-    "              title='Remove this \"{{ item.question }}\"'>-</button>\n" +
+    "              title='Remove this \"{{ item._text }}\"'>-</button>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
@@ -367,14 +367,14 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <lf-answers item=\"item\"></lf-answers>\n" +
     "          </div>\n" +
     "\n" +
-    "          <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" +
+    "          <input ng-switch-when=\"DT\" name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "\n" +
     "          <!-- Gillardo boostrap datetime picker -->\n" +
     "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
-    "            <input name=\"{{item.question}}\" type=\"text\" class=\"form-control\"\n" +
+    "            <input name=\"{{item._text}}\" type=\"text\" class=\"form-control\"\n" +
     "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" +
     "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" +
     "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" +
@@ -384,17 +384,17 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" +
     "          </div>\n" +
     "\n" +
-    "          <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" +
+    "          <textarea ng-switch-when=\"TX\" name=\"{{item._text}}\"\n" +
     "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" +
     "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          </textarea>\n" +
-    "          <input ng-switch-when=\"BL\" name=\"{{item.question}}\" type=\"checkbox\"\n" +
+    "          <input ng-switch-when=\"BL\" name=\"{{item._text}}\" type=\"checkbox\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
-    "          <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" +
+    "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
     "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
@@ -425,7 +425,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item._text}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -562,11 +562,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" +
     "              ng-click=\"addOneRepeatingItem(item, true)\"\n" +
     "              ng-blur=\"hideUnusedItemWarning(item)\"\n" +
-    "              uib-popover='Please enter info in the blank \"{{ item.question }}\".'\n" +
+    "              uib-popover='Please enter info in the blank \"{{ item._text }}\".'\n" +
     "              popover-placement=\"top-left\"\n" +
     "              popover-trigger=\"none\"\n" +
     "              popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "        + Add another \"{{item.question}}\"\n" +
+    "        + Add another \"{{item._text}}\"\n" +
     "      </button>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -580,7 +580,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-matrix-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item.question}}</label></span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item._text}}</label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -693,12 +693,12 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <label>\n" +
     "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" +
     "                     id=\"{{subItem._elementId + '_other'}}\"\n" +
-    "                     ng-click=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "                     ng-click=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" +
     "            </label>\n" +
     "            <label>\n" +
-    "              <input type=\"text\" ng-model=\"subItem.valueOther\"\n" +
+    "              <input type=\"text\" ng-model=\"subitem._answerOther\"\n" +
     "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" +
-    "                     ng-change=\"updateCheckboxListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" +
     "            </label>\n" +
     "          </span>\n" +
     "          <!--for single answer-->\n" +
@@ -706,11 +706,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            <label>\n" +
     "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" +
     "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" +
-    "                     ng-click=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "                     ng-click=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" +
     "            </label>\n" +
     "            <label>\n" +
-    "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subItem.valueOther\"\n" +
-    "                     ng-change=\"updateRadioListForOther(subItem, {'code':subItem.valueOther,'text':subItem.valueOther})\">\n" +
+    "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subitem._answerOther\"\n" +
+    "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" +
     "            </label>\n" +
     "          </span>\n" +
     "        </td>\n" +
@@ -741,7 +741,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            popover-placement=\"top-left\"\n" +
     "            popover-trigger=\"none\"\n" +
     "            popover-is-open=\"item._showUnusedItemWarning\">\n" +
-    "      + Add another \"{{item.question}}\"\n" +
+    "      + Add another \"{{item._text}}\"\n" +
     "    </button>\n" +
     "  </div>\n" +
     "</div>\n"
