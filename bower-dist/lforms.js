@@ -4652,7 +4652,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param data the lforms form definition data
      */
     init: function init(data) {
-      if (data && data._initializeFormFHIRData) {
+      if (data && data._initializeInternalData) {
         // This is aleady a lformsData object.
         return data;
       }

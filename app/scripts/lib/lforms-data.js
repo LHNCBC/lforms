@@ -169,7 +169,7 @@
      */
     init: function(data) {
 
-      if(data && data._initializeFormFHIRData) { // This is aleady a lformsData object.
+      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
         return data;
       }
       
