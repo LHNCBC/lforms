@@ -169,6 +169,10 @@
      */
     init: function(data) {
 
+      if(data && data._initializeFormFHIRData) { // This is aleady a lformsData object.
+        return data;
+      }
+      
       jQuery.extend(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";

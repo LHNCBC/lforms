@@ -4652,6 +4652,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param data the lforms form definition data
      */
     init: function init(data) {
+      if (data && data._initializeFormFHIRData) {
+        // This is aleady a lformsData object.
+        return data;
+      }
+
       jQuery.extend(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/"; // when the skip logic rule says the form is done
