@@ -3098,8 +3098,6 @@ LForms.Util = {
       for (var i = collectionObj.length - 1; i >= 0; i--) {
         if (collectionObj[i] === null || collectionObj[i] === undefined) {
           collectionObj.splice(i, 1);
-        } else if (typeof collectionObj[i] === 'Array') {
-          LForms.Util.pruneNulls(collectionObj[key]);
         } else if (_typeof(collectionObj[i]) === 'object') {
           LForms.Util.pruneNulls(collectionObj[i]);
         }
