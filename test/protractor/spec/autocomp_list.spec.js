@@ -105,7 +105,7 @@ describe('autocomp list', function() {
     expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
   });
 
-  fit('should not display SeqNum on answers that one of them has a numeric value', function() {
+  it('should not display SeqNum on answers that one of them has a numeric value', function() {
     tp.openFullFeaturedForm();
 
     // no sequence number
