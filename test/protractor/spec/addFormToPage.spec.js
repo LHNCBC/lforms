@@ -36,14 +36,17 @@ describe('addFormToPage test page', function() {
   });
 
   describe('addFormToPage', function () {
-    it('should be able to called a second time with a new form for the same form '+
-       'container', function() {
+    beforeEach(function() {
       po.openPage();
       // Pre-condition -- Form USSG-FHT should not be in formContainer
       browser.wait(function() {
         return browser.driver.executeScript(
           'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
       }, tp.WAIT_TIMEOUT_2);
+    });
+
+    it('should be able to called a second time with a new form for the same form '+
+       'container', function() {
       // Now put form USSG-FHT on the page, using the variable name method
       // (FHTData).
       browser.driver.executeScript(
@@ -56,12 +59,6 @@ describe('addFormToPage test page', function() {
     });
 
     it('should be able to take a form object',  function() {
-      po.openPage();
-      // Pre-condition -- Form USSG-FHT should not be in formContainer
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
-      }, tp.WAIT_TIMEOUT_2);
       // Now put form USSG-FHT on the page, using the form object method
       browser.driver.executeScript(
         'LForms.Util.addFormToPage(FHTData, "formContainer")');
@@ -73,12 +70,6 @@ describe('addFormToPage test page', function() {
     });
 
     it('should be able to take a JSON form definition',  function() {
-      po.openPage();
-      // Pre-condition -- Form USSG-FHT should not be in formContainer
-      browser.wait(function() {
-        return browser.driver.executeScript(
-          'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
-      }, tp.WAIT_TIMEOUT_2);
       // Now put form USSG-FHT on the page, using the form object method
       browser.driver.executeScript(
         'LForms.Util.addFormToPage(JSON.stringify(FHTData), "formContainer")');
@@ -87,6 +78,19 @@ describe('addFormToPage test page', function() {
         return browser.driver.executeScript(
           'return $("#formContainer").html().indexOf("USSG-FHT") >= 0');
       }, tp.WAIT_TIMEOUT_2);
+    });
+
+    it('should be able to display a very nested form', function() {
+      // AngularJS only supports a certain level of nesting of directives
+      // calling directives, which limits the nesting level of forms.  We've
+      // increased that limit via  $rootScopeProvider.digestTtl(...) and the
+      // code below tests that at least one particular amount of nesting is handled.
+      tp.loadFromTestData('very-nested-form.json'); // uses addFormToPage
+      // Wait for addFormToPage to be done.
+      browser.wait(function() {return browser.executeScript('return ' +
+        'window.addFormToPageDone')}, 2000);
+      // Make sure the error message div is blank
+      expect($('#loadMsg').getText()).toBe('');
     });
   });
 });

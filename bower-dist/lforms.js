@@ -705,8 +705,14 @@ module.exports = LForms;
   var Def = __webpack_require__(5);
 
   if (Def._tooltip) widgetDeps = [Def._animate, Def._popover, Def._tooltip, 'ui.bootstrap'].concat(widgetDeps);else widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
-  angular.module('lformsWidget', widgetDeps).config(['$animateProvider', function ($animateProvider) {
-    $animateProvider.classNameFilter(/has-ng-animate/);
+  angular.module('lformsWidget', widgetDeps).config(['$animateProvider', '$rootScopeProvider', function ($animateProvider, $rootScopeProvider) {
+    $animateProvider.classNameFilter(/has-ng-animate/); // AngularJS complains if there are too many levels of nesting in the form
+    // (due to directives calling directives....)  Increase the maximum from
+    // the default of 10.  When the number of levels is exceeded, the form
+    // still renders, but error messages appear in the console, and it is
+    // probably not properly initialized.
+
+    $rootScopeProvider.digestTtl(20);
   }]).directive('lforms', function () {
     return {
       restrict: 'E',
@@ -5142,6 +5148,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             if (source && (!source.sourceType || source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL) && source.sourceItemCode) {
               // get the source item object
               var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
+
+              if (!sourceItem) {
+                // This is an error in the form defintion.  Provide a useful
+                // debugging message.
+                throw new Error("Data control for item '" + item.question + "' refers to source item '" + source.sourceItemCode + "' which was not found as a sibling, ancestor, or ancestor sibling.");
+              }
 
               if (sourceItem._dataControlTargets) {
                 sourceItem._dataControlTargets.push(item);

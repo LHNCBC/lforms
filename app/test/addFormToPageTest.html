@@ -6,6 +6,7 @@
   <body>
     <input type="text" placeholder="FHIR Version" id="fhirVersion" />
     <button id="loadBtn" type="button" class="btn btn-success" onclick="document.querySelector('#fileAnchor').click()">Load From File</button>
+    <div id="loadMsg" style="color: red"></div>
     <div id="formContainer2"></div>
     <div id="formContainer"></div>
     <script src="latestBuild/lforms.min.js"></script>
@@ -64,9 +65,15 @@
                 // resources have finished loading.  Put that a flag on window
                 // so we can test that the promise is working.
                 window.addFormToPageDone = false;
-                LForms.Util.addFormToPage(importedData, 'formContainer2',
-                  {prepopulate: window.prepopulateFHIR}).then(function() {
-                   window.addFormToPageDone = true});
+                try {
+                  $('#loadMsg')[0].innerText = '';
+                  LForms.Util.addFormToPage(importedData, 'formContainer2',
+                    {prepopulate: window.prepopulateFHIR}).then(function() {
+                     window.addFormToPageDone = true});
+                }
+                catch(e){
+                  $('#loadMsg')[0].innerText = 'Unable to render form';
+                }
               };
               reader.readAsText(item._file);
             };

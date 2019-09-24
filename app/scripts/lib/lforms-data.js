@@ -631,6 +631,12 @@
                 source.sourceItemCode) {
               // get the source item object
               var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
+              if (!sourceItem) {
+                // This is an error in the form defintion.  Provide a useful
+                // debugging message.
+                throw new Error("Data control for item '"+item.question+ "' refers to source item '"+source.sourceItemCode+
+                  "' which was not found as a sibling, ancestor, or ancestor sibling.");
+              }
               if (sourceItem._dataControlTargets) {
                 sourceItem._dataControlTargets.push(item);
               }
