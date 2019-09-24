@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.0.1] 2019-09-24
+### Changed
+- The sequence numbers in front of answers won't be displayed if one of the 
+  answers has a numeric value, to avoid confusion.
+  
 ## [18.0.0] 2019-09-12
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.

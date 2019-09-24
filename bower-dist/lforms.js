@@ -6949,6 +6949,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
           item._modifiedAnswers = [];
           item._hasOneAnswerLabel = false;
+          item._hasOneNumericAnswer = true;
 
           for (var i = 0, iLen = answers.length; i < iLen; i++) {
             var answerData = angular.copy(answers[i]);
@@ -6957,7 +6958,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             if (answerData.label) {
               displayText = answerData.label + ". " + displayText;
               item._hasOneAnswerLabel = true;
-            }
+            } // check if one of the values is numeric
+            else {
+                if (!item._hasOneNumericAnswer && typeof parseFloat(answerData.text) === 'number') {
+                  item._hasOneNumericAnswer = true;
+                }
+              }
 
             if (answerData.score !== undefined && answerData.score !== null) // score is an int
               displayText = displayText + " - " + answerData.score; // always uses _displayText in autocomplete-lhc for display
@@ -7234,7 +7240,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         } else {
           options.listItems = item._modifiedAnswers;
-          options.addSeqNum = !item._hasOneAnswerLabel;
+          options.addSeqNum = !item._hasOneAnswerLabel && !item._hasOneNumericAnswer;
           options.display = "_displayText"; // See if there are list headings, and set them up if so.
           // The only way to determine this is to check whether parentAnswerCode
           // is defined on any item.

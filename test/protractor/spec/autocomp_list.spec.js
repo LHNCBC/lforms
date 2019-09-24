@@ -105,4 +105,13 @@ describe('autocomp list', function() {
     expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
   });
 
+  it('should not display SeqNum on answers that one of them has a numeric value', function() {
+    tp.openFullFeaturedForm();
+    var numericAnswer = element(by.id('/numeric_answer/1'));
+    numericAnswer.click();
+    expect($('#searchResults #completionOptions ul li:first-child').getText()).toBe('1');
+    expect($('#searchResults #completionOptions ul li:nth-child(2)').getText()).toBe('Answer 2');
+    expect($('#searchResults #completionOptions ul li:nth-child(3)').getText()).toBe('Answer 3');
+  });
+
 });
