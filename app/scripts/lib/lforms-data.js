@@ -2447,7 +2447,7 @@
           // reset the modified answers (for the display text)
           item._modifiedAnswers = [];
           item._hasOneAnswerLabel = false;
-          item._hasOneNumericAnswer = true;
+          item._hasOneNumericAnswer = false;
           for (var i = 0, iLen = answers.length; i < iLen; i++) {
             var answerData = angular.copy(answers[i]);
 
@@ -2459,7 +2459,7 @@
             }
             // check if one of the values is numeric
             else {
-              if (!item._hasOneNumericAnswer && typeof parseFloat(answerData.text) === 'number') {
+              if (!item._hasOneNumericAnswer && !isNaN(answerData.text)) {
                 item._hasOneNumericAnswer = true;
               }
             }
@@ -2733,6 +2733,7 @@
         }
         else {
           options.listItems = item._modifiedAnswers;
+          // add seq num when there is no labels and no numeric values as answer
           options.addSeqNum = !item._hasOneAnswerLabel && !item._hasOneNumericAnswer;
           options.display = "_displayText";
 

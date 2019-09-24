@@ -105,13 +105,24 @@ describe('autocomp list', function() {
     expect(rxterms.strengthAndForm.getAttribute('value')).toEqual('20% Cream');
   });
 
-  it('should not display SeqNum on answers that one of them has a numeric value', function() {
+  fit('should not display SeqNum on answers that one of them has a numeric value', function() {
     tp.openFullFeaturedForm();
+
+    // no sequence number
     var numericAnswer = element(by.id('/numeric_answer/1'));
     numericAnswer.click();
     expect($('#searchResults #completionOptions ul li:first-child').getText()).toBe('1');
     expect($('#searchResults #completionOptions ul li:nth-child(2)').getText()).toBe('Answer 2');
     expect($('#searchResults #completionOptions ul li:nth-child(3)').getText()).toBe('Answer 3');
+
+    // has sequence number
+    var textAnswer = element(by.id('/type9/1'));
+    textAnswer.click();
+    expect($('#searchResults #completionOptions ul li:first-child').getText()).toBe('1:  Answer 1');
+    expect($('#searchResults #completionOptions ul li:nth-child(2)').getText()).toBe('2:  Answer 2');
+    expect($('#searchResults #completionOptions ul li:nth-child(3)').getText()).toBe('3:  Answer 3');
+
+
   });
 
 });
