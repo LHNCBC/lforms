@@ -1249,6 +1249,18 @@ var allInOne =
       "question": "Question display text"
     },
 
+    // an item with answers where one of them is numeric
+    {
+      "questionCode": "numeric_answer",
+      "dataType": "CNE",
+      "header": false,
+      "question": "One answer is numeric, no seq num displayed",
+      "answers": [
+        {"code": "c1", "text": "1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null}]
+    },
+
 
 
     // skip logic, controlling child items and headers (one level below)
