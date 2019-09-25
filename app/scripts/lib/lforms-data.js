@@ -168,15 +168,24 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-
+/*
       if(data && data._initializeInternalData) { // This is aleady a lformsData object.
-        return data;
+        var props = Object.getOwnPropertyNames(data);
+        for(var i = 0; i < props.length; i++) {
+          if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
+            this[props[i]] = data[props[i]];
+          }
+        }
       }
-      
+      else {
+        jQuery.extend(this, data);
+        this.templateOptions = data.templateOptions || {};
+        this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
+      }
+*/
       jQuery.extend(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
-
       // when the skip logic rule says the form is done
       this._formDone = false;
 

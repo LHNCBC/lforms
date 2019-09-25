@@ -4652,11 +4652,21 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param data the lforms form definition data
      */
     init: function init(data) {
-      if (data && data._initializeInternalData) {
-        // This is aleady a lformsData object.
-        return data;
-      }
-
+      /*
+            if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+              var props = Object.getOwnPropertyNames(data);
+              for(var i = 0; i < props.length; i++) {
+                if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
+                  this[props[i]] = data[props[i]];
+                }
+              }
+            }
+            else {
+              jQuery.extend(this, data);
+              this.templateOptions = data.templateOptions || {};
+              this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
+            }
+      */
       jQuery.extend(this, data);
       this.templateOptions = data.templateOptions || {};
       this.PATH_DELIMITER = data.PATH_DELIMITER || "/"; // when the skip logic rule says the form is done
