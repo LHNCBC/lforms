@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.0.2] 2019-09-26
+### Fixed
+- Fixed a bug that item values that have extra user data are not found in the answer list so that
+  they are not displayed.  
+
 ## [18.0.1] 2019-09-24
 ### Changed
 - The sequence numbers in front of answers won't be displayed if one of the 

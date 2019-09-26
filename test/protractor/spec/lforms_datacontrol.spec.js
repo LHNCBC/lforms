@@ -110,4 +110,36 @@ describe('data control', function() {
 
   });
 
+  it('saved item value should be displayed when the value contains extra data for data controls', function() {
+    tp.openNewGeneticForm();
+
+    var catgory = element(by.id('/81250-3/83005-9/1/1'));
+
+    expect(catgory.getAttribute('value')).toBe("Simple Variant");
+    catgory.evaluate('item.value').then(function(val) {
+      expect(val.code).toEqual('LA26801-3');
+      expect(val.text).toEqual('Simple Variant');
+      expect(val._displayText).toEqual('Simple Variant');
+      expect(val.dnaChangeTypeList).toEqual([
+        { "text": "Wild Type", "code": "LA9658-1" },
+        { "text": "Deletion", "code": "LA6692-3" },
+        { "text": "Duplication", "code": "LA6686-5" },
+        { "text": "Insertion", "code": "LA6687-3" },
+        { "text": "Insertion/Deletion", "code": "LA6688-1" },
+        { "text": "Inversion", "code": "LA6689-9" },
+        { "text": "Substitution", "code": "LA6690-7" }
+      ])
+      expect(val.variantCodeSystemList).toEqual([
+        {"text": "ClinVar Variants", "code": "CLINVAR-V",
+          "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"},
+        {"text": "ClinVar Alleles", "code": "CLINVAR-A",
+          "url": "https://lforms-service.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,AlleleID"},
+        {"text": "COSMIC", "code": "cosmic-Smpl",
+          "url": "https://lforms-service.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"},
+        {"text": "Other variant source", "code": "LA46-8"}
+      ])
+    });
+
+  });
+
 });

@@ -7057,7 +7057,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @private
      */
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
-      // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+      var allowedAnswerAttr = ['label', 'code', 'text', 'score', 'other']; // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+
       var completeAnswerCodeSystem = completeAnswer.codeSystem;
 
       if (!completeAnswer.codeSystem) {
@@ -7074,7 +7075,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var fields = Object.keys(answer);
 
         for (var i = 0, iLen = fields.length; i < iLen; i++) {
-          if (fields[i] !== "codeSystem" && answer[fields[i]] !== completeAnswer[fields[i]]) {
+          // not to check extra attributes not specified in specs.
+          if (allowedAnswerAttr.indexOf(fields[i]) >= 0 && answer[fields[i]] !== completeAnswer[fields[i]]) {
             same = false;
             break;
           }
