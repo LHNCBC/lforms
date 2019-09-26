@@ -2,33 +2,37 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.0.3] 2019-09-26
+### Fixed
+- Increased the maximum supported nesting level of form sections.
+
 ## [18.0.2] 2019-09-25
 ### Changed
 - Changed form title to use title field, if present, otherwise use name field.
 ### Fixed
-- Fixed missing form level fields related to FHIR Questionnaire. All form level fields are preserved. 
+- Fixed missing form level fields related to FHIR Questionnaire. All form level fields are preserved.
 
-q## [18.0.1] 2019-09-24
+## [18.0.1] 2019-09-24
 ### Changed
-- The sequence numbers in front of answers won't be displayed if one of the 
+- The sequence numbers in front of answers won't be displayed if one of the
   answers has a numeric value, to avoid confusion.
-  
+
 ## [18.0.0] 2019-09-12
 ### Added
 - Added support for 'prefix' in FHIR Questionnaire and in LForms.
 ### Fixed
-- Fixed a bug that on CWE items, user typed answers that are not in the answer list are 
-  not displayed in the "OTHER" fields, when answer list is displayed as radio buttons or 
+- Fixed a bug that on CWE items, user typed answers that are not in the answer list are
+  not displayed in the "OTHER" fields, when answer list is displayed as radio buttons or
   checkboxes.
 - Fixed a bug that code system of an answer is not imported for QuestionnaireResponse and
   DiagnosticReport.
 ### Changed
-- User typed, not-on-list value for CWE item is now stored as a string.   
+- User typed, not-on-list value for CWE item is now stored as a string.
 
 ## [17.4.1] 2019-09-06
 ### Fixed
 - Fixed a bug in conversion of restrictions to corresponding FHIR extensions.
-  
+
 ## [17.4.0] 2019-08-28
 ### Added
 - Support for prefetched lists (FHIR item control type = 'dropdown') whose
