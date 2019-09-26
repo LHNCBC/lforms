@@ -19916,12 +19916,7 @@ function addCommonSDCExportFns(ns) {
 
   self._setFormLevelFields = function (target, source, noExtensions) {
     this.copyFields(source, target, this.formLevelFields);
-    target.code = source.codeList; // If missing, assign title
-
-    if (!target.title) {
-      target.title = target.name;
-    } // resourceType
-
+    target.code = source.codeList; // resourceType
 
     target.resourceType = "Questionnaire";
     target.status = target.status ? target.status : "draft"; // meta

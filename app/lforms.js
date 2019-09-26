@@ -11,8 +11,14 @@
   else
     widgetDeps = ['ngAnimate', 'ui.bootstrap'].concat(widgetDeps);
   angular.module('lformsWidget', widgetDeps)
-    .config(['$animateProvider', function ($animateProvider) {
+    .config(['$animateProvider', '$rootScopeProvider', function ($animateProvider, $rootScopeProvider) {
       $animateProvider.classNameFilter(/has-ng-animate/);
+      // AngularJS complains if there are too many levels of nesting in the form
+      // (due to directives calling directives....)  Increase the maximum from
+      // the default of 10.  When the number of levels is exceeded, the form
+      // still renders, but error messages appear in the console, and it is
+      // probably not properly initialized.
+      $rootScopeProvider.digestTtl(20);
     }])
     .directive('lforms', function() {
       return {

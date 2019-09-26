@@ -61,6 +61,13 @@ describe('Util library', function() {
       LForms.Util.pruneNulls(target);
       assert.deepEqual(target, expected);
     });
+    
+    it('should prune from nested array elements', function () {
+      var target   = [undefined, [null, undefined, 1, 'str', true,{a: {x: {m: null, n: undefined, o: false}, y: null, z: undefined}, b: null,c: undefined,d: [{f: null, g: undefined, h:1}]}], null];
+      var expected = [           [                 1, 'str', true,{a: {x: {                       o: false}                       },                      d: [{                       h:1}]}]      ];
+      LForms.Util.pruneNulls(target);
+      assert.deepEqual(target, expected);
+    });
   });
 
   describe('findItem', function() {

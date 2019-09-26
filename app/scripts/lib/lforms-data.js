@@ -168,21 +168,19 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-
-      this.items = data.items;
-      this.code = data.code;
-      this.codeList = data.codeList;
-      this.identifier = data.identifier;
-      this.name = data.name;
-      this.type = data.type;
-      this.codeSystem = data.codeSystem;
-      this.hasUserData = data.hasUserData;
-      this.template = data.template;
-      this.templateOptions = data.templateOptions || {};
-      this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
-      this.answerLists = data.answerLists;
-      this.copyrightNotice = data.copyrightNotice;
-
+      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+        var props = Object.getOwnPropertyNames(data);
+        for(var i = 0; i < props.length; i++) {
+          if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
+            this[props[i]] = data[props[i]];
+          }
+        }
+      }
+      else {
+        jQuery.extend(this, data);
+        this.templateOptions = data.templateOptions || {};
+        this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
+      }
       // when the skip logic rule says the form is done
       this._formDone = false;
 
@@ -631,6 +629,12 @@
                 source.sourceItemCode) {
               // get the source item object
               var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
+              if (!sourceItem) {
+                // This is an error in the form defintion.  Provide a useful
+                // debugging message.
+                throw new Error("Data control for item '"+item.question+ "' refers to source item '"+source.sourceItemCode+
+                  "' which was not found as a sibling, ancestor, or ancestor sibling.");
+              }
               if (sourceItem._dataControlTargets) {
                 sourceItem._dataControlTargets.push(item);
               }

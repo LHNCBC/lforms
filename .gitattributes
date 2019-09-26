@@ -1,5 +1,5 @@
 * text=auto
-npm-shrinkwrap.json -diff
+package-lock.json -diff
 themes.css -diff
 app/scripts/fhir/*/lformsFHIR.js -diff
 app/scripts/fhir/*/lformsFHIR.js linguist-generated=true
