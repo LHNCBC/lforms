@@ -2,7 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.0.1] 2019-09-24
+## [18.0.2] 2019-09-25
+### Changed
+- Changed form title to use title field, if present, otherwise use name field.
+### Fixed
+- Fixed missing form level fields related to FHIR Questionnaire. All form level fields are preserved. 
+
+q## [18.0.1] 2019-09-24
 ### Changed
 - The sequence numbers in front of answers won't be displayed if one of the 
   answers has a numeric value, to avoid confusion.
