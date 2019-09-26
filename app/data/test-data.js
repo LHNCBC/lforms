@@ -14,6 +14,7 @@ var FHTData = {
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
   name: "USSG-FHT, (with mock-up items for skip logic demo)",
+  title: "USSG-FHT, (with mock-up items for skip logic demo) - Title",
   // predefined template name. optional, if not provided, a default template will be used for certain form "type"
   template: "table",
   // template configuration data. optional, if not provided, a default configuration will be used for the
@@ -1246,6 +1247,18 @@ var allInOne =
       "header": false,
       "prefix": "Prefix A:",
       "question": "Question display text"
+    },
+
+    // an item with answers where one of them is numeric
+    {
+      "questionCode": "numeric_answer",
+      "dataType": "CNE",
+      "header": false,
+      "question": "One answer is numeric, no seq num displayed",
+      "answers": [
+        {"code": "c1", "text": "1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null}]
     },
 
 

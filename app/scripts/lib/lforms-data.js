@@ -168,21 +168,19 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-
-      this.items = data.items;
-      this.code = data.code;
-      this.codeList = data.codeList;
-      this.identifier = data.identifier;
-      this.name = data.name;
-      this.type = data.type;
-      this.codeSystem = data.codeSystem;
-      this.hasUserData = data.hasUserData;
-      this.template = data.template;
-      this.templateOptions = data.templateOptions || {};
-      this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
-      this.answerLists = data.answerLists;
-      this.copyrightNotice = data.copyrightNotice;
-
+      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+        var props = Object.getOwnPropertyNames(data);
+        for(var i = 0; i < props.length; i++) {
+          if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
+            this[props[i]] = data[props[i]];
+          }
+        }
+      }
+      else {
+        jQuery.extend(this, data);
+        this.templateOptions = data.templateOptions || {};
+        this.PATH_DELIMITER = data.PATH_DELIMITER || "/";
+      }
       // when the skip logic rule says the form is done
       this._formDone = false;
 
@@ -2453,6 +2451,7 @@
           // reset the modified answers (for the display text)
           item._modifiedAnswers = [];
           item._hasOneAnswerLabel = false;
+          item._hasOneNumericAnswer = false;
           for (var i = 0, iLen = answers.length; i < iLen; i++) {
             var answerData = angular.copy(answers[i]);
 
@@ -2461,6 +2460,12 @@
             if (answerData.label) {
               displayText = answerData.label + ". " + displayText;
               item._hasOneAnswerLabel = true;
+            }
+            // check if one of the values is numeric
+            else {
+              if (!item._hasOneNumericAnswer && !isNaN(answerData.text)) {
+                item._hasOneNumericAnswer = true;
+              }
             }
 
             if (answerData.score !== undefined && answerData.score !== null) // score is an int
@@ -2732,7 +2737,8 @@
         }
         else {
           options.listItems = item._modifiedAnswers;
-          options.addSeqNum = !item._hasOneAnswerLabel;
+          // add seq num when there is no labels and no numeric values as answer
+          options.addSeqNum = !item._hasOneAnswerLabel && !item._hasOneNumericAnswer;
           options.display = "_displayText";
 
           // See if there are list headings, and set them up if so.
