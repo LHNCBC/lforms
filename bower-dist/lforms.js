@@ -7049,10 +7049,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                     found = true;
                   }
                 } // a saved value or a default value is not on the list (default answer must be one of the answer items).
-                // non-matching value objects are no longer treated as a not-on-list, user supplied value.
+                // non-matching value objects are kept, (data control or others might use data on these objects)
 
 
-                if (userValue && !found && userValue._notOnList) {
+                if (userValue && !found) {
+                  if (userValue.text) userValue._displayText = userValue.text;
                   listVals.push(userValue);
                 }
               }
