@@ -7021,7 +7021,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                   "text": answerValueArray[i],
                   "_displayText": answerValueArray[i],
                   "_notOnList": true
-                }); // for radio button/checkbox display, an "Other" option is displayed
+                }); // for radio button/checkbox display, where only one "Other" option is displayed
 
                 item._answerOther = answerValueArray[i];
                 item._otherValueChecked = true;
@@ -7049,10 +7049,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                     found = true;
                   }
                 } // a saved value or a default value is not on the list (default answer must be one of the answer items).
-                // non-matching value objects are no longer treated as a not-on-list, user supplied value.
+                // non-matching value objects are kept, (data control or others might use data on these objects)
 
 
-                if (userValue && !found && userValue._notOnList) {
+                if (userValue && !found) {
+                  if (userValue.text) userValue._displayText = userValue.text;
                   listVals.push(userValue);
                 }
               }
@@ -7071,7 +7072,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @private
      */
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
-      // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+      var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other']; // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
+
       var completeAnswerCodeSystem = completeAnswer.codeSystem;
 
       if (!completeAnswer.codeSystem) {
@@ -7088,7 +7090,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var fields = Object.keys(answer);
 
         for (var i = 0, iLen = fields.length; i < iLen; i++) {
-          if (fields[i] !== "codeSystem" && answer[fields[i]] !== completeAnswer[fields[i]]) {
+          // not to check extra attributes not specified in specs.
+          if (standardAnswerAttr.indexOf(fields[i]) >= 0 && answer[fields[i]] !== completeAnswer[fields[i]]) {
             same = false;
             break;
           }

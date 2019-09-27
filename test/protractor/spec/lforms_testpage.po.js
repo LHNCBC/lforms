@@ -58,6 +58,7 @@ var TestPage = function() {
     QuestionInQuestionForm: 14,
     HL7GeneticPanel: 15,
     DefaultAnswerForm: 17,
+    NewGeneticForm: 19,
     TwoTotalScoreForm: 20,
     VitalSign: 21,
     QTYDemo: 22

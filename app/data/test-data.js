@@ -4358,10 +4358,10 @@ var QTYDemo =
   };
 
 var newGenetic = {
-  "_comment": "WARNING:  Do not edit the generated copy of this file.",
+  "_comment": "WARNING:  This file in server/data was generated from templates in server/data_templates.  Do not edit the generated copy of this file.",
   "type": "LOINC",
   "code": "81247-9",
-  "name": "Master HL7 genetic variant reporting panel (2016-11-21)",
+  "name": "Master HL7 genetic variant reporting panel (2017-06-06)",
   "template": "table",
   "codingInstructions": "NIH/NLM/LHNCBC",
   "copyrightNotice": null,
@@ -4381,7 +4381,7 @@ var newGenetic = {
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
       ],
-      "defaultAnswer": [
+      "value": [
         {"code": "C01", "text": "Discrete variants"},
         {"code": "C02", "text": "Complex variants"},
         {"code": "C04", "text": "Pharmacogenomics"}
@@ -4396,7 +4396,7 @@ var newGenetic = {
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ],
-      "defaultAnswer": [
+      "value": [
         {"code": "C01", "text": "Specific targeted mutations"},
         {"code": "C02", "text": "Range targeted in the reference sequence"}
       ]
@@ -4468,7 +4468,7 @@ var newGenetic = {
 
 
     {
-      "questionCode": "81296-6",
+      "questionCode": "81306-3",
       "question": "Variables that apply to the overall study",
       "dataType": "SECTION",
       "header": true,
@@ -4481,7 +4481,7 @@ var newGenetic = {
           "question":"Genetic disease(s) assessed",
           "dataType":"CWE",
           "answerCodeSystem": "Medgen-Dis",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
 
           "codingInstructions":"Choose diseases coded within MedGen or type in your own text name.",
           "answerCardinality": {"min":"0", "max":"*"}
@@ -4493,7 +4493,7 @@ var newGenetic = {
           "dataType": "CWE",
           "answerCardinality": {"min":"0", "max":"*"},
           "answerCodeSystem": "RxT-Ingrd",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/drug_ingredients/v3/search"
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/drug_ingredients/v3/search"
 
         },
         {"questionCode": "48018-6",
@@ -4502,9 +4502,9 @@ var newGenetic = {
           "answerCardinality": {"min":"0", "max":"*"},
           "answerCodeSystem": "HGNC-Symb",
           "displayControl": {
-            "listColHeaders": ["Symbol", "HGNC&nbsp;ID", "Name", "Location"]
+            "listColHeaders": ["Symbol", "Code System", "Code", "Chromosome", "Description", "Type of Gene"]
           },
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,hgnc_id,name_mod,location"
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/ncbi_genes/v3/search?df=Symbol,_code_system,_code,chromosome,description,type_of_gene"
 
         },
         {"questionCode": "36908-2",
@@ -4514,7 +4514,7 @@ var newGenetic = {
           "dataType": "CWE",
           "answerCodeSystem": "CLINVAR-V",
 
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID",
+          "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID",
           "displayControl": {
             "listColHeaders": ["Name", "Variant&nbsp;ID", "Phenotype"]
           },
@@ -4562,7 +4562,7 @@ var newGenetic = {
           ]
         },
         {"questionCode": "51969-4",
-          "question": "Full narrative report",
+          "question": "Genetic analysis report",
           "dataType": "TX"
         },
         {"questionCode": "81291-7",
@@ -4618,6 +4618,62 @@ var newGenetic = {
           "answers": [
             { "code": "LA26801-3",
               "text": "Simple Variant",
+              "data": {
+                "dnaChangeTypeList": [
+                  { "text": "Wild Type", "code": "LA9658-1" },
+                  { "text": "Deletion", "code": "LA6692-3" },
+                  { "text": "Duplication", "code": "LA6686-5" },
+                  { "text": "Insertion", "code": "LA6687-3" },
+                  { "text": "Insertion/Deletion", "code": "LA6688-1" },
+                  { "text": "Inversion", "code": "LA6689-9" },
+                  { "text": "Substitution", "code": "LA6690-7" }
+                ],
+                "variantCodeSystemList": [
+                  {"text": "ClinVar Variants", "code": "CLINVAR-V",
+                    "data": {"url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"}},
+                  {"text": "ClinVar Alleles", "code": "CLINVAR-A",
+                    "data": {"url": "https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID"}},
+                  {"text": "COSMIC", "code": "cosmic-Smpl",
+                    "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"}},
+                  {"text": "Other variant source", "code": "LA46-8"}
+                ]
+              }
+            },
+            {
+              "code": "LA26802-1",
+              "text": "Structural Variant",
+              "data": {
+                "dnaChangeTypeList": [
+                  { "text": "Wild Type", "code": "LA9658-1" },
+                  { "text": "Deletion", "code": "LA6692-3" },
+                  { "text": "Duplication", "code": "LA6686-5" },
+                  { "text": "Insertion", "code": "LA6687-3" },
+                  { "text": "Insertion/Deletion", "code": "LA6688-1" },
+                  { "text": "Inversion", "code": "LA6689-9" },
+                  { "text": "Substitution", "code": "LA6690-7" },
+                  {"text": "Copy number gain", "code": "LA14033-7"},
+                  {"text": "Copy number loss", "code": "LA14034-5"},
+                  {"code": "LA26324-6", "text": "Mobile element insertion"},
+                  {"code": "LA26325-3", "text": "Novel sequence insertion"},
+                  {"code": "LA26326-1", "text": "Tandem duplication"},
+                  {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
+                  {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
+                  {"code": "LA26331-1", "text": "Translocation"},
+                  {"code": "LA26330-3", "text": "Complex"},
+                  {"code": "LA26329-5", "text": "Sequence alteration"}
+                ],
+                "variantCodeSystemList": [
+                  {"text": "COSMIC Structural", "code": "cosmic-Strct",
+                    "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic_struct/v3/search?sf=MutationID,MutationType,Site"}},
+                  {"text": "Other variant source", "code": "LA46-8"}
+                ]
+              }
+            }
+          ],
+          "value": {
+            "code": "LA26801-3",
+            "text": "Simple Variant",
+            "data": {
               "dnaChangeTypeList": [
                 { "text": "Wild Type", "code": "LA9658-1" },
                 { "text": "Deletion", "code": "LA6692-3" },
@@ -4629,61 +4685,14 @@ var newGenetic = {
               ],
               "variantCodeSystemList": [
                 {"text": "ClinVar Variants", "code": "CLINVAR-V",
-                  "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"},
+                  "data": {"url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"}},
                 {"text": "ClinVar Alleles", "code": "CLINVAR-A",
-                  "url": "https://lforms-service.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,AlleleID"},
+                  "data": {"url": "https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID"}},
                 {"text": "COSMIC", "code": "cosmic-Smpl",
-                  "url": "https://lforms-service.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"},
-                {"text": "Other variant source", "code": "LA46-8"}
-              ]
-            },
-            {
-              "code": "LA26802-1",
-              "text": "Structural Variant",
-              "dnaChangeTypeList": [
-                {"text": "Copy number gain", "code": "LA14033-7"},
-                {"text": "Copy number loss", "code": "LA14034-5"},
-                {"text": "Duplication", "code": "LA6686-5"},
-                {"text": "Deletion", "code": "LA6692-3"},
-                {"text": "Insertion", "code": "LA6687-3"},
-                {"code": "LA26324-6", "text": "Mobile element insertion"},
-                {"code": "LA26325-3", "text": "Novel sequence insertion"},
-                {"code": "LA26326-1", "text": "Tandem duplication"},
-                {"code": "LA6689-9", "text": "Inversion"},
-                {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
-                {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
-                {"code": "LA26331-1", "text": "Translocation"},
-                {"code": "LA26330-3", "text": "Complex"},
-                {"code": "LA26329-5", "text": "Sequence alteration"}
-              ],
-              "variantCodeSystemList": [
-                {"text": "COSMIC Structural", "code": "cosmic-Strct",
-                  "url": "https://lforms-service.nlm.nih.gov/api/cosmic_struct/v3/search?sf=MutationID,MutationType,Site"},
+                  "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"}},
                 {"text": "Other variant source", "code": "LA46-8"}
               ]
             }
-          ],
-          "value": {
-            "code": "LA26801-3",
-            "text": "Simple Variant",
-            "dnaChangeTypeList": [
-              { "text": "Wild Type", "code": "LA9658-1" },
-              { "text": "Deletion", "code": "LA6692-3" },
-              { "text": "Duplication", "code": "LA6686-5" },
-              { "text": "Insertion", "code": "LA6687-3" },
-              { "text": "Insertion/Deletion", "code": "LA6688-1" },
-              { "text": "Inversion", "code": "LA6689-9" },
-              { "text": "Substitution", "code": "LA6690-7" }
-            ],
-            "variantCodeSystemList": [
-              {"text": "ClinVar Variants", "code": "CLINVAR-V",
-                "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"},
-              {"text": "ClinVar Alleles", "code": "CLINVAR-A",
-                "url": "https://lforms-service.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,AlleleID"},
-              {"text": "COSMIC", "code": "cosmic-Smpl",
-                "url": "https://lforms-service.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"},
-              {"text": "Other variant source", "code": "LA46-8"}
-            ]
           }
         },
         {
@@ -4694,9 +4703,12 @@ var newGenetic = {
             "max": "1",
             "min": "0"
           },
-          "value": {"text": "ClinVar Variants",
+          "defaultAnswer": {
+            "text": "ClinVar Variants",
             "code": "CLINVAR-V",
-            "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"
+            "data": {
+              "url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"
+            }
           },
           "answers": [
           ],
@@ -4706,7 +4718,7 @@ var newGenetic = {
               "sourceItemCode": "83005-9"
             },
             "construction":"SIMPLE",
-            "dataFormat": "value.variantCodeSystemList",
+            "dataFormat": "value.data.variantCodeSystemList",
             "onAttribute":"answers"
           }]
         },
@@ -4715,7 +4727,7 @@ var newGenetic = {
           "dataType": "CWE",
           "answerCodeSystem": "CLINVAR-V",
 
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID",
+          "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID",
           "displayControl": {
             "listColHeaders": ["Name", "Variant&nbsp;ID", "Phenotype"]
           },
@@ -4727,7 +4739,7 @@ var newGenetic = {
                 "sourceItemCode": "82122-3"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.url",
+              "dataFormat":"value.data.url",
               "onAttribute": "externallyDefined"
             },
             {
@@ -4736,7 +4748,7 @@ var newGenetic = {
                 "sourceItemCode": "83005-9"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.answerCodeSystem",
+              "dataFormat":"value.data.answerCodeSystem",
               "onAttribute": "answerCodeSystem"
             }
           ]
@@ -4764,15 +4776,15 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.hgnc_id","text": "value.GeneSymbol"},
+              "dataFormat":{"code": "value.data.hgnc_id","text": "value.data.GeneSymbol"},
               "onAttribute":"value"
             }
           ],
           "answerCodeSystem": "HGNC-Symb",
           "displayControl": {
-            "listColHeaders": ["Symbol", "HGNC&nbsp;ID", "Name", "Location"]
+            "listColHeaders": ["Symbol", "Code System", "Code", "Chromosome", "Description", "Type of Gene"]
           },
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,hgnc_id,name_mod,location"
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/ncbi_genes/v3/search?df=Symbol,_code_system,_code,chromosome,description,type_of_gene"
 
         },
         {
@@ -4780,7 +4792,7 @@ var newGenetic = {
           "question": "Transcript RefSeq ID",
           "dataType": "CWE",
           "answerCodeSystem": "RefSeq-T",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/refseqs/v3/search",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/refseqs/v3/search",
           "dataControl": [
             {
               "source": {
@@ -4788,7 +4800,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.RefSeqID", "text": "value.RefSeqID"},
+              "dataFormat":{"code": "value.data.RefSeqID", "text": "value.data.RefSeqID"},
               "onAttribute":"value"
             }
           ]
@@ -4798,7 +4810,7 @@ var newGenetic = {
           "question": "DNA change c.HGVS",
           "dataType": "CWE",
           "answerCodeSystem": "HGVS.c",
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?cf=NucleotideChange&df=NucleotideChange,GeneSymbol",
+          "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?cf=NucleotideChange&df=NucleotideChange,GeneSymbol",
           "dataControl": [
             {
               "source": {
@@ -4806,7 +4818,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.NucleotideChange", "text": "value.NucleotideChange"},
+              "dataFormat":{"code": "value.data.NucleotideChange", "text": "value.data.NucleotideChange"},
               "onAttribute":"value"
             }
           ]
@@ -4816,7 +4828,7 @@ var newGenetic = {
           "question": "Amino acid change p.HGVS",
           "dataType": "CWE",
           "answerCodeSystem": "HGVS.p",
-          "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?cf=AminoAcidChange&df=AminoAcidChange,GeneSymbol",
+          "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?cf=AminoAcidChange&df=AminoAcidChange,GeneSymbol",
           "dataControl": [
             {
               "source": {
@@ -4824,37 +4836,20 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.AminoAcidChange", "text": "value.AminoAcidChange"},
+              "dataFormat":{"code": "value.data.AminoAcidChange", "text": "value.data.AminoAcidChange"},
               "onAttribute":"value"
             }
           ]
         },
         {
           "questionCode": "48019-4",
-          "question": "DNA change type",
+          "question": "DNA change [Type]",
           "dataType": "CWE",
           "answerCardinality": {
             "max": "1",
             "min": "0"
           },
           "answers": [
-            { "text": "Wild Type", "code": "LA9658-1" },
-            { "text": "Deletion", "code": "LA6692-3" },
-            { "text": "Duplication", "code": "LA6686-5" },
-            { "text": "Insertion", "code": "LA6687-3" },
-            { "text": "Insertion/Deletion", "code": "LA6688-1" },
-            { "text": "Inversion", "code": "LA6689-9" },
-            { "text": "Substitution", "code": "LA6690-7" },
-            {"text": "Copy number gain", "code": "LA14033-7"},
-            {"text": "Copy number loss", "code": "LA14034-5"},
-            {"code": "LA26324-6", "text": "Mobile element insertion"},
-            {"code": "LA26325-3", "text": "Novel sequence insertion"},
-            {"code": "LA26326-1", "text": "Tandem duplication"},
-            {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
-            {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
-            {"code": "LA26331-1", "text": "Translocation"},
-            {"code": "LA26330-3", "text": "Complex"},
-            {"code": "LA26329-5", "text": "Sequence alteration"}
           ],
           "dataControl": [
             {
@@ -4863,22 +4858,22 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"code": "value.TypeAbbr", "text": "value.TypeAbbr"},
+              "dataFormat":{"code": "value.data.TypeAbbr", "text": "value.data.TypeAbbr"},
               "onAttribute":"value"
             },
             { "source" : {
-              "sourceType":"INTERNAL",
-              "sourceItemCode":"83005-9"
-            },
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"83005-9"
+              },
               "construction":"SIMPLE",
-              "dataFormat": "value.dnaChangeTypeList",
+              "dataFormat": "value.data.dnaChangeTypeList",
               "onAttribute":"answers"
             }
           ]
         },
         {
           "questionCode": "48006-1",
-          "question": "Amino acid change type",
+          "question": "Amino acid change [Type]",
           "dataType": "CWE",
           "answerCardinality": {
             "max": "1",
@@ -4930,7 +4925,7 @@ var newGenetic = {
           "question": "Genomic reference sequence",
           "dataType": "CWE",
           "answerCodeSystem": "RefSeq-G",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/refseqs/v3/search?q=!RefSeq%3ANM*&sf=RefSeq&df=RefSeq",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/refseqs/v3/search?q=!RefSeq%3ANM*&sf=RefSeq&df=RefSeq",
           "dataControl": [
             {
               "source": {
@@ -4938,7 +4933,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"text": "value.ChromosomeAccession","code": "value.ChromosomeAccession"},
+              "dataFormat":{"text": "value.data.ChromosomeAccession","code": "value.data.ChromosomeAccession"},
               "onAttribute":"value"
             }
           ]
@@ -4956,7 +4951,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.ReferenceAllele",
+              "dataFormat":"value.data.ReferenceAllele",
               "onAttribute":"value"
             }
           ]
@@ -4971,7 +4966,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.GenomicLocation",
+              "dataFormat":"value.data.GenomicLocation",
               "onAttribute":"value"
             }
           ]
@@ -4985,7 +4980,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.AlternateAllele",
+              "dataFormat":"value.data.AlternateAllele",
               "onAttribute":"value"
             }
           ]
@@ -5007,11 +5002,12 @@ var newGenetic = {
           "answerCardinality": {"max": "1", "min":"0"},
           "answerCodeSystem": "dbSNP",
           "externallyDefined":
-              "https://lforms-service.nlm.nih.gov/api/snps/v3/search?df=rsNum,chr,chrPos,alleles,geneSymbol",
+              "https://clinicaltables.nlm.nih.gov/api/snps/v3/search?df=rsNum,chr,chrPos,alleles,geneSymbol",
           "displayControl": {
             "listColHeaders": ["ID", "Chromosome", "Chr.&nbsp;Position",
               "Alleles", "Gene"]
-          },
+          }
+          ,
           "dataControl": [
             {
               "source": {
@@ -5019,7 +5015,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"text": "value.dbSNP", "code": "value.code"},
+              "dataFormat":{"text": "value.data.dbSNP", "code": "value.code"},
               "onAttribute":"value"
             }
           ]
@@ -5036,10 +5032,10 @@ var newGenetic = {
           "dataType": "TITLE"
         },
         {"questionCode": "48001-2",
-          "question": "Cytogenetic location of variant",
+          "question": "Cytogenetic (chromosome) location",
           "dataType": "CWE",
           "answerCodeSystem": "Chrom-Loc",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/cytogenetic_locs/v3/search",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/cytogenetic_locs/v3/search",
 
           "dataControl": [
             {
@@ -5048,7 +5044,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"OBJECT",
-              "dataFormat":{"text": "value.Cytogenetic", "code": "value.Cytogenetic"},
+              "dataFormat":{"text": "value.data.Cytogenetic", "code": "value.Cytogenetic"},
               "onAttribute":"value"
             }
           ]
@@ -5060,11 +5056,12 @@ var newGenetic = {
           "answers": [
             {"code": "LA6683-2", "text": "Germline"},
             {"code": "LA6684-0", "text": "Somatic"},
-            {"code": "LA10429-1", "text": "Prenatal"},
+            {"code": "LA10429-1", "text": "Fetal"},
             {"code": "LA18194-3", "text": "Likely germline"},
             {"code": "LA18195-0", "text": "Likely somatic"},
-            {"code": "LA18196-8", "text": "Likely prenatal"},
-            {"code": "LA18197-6", "text": "Unknown genomic origin"}
+            {"code": "LA18196-8", "text": "Likely fetal"},
+            {"code": "LA18197-6", "text": "Unknown genomic origin"},
+            {"code": "LA26807-0", "text": "De novo"}
           ]
         },
         {
@@ -5143,7 +5140,7 @@ var newGenetic = {
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "answerCodeSystem": "Medgen-Dis",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
 
           "dataControl": [
             {
@@ -5152,7 +5149,7 @@ var newGenetic = {
                 "sourceItemCode":"81252-9"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.phenotype",
+              "dataFormat":"value.data.phenotype",
               "onAttribute":"value"
             }
           ]
@@ -5218,7 +5215,7 @@ var newGenetic = {
           ]
         },
         {"questionCode": "81258-6",
-          "question": "Allelic Frequency NFR",
+          "question": "Allelic Frequency [NFR]",
           "dataType": "REAL"
         },
         {"questionCode": "82121-5",
@@ -5226,12 +5223,14 @@ var newGenetic = {
           "dataType": "REAL"
         },
         {"questionCode": "82120-7",
-          "question": "Allelic phase [Type]",
+          "question": "Allelic phase",
           "dataType": "CWE",
           "answers": [
-            {"code": "LA6112-2", "text": "1"},
-            {"code": "LA6113-0", "text": "2"},
-            {"code": "LA6114-8", "text": "3"},
+            {"code": "LA26814-6", "text": "1st set of variants in cis relation to each other"},
+            {"code": "LA26815-3", "text": "2nd set of variants in cis relation to each other"},
+            {"code": "LA26816-1", "text": "3rd set of variants in cis relation to each other"},
+            {"code": "LA26817-9", "text": "4th set of variants in cis relation to each other"},
+            {"code": "LA26818-7", "text": "5th set of variants in cis relation to each other"},
             {"code": "LA26320-4", "text": "Maternal"},
             {"code": "LA26321-2", "text": "Paternal"},
             {"code": "LA4489-6", "text": "Unknown"},
@@ -5261,7 +5260,7 @@ var newGenetic = {
         { "questionCode": "81297-4",
           "question": "Structural variant addendum panel",
           "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-            "code": "LA26802-1"}}], "action": "show"},
+                "code": "LA26802-1"}}], "action": "show"},
           "header": true,
           "items" : [
             {"questionCode": "82155-3",
@@ -5274,15 +5273,15 @@ var newGenetic = {
               "answerCardinality": {"max": "1", "min":"0"}
             },
             {"questionCode": "81300-6",
-              "question": "Structural variant length",
+              "question": "Variant length",
               "dataType": "INT"
             },
             {"questionCode": "81301-4",
-              "question": "Structural variant outer start-end",
+              "question": "Outer start-end",
               "dataType": "NR"
             },
             {"questionCode": "81302-2",
-              "question": "Structural variant inner start-end",
+              "question": "Inner start-end",
               "dataType": "NR"
             }
 
@@ -5300,12 +5299,12 @@ var newGenetic = {
       "header": true,
       "items" : [
         {"questionCode": "81260-2",
-          "question": "Complex variant ID",
+          "question": "Complex variant [ID]",
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "answerCodeSystem": "CLINVAR-V",
 
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession,HGVS_c&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=VariantID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession,HGVS_c&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"
         },
         {
           "questionCode": "81262-8",
@@ -5322,7 +5321,7 @@ var newGenetic = {
                 "sourceItemCode":"81260-2"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.HGVS_c",
+              "dataFormat":"value.data.HGVS_c",
               "onAttribute":"value"
             }
           ]
@@ -5342,7 +5341,7 @@ var newGenetic = {
           "dataType": "CWE",
           "answerCardinality": {"max": "1", "min":"0"},
           "answerCodeSystem": "Medgen-Dis",
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
 
           "dataControl": [
             {
@@ -5351,7 +5350,7 @@ var newGenetic = {
                 "sourceItemCode":"81260-2"
               },
               "construction":"SIMPLE",
-              "dataFormat":"value.phenotype",
+              "dataFormat":"value.data.phenotype",
               "onAttribute":"value"
             }
           ]
@@ -5465,6 +5464,62 @@ var newGenetic = {
               "answers": [
                 { "code": "LA26801-3",
                   "text": "Simple Variant",
+                  "data": {
+                    "dnaChangeTypeList": [
+                      { "text": "Wild Type", "code": "LA9658-1" },
+                      { "text": "Deletion", "code": "LA6692-3" },
+                      { "text": "Duplication", "code": "LA6686-5" },
+                      { "text": "Insertion", "code": "LA6687-3" },
+                      { "text": "Insertion/Deletion", "code": "LA6688-1" },
+                      { "text": "Inversion", "code": "LA6689-9" },
+                      { "text": "Substitution", "code": "LA6690-7" }
+                    ],
+                    "variantCodeSystemList": [
+                      {"text": "ClinVar Variants", "code": "CLINVAR-V",
+                        "data": {"url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"}},
+                      {"text": "ClinVar Alleles", "code": "CLINVAR-A",
+                        "data": {"url": "https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID"}},
+                      {"text": "COSMIC", "code": "cosmic-Smpl",
+                        "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"}},
+                      {"text": "Other variant source", "code": "LA46-8"}
+                    ]
+                  }
+                },
+                {
+                  "code": "LA26802-1",
+                  "text": "Structural Variant",
+                  "data": {
+                    "dnaChangeTypeList": [
+                      { "text": "Wild Type", "code": "LA9658-1" },
+                      { "text": "Deletion", "code": "LA6692-3" },
+                      { "text": "Duplication", "code": "LA6686-5" },
+                      { "text": "Insertion", "code": "LA6687-3" },
+                      { "text": "Insertion/Deletion", "code": "LA6688-1" },
+                      { "text": "Inversion", "code": "LA6689-9" },
+                      { "text": "Substitution", "code": "LA6690-7" },
+                      {"text": "Copy number gain", "code": "LA14033-7"},
+                      {"text": "Copy number loss", "code": "LA14034-5"},
+                      {"code": "LA26324-6", "text": "Mobile element insertion"},
+                      {"code": "LA26325-3", "text": "Novel sequence insertion"},
+                      {"code": "LA26326-1", "text": "Tandem duplication"},
+                      {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
+                      {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
+                      {"code": "LA26331-1", "text": "Translocation"},
+                      {"code": "LA26330-3", "text": "Complex"},
+                      {"code": "LA26329-5", "text": "Sequence alteration"}
+                    ],
+                    "variantCodeSystemList": [
+                      {"text": "COSMIC Structural", "code": "cosmic-Strct",
+                        "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic_struct/v3/search?sf=MutationID,MutationType,Site"}},
+                      {"text": "Other variant source", "code": "LA46-8"}
+                    ]
+                  }
+                }
+              ],
+              "value": {
+                "code": "LA26801-3",
+                "text": "Simple Variant",
+                "data": {
                   "dnaChangeTypeList": [
                     { "text": "Wild Type", "code": "LA9658-1" },
                     { "text": "Deletion", "code": "LA6692-3" },
@@ -5476,61 +5531,14 @@ var newGenetic = {
                   ],
                   "variantCodeSystemList": [
                     {"text": "ClinVar Variants", "code": "CLINVAR-V",
-                      "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"},
+                      "data": {"url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"}},
                     {"text": "ClinVar Alleles", "code": "CLINVAR-A",
-                      "url": "https://lforms-service.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,AlleleID"},
+                      "data": {"url": "https://clinicaltables.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,AlleleID"}},
                     {"text": "COSMIC", "code": "cosmic-Smpl",
-                      "url": "https://lforms-service.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"},
-                    {"text": "Other variant source", "code": "LA46-8"}
-                  ]
-                },
-                {
-                  "code": "LA26802-1",
-                  "text": "Structural Variant",
-                  "dnaChangeTypeList": [
-                    {"text": "Copy number gain", "code": "LA14033-7"},
-                    {"text": "Copy number loss", "code": "LA14034-5"},
-                    {"text": "Duplication", "code": "LA6686-5"},
-                    {"text": "Deletion", "code": "LA6692-3"},
-                    {"text": "Insertion", "code": "LA6687-3"},
-                    {"code": "LA26324-6", "text": "Mobile element insertion"},
-                    {"code": "LA26325-3", "text": "Novel sequence insertion"},
-                    {"code": "LA26326-1", "text": "Tandem duplication"},
-                    {"code": "LA6689-9", "text": "Inversion"},
-                    {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
-                    {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
-                    {"code": "LA26331-1", "text": "Translocation"},
-                    {"code": "LA26330-3", "text": "Complex"},
-                    {"code": "LA26329-5", "text": "Sequence alteration"}
-                  ],
-                  "variantCodeSystemList": [
-                    {"text": "COSMIC Structural", "code": "cosmic-Strct",
-                      "url": "https://lforms-service.nlm.nih.gov/api/cosmic_struct/v3/search?sf=MutationID,MutationType,Site"},
+                      "data": {"url": "https://clinicaltables.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"}},
                     {"text": "Other variant source", "code": "LA46-8"}
                   ]
                 }
-              ],
-              "value": {
-                "code": "LA26801-3",
-                "text": "Simple Variant",
-                "dnaChangeTypeList": [
-                  { "text": "Wild Type", "code": "LA9658-1" },
-                  { "text": "Deletion", "code": "LA6692-3" },
-                  { "text": "Duplication", "code": "LA6686-5" },
-                  { "text": "Insertion", "code": "LA6687-3" },
-                  { "text": "Insertion/Deletion", "code": "LA6688-1" },
-                  { "text": "Inversion", "code": "LA6689-9" },
-                  { "text": "Substitution", "code": "LA6690-7" }
-                ],
-                "variantCodeSystemList": [
-                  {"text": "ClinVar Variants", "code": "CLINVAR-V",
-                    "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"},
-                  {"text": "ClinVar Alleles", "code": "CLINVAR-A",
-                    "url": "https://lforms-service.nlm.nih.gov/api/alleles/v3/search?df=Name,AlleleID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,AlleleID"},
-                  {"text": "COSMIC", "code": "cosmic-Smpl",
-                    "url": "https://lforms-service.nlm.nih.gov/api/cosmic/v3/search?ef=GeneName:GeneSymbol,MutationAA:NucleotideChange,MutationCDS:AminoAcidChange,MutationGenomePosition:Start&df=Name,MutationID,Site"},
-                  {"text": "Other variant source", "code": "LA46-8"}
-                ]
               }
             },
             {
@@ -5541,9 +5549,12 @@ var newGenetic = {
                 "max": "1",
                 "min": "0"
               },
-              "value": {"text": "ClinVar Variants",
+              "defaultAnswer": {
+                "text": "ClinVar Variants",
                 "code": "CLINVAR-V",
-                "url": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID"
+                "data": {
+                  "url": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID"
+                }
               },
               "answers": [
               ],
@@ -5553,7 +5564,7 @@ var newGenetic = {
                   "sourceItemCode": "83005-9"
                 },
                 "construction":"SIMPLE",
-                "dataFormat": "value.variantCodeSystemList",
+                "dataFormat": "value.data.variantCodeSystemList",
                 "onAttribute":"answers"
               }]
             },
@@ -5562,7 +5573,7 @@ var newGenetic = {
               "dataType": "CWE",
               "answerCodeSystem": "CLINVAR-V",
 
-              "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,Start,VariantID",
+              "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?df=Name,VariantID,phenotype.text&ef=AlleleID,RefSeqID,GeneSymbol,GenomicLocation,hgnc_id,NucleotideChange,AminoAcidChange,phenotype,AlternateAllele,ReferenceAllele,Cytogenetic,dbSNP,Name,Start,TypeAbbr,ChromosomeAccession&sf=AminoAcidChange,Cytogenetic,dbSNP,GeneID,GeneSymbol,HGVS_c,HGVS_p,Name,NucleotideChange,phenotypes.text,RefSeqID,VariantID",
               "displayControl": {
                 "listColHeaders": ["Name", "Variant&nbsp;ID", "Phenotype"]
               },
@@ -5574,7 +5585,7 @@ var newGenetic = {
                     "sourceItemCode": "82122-3"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.url",
+                  "dataFormat":"value.data.url",
                   "onAttribute": "externallyDefined"
                 },
                 {
@@ -5583,7 +5594,7 @@ var newGenetic = {
                     "sourceItemCode": "83005-9"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.answerCodeSystem",
+                  "dataFormat":"value.data.answerCodeSystem",
                   "onAttribute": "answerCodeSystem"
                 }
               ]
@@ -5611,15 +5622,15 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"code": "value.hgnc_id","text": "value.GeneSymbol"},
+                  "dataFormat":{"code": "value.data.hgnc_id","text": "value.data.GeneSymbol"},
                   "onAttribute":"value"
                 }
               ],
               "answerCodeSystem": "HGNC-Symb",
               "displayControl": {
-                "listColHeaders": ["Symbol", "HGNC&nbsp;ID", "Name", "Location"]
+                "listColHeaders": ["Symbol", "Code System", "Code", "Chromosome", "Description", "Type of Gene"]
               },
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,hgnc_id,name_mod,location"
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/ncbi_genes/v3/search?df=Symbol,_code_system,_code,chromosome,description,type_of_gene"
 
             },
             {
@@ -5627,7 +5638,7 @@ var newGenetic = {
               "question": "Transcript RefSeq ID",
               "dataType": "CWE",
               "answerCodeSystem": "RefSeq-T",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/refseqs/v3/search",
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/refseqs/v3/search",
               "dataControl": [
                 {
                   "source": {
@@ -5635,7 +5646,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"code": "value.RefSeqID", "text": "value.RefSeqID"},
+                  "dataFormat":{"code": "value.data.RefSeqID", "text": "value.data.RefSeqID"},
                   "onAttribute":"value"
                 }
               ]
@@ -5645,7 +5656,7 @@ var newGenetic = {
               "question": "DNA change c.HGVS",
               "dataType": "CWE",
               "answerCodeSystem": "HGVS.c",
-              "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?cf=NucleotideChange&df=NucleotideChange,GeneSymbol",
+              "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?cf=NucleotideChange&df=NucleotideChange,GeneSymbol",
               "dataControl": [
                 {
                   "source": {
@@ -5653,7 +5664,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"code": "value.NucleotideChange", "text": "value.NucleotideChange"},
+                  "dataFormat":{"code": "value.data.NucleotideChange", "text": "value.data.NucleotideChange"},
                   "onAttribute":"value"
                 }
               ]
@@ -5663,7 +5674,7 @@ var newGenetic = {
               "question": "Amino acid change p.HGVS",
               "dataType": "CWE",
               "answerCodeSystem": "HGVS.p",
-              "externallyDefined": "https://lforms-service.nlm.nih.gov/api/variants/v3/search?cf=AminoAcidChange&df=AminoAcidChange,GeneSymbol",
+              "externallyDefined": "https://clinicaltables.nlm.nih.gov/api/variants/v3/search?cf=AminoAcidChange&df=AminoAcidChange,GeneSymbol",
               "dataControl": [
                 {
                   "source": {
@@ -5671,37 +5682,20 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"code": "value.AminoAcidChange", "text": "value.AminoAcidChange"},
+                  "dataFormat":{"code": "value.data.AminoAcidChange", "text": "value.data.AminoAcidChange"},
                   "onAttribute":"value"
                 }
               ]
             },
             {
               "questionCode": "48019-4",
-              "question": "DNA change type",
+              "question": "DNA change [Type]",
               "dataType": "CWE",
               "answerCardinality": {
                 "max": "1",
                 "min": "0"
               },
               "answers": [
-                { "text": "Wild Type", "code": "LA9658-1" },
-                { "text": "Deletion", "code": "LA6692-3" },
-                { "text": "Duplication", "code": "LA6686-5" },
-                { "text": "Insertion", "code": "LA6687-3" },
-                { "text": "Insertion/Deletion", "code": "LA6688-1" },
-                { "text": "Inversion", "code": "LA6689-9" },
-                { "text": "Substitution", "code": "LA6690-7" },
-                {"text": "Copy number gain", "code": "LA14033-7"},
-                {"text": "Copy number loss", "code": "LA14034-5"},
-                {"code": "LA26324-6", "text": "Mobile element insertion"},
-                {"code": "LA26325-3", "text": "Novel sequence insertion"},
-                {"code": "LA26326-1", "text": "Tandem duplication"},
-                {"code": "LA26327-9", "text": "Intrachromosomal breakpoint"},
-                {"code": "LA26328-7", "text": "Interchromosomal breakpoint"},
-                {"code": "LA26331-1", "text": "Translocation"},
-                {"code": "LA26330-3", "text": "Complex"},
-                {"code": "LA26329-5", "text": "Sequence alteration"}
               ],
               "dataControl": [
                 {
@@ -5710,22 +5704,22 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"code": "value.TypeAbbr", "text": "value.TypeAbbr"},
+                  "dataFormat":{"code": "value.data.TypeAbbr", "text": "value.data.TypeAbbr"},
                   "onAttribute":"value"
                 },
                 { "source" : {
-                  "sourceType":"INTERNAL",
-                  "sourceItemCode":"83005-9"
-                },
+                    "sourceType":"INTERNAL",
+                    "sourceItemCode":"83005-9"
+                  },
                   "construction":"SIMPLE",
-                  "dataFormat": "value.dnaChangeTypeList",
+                  "dataFormat": "value.data.dnaChangeTypeList",
                   "onAttribute":"answers"
                 }
               ]
             },
             {
               "questionCode": "48006-1",
-              "question": "Amino acid change type",
+              "question": "Amino acid change [Type]",
               "dataType": "CWE",
               "answerCardinality": {
                 "max": "1",
@@ -5777,7 +5771,7 @@ var newGenetic = {
               "question": "Genomic reference sequence",
               "dataType": "CWE",
               "answerCodeSystem": "RefSeq-G",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/refseqs/v3/search?q=!RefSeq%3ANM*&sf=RefSeq&df=RefSeq",
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/refseqs/v3/search?q=!RefSeq%3ANM*&sf=RefSeq&df=RefSeq",
               "dataControl": [
                 {
                   "source": {
@@ -5785,7 +5779,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"text": "value.ChromosomeAccession","code": "value.ChromosomeAccession"},
+                  "dataFormat":{"text": "value.data.ChromosomeAccession","code": "value.data.ChromosomeAccession"},
                   "onAttribute":"value"
                 }
               ]
@@ -5803,7 +5797,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.ReferenceAllele",
+                  "dataFormat":"value.data.ReferenceAllele",
                   "onAttribute":"value"
                 }
               ]
@@ -5818,7 +5812,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.GenomicLocation",
+                  "dataFormat":"value.data.GenomicLocation",
                   "onAttribute":"value"
                 }
               ]
@@ -5832,7 +5826,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.AlternateAllele",
+                  "dataFormat":"value.data.AlternateAllele",
                   "onAttribute":"value"
                 }
               ]
@@ -5854,11 +5848,12 @@ var newGenetic = {
               "answerCardinality": {"max": "1", "min":"0"},
               "answerCodeSystem": "dbSNP",
               "externallyDefined":
-                  "https://lforms-service.nlm.nih.gov/api/snps/v3/search?df=rsNum,chr,chrPos,alleles,geneSymbol",
+                  "https://clinicaltables.nlm.nih.gov/api/snps/v3/search?df=rsNum,chr,chrPos,alleles,geneSymbol",
               "displayControl": {
                 "listColHeaders": ["ID", "Chromosome", "Chr.&nbsp;Position",
                   "Alleles", "Gene"]
-              },
+              }
+              ,
               "dataControl": [
                 {
                   "source": {
@@ -5866,7 +5861,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"text": "value.dbSNP", "code": "value.code"},
+                  "dataFormat":{"text": "value.data.dbSNP", "code": "value.code"},
                   "onAttribute":"value"
                 }
               ]
@@ -5883,10 +5878,10 @@ var newGenetic = {
               "dataType": "TITLE"
             },
             {"questionCode": "48001-2",
-              "question": "Cytogenetic location of variant",
+              "question": "Cytogenetic (chromosome) location",
               "dataType": "CWE",
               "answerCodeSystem": "Chrom-Loc",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/cytogenetic_locs/v3/search",
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/cytogenetic_locs/v3/search",
 
               "dataControl": [
                 {
@@ -5895,7 +5890,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"OBJECT",
-                  "dataFormat":{"text": "value.Cytogenetic", "code": "value.Cytogenetic"},
+                  "dataFormat":{"text": "value.data.Cytogenetic", "code": "value.Cytogenetic"},
                   "onAttribute":"value"
                 }
               ]
@@ -5907,11 +5902,12 @@ var newGenetic = {
               "answers": [
                 {"code": "LA6683-2", "text": "Germline"},
                 {"code": "LA6684-0", "text": "Somatic"},
-                {"code": "LA10429-1", "text": "Prenatal"},
+                {"code": "LA10429-1", "text": "Fetal"},
                 {"code": "LA18194-3", "text": "Likely germline"},
                 {"code": "LA18195-0", "text": "Likely somatic"},
-                {"code": "LA18196-8", "text": "Likely prenatal"},
-                {"code": "LA18197-6", "text": "Unknown genomic origin"}
+                {"code": "LA18196-8", "text": "Likely fetal"},
+                {"code": "LA18197-6", "text": "Unknown genomic origin"},
+                {"code": "LA26807-0", "text": "De novo"}
               ]
             },
             {
@@ -5990,7 +5986,7 @@ var newGenetic = {
               "dataType": "CWE",
               "answerCardinality": {"max": "1", "min":"0"},
               "answerCodeSystem": "Medgen-Dis",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/disease_names/v3/search?of=DiseaseName",
 
               "dataControl": [
                 {
@@ -5999,7 +5995,7 @@ var newGenetic = {
                     "sourceItemCode":"81252-9"
                   },
                   "construction":"SIMPLE",
-                  "dataFormat":"value.phenotype",
+                  "dataFormat":"value.data.phenotype",
                   "onAttribute":"value"
                 }
               ]
@@ -6065,7 +6061,7 @@ var newGenetic = {
               ]
             },
             {"questionCode": "81258-6",
-              "question": "Allelic Frequency NFR",
+              "question": "Allelic Frequency [NFR]",
               "dataType": "REAL"
             },
             {"questionCode": "82121-5",
@@ -6073,12 +6069,14 @@ var newGenetic = {
               "dataType": "REAL"
             },
             {"questionCode": "82120-7",
-              "question": "Allelic phase [Type]",
+              "question": "Allelic phase",
               "dataType": "CWE",
               "answers": [
-                {"code": "LA6112-2", "text": "1"},
-                {"code": "LA6113-0", "text": "2"},
-                {"code": "LA6114-8", "text": "3"},
+                {"code": "LA26814-6", "text": "1st set of variants in cis relation to each other"},
+                {"code": "LA26815-3", "text": "2nd set of variants in cis relation to each other"},
+                {"code": "LA26816-1", "text": "3rd set of variants in cis relation to each other"},
+                {"code": "LA26817-9", "text": "4th set of variants in cis relation to each other"},
+                {"code": "LA26818-7", "text": "5th set of variants in cis relation to each other"},
                 {"code": "LA26320-4", "text": "Maternal"},
                 {"code": "LA26321-2", "text": "Paternal"},
                 {"code": "LA4489-6", "text": "Unknown"},
@@ -6108,7 +6106,7 @@ var newGenetic = {
             { "questionCode": "81297-4",
               "question": "Structural variant addendum panel",
               "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-                "code": "LA26802-1"}}], "action": "show"},
+                    "code": "LA26802-1"}}], "action": "show"},
               "header": true,
               "items" : [
                 {"questionCode": "82155-3",
@@ -6121,15 +6119,15 @@ var newGenetic = {
                   "answerCardinality": {"max": "1", "min":"0"}
                 },
                 {"questionCode": "81300-6",
-                  "question": "Structural variant length",
+                  "question": "Variant length",
                   "dataType": "INT"
                 },
                 {"questionCode": "81301-4",
-                  "question": "Structural variant outer start-end",
+                  "question": "Outer start-end",
                   "dataType": "NR"
                 },
                 {"questionCode": "81302-2",
-                  "question": "Structural variant inner start-end",
+                  "question": "Inner start-end",
                   "dataType": "NR"
                 }
 
@@ -6142,7 +6140,7 @@ var newGenetic = {
       ]
     },
     {
-      "questionCode": "XP001-0",
+      "questionCode": "82118-1",
       "question": "Pharmacogenomics gene results panel",
       "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C04"}}],
         "action": "show"},
@@ -6157,20 +6155,16 @@ var newGenetic = {
           "answerCardinality": {"min": "0", "max": "*"},
           "answerCodeSystem": "HGNC-Symb",
           "displayControl": {
-            "listColHeaders": ["Symbol", "HGNC&nbsp;ID", "Name", "Location"]
+            "listColHeaders": ["Symbol", "Code System", "Code", "Chromosome", "Description", "Type of Gene"]
           },
-          "externallyDefined":"https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,hgnc_id,name_mod,location"
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/ncbi_genes/v3/search?df=Symbol,_code_system,_code,chromosome,description,type_of_gene"
 
         },
         {
           "questionCode": "47998-0",
           "question": "Genotype display name",
-          "dataType": "ST"
-        },
-        {
-          "questionCode": "X00D3-0",
-          "question": "Cross reference to full genetic details",
-          "dataType": "ST"
+          "dataType": "ST",
+          "questionCardinality": {"min": "0", "max": "*"}
         },
         {
           "questionCode": "53040-2",
@@ -6210,7 +6204,7 @@ var newGenetic = {
         },
         {
           "questionCode": "83009-1",
-          "question": "Genetic variation’s risk for hypersensitivity",
+          "question": "Genetic variation’s effect on high-risk allele",
           "dataType": "CWE",
           "answers": [
             {"text": "Low risk", "code": "LA19542-2"},
@@ -6229,7 +6223,7 @@ var newGenetic = {
               "question": "Medication assessed",
               "dataType": "CWE",
               "answerCodeSystem": "RxT-Ingrd",
-              "externallyDefined":"https://lforms-service.nlm.nih.gov/api/drug_ingredients/v3/search"
+              "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/drug_ingredients/v3/search"
 
             },
             {
@@ -6237,11 +6231,11 @@ var newGenetic = {
               "question": "Medication usage suggestion [type]",
               "dataType": "CWE",
               "answers": [
-                {"code": "1", "text": "Consider Alternative Medication"},
-                {"code": "2", "text": "Decrease Dose"},
-                {"code": "3", "text": "Increase Dose"},
-                {"code": "4", "text": "Use Caution"},
-                {"code": "5", "text": "Normal Response Expected"}
+                {"code": "LA26421-0", "text": "Consider Alternative Medications not contraindicated or impacted by gene"},
+                {"code": "LA26422-8", "text": "Decrease Dose and titrate to response"},
+                {"code": "LA26423-6", "text": "Increase Dose and titrate to response if appropriate"},
+                {"code": "LA26424-4", "text": "Use with caution"},
+                {"code": "LA26425-1", "text": "Use standard dose"}
               ]
             },
             {
@@ -6255,7 +6249,56 @@ var newGenetic = {
     }
 
 
+    ,
+    {
+      "questionCode": "83011-7",
+      "question": "Glossary for Haplotype Definition",
+      "header": true,
+      "layout": "vertical",
+      "questionCardinality": {"max": "*"},
+      "items": [
+        {
+          "questionCode": "48018-6",
+          "question": "Gene studied",
+          "dataType": "CNE",
+          "answerCardinality": {"min": "1", "max": "1"},
+          "answerCodeSystem": "HGNC-Symb",
+          "displayControl": {
+            "listColHeaders": ["Symbol", "Code System", "Code", "Chromosome", "Description", "Type of Gene"]
+          },
+          "externallyDefined":"https://clinicaltables.nlm.nih.gov/api/ncbi_genes/v3/search?df=Symbol,_code_system,_code,chromosome,description,type_of_gene"
 
+        },
+        {
+          "questionCode": "84414-2",
+          "question": "Haplotype name",
+          "TBD_dataType": "CWE",
+          "answerCodeSystem": "TBD",
+          "TBD_displayControl": {
+            "listColHeaders": ["TBD"]
+          },
+          "TBD_externallyDefined":"https://clinicaltables.nlm.nih.gov/api/star_alleles/v3/search"
+        },
+        {"questionCode": "81255-2",
+          "question": "dbSNP ID",
+          "dataType": "CNE",
+          "answerCardinality": {"max": "1", "min":"0"},
+          "answerCodeSystem": "dbSNP",
+          "externallyDefined":
+              "https://clinicaltables.nlm.nih.gov/api/snps/v3/search?df=rsNum,chr,chrPos,alleles,geneSymbol",
+          "displayControl": {
+            "listColHeaders": ["ID", "Chromosome", "Chr.&nbsp;Position",
+              "Alleles", "Gene"]
+          }
+
+        },
+        {
+          "questionCode": "69551-0",
+          "question": "Genomic alt allele"
+        }
+
+      ]
+    }
   ]
 };
 
