@@ -2512,7 +2512,7 @@
                   "text": answerValueArray[i],
                   "_displayText": answerValueArray[i],
                   "_notOnList" : true});
-                // for radio button/checkbox display, an "Other" option is displayed
+                // for radio button/checkbox display, where only one "Other" option is displayed
                 item._answerOther = answerValueArray[i];
                 item._otherValueChecked = true;
               }
@@ -2563,7 +2563,7 @@
      */
     _areTwoAnswersSame: function(answer, completeAnswer, item) {
 
-      var allowedAnswerAttr = ['label', 'code', 'text', 'score', 'other'];
+      var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other'];
       // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
       var completeAnswerCodeSystem = completeAnswer.codeSystem;
       if (!completeAnswer.codeSystem) {
@@ -2580,7 +2580,7 @@
         var fields = Object.keys(answer);
         for (var i= 0, iLen=fields.length; i<iLen; i++) {
           // not to check extra attributes not specified in specs.
-          if (allowedAnswerAttr.indexOf(fields[i]) >= 0 && answer[fields[i]] !== completeAnswer[fields[i]]) {
+          if (standardAnswerAttr.indexOf(fields[i]) >= 0 && answer[fields[i]] !== completeAnswer[fields[i]]) {
             same = false;
             break;
           }
