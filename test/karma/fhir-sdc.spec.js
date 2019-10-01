@@ -39,6 +39,35 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhir.SDC._significantDigits(12.01), 4);
           });
         });
+
+        describe('Round trip conversion', function() {
+          it('should preserve extensions on _title', function (){
+            var questionnaire = {
+              _title: {
+                extension: [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                  "valueString": "color: green"
+                }]
+              }
+            }
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.deepEqual(qData._title, questionnaire._title);
+          });
+
+          it('should correctly translate name & title fields', function (){
+            var questionnaire = {
+              name: 'FHP',
+              title: 'Family Health Portrait'
+            }
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            assert.equal(lfData.name, questionnaire.title);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.equal(qData.title, questionnaire.title);
+            assert.equal(qData.name, questionnaire.name);
+          });
+        });
+
         describe('itemToQuestionnaireItem', function() {
 
           it('should convert code system', function() {
@@ -265,8 +294,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
             assert.equal(lfData.code, 'formcode1');
             assert.equal(lfData.codeSystem, 'http://form-example1.com');
-            assert.equal(lfData.title, 'test title');
-            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.name, 'test title');
             assert.equal(lfData.version, '0.0.1');
             assert.equal(lfData.codeList, formCodes);
 
@@ -344,8 +372,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var lfData = fhir.SDC.convertQuestionnaireToLForms(fhirData);
             assert.equal(lfData.code, 'formcode1');
             assert.equal(lfData.codeSystem, undefined);
-            assert.equal(lfData.title, 'test title');
-            assert.equal(lfData.name, 'test name');
+            assert.equal(lfData.name, 'test title');
             assert.equal(lfData.version, '0.0.1');
             assert.equal(lfData.codeList, formCodes);
 

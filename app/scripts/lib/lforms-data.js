@@ -1,4 +1,3 @@
-
 /**
  * LForms class for form definition data
  */
@@ -184,7 +183,7 @@
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR) {
+      if (LForms.FHIR && data.fhirVersion) {
         this._initializeFormFHIRData(data);
       }
 
@@ -233,6 +232,7 @@
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+      this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
 
 

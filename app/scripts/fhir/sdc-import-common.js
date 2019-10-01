@@ -47,8 +47,6 @@ function addCommonSDCImportFns(ns) {
     // Questionnaire
     'date',
     'version',
-    'title',
-    'name',
     'identifier',
     'code',  // code in FHIR clashes with previous definition in lforms. It needs special handling.
     'subjectType',
@@ -100,6 +98,47 @@ function addCommonSDCImportFns(ns) {
     }
 
     return target;
+  };
+
+
+  /**
+   * Parse form level fields from FHIR questionnaire and assign to LForms object.
+   *
+   * @param lfData - LForms object to assign the extracted fields
+   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
+   * @private
+   */
+  self._processFormLevelFields = function(lfData, questionnaire) {
+    self.copyFields(questionnaire, lfData, self.formLevelFields);
+
+    // Handle title and name.  In LForms, "name" is the "title", but FHIR
+    // defines both.
+    lfData.fhirQName = questionnaire.name;
+    lfData.name = questionnaire.title;
+
+    // Handle extensions on title
+    if (questionnaire._title && questionnaire._title.extension)
+      lfData.obj_title = questionnaire._title;
+
+    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
+    // into questionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
+    if(questionnaire.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = questionnaire.code;
+    }
+    var codeAndSystemObj = self._getCode(questionnaire);
+    if(codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
+    }
+
+    // form-level variables (really only R4+)
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
+      self.fhirExtVariable, 0, true);
+    if (ext.length > 0)
+      lfData._variableExt = ext;
   };
 
 

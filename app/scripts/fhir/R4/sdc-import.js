@@ -18,38 +18,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
-   * @private
-   */
-  self._processFormLevelFields = function(lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields);
-
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
-    // into questionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(questionnaire.code) {
-      // Rename questionnaire code to codeList
-      lfData.codeList = questionnaire.code;
-    }
-    var codeAndSystemObj = self._getCode(questionnaire);
-    if(codeAndSystemObj) {
-      lfData.code = codeAndSystemObj.code;
-      lfData.codeSystem = codeAndSystemObj.system;
-    }
-
-    // form-level variables
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
-      self.fhirExtVariable, 0, true);
-    if (ext.length > 0)
-      lfData._variableExt = ext;
-  };
-
-
-  /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
    * @return when there are contained value sets, returns a hash from the ValueSet url to the answers
@@ -133,8 +101,8 @@ function addSDCImportFns(ns) {
     }
 
     return targetItem;
-
   };
+
 
   // A map of FHIR extensions involving Expressions to the property names on
   // which they will be stored in LFormsData, and a boolean indicating whether

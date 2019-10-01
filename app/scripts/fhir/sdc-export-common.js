@@ -111,6 +111,15 @@ function addCommonSDCExportFns(ns) {
   self._setFormLevelFields = function(target, source, noExtensions) {
 
     this.copyFields(source, target, this.formLevelFields);
+    // Handle title and name.  In LForms, "name" is the "title", but FHIR
+    // defines both.
+    target.name = source.fhirQName;
+    target.title = source.name;
+
+    // Handle extensions on title
+    if (source.obj_title)
+      target._title = source.obj_title;
+
     target.code = source.codeList;
 
     // resourceType

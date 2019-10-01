@@ -19,27 +19,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
-   * @private
-   */
-  self._processFormLevelFields = function (lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields);
-    if(questionnaire.code) {
-      // Rename questionnaire code to codeList
-      lfData.codeList = questionnaire.code;
-    }
-    var codeAndSystemObj = self._getCode(questionnaire);
-    if(codeAndSystemObj) {
-      lfData.code = codeAndSystemObj.code;
-      lfData.codeSystem = codeAndSystemObj.system;
-    }
-  };
-
-
-  /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
    * @return when there are contained value sets, returns a hash from "#<ValueSet.id>" (the character "#"
@@ -126,8 +105,6 @@ function addSDCImportFns(ns) {
     }
 
     return targetItem;
-
-
   };
 
 

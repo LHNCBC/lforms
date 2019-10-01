@@ -37,6 +37,14 @@ function getFHIRResource(resourceType, fhirVersion, options) {
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
+      describe('rendering-style extension', function() {
+        it('should work on Questionnaire.title', function() {
+          tp.openBaseTestPage();
+          tp.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
+          expect(element(by.id('label-44249-1')).getCssValue('color')).toBe('rgba(0, 128, 0, 1)');
+        });
+      });
+
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
 
