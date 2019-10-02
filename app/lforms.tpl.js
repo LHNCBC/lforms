@@ -208,7 +208,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('form-title.html',
     "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" +
     "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\"\n" +
-    "   style=\"{{lfData._obj_titleCSS}}\">{{lfData.title || lfData.name}}</span>\n" +
+    "   style=\"{{lfData._obj_titleCSS}}\">{{lfData.name || lfData.fhirQName}}</span>\n" +
     "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +

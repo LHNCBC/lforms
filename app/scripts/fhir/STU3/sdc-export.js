@@ -81,41 +81,11 @@ var self = {
 
 
   /**
-   * Process an item of the form
-   * @param item an item in LForms form object
-   * @param source a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
-   * @private
+   *  Proceses the LForms questionCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
    */
-  _processItem: function(item, source, noExtensions) {
-    var targetItem = {};
-
-    // type
-    targetItem.type = this._getFhirDataType(item);
-
-    // id (empty for new record)
-
-    // code
-    targetItem.code = item.codeList;
-
-    // extension
-    targetItem.extension = [];
-
-    // required
-    targetItem.required = item._answerRequired;
-
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
-    if (targetItem.required) {
-      targetItem.extension.push({
-        "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-        "valueInteger" : parseInt(item.questionCardinality.min)
-      });
-    }
-
-    // question repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
+  _processQuestionCardinality: function(targetItem, item) {
     if (item.questionCardinality) {
       if (item.questionCardinality.max === "*") {
         targetItem.repeats = true;
@@ -131,129 +101,21 @@ var self = {
     else {
       targetItem.repeats = false;
     }
+  },
 
-    // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    }
 
+
+  /**
+   *  Processes FHIRPath and related item extensions (e.g. for pre-population
+   *  and extraction.)
+   *
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+  _processFHIRPathExtensions: function(targetItem, item) {
     // calcuatedValue
     if (item._calculatedExprExt)
       targetItem.extension.push(item._calculatedExprExt);
-
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-    this._handleItemControl(targetItem, item);
-
-    // questionnaire-choiceOrientation , not supported yet
-
-    // check restrictions
-    this._handleRestrictions(targetItem, item);
-
-    // http://hl7.org/fhir/StructureDefinition/entryFormat
-    // looks like tooltip, TBD
-
-    if(item._isHidden) {
-      targetItem.extension.push({
-        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
-        valueBoolean: true
-      });
-    }
-
-    // linkId
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath;
-
-    // prefix
-    if (item.prefix) {
-      targetItem.prefix = item.prefix;
-    }
-
-    // text
-    targetItem.text = item.question;
-
-    // enableWhen
-    if (item.skipLogic) {
-      this._handleSkipLogic(targetItem, item, source)
-    }
-
-    // repeats, handled above
-    // readonly, (editable)
-    if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
-      targetItem.readOnly = true;
-    }
-
-    // an extension for the search url of the auto-complete field.
-    if(item.externallyDefined) {
-      this._handleExternallyDefined(targetItem, item);
-    }
-    // option, for answer list
-    else if (item.answers && !item.answerValueSet) {
-      targetItem.option = this._handleAnswers(item, noExtensions);
-    }
-    else if (item.answerValueSet)
-      targetItem.options = item.answerValueSet;
-
-    self._handleTerminologyServer(targetItem, item);
-
-    // initialValue, for default values
-    this._handleInitialValues(targetItem, item);
-    // add LForms Extension to units list. Handle units after handling initial values.
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
-    }
-
-    if (item.items && Array.isArray(item.items)) {
-      targetItem.item = [];
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var newItem = this._processItem(item.items[i], source, noExtensions);
-        targetItem.item.push(newItem);
-      }
-    }
-
-    // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
-    // it is added as a sub item of this item.
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
-    if (item.codingInstructions) {
-      let helpItem = {
-        text: item.codingInstructions,
-        type: "display",
-        linkId: targetItem.linkId + "-help",
-        extension: [{
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "text": "Help-Button",
-            "coding": [{
-              "code": "help",
-              "display": "Help-Button",
-              "system": "http://hl7.org/fhir/questionnaire-item-control"
-            }]
-          }
-        }]
-      };
-
-      if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(helpItem)
-      }
-      else {
-        targetItem.item = [
-          helpItem
-        ]
-      }
-    }
-
-    // handle special constraints for "display" item
-    this._handleSpecialConstraints(targetItem, item);
-
-    // if no extensions are allowed or there is no extension, remove it
-    if (noExtensions || targetItem.extension.length === 0)
-      delete targetItem.extension;
-
-    return targetItem
   },
 
 
@@ -437,6 +299,27 @@ var self = {
         "valueUri": item.externallyDefined
       });
     }
+  },
+
+
+  /**
+   *  Processes settings for a list field with choices.
+   * @param targetItem a QuestionnaireResponse object
+   * @param item an item in the LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   */
+  _handleChoiceField: function(targetItem, item, noExtensions) {
+    // an extension for the search url of the auto-complete field.
+    if(item.externallyDefined) {
+      this._handleExternallyDefined(targetItem, item);
+    }
+    // option, for answer list
+    else if (item.answers && !item.answerValueSet) {
+      targetItem.option = this._handleAnswers(item, noExtensions);
+    }
+    else if (item.answerValueSet)
+      targetItem.options = item.answerValueSet;
   },
 
 

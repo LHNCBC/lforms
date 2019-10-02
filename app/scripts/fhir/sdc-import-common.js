@@ -351,6 +351,27 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   *  Process the text and prefix data.
+   * @param lfItem {object} - LForms item object to receive the data
+   * @param qItem {object} - Questionnaire item object (as the source)
+   */
+  self._processTextAndPrefix = function(lfItem, qItem) {
+    // prefix
+    if (qItem.prefix)
+      lfItem.prefix = qItem.prefix;
+    // text
+    lfItem.question = qItem.text;
+
+    // Copy item extensions
+    for (let extField of ['_prefix', '_text']) {
+      let extFieldData = qItem[extField];
+      if (extFieldData && extFieldata.extension)
+        lfData['obj'+extField] = extFieldData;
+    }
+  };
+
+
+  /**
    * Parse questionnaire item for code and code system
    * @param lfItem {object} - LForms item object to assign question code
    * @param qItem {object} - Questionnaire item object
@@ -374,6 +395,33 @@ function addCommonSDCImportFns(ns) {
     lfItem.linkId = qItem.linkId;
   };
 
+
+  /**
+   * Parse questionnaire item for question cardinality
+   *
+   * @param lfItem {object} - LForms item object to assign question cardinality
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processFHIRQCardinality = function (lfItem, qItem) {
+    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
+    if(min) {
+      lfItem.questionCardinality = {min: min.valueInteger.toString()};
+      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+      if(max) {
+        lfItem.questionCardinality.max = min.valueInteger.toString();
+      }
+      else if(qItem.repeats) {
+        lfItem.questionCardinality.max = '*';
+      }
+    }
+    else if (qItem.repeats) {
+      lfItem.questionCardinality = {min: "1", max: "*"};
+    }
+    else if (qItem.required) {
+      lfItem.questionCardinality = {min: "1", max: "1"};
+    }
+  };
 
 
   /**
@@ -818,6 +866,75 @@ function addCommonSDCImportFns(ns) {
     }
     return retValue
   }
+
+
+  /**
+   * Parse questionnaire item for coding instructions
+   *
+   * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
+   * @private
+   */
+  self._processCodingInstructions = function(qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    let ret = null;
+    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    let xhtmlFormat;
+    if ( qItem.type === "display" && ci) {
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      }
+
+      // there is a xhtml extension
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
+        };
+      }
+      // no xhtml extension, default to 'text'
+      else {
+        ret = {
+          codingInstructionsFormat: "text",
+          codingInstructions: qItem.text,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+        };
+      }
+    }
+
+    return ret;
+  }
+
+  /**
+   *  Processes the child items of the item.
+   * @param targetItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   */
+  self._processChildItems = function(targetItem, qItem, containedVS, linkIdItemMap) {
+    if (Array.isArray(qItem.item)) {
+      targetItem.items = [];
+      for (var i=0; i < qItem.item.length; i++) {
+        var help = self._processCodingInstructions(qItem.item[i]);
+        // pick one coding instruction if there are multiple ones in Questionnaire
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
+        }
+        else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+          targetItem.items.push(item);
+        }
+      }
+    }
+  }
+
+
 }
 
 export default addCommonSDCImportFns;
