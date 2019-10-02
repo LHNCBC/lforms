@@ -52,6 +52,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             }
             var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.ok(qData._title);
             assert.deepEqual(qData._title, questionnaire._title);
           });
 
@@ -66,6 +67,32 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(qData.title, questionnaire.title);
             assert.equal(qData.name, questionnaire.name);
           });
+
+          it('should preserve extensions on item._prefix & _text', function (){
+            var questionnaire = {
+              item: [{
+                _prefix: {
+                  extension: [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "color: green"
+                  }]
+                },
+                _text: {
+                  extension: [{
+                    "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                    "valueString": "color: green"
+                  }]
+                }
+              }]
+            }
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.ok(qData.item[0]._prefix);
+            assert.deepEqual(qData.item[0]._prefix, questionnaire.item[0]._prefix);
+            assert.ok(qData.item[0]._text);
+            assert.deepEqual(qData.item[0]._text, questionnaire.item[0]._text);
+          });
+
         });
 
         describe('itemToQuestionnaireItem', function() {

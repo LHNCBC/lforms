@@ -307,7 +307,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
     "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" +
-    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item._text}}</label></span>\n" +
+    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"\n" +
+    "      for=\"{{item._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -418,6 +419,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "\n" +
     "</div>\n" +
     "\n"
+  );
+
+
+  $templateCache.put('itemPrefixAndText.html',
+    "<span ng-if=\"item.prefix\" class=\"prefix\"\n" +
+    "      style=\"{{item._obj_prefixCSS}}\">{{item.prefix}}</span><span\n" +
+    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}</span>\n"
   );
 
 

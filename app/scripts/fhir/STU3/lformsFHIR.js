@@ -23965,12 +23965,19 @@ function addCommonSDCExportFns(ns) {
     } // linkId
 
 
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // text
+    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // Text & prefix
 
-    targetItem.text = item.question; // prefix
+    targetItem.text = item.question;
 
     if (item.prefix) {
       targetItem.prefix = item.prefix;
+    } // Copy item extensions
+
+
+    for (var _i = 0, _arr = ['_prefix', '_text']; _i < _arr.length; _i++) {
+      var extField = _arr[_i];
+      var extFieldData = item['obj' + extField];
+      if (extFieldData) targetItem[extField] = extFieldData;
     } // enableWhen
 
 
@@ -25471,7 +25478,7 @@ function addCommonSDCImportFns(ns) {
     lfData.fhirQName = questionnaire.name;
     lfData.name = questionnaire.title; // Handle extensions on title
 
-    if (questionnaire._title && questionnaire._title.extension) lfData.obj_title = questionnaire._title; // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    if (questionnaire._title) lfData.obj_title = questionnaire._title; // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
     // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
     // into questionnaire.code. While importing, convert first of questionnaire.code
     // as lforms.code, and copy questionnaire.code to lforms.codeList.
@@ -25716,7 +25723,7 @@ function addCommonSDCImportFns(ns) {
     for (var _i = 0, _arr = ['_prefix', '_text']; _i < _arr.length; _i++) {
       var extField = _arr[_i];
       var extFieldData = qItem[extField];
-      if (extFieldData && extFieldata.extension) lfData['obj' + extField] = extFieldData;
+      if (extFieldData) lfItem['obj' + extField] = extFieldData;
     }
   };
   /**

@@ -117,7 +117,7 @@ function addCommonSDCImportFns(ns) {
     lfData.name = questionnaire.title;
 
     // Handle extensions on title
-    if (questionnaire._title && questionnaire._title.extension)
+    if (questionnaire._title)
       lfData.obj_title = questionnaire._title;
 
     // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
@@ -365,8 +365,8 @@ function addCommonSDCImportFns(ns) {
     // Copy item extensions
     for (let extField of ['_prefix', '_text']) {
       let extFieldData = qItem[extField];
-      if (extFieldData && extFieldata.extension)
-        lfData['obj'+extField] = extFieldData;
+      if (extFieldData)
+        lfItem['obj'+extField] = extFieldData;
     }
   };
 

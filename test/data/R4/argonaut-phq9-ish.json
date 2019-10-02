@@ -247,7 +247,19 @@
                         }
                     ],
                     "prefix": "2.",
+                    "_prefix": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-weight: bold"
+                      }]
+                    },
                     "text": "Feeling down, depressed, or hopeless,",
+                    "_text": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-style: italic"
+                      }]
+                    },
                     "type": "choice",
                     "required": true,
                     "repeats": false,

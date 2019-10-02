@@ -1178,4 +1178,7 @@ Override color of select boxes in calendar widget title bar.
   /*color: white;*/
 }
 
-
+/* prefix */
+.lf-form .prefix {
+  padding-right: 0.25em; /* space between the prefix and the question */
+}

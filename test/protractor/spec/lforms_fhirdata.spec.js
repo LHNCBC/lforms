@@ -38,10 +38,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
       describe('rendering-style extension', function() {
-        it('should work on Questionnaire.title', function() {
+        it('should work on Questionnaire.title, item.prefix, and item.text', function() {
           tp.openBaseTestPage();
           tp.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
-          expect(element(by.id('label-44249-1')).getCssValue('color')).toBe('rgba(0, 128, 0, 1)');
+          expect(element(by.id('label-44249-1')).getAttribute('style')).toBe('color: green;');
+          var idCSS = '#label-\\/44249-1\\/44255-8\\/1\\/1';
+          expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
+          expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
       });
 

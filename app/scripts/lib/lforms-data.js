@@ -1209,6 +1209,11 @@
         lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
            item._initialExprExt.valueExpression.language=="text/fhirpath");
       }
+
+      if (this._fhir) {
+        this._fhir.SDC.processExtensions(item, 'obj_text');
+        this._fhir.SDC.processExtensions(item, 'obj_prefix');
+      }
     },
 
 

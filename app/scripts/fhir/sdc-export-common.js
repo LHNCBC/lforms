@@ -151,12 +151,16 @@ function addCommonSDCExportFns(ns) {
     // linkId
     targetItem.linkId = item.linkId ? item.linkId : item._codePath;
 
-    // text
+    // Text & prefix
     targetItem.text = item.question;
-
-    // prefix
     if (item.prefix) {
       targetItem.prefix = item.prefix;
+    }
+    // Copy item extensions
+    for (let extField of ['_prefix', '_text']) {
+      let extFieldData = item['obj'+extField];
+      if (extFieldData)
+        targetItem[extField] = extFieldData;
     }
 
     // enableWhen
