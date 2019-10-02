@@ -351,7 +351,7 @@ describe('formdata: ', function() {
       }, tp.WAIT_TIMEOUT_1);
 
       expect(element(by.id("label-/with_prefix/1")).getText()).toBe("Prefix A:Question display text");
-      expect(element(by.id("col/horizontalTable/colA/1/1")).getText()).toBe("Pre. A: A ST");
+      expect(element(by.id("col/horizontalTable/colA/1/1")).getText()).toBe("Pre. A:A ST");
     });
   });
 

@@ -1703,7 +1703,8 @@
 
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-              columnHeaders.push({label: itemsInRow[j]._text, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
+              var itemInRow = itemsInRow[j];
+              columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
               // indicate the item is in a horizontal table
               itemsInRow[j]._inHorizontalTable = true;
             }

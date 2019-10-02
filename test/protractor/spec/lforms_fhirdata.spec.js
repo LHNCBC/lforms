@@ -37,7 +37,7 @@ function getFHIRResource(resourceType, fhirVersion, options) {
 for (var i=0, len=fhirVersions.length; i<len; ++i) {
   (function (fhirVersion) {
     describe(fhirVersion, function() {
-      describe('rendering-style extension', function() {
+      fdescribe('rendering-style extension', function() {
         it('should work on Questionnaire.title, item.prefix, and item.text', function() {
           tp.openBaseTestPage();
           tp.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
@@ -46,6 +46,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
+
+        if (fhirVersion !== 'STU3') { // supported in STU3, but sufficient to test R4
+          it('should work on question text in horizontal tables', function() {
+            tp.loadFromTestData('tables.json', fhirVersion);
+            var idCSS = '#col\\/g2\\/g1m1\\/1\\/1';
+            expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
+            expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
+          });
+        }
       });
 
       describe('FHIR Data: ', function () {
