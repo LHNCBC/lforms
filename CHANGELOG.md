@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.1.0] 2019-10-03
+### Added
+- Support for the FHIR "rendering-style" (CSS) extension on Questionnaire.title,
+  item.text, and item.prefix.  (Support on answer list text is still TBD).
+
 ## [18.0.4] 2019-09-26
 ### Fixed
 - Fixed a bug that item values that have extra user data are not found in the answer list so that
-  they are not displayed.  
+  they are not displayed.
 
 ## [18.0.3] 2019-09-26
 ### Fixed
