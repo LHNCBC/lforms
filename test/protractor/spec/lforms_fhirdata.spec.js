@@ -656,7 +656,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             element(by.id("merge-qr")).click();
 
             browser.wait(function() {
-              return ff.name.isDisplayed();
+              return element(by.id(ff.nameID)).isDisplayed(); // .name is sometimes stale
             }, tp.WAIT_TIMEOUT_1);
 
             browser.wait(EC.textToBePresentInElementValue(ff.name,
