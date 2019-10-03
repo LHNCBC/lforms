@@ -35,6 +35,11 @@ function makeConfigs(env) {
   let configs = [];
   let fhirVersions = Object.keys(require('./app/scripts/fhir/versions'));
   let versionedDist = 'lforms-'+require('./package.json').version;
+
+  // Builds for each FHIR version
+  let fhirExternals = {
+    '@lhncbc/ucum-lhc': 'LForms.ucumPkg'
+  }
   var allFHIREntryFiles = [];
   for (let version of fhirVersions) {
     let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
@@ -43,12 +48,14 @@ function makeConfigs(env) {
     nonMinConfig.entry = entryFile;
     nonMinConfig.output.filename = './app/scripts/fhir/'+version+'/lformsFHIR.js';
     nonMinConfig.mode = 'none';
+    nonMinConfig.externals = fhirExternals;
     configs.push(nonMinConfig);
 
     let minConfig = commonConfig();
     minConfig.entry = entryFile;
     minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
     minConfig.mode = 'production';
+    minConfig.externals = fhirExternals;
     minConfig.devtool = 'source-map';
     configs.push(minConfig);
   }
@@ -59,6 +66,7 @@ function makeConfigs(env) {
   allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js',
   allFHIRConfig.mode = 'production';
   allFHIRConfig.devtool = 'source-map';
+  allFHIRConfig.externals = fhirExternals;
   configs.push(allFHIRConfig);
 
   if (!env || !env.fhirOnly) {

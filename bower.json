@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "18.0.4",
+  "version": "18.0.5",
   "dependencies": {
     "jquery-ui": "^1.12.1",
     "angular": "^1.4.7",
@@ -11,7 +11,7 @@
     "element-resize-detector": "^1.1.11",
     "bootstrap-ui-datetime-picker": "^2.6.3",
     "autocomplete-lhc": "^18.1.1",
-    "ucum-lhc": "^2.5.4",
+    "ucum-lhc": "^3.0.0",
     "moment": "^2.24.0"
   },
   "overrides": {

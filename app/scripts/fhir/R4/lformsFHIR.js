@@ -91,13 +91,13 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(70);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(71);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(72);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(74);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(86);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(87);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(89);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(90);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -175,35 +175,44 @@ var parser = __webpack_require__(3);
 
 var util = __webpack_require__(55);
 
+__webpack_require__(56);
+
+var constants = __webpack_require__(57);
+
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(56);
+var existence = __webpack_require__(58);
 
-var filtering = __webpack_require__(57);
+var filtering = __webpack_require__(59);
 
-var combining = __webpack_require__(58);
+var combining = __webpack_require__(60);
 
-var misc = __webpack_require__(59);
+var misc = __webpack_require__(61);
 
-var equality = __webpack_require__(60);
+var equality = __webpack_require__(76);
 
-var collections = __webpack_require__(62);
+var collections = __webpack_require__(78);
 
-var math = __webpack_require__(63);
+var math = __webpack_require__(79);
 
-var strings = __webpack_require__(64);
+var strings = __webpack_require__(80);
 
-var navigation = __webpack_require__(65);
+var navigation = __webpack_require__(81);
 
-var datetime = __webpack_require__(66);
+var datetime = __webpack_require__(82);
 
-var logic = __webpack_require__(67); // * fn: handler
+var logic = __webpack_require__(83);
+
+var types = __webpack_require__(62);
+
+var FP_DateTime = types.FP_DateTime;
+var FP_Time = types.FP_Time;
+var FP_Quantity = types.FP_Quantity; // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
 //   function accepts value of this type or empty value {}
 // * nullable - means propagate empty result, i.e. instead
 //   calling function if one of params is  empty return empty
-
 
 engine.invocationTable = {
   empty: {
@@ -328,6 +337,12 @@ engine.invocationTable = {
   toString: {
     fn: misc.toString
   },
+  toDateTime: {
+    fn: misc.toDateTime
+  },
+  toTime: {
+    fn: misc.toTime
+  },
   indexOf: {
     fn: strings.indexOf,
     arity: {
@@ -379,6 +394,47 @@ engine.invocationTable = {
   },
   length: {
     fn: strings.length
+  },
+  abs: {
+    fn: math.abs
+  },
+  ceiling: {
+    fn: math.ceiling
+  },
+  exp: {
+    fn: math.exp
+  },
+  floor: {
+    fn: math.floor
+  },
+  ln: {
+    fn: math.ln
+  },
+  log: {
+    fn: math.log,
+    arity: {
+      1: ["Number"]
+    },
+    nullable: true
+  },
+  power: {
+    fn: math.power,
+    arity: {
+      1: ["Number"]
+    },
+    nullable: true
+  },
+  round: {
+    fn: math.round,
+    arity: {
+      1: ["Number"]
+    }
+  },
+  sqrt: {
+    fn: math.sqrt
+  },
+  truncate: {
+    fn: math.truncate
   },
   now: {
     fn: datetime.now
@@ -554,6 +610,21 @@ engine.TermExpression = function (ctx, parentData, node) {
   return engine.doEval(ctx, parentData, node.children[0]);
 };
 
+engine.PolarityExpression = function (ctx, parentData, node) {
+  var sign = node.terminalNodeText[0]; // either - or + per grammar
+
+  var rtn = engine.doEval(ctx, parentData, node.children[0]);
+
+  if (rtn.length != 1) {
+    // not yet in spec, but per Bryn Rhodes
+    throw new Error('Unary ' + sign + ' can only be applied to an individual number.');
+  }
+
+  if (typeof rtn[0] != 'number' || isNaN(rtn[0])) throw new Error('Unary ' + sign + ' can only be applied to a number.');
+  if (sign === '-') rtn[0] = -rtn[0];
+  return rtn;
+};
+
 engine.ExternalConstantTerm = function (ctx, parentData, node) {
   var extConstant = node.children[0];
   var identifier = extConstant.children[0];
@@ -575,7 +646,36 @@ engine.LiteralTerm = function (ctx, parentData, node) {
 };
 
 engine.StringLiteral = function (ctx, parentData, node) {
-  return [node.text.replace(/(^['"]|['"]$)/g, "")];
+  // Remove the beginning and ending quotes.
+  var rtn = node.text.replace(/(^['"]|['"]$)/g, "");
+  rtn = rtn.replace(/\\(u\d{4}|.)/g, function (match, submatch) {
+    switch (match) {
+      case "\\'":
+        return "'";
+
+      case '\\"':
+        return '"';
+
+      case '\\r':
+        return '\r';
+
+      case '\\n':
+        return "\n";
+
+      case '\\t':
+        return '\t';
+
+      case '\\f':
+        return '\f';
+
+      case '\\\\':
+        return '\\';
+
+      default:
+        if (submatch.length > 1) return String.fromCharCode('0x' + submatch.slice(1));else return submatch;
+    }
+  });
+  return [rtn];
 };
 
 engine.BooleanLiteral = function (ctx, parentData, node) {
@@ -584,6 +684,28 @@ engine.BooleanLiteral = function (ctx, parentData, node) {
   } else {
     return [false];
   }
+};
+
+engine.QuantityLiteral = function (ctx, parentData, node) {
+  var valueNode = node.children[0];
+  var value = Number(valueNode.terminalNodeText[0]);
+  var unitNode = valueNode.children[0];
+  var unit = unitNode.terminalNodeText[0]; // Sometimes the unit is in a child node of the child
+
+  if (!unit && unitNode.children) unit = unitNode.children[0].terminalNodeText[0];
+  return [new FP_Quantity(value, unit)];
+};
+
+engine.DateTimeLiteral = function (ctx, parentData, node) {
+  var dateStr = node.text.slice(1); // Remove the @
+
+  return [new FP_DateTime(dateStr)];
+};
+
+engine.TimeLiteral = function (ctx, parentData, node) {
+  var timeStr = node.text.slice(1); // Remove the @
+
+  return [new FP_Time(timeStr)];
 };
 
 engine.NumberLiteral = function (ctx, parentData, node) {
@@ -933,12 +1055,14 @@ var parse = function parse(path) {
  *  Applies the given parsed FHIRPath expression to the given resource,
  *  returning the result of doEval.
  * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
+ *  This resource will be modified by this function to add type information.
  * @param {string} parsedPath - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
  */
 
 
 function applyParsedPath(resource, parsedPath, context) {
+  constants.reset();
   var dataRoot = util.arraify(resource); // doEval takes a "ctx" object, and we store things in that as we parse, so we
   // need to put user-provided variable data in a sub-object, ctx.vars.
   // Set up default standard variables, and allow override from the variables.
@@ -958,6 +1082,7 @@ function applyParsedPath(resource, parsedPath, context) {
  *  Evaluates the "path" FHIRPath expression on the given resource, using data
  *  from "context" for variables mentioned in the "path" expression.
  * @param {(object|object[])} resource -  FHIR resource, bundle as js object or array of resources
+ *  This resource will be modified by this function to add type information.
  * @param {string} path - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
  */
@@ -987,7 +1112,9 @@ var compile = function compile(path, context) {
 module.exports = {
   parse: parse,
   compile: compile,
-  evaluate: evaluate
+  evaluate: evaluate,
+  // Might as well export the UCUM library, since we are using it.
+  ucumUtils: __webpack_require__(68).UcumLhcUtils.getInstance()
 };
 
 /***/ }),
@@ -1108,7 +1235,8 @@ var parse = function parse(path) {
 
     for (var i = 0, len = errors.length; i < len; ++i) {
       var err = errors[i];
-      errMsgs.push("rec: " + err[0] + "; sym: " + err[1] + "; line: " + err[2] + "; col: " + err[3] + "; msg: " + err[4] + "; e: " + err[5]);
+      var msg = "line: " + err[2] + "; column: " + err[3] + "; message: " + err[4];
+      errMsgs.push(msg);
     }
 
     var e = new Error(errMsgs.join("\n"));
@@ -17121,6 +17249,47 @@ module.exports = util;
 
 /***/ }),
 /* 56 */
+/***/ (function(module, exports) {
+
+// isInteger (not in IE)
+// From Mozilla docs
+Number.isInteger = Number.isInteger || function (value) {
+  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
+};
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports) {
+
+// These are values that should not change during an evaluation of a FHIRPath
+// expression (e.g. the return value of today(), per the spec.)  They are
+// constant during at least one evaluation.
+module.exports = {
+  /**
+   *  Resets the constants.  Should be called when before the engine starts its
+   *  processing.
+   */
+  reset: function reset() {
+    this.nowDate = new Date(); // a Date object representint "now"
+
+    this.today = null;
+    this.now = null;
+    this.localTimezoneOffset = null;
+  },
+
+  /**
+   *  The cached value of today().
+   */
+  today: null,
+
+  /**
+   *  The cached value of now().
+   */
+  now: null
+};
+
+/***/ }),
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17129,7 +17298,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 // specification).
 var util = __webpack_require__(55);
 
-var filtering = __webpack_require__(57);
+var filtering = __webpack_require__(59);
 
 var engine = {};
 engine.emptyFn = util.isEmpty;
@@ -17308,7 +17477,7 @@ engine.countFn = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17428,13 +17597,13 @@ engine.ofTypeFn = function (coll, type) {
 module.exports = engine;
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Combining functions.
 var combineFns = {};
 
-var existence = __webpack_require__(56);
+var existence = __webpack_require__(58);
 
 combineFns.unionOp = function (coll1, coll2) {
   return existence.distinctFn(coll1.concat(coll2));
@@ -17447,13 +17616,17 @@ combineFns.combineFn = function (coll1, coll2) {
 module.exports = combineFns;
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
 var util = __webpack_require__(55);
 
+var types = __webpack_require__(62);
+
+var FP_DateTime = types.FP_DateTime;
+var FP_Time = types.FP_Time;
 var engine = {};
 
 engine.iifMacro = function (data, cond, ok, fail) {
@@ -17545,20 +17718,1640 @@ engine.toString = function (coll) {
   var v = coll[0];
   return v.toString();
 };
+/**
+ *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
+ * @param timeType a class (contsructor) for a time type (e.g. FP_DateTime).
+ */
 
+
+function defineTimeConverter(timeType) {
+  var timeName = timeType.name.slice(3);
+
+  engine['to' + timeName] = function (coll) {
+    var rtn = [];
+    if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
+
+    if (coll.length === 1) {
+      var t = timeType.checkString(coll[0]);
+      if (t) rtn[0] = t;
+    }
+
+    return rtn;
+  };
+}
+
+defineTimeConverter(FP_DateTime);
+defineTimeConverter(FP_Time);
 module.exports = engine;
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var addMinutes = __webpack_require__(63);
+
+var ucumUtils = __webpack_require__(68).UcumLhcUtils.getInstance();
+
+var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
+var timeRE = new RegExp('^T?' + timeFormat + '$');
+var dateTimeRE = new RegExp('^[0-9][0-9][0-9][0-9](-[0-9][0-9](-[0-9][0-9](T' + timeFormat + ')?)?)?Z?$'); // FHIR date/time regular expressions are slightly different.  For now, we will
+// stick with the FHIRPath regular expressions.
+//let fhirTimeRE = /([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?/;
+//let fhirDateTimeRE =
+///([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?/;
+
+var FP_Type =
+/*#__PURE__*/
+function () {
+  function FP_Type() {
+    _classCallCheck(this, FP_Type);
+  }
+
+  _createClass(FP_Type, [{
+    key: "equals",
+
+    /**
+     *  Tests whether this object is equal to another.  Returns either true,
+     *  false, or undefined (where in the FHIRPath specification empty would be
+     *  returned).  The undefined return value indicates that the values were the
+     *  same to the shared precision, but that they had differnent levels of
+     *  precision.
+     */
+    value: function equals()
+    /* otherObj */
+    {
+      return false;
+    }
+    /**
+     *  Tests whether this object is equivalant to another.  Returns either true,
+     *  false, or undefined (where in the FHIRPath specification empty would be
+     *  returned).
+     */
+
+  }, {
+    key: "equivalentTo",
+    value: function equivalentTo()
+    /* otherObj */
+    {
+      return false;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return this.asStr ? this.asStr : _get(_getPrototypeOf(FP_Type.prototype), "toString", this).call(this);
+    }
+  }, {
+    key: "toJSON",
+    value: function toJSON() {
+      return this.toString();
+    }
+    /**
+     *  Returns -1, 0, or 1 if this object is less then, equal to, or greater
+     *  than otherObj.
+     */
+
+  }, {
+    key: "compare",
+    value: function compare()
+    /* otherObj */
+    {
+      throw 'Not implemented';
+    }
+  }]);
+
+  return FP_Type;
+}();
+/**
+ *  A class for Quantities.
+ */
+
+
+var FP_Quantity =
+/*#__PURE__*/
+function (_FP_Type) {
+  _inherits(FP_Quantity, _FP_Type);
+
+  function FP_Quantity(value, unit) {
+    var _this;
+
+    _classCallCheck(this, FP_Quantity);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(FP_Quantity).call(this));
+    _this.asStr = value + ' ' + unit;
+    _this.value = value;
+    _this.unit = unit;
+    return _this;
+  }
+
+  return FP_Quantity;
+}(FP_Type);
+/**
+ *  Defines a map from FHIRPath time units to UCUM.
+ */
+
+
+FP_Quantity.timeUnitsToUCUM = {
+  'years': "'a'",
+  'months': "'mo'",
+  'weeks': "'wk'",
+  'days': "'d'",
+  'hours': "'h'",
+  'minutes': "'min'",
+  'seconds': "'s'",
+  'milliseconds': "'ms'",
+  'year': "'a'",
+  'month': "'mo'",
+  'week': "'wk'",
+  'day': "'d'",
+  'hour': "'h'",
+  'minute': "'min'",
+  'second': "'s'",
+  'millisecond': "'ms'",
+  "'a'": "'a'",
+  "'mo'": "'mo'",
+  "'wk'": "'wk'",
+  "'d'": "'d'",
+  "'h'": "'h'",
+  "'min'": "'min'",
+  "'s'": "'s'",
+  "'ms'": "'ms'"
+};
+/**
+ *  A map of the UCUM units that must be paired with integer values when doing
+ *  arithmetic.
+ */
+
+FP_Quantity.integerUnits = {
+  "'a'": true,
+  "'mo'": true,
+  "'wk'": true,
+  "'d'": true,
+  "'h'": true,
+  "'min'": true
+};
+
+var FP_TimeBase =
+/*#__PURE__*/
+function (_FP_Type2) {
+  _inherits(FP_TimeBase, _FP_Type2);
+
+  function FP_TimeBase(timeStr) {
+    var _this2;
+
+    _classCallCheck(this, FP_TimeBase);
+
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(FP_TimeBase).call(this));
+    _this2.asStr = timeStr;
+    return _this2;
+  }
+  /**
+   *  Adds a time-based quantity to this date/time.
+   * @param timeQuantity a quantity to be added to this date/time.  See the
+   *  FHIRPath specification for supported units.
+   */
+
+
+  _createClass(FP_TimeBase, [{
+    key: "plus",
+    value: function plus(timeQuantity) {
+      var unit = timeQuantity.unit;
+      var ucumUnit = FP_Quantity.timeUnitsToUCUM[unit];
+
+      if (!ucumUnit) {
+        throw new Error('For date/time arithmetic, the unit of the quantity ' + 'must be a recognized time-based unit');
+      }
+
+      var cls = this.constructor;
+      var unitPrecision = cls._ucumToDatePrecision[ucumUnit];
+
+      if (unitPrecision === undefined) {
+        throw new Error('Unsupported unit for +.  The unit should be one of ' + Object.keys(cls._ucumToDatePrecision).join(', ') + '.');
+      }
+
+      var isIntUnit = FP_Quantity.integerUnits[ucumUnit];
+      var qVal = timeQuantity.value;
+
+      if (isIntUnit && !Number.isInteger(qVal)) {
+        throw new Error('When adding a quantity of unit ' + unit + ' to a date/time,' + ' the value must be an integer.');
+      } // If the precision of the time quantity is higher than the precision of the
+      // date, we need to convert the time quantity to the precision of the date.
+
+
+      if (this._getPrecision() < unitPrecision) {
+        var unquotedUnit = ucumUnit.slice(1, ucumUnit.length - 1);
+
+        var neededUnit = cls._datePrecisionToUnquotedUcum[this._getPrecision()];
+
+        var convResult = ucumUtils.convertUnitTo(unquotedUnit, qVal, neededUnit);
+
+        if (convResult.status != 'succeeded') {
+          throw new Error(convResult.msg.join("\n"));
+        }
+
+        ucumUnit = "'" + neededUnit + "'";
+        qVal = Math.floor(convResult.toVal);
+      }
+
+      var newDate = FP_TimeBase.timeUnitToAddFn[ucumUnit](this._getDateObj(), qVal); // newDate is a Date.  We need to make a string with the correct precision.
+
+      var isTime = cls === FP_Time;
+
+      var precision = this._getPrecision();
+
+      if (isTime) precision += 3; // based on dateTimeRE, not timeRE
+
+      var newDateStr = FP_DateTime.isoDateTime(newDate, precision);
+
+      if (isTime) {
+        // FP_Time just needs the time part of the string
+        newDateStr = newDateStr.slice(newDateStr.indexOf('T') + 1);
+      }
+
+      return new cls(newDateStr);
+    }
+    /**
+     *  Tests whether this object is equal to another.  Returns either true,
+     *  false, or undefined (where in the FHIRPath specification empty would be
+     *  returned).  The undefined return value indicates that the values were the
+     *  same to the shared precision, but that they had differnent levels of
+     *  precision.
+     * @param otherDateTime any sub-type of FP_TimeBase, but it should be the same
+     *  as the type of "this".
+     */
+
+  }, {
+    key: "equals",
+    value: function equals(otherDateTime) {
+      // From the 2019May ballot:
+      // For Date, DateTime and Time equality, the comparison is performed by
+      // considering each precision in order, beginning with years (or hours for
+      // time values), and respecting timezone offsets. If the values are the
+      // same, comparison proceeds to the next precision; if the values are
+      // different, the comparison stops and the result is false. If one input has
+      // a value for the precision and the other does not, the comparison stops
+      // and the result is empty ({ }); if neither input has a value for the
+      // precision, or the last precision has been reached, the comparison stops
+      // and the result is true.
+      // Note:  Per the spec above
+      //   2012-01 = 2012 //  empty
+      //   2012-01 = 2011 //  false
+      //   2012-01 ~ 2012 //  false
+      var rtn;
+      if (!(otherDateTime instanceof this.constructor)) rtn = false;else {
+        var thisPrec = this._getPrecision();
+
+        var otherPrec = otherDateTime._getPrecision();
+
+        if (thisPrec == otherPrec) {
+          rtn = this._getDateObj().getTime() == otherDateTime._getDateObj().getTime();
+        } else {
+          // The dates are not equal, but decide whether to return empty or false.
+          var commonPrec = thisPrec <= otherPrec ? thisPrec : otherPrec; // Adjust for timezone offsets, if any, so they are at a common timezone
+
+          var thisUTCStr = this._getDateObj().toISOString();
+
+          var otherUTCStr = otherDateTime._getDateObj().toISOString(); // Now parse the strings and compare the adjusted time parts.
+
+
+          var thisAdj = new FP_DateTime(thisUTCStr)._getTimeParts();
+
+          var otherAdj = new FP_DateTime(otherUTCStr)._getTimeParts();
+
+          if (this.constructor === FP_Time) commonPrec += 3; // because we now have year, month, and day
+
+          for (var i = 0; i <= commonPrec && rtn !== false; ++i) {
+            rtn = thisAdj[i] == otherAdj[i];
+          } // if rtn is still true, then return empty to indicate the difference in
+          // precision.
+
+
+          if (rtn) rtn = undefined;
+        }
+      } // else return undefined (empty)
+
+      return rtn;
+    }
+    /**
+     *  Tests whether this object is equivalant to another.  Returns either true
+     *  or false.
+     */
+
+  }, {
+    key: "equivalentTo",
+    value: function equivalentTo(otherDateTime) {
+      var rtn = otherDateTime instanceof this.constructor;
+
+      if (rtn) {
+        var thisPrec = this._getPrecision();
+
+        var otherPrec = otherDateTime._getPrecision();
+
+        rtn = thisPrec == otherPrec;
+
+        if (rtn) {
+          rtn = this._getDateObj().getTime() == otherDateTime._getDateObj().getTime();
+        }
+      }
+
+      return rtn;
+    }
+    /**
+     *  Returns -1, 0, or 1 if this (date) time is less then, equal to, or greater
+     *  than otherTime.  Comparisons are made at the lesser of the two time
+     *  precisions.
+     */
+
+  }, {
+    key: "compare",
+    value: function compare(otherTime) {
+      var thisPrecision = this._getPrecision();
+
+      var otherPrecision = otherTime._getPrecision();
+
+      var thisTimeInt = thisPrecision <= otherPrecision ? this._getDateObj().getTime() : this._dateAtPrecision(otherPrecision).getTime();
+      var otherTimeInt = otherPrecision <= thisPrecision ? otherTime._getDateObj().getTime() : otherTime._dateAtPrecision(thisPrecision).getTime();
+      return thisTimeInt < otherTimeInt ? -1 : thisTimeInt === otherTimeInt ? 0 : 1;
+    }
+    /**
+     *  Returns a number representing the precision of the time string given to
+     *  the constructor.  (Higher means more precise).  The number is the number
+     *  of components of the time string (ignoring the time zone) produced by
+     *  matching against the time regular expression.
+     */
+
+  }, {
+    key: "_getPrecision",
+    value: function _getPrecision() {
+      if (this.precision === undefined) this._getMatchData();
+      return this.precision;
+    }
+    /**
+     *  Returns the match data from matching the given RegExp against the
+     *  date/time string given to the constructor.
+     *  Also sets this.precision.
+     * @param regEx The regular expression to match against the date/time string.
+     * @param maxPrecision the maximum precision possible for the type
+     */
+
+  }, {
+    key: "_getMatchData",
+    value: function _getMatchData(regEx, maxPrecision) {
+      if (this.timeMatchData === undefined) {
+        this.timeMatchData = this.asStr.match(regEx);
+
+        if (this.timeMatchData) {
+          for (var i = maxPrecision; i >= 0 && this.precision === undefined; --i) {
+            if (this.timeMatchData[i]) this.precision = i;
+          }
+        }
+      }
+
+      return this.timeMatchData;
+    }
+    /**
+     *  Returns an array of the pieces of the given time string, for use in
+     *  constructing lower precision versions of the time. The returned array will
+     *  contain separate elements for the hour, minutes, seconds, and milliseconds
+     *  (or as many of those are as present).  The length of the returned array
+     *  will therefore be an indication of the precision.
+     *  It will not include the timezone.
+     * @timeMatchData the result of matching the time portion of the string passed
+     *  into the constructor against the "timeRE" regular expression.
+     */
+
+  }, {
+    key: "_getTimeParts",
+    value: function _getTimeParts(timeMatchData) {
+      var timeParts = []; // Finish parsing the data into pieces, for later use in building
+      // lower-precision versions of the date if needed.
+
+      timeParts = [timeMatchData[0]];
+      var timeZone = timeMatchData[4];
+
+      if (timeZone) {
+        // remove time zone from hours
+        var hours = timeParts[0];
+        timeParts[0] = hours.slice(0, hours.length - timeZone.length);
+      }
+
+      var min = timeMatchData[1];
+
+      if (min) {
+        // remove minutes from hours
+        var _hours = timeParts[0];
+        timeParts[0] = _hours.slice(0, _hours.length - min.length);
+        timeParts[1] = min;
+        var sec = timeMatchData[2];
+
+        if (sec) {
+          // remove seconds from minutes
+          timeParts[1] = min.slice(0, min.length - sec.length);
+          timeParts[2] = sec;
+          var ms = timeMatchData[3];
+
+          if (ms) {
+            // remove milliseconds from seconds
+            timeParts[2] = sec.slice(0, sec.length - ms.length);
+            timeParts[3] = ms;
+          }
+        }
+      }
+
+      return timeParts;
+    }
+    /**
+     *  Returns a date object representing this time on a certain date.
+     */
+
+  }, {
+    key: "_getDateObj",
+    value: function _getDateObj() {
+      if (!this.dateObj) {
+        var precision = this._getPrecision(); // We cannot directly pass the string into the date constructor because
+        // (1) we don't want to introduce a time-dependent system date and (2) the
+        // time string might not have contained minutes, which are required by the
+        // Date constructor.
+
+
+        this.dateObj = this._dateAtPrecision(precision);
+      }
+
+      return this.dateObj;
+    }
+    /**
+     *  Creates a date object for the given timezone.  The returned date object
+     *  will have the specified date and time in the specified timezone.
+     * @param year...ms Just as in the Date constructor.
+     * @param timezoneOffset (optional) a string in the format (+-)HH:mm or Z, representing the
+     *  timezone offset.  If not provided, the local timzone will be assumed (as the
+     *  Date constructor does).
+     */
+
+  }, {
+    key: "_createDate",
+    value: function _createDate(year, month, day, hour, minutes, seconds, ms, timezoneOffset) {
+      var d = new Date(year, month, day, hour, minutes, seconds, ms);
+
+      if (timezoneOffset) {
+        // d is in local time.  Adjust for the timezone offset.
+        // First adjust the date by the timezone offset before reducing its
+        // precision.  Otherwise,
+        // @2018-11-01T-04:00 < @2018T-05:00
+        var localTimezoneMinutes = d.getTimezoneOffset();
+        var timezoneMinutes = 0; // if Z
+
+        if (timezoneOffset != 'Z') {
+          var timezoneParts = timezoneOffset.split(':'); // (+-)hours:minutes
+
+          var hours = parseInt(timezoneParts[0]);
+          timezoneMinutes = parseInt(timezoneParts[1]);
+          if (hours < 0) timezoneMinutes = -timezoneMinutes;
+          timezoneMinutes += 60 * hours;
+        } // localTimezoneMinutes has the inverse sign of its timezone offset
+
+
+        d = addMinutes(d, -localTimezoneMinutes - timezoneMinutes);
+      }
+
+      return d;
+    }
+  }]);
+
+  return FP_TimeBase;
+}(FP_Type);
+/**
+ *  A map from a UCUM time based unit to a function used to add that quantity to
+ *  a date/time.
+ */
+
+
+FP_TimeBase.timeUnitToAddFn = {
+  "'a'": __webpack_require__(69),
+  "'mo'": __webpack_require__(70),
+  "'wk'": __webpack_require__(72),
+  "'d'": __webpack_require__(73),
+  "'h'": __webpack_require__(74),
+  "'min'": __webpack_require__(63),
+  "'s'": __webpack_require__(75),
+  "'ms'": __webpack_require__(64)
+};
+
+var FP_DateTime =
+/*#__PURE__*/
+function (_FP_TimeBase) {
+  _inherits(FP_DateTime, _FP_TimeBase);
+
+  /**
+   *  Constructs an FP_DateTime, assuming dateStr is valid.  If you don't know
+   *  whether a string is a valid DateTime, use FP_DateTime.checkString instead.
+   */
+  function FP_DateTime(dateStr) {
+    _classCallCheck(this, FP_DateTime);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(FP_DateTime).call(this, dateStr));
+  }
+  /**
+   *  Returns -1, 0, or 1 if this date time is less then, equal to, or greater
+   *  than otherDateTime.  Comparisons are made at the lesser of the two date time
+   *  precisions.
+   */
+
+
+  _createClass(FP_DateTime, [{
+    key: "compare",
+    value: function compare(otherDateTime) {
+      if (!(otherDateTime instanceof FP_DateTime)) throw 'Invalid comparison of a DateTime with something else';
+      return _get(_getPrototypeOf(FP_DateTime.prototype), "compare", this).call(this, otherDateTime);
+    }
+    /**
+     *  Returns the match data from matching timeRE against the time string.
+     *  Also sets this.precision.
+     */
+
+  }, {
+    key: "_getMatchData",
+    value: function _getMatchData() {
+      return _get(_getPrototypeOf(FP_DateTime.prototype), "_getMatchData", this).call(this, dateTimeRE, 6);
+    }
+    /**
+     *  Returns an array of the pieces of the date time string passed into the
+     *  constructor, for use in constructing lower precision versions of the
+     *  date time. The returned array will contain separate elements for the year,
+     *  month, day, hour, minutes, seconds, and milliseconds (or as many of those
+     *  are as present).  The length of the returned array will therefore be an
+     *  indication of the precision.  It will not include the timezone.
+     */
+
+  }, {
+    key: "_getTimeParts",
+    value: function _getTimeParts() {
+      if (!this.timeParts) {
+        var timeMatchData = this._getMatchData();
+
+        var year = timeMatchData[0];
+        this.timeParts = [year];
+        var month = timeMatchData[1];
+
+        if (month) {
+          // Remove other information from year
+          this.timeParts[0] = year.slice(0, year.length - month.length);
+          this.timeParts[1] = month;
+          var day = timeMatchData[2];
+
+          if (day) {
+            // Remove day information from month
+            this.timeParts[1] = month.slice(0, month.length - day.length);
+            this.timeParts[2] = day;
+            var time = timeMatchData[3];
+
+            if (time) {
+              // Remove time from day
+              this.timeParts[2] = day.slice(0, day.length - time.length);
+              if (time[0] === 'T') // remove T from hour
+                timeMatchData[3] = time.slice(1);
+              this.timeParts = this.timeParts.concat(_get(_getPrototypeOf(FP_DateTime.prototype), "_getTimeParts", this).call(this, timeMatchData.slice(3)));
+            }
+          }
+        }
+      }
+
+      return this.timeParts;
+    }
+    /**
+     *  Returns a new Date object for a time equal to what this time would be if
+     *  the string passed into the constructor had the given precision.
+     * @param precision the new precision, which is assumed to be less than
+     *  or equal to the current precision.
+     */
+
+  }, {
+    key: "_dateAtPrecision",
+    value: function _dateAtPrecision(precision) {
+      var timeParts = this._getTimeParts();
+
+      var timezoneOffset = this._getMatchData()[7]; // Get the date object first at the current precision.
+
+
+      var thisPrecision = this._getPrecision();
+
+      var year = parseInt(timeParts[0]);
+      var month = thisPrecision > 0 ? parseInt(timeParts[1].slice(1)) - 1 : 0;
+      var day = thisPrecision > 1 ? parseInt(timeParts[2].slice(1)) : 1;
+      var hour = thisPrecision > 2 ? parseInt(timeParts[3]) : 0;
+      var minutes = thisPrecision > 3 ? parseInt(timeParts[4].slice(1)) : 0;
+      var seconds = thisPrecision > 4 ? parseInt(timeParts[5].slice(1)) : 0;
+      var ms = thisPrecision > 5 ? parseInt(timeParts[6].slice(1)) : 0;
+
+      var d = this._createDate(year, month, day, hour, minutes, seconds, ms, timezoneOffset);
+
+      if (precision < this._getPrecision()) {
+        // Adjust the precision
+        year = d.getFullYear();
+        month = precision > 0 ? d.getMonth() : 0;
+        day = precision > 1 ? d.getDate() : 1;
+        hour = precision > 2 ? d.getHours() : 0;
+        minutes = precision > 3 ? d.getMinutes() : 0;
+        seconds = precision > 4 ? d.getSeconds() : 0;
+        ms = precision > 5 ? d.getMilliseconds() : 0;
+        d = new Date(year, month, day, hour, minutes, seconds, ms);
+      }
+
+      return d;
+    }
+  }]);
+
+  return FP_DateTime;
+}(FP_TimeBase);
+/**
+ *  Tests str to see if it is convertible to a DateTime.
+ * @return If str is convertible to a DateTime, returns an FP_DateTime;
+ *  otherwise returns null.
+ */
+
+
+FP_DateTime.checkString = function (str) {
+  var d = new FP_DateTime(str);
+  if (!d._getMatchData()) d = null;
+  return d;
+};
+/**
+ *  A map from UCUM units (in quotation marks, which is the FHIRPath syntax for
+ *  UCUM) to the internal DateTime "precision" number.
+ */
+
+
+FP_DateTime._ucumToDatePrecision = {
+  "'a'": 0,
+  "'mo'": 1,
+  "'wk'": 2,
+  // wk is just 7*d
+  "'d'": 2,
+  "'h'": 3,
+  "'min'": 4,
+  "'s'": 5,
+  "'ms'": 6
+};
+/**
+ *  The inverse of _ucumToDatePrecision, except with unquoted UCUM units.
+ */
+
+FP_DateTime._datePrecisionToUnquotedUcum = ["a", "mo", "d", "h", "min", "s", "ms"];
+
+var FP_Time =
+/*#__PURE__*/
+function (_FP_TimeBase2) {
+  _inherits(FP_Time, _FP_TimeBase2);
+
+  /**
+   *  Constructs an FP_Time, assuming dateStr is valid.  If you don't know
+   *  whether a string is a valid DateTime, use FP_Time.checkString instead.
+   */
+  function FP_Time(timeStr) {
+    _classCallCheck(this, FP_Time);
+
+    if (timeStr[0] == 'T') timeStr = timeStr.slice(1);
+    return _possibleConstructorReturn(this, _getPrototypeOf(FP_Time).call(this, timeStr));
+  }
+  /**
+   *  Returns -1, 0, or 1 if this time is less then, equal to, or greater
+   *  than otherTime.  Comparisons are made at the lesser of the two time
+   *  precisions.
+   */
+
+
+  _createClass(FP_Time, [{
+    key: "compare",
+    value: function compare(otherTime) {
+      if (!(otherTime instanceof FP_Time)) throw 'Invalid comparison of a time with something else';
+      return _get(_getPrototypeOf(FP_Time.prototype), "compare", this).call(this, otherTime);
+    }
+    /**
+     *  Returns a new Date object for a time equal to what this time would be if
+     *  the string passed into the constructor had the given precision.
+     *  The "date" portion of the returned Date object is not meaningful, and
+     *  should be ignored.
+     * @param precision the new precision, which is assumed to be less than the
+     *  or equal to the current precision.  A precision of 0 means the hour.
+     */
+
+  }, {
+    key: "_dateAtPrecision",
+    value: function _dateAtPrecision(precision) {
+      var timeParts = this._getTimeParts();
+
+      var timezoneOffset = this._getMatchData()[4]; // Get the date object first at the current precision.
+
+
+      var thisPrecision = this._getPrecision();
+
+      var year = 2010; // Have to pick some year for the date object
+
+      var month = 0;
+      var day = 1;
+      var hour = parseInt(timeParts[0]);
+      var minutes = thisPrecision > 0 ? parseInt(timeParts[1].slice(1)) : 0;
+      var seconds = thisPrecision > 1 ? parseInt(timeParts[2].slice(1)) : 0;
+      var ms = thisPrecision > 2 ? parseInt(timeParts[3].slice(1)) : 0;
+
+      var d = this._createDate(year, month, day, hour, minutes, seconds, ms, timezoneOffset);
+
+      if (timezoneOffset) {
+        // Keep the date the same (in the local timezone), so it is not a relevant
+        // factor when comparing different times.
+        d.setYear(year);
+        d.setMonth(month);
+        d.setDate(day);
+      }
+
+      if (precision < this._getPrecision()) {
+        // Adjust the precision
+        hour = d.getHours();
+        minutes = precision > 0 ? d.getMinutes() : 0;
+        seconds = precision > 1 ? d.getSeconds() : 0;
+        ms = precision > 2 ? d.getMilliseconds() : 0;
+        d = new Date(year, month, day, hour, minutes, seconds, ms);
+      }
+
+      return d;
+    }
+    /**
+     *  Returns the match data from matching timeRE against the time string.
+     *  Also sets this.precision.
+     */
+
+  }, {
+    key: "_getMatchData",
+    value: function _getMatchData() {
+      return _get(_getPrototypeOf(FP_Time.prototype), "_getMatchData", this).call(this, timeRE, 3);
+    }
+    /**
+     *  Returns an array of the pieces of the time string passed into the
+     *  constructor, for use in constructing lower precision versions of the
+     *  time. The returned array will contain separate elements for the hour,
+     *  minutes, seconds, and milliseconds (or as many of those are as present).
+     *  The length of the returned array will therefore be an indication of the
+     *  precision.  It will not include the timezone.
+     */
+
+  }, {
+    key: "_getTimeParts",
+    value: function _getTimeParts() {
+      if (!this.timeParts) {
+        this.timeParts = _get(_getPrototypeOf(FP_Time.prototype), "_getTimeParts", this).call(this, this._getMatchData());
+      }
+
+      return this.timeParts;
+    }
+  }]);
+
+  return FP_Time;
+}(FP_TimeBase);
+/**
+ *  Tests str to see if it is convertible to a Time.
+ * @return If str is convertible to a Time, returns an FP_Time;
+ *  otherwise returns null.
+ */
+
+
+FP_Time.checkString = function (str) {
+  var d = new FP_Time(str);
+  if (!d._getMatchData()) d = null;
+  return d;
+};
+/**
+ *  A map from UCUM units (in quotation marks, which is the FHIRPath syntax for
+ *  UCUM) to the internal DateTime "precision" number.
+ */
+
+
+FP_Time._ucumToDatePrecision = {
+  "'h'": 0,
+  "'min'": 1,
+  "'s'": 2,
+  "'ms'": 3
+};
+/**
+ *  The inverse of _ucumToDatePrecision, except with unquoted UCUM units.
+ */
+
+FP_Time._datePrecisionToUnquotedUcum = ["h", "min", "s", "ms"];
+/**
+ *  Returns either the given number or a string with the number prefixed by
+ *  zeros if the given number is less than the given length.
+ * @param num the nubmer to format
+ * @param len the number of returned digits.  For now this must either be 2 or
+ *  3. (Optional-- default is 2).
+ */
+
+function formatNum(num, len) {
+  // Could use String.repeat, but that requires convertin num to an string first
+  // to get its length.  This might be slightly faster given that we only need 2
+  // or three 3 digit return values.
+  var rtn = num;
+  if (len === 3 && num < 100) rtn = '0' + num;
+  if (num < 10) rtn = '0' + rtn;
+  return rtn;
+}
+/**
+ *  Formats the given date object into an ISO8601 datetime string, expressing it
+ *  in the local timezone.
+ * @date the date to format
+ * @precision the precision at which to terminate string string.  (This is
+ *  optional). If present, it will be an integer into the matching components of
+ *  dateTimeRE.
+ * @return a string in ISO8601 format.
+ */
+
+
+FP_DateTime.isoDateTime = function (date, precision) {
+  if (precision === undefined) precision = 6; // maximum
+  // YYYY-MM-DDTHH:mm:ss.sss[+-]HH:mm
+  // Note:  Date.toISOString sets the timezone at 'Z', which I did not want.
+  // Actually, I wanted to keep the original timezone given in the constructor,
+  // but that is difficult due to daylight savings time changes.  (For instance,
+  // if you add 6 months, the timezone offset could change).
+
+  var rtn = '' + date.getFullYear();
+
+  if (precision > 0) {
+    rtn += '-' + formatNum(date.getMonth() + 1);
+
+    if (precision > 1) {
+      rtn += '-' + formatNum(date.getDate());
+
+      if (precision > 2) {
+        rtn += 'T' + formatNum(date.getHours());
+
+        if (precision > 3) {
+          rtn += ':' + formatNum(date.getMinutes());
+
+          if (precision > 4) {
+            rtn += ':' + formatNum(date.getSeconds());
+            if (precision > 5) rtn += '.' + formatNum(date.getMilliseconds(), 3);
+          }
+        }
+      }
+    }
+  } // FHIRPath STU1 does not allow a timezone offset on a dateTime that does not
+  // have a time part (except that the grammar allows 'Z', which is
+  // inconsistent).
+
+
+  if (precision > 2) {
+    // Note:  getTimezoneoffset returns the offset for the local system at the
+    // given date.
+    var tzOffset = date.getTimezoneOffset(); // tzOffset is a number of minutes, and is positive for negative timezones,
+    // and negative for positive timezones.
+
+    var tzSign = tzOffset < 0 ? '+' : '-';
+    tzOffset = Math.abs(tzOffset);
+    var tzMin = tzOffset % 60;
+    var tzHour = (tzOffset - tzMin) / 60;
+    rtn += tzSign + formatNum(tzHour) + ':' + formatNum(tzMin);
+  }
+
+  return rtn;
+};
+/**
+ *  Returns a date string in ISO format at the given precision level.
+ * @date the date to format
+ * @precision the precision at which to terminate string string.  (This is
+ *  optional). If present, it will be an integer into the matching components of
+ *  dateTimeRE.
+ * @return a string in ISO8601 format.
+ */
+
+
+FP_DateTime.isoDate = function (date, precision) {
+  if (precision === undefined || precision > 2) precision = 2;
+  return FP_DateTime.isoDateTime(date, precision);
+};
+
+module.exports = {
+  FP_Type: FP_Type,
+  FP_TimeBase: FP_TimeBase,
+  FP_DateTime: FP_DateTime,
+  FP_Time: FP_Time,
+  FP_Quantity: FP_Quantity,
+  timeRE: timeRE,
+  dateTimeRE: dateTimeRE
+};
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var addMilliseconds = __webpack_require__(64);
+
+var MILLISECONDS_IN_MINUTE = 60000;
+/**
+ * @category Minute Helpers
+ * @summary Add the specified number of minutes to the given date.
+ *
+ * @description
+ * Add the specified number of minutes to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of minutes to be added
+ * @returns {Date} the new date with the minutes added
+ *
+ * @example
+ * // Add 30 minutes to 10 July 2014 12:00:00:
+ * var result = addMinutes(new Date(2014, 6, 10, 12, 0), 30)
+ * //=> Thu Jul 10 2014 12:30:00
+ */
+
+function addMinutes(dirtyDate, dirtyAmount) {
+  var amount = Number(dirtyAmount);
+  return addMilliseconds(dirtyDate, amount * MILLISECONDS_IN_MINUTE);
+}
+
+module.exports = addMinutes;
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parse = __webpack_require__(65);
+/**
+ * @category Millisecond Helpers
+ * @summary Add the specified number of milliseconds to the given date.
+ *
+ * @description
+ * Add the specified number of milliseconds to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of milliseconds to be added
+ * @returns {Date} the new date with the milliseconds added
+ *
+ * @example
+ * // Add 750 milliseconds to 10 July 2014 12:45:30.000:
+ * var result = addMilliseconds(new Date(2014, 6, 10, 12, 45, 30, 0), 750)
+ * //=> Thu Jul 10 2014 12:45:30.750
+ */
+
+
+function addMilliseconds(dirtyDate, dirtyAmount) {
+  var timestamp = parse(dirtyDate).getTime();
+  var amount = Number(dirtyAmount);
+  return new Date(timestamp + amount);
+}
+
+module.exports = addMilliseconds;
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getTimezoneOffsetInMilliseconds = __webpack_require__(66);
+
+var isDate = __webpack_require__(67);
+
+var MILLISECONDS_IN_HOUR = 3600000;
+var MILLISECONDS_IN_MINUTE = 60000;
+var DEFAULT_ADDITIONAL_DIGITS = 2;
+var parseTokenDateTimeDelimeter = /[T ]/;
+var parseTokenPlainTime = /:/; // year tokens
+
+var parseTokenYY = /^(\d{2})$/;
+var parseTokensYYY = [/^([+-]\d{2})$/, // 0 additional digits
+/^([+-]\d{3})$/, // 1 additional digit
+/^([+-]\d{4})$/ // 2 additional digits
+];
+var parseTokenYYYY = /^(\d{4})/;
+var parseTokensYYYYY = [/^([+-]\d{4})/, // 0 additional digits
+/^([+-]\d{5})/, // 1 additional digit
+/^([+-]\d{6})/ // 2 additional digits
+]; // date tokens
+
+var parseTokenMM = /^-(\d{2})$/;
+var parseTokenDDD = /^-?(\d{3})$/;
+var parseTokenMMDD = /^-?(\d{2})-?(\d{2})$/;
+var parseTokenWww = /^-?W(\d{2})$/;
+var parseTokenWwwD = /^-?W(\d{2})-?(\d{1})$/; // time tokens
+
+var parseTokenHH = /^(\d{2}([.,]\d*)?)$/;
+var parseTokenHHMM = /^(\d{2}):?(\d{2}([.,]\d*)?)$/;
+var parseTokenHHMMSS = /^(\d{2}):?(\d{2}):?(\d{2}([.,]\d*)?)$/; // timezone tokens
+
+var parseTokenTimezone = /([Z+-].*)$/;
+var parseTokenTimezoneZ = /^(Z)$/;
+var parseTokenTimezoneHH = /^([+-])(\d{2})$/;
+var parseTokenTimezoneHHMM = /^([+-])(\d{2}):?(\d{2})$/;
+/**
+ * @category Common Helpers
+ * @summary Convert the given argument to an instance of Date.
+ *
+ * @description
+ * Convert the given argument to an instance of Date.
+ *
+ * If the argument is an instance of Date, the function returns its clone.
+ *
+ * If the argument is a number, it is treated as a timestamp.
+ *
+ * If an argument is a string, the function tries to parse it.
+ * Function accepts complete ISO 8601 formats as well as partial implementations.
+ * ISO 8601: http://en.wikipedia.org/wiki/ISO_8601
+ *
+ * If all above fails, the function passes the given argument to Date constructor.
+ *
+ * @param {Date|String|Number} argument - the value to convert
+ * @param {Object} [options] - the object with options
+ * @param {0 | 1 | 2} [options.additionalDigits=2] - the additional number of digits in the extended year format
+ * @returns {Date} the parsed date in the local time zone
+ *
+ * @example
+ * // Convert string '2014-02-11T11:30:30' to date:
+ * var result = parse('2014-02-11T11:30:30')
+ * //=> Tue Feb 11 2014 11:30:30
+ *
+ * @example
+ * // Parse string '+02014101',
+ * // if the additional number of digits in the extended year format is 1:
+ * var result = parse('+02014101', {additionalDigits: 1})
+ * //=> Fri Apr 11 2014 00:00:00
+ */
+
+function parse(argument, dirtyOptions) {
+  if (isDate(argument)) {
+    // Prevent the date to lose the milliseconds when passed to new Date() in IE10
+    return new Date(argument.getTime());
+  } else if (typeof argument !== 'string') {
+    return new Date(argument);
+  }
+
+  var options = dirtyOptions || {};
+  var additionalDigits = options.additionalDigits;
+
+  if (additionalDigits == null) {
+    additionalDigits = DEFAULT_ADDITIONAL_DIGITS;
+  } else {
+    additionalDigits = Number(additionalDigits);
+  }
+
+  var dateStrings = splitDateString(argument);
+  var parseYearResult = parseYear(dateStrings.date, additionalDigits);
+  var year = parseYearResult.year;
+  var restDateString = parseYearResult.restDateString;
+  var date = parseDate(restDateString, year);
+
+  if (date) {
+    var timestamp = date.getTime();
+    var time = 0;
+    var offset;
+
+    if (dateStrings.time) {
+      time = parseTime(dateStrings.time);
+    }
+
+    if (dateStrings.timezone) {
+      offset = parseTimezone(dateStrings.timezone) * MILLISECONDS_IN_MINUTE;
+    } else {
+      var fullTime = timestamp + time;
+      var fullTimeDate = new Date(fullTime);
+      offset = getTimezoneOffsetInMilliseconds(fullTimeDate); // Adjust time when it's coming from DST
+
+      var fullTimeDateNextDay = new Date(fullTime);
+      fullTimeDateNextDay.setDate(fullTimeDate.getDate() + 1);
+      var offsetDiff = getTimezoneOffsetInMilliseconds(fullTimeDateNextDay) - getTimezoneOffsetInMilliseconds(fullTimeDate);
+
+      if (offsetDiff > 0) {
+        offset += offsetDiff;
+      }
+    }
+
+    return new Date(timestamp + time + offset);
+  } else {
+    return new Date(argument);
+  }
+}
+
+function splitDateString(dateString) {
+  var dateStrings = {};
+  var array = dateString.split(parseTokenDateTimeDelimeter);
+  var timeString;
+
+  if (parseTokenPlainTime.test(array[0])) {
+    dateStrings.date = null;
+    timeString = array[0];
+  } else {
+    dateStrings.date = array[0];
+    timeString = array[1];
+  }
+
+  if (timeString) {
+    var token = parseTokenTimezone.exec(timeString);
+
+    if (token) {
+      dateStrings.time = timeString.replace(token[1], '');
+      dateStrings.timezone = token[1];
+    } else {
+      dateStrings.time = timeString;
+    }
+  }
+
+  return dateStrings;
+}
+
+function parseYear(dateString, additionalDigits) {
+  var parseTokenYYY = parseTokensYYY[additionalDigits];
+  var parseTokenYYYYY = parseTokensYYYYY[additionalDigits];
+  var token; // YYYY or ±YYYYY
+
+  token = parseTokenYYYY.exec(dateString) || parseTokenYYYYY.exec(dateString);
+
+  if (token) {
+    var yearString = token[1];
+    return {
+      year: parseInt(yearString, 10),
+      restDateString: dateString.slice(yearString.length)
+    };
+  } // YY or ±YYY
+
+
+  token = parseTokenYY.exec(dateString) || parseTokenYYY.exec(dateString);
+
+  if (token) {
+    var centuryString = token[1];
+    return {
+      year: parseInt(centuryString, 10) * 100,
+      restDateString: dateString.slice(centuryString.length)
+    };
+  } // Invalid ISO-formatted year
+
+
+  return {
+    year: null
+  };
+}
+
+function parseDate(dateString, year) {
+  // Invalid ISO-formatted year
+  if (year === null) {
+    return null;
+  }
+
+  var token;
+  var date;
+  var month;
+  var week; // YYYY
+
+  if (dateString.length === 0) {
+    date = new Date(0);
+    date.setUTCFullYear(year);
+    return date;
+  } // YYYY-MM
+
+
+  token = parseTokenMM.exec(dateString);
+
+  if (token) {
+    date = new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    date.setUTCFullYear(year, month);
+    return date;
+  } // YYYY-DDD or YYYYDDD
+
+
+  token = parseTokenDDD.exec(dateString);
+
+  if (token) {
+    date = new Date(0);
+    var dayOfYear = parseInt(token[1], 10);
+    date.setUTCFullYear(year, 0, dayOfYear);
+    return date;
+  } // YYYY-MM-DD or YYYYMMDD
+
+
+  token = parseTokenMMDD.exec(dateString);
+
+  if (token) {
+    date = new Date(0);
+    month = parseInt(token[1], 10) - 1;
+    var day = parseInt(token[2], 10);
+    date.setUTCFullYear(year, month, day);
+    return date;
+  } // YYYY-Www or YYYYWww
+
+
+  token = parseTokenWww.exec(dateString);
+
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    return dayOfISOYear(year, week);
+  } // YYYY-Www-D or YYYYWwwD
+
+
+  token = parseTokenWwwD.exec(dateString);
+
+  if (token) {
+    week = parseInt(token[1], 10) - 1;
+    var dayOfWeek = parseInt(token[2], 10) - 1;
+    return dayOfISOYear(year, week, dayOfWeek);
+  } // Invalid ISO-formatted date
+
+
+  return null;
+}
+
+function parseTime(timeString) {
+  var token;
+  var hours;
+  var minutes; // hh
+
+  token = parseTokenHH.exec(timeString);
+
+  if (token) {
+    hours = parseFloat(token[1].replace(',', '.'));
+    return hours % 24 * MILLISECONDS_IN_HOUR;
+  } // hh:mm or hhmm
+
+
+  token = parseTokenHHMM.exec(timeString);
+
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseFloat(token[2].replace(',', '.'));
+    return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE;
+  } // hh:mm:ss or hhmmss
+
+
+  token = parseTokenHHMMSS.exec(timeString);
+
+  if (token) {
+    hours = parseInt(token[1], 10);
+    minutes = parseInt(token[2], 10);
+    var seconds = parseFloat(token[3].replace(',', '.'));
+    return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE + seconds * 1000;
+  } // Invalid ISO-formatted time
+
+
+  return null;
+}
+
+function parseTimezone(timezoneString) {
+  var token;
+  var absoluteOffset; // Z
+
+  token = parseTokenTimezoneZ.exec(timezoneString);
+
+  if (token) {
+    return 0;
+  } // ±hh
+
+
+  token = parseTokenTimezoneHH.exec(timezoneString);
+
+  if (token) {
+    absoluteOffset = parseInt(token[2], 10) * 60;
+    return token[1] === '+' ? -absoluteOffset : absoluteOffset;
+  } // ±hh:mm or ±hhmm
+
+
+  token = parseTokenTimezoneHHMM.exec(timezoneString);
+
+  if (token) {
+    absoluteOffset = parseInt(token[2], 10) * 60 + parseInt(token[3], 10);
+    return token[1] === '+' ? -absoluteOffset : absoluteOffset;
+  }
+
+  return 0;
+}
+
+function dayOfISOYear(isoYear, week, day) {
+  week = week || 0;
+  day = day || 0;
+  var date = new Date(0);
+  date.setUTCFullYear(isoYear, 0, 4);
+  var fourthOfJanuaryDay = date.getUTCDay() || 7;
+  var diff = week * 7 + day + 1 - fourthOfJanuaryDay;
+  date.setUTCDate(date.getUTCDate() + diff);
+  return date;
+}
+
+module.exports = parse;
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports) {
+
+var MILLISECONDS_IN_MINUTE = 60000;
+/**
+ * Google Chrome as of 67.0.3396.87 introduced timezones with offset that includes seconds.
+ * They usually appear for dates that denote time before the timezones were introduced
+ * (e.g. for 'Europe/Prague' timezone the offset is GMT+00:57:44 before 1 October 1891
+ * and GMT+01:00:00 after that date)
+ *
+ * Date#getTimezoneOffset returns the offset in minutes and would return 57 for the example above,
+ * which would lead to incorrect calculations.
+ *
+ * This function returns the timezone offset in milliseconds that takes seconds in account.
+ */
+
+module.exports = function getTimezoneOffsetInMilliseconds(dirtyDate) {
+  var date = new Date(dirtyDate.getTime());
+  var baseTimezoneOffset = date.getTimezoneOffset();
+  date.setSeconds(0, 0);
+  var millisecondsPartOfTimezoneOffset = date.getTime() % MILLISECONDS_IN_MINUTE;
+  return baseTimezoneOffset * MILLISECONDS_IN_MINUTE + millisecondsPartOfTimezoneOffset;
+};
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports) {
+
+/**
+ * @category Common Helpers
+ * @summary Is the given argument an instance of Date?
+ *
+ * @description
+ * Is the given argument an instance of Date?
+ *
+ * @param {*} argument - the argument to check
+ * @returns {Boolean} the given argument is an instance of Date
+ *
+ * @example
+ * // Is 'mayonnaise' a Date?
+ * var result = isDate('mayonnaise')
+ * //=> false
+ */
+function isDate(argument) {
+  return argument instanceof Date;
+}
+
+module.exports = isDate;
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports) {
+
+module.exports = LForms.ucumPkg;
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var addMonths = __webpack_require__(70);
+/**
+ * @category Year Helpers
+ * @summary Add the specified number of years to the given date.
+ *
+ * @description
+ * Add the specified number of years to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of years to be added
+ * @returns {Date} the new date with the years added
+ *
+ * @example
+ * // Add 5 years to 1 September 2014:
+ * var result = addYears(new Date(2014, 8, 1), 5)
+ * //=> Sun Sep 01 2019 00:00:00
+ */
+
+
+function addYears(dirtyDate, dirtyAmount) {
+  var amount = Number(dirtyAmount);
+  return addMonths(dirtyDate, amount * 12);
+}
+
+module.exports = addYears;
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parse = __webpack_require__(65);
+
+var getDaysInMonth = __webpack_require__(71);
+/**
+ * @category Month Helpers
+ * @summary Add the specified number of months to the given date.
+ *
+ * @description
+ * Add the specified number of months to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of months to be added
+ * @returns {Date} the new date with the months added
+ *
+ * @example
+ * // Add 5 months to 1 September 2014:
+ * var result = addMonths(new Date(2014, 8, 1), 5)
+ * //=> Sun Feb 01 2015 00:00:00
+ */
+
+
+function addMonths(dirtyDate, dirtyAmount) {
+  var date = parse(dirtyDate);
+  var amount = Number(dirtyAmount);
+  var desiredMonth = date.getMonth() + amount;
+  var dateWithDesiredMonth = new Date(0);
+  dateWithDesiredMonth.setFullYear(date.getFullYear(), desiredMonth, 1);
+  dateWithDesiredMonth.setHours(0, 0, 0, 0);
+  var daysInMonth = getDaysInMonth(dateWithDesiredMonth); // Set the last day of the new month
+  // if the original date was the last day of the longer month
+
+  date.setMonth(desiredMonth, Math.min(daysInMonth, date.getDate()));
+  return date;
+}
+
+module.exports = addMonths;
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parse = __webpack_require__(65);
+/**
+ * @category Month Helpers
+ * @summary Get the number of days in a month of the given date.
+ *
+ * @description
+ * Get the number of days in a month of the given date.
+ *
+ * @param {Date|String|Number} date - the given date
+ * @returns {Number} the number of days in a month
+ *
+ * @example
+ * // How many days are in February 2000?
+ * var result = getDaysInMonth(new Date(2000, 1))
+ * //=> 29
+ */
+
+
+function getDaysInMonth(dirtyDate) {
+  var date = parse(dirtyDate);
+  var year = date.getFullYear();
+  var monthIndex = date.getMonth();
+  var lastDayOfMonth = new Date(0);
+  lastDayOfMonth.setFullYear(year, monthIndex + 1, 0);
+  lastDayOfMonth.setHours(0, 0, 0, 0);
+  return lastDayOfMonth.getDate();
+}
+
+module.exports = getDaysInMonth;
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var addDays = __webpack_require__(73);
+/**
+ * @category Week Helpers
+ * @summary Add the specified number of weeks to the given date.
+ *
+ * @description
+ * Add the specified number of week to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of weeks to be added
+ * @returns {Date} the new date with the weeks added
+ *
+ * @example
+ * // Add 4 weeks to 1 September 2014:
+ * var result = addWeeks(new Date(2014, 8, 1), 4)
+ * //=> Mon Sep 29 2014 00:00:00
+ */
+
+
+function addWeeks(dirtyDate, dirtyAmount) {
+  var amount = Number(dirtyAmount);
+  var days = amount * 7;
+  return addDays(dirtyDate, days);
+}
+
+module.exports = addWeeks;
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var parse = __webpack_require__(65);
+/**
+ * @category Day Helpers
+ * @summary Add the specified number of days to the given date.
+ *
+ * @description
+ * Add the specified number of days to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of days to be added
+ * @returns {Date} the new date with the days added
+ *
+ * @example
+ * // Add 10 days to 1 September 2014:
+ * var result = addDays(new Date(2014, 8, 1), 10)
+ * //=> Thu Sep 11 2014 00:00:00
+ */
+
+
+function addDays(dirtyDate, dirtyAmount) {
+  var date = parse(dirtyDate);
+  var amount = Number(dirtyAmount);
+  date.setDate(date.getDate() + amount);
+  return date;
+}
+
+module.exports = addDays;
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var addMilliseconds = __webpack_require__(64);
+
+var MILLISECONDS_IN_HOUR = 3600000;
+/**
+ * @category Hour Helpers
+ * @summary Add the specified number of hours to the given date.
+ *
+ * @description
+ * Add the specified number of hours to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of hours to be added
+ * @returns {Date} the new date with the hours added
+ *
+ * @example
+ * // Add 2 hours to 10 July 2014 23:00:00:
+ * var result = addHours(new Date(2014, 6, 10, 23, 0), 2)
+ * //=> Fri Jul 11 2014 01:00:00
+ */
+
+function addHours(dirtyDate, dirtyAmount) {
+  var amount = Number(dirtyAmount);
+  return addMilliseconds(dirtyDate, amount * MILLISECONDS_IN_HOUR);
+}
+
+module.exports = addHours;
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var addMilliseconds = __webpack_require__(64);
+/**
+ * @category Second Helpers
+ * @summary Add the specified number of seconds to the given date.
+ *
+ * @description
+ * Add the specified number of seconds to the given date.
+ *
+ * @param {Date|String|Number} date - the date to be changed
+ * @param {Number} amount - the amount of seconds to be added
+ * @returns {Date} the new date with the seconds added
+ *
+ * @example
+ * // Add 30 seconds to 10 July 2014 12:45:00:
+ * var result = addSeconds(new Date(2014, 6, 10, 12, 45, 0), 30)
+ * //=> Thu Jul 10 2014 12:45:30
+ */
+
+
+function addSeconds(dirtyDate, dirtyAmount) {
+  var amount = Number(dirtyAmount);
+  return addMilliseconds(dirtyDate, amount * 1000);
+}
+
+module.exports = addSeconds;
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // This file holds code to hande the FHIRPath Math functions.
 var util = __webpack_require__(55);
 
-var deepEqual = __webpack_require__(61);
+var deepEqual = __webpack_require__(77);
 
+var types = __webpack_require__(62);
+
+var FP_Type = types.FP_Type;
+var FP_DateTime = types.FP_DateTime;
+var FP_Time = types.FP_Time;
 var engine = {};
 
 function equality(x, y) {
@@ -17588,7 +19381,8 @@ engine.equal = function (a, b) {
 };
 
 engine.unequal = function (a, b) {
-  return !equality(a, b);
+  var eq = equality(a, b);
+  return eq === undefined ? undefined : !eq;
 };
 
 engine.equival = function (a, b) {
@@ -17598,57 +19392,94 @@ engine.equival = function (a, b) {
 engine.unequival = function (a, b) {
   return !equivalence(a, b);
 };
+/**
+ *  Checks that the types of a and b are suitable for comparison in an
+ *  inequality expression.  It is assumed that a check has already been made
+ *  that there is at least one value in a and b.
+ * @param a the left side of the inequality expression (which should be an array of
+ *  one value).
+ * @param b the right side of the inequality expression (which should be an array of
+ *  one value).
+ * @return the singleton values of the arrays a, and b.  If one was an FP_Type
+ *  and the other was convertible, the coverted value will be retureed.
+ */
+
 
 function typecheck(a, b) {
+  var rtn = null;
   util.assertAtMostOne(a, "Singleton was expected");
   util.assertAtMostOne(b, "Singleton was expected");
   a = a[0];
   b = b[0];
+  var lClass = a.constructor;
+  var rClass = b.constructor;
 
-  var lType = _typeof(a);
+  if (lClass != rClass) {
+    // See if one is an FPDateTime or FTTime while the other is a string.
+    var d;
 
-  var rType = _typeof(b);
+    if (lClass === String && (rClass === FP_DateTime || rClass === FP_Time)) {
+      d = rClass.checkString(a);
+      if (d) rtn = [d, b];
+    } else if (rClass === String && (lClass === FP_DateTime || lClass === FP_Time)) {
+      d = lClass.checkString(b);
+      if (d) rtn = [a, d];
+    }
 
-  if (lType != rType) {
-    util.raiseError('Type of "' + a + '" did not match type of "' + b + '"', 'InequalityExpression');
+    if (!rtn) {
+      util.raiseError('Type of "' + a + '" (' + lClass.name + ') did not match type of "' + b + '" (' + rClass.name + ')', 'InequalityExpression');
+    }
   }
+
+  return rtn ? rtn : [a, b];
 }
 
 engine.lt = function (a, b) {
   if (!a.length || !b.length) return [];
-  typecheck(a, b);
-  return a[0] < b[0];
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) == -1 : a0 < b0;
 };
 
 engine.gt = function (a, b) {
   if (!a.length || !b.length) return [];
-  typecheck(a, b);
-  return a[0] > b[0];
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) == 1 : a0 > b0;
 };
 
 engine.lte = function (a, b) {
   if (!a.length || !b.length) return [];
-  typecheck(a, b);
-  return a[0] <= b[0];
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) <= 0 : a0 <= b0;
 };
 
 engine.gte = function (a, b) {
   if (!a.length || !b.length) return [];
-  typecheck(a, b);
-  return a[0] >= b[0];
+  var vals = typecheck(a, b);
+  var a0 = vals[0];
+  var b0 = vals[1];
+  return a0 instanceof FP_Type ? a0.compare(b0) >= 0 : a0 >= b0;
 };
 
 module.exports = engine;
 
 /***/ }),
-/* 61 */
-/***/ (function(module, exports) {
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
+var types = __webpack_require__(62);
+
+var FP_Type = types.FP_Type;
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
 
@@ -17759,13 +19590,49 @@ var deepEqual = function deepEqual(actual, expected, opts) {
     return actual.getTime() === expected.getTime(); // 7.3. Other pairs that do not both pass typeof value == 'object',
     // equivalence is determined by ==.
   } else if (!actual || !expected || _typeof(actual) != 'object' && _typeof(expected) != 'object') {
-    return opts.strict ? actual === expected : actual == expected; // 7.4. For all other Object pairs, including Array objects, equivalence is
+    return opts.strict ? actual === expected : actual == expected;
+  } else {
+    var actualIsFPT = actual instanceof FP_Type;
+    var expectedIsFPT = expected instanceof FP_Type;
+
+    if (actualIsFPT && expectedIsFPT) {
+      // if both are FP_Type
+      var rtn = opts.fuzzy ? actual.equivalentTo(expected) : actual.equals(expected); // May return undefined
+
+      return rtn;
+    } else if (actualIsFPT || expectedIsFPT) {
+      // if only one is an FP_Type
+      // See if the other is convertible.
+      var fpt, nonFPT;
+
+      if (actualIsFPT) {
+        fpt = actual;
+        nonFPT = expected;
+      } else {
+        fpt = expected;
+        nonFPT = actual;
+      }
+
+      var _rtn = typeof nonFPT === 'string';
+
+      if (_rtn) {
+        var d = fpt.constructor.checkString(nonFPT);
+
+        if (d) {
+          _rtn = opts.fuzzy ? actual.equivalentTo(d) : fpt.equals(d); // May return undefined
+        } else _rtn = false; // not a date string
+
+      }
+
+      return _rtn;
+    } // 7.4. For all other Object pairs, including Array objects, equivalence is
     // determined by having the same number of owned properties (as verified
     // with Object.prototype.hasOwnProperty.call), the same set of keys
     // (although not necessarily the same order), equivalent values for every
     // corresponding key, and an identical 'prototype' property. Note: this
     // accounts for both named and indexed properties on Arrays.
-  } else {
+
+
     return objEquiv(actual, expected, opts);
   }
 };
@@ -17806,7 +19673,14 @@ function objEquiv(a, b, opts) {
     if (ka[i] != kb[i]) return false;
   } //equivalent values for every corresponding key, and
   //~~~possibly expensive deep test
+  // If the length of the array is one, return the value of deepEqual (which can
+  // be "undefined".
 
+
+  if (ka.length === 1) {
+    key = ka[0];
+    return deepEqual(a[key], b[key], opts);
+  }
 
   for (i = ka.length - 1; i >= 0; i--) {
     key = ka[i];
@@ -17839,11 +19713,11 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /***/ }),
-/* 62 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var deepEqual = __webpack_require__(61);
+var deepEqual = __webpack_require__(77);
 
 var engine = {}; // b is assumed to have one element and it tests whether b[0] is in a
 
@@ -17896,15 +19770,39 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 63 */
-/***/ (function(module, exports) {
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
+var types = __webpack_require__(62);
 
+var FP_TimeBase = types.FP_TimeBase;
+var FP_Quantity = types.FP_Quantity;
 /**
  *  Adds the math functions to the given FHIRPath engine.
  */
+
 var engine = {};
+
+function ensureNumberSingleton(x) {
+  if (typeof x != 'number') {
+    if (x.length == 1 && typeof x[0] == 'number') {
+      return x[0];
+    } else {
+      throw new Error("Expected number, but got " + JSON.stringify(x));
+    }
+  } else {
+    return x;
+  }
+}
+
+function isEmpty(x) {
+  if (typeof x == 'number') {
+    return false;
+  }
+
+  return x.length == 0;
+}
 
 engine.amp = function (x, y) {
   return (x || "") + (y || "");
@@ -17922,6 +19820,10 @@ engine.plus = function (xs, ys) {
 
     if (typeof x == "number" && typeof y == "number") {
       return x + y;
+    }
+
+    if (x instanceof FP_TimeBase && y instanceof FP_Quantity) {
+      return x.plus(y);
     }
   }
 
@@ -17948,10 +19850,118 @@ engine.mod = function (x, y) {
   return x % y;
 };
 
+engine.abs = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.abs(num);
+  }
+};
+
+engine.ceiling = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.ceil(num);
+  }
+};
+
+engine.exp = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.exp(num);
+  }
+};
+
+engine.floor = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.floor(num);
+  }
+};
+
+engine.ln = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.log(num);
+  }
+};
+
+engine.log = function (x, base) {
+  if (isEmpty(x) || isEmpty(base)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    var num2 = ensureNumberSingleton(base);
+    return Math.log(num) / Math.log(num2);
+  }
+};
+
+engine.power = function (x, degree) {
+  if (isEmpty(x) || isEmpty(degree)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    var num2 = ensureNumberSingleton(degree);
+
+    if (num < 0 && Math.floor(num2) != num2) {
+      return [];
+    } else {
+      return Math.pow(num, num2);
+    }
+  }
+};
+
+engine.round = function (x, acc) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+
+    if (isEmpty(acc)) {
+      return Math.round(num);
+    } else {
+      var num2 = ensureNumberSingleton(acc);
+      var degree = Math.pow(10, num2);
+      return Math.round(num * degree) / degree;
+    }
+  }
+};
+
+engine.sqrt = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    if (x < 0) {
+      return [];
+    } else {
+      var num = ensureNumberSingleton(x);
+      return Math.sqrt(num);
+    }
+  }
+};
+
+engine.truncate = function (x) {
+  if (isEmpty(x)) {
+    return [];
+  } else {
+    var num = ensureNumberSingleton(x);
+    return Math.trunc(num);
+  }
+};
+
 module.exports = engine;
 
 /***/ }),
-/* 64 */
+/* 80 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18014,7 +20024,7 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 65 */
+/* 81 */
 /***/ (function(module, exports) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -18058,19 +20068,57 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 66 */
-/***/ (function(module, exports) {
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
 
 var engine = {};
 
-engine.now = function () {};
+var types = __webpack_require__(62);
 
-engine.today = function () {};
+var constants = __webpack_require__(57);
+
+var FP_DateTime = types.FP_DateTime;
+/**
+ *  Implements FHIRPath now().
+ */
+
+engine.now = function () {
+  if (!constants.now) {
+    // return new FP_DateTime((new Date()).toISOString());
+    // The above would construct an FP_DateTime with a timezone of "Z", which
+    // would not make a difference for computation, but if the end result of an
+    // expression is "now()", then it would look different when output to a user.
+    // Construct it ourselves to preserve timezone
+    var now = constants.nowDate; // a JS Date
+
+    var isoStr = FP_DateTime.isoDateTime(now);
+    constants.now = new FP_DateTime(isoStr);
+  }
+
+  return constants.now;
+};
+/**
+ *  Implements FHIRPath today().  See comments in now(). This does not
+ *  include a timezone offset.
+ */
+
+
+engine.today = function () {
+  if (!constants.today) {
+    // Construct the string ourselves to preserve timezone
+    var now = constants.nowDate; // a JS Date
+
+    var isoStr = FP_DateTime.isoDate(now);
+    constants.today = new FP_DateTime(isoStr);
+  }
+
+  return constants.today;
+};
 
 module.exports = engine;
 
 /***/ }),
-/* 67 */
+/* 83 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -18155,7 +20203,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 68 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18849,7 +20897,7 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 69 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19009,7 +21057,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 70 */
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19826,7 +21874,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 71 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20370,7 +22418,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 72 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21316,7 +23364,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 73 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21445,7 +23493,7 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 74 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

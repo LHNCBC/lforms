@@ -124,7 +124,7 @@ var TestPage = function() {
     btnAnotherFamily2: element(by.id('add-/54114-4/2')),
     btnAnotherDiseasesHist2: element(by.id('add-/54114-4/54117-7/2/1')),
   };
-  USSGFHTVertical.name = element(by.id('/54126-8/54125-0/1/1'));
+  USSGFHTVertical.name = element(by.id(USSGFHTVertical.nameID));
 
 
   Object.assign(rtnObj, {
