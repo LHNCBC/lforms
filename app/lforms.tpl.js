@@ -644,12 +644,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </thead>\n" +
     "      <tbody>\n" +
     "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" +
+    "         ng-init=\"firstItem = item.items[0] ; item = subItem\"\n" +
     "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" +
     "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" +
     "        <td class=\"lf-question\">\n" +
     "          <div class=\"lf-de-label\">\n" +
     "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
-    "             for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" +
+    "             for=\"{{subItem._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" +
     "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" +
@@ -681,7 +682,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </button>\n" +
     "          </div>\n" +
     "        </td>\n" +
-    "        <td ng-repeat=\"answer in item.items[0].answers\"\n" +
+    "        <td ng-repeat=\"answer in firstItem.answers\"\n" +
     "         class=\"lf-form-matrix-cell\">\n" +
     "          <span class=\"lf-form-matrix-answer\">\n" +
     "            <label ng-if=\"subItem._multipleAnswers\">\n" +

@@ -660,7 +660,20 @@
                     ],
                     "required": false,
                     "linkId": "/g4/g1m2",
+                    "prefix": "J.",
+                    "_prefix": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-weight: bold"
+                      }]
+                    },
                     "text": "Question #2",
+                    "_text": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-style: italic"
+                      }]
+                    },
                     "answerOption": [
                         {
                             "valueCoding": {
