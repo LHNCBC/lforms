@@ -22019,7 +22019,8 @@ function addCommonSDCExportFns(ns) {
     this.copyFields(source, target, this.formLevelFields); // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
 
-    target.name = source.fhirQName;
+    target.name = source.shortName; // computer friendly
+
     target.title = source.name; // Handle extensions on title
 
     if (source.obj_title) target._title = source.obj_title;
@@ -23404,7 +23405,8 @@ function addCommonSDCImportFns(ns) {
     self.copyFields(questionnaire, lfData, self.formLevelFields); // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
 
-    lfData.fhirQName = questionnaire.name;
+    lfData.shortName = questionnaire.name; // computer friendly
+
     lfData.name = questionnaire.title; // Handle extensions on title
 
     if (questionnaire._title) lfData.obj_title = questionnaire._title; // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList

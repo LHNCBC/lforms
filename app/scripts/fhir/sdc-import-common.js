@@ -113,7 +113,7 @@ function addCommonSDCImportFns(ns) {
 
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
-    lfData.fhirQName = questionnaire.name;
+    lfData.shortName = questionnaire.name; // computer friendly
     lfData.name = questionnaire.title;
 
     // Handle extensions on title

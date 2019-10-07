@@ -298,7 +298,7 @@ function addCommonSDCExportFns(ns) {
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
-    target.name = source.fhirQName;
+    target.name = source.shortName; // computer friendly
     target.title = source.name;
 
     // Handle extensions on title
