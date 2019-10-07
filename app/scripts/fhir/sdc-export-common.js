@@ -248,6 +248,23 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
+   * Process an item's externally defined answer list
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleExternallyDefined = function(targetItem, item) {
+    if (item.externallyDefined) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+        "valueUri": item.externallyDefined
+      });
+    }
+  };
+
+
+  /**
    * Remove repeating items in a form data object
    * @param source a LForms form data object
    * @private

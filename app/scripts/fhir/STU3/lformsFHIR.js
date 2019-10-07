@@ -21347,24 +21347,8 @@ var self = {
   },
 
   /**
-   * Process an item's externally defined answer list
-   * @param targetItem a QuestionnaireResponse object
-   * @param item an item in the LForms form object
-   * @returns {*}
-   * @private
-   */
-  _handleExternallyDefined: function _handleExternallyDefined(targetItem, item) {
-    if (item.externallyDefined) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
-        "valueUri": item.externallyDefined
-      });
-    }
-  },
-
-  /**
    *  Processes settings for a list field with choices.
-   * @param targetItem a QuestionnaireResponse object
+   * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
    *        The default is false.
@@ -21989,10 +21973,26 @@ function addCommonSDCExportFns(ns) {
     return targetItem;
   },
   /**
+   * Process an item's externally defined answer list
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleExternallyDefined = function (targetItem, item) {
+    if (item.externallyDefined) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+        "valueUri": item.externallyDefined
+      });
+    }
+  };
+  /**
    * Remove repeating items in a form data object
    * @param source a LForms form data object
    * @private
    */
+
   self._removeRepeatingItems = function (source) {
     if (source.items && Array.isArray(source.items)) {
       for (var i = source.items.length - 1; i >= 0; i--) {
@@ -22013,6 +22013,7 @@ function addCommonSDCExportFns(ns) {
    *        The default is false.
    * @private
    */
+
 
   self._setFormLevelFields = function (target, source, noExtensions) {
     this.copyFields(source, target, this.formLevelFields); // Handle title and name.  In LForms, "name" is the "title", but FHIR

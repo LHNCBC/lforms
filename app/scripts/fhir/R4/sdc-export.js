@@ -271,25 +271,8 @@ var self = {
 
 
   /**
-   * Process an item's externally defined answer list
-   * @param targetItem a QuestionnaireResponse object
-   * @param item an item in the LForms form object
-   * @returns {*}
-   * @private
-   */
-  _handleExternallyDefined: function(targetItem, item) {
-    if (item.externallyDefined) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
-        "valueUri": item.externallyDefined
-      });
-    }
-  },
-
-
-  /**
    *  Processes settings for a list field with choices.
-   * @param targetItem a QuestionnaireResponse object
+   * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
    * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
    *        The default is false.
