@@ -98,6 +98,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
 /* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(89);
 /* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(90);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(91);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -121,6 +122,8 @@ Object(_sdc_import_js__WEBPACK_IMPORTED_MODULE_5__["default"])(fhir.SDC);
 Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_6__["default"])(fhir.SDC);
 
 Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__["default"])(fhir.SDC);
+
+Object(_runtime_common_js__WEBPACK_IMPORTED_MODULE_8__["addCommonRuntimeFns"])(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -21144,35 +21147,11 @@ var self = {
   },
 
   /**
-   * Process an item of the form
-   * @param item an item in LForms form object
-   * @param source a LForms form object
-   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
-   *        The default is false.
-   * @returns {{}}
-   * @private
+   *  Proceses the LForms questionCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
    */
-  _processItem: function _processItem(item, source, noExtensions) {
-    var targetItem = {}; // type
-
-    targetItem.type = this._getFhirDataType(item); // id (empty for new record)
-    // code
-
-    targetItem.code = item.codeList; // extension
-
-    targetItem.extension = []; // required
-
-    targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
-
-    if (targetItem.required) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-        "valueInteger": parseInt(item.questionCardinality.min)
-      });
-    } // question repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-
-
+  _processQuestionCardinality: function _processQuestionCardinality(targetItem, item) {
     if (item.questionCardinality) {
       if (item.questionCardinality.max === "*") {
         targetItem.repeats = true;
@@ -21185,119 +21164,19 @@ var self = {
       }
     } else {
       targetItem.repeats = false;
-    } // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-
-
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    } // calcuatedValue
-
-
-    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
-
-    this._handleItemControl(targetItem, item); // questionnaire-choiceOrientation , not supported yet
-    // check restrictions
-
-
-    this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
-    // looks like tooltip, TBD
-
-
-    if (item._isHidden) {
-      targetItem.extension.push({
-        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
-        valueBoolean: true
-      });
-    } // linkId
-
-
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // prefix
-
-    if (item.prefix) {
-      targetItem.prefix = item.prefix;
-    } // text
-
-
-    targetItem.text = item.question; // enableWhen
-
-    if (item.skipLogic) {
-      this._handleSkipLogic(targetItem, item, source);
-    } // repeats, handled above
-    // readonly, (editable)
-
-
-    if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
-      targetItem.readOnly = true;
-    } // an extension for the search url of the auto-complete field.
-
-
-    if (item.externallyDefined) {
-      this._handleExternallyDefined(targetItem, item);
-    } // option, for answer list
-    else if (item.answers && !item.answerValueSet) {
-        targetItem.option = this._handleAnswers(item, noExtensions);
-      } else if (item.answerValueSet) targetItem.options = item.answerValueSet;
-
-    self._handleTerminologyServer(targetItem, item); // initialValue, for default values
-
-
-    this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Handle units after handling initial values.
-
-
-    if (item.units) {
-      this._handleLFormsUnits(targetItem, item);
     }
+  },
 
-    if (item.items && Array.isArray(item.items)) {
-      targetItem.item = [];
-
-      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-        var newItem = this._processItem(item.items[i], source, noExtensions);
-
-        targetItem.item.push(newItem);
-      }
-    } // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
-    // it is added as a sub item of this item.
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory, for instructions
-
-
-    if (item.codingInstructions) {
-      var helpItem = {
-        text: item.codingInstructions,
-        type: "display",
-        linkId: targetItem.linkId + "-help",
-        extension: [{
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
-          "valueCodeableConcept": {
-            "text": "Help-Button",
-            "coding": [{
-              "code": "help",
-              "display": "Help-Button",
-              "system": "http://hl7.org/fhir/questionnaire-item-control"
-            }]
-          }
-        }]
-      };
-
-      if (Array.isArray(targetItem.item)) {
-        targetItem.item.push(helpItem);
-      } else {
-        targetItem.item = [helpItem];
-      }
-    } // handle special constraints for "display" item
-
-
-    this._handleSpecialConstraints(targetItem, item); // if no extensions are allowed or there is no extension, remove it
-
-
-    if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
-    return targetItem;
+  /**
+   *  Processes FHIRPath and related item extensions (e.g. for pre-population
+   *  and extraction.)
+   *
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+  _processFHIRPathExtensions: function _processFHIRPathExtensions(targetItem, item) {
+    // calcuatedValue
+    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
   },
 
   /**
@@ -21468,19 +21347,20 @@ var self = {
   },
 
   /**
-   * Process an item's externally defined answer list
-   * @param targetItem a QuestionnaireResponse object
+   *  Processes settings for a list field with choices.
+   * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
-   * @returns {*}
-   * @private
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
    */
-  _handleExternallyDefined: function _handleExternallyDefined(targetItem, item) {
+  _handleChoiceField: function _handleChoiceField(targetItem, item, noExtensions) {
+    // an extension for the search url of the auto-complete field.
     if (item.externallyDefined) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
-        "valueUri": item.externallyDefined
-      });
-    }
+      this._handleExternallyDefined(targetItem, item);
+    } // option, for answer list
+    else if (item.answers && !item.answerValueSet) {
+        targetItem.option = this._handleAnswers(item, noExtensions);
+      } else if (item.answerValueSet) targetItem.options = item.answerValueSet;
   },
 
   /**
@@ -21934,11 +21814,184 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
+   * Process an item of the form
+   * @param item an item in LForms form object
+   * @param source a LForms form object
+   * @param noExtensions a flag that a standard FHIR Questionnaire is to be created without any extensions.
+   *        The default is false.
+   * @returns {{}}
+   * @private
+   */
+
+
+  self._processItem = function (item, source, noExtensions) {
+    var targetItem = {}; // type
+
+    targetItem.type = this._getFhirDataType(item); // id (empty for new record)
+    // code
+
+    targetItem.code = item.codeList; // extension
+
+    targetItem.extension = []; // required
+
+    targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
+
+    if (targetItem.required) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+        "valueInteger": parseInt(item.questionCardinality.min)
+      });
+    } // question repeats
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
+
+
+    this._processQuestionCardinality(targetItem, item); // answer repeats
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
+
+
+    if (item.answerCardinality) {
+      if (item.answerCardinality.max === "*") {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
+          "valueBoolean": true
+        });
+      }
+    } // Copied FHIRPath-related (pre-pop & extraction) extensions
+
+
+    this._processFHIRPathExtensions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+
+
+    this._handleItemControl(targetItem, item); // check restrictions
+
+
+    this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
+    // looks like tooltip, TBD
+
+
+    if (item._isHidden) {
+      targetItem.extension.push({
+        url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
+        valueBoolean: true
+      });
+    } // linkId
+
+
+    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // Text & prefix
+
+    targetItem.text = item.question;
+
+    if (item.prefix) {
+      targetItem.prefix = item.prefix;
+    } // Copy item extensions
+
+
+    for (var _i = 0, _arr = ['_prefix', '_text']; _i < _arr.length; _i++) {
+      var extField = _arr[_i];
+      var extFieldData = item['obj' + extField];
+      if (extFieldData) targetItem[extField] = extFieldData;
+    } // enableWhen
+
+
+    if (item.skipLogic) {
+      this._handleSkipLogic(targetItem, item, source);
+    } // repeats, handled above
+    // readonly, (editable)
+
+
+    if (item.dataType !== "SECTION" && item.dataType !== "TITLE" && item.editable === "0") {
+      targetItem.readOnly = true;
+    }
+
+    this._handleChoiceField(targetItem, item, noExtensions);
+
+    this._handleTerminologyServer(targetItem, item); // initialValue, for default values
+
+
+    this._handleInitialValues(targetItem, item); // add LForms Extension to units list. Process units after handling initial values.
+
+
+    if (item.units) {
+      this._handleLFormsUnits(targetItem, item);
+    }
+
+    if (item.items && Array.isArray(item.items)) {
+      targetItem.item = [];
+
+      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+        var newItem = this._processItem(item.items[i], source, noExtensions);
+
+        targetItem.item.push(newItem);
+      }
+    } // the coding instruction is a sub item with a "display" type, and an item-control value as "help"
+    // it is added as a sub item of this item.
+    // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl, for instructions
+
+
+    if (item.codingInstructions) {
+      var helpItem = {
+        "text": item.codingInstructionsPlain ? item.codingInstructionsPlain : item.codingInstructions,
+        "type": "display",
+        "linkId": targetItem.linkId + "-help",
+        "extension": [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "text": "Help-Button",
+            "coding": [{
+              "code": "help",
+              "display": "Help-Button",
+              "system": "http://hl7.org/fhir/questionnaire-item-control"
+            }]
+          }
+        }]
+      }; // format could be 'html' or 'text'
+
+      if (item.codingInstructionsFormat === 'html') {
+        // add a "_text" field to contain the extension for the string value in the 'text' field
+        // see http://hl7.org/fhir/R4/json.html#primitive
+        helpItem._text = {
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/rendering-xhtml",
+            "valueString": item.codingInstructions
+          }]
+        };
+      }
+
+      if (Array.isArray(targetItem.item)) {
+        targetItem.item.push(helpItem);
+      } else {
+        targetItem.item = [helpItem];
+      }
+    } // handle special constraints for "display" item
+
+
+    this._handleSpecialConstraints(targetItem, item); // if no extensions are allowed or there is no extension, remove it
+
+
+    if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
+    this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
+    return targetItem;
+  },
+  /**
+   * Process an item's externally defined answer list
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleExternallyDefined = function (targetItem, item) {
+    if (item.externallyDefined) {
+      targetItem.extension.push({
+        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
+        "valueUri": item.externallyDefined
+      });
+    }
+  };
+  /**
    * Remove repeating items in a form data object
    * @param source a LForms form data object
    * @private
    */
-
 
   self._removeRepeatingItems = function (source) {
     if (source.items && Array.isArray(source.items)) {
@@ -21963,7 +22016,14 @@ function addCommonSDCExportFns(ns) {
 
 
   self._setFormLevelFields = function (target, source, noExtensions) {
-    this.copyFields(source, target, this.formLevelFields);
+    this.copyFields(source, target, this.formLevelFields); // Handle title and name.  In LForms, "name" is the "title", but FHIR
+    // defines both.
+
+    target.name = source.shortName; // computer friendly
+
+    target.title = source.name; // Handle extensions on title
+
+    if (source.obj_title) target._title = source.obj_title;
     target.code = source.codeList; // resourceType
 
     target.resourceType = "Questionnaire";
@@ -22407,29 +22467,6 @@ function addSDCImportFns(ns) {
   var self = ns;
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
-   * @private
-   */
-
-  self._processFormLevelFields = function (lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields);
-
-    if (questionnaire.code) {
-      // Rename questionnaire code to codeList
-      lfData.codeList = questionnaire.code;
-    }
-
-    var codeAndSystemObj = self._getCode(questionnaire);
-
-    if (codeAndSystemObj) {
-      lfData.code = codeAndSystemObj.code;
-      lfData.codeSystem = codeAndSystemObj.system;
-    }
-  };
-  /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
    * @return when there are contained value sets, returns a hash from "#<ValueSet.id>" (the character "#"
@@ -22439,7 +22476,6 @@ function addSDCImportFns(ns) {
    *         returns undefined if no contained value set is present.
    * @private
    */
-
 
   self._extractContainedVS = function (questionnaire) {
     var answersVS;
@@ -22481,13 +22517,11 @@ function addSDCImportFns(ns) {
 
 
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
-    var targetItem = {}; // prefix
-
-    if (qItem.prefix) targetItem.prefix = qItem.prefix; // text
-
-    targetItem.question = qItem.text; //A lot of parsing depends on data type. Extract it first.
+    var targetItem = {}; //A lot of parsing depends on data type. Extract it first.
 
     self._processDataType(targetItem, qItem);
+
+    self._processTextAndPrefix(targetItem, qItem);
 
     self._processCodeAndLinkId(targetItem, qItem);
 
@@ -22495,7 +22529,7 @@ function addSDCImportFns(ns) {
 
     _processEditable(targetItem, qItem);
 
-    _processQuestionCardinality(targetItem, qItem);
+    self._processFHIRQCardinality(targetItem, qItem);
 
     _processAnswerCardinality(targetItem, qItem);
 
@@ -22519,22 +22553,7 @@ function addSDCImportFns(ns) {
 
     _processCalculatedValue(targetItem, qItem);
 
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-
-      for (var i = 0; i < qItem.item.length; i++) {
-        var help = _processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
-
-
-        if (help !== null) {
-          targetItem.codingInstructions = help.codingInstructions;
-        } else {
-          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-
-          targetItem.items.push(item);
-        }
-      }
-    }
+    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
   };
@@ -22832,63 +22851,6 @@ function addSDCImportFns(ns) {
         lfItem.questionCode = codes[codes.length - 1];
       }
     }
-  }
-  /**
-   * Parse questionnaire item for question cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign question cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processQuestionCardinality(lfItem, qItem) {
-    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-
-    if (min) {
-      lfItem.questionCardinality = {
-        min: min.valueInteger.toString()
-      };
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-
-      if (max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      } else if (qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
-      }
-    } else if (qItem.repeats) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "*"
-      };
-    } else if (qItem.required) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "1"
-      };
-    }
-  }
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  function _processCodingInstructions(qItem) {
-    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
-    // which in LForms is an attribute of the parent item, not a separate item.
-    var ret = null;
-    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-
-    if (qItem.type === "display" && ci) {
-      ret = {
-        codingInstructions: qItem.text
-      };
-    }
-
-    return ret;
   }
   /**
    * Parse questionnaire item for restrictions
@@ -23391,7 +23353,7 @@ function addCommonSDCImportFns(ns) {
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
-  'date', 'version', 'title', 'name', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
+  'date', 'version', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
   'subjectType', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
   self.itemLevelIgnoredFields = ['definition', 'prefix'];
@@ -23429,6 +23391,44 @@ function addCommonSDCImportFns(ns) {
     }
 
     return target;
+  };
+  /**
+   * Parse form level fields from FHIR questionnaire and assign to LForms object.
+   *
+   * @param lfData - LForms object to assign the extracted fields
+   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
+   * @private
+   */
+
+
+  self._processFormLevelFields = function (lfData, questionnaire) {
+    self.copyFields(questionnaire, lfData, self.formLevelFields); // Handle title and name.  In LForms, "name" is the "title", but FHIR
+    // defines both.
+
+    lfData.shortName = questionnaire.name; // computer friendly
+
+    lfData.name = questionnaire.title; // Handle extensions on title
+
+    if (questionnaire._title) lfData.obj_title = questionnaire._title; // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
+    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
+    // into questionnaire.code. While importing, convert first of questionnaire.code
+    // as lforms.code, and copy questionnaire.code to lforms.codeList.
+
+    if (questionnaire.code) {
+      // Rename questionnaire code to codeList
+      lfData.codeList = questionnaire.code;
+    }
+
+    var codeAndSystemObj = self._getCode(questionnaire);
+
+    if (codeAndSystemObj) {
+      lfData.code = codeAndSystemObj.code;
+      lfData.codeSystem = codeAndSystemObj.system;
+    } // form-level variables (really only R4+)
+
+
+    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url', self.fhirExtVariable, 0, true);
+    if (ext.length > 0) lfData._variableExt = ext;
   };
   /**
    *  Returns the number of sinificant digits in the number after, ignoring
@@ -23639,6 +23639,25 @@ function addCommonSDCImportFns(ns) {
     return ret;
   };
   /**
+   *  Process the text and prefix data.
+   * @param lfItem {object} - LForms item object to receive the data
+   * @param qItem {object} - Questionnaire item object (as the source)
+   */
+
+
+  self._processTextAndPrefix = function (lfItem, qItem) {
+    // prefix
+    if (qItem.prefix) lfItem.prefix = qItem.prefix; // text
+
+    lfItem.question = qItem.text; // Copy item extensions
+
+    for (var _i = 0, _arr = ['_prefix', '_text']; _i < _arr.length; _i++) {
+      var extField = _arr[_i];
+      var extFieldData = qItem[extField];
+      if (extFieldData) lfItem['obj' + extField] = extFieldData;
+    }
+  };
+  /**
    * Parse questionnaire item for code and code system
    * @param lfItem {object} - LForms item object to assign question code
    * @param qItem {object} - Questionnaire item object
@@ -23663,6 +23682,41 @@ function addCommonSDCImportFns(ns) {
       }
 
     lfItem.linkId = qItem.linkId;
+  };
+  /**
+   * Parse questionnaire item for question cardinality
+   *
+   * @param lfItem {object} - LForms item object to assign question cardinality
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processFHIRQCardinality = function (lfItem, qItem) {
+    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
+
+    if (min) {
+      lfItem.questionCardinality = {
+        min: min.valueInteger.toString()
+      };
+      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+
+      if (max) {
+        lfItem.questionCardinality.max = min.valueInteger.toString();
+      } else if (qItem.repeats) {
+        lfItem.questionCardinality.max = '*';
+      }
+    } else if (qItem.repeats) {
+      lfItem.questionCardinality = {
+        min: "1",
+        max: "*"
+      };
+    } else if (qItem.required) {
+      lfItem.questionCardinality = {
+        min: "1",
+        max: "1"
+      };
+    }
   };
   /**
    * Parse questionnaire item for display control
@@ -24176,9 +24230,142 @@ function addCommonSDCImportFns(ns) {
 
     return retValue;
   };
+  /**
+   * Parse questionnaire item for coding instructions
+   *
+   * @param qItem {object} - Questionnaire item object
+   * @return {{}} an object contains the coding instructions info.
+   * @private
+   */
+
+
+  self._processCodingInstructions = function (qItem) {
+    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
+    // which in LForms is an attribute of the parent item, not a separate item.
+    var ret = null;
+    var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
+    var xhtmlFormat;
+
+    if (qItem.type === "display" && ci) {
+      // only "redering-xhtml" is supported. others are default to text
+      if (qItem._text) {
+        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
+      } // there is a xhtml extension
+
+
+      if (xhtmlFormat) {
+        ret = {
+          codingInstructionsFormat: "html",
+          codingInstructions: xhtmlFormat.valueString,
+          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+        };
+      } // no xhtml extension, default to 'text'
+      else {
+          ret = {
+            codingInstructionsFormat: "text",
+            codingInstructions: qItem.text,
+            codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
+
+          };
+        }
+    }
+
+    return ret;
+  };
+  /**
+   *  Processes the child items of the item.
+   * @param targetItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
+   * @param containedVS - contained ValueSet info, see _extractContainedVS() for data format details
+   */
+
+
+  self._processChildItems = function (targetItem, qItem, containedVS, linkIdItemMap) {
+    if (Array.isArray(qItem.item)) {
+      targetItem.items = [];
+
+      for (var i = 0; i < qItem.item.length; i++) {
+        var help = self._processCodingInstructions(qItem.item[i]); // pick one coding instruction if there are multiple ones in Questionnaire
+
+
+        if (help !== null) {
+          targetItem.codingInstructions = help.codingInstructions;
+          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
+          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
+        } else {
+          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
+
+          targetItem.items.push(item);
+        }
+      }
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
+
+/***/ }),
+/* 91 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(92);
+
+var extProcessors = {};
+extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
+function addCommonRuntimeFns(ns) {
+  var self = ns;
+
+  self.processExtensions = function (lfNode, lfFieldName) {
+    var fieldData = lfNode[lfFieldName]; // could be item or _text
+
+    if (fieldData) {
+      var extensions = fieldData.extension;
+
+      if (extensions) {
+        for (var i = 0, len = extensions.length; i < len; ++i) {
+          var extData = extensions[i];
+          var extURL = extData.url;
+          var processor = extProcessors[extURL];
+          if (processor) processor(lfNode, lfFieldName, extData);
+        }
+      }
+    }
+  };
+}
+
+/***/ }),
+/* 92 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var extURL = 'http://hl7.org/fhir/StructureDefinition/rendering-style';
+/**
+ *  A generic API for processing an extension found on some node in the
+ *  Questionnaire structure being imported.
+ *  (The parameter list will likely get more complicated in the future.)
+ * @param lfNode the node in the LFormsData structure on which the information
+ *  from the extension will be stored.
+ * @param fieldName the field name  on which the extension was found (e.g.
+ *  'item' or 'title').  This forms part of the field name on lfNode where the
+ *  data from the extension will be stored.
+ * @param extNode the extension's structure with its data.
+ */
+
+function processExtension(lfNode, fieldName, extNode) {
+  var css = extNode.valueString;
+  if (css) lfNode['_' + fieldName + 'CSS'] = css;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  extURL: extURL,
+  processExtension: processExtension
+});
 
 /***/ })
 /******/ ]);

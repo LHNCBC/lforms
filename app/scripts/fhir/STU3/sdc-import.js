@@ -19,27 +19,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
-   * @private
-   */
-  self._processFormLevelFields = function (lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields);
-    if(questionnaire.code) {
-      // Rename questionnaire code to codeList
-      lfData.codeList = questionnaire.code;
-    }
-    var codeAndSystemObj = self._getCode(questionnaire);
-    if(codeAndSystemObj) {
-      lfData.code = codeAndSystemObj.code;
-      lfData.codeSystem = codeAndSystemObj.system;
-    }
-  };
-
-
-  /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
    * @return when there are contained value sets, returns a hash from "#<ValueSet.id>" (the character "#"
@@ -87,17 +66,13 @@ function addSDCImportFns(ns) {
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
 
     var targetItem = {};
-    // prefix
-    if (qItem.prefix)
-      targetItem.prefix = qItem.prefix;
-    // text
-    targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     self._processDataType(targetItem, qItem);
+    self._processTextAndPrefix(targetItem, qItem);
     self._processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
-    _processQuestionCardinality(targetItem, qItem);
+    self._processFHIRQCardinality(targetItem, qItem);
     _processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
@@ -109,25 +84,9 @@ function addSDCImportFns(ns) {
     self._processTerminologyServer(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
     _processCalculatedValue(targetItem, qItem);
-
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-      for (var i=0; i < qItem.item.length; i++) {
-        var help = _processCodingInstructions(qItem.item[i]);
-        // pick one coding instruction if there are multiple ones in Questionnaire
-        if (help !== null) {
-          targetItem.codingInstructions = help.codingInstructions;
-        }
-        else {
-          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-          targetItem.items.push(item);
-        }
-      }
-    }
+    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
-
-
   };
 
 
@@ -401,54 +360,6 @@ function addSDCImportFns(ns) {
         lfItem.questionCode = codes[codes.length-1];
       }
     }
-  }
-
-
-  /**
-   * Parse questionnaire item for question cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign question cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _processQuestionCardinality(lfItem, qItem) {
-    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-    if(min) {
-      lfItem.questionCardinality = {min: min.valueInteger.toString()};
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-      if(max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      }
-      else if(qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
-      }
-    }
-    else if (qItem.repeats) {
-      lfItem.questionCardinality = {min: "1", max: "*"};
-    }
-    else if (qItem.required) {
-      lfItem.questionCardinality = {min: "1", max: "1"};
-    }
-  }
-
-
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _processCodingInstructions(qItem) {
-    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
-    // which in LForms is an attribute of the parent item, not a separate item.
-    let ret = null;
-    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    if ( qItem.type === "display" && ci ) {
-      ret = {
-        codingInstructions: qItem.text
-      }
-    }
-    return ret;
   }
 
 

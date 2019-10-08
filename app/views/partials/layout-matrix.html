@@ -2,7 +2,7 @@
   <div ng-attr-role="{{item.header ? 'heading' : undefined}}"
        ng-attr-aria-level="{{item.header ? item._displayLevel+1 : undefined}}"
        class="lf-form-matrix-table-title lf-de-label">
-    <span class="lf-question"><label id="label-{{ item._elementId }}">{{item._text}}</label></span>
+    <span class="lf-question"><label id="label-{{ item._elementId }}"><ng-include src="'itemPrefixAndText.html'"></label></span>
     <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
       <a ng-if="item._linkToDef" href="{{ item._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ item.questionCode }}]</a>
       <span ng-if="!item._linkToDef">[{{ item.questionCode }}]</span>
@@ -57,12 +57,13 @@
       </thead>
       <tbody>
       <tr ng-repeat="subItem in item.items" role="radiogroup"
+         ng-init="firstItem = item.items[0] ; item = subItem"
          aria-labeledby="label-{{subItem._elementId }}"
          aria-describedby="help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}">
         <td class="lf-question">
           <div class="lf-de-label">
             <span class="lf-question"><label id="label-{{ subItem._elementId }}"
-             for="{{subItem._elementId}}">{{subItem.question}}</label></span>
+             for="{{subItem._elementId}}"><ng-include src="'itemPrefixAndText.html'"></label></span>
             <span class="lf-item-code" ng-show="lfData.templateOptions.showQuestionCode">
               <a ng-if="subItem._linkToDef" href="{{ subItem._linkToDef }}" target="_blank" rel="noopener noreferrer">[{{ subItem.questionCode }}]</a>
               <span ng-if="!subItem._linkToDef">[{{ subItem.questionCode }}]</span>
@@ -94,7 +95,7 @@
             </button>
           </div>
         </td>
-        <td ng-repeat="answer in item.items[0].answers"
+        <td ng-repeat="answer in firstItem.answers"
          class="lf-form-matrix-cell">
           <span class="lf-form-matrix-answer">
             <label ng-if="subItem._multipleAnswers">
