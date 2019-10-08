@@ -354,7 +354,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"!item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" +
+    "  <div ng-if=\"item.dataType !=='TITLE' && !item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" +
     "    <!-- input field -->\n" +
     "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" +
     "      <ng-form name=\"innerForm2\">\n" +
