@@ -146,6 +146,12 @@
     ],
     "version": "0.0.0",
     "title": "Patient Health Questionnaire (PHQ-9)",
+    "_title": {
+      "extension": [{
+        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+        "valueString": "color: green; background-color: white"
+      }]
+    },
     "status": "draft",
     "date": "2018-07-26T00:00:00-07:00",
     "publisher": "Argonaut Project",
@@ -241,7 +247,19 @@
                         }
                     ],
                     "prefix": "2.",
+                    "_prefix": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-weight: bold"
+                      }]
+                    },
                     "text": "Feeling down, depressed, or hopeless,",
+                    "_text": {
+                      "extension": [{
+                        "url": "http://hl7.org/fhir/StructureDefinition/rendering-style",
+                        "valueString": "font-style: italic"
+                      }]
+                    },
                     "type": "choice",
                     "required": true,
                     "repeats": false,

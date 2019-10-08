@@ -2,6 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.1.1] 2019-10-08
+### FIxed
+- Display of item with TITLE data type is fixed without setting header flag.
+
+## [18.1.0] 2019-10-03
+### Added
+- Support for the FHIR "rendering-style" (CSS) extension on Questionnaire.title,
+  item.text, and item.prefix.  (Support on answer list text is still TBD).
+
 ## [18.0.5] 2019-09-30
 ### Fixed
 - Updated dependencies to get patches for a vulnerability.

@@ -1,4 +1,3 @@
-
 /**
  * LForms class for form definition data
  */
@@ -184,7 +183,7 @@
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR) {
+      if (LForms.FHIR && data.fhirVersion) {
         this._initializeFormFHIRData(data);
       }
 
@@ -233,6 +232,7 @@
       this._fhirVariables = {};
       this.extension = data.extension;
       this._variableExt = data._variableExt; // FHIR "variable" extensions
+      this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
 
 
@@ -1209,6 +1209,11 @@
         lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
            item._initialExprExt.valueExpression.language=="text/fhirpath");
       }
+
+      if (this._fhir) {
+        this._fhir.SDC.processExtensions(item, 'obj_text');
+        this._fhir.SDC.processExtensions(item, 'obj_prefix');
+      }
     },
 
 
@@ -1698,7 +1703,8 @@
 
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
-              columnHeaders.push({label: itemsInRow[j]._text, id: "col" + itemsInRow[j]._elementId, displayControl: itemsInRow[j].displayControl});
+              var itemInRow = itemsInRow[j];
+              columnHeaders.push({item: itemInRow, id: "col" + itemInRow._elementId, displayControl: itemInRow.displayControl});
               // indicate the item is in a horizontal table
               itemsInRow[j]._inHorizontalTable = true;
             }

@@ -18,38 +18,6 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse form level fields from FHIR questionnaire and assign to LForms object.
-   *
-   * @param lfData - LForms object to assign the extracted fields
-   * @param questionnaire - FHIR questionnaire resource object to parse for the fields.
-   * @private
-   */
-  self._processFormLevelFields = function(lfData, questionnaire) {
-    self.copyFields(questionnaire, lfData, self.formLevelFields);
-
-    // For backward compatibility, we keep lforms.code as it is, and use lforms.codeList
-    // for storing questionnaire.code. While exporting, merge lforms.code and lforms.codeList
-    // into questionnaire.code. While importing, convert first of questionnaire.code
-    // as lforms.code, and copy questionnaire.code to lforms.codeList.
-    if(questionnaire.code) {
-      // Rename questionnaire code to codeList
-      lfData.codeList = questionnaire.code;
-    }
-    var codeAndSystemObj = self._getCode(questionnaire);
-    if(codeAndSystemObj) {
-      lfData.code = codeAndSystemObj.code;
-      lfData.codeSystem = codeAndSystemObj.system;
-    }
-
-    // form-level variables
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
-      self.fhirExtVariable, 0, true);
-    if (ext.length > 0)
-      lfData._variableExt = ext;
-  };
-
-
-  /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
    * @return when there are contained value sets, returns a hash from the ValueSet url to the answers
@@ -90,17 +58,13 @@ function addSDCImportFns(ns) {
   self._processQuestionnaireItem = function (qItem, containedVS, linkIdItemMap) {
 
     var targetItem = {};
-    // prefix
-    if (qItem.prefix)
-      targetItem.prefix = qItem.prefix;
-    // text
-    targetItem.question = qItem.text;
     //A lot of parsing depends on data type. Extract it first.
     self._processDataType(targetItem, qItem);
+    self._processTextAndPrefix(targetItem, qItem);
     self._processCodeAndLinkId(targetItem, qItem);
     self._processDisplayItemCode(targetItem, qItem);
     self._processEditable(targetItem, qItem);
-    self._processQuestionCardinality(targetItem, qItem);
+    self._processFHIRQCardinality(targetItem, qItem);
     self._processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
@@ -112,29 +76,12 @@ function addSDCImportFns(ns) {
     self._processTerminologyServer(targetItem, qItem);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
     self._processCopiedItemExtensions(targetItem, qItem);
-
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
-
-    if (Array.isArray(qItem.item)) {
-      targetItem.items = [];
-      for (var i=0; i < qItem.item.length; i++) {
-        var help = _processCodingInstructions(qItem.item[i]);
-        // pick one coding instruction if there are multiple ones in Questionnaire
-        if (help !== null) {
-          targetItem.codingInstructions = help.codingInstructions;
-          targetItem.codingInstructionsFormat = help.codingInstructionsFormat;
-          targetItem.codingInstructionsPlain = help.codingInstructionsPlain;
-        }
-        else {
-          var item = self._processQuestionnaireItem(qItem.item[i], containedVS, linkIdItemMap);
-          targetItem.items.push(item);
-        }
-      }
-    }
+    self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
-
   };
+
 
   // A map of FHIR extensions involving Expressions to the property names on
   // which they will be stored in LFormsData, and a boolean indicating whether
@@ -488,75 +435,6 @@ function addSDCImportFns(ns) {
       }
     }
   };
-
-
-  /**
-   * Parse questionnaire item for question cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign question cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processQuestionCardinality = function (lfItem, qItem) {
-    var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-    if(min) {
-      lfItem.questionCardinality = {min: min.valueInteger.toString()};
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-      if(max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      }
-      else if(qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
-      }
-    }
-    else if (qItem.repeats) {
-      lfItem.questionCardinality = {min: "1", max: "*"};
-    }
-    else if (qItem.required) {
-      lfItem.questionCardinality = {min: "1", max: "1"};
-    }
-  };
-
-
-  /**
-   * Parse questionnaire item for coding instructions
-   *
-   * @param qItem {object} - Questionnaire item object
-   * @return {{}} an object contains the coding instructions info.
-   * @private
-   */
-  function _processCodingInstructions(qItem) {
-    // if the qItem is a "display" typed item with a item-control extension, then it meant to be a help message,
-    // which in LForms is an attribute of the parent item, not a separate item.
-    let ret = null;
-    let ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlItemControl);
-    let xhtmlFormat;
-    if ( qItem.type === "display" && ci) {
-      // only "redering-xhtml" is supported. others are default to text
-      if (qItem._text) {
-        xhtmlFormat = LForms.Util.findObjectInArray(qItem._text.extension, 'url', "http://hl7.org/fhir/StructureDefinition/rendering-xhtml");
-      }
-
-      // there is a xhtml extension
-      if (xhtmlFormat) {
-        ret = {
-          codingInstructionsFormat: "html",
-          codingInstructions: xhtmlFormat.valueString,
-          codingInstructionsPlain: qItem.text  // this always contains the coding instructions in plain text
-        };
-      }
-      // no xhtml extension, default to 'text'
-      else {
-        ret = {
-          codingInstructionsFormat: "text",
-          codingInstructions: qItem.text,
-          codingInstructionsPlain: qItem.text // this always contains the coding instructions in plain text
-        };
-      }
-    }
-
-    return ret;
-  }
 
 
   /**

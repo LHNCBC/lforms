@@ -22,6 +22,8 @@ import addCommonSDCFns from '../sdc-common.js';
 addCommonSDCFns(fhir.SDC);
 import addCommonSDCImportFns from '../sdc-import-common.js';
 addCommonSDCImportFns(fhir.SDC);
+import { addCommonRuntimeFns } from '../runtime-common.js';
+addCommonRuntimeFns(fhir.SDC);
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};

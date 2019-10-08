@@ -207,7 +207,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
 
   $templateCache.put('form-title.html',
     "<div class=\"lf-form-title\" role=\"heading\" aria-level=1>\n" +
-    "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\">{{lfData.title || lfData.name}}</span>\n" +
+    "  <span id=\"label-{{ lfData.code }}\" class=\"lf-question\"\n" +
+    "   style=\"{{lfData._obj_titleCSS}}\">{{lfData.name || lfData.fhirQName}}</span>\n" +
     "  <span class=\"lf-item-code\" ng-if=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"lfData._linkToDef\" href=\"{{ lfData._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ lfData.code }}]</a>\n" +
     "        <span ng-if=\"!lfData._linkToDef\">[{{ lfData.code }}]</span>\n" +
@@ -306,7 +307,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <!-- label -->\n" +
     "    <div class=\"lf-de-label\">\n" +
     "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" +
-    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\" for=\"{{item._elementId}}\">{{item._text}}</label></span>\n" +
+    "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"\n" +
+    "      for=\"{{item._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -420,12 +422,19 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   );
 
 
+  $templateCache.put('itemPrefixAndText.html',
+    "<span ng-if=\"item.prefix\" class=\"prefix\"\n" +
+    "      style=\"{{item._obj_prefixCSS}}\">{{item.prefix}}</span><span\n" +
+    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}</span>\n"
+  );
+
+
   $templateCache.put('layout-horizontal.html',
     "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" +
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item._text}}</label></span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -471,8 +480,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    <tr>\n" +
     "      <th class=\"lf-form-horizontal-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" +
     "      <th ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" +
-    "          class=\"lf-form-horizontal-table-header\"\n" +
-    "          id=\"{{col.id}}\">{{col.label}}</th>\n" +
+    "          ng-init=\"item = col.item\" class=\"lf-form-horizontal-table-header\"\n" +
+    "          id=\"{{col.id}}\"><ng-include src=\"'itemPrefixAndText.html'\"></th>\n" +
     "    </tr>\n" +
     "    </thead>\n" +
     "    <tbody id=\"\" class=\"\">\n" +
@@ -580,7 +589,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" +
     "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" +
     "       class=\"lf-form-matrix-table-title lf-de-label\">\n" +
-    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\">{{item._text}}</label></span>\n" +
+    "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" +
     "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" +
@@ -635,12 +644,13 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "      </thead>\n" +
     "      <tbody>\n" +
     "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" +
+    "         ng-init=\"firstItem = item.items[0] ; item = subItem\"\n" +
     "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" +
     "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" +
     "        <td class=\"lf-question\">\n" +
     "          <div class=\"lf-de-label\">\n" +
     "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" +
-    "             for=\"{{subItem._elementId}}\">{{subItem.question}}</label></span>\n" +
+    "             for=\"{{subItem._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" +
     "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" +
     "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" +
     "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" +
@@ -672,7 +682,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "            </button>\n" +
     "          </div>\n" +
     "        </td>\n" +
-    "        <td ng-repeat=\"answer in item.items[0].answers\"\n" +
+    "        <td ng-repeat=\"answer in firstItem.answers\"\n" +
     "         class=\"lf-form-matrix-cell\">\n" +
     "          <span class=\"lf-form-matrix-answer\">\n" +
     "            <label ng-if=\"subItem._multipleAnswers\">\n" +
