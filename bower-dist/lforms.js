@@ -8079,8 +8079,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateVariables(item.items[i]);
+        for (var _i = 0, _len = item.items.length; _i < _len; ++_i) {
+          var changed = this._evaluateVariables(item.items[_i]);
 
           if (!rtn) rtn = changed;
         }
@@ -8134,10 +8134,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
+        for (var _i2 = 0, _len2 = item.items.length; _i2 < _len2; ++_i2) {
+          var _changed = this._evaluateFieldExpressions(item.items[_i2], includeInitialExpr, changesOnly);
 
-          if (!rtn) rtn = changed;
+          if (!rtn) rtn = _changed;
         }
       }
 
@@ -8190,7 +8190,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           fVars[k] = itemVars[k];
         }
 
-        fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId], expression, fVars);
+        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext, expression, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
@@ -8265,13 +8266,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 for (var a = 0; a < numAnswers; ++a, ++i) {
                   if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
 
-                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
 
-                  if (newlyAdded === 0) {
+                  if (_newlyAdded === 0) {
                     // lfItems[i] was blank; try next lfItem
                     --a;
                   } else {
-                    added += newlyAdded;
+                    added += _newlyAdded;
                   }
                 }
               }
@@ -8303,7 +8304,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
       var oldVal = item.value;
-      if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
+      var fhirPathVal;
+      if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
           item.value = new Date(fhirPathVal);

@@ -31,8 +31,9 @@ function commonConfig() {
 
 function makeConfigs(env) {
   // Limit build per env
-  let buildBowerDist = !env || (!env.r4Only && !env.fhirOnly);
+  let buildBowerDist = !env || env.mainOnly;
   let buildSTU3 = !env || !env.r4Only;
+  let buildFHIR = !env || !env.mainOnly;
 
   const MomentLocalesPlugin = require('moment-locales-webpack-plugin'); // Excludes momentjs locales.
   let configs = [];
@@ -44,35 +45,37 @@ function makeConfigs(env) {
     '@lhncbc/ucum-lhc': 'LForms.ucumPkg'
   }
   var allFHIREntryFiles = [];
-  for (let version of fhirVersions) {
-    if (version !== 'STU3' || buildSTU3) {
-      let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
-      allFHIREntryFiles.push(entryFile);
-      let nonMinConfig = commonConfig();
-      nonMinConfig.entry = entryFile;
-      nonMinConfig.output.filename = './app/scripts/fhir/'+version+'/lformsFHIR.js';
-      nonMinConfig.mode = 'none';
-      nonMinConfig.externals = fhirExternals;
-      configs.push(nonMinConfig);
+  if (buildFHIR) {
+    for (let version of fhirVersions) {
+      if (version !== 'STU3' || buildSTU3) {
+        let entryFile = './app/scripts/fhir/'+version+'/fhirRequire.js';
+        allFHIREntryFiles.push(entryFile);
+        let nonMinConfig = commonConfig();
+        nonMinConfig.entry = entryFile;
+        nonMinConfig.output.filename = './app/scripts/fhir/'+version+'/lformsFHIR.js';
+        nonMinConfig.mode = 'none';
+        nonMinConfig.externals = fhirExternals;
+        configs.push(nonMinConfig);
 
-      let minConfig = commonConfig();
-      minConfig.entry = entryFile;
-      minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
-      minConfig.mode = 'production';
-      minConfig.externals = fhirExternals;
-      minConfig.devtool = 'source-map';
-      configs.push(minConfig);
+        let minConfig = commonConfig();
+        minConfig.entry = entryFile;
+        minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
+        minConfig.mode = 'production';
+        minConfig.externals = fhirExternals;
+        minConfig.devtool = 'source-map';
+        configs.push(minConfig);
+      }
     }
-  }
 
-  // All FHIR versions together
-  let allFHIRConfig = commonConfig();
-  allFHIRConfig.entry = allFHIREntryFiles;
-  allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js',
-  allFHIRConfig.mode = 'production';
-  allFHIRConfig.devtool = 'source-map';
-  allFHIRConfig.externals = fhirExternals;
-  configs.push(allFHIRConfig);
+    // All FHIR versions together
+    let allFHIRConfig = commonConfig();
+    allFHIRConfig.entry = allFHIREntryFiles;
+    allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js',
+    allFHIRConfig.mode = 'production';
+    allFHIRConfig.devtool = 'source-map';
+    allFHIRConfig.externals = fhirExternals;
+    configs.push(allFHIRConfig);
+  }
 
   if (buildBowerDist) {
     // LForms and dependencies

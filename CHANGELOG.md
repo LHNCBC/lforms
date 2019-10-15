@@ -9,6 +9,8 @@ This project follows [Semantic Versioning](http://semver.org/).
   field visible).  The "ANY" default was what should have been the case per the
   documentation in form_definition.md, and also matches the equivalent default
   in FHIR.
+- Fixed the setting of the FHIR context for evaluating FHIR variables defined on
+  Questionnaire.
 
 ## [18.1.0] 2019-10-03
 ### Added
