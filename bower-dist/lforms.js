@@ -7639,8 +7639,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var takeAction = false;
 
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY"; // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
+        // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
 
         takeAction = hasAll;
