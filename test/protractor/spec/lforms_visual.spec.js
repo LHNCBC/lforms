@@ -67,7 +67,14 @@ describe('Visual effect tests', function() {
       // show it again
       element(by.id("toggle-units-col")).click();
       expect(unitsCol.isDisplayed()).toBe(true);
-   });
+    });
+
+    it('should not show the units column if there are no units in the form data', function () {
+      var unitsCol = element(by.id("th_Units"));
+      tp.openValidationTest();
+      expect(unitsCol.isPresent()).toBe(false);
+    });
+
   });
 
 

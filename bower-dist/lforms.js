@@ -4659,7 +4659,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     init: function init(data) {
       if (data && data._initializeInternalData) {
-        // This is aleady a lformsData object.
+        // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
 
         for (var i = 0; i < props.length; i++) {
@@ -4881,7 +4881,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._setupSourceToTargetMap(); // run the form controls
 
 
-      this._checkFormControls();
+      this._checkFormControls(); // adjust template options
+
+
+      this._adjustTemplateOptions();
+    },
+
+    /**
+     * Adjust hideUnits value depending on whether units are included in the form.
+     * It is to be called only in the initialization of the form data object.
+     * @private
+     */
+    _adjustTemplateOptions: function _adjustTemplateOptions() {
+      // if none of the items has 'units', reset the 'hideUnits' to be true
+      var noUnits = true;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0) {
+          noUnits = false;
+          break;
+        }
+      }
+
+      if (noUnits) {
+        this.templateOptions.hideUnits = true;
+      }
     },
 
     /**

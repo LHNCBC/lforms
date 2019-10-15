@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [18.2.0] 2019-10-15
+### Changed
+- Units column is no longer shown if there is no units values in the form data.
+
 ## [18.1.0] 2019-10-03
 ### Added
 - Support for the FHIR "rendering-style" (CSS) extension on Questionnaire.title,
