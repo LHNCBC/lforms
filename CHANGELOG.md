@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.2.1] 2019-10-16
+### Changed
+- Default values are no longer set when loading QuestionnaireResponse and DiagnosticReport. 
+
 ## [18.2.0] 2019-10-15
 ### Changed
 - Units column is no longer shown if there is no units values in the form data.

@@ -20874,8 +20874,13 @@ var dr = {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeDiagnosticReportToLForms: function mergeDiagnosticReportToLForms(formData, diagnosticReport) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      // not to set item values by default values for save forms with user data
+      formData._hasSavedData = true;
+      formData = new LForms.LFormsData(formData).getFormData();
+    }
+
     var inBundle = diagnosticReport && diagnosticReport.resourceType === "Bundle"; // move Observation resources in Bundle to be in "contained" in DiagnosticReport resource
     // as a base data structure for converting
 
@@ -20883,18 +20888,18 @@ var dr = {
 
     var reportStructure = this._getReportStructure(dr);
 
-    this._processObxAndItem(reportStructure, newFormData, dr); // date
+    this._processObxAndItem(reportStructure, formData, dr); // date
 
 
-    if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
+    if (dr.effectiveDateTime && formData.templateOptions.formHeaderItems) {
       var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
 
       if (whenDone) {
-        newFormData.templateOptions.formHeaderItems[0].value = whenDone;
+        formData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
 
-    return newFormData;
+    return formData;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (dr);
@@ -23892,6 +23897,8 @@ function addCommonSDCImportFns(ns) {
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData._hasSavedData = true;
       formData = new LForms.LFormsData(formData).getFormData();
     } // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.

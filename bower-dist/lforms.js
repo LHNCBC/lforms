@@ -4530,6 +4530,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     items: [],
     // a delimiter used in code path and id path
     PATH_DELIMITER: "/",
+    // whether the form data contains saved user data
+    _hasSavedData: false,
     // repeatable question items derived from items
     _repeatableItems: {},
     // All accessory attributes of an item
@@ -6909,8 +6911,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
           if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
             this._updateAutocompOptions(item);
-          } else if (item.defaultAnswer && !item.value) // && not a list
-            item.value = item.defaultAnswer;
+          } // if this is not a saved form with user data, and
+          // there is a default value, and
+          // there is no embedded data
+          else if (!this._hasSavedData && item.defaultAnswer && !item.value) item.value = item.defaultAnswer;
 
           this._updateUnitAutocompOptions(item);
         }
@@ -7035,8 +7039,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (item._modifiedAnswers) {
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null; // item.value has the priority over item.defaultAnswer
+        // if this is a save form with user data, default answers are not to be used.
 
-        var answerValue = item.value || item.defaultAnswer;
+        var answerValue = this._hasSavedData ? item.value : item.value || item.defaultAnswer;
 
         if (answerValue) {
           modifiedValue = []; // could be an array of multiple default values or a single value
@@ -7317,11 +7322,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
             options.codes = codes;
             options.itemToHeading = itemToHeading;
-          } // If there isn't already a default value set (handled elsewhere), and
+          } // If this is not a saved form with user data, and
+          // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
 
 
-          if (!options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
+          if (!this._hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
         }
 
         item._autocompOptions = options;

@@ -695,11 +695,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
+            var cne = element(by.id('/type9/1'));
 
             browser.wait(function() {
               return cwe.isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
+            // the default value should not be set
+            expect(cne.getAttribute('value')).toBe('');
             expect(cwe.getAttribute('value')).toBe("user typed value");
             cwe.evaluate('item.value').then(function(val) {
               expect(val.code).toEqual(undefined);
