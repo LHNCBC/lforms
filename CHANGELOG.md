@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.1.1] 2019-10-15
+## [18.2.1] 2019-10-15
 ### Fixed
 - Corrected the default for handling multiple skip logic conditions to be "ANY"
   instead of "ALL" (i.e. now "ANY" of the conditions being true will make the
@@ -11,6 +11,14 @@ This project follows [Semantic Versioning](http://semver.org/).
   in FHIR.
 - Fixed the setting of the FHIR context for evaluating FHIR variables defined on
   Questionnaire.
+
+## [18.2.0] 2019-10-15
+### Changed
+- Units column is no longer shown if there is no units values in the form data.
+
+## [18.1.1] 2019-10-08
+### Fixed
+- Display of item with TITLE data type is fixed without setting header flag.
 
 ## [18.1.0] 2019-10-03
 ### Added
