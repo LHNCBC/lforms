@@ -160,7 +160,7 @@ function addCommonSDCImportFns(ns) {
     var fraction = match[2];
     //var exponent = match[3];
     return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
-  }
+  };
 
 
   /**
@@ -186,7 +186,7 @@ function addCommonSDCImportFns(ns) {
       // Accept initial value of type Quantity for these types.
       val = obs.valueQuantity;
       if (val)
-        val._type = 'Quantity'
+        val._type = 'Quantity';
     }
 
     if (val) {
@@ -389,7 +389,7 @@ function addCommonSDCImportFns(ns) {
     // use linkId as questionCode, which should not be exported as code
     else {
       lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
+      lfItem.questionCodeSystem = "LinkId";
     }
 
     lfItem.linkId = qItem.linkId;
@@ -425,6 +425,79 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processUnitList = function (lfItem, qItem) {
+
+    var lformsUnits = [];
+    var lformsDefaultUnit = null;
+    // The questionnaire-unit extension is only for item.type = quantity
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+    if(unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Exception('The extension '+self.fhirExtUrlUnitOption+
+          ' can only be used with type quantity.');
+      }
+      for(var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    }
+
+    // The questionnaire-unit extension is only for item.type = integer or decimal
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+    if (unit) {
+      if (qItem.type !== 'integer' || qItem.type !== 'decimal') {
+        throw new Exception('The extension '+self.fhirExtUrlUnit+
+          ' can only be used with types integer or decimal.');
+      }
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      let initialQ = this.getFirstInitialQuantity(qItem);
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+        if(lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        }
+        else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+      lfItem.units = lformsUnits;
+    }
+  };
+
+
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -441,6 +514,7 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+          // continue to drop-down case
         case 'drop-down':
           displayControl.answerLayout = {type: 'COMBO_BOX'};
           break;
@@ -526,7 +600,7 @@ function addCommonSDCImportFns(ns) {
                 parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
             }
           }
           // reset the total number of questions when it is the answers that repeats
@@ -765,7 +839,7 @@ function addCommonSDCImportFns(ns) {
       parent = parent._parentItem;
     }
     return terminologyServer;
-  },
+  };
 
 
   /**
@@ -782,7 +856,7 @@ function addCommonSDCImportFns(ns) {
         rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
     }
     return rtn;
-  }
+  };
 
 
   /**
@@ -841,7 +915,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
-  }
+  };
 
 
   /**
@@ -864,8 +938,8 @@ function addCommonSDCImportFns(ns) {
     else if (qrItemValue.valueString) {
       retValue = qrItemValue.valueString;
     }
-    return retValue
-  }
+    return retValue;
+  };
 
 
   /**
@@ -906,7 +980,8 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
-  }
+  };
+
 
   /**
    *  Processes the child items of the item.
@@ -932,7 +1007,7 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
-  }
+  };
 
 
 }

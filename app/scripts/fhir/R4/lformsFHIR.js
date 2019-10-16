@@ -22862,70 +22862,13 @@ function addSDCImportFns(ns) {
     if (vals.length > 0) this._processFHIRValues(lfItem, vals, true);
   };
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
 
 
-  self._processUnitList = function (lfItem, qItem) {
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-
-    if (unitOption && unitOption.length > 0) {
-      for (var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-
-    if (unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code); // If this unit is already in the list, set its default flag, otherwise create new
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    } else if (qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: qItem.initial[0].valueQuantity.unit,
-          code: qItem.initial[0].valueQuantity.code,
-          system: qItem.initial[0].valueQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if (lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-
-      lfItem.units = lformsUnits;
-    }
+  self.getFirstInitialQuantity = function (qItem) {
+    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
   /**
    * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
@@ -23812,6 +23755,82 @@ function addCommonSDCImportFns(ns) {
     }
   };
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processUnitList = function (lfItem, qItem) {
+    var lformsUnits = [];
+    var lformsDefaultUnit = null; // The questionnaire-unit extension is only for item.type = quantity
+
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+
+    if (unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Exception('The extension ' + self.fhirExtUrlUnitOption + ' can only be used with type quantity.');
+      }
+
+      for (var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    } // The questionnaire-unit extension is only for item.type = integer or decimal
+
+
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+
+    if (unit) {
+      if (qItem.type !== 'integer' || qItem.type !== 'decimal') {
+        throw new Exception('The extension ' + self.fhirExtUrlUnit + ' can only be used with types integer or decimal.');
+      }
+
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      var initialQ = this.getFirstInitialQuantity(qItem);
+
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+
+        if (lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        } else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if (lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+
+      lfItem.units = lformsUnits;
+    }
+  };
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -23833,6 +23852,7 @@ function addCommonSDCImportFns(ns) {
 
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+        // continue to drop-down case
 
         case 'drop-down':
           displayControl.answerLayout = {
@@ -24201,13 +24221,15 @@ function addCommonSDCImportFns(ns) {
     }
 
     return terminologyServer;
-  },
+  };
   /**
    *  Returns the URL for performing a ValueSet expansion for the given item,
    *  if the given item has a terminology server and answerValueSet
    *  configured; otherwise it returns undefined.
    * @param item a question, title, or group in the form
    */
+
+
   self._getExpansionURL = function (item) {
     var rtn;
 
@@ -24225,6 +24247,7 @@ function addCommonSDCImportFns(ns) {
    * @return an array of promise objects which resolve when the answer valuesets
    * have been loaded and imported.
    */
+
 
   self.loadAnswerValueSets = function (lfData) {
     var _this = this;
