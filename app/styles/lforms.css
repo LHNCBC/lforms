@@ -1170,11 +1170,11 @@ Override color of select boxes in calendar widget title bar.
   padding: 4px 0 4px 0;
 }
 /* title row */
-.lf-form-table .lf-form-table-row.lf-section-header.lf-title-row  {
+.lf-form-table .lf-form-table-row.lf-title-row  {
   background-color: #e6f1ff; /*rgb(67,115,156);*/
   border-top: 2px solid white; /* leave space between headers */
 }
-.lf-form-table .lf-form-table-row.lf-section-header.lf-title-row .lf-de-label {
+.lf-form-table .lf-form-table-row.lf-title-row .lf-de-label {
   /*color: white;*/
 }
 

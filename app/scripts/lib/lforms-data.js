@@ -167,7 +167,7 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+      if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
         for(var i = 0; i < props.length; i++) {
           if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
@@ -389,6 +389,27 @@
       // run the form controls
       this._checkFormControls();
 
+      // adjust template options
+      this._adjustTemplateOptions();
+    },
+
+    /**
+     * Adjust hideUnits value depending on whether units are included in the form.
+     * It is to be called only in the initialization of the form data object.
+     * @private
+     */
+    _adjustTemplateOptions: function() {
+      // if none of the items has 'units', reset the 'hideUnits' to be true
+      var noUnits = true;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0 ) {
+          noUnits = false;
+          break;
+        }
+      }
+      if (noUnits) {
+        this.templateOptions.hideUnits = true;
+      }
     },
 
 

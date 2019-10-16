@@ -1106,7 +1106,7 @@ var allInOne =
       "questionCode": "titleHeader",
       "question": "This is a TITLE. It looks like a section header but has no children",
       "dataType": "TITLE",
-      "header": true
+      "header": false
     },
 
     {"questionCode": "cardinalityControl",
@@ -1542,7 +1542,7 @@ var formWithUserData =
       "questionCode": "titleHeader",
       "question": "This is a TITLE. It looks like a section header but has no children",
       "dataType": "TITLE",
-      "header": true
+      "header": false
     },
 
 
