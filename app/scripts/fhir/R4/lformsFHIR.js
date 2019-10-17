@@ -22597,7 +22597,7 @@ function addSDCImportFns(ns) {
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      if (!multiple || ext.length > 0) lfItem[prop] = ext;
+      if (ext && (!multiple || ext.length > 0)) lfItem[prop] = ext;
     }
   };
   /**
