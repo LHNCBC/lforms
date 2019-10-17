@@ -162,6 +162,7 @@ LForms.HL7 = (function() {
       switch (lformsDataType) {
         case "INT":
         case "REAL":
+        case "QTY":
           ret = "NM";
           break;
         case "NR":
@@ -178,7 +179,6 @@ LForms.HL7 = (function() {
         /*
         case "BIN":
         case "RTO":
-        case "QTY":
         case "YEAR":
         case "MONTH":
         case "DAY":

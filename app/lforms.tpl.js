@@ -72,16 +72,21 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" +
     "    <span ng-repeat=\"unit in item.units\">\n" +
     "      <label>\n" +
-    "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit._displayUnit}}\n" +
+    "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\"\n" +
+    "         ng-readonly=\"item._unitReadonly\">{{unit._displayUnit}}\n" +
     "      </label>\n" +
     "    </span>\n" +
     "  </div>\n" +
     "\n" +
     "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" +
     "  <div ng-switch-default>\n" +
-    "    <input class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" +
+    "    <input ng-if=\"!item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" +
     "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" +
-    "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" +
+    "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\"\n" +
+    "           aria-labelledby=\"th_Units\">\n" +
+    "    <input ng-if=\"item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" +
+    "           id=\"unit_{{item._elementId}}\" value=\"{{item.unit._displayUnit}}\"\n" +
+    "           aria-labelledby=\"th_Units\" readonly>\n" +
     "  </div>\n" +
     "\n" +
     "</div>\n" +

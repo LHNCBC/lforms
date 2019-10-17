@@ -92,6 +92,10 @@
   background-color: #FFF8C6
 }
 
+.lf-form input[readonly], .lf-form textarea[readonly] {
+  background-color: #E8E8E8;
+}
+
 /* buttons in tables */
 .lf-de-button {
   width: 22px;

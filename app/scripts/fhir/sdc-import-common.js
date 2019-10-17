@@ -439,8 +439,9 @@ function addCommonSDCImportFns(ns) {
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
     if(unitOption && unitOption.length > 0) {
       if (qItem.type !== 'quantity') {
-        throw new Exception('The extension '+self.fhirExtUrlUnitOption+
-          ' can only be used with type quantity.');
+        throw new Error('The extension '+self.fhirExtUrlUnitOption+
+          ' can only be used with type quantity.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
       }
       for(var i = 0; i < unitOption.length; i++) {
         var coding = unitOption[i].valueCoding;
@@ -456,9 +457,10 @@ function addCommonSDCImportFns(ns) {
     // The questionnaire-unit extension is only for item.type = integer or decimal
     var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
     if (unit) {
-      if (qItem.type !== 'integer' || qItem.type !== 'decimal') {
-        throw new Exception('The extension '+self.fhirExtUrlUnit+
-          ' can only be used with types integer or decimal.');
+      if (qItem.type !== 'integer' && qItem.type !== 'decimal') {
+        throw new Error('The extension '+self.fhirExtUrlUnit+
+          ' can only be used with types integer or decimal.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
       }
       lformsDefaultUnit = {
         name: unit.valueCoding.display,

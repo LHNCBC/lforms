@@ -286,7 +286,6 @@ function addSDCImportFns(ns) {
    */
   self.getFirstInitialQuantity = function(qItem) {
     return qItem.initialQuantity || null;
-    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
 
 
