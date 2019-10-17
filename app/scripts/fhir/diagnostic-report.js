@@ -345,7 +345,7 @@ var dr = {
         case "QTY":
           let qty = obx.valueQuantity;
           item.value = qty.value;
-          let unitName = qty.name || qty.code;
+          let unitName = qty.unit || qty.code;
           if (unitName || qty.code || qty.system) {
             item.unit = {};
             if (unitName)

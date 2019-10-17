@@ -30,7 +30,7 @@ var self = {
     }
     switch (dataType) {
       case "INT":
-        values = [this._createObsIntValue(item.value)];
+        values = [this._createObsIntValue(item)];
         break;
       case "REAL":
         // A "real" data type should be exported as valueQuantity, because

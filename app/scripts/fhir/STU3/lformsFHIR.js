@@ -20557,7 +20557,7 @@ var dr = {
         case "QTY":
           var qty = obx.valueQuantity;
           item.value = qty.value;
-          var unitName = qty.name || qty.code;
+          var unitName = qty.unit || qty.code;
 
           if (unitName || qty.code || qty.system) {
             item.unit = {};
@@ -20924,7 +20924,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(86);
 // STU3-specific export code common to DiagnosticReport and SDC.
 
-var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"], {
+var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
+
+Object.assign(self, {
   /**
    *  Creates a structure for use by _createObservation() in constructing an
    *  Observation value for the given integer value.
@@ -20934,11 +20936,11 @@ var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default
    *  the value in the Observation object, and a "val" property that holds the
    *  value (formatted for the Observation).
    */
-  _createObsIntValue: function _createObsIntValue(value) {
+  _createObsIntValue: function _createObsIntValue(item) {
     // In STU3, there is no valueInteger in Observation, so we use
     // valueQuantity.
     var quantity = {
-      value: value
+      value: item.value
     };
 
     this._setFHIRQuantityUnit(quantity, item.unit);
@@ -20996,7 +20998,7 @@ var self = {
 
     switch (dataType) {
       case "INT":
-        values = [this._createObsIntValue(item.value)];
+        values = [this._createObsIntValue(item)];
         break;
 
       case "REAL": // A "real" data type should be exported as valueQuantity, because
