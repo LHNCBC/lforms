@@ -8,7 +8,7 @@ Object.assign(self, {
    *  Creates a structure for use by _createObservation() in constructing an
    *  Observation value for the given integer value.
    * @param item an LForms item with the integer value to be represented in an Observation.
-   *  It is assumed that the called has already checked the data type.
+   *  It is assumed that the caller has already checked the data type.
    * @return an object with a "key" property that will be the property name for
    *  the value in the Observation object, and a "val" property that holds the
    *  value (formatted for the Observation).
