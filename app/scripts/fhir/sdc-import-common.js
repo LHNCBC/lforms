@@ -22,7 +22,6 @@ function addCommonSDCImportFns(ns) {
     "http://hl7.org/fhir/StructureDefinition/minLength",
     "http://hl7.org/fhir/StructureDefinition/regex"
   ];
-  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
@@ -397,30 +396,56 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for question cardinality
+   * Parse questionnaire item for question cardinality and answer cardinality
    *
    * @param lfItem {object} - LForms item object to assign question cardinality
    * @param qItem {object} - Questionnaire item object
    * @private
    */
-  self._processFHIRQCardinality = function (lfItem, qItem) {
+  self._processFHIRQuestionAndAnswerCardinality = function(lfItem, qItem) {
     var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
-    if(min) {
-      lfItem.questionCardinality = {min: min.valueInteger.toString()};
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-      if(max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
+    var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+    var repeats = qItem.repeats;
+    var required = qItem.required;
+    var answerCardinality, questionCardinality;
+    // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
+    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE') {
+      if (repeats) {
+        answerCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
       }
-      else if(qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
+      else {
+        answerCardinality = {max: "1"};
+      }
+      if (required) {
+        answerCardinality.min = min ? min.valueInteger.toString() : "1";
+      }
+      else {
+        answerCardinality.min = "0";
       }
     }
-    else if (qItem.repeats) {
-      lfItem.questionCardinality = {min: "1", max: "*"};
+    // not CNE/CWE, question repeats
+    else {
+      // repeats
+      if (repeats) {
+        questionCardinality = max ? {max: max.valueInteger.toString()} : {max: "*"};
+      }
+      else {
+        questionCardinality = {max: "1"};
+      }
+      // required
+      if (required) {
+        questionCardinality.min = min ? min.valueInteger.toString() : "1";
+        answerCardinality = {min: "1"};
+      }
+      else {
+        questionCardinality.min = "1";
+      }
     }
-    else if (qItem.required) {
-      lfItem.questionCardinality = {min: "1", max: "1"};
-    }
+
+    if (questionCardinality)
+      lfItem.questionCardinality = questionCardinality;
+    if (answerCardinality)
+      lfItem.answerCardinality = answerCardinality;
   };
 
 

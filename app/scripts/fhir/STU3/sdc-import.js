@@ -72,8 +72,7 @@ function addSDCImportFns(ns) {
     self._processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
-    self._processFHIRQCardinality(targetItem, qItem);
-    _processAnswerCardinality(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
@@ -99,31 +98,6 @@ function addSDCImportFns(ns) {
       "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
     if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
       lfItem._calculatedExprExt = calcExt;
-    }
-  }
-
-
-  /**
-   * Parse questionnaire object for answer cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign answer cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  function _processAnswerCardinality(lfItem, qItem) {
-    if(qItem.required) {
-      lfItem.answerCardinality = {min: '1'};
-    }
-    else {
-      lfItem.answerCardinality = {min: '0'};
-    }
-
-    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-    if(answerRepeats && answerRepeats.valueBoolean) {
-      lfItem.answerCardinality.max = '*';
-    }
-    else {
-      lfItem.answerCardinality.max = '1';
     }
   }
 

@@ -83,23 +83,6 @@ function addCommonSDCFns(ns) {
 
 
   /**
-   * Find out if multiple answers extension is true.
-   * @param qItem - FHIR Questionnaire item.
-   * @returns {boolean}
-   */
-  self._hasMultipleAnswers = function (qItem) {
-    var ret = false;
-    if(qItem) {
-      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-      if(answerRepeats && answerRepeats.valueBoolean) {
-        ret = true;
-      }
-    }
-    return ret;
-  };
-
-
-  /**
    * Do a shallow copy of specified fields from source to target.
    *
    * @param source - Source object
@@ -116,8 +99,8 @@ function addCommonSDCFns(ns) {
       });
     }
   };
-  
-  
+
+
   // Store the UCUM code system URI
   self.UCUM_URI = 'http://unitsofmeasure.org';
 

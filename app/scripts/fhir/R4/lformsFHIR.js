@@ -21152,27 +21152,6 @@ var self = {
   },
 
   /**
-   *  Proceses the LForms questionCardinality into FHIR.
-   * @param targetItem an item in Questionnaire
-   * @param item a LForms item
-   */
-  _processQuestionCardinality: function _processQuestionCardinality(targetItem, item) {
-    if (item.questionCardinality) {
-      if (item.questionCardinality.max === "*") {
-        targetItem.repeats = true;
-      } else if (parseInt(item.questionCardinality.max) > 1) {
-        targetItem.repeats = true;
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
-          "valueInteger": parseInt(item.questionCardinality.max)
-        });
-      }
-    } else {// No default in R4
-      // targetItem.repeats = false;
-    }
-  },
-
-  /**
    *  Processes FHIRPath and related item extensions (e.g. for pre-population
    *  and extraction.)
    *
@@ -21863,22 +21842,11 @@ function addCommonSDCExportFns(ns) {
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
         "valueInteger": parseInt(item.questionCardinality.min)
       });
-    } // question repeats
+    } // question/answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
 
 
-    this._processQuestionCardinality(targetItem, item); // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-
-
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    } // Copied FHIRPath-related (pre-pop & extraction) extensions
+    this._processQuestionAndAnswerCardinality(targetItem, item); // Copied FHIRPath-related (pre-pop & extraction) extensions
 
 
     this._processFHIRPathExtensions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
@@ -21993,7 +21961,41 @@ function addCommonSDCExportFns(ns) {
     if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem;
-  },
+  };
+  /**
+   *  Process the LForms questionCardinality and AnswerCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+
+
+  self._processQuestionAndAnswerCardinality = function (targetItem, item) {
+    var repeats = false,
+        maxOccurs = 0;
+    [item.answerCardinality, item.questionCardinality].forEach(function (cardinality) {
+      if (cardinality) {
+        if (cardinality.max === "*") {
+          repeats = true;
+        } else if (parseInt(cardinality.max) > 1) {
+          repeats = true;
+          maxOccurs = parseInt(item.questionCardinality.max);
+        }
+      }
+    });
+
+    if (repeats && item.dataType !== "TITLE") {
+      targetItem.repeats = true;
+
+      if (maxOccurs > 1) {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": maxOccurs
+        });
+      }
+    } else {
+      targetItem.repeats = false;
+    }
+  };
   /**
    * Process an item's externally defined answer list
    * @param targetItem an item in FHIR SDC Questionnaire object
@@ -22001,6 +22003,8 @@ function addCommonSDCExportFns(ns) {
    * @returns {*}
    * @private
    */
+
+
   self._handleExternallyDefined = function (targetItem, item) {
     if (item.externallyDefined) {
       targetItem.extension.push({
@@ -22014,6 +22018,7 @@ function addCommonSDCExportFns(ns) {
    * @param source a LForms form data object
    * @private
    */
+
 
   self._removeRepeatingItems = function (source) {
     if (source.items && Array.isArray(source.items)) {
@@ -22541,9 +22546,7 @@ function addSDCImportFns(ns) {
 
     self._processEditable(targetItem, qItem);
 
-    self._processFHIRQCardinality(targetItem, qItem);
-
-    self._processAnswerCardinality(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
 
     self._processDisplayControl(targetItem, qItem);
 
@@ -22598,32 +22601,6 @@ function addSDCImportFns(ns) {
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
       if (!multiple || ext.length > 0) lfItem[prop] = ext;
-    }
-  };
-  /**
-   * Parse questionnaire object for answer cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign answer cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-
-
-  self._processAnswerCardinality = function (lfItem, qItem) {
-    if (qItem.required) {
-      lfItem.answerCardinality = {
-        min: '1'
-      };
-    } else {
-      lfItem.answerCardinality = {
-        min: '0'
-      };
-    }
-
-    if (self._hasMultipleAnswers(qItem)) {
-      lfItem.answerCardinality.max = '*';
-    } else {
-      lfItem.answerCardinality.max = '1';
     }
   };
   /**
@@ -23367,26 +23344,6 @@ function addCommonSDCFns(ns) {
     return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
   };
   /**
-   * Find out if multiple answers extension is true.
-   * @param qItem - FHIR Questionnaire item.
-   * @returns {boolean}
-   */
-
-
-  self._hasMultipleAnswers = function (qItem) {
-    var ret = false;
-
-    if (qItem) {
-      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-
-      if (answerRepeats && answerRepeats.valueBoolean) {
-        ret = true;
-      }
-    }
-
-    return ret;
-  };
-  /**
    * Do a shallow copy of specified fields from source to target.
    *
    * @param source - Source object
@@ -23438,7 +23395,6 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
-  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
@@ -23777,7 +23733,7 @@ function addCommonSDCImportFns(ns) {
     lfItem.linkId = qItem.linkId;
   };
   /**
-   * Parse questionnaire item for question cardinality
+   * Parse questionnaire item for question cardinality and answer cardinality
    *
    * @param lfItem {object} - LForms item object to assign question cardinality
    * @param qItem {object} - Questionnaire item object
@@ -23785,31 +23741,59 @@ function addCommonSDCImportFns(ns) {
    */
 
 
-  self._processFHIRQCardinality = function (lfItem, qItem) {
+  self._processFHIRQuestionAndAnswerCardinality = function (lfItem, qItem) {
     var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
+    var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+    var repeats = qItem.repeats;
+    var required = qItem.required;
+    var answerCardinality, questionCardinality; // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
 
-    if (min) {
-      lfItem.questionCardinality = {
-        min: min.valueInteger.toString()
-      };
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-
-      if (max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      } else if (qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
+    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE') {
+      if (repeats) {
+        answerCardinality = max ? {
+          max: max.valueInteger.toString()
+        } : {
+          max: "*"
+        };
+      } else {
+        answerCardinality = {
+          max: "1"
+        };
       }
-    } else if (qItem.repeats) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "*"
-      };
-    } else if (qItem.required) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "1"
-      };
-    }
+
+      if (required) {
+        answerCardinality.min = min ? min.valueInteger.toString() : "1";
+      } else {
+        answerCardinality.min = "0";
+      }
+    } // not CNE/CWE, question repeats
+    else {
+        // repeats
+        if (repeats) {
+          questionCardinality = max ? {
+            max: max.valueInteger.toString()
+          } : {
+            max: "*"
+          };
+        } else {
+          questionCardinality = {
+            max: "1"
+          };
+        } // required
+
+
+        if (required) {
+          questionCardinality.min = min ? min.valueInteger.toString() : "1";
+          answerCardinality = {
+            min: "1"
+          };
+        } else {
+          questionCardinality.min = "1";
+        }
+      }
+
+    if (questionCardinality) lfItem.questionCardinality = questionCardinality;
+    if (answerCardinality) lfItem.answerCardinality = answerCardinality;
   };
   /**
    * Parse questionnaire item for display control

@@ -113,20 +113,9 @@ function addCommonSDCExportFns(ns) {
       });
     }
 
-    // question repeats
+    // question/answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    this._processQuestionCardinality(targetItem, item);
-
-    // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    }
+    this._processQuestionAndAnswerCardinality(targetItem, item);
 
     // Copied FHIRPath-related (pre-pop & extraction) extensions
     this._processFHIRPathExtensions(targetItem, item);
@@ -244,7 +233,42 @@ function addCommonSDCExportFns(ns) {
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem
-  },
+  };
+
+
+  /**
+   *  Process the LForms questionCardinality and AnswerCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+  self._processQuestionAndAnswerCardinality = function(targetItem, item) {
+    var repeats = false, maxOccurs = 0;
+
+    [item.answerCardinality, item.questionCardinality].forEach(function(cardinality) {
+      if (cardinality) {
+        if (cardinality.max === "*") {
+          repeats = true;
+        }
+        else if (parseInt(cardinality.max) > 1) {
+          repeats = true;
+          maxOccurs = parseInt(item.questionCardinality.max);
+        }
+      }
+    });
+
+    if (repeats && item.dataType !== "TITLE") {
+      targetItem.repeats = true;
+      if (maxOccurs > 1) {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": maxOccurs
+        });
+      }
+    }
+    else {
+      targetItem.repeats = false;
+    }
+  };
 
 
   /**

@@ -85,31 +85,6 @@ var self = {
 
 
   /**
-   *  Proceses the LForms questionCardinality into FHIR.
-   * @param targetItem an item in Questionnaire
-   * @param item a LForms item
-   */
-  _processQuestionCardinality: function(targetItem, item) {
-    if (item.questionCardinality) {
-      if (item.questionCardinality.max === "*") {
-        targetItem.repeats = true;
-      }
-      else if (parseInt(item.questionCardinality.max) > 1) {
-        targetItem.repeats = true;
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
-          "valueInteger": parseInt(item.questionCardinality.max)
-        });
-      }
-    }
-    else {
-      // No default in R4
-      // targetItem.repeats = false;
-    }
-  },
-
-
-  /**
    *  Processes FHIRPath and related item extensions (e.g. for pre-population
    *  and extraction.)
    *

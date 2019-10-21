@@ -192,12 +192,12 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             assert.equal(out.item.length, 2);
             assert.equal(out.item[0].required, undefined);
-            assert.equal(out.item[0].repeats, undefined);
+            assert.equal(out.item[0].repeats, false);
             assert.equal(out.item[0].linkId, "/54126-8/54137-5X/54140-9X");
             assert.equal(out.item[0].text,"Mock-up sub item #1");
             assert.equal(out.item[0].type,"integer");
             assert.equal(out.item[1].required, undefined);
-            assert.equal(out.item[1].repeats, undefined);
+            assert.equal(out.item[1].repeats, false);
             assert.equal(out.item[1].linkId, "/54126-8/54137-5X/54130-0X");
             assert.equal(out.item[1].text,"Mock-up sub item #2");
             assert.equal(out.item[1].type,"decimal");
@@ -308,6 +308,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               code: formCodes,
               item: [{
                 required: true,
+                repeats: false,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
                   "valueInteger": 1
@@ -386,6 +387,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               code: formCodes,
               item: [{
                 required: true,
+                repeats: false,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
                   "valueInteger": 1
