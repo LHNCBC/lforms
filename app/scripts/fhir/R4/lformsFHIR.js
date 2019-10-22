@@ -1096,18 +1096,23 @@ var evaluate = function evaluate(resource, path, context) {
   return applyParsedPath(resource, node, context);
 };
 /**
- *  Returns a function that takes a resource and returns the result of
- *  evaluating the given FHIRPath expression on that resource.  The advantage
- *  of this function over "evaluate" is that if you have multiple resources,
- *  the given FHIRPath expression will only be parsed once.
+ *  Returns a function that takes a resource and an optional context hash (see
+ *  "evaluate"), and returns the result of evaluating the given FHIRPath
+ *  expression on that resource.  The advantage of this function over "evaluate"
+ *  is that if you have multiple resources, the given FHIRPath expression will
+ *  only be parsed once.
  * @param path the FHIRPath expression to be parsed.
- * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} (deprecated) context - a hash of variable name/value pairs.  This is
+ *  optional now, and is deprecated, because it was probably a mistake.  Instead
+ *  of passing in this hash of variables here, pass it to the returned function
+ *  as a second argument.
  */
 
 
 var compile = function compile(path, context) {
   var node = parse(path);
-  return function (resource) {
+  return function (resource, contextOverride) {
+    if (contextOverride) context = contextOverride;
     return applyParsedPath(resource, node, context);
   };
 };
@@ -4895,11 +4900,7 @@ ParseTreeVisitor.prototype.visit = function (ctx) {
 };
 
 ParseTreeVisitor.prototype.visitChildren = function (ctx) {
-  if (ctx.children) {
-    return this.visit(ctx.children);
-  } else {
-    return null;
-  }
+  return this.visit(ctx.children);
 };
 
 ParseTreeVisitor.prototype.visitTerminal = function (node) {};
@@ -7816,7 +7817,7 @@ Recognizer.tokenTypeMapCache = {};
 Recognizer.ruleIndexMapCache = {};
 
 Recognizer.prototype.checkVersion = function (toolVersion) {
-  var runtimeVersion = "4.7.2";
+  var runtimeVersion = "4.7.1";
 
   if (runtimeVersion !== toolVersion) {
     console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
@@ -10377,6 +10378,11 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
     var c = this.getEpsilonTarget(config, t, continueCollecting, depth === 0, fullCtx, treatEofAsEpsilon);
 
     if (c !== null) {
+      if (!t.isEpsilon && closureBusy.add(c) !== c) {
+        // avoid infinite recursion for EOF* and EOF+
+        continue;
+      }
+
       var newDepth = depth;
 
       if (config.state instanceof RuleStopState) {
@@ -10385,6 +10391,11 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         // track how far we dip into outer context.  Might
         // come in handy and we avoid evaluating context dependent
         // preds if this is > 0.
+        if (closureBusy.add(c) !== c) {
+          // avoid infinite recursion for right-recursive rules
+          continue;
+        }
+
         if (this._dfa !== null && this._dfa.precedenceDfa) {
           if (t.outermostPrecedenceReturn === this._dfa.atnStartState.ruleIndex) {
             c.precedenceFilterSuppressed = true;
@@ -10392,12 +10403,6 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         }
 
         c.reachesIntoOuterContext += 1;
-
-        if (closureBusy.add(c) !== c) {
-          // avoid infinite recursion for right-recursive rules
-          continue;
-        }
-
         configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
 
         newDepth -= 1;
@@ -10405,17 +10410,10 @@ ParserATNSimulator.prototype.closure_ = function (config, configs, closureBusy, 
         if (this.debug) {
           console.log("dips into outer ctx: " + c);
         }
-      } else {
-        if (!t.isEpsilon && closureBusy.add(c) !== c) {
-          // avoid infinite recursion for EOF* and EOF+
-          continue;
-        }
-
-        if (t instanceof RuleTransition) {
-          // latch when newDepth goes negative - once we step out of the entry context we can't return
-          if (newDepth >= 0) {
-            newDepth += 1;
-          }
+      } else if (t instanceof RuleTransition) {
+        // latch when newDepth goes negative - once we step out of the entry context we can't return
+        if (newDepth >= 0) {
+          newDepth += 1;
         }
       }
 
@@ -12943,7 +12941,7 @@ __webpack_require__(36);
 __webpack_require__(40); // Vacuum all input from a string and then treat it like a buffer.
 
 
-function _loadString(stream) {
+function _loadString(stream, decodeToUnicodeCodePoints) {
   stream._index = 0;
   stream.data = [];
 
@@ -20931,7 +20929,7 @@ Object.assign(self, {
    *  Creates a structure for use by _createObservation() in constructing an
    *  Observation value for the given integer value.
    * @param item an LForms item with the integer value to be represented in an Observation.
-   *  It is assumed that the called has already checked the data type.
+   *  It is assumed that the caller has already checked the data type.
    * @return an object with a "key" property that will be the property name for
    *  the value in the Observation object, and a "val" property that holds the
    *  value (formatted for the Observation).
