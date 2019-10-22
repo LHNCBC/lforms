@@ -33,14 +33,14 @@
       "valueExpression" : {
         "name": "weight",
         "language": "text/fhirpath",
-        "expression": "%resource.item.where(linkId='/29463-7').answer.valueQuantity.value"
+        "expression": "%resource.item.where(linkId='/29463-7').answer.valueDecimal"
       }
     }, {
       "url" : "http://hl7.org/fhir/StructureDefinition/variable",
       "valueExpression" : {
         "name": "height",
         "language": "text/fhirpath",
-        "expression": "item.where(linkId='/8302-2').answer.valueQuantity.value*0.0254"
+        "expression": "item.where(linkId='/8302-2').answer.valueDecimal*0.0254"
       }
     }
   ],

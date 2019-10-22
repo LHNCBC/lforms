@@ -9,7 +9,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
 fhir.fhirpath = require('fhirpath');
 import dr from '../diagnostic-report.js';
 fhir.DiagnosticReport = dr;
-import commonExport from '../export-common.js';
+import commonExport from './export.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;
