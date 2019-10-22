@@ -78,7 +78,7 @@
     PATH_DELIMITER : "/",
 
     // whether the form data contains saved user data
-    _hasSavedData : false,
+    hasSavedData : false,
 
     // repeatable question items derived from items
     _repeatableItems : {},
@@ -350,10 +350,10 @@
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function() {
@@ -1336,6 +1336,16 @@
       // get the form data
       var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
 
+      // check if there is user data
+      var hasSavedData = false;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        var item = this.itemList[i];
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -1349,8 +1359,13 @@
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
       };
+
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      }
+
       // reset obr fields
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
 
       return defData;
     },
@@ -2391,7 +2406,7 @@
           // if this is not a saved form with user data, and
           // there is a default value, and
           // there is no embedded data
-          else if (!this._hasSavedData && item.defaultAnswer && !item.value)
+          else if (!this.hasSavedData && item.defaultAnswer && !item.value)
             item.value = item.defaultAnswer;
           this._updateUnitAutocompOptions(item);
         }
@@ -2527,8 +2542,8 @@
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null;
         // item.value has the priority over item.defaultAnswer
-        // if this is a save form with user data, default answers are not to be used.
-        var answerValue = this._hasSavedData ? item.value : item.value || item.defaultAnswer;
+        // if this is a saved form with user data, default answers are not to be used.
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
         if (answerValue) {
           modifiedValue = [];
           // could be an array of multiple default values or a single value
@@ -2804,7 +2819,7 @@
           // If this is not a saved form with user data, and
           // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
-          if (!this._hasSavedData && !options.defaultValue && options.listItems.length === 1)
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
         }
         item._autocompOptions = options;
@@ -3143,8 +3158,8 @@
     _checkSkipLogic: function(item) {
       var takeAction = false;
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY";
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
         // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
         takeAction = hasAll;

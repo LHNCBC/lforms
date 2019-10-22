@@ -2557,12 +2557,12 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
 
           break;
       }
@@ -4531,7 +4531,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     // a delimiter used in code path and id path
     PATH_DELIMITER: "/",
     // whether the form data contains saved user data
-    _hasSavedData: false,
+    hasSavedData: false,
     // repeatable question items derived from items
     _repeatableItems: {},
     // All accessory attributes of an item
@@ -4841,10 +4841,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function _initializeInternalData() {
@@ -5831,7 +5831,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // check if there is user data
+
+      var hasSavedData = false;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -5844,9 +5856,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         copyrightNotice: this.copyrightNotice,
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
-      }; // reset obr fields
+      };
 
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      } // reset obr fields
+
+
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
       return defData;
     },
 
@@ -6914,7 +6931,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           } // if this is not a saved form with user data, and
           // there is a default value, and
           // there is no embedded data
-          else if (!this._hasSavedData && item.defaultAnswer && !item.value) item.value = item.defaultAnswer;
+          else if (!this.hasSavedData && item.defaultAnswer && !item.value) item.value = item.defaultAnswer;
 
           this._updateUnitAutocompOptions(item);
         }
@@ -7039,9 +7056,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (item._modifiedAnswers) {
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null; // item.value has the priority over item.defaultAnswer
-        // if this is a save form with user data, default answers are not to be used.
+        // if this is a saved form with user data, default answers are not to be used.
 
-        var answerValue = this._hasSavedData ? item.value : item.value || item.defaultAnswer;
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
 
         if (answerValue) {
           modifiedValue = []; // could be an array of multiple default values or a single value
@@ -7327,7 +7344,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // there is just one item in the list, use that as the default value.
 
 
-          if (!this._hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
         }
 
         item._autocompOptions = options;
@@ -7669,8 +7686,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var takeAction = false;
 
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY"; // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
+        // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
 
         takeAction = hasAll;
@@ -8108,8 +8126,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateVariables(item.items[i]);
+        for (var _i = 0, _len = item.items.length; _i < _len; ++_i) {
+          var changed = this._evaluateVariables(item.items[_i]);
 
           if (!rtn) rtn = changed;
         }
@@ -8163,10 +8181,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
+        for (var _i2 = 0, _len2 = item.items.length; _i2 < _len2; ++_i2) {
+          var _changed = this._evaluateFieldExpressions(item.items[_i2], includeInitialExpr, changesOnly);
 
-          if (!rtn) rtn = changed;
+          if (!rtn) rtn = _changed;
         }
       }
 
@@ -8219,7 +8237,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           fVars[k] = itemVars[k];
         }
 
-        fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId], expression, fVars);
+        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext, expression, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
@@ -8294,13 +8313,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 for (var a = 0; a < numAnswers; ++a, ++i) {
                   if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
 
-                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
 
-                  if (newlyAdded === 0) {
+                  if (_newlyAdded === 0) {
                     // lfItems[i] was blank; try next lfItem
                     --a;
                   } else {
-                    added += newlyAdded;
+                    added += _newlyAdded;
                   }
                 }
               }
@@ -8332,7 +8351,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
       var oldVal = item.value;
-      if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
+      var fhirPathVal;
+      if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
           item.value = new Date(fhirPathVal);

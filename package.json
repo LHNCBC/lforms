@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "18.2.1",
+  "version": "18.2.3",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -76,8 +76,9 @@
   "license": "See LICENSE.md",
   "scripts": {
     "wiredep": "grunt wiredep",
-    "webpack": "webpack",
     "webpack:fhir": "webpack --env.fhirOnly=true",
+    "webpack:r4": "webpack --env.r4Only=true",
+    "webpack:main": "webpack --env.mainOnly=true",
     "test": "npm run update-webdriver && grunt test",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",

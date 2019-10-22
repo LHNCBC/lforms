@@ -20876,8 +20876,8 @@ var dr = {
   mergeDiagnosticReportToLForms: function mergeDiagnosticReportToLForms(formData, diagnosticReport) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
-      // not to set item values by default values for save forms with user data
-      formData._hasSavedData = true;
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
       formData = new LForms.LFormsData(formData).getFormData();
     }
 
@@ -23805,7 +23805,7 @@ function addCommonSDCImportFns(ns) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
       // not to set item values by default values for saved forms with user data
-      formData._hasSavedData = true;
+      formData.hasSavedData = true;
       formData = new LForms.LFormsData(formData).getFormData();
     } // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.

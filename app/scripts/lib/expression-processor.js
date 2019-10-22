@@ -13,7 +13,7 @@
   LForms.ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
-  }
+  };
 
   LForms.ExpressionProcessor.prototype = {
 
@@ -54,7 +54,7 @@
       var rtn = false;
       var variableExts = item._variableExt;
       if (variableExts) {
-        for (var i=0, len=variableExts.length; i<len; ++i) {
+        for (let i=0, len=variableExts.length; i<len; ++i) {
           var ext = variableExts[i];
           if (ext && ext.valueExpression.language=="text/fhirpath") {
             var varName = ext.valueExpression.name;
@@ -81,7 +81,7 @@
         }
       }
       if (item.items) {
-        for (var i=0, len=item.items.length; i<len; ++i) {
+        for (let i=0, len=item.items.length; i<len; ++i) {
           var changed = this._evaluateVariables(item.items[i]);
           if (!rtn)
             rtn = changed;
@@ -117,8 +117,8 @@
           exts.push(item._initialExprExt);
         if (item._calculatedExprExt)
           exts.push(item._calculatedExprExt);
-        var changed = false;
-        for (var i=0, len=exts.length; i<len; ++i) {
+        let changed = false;
+        for (let i=0, len=exts.length; i<len; ++i) {
           var ext = exts[i];
           if (ext && ext.valueExpression.language=="text/fhirpath") {
             var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
@@ -132,8 +132,8 @@
 
       // Process child items
       if (item.items) {
-        for (var i=0, len=item.items.length; i<len; ++i) {
-          var changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
+        for (let i=0, len=item.items.length; i<len; ++i) {
+          let changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
           if (!rtn)
             rtn = changed;
         }
@@ -181,7 +181,9 @@
         var fVars = {};
         for (var k in itemVars)
           fVars[k] = itemVars[k];
-        fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId],
+        let fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] :
+          this._lfData._fhirVariables.resource;
+        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext,
           expression, fVars);
       }
       catch (e) {
@@ -189,7 +191,7 @@
         // yet.
         console.log(e);
       }
-      return fhirPathVal
+      return fhirPathVal;
     },
 
 
@@ -237,7 +239,7 @@
               var lfIthItem = lfItems[i];
               if (!qrIthItem.answer) {
                 // process item anyway to handle child items with data
-                var newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+                let newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
                 if (newlyAdded === 0) {
                   // lfIthItem was blank, so qrIthItem must be for a following
                   // item.
@@ -252,7 +254,7 @@
                 for (var a=0; a<numAnswers; ++a, ++i) {
                   if (i >= numLFItems)
                     throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
-                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  let newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
                   if (newlyAdded === 0) { // lfItems[i] was blank; try next lfItem
                     --a;
                   }
@@ -288,8 +290,9 @@
      */
     _setItemValueFromFHIRPath: function(item, fhirPathRes) {
       var oldVal = item.value;
+      var fhirPathVal;
       if (fhirPathRes !== undefined)
-        var fhirPathVal = fhirPathRes[0];
+        fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
       else {
@@ -298,7 +301,6 @@
         }
         else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
           item.value = LForms.Util.stringToDTDateISO(fhirPathVal);
-
         }
         else
           item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
