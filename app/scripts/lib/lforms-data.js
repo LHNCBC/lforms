@@ -2439,13 +2439,16 @@
         // clean up unit autocomp options
         item._unitAutocompOptions = null;
 
+        // Per FHIR, if the item is of type integer or decimal, it can only have
+        // one unit, and that unit is not editable.
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
-        var defaultValue;
+        var defaultValue, defaultUnit;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
           this._setUnitDisplay(listItem);
           if (answers[i].default) {
+            defaultUnit = listItem;
             defaultValue = listItem._displayUnit;
           }
           // Include only if name or code is specified.
@@ -2454,20 +2457,28 @@
           }
         }
 
-        var options = {
-          listItems: listItems,
-          matchListValue: true,
-          autoFill: true,
-          display: "_displayUnit"
-        };
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.INT ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
+          item._unitReadonly = true;
+          if (!item.unit && defaultUnit)
+            item.unit = defaultUnit;
         }
-        else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
-        }
+        else { // quanitity
+          var options = {
+            listItems: listItems,
+            matchListValue: true,
+            autoFill: true,
+            display: "_displayUnit"
+          };
+          if (defaultValue !== undefined) {
+            options.defaultValue = defaultValue;
+          }
+          else if (listItems.length === 1) {
+            options.defaultValue = listItems[0]._displayUnit;
+          }
 
-        item._unitAutocompOptions = options;
+          item._unitAutocompOptions = options;
+        }
       }
     },
 

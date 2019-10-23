@@ -20,6 +20,7 @@
     "element-resize-detector": "^1.1.15",
     "es6-promise": "^4.2.8",
     "fhirpath": "^0.17.2",
+    "grunt-protractor-runner": "^5.0.0",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",
@@ -45,7 +46,6 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-karma": "^3.0.1",
     "grunt-newer": "^1.1.0",
-    "grunt-protractor-runner": "^5.0.0",
     "grunt-wiredep": "^3.0.1",
     "jasmine-core": "^2.3.4",
     "jasmine-spec-reporter": "^2.7.0",
@@ -88,7 +88,7 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update",
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome 77.0.3865.40",
     "start": "grunt serve"
   }
 }

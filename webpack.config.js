@@ -42,6 +42,7 @@ function makeConfigs(env) {
 
   // Builds for each FHIR version
   let fhirExternals = {
+    '../lforms-index': 'LForms',
     '@lhncbc/ucum-lhc': 'LForms.ucumPkg'
   }
   var allFHIREntryFiles = [];
@@ -84,7 +85,7 @@ function makeConfigs(env) {
     let bowerConfig = commonConfig();
     bowerConfig.entry = ['whatwg-fetch', './app/scripts/bower-index.js']; // includes fetch polyfill
     bowerConfig.output.filename = './bower-dist/lforms.js';
-    bowerConfig.output.library = 'LForms';
+    bowerConfig.output.library = 'LForms'; // global variable for the library
     bowerConfig.devtool = 'source-map';
     bowerConfig.mode = 'none';
     bowerConfig.externals = {

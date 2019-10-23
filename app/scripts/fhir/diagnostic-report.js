@@ -336,9 +336,25 @@ var dr = {
 
       switch (dataType) {
         case "INT":
-        case "REAL":
-          item.value = obx.valueQuantity.value;
-          item.unit = {name: obx.valueQuantity.code};
+          if (obx.valueInteger) {
+            item.value = obx.valueInteger;
+            break;
+          }
+          // else handle as Quantity
+        case "REAL": // handle as Quantity
+        case "QTY":
+          let qty = obx.valueQuantity;
+          item.value = qty.value;
+          let unitName = qty.unit || qty.code;
+          if (unitName || qty.code || qty.system) {
+            item.unit = {};
+            if (unitName)
+              item.unit.name = unitName;
+            if (qty.code)
+              item.unit.code = qty.code;
+            if (qty.system)
+              item.unit.system = qty.system;
+          }
           break;
         case "DT":
           item.value = LForms.Util.stringToDTDateISO(obx.valueDate);

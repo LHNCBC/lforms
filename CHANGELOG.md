@@ -7,6 +7,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
   and saved form data. 
 
+## [18.2.2] 2019-10-17
+### Fixed
+- Corrected FHIR export and import of integer, decimal, and quantity types, and
+  the unit extensions used.
+
 ## [18.2.1] 2019-10-15
 ### Fixed
 - Corrected the default for handling multiple skip logic conditions to be "ANY"

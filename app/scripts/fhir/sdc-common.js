@@ -66,7 +66,7 @@ function addCommonSDCFns(ns) {
    */
   self._questionRepeats = function(item) {
     return item && item.questionCardinality && item.questionCardinality.max &&
-        (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1)
+        (item.questionCardinality.max === "*" || parseInt(item.questionCardinality.max) > 1);
   };
 
 
@@ -78,7 +78,7 @@ function addCommonSDCFns(ns) {
    */
   self._answerRepeats = function(item) {
     return item && item.answerCardinality && item.answerCardinality.max &&
-        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1)
+        (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
   };
 
 
@@ -116,8 +116,8 @@ function addCommonSDCFns(ns) {
       });
     }
   };
-  
-  
+
+
   // Store the UCUM code system URI
   self.UCUM_URI = 'http://unitsofmeasure.org';
 
