@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.3.0] 2019-10-22
+### Added
+- The FHIRPath expressions are now cached after being parsed, which greatly
+  speeds up the processing.
+
 ## [18.2.2] 2019-10-17
 ### Fixed
 - Corrected FHIR export and import of integer, decimal, and quantity types, and
