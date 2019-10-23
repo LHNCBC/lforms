@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "18.2.3",
+  "version": "18.3.1",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -19,8 +19,7 @@
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
     "es6-promise": "^4.2.8",
-    "fhirpath": "^0.17.2",
-    "grunt-protractor-runner": "^5.0.0",
+    "fhirpath": "^0.17.4",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",
@@ -46,6 +45,7 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-karma": "^3.0.1",
     "grunt-newer": "^1.1.0",
+    "grunt-protractor-runner": "^5.0.0",
     "grunt-wiredep": "^3.0.1",
     "jasmine-core": "^2.3.4",
     "jasmine-spec-reporter": "^2.7.0",

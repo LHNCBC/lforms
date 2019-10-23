@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.2.3] 2019-10-21
+## [18.3.1] 2019-10-23
 ### Changed
 - Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
   and saved form data. 
+
+## [18.3.0] 2019-10-22
+### Added
+- The FHIRPath expressions are now cached after being parsed, which greatly
+  speeds up the processing.
 
 ## [18.2.2] 2019-10-17
 ### Fixed

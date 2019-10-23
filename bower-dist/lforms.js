@@ -8101,6 +8101,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   LForms.ExpressionProcessor = function (lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
+    this._compiledExpressions = {};
   };
 
   LForms.ExpressionProcessor.prototype = {
@@ -8121,6 +8122,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       var firstRun = true;
       var changed = true;
+      var start = new Date();
 
       while (changed) {
         if (changed || firstRun) {
@@ -8132,6 +8134,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (changed || firstRun) changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
+
+      console.log("Ran FHIRPath expressions in " + (new Date() - start) + " ms");
     },
 
     /**
@@ -8283,7 +8287,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         }
 
         var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
-        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext, expression, fVars);
+        var compiledExpr = this._compiledExpressions[expression];
+
+        if (!compiledExpr) {
+          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression);
+        }
+
+        fhirPathVal = compiledExpr(fhirContext, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
