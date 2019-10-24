@@ -110,7 +110,7 @@ function addSDCImportFns(ns) {
       var extInfo = copiedExtensions[url];
       var prop = extInfo[0], multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      if (!multiple || ext.length > 0)
+      if (ext && (!multiple || ext.length > 0))
         lfItem[prop] = ext;
     }
   };
@@ -354,68 +354,11 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
-  self._processUnitList = function (lfItem, qItem) {
-
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-    if(unitOption && unitOption.length > 0) {
-      for(var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-    if(unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
-      // If this unit is already in the list, set its default flag, otherwise create new
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-    else if(qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: qItem.initial[0].valueQuantity.unit,
-          code: qItem.initial[0].valueQuantity.code,
-          system: qItem.initial[0].valueQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if(lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-      lfItem.units = lformsUnits;
-    }
+  self.getFirstInitialQuantity = function(qItem) {
+    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
 
 

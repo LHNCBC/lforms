@@ -2,6 +2,34 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.3.0] 2019-10-22
+### Added
+- The FHIRPath expressions are now cached after being parsed, which greatly
+  speeds up the processing.
+
+## [18.2.2] 2019-10-17
+### Fixed
+- Corrected FHIR export and import of integer, decimal, and quantity types, and
+  the unit extensions used.
+
+## [18.2.1] 2019-10-15
+### Fixed
+- Corrected the default for handling multiple skip logic conditions to be "ANY"
+  instead of "ALL" (i.e. now "ANY" of the conditions being true will make the
+  field visible).  The "ANY" default was what should have been the case per the
+  documentation in form_definition.md, and also matches the equivalent default
+  in FHIR.
+- Fixed the setting of the FHIR context for evaluating FHIR variables defined on
+  Questionnaire.
+
+## [18.2.0] 2019-10-15
+### Changed
+- Units column is no longer shown if there is no units values in the form data.
+
+## [18.1.1] 2019-10-08
+### Fixed
+- Display of item with TITLE data type is fixed without setting header flag.
+
 ## [18.1.0] 2019-10-03
 ### Added
 - Support for the FHIR "rendering-style" (CSS) extension on Questionnaire.title,

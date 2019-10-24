@@ -92,13 +92,13 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(86);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(87);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(89);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(90);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(91);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(88);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(89);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(90);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(91);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(92);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(93);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -110,10 +110,10 @@ fhir.fhirpath = __webpack_require__(2);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-fhir.DiagnosticReport._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+fhir.DiagnosticReport._commonExport = _export_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__["default"];
-fhir.SDC._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+fhir.SDC._commonExport = _export_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 
@@ -1096,18 +1096,25 @@ var evaluate = function evaluate(resource, path, context) {
   return applyParsedPath(resource, node, context);
 };
 /**
- *  Returns a function that takes a resource and returns the result of
- *  evaluating the given FHIRPath expression on that resource.  The advantage
- *  of this function over "evaluate" is that if you have multiple resources,
- *  the given FHIRPath expression will only be parsed once.
+ *  Returns a function that takes a resource and an optional context hash (see
+ *  "evaluate"), and returns the result of evaluating the given FHIRPath
+ *  expression on that resource.  The advantage of this function over "evaluate"
+ *  is that if you have multiple resources, the given FHIRPath expression will
+ *  only be parsed once.
  * @param path the FHIRPath expression to be parsed.
- * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} (deprecated) context - a hash of variable name/value pairs.  This is
+ *  optional now, and is deprecated, because it was probably a mistake.  Instead
+ *  of passing in this hash of variables here, pass it to the returned function
+ *  as a second argument.  If context is provided both here and to the returned
+ *  function, the argument to the returned function will be used instead of this
+ *  one.
  */
 
 
 var compile = function compile(path, context) {
   var node = parse(path);
-  return function (resource) {
+  return function (resource, contextOverride) {
+    if (contextOverride) context = contextOverride;
     return applyParsedPath(resource, node, context);
   };
 };
@@ -20545,11 +20552,27 @@ var dr = {
 
       switch (dataType) {
         case "INT":
-        case "REAL":
-          item.value = obx.valueQuantity.value;
-          item.unit = {
-            name: obx.valueQuantity.code
-          };
+          if (obx.valueInteger) {
+            item.value = obx.valueInteger;
+            break;
+          }
+
+        // else handle as Quantity
+
+        case "REAL": // handle as Quantity
+
+        case "QTY":
+          var qty = obx.valueQuantity;
+          item.value = qty.value;
+          var unitName = qty.unit || qty.code;
+
+          if (unitName || qty.code || qty.system) {
+            item.unit = {};
+            if (unitName) item.unit.name = unitName;
+            if (qty.code) item.unit.code = qty.code;
+            if (qty.system) item.unit.system = qty.system;
+          }
+
           break;
 
         case "DT":
@@ -20905,23 +20928,80 @@ var dr = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(86);
+// R4-specific export code common to DiagnosticReport and SDC.
+
+var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
+
+Object.assign(self, {
+  /**
+   *  Creates a structure for use by _createObservation() in constructing an
+   *  Observation value for the given integer value.
+   * @param item an LForms item with the integer value to be represented in an Observation.
+   *  It is assumed that the caller has already checked the data type.
+   * @return an object with a "key" property that will be the property name for
+   *  the value in the Observation object, and a "val" property that holds the
+   *  value (formatted for the Observation).
+   */
+  _createObsIntValue: function _createObsIntValue(item) {
+    // R4 added valueInteger to Observation, so we use that unless the item has
+    // a unit, in which case we use valueQuantity.
+    // valueQuantity.
+    var rtn;
+
+    if (item.unit) {
+      var quantity = {
+        value: item.value
+      };
+
+      this._setFHIRQuantityUnit(quantity, item.unit);
+
+      rtn = {
+        key: 'valueQuantity',
+        val: quantity
+      };
+    } else rtn = {
+      key: 'valueInteger',
+      val: item.value
+    };
+
+    return rtn;
+  }
+});
+/* harmony default export */ __webpack_exports__["default"] = (self);
+
+/***/ }),
+/* 86 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* jshint -W097 */
+// suppress jshint warning about strict
+
+/* jshint node: true */
+// suppress warning about "require"
 
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
+
+var LForms = __webpack_require__(87);
 /**
  *  Defines export functions that are the same across the different FHIR
  *  versions and that are used by both the SDC and DiagnosticReport exports.
  */
 
+
 var self = {
   /**
-   * Create an Observation resource from an LForms item object
+   *  Creates Observation resources from an LForms item object
    * @param item an LForms item object
    * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
-   * @returns {{}} an observation resource
+   * @returns {{}} an array of observation resources representing the values
+   *  stored in the item.
    * @private
    */
   _createObservation: function _createObservation(item, setId) {
@@ -20934,29 +21014,23 @@ var self = {
 
     switch (dataType) {
       case "INT":
-      case "REAL":
-        if (item.unit) {
-          var valValue = {
-            "value": item.value
-          };
+        values = [this._createObsIntValue(item)];
+        break;
 
-          if (item.unit) {
-            if (item.unit.name) valValue.unit = item.unit.name;
-            if (item.unit.code) valValue.code = item.unit.code;
-            if (item.unit.system) valValue.system = item.unit.system;
-          }
+      case "REAL": // A "real" data type should be exported as valueQuantity, because
+      // there is no valueDecimal for Observation (as of R4).
 
-          values = [{
-            key: "valueQuantity",
-            val: valValue
-          }];
-        } else {
-          values = [{
-            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
-            val: item.value
-          }];
-        }
+      case "QTY":
+        var valValue = {
+          value: item.value
+        };
 
+        this._setFHIRQuantityUnit(valValue, item.unit);
+
+        values = [{
+          key: "valueQuantity",
+          val: valValue
+        }];
         break;
 
       case "DT":
@@ -21055,12 +21129,32 @@ var self = {
   _getUniqueId: function _getUniqueId(prefix) {
     this._idCtr || (this._idCtr = 0);
     return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' + Math.random().toString(16).substr(2);
+  },
+
+  /**
+   *  Sets the unit for a Quantity.
+   * @param qty the FHIR Quantity structure whose unit will be set.  This
+   *  function assumes there is no unit information already set.
+   * @param unit An LForms unit object.
+   */
+  _setFHIRQuantityUnit: function _setFHIRQuantityUnit(qty, unit) {
+    if (unit) {
+      if (unit.name) qty.unit = unit.name;
+      if (unit.code) qty.code = unit.code;
+      if (unit.system) qty.system = unit.system;
+    }
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 86 */
+/* 87 */
+/***/ (function(module, exports) {
+
+module.exports = LForms;
+
+/***/ }),
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21437,95 +21531,6 @@ var self = {
   },
 
   /**
-   * Process capture user data
-   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
-   * @param item an item in LForms form object
-   * @private
-   */
-  _handleAnswerValues: function _handleAnswerValues(targetItem, item, parentItem) {
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
-    var answer = [];
-    var linkId = item._codePath;
-
-    var dataType = this._getAssumedDataTypeForExport(item); // value not processed by previous repeating items
-
-
-    if (dataType !== "SECTION" && dataType !== "TITLE") {
-      var valueKey = this._getValueKeyByDataType("value", item);
-
-      if (this._questionRepeats(item)) {
-        var values = parentItem._questionValues[linkId];
-      } else if (this._answerRepeats(item)) {
-        values = item.value;
-      } else {
-        values = [item.value];
-      }
-
-      for (var i = 0, iLen = values.length; i < iLen; i++) {
-        // for Coding
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof values[i] === 'string') {
-            if (values[i] !== '') {
-              answer.push({
-                "valueString": values[i]
-              });
-            }
-          } else if (!jQuery.isEmptyObject(values[i])) {
-            var oneAnswer = {};
-            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
-            if (codeSystem) oneAnswer.system = codeSystem;
-            if (values[i].code) oneAnswer.code = values[i].code;
-            if (values[i].text) oneAnswer.display = values[i].text;
-            answer.push({
-              "valueCoding": oneAnswer
-            });
-          }
-        } // for Quantity,
-        // [{
-        //   // from Element: extension
-        //   "value" : <decimal>, // Numerical value (with implicit precision)
-        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-        //   "unit" : "<string>", // Unit representation
-        //   "system" : "<uri>", // Code System that defines coded unit form
-        //   "code" : "<code>" // Coded form of the unit
-        // }]
-        else if (dataType === "QTY") {
-            // for now, handling only simple quantities without the comparators.
-            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
-
-            if (fhirQuantity) {
-              answer.push({
-                valueQuantity: fhirQuantity
-              });
-            }
-          } // make a Quantity type if numeric values has a unit value
-          else if (item.unit && typeof values[i] !== 'undefined' && (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
-              var q = {
-                value: parseFloat(values[i])
-              };
-
-              self._setUnitAttributesToFhirQuantity(q, item.unit);
-
-              answer.push({
-                valueQuantity: q
-              });
-            } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-            else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-                var answerValue = {};
-                answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
-                answer.push(answerValue);
-              } // no support for reference yet
-
-      }
-
-      targetItem.answer = answer;
-    }
-  },
-
-  /**
    * Process default values
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
@@ -21711,7 +21716,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22448,27 +22453,82 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   /**
-   * Set questionnaire-unitOption extensions using lforms units.
-   *
-   * @param targetFhirItem - FHIR Questionnaire item
-   * @param units - lforms units array
+   * Process captured user data
+   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
+   * @param item an item in LForms form object
    * @private
    */
 
 
-  self._setUnitOptions = function (targetFhirItem, units) {
-    for (var i = 0, iLen = units.length; i < iLen; i++) {
-      var unit = units[i];
-      var fhirUnitExt = {
-        "url": this.fhirExtUrlUnitOption,
-        "valueCoding": self._createFhirUnitCoding(unit)
-      };
+  self._handleAnswerValues = function (targetItem, item, parentItem) {
+    // dataType:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+    var answer = [];
+    var linkId = item._codePath;
 
-      if (!targetFhirItem.extension) {
-        targetFhirItem.extension = [];
+    var dataType = this._getAssumedDataTypeForExport(item); // value not processed by previous repeating items
+
+
+    if (dataType !== "SECTION" && dataType !== "TITLE") {
+      var valueKey = this._getValueKeyByDataType("value", item);
+
+      if (this._questionRepeats(item)) {
+        var values = parentItem._questionValues[linkId];
+      } else if (this._answerRepeats(item)) {
+        values = item.value;
+      } else {
+        values = [item.value];
       }
 
-      targetFhirItem.extension.push(fhirUnitExt);
+      for (var i = 0, iLen = values.length; i < iLen; i++) {
+        // for Coding
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString": values[i]
+              });
+            }
+          } else if (!jQuery.isEmptyObject(values[i])) {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            });
+          }
+        } // for Quantity,
+        // [{
+        //   // from Element: extension
+        //   "value" : <decimal>, // Numerical value (with implicit precision)
+        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+        //   "unit" : "<string>", // Unit representation
+        //   "system" : "<uri>", // Code System that defines coded unit form
+        //   "code" : "<code>" // Coded form of the unit
+        // }]
+        else if (dataType === "QTY") {
+            // for now, handling only simple quantities without the comparators.
+            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
+
+            if (fhirQuantity) {
+              answer.push({
+                valueQuantity: fhirQuantity
+              });
+            }
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+              var answerValue = {};
+              answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
+              answer.push(answerValue);
+            } // no support for reference yet
+
+      }
+
+      targetItem.answer = answer;
     }
   };
 }
@@ -22476,7 +22536,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22607,7 +22667,7 @@ function addSDCImportFns(ns) {
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      if (!multiple || ext.length > 0) lfItem[prop] = ext;
+      if (ext && (!multiple || ext.length > 0)) lfItem[prop] = ext;
     }
   };
   /**
@@ -22867,70 +22927,13 @@ function addSDCImportFns(ns) {
     if (vals.length > 0) this._processFHIRValues(lfItem, vals, true);
   };
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
 
 
-  self._processUnitList = function (lfItem, qItem) {
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-
-    if (unitOption && unitOption.length > 0) {
-      for (var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-
-    if (unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code); // If this unit is already in the list, set its default flag, otherwise create new
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    } else if (qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: qItem.initial[0].valueQuantity.unit,
-          code: qItem.initial[0].valueQuantity.code,
-          system: qItem.initial[0].valueQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if (lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-
-      lfItem.units = lformsUnits;
-    }
+  self.getFirstInitialQuantity = function (qItem) {
+    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
   /**
    * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
@@ -23289,7 +23292,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23463,7 +23466,7 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23862,6 +23865,82 @@ function addCommonSDCImportFns(ns) {
     }
   };
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processUnitList = function (lfItem, qItem) {
+    var lformsUnits = [];
+    var lformsDefaultUnit = null; // The questionnaire-unit extension is only for item.type = quantity
+
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+
+    if (unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Error('The extension ' + self.fhirExtUrlUnitOption + ' can only be used with type quantity.  Question "' + qItem.text + '" is of type ' + qItem.type);
+      }
+
+      for (var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    } // The questionnaire-unit extension is only for item.type = integer or decimal
+
+
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+
+    if (unit) {
+      if (qItem.type !== 'integer' && qItem.type !== 'decimal') {
+        throw new Error('The extension ' + self.fhirExtUrlUnit + ' can only be used with types integer or decimal.  Question "' + qItem.text + '" is of type ' + qItem.type);
+      }
+
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      var initialQ = this.getFirstInitialQuantity(qItem);
+
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+
+        if (lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        } else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if (lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+
+      lfItem.units = lformsUnits;
+    }
+  };
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -23883,6 +23962,7 @@ function addCommonSDCImportFns(ns) {
 
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+        // continue to drop-down case
 
         case 'drop-down':
           displayControl.answerLayout = {
@@ -24251,13 +24331,15 @@ function addCommonSDCImportFns(ns) {
     }
 
     return terminologyServer;
-  },
+  };
   /**
    *  Returns the URL for performing a ValueSet expansion for the given item,
    *  if the given item has a terminology server and answerValueSet
    *  configured; otherwise it returns undefined.
    * @param item a question, title, or group in the form
    */
+
+
   self._getExpansionURL = function (item) {
     var rtn;
 
@@ -24275,6 +24357,7 @@ function addCommonSDCImportFns(ns) {
    * @return an array of promise objects which resolve when the answer valuesets
    * have been loaded and imported.
    */
+
 
   self.loadAnswerValueSets = function (lfData) {
     var _this = this;
@@ -24450,13 +24533,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(92);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(94);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -24482,7 +24565,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

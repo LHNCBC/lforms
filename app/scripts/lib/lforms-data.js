@@ -167,7 +167,7 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+      if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
         for(var i = 0; i < props.length; i++) {
           if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
@@ -389,6 +389,27 @@
       // run the form controls
       this._checkFormControls();
 
+      // adjust template options
+      this._adjustTemplateOptions();
+    },
+
+    /**
+     * Adjust hideUnits value depending on whether units are included in the form.
+     * It is to be called only in the initialization of the form data object.
+     * @private
+     */
+    _adjustTemplateOptions: function() {
+      // if none of the items has 'units', reset the 'hideUnits' to be true
+      var noUnits = true;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0 ) {
+          noUnits = false;
+          break;
+        }
+      }
+      if (noUnits) {
+        this.templateOptions.hideUnits = true;
+      }
     },
 
 
@@ -2397,13 +2418,16 @@
         // clean up unit autocomp options
         item._unitAutocompOptions = null;
 
+        // Per FHIR, if the item is of type integer or decimal, it can only have
+        // one unit, and that unit is not editable.
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
-        var defaultValue;
+        var defaultValue, defaultUnit;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
           this._setUnitDisplay(listItem);
           if (answers[i].default) {
+            defaultUnit = listItem;
             defaultValue = listItem._displayUnit;
           }
           // Include only if name or code is specified.
@@ -2412,20 +2436,28 @@
           }
         }
 
-        var options = {
-          listItems: listItems,
-          matchListValue: true,
-          autoFill: true,
-          display: "_displayUnit"
-        };
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.INT ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
+          item._unitReadonly = true;
+          if (!item.unit && defaultUnit)
+            item.unit = defaultUnit;
         }
-        else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
-        }
+        else { // quanitity
+          var options = {
+            listItems: listItems,
+            matchListValue: true,
+            autoFill: true,
+            display: "_displayUnit"
+          };
+          if (defaultValue !== undefined) {
+            options.defaultValue = defaultValue;
+          }
+          else if (listItems.length === 1) {
+            options.defaultValue = listItems[0]._displayUnit;
+          }
 
-        item._unitAutocompOptions = options;
+          item._unitAutocompOptions = options;
+        }
       }
     },
 
@@ -3131,8 +3163,8 @@
     _checkSkipLogic: function(item) {
       var takeAction = false;
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY";
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
         // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
         takeAction = hasAll;

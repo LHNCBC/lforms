@@ -64,6 +64,33 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
+          it('should generate correct Observations for type integer', function() {
+            tp.openFullFeaturedForm();
+            let integerWithUnit = $('#\\/q_lg\\/1')
+            integerWithUnit.sendKeys(3);
+            let integerNoUnit = $('#\\/type2\\/1');
+            integerNoUnit.sendKeys(4);
+            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("DiagnosticReport");
+              // integer with unit
+              expect(fhirData.contained[0].resourceType).toBe("Observation");
+              expect(fhirData.contained[0].id).not.toBe(undefined);
+              expect(fhirData.contained[0].code.coding[0].code).toBe("q_lg");
+              expect(fhirData.contained[0].valueQuantity).toEqual({value: 3, unit: 'lbs'});
+
+              // integer without unit
+              expect(fhirData.contained[1].resourceType).toBe("Observation");
+              expect(fhirData.contained[1].id).not.toBe(undefined);
+              expect(fhirData.contained[1].code.coding[0].code).toBe("type2");
+              if (fhirVersion === 'STU3')
+                expect(fhirData.contained[1].valueQuantity).toEqual({value: 4});
+              else
+                expect(fhirData.contained[1].valueInteger).toBe(4);
+            });
+          });
 
           it('should get a DiagnosticReport (contained) data from a form', function() {
 

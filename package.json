@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "18.1.0",
+  "version": "18.3.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -19,7 +19,7 @@
     "bootstrap": "^3.4.1",
     "element-resize-detector": "^1.1.15",
     "es6-promise": "^4.2.8",
-    "fhirpath": "^0.17.2",
+    "fhirpath": "^0.17.4",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",
@@ -76,8 +76,9 @@
   "license": "See LICENSE.md",
   "scripts": {
     "wiredep": "grunt wiredep",
-    "webpack": "webpack",
     "webpack:fhir": "webpack --env.fhirOnly=true",
+    "webpack:r4": "webpack --env.r4Only=true",
+    "webpack:main": "webpack --env.mainOnly=true",
     "test": "npm run update-webdriver && grunt test",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
@@ -87,7 +88,7 @@
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
     "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update",
+    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome 77.0.3865.40",
     "start": "grunt serve"
   }
 }
