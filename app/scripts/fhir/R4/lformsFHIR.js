@@ -22671,12 +22671,11 @@ function addSDCImportFns(ns) {
           var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
 
           if (!opMapping) {
-            throw new Error('#### i=' + i + '; qItem=' + JSON.stringify(qItem)); // throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+            throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
           }
 
           if (opMapping === 'exists') {
             condition.trigger.exists = answer; // boolean value here regardless of data type
-            // throw new Error('=== exists@import: answer=' + answer + '; enableWhen=' + JSON.stringify(qItem.enableWhen[i], null, 4));
           } else if (source.dataType === 'CWE' || source.dataType === 'CNE') {
             condition.trigger.value = self._copyTriggerCoding(answer, null, false);
           } else if (source.dataType === 'QTY') {

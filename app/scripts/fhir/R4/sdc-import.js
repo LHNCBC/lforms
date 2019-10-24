@@ -163,8 +163,7 @@ function addSDCImportFns(ns) {
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
           if(! opMapping) {
-            throw new Error('#### i=' + i + '; qItem=' + JSON.stringify(qItem));
-            // throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+            throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
           }
 
           if(opMapping === 'exists') {
