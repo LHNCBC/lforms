@@ -1041,7 +1041,7 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
                 }
               ]
             };
-            var lformsQ = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
+            var lformsQ = new LForms.LFormsData(fhir.SDC.convertQuestionnaireToLForms(fhirQ));
             assert.isOk(lformsQ.items[0]._variableExt);
             assert.equal(lformsQ.items[0]._variableExt.length, 2);
             var convertedFHIRQ = fhir.SDC.convertLFormsToQuestionnaire(lformsQ);

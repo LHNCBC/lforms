@@ -1203,6 +1203,7 @@
          !!(item.calculationMethod || item._calculatedExprExt);
 
       var lfData = this;
+      LForms.Util.processCopiedItemExtensions(item, item.extension);
       if (LForms.FHIR && lfData.fhirVersion) {
         lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
              item._calculatedExprExt.valueExpression.language=="text/fhirpath");

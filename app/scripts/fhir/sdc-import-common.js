@@ -68,7 +68,8 @@ function addCommonSDCImportFns(ns) {
 
   self.itemLevelIgnoredFields = [
     'definition',
-    'prefix'
+    'prefix',
+    'extension'
   ];
 
   /**
@@ -160,7 +161,7 @@ function addCommonSDCImportFns(ns) {
     var fraction = match[2];
     //var exponent = match[3];
     return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
-  }
+  };
 
 
   /**
@@ -178,7 +179,7 @@ function addCommonSDCImportFns(ns) {
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
     // fhirValType is now the FHIR data type for a Questionnaire.  However,
     // where Questionnaire uses Coding, Observation uses CodeableConcept.
-    if (fhirValType == 'Coding')
+    if (fhirValType === 'Coding')
       fhirValType = 'CodeableConcept';
     if (fhirValType)
       val = obs['value'+fhirValType];
@@ -260,10 +261,10 @@ function addCommonSDCImportFns(ns) {
       var answer = null;
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
         var codings = null;
-        if (fhirVal._type == 'CodeableConcept') {
+        if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
         }
-        else if (fhirVal._type == 'Coding') {
+        else if (fhirVal._type === 'Coding') {
           codings = [fhirVal];
         }
         if (!codings) {
@@ -281,8 +282,8 @@ function addCommonSDCImportFns(ns) {
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
                 var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
-                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) &&
-                    coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
+                    coding.code === listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -765,7 +766,7 @@ function addCommonSDCImportFns(ns) {
       parent = parent._parentItem;
     }
     return terminologyServer;
-  },
+  };
 
 
   /**
@@ -782,7 +783,7 @@ function addCommonSDCImportFns(ns) {
         rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
     }
     return rtn;
-  }
+  };
 
 
   /**
@@ -841,7 +842,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
-  }
+  };
 
 
   /**
@@ -865,7 +866,7 @@ function addCommonSDCImportFns(ns) {
       retValue = qrItemValue.valueString;
     }
     return retValue
-  }
+  };
 
 
   /**
@@ -906,7 +907,7 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
-  }
+  };
 
   /**
    *  Processes the child items of the item.
@@ -932,7 +933,7 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
-  }
+  };
 
 
 }

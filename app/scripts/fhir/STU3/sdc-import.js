@@ -83,24 +83,11 @@ function addSDCImportFns(ns) {
     _processExternallyDefined(targetItem, qItem);
     self._processTerminologyServer(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
-    _processCalculatedValue(targetItem, qItem);
+    self.copyFields(qItem, targetItem, ['extension']);
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
   };
-
-
-  /**
-   *  Copies the calculated value expression from qItem to lfItem if it exists,
-   *  and if it is a FHIRPath expression, which is the only type we support.
-   */
-  function _processCalculatedValue(lfItem, qItem) {
-    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url',
-      "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
-    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
-      lfItem._calculatedExprExt = calcExt;
-    }
-  }
 
 
   /**

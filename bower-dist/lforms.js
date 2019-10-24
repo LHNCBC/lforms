@@ -2332,7 +2332,16 @@ var moment = __webpack_require__(13); // Acceptable date formats
 // Strict parsing -
 
 
-var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D', 'YYYY', 'YYYY-M-D', 'YYYY/M/D', moment.ISO_8601, 'M/D/YYYY HH:mm', 'M/D/YY HH:mm', 'M/D HH:mm', 'M-D-YYYY HH:mm', 'M-D-YY HH:mm', 'M-D HH:mm'];
+var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D', 'YYYY', 'YYYY-M-D', 'YYYY/M/D', moment.ISO_8601, 'M/D/YYYY HH:mm', 'M/D/YY HH:mm', 'M/D HH:mm', 'M-D-YYYY HH:mm', 'M-D-YY HH:mm', 'M-D HH:mm']; // A map of FHIR extensions involving Expressions to the property names on
+// which they will be stored in LFormsData, and a boolean indicating whether
+// more than one extension of the type is permitted.
+
+var copiedExtensions = {
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false],
+  "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
+};
 
 var LForms = __webpack_require__(4);
 
@@ -3238,6 +3247,33 @@ LForms.Util = {
     }
 
     return codeSystem;
+  },
+
+  /**
+   *  Some extensions are simply copied over to the LForms data structure.
+   *  This copies those extensions from qItem to lfItem if they exist, and
+   *  LForms can support them.
+   * @param qItem an item from the Questionnaire resource
+   * @param lfItem an item from the LFormsData structure
+   */
+  processCopiedItemExtensions: function processCopiedItemExtensions(lfItem, extensionArray) {
+    if (!extensionArray || extensionArray.length === 0) {
+      return;
+    }
+
+    var copiedExtURLs = Object.keys(copiedExtensions);
+
+    for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
+      var prop = extInfo[0],
+          multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(extensionArray, 'url', url, 0, multiple);
+
+      if (!multiple || ext.length > 0) {
+        lfItem[prop] = ext;
+      }
+    }
   }
 };
 
@@ -5701,6 +5737,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       item._readOnly = item.editable && item.editable === "0" || !!(item.calculationMethod || item._calculatedExprExt);
       var lfData = this;
+      LForms.Util.processCopiedItemExtensions(item, item.extension);
 
       if (LForms.FHIR && lfData.fhirVersion) {
         lfData.hasFHIRPath = lfData.hasFHIRPath || item._calculatedExprExt && item._calculatedExprExt.valueExpression.language == "text/fhirpath";

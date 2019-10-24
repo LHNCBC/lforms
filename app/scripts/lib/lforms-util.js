@@ -25,6 +25,20 @@ var parseDateFormats = [
   'M-D HH:mm',
 ];
 
+// A map of FHIR extensions involving Expressions to the property names on
+// which they will be stored in LFormsData, and a boolean indicating whether
+// more than one extension of the type is permitted.
+var copiedExtensions = {
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
+    ["_calculatedExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
+    ["_initialExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod":
+    ["_obsLinkPeriodExt", false],
+  "http://hl7.org/fhir/StructureDefinition/variable":
+    ["_variableExt", true],
+};
+
 var LForms = require('../../lforms');
 
 LForms.Util = {
@@ -970,7 +984,28 @@ LForms.Util = {
 
     return codeSystem;
   },
-
-
-
+  
+  /**
+   *  Some extensions are simply copied over to the LForms data structure.
+   *  This copies those extensions from qItem.extension to lfItem if they exist, and
+   *  LForms can support them.
+   * @param extensionArray - Questionnaire.item.extension
+   * @param lfItem an item from the LFormsData structure
+   */
+  processCopiedItemExtensions: function (lfItem, extensionArray) {
+    if(!extensionArray || extensionArray.length === 0) {
+      return;
+    }
+    // Go through selected extensions.
+    var copiedExtURLs = Object.keys(copiedExtensions);
+    for (var i = 0,len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = copiedExtensions[url];
+      var prop = extInfo[0],multiple = extInfo[1];
+      var ext = LForms.Util.findObjectInArray(extensionArray,'url',url,0,multiple);
+      if (!multiple || ext.length > 0) {
+        lfItem[prop] = ext;
+      }
+    }
+  },
 };

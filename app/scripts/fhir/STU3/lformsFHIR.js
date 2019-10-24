@@ -21168,18 +21168,6 @@ var self = {
   },
 
   /**
-   *  Processes FHIRPath and related item extensions (e.g. for pre-population
-   *  and extraction.)
-   *
-   * @param targetItem an item in Questionnaire
-   * @param item a LForms item
-   */
-  _processFHIRPathExtensions: function _processFHIRPathExtensions(targetItem, item) {
-    // calcuatedValue
-    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
-  },
-
-  /**
    * Handle special requirements for 'display' items
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
@@ -21856,10 +21844,7 @@ function addCommonSDCExportFns(ns) {
           "valueBoolean": true
         });
       }
-    } // Copied FHIRPath-related (pre-pop & extraction) extensions
-
-
-    this._processFHIRPathExtensions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    } // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
 
     this._handleItemControl(targetItem, item); // check restrictions
@@ -21971,7 +21956,7 @@ function addCommonSDCExportFns(ns) {
     if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem;
-  },
+  };
   /**
    * Process an item's externally defined answer list
    * @param targetItem an item in FHIR SDC Questionnaire object
@@ -21979,6 +21964,8 @@ function addCommonSDCExportFns(ns) {
    * @returns {*}
    * @private
    */
+
+
   self._handleExternallyDefined = function (targetItem, item) {
     if (item.externallyDefined) {
       targetItem.extension.push({
@@ -21992,6 +21979,7 @@ function addCommonSDCExportFns(ns) {
    * @param source a LForms form data object
    * @private
    */
+
 
   self._removeRepeatingItems = function (source) {
     if (source.items && Array.isArray(source.items)) {
@@ -22121,13 +22109,15 @@ function addCommonSDCExportFns(ns) {
         "valueUrl": item.terminologyServer
       });
     }
-  },
+  };
   /**
    * Convert LForms data type to FHIR SDC data type
    * @param item an item in the LForms form object
    * @returns {string}
    * @private
    */
+
+
   self._getFhirDataType = function (item) {
     var dataType = this._getAssumedDataTypeForExport(item);
 
@@ -22149,6 +22139,7 @@ function addCommonSDCExportFns(ns) {
    * @returns {string} dataType - Data type in lforms
    * @private
    */
+
 
   self._getAssumedDataTypeForExport = function (item) {
     var dataType = item.dataType;
@@ -22551,25 +22542,12 @@ function addSDCImportFns(ns) {
 
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
 
-    _processCalculatedValue(targetItem, qItem);
+    self.copyFields(qItem, targetItem, ['extension']);
 
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
   };
-  /**
-   *  Copies the calculated value expression from qItem to lfItem if it exists,
-   *  and if it is a FHIRPath expression, which is the only type we support.
-   */
-
-
-  function _processCalculatedValue(lfItem, qItem) {
-    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
-
-    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
-      lfItem._calculatedExprExt = calcExt;
-    }
-  }
   /**
    * Parse questionnaire object for answer cardinality
    *
@@ -23356,7 +23334,7 @@ function addCommonSDCImportFns(ns) {
   'date', 'version', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
   'subjectType', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
-  self.itemLevelIgnoredFields = ['definition', 'prefix'];
+  self.itemLevelIgnoredFields = ['definition', 'prefix', 'extension'];
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -23471,7 +23449,7 @@ function addCommonSDCImportFns(ns) {
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType]; // fhirValType is now the FHIR data type for a Questionnaire.  However,
     // where Questionnaire uses Coding, Observation uses CodeableConcept.
 
-    if (fhirValType == 'Coding') fhirValType = 'CodeableConcept';
+    if (fhirValType === 'Coding') fhirValType = 'CodeableConcept';
     if (fhirValType) val = obs['value' + fhirValType];
 
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -23552,9 +23530,9 @@ function addCommonSDCImportFns(ns) {
       if (lfDataType === 'CWE' || lfDataType === 'CNE') {
         var codings = null;
 
-        if (fhirVal._type == 'CodeableConcept') {
+        if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
-        } else if (fhirVal._type == 'Coding') {
+        } else if (fhirVal._type === 'Coding') {
           codings = [fhirVal];
         }
 
@@ -23575,7 +23553,7 @@ function addCommonSDCImportFns(ns) {
                 var listAnswer = itemAnswers[j];
                 var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
 
-                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) && coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) && coding.code === listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -24108,13 +24086,15 @@ function addCommonSDCImportFns(ns) {
     }
 
     return terminologyServer;
-  },
+  };
   /**
    *  Returns the URL for performing a ValueSet expansion for the given item,
    *  if the given item has a terminology server and answerValueSet
    *  configured; otherwise it returns undefined.
    * @param item a question, title, or group in the form
    */
+
+
   self._getExpansionURL = function (item) {
     var rtn;
 
@@ -24132,6 +24112,7 @@ function addCommonSDCImportFns(ns) {
    * @return an array of promise objects which resolve when the answer valuesets
    * have been loaded and imported.
    */
+
 
   self.loadAnswerValueSets = function (lfData) {
     var _this = this;

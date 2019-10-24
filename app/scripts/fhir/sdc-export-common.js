@@ -128,9 +128,6 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
-    // Copied FHIRPath-related (pre-pop & extraction) extensions
-    this._processFHIRPathExtensions(targetItem, item);
-
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
 
@@ -244,7 +241,7 @@ function addCommonSDCExportFns(ns) {
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem
-  },
+  };
 
 
   /**
@@ -411,7 +408,7 @@ function addCommonSDCExportFns(ns) {
         "valueUrl": item.terminologyServer
       });
     }
-  },
+  };
 
 
 
