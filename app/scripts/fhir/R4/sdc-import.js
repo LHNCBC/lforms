@@ -159,25 +159,25 @@ function addSDCImportFns(ns) {
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
-          var condition = {source: source.questionCode};
+          var condition = {source: source.questionCode, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-          var opMapping = null;
-          if(source.dataType === 'CWE' || source.dataType === 'CNE') {
-            condition.trigger = {code: answer.code};
+          var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+          if(! opMapping) {
+            throw new Error('#### i=' + i + '; qItem=' + JSON.stringify(qItem));
+            // throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+          }
+
+          if(opMapping === 'exists') {
+            condition.trigger.exists = answer; // boolean value here regardless of data type
+          }
+          else if(source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger.value = self._copyTriggerCoding(answer, null, false);
           }
           else if(source.dataType === 'QTY') {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-            if(opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer.value;
-            }
+            condition.trigger[opMapping] = answer.value;
           }
           else {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-            if(opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer;
-            }
+            condition.trigger[opMapping] = answer;
           }
           lfItem.skipLogic.conditions.push(condition);
         }

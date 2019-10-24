@@ -614,19 +614,19 @@ var self = {
         var valueKey = this._getValueKeyByDataType("answer", sourceItem);
         var dataType = this._getAssumedDataTypeForExport(sourceItem);
 
+        if(condition.trigger.hasOwnProperty('exists')) {
+          enableWhenRule.hasAnswer = condition.trigger.exists;
+        }
         // for Coding
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          if (condition.trigger.code) {
-            enableWhenRule[valueKey] = {
-              "code": condition.trigger.code
-            }
+        else if (dataType === 'CWE' || dataType === 'CNE' ) {
+          let answerCoding = self._copyTriggerCoding(condition.trigger.value, null, true);
+          if (answerCoding) {
+            enableWhenRule[valueKey] = answerCoding;
           }
           else {
-            enableWhenRule[valueKey] = {
-              "code": "only 'code' attribute is supported"
-            }
+            throw new Error("Unable to convert trigger to answerCoding: " + condition.trigger.value);
           }
         }
         // for Quantity,

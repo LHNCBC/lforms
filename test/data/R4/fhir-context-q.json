@@ -1241,6 +1241,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA33-6"
                   }
@@ -1272,6 +1273,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA33-6"
                   }
@@ -1308,6 +1310,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA32-8"
                   }
@@ -1836,6 +1839,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA32-8"
                   }

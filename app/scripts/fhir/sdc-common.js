@@ -55,7 +55,8 @@ function addCommonSDCFns(ns) {
     '>=': 'minInclusive',
     '<=': 'maxInclusive',
     '=': 'value',
-    '!=': 'not'
+    '!=': 'not',
+    'exists': 'exists'
   };
 
   /**
@@ -121,6 +122,50 @@ function addCommonSDCFns(ns) {
   // Store the UCUM code system URI
   self.UCUM_URI = 'http://unitsofmeasure.org';
 
+
+
+  /**
+   * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
+   * @param obj can be null/undefined, and if so, a new object will be created and returned (only if the value is non-empty).
+   * @param key
+   * @param value
+   * @return if the input object is not null/undefined, it will be returned;
+   *         if the input object is null/undefined:
+   *         - return null if the given value is null/undefined/empty-string, or
+   *         - a newly created object with the given key/value set.
+   * @private
+   */
+  self._setIfHasValue = function (obj, key, value) {
+    if(value === 0 || value === false || value) {
+      if(! obj) {
+        obj = {};
+      }
+      obj[key] = value;
+    }
+    return obj;
+  };
+
+  /**
+   * Copy between lforms trigger value coding and FHIR enableWhen valueCoding. It only copies 3 fields:
+   * code, system, and display/text (called "text" in lforms, "display" in FHIR)
+   * @param srcCoding the coding object to copy from
+   * @param dstCoding the coding object to copy to, may be null/undefined, and if null/undefined, a new object
+   *        will be created but only if the srcCoding has at least one of code, system, display/text
+   * @param lforms2Fhir The direction of copying, can be true or false. The direction matters because in lforms,
+   *        the text/display field is called "text", while in FHIR, it's called "display"
+   * @return the resulting dstCoding object.
+   * @private
+   */
+  self._copyTriggerCoding = function(srcCoding, dstCoding, lforms2Fhir) {
+    let srcTextField = lforms2Fhir? 'text': 'display';
+    let dstTextField = lforms2Fhir? 'display': 'text';
+
+    dstCoding = self._setIfHasValue(dstCoding, 'code', srcCoding.code);
+    dstCoding = self._setIfHasValue(dstCoding, 'system', srcCoding.system);
+    dstCoding = self._setIfHasValue(dstCoding, dstTextField, srcCoding[srcTextField]);
+
+    return dstCoding;
+  };
 }
 
 export default addCommonSDCFns;

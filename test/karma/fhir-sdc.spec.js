@@ -496,6 +496,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             if(fhirVersion !== 'STU3') {
               assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, fhtClone.items[0].items[6].items[1].skipLogic);
               assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, fhtClone.items[0].items[6].items[2].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[5].items[0].skipLogic, fhtClone.items[0].items[5].items[0].skipLogic);
+              assert.deepEqual(convertedLfData.items[0].items[5].items[1].skipLogic, fhtClone.items[0].items[5].items[1].skipLogic);
             }
 
             assert.equal(convertedLfData.items[0].items[2].codingInstructions,
@@ -749,6 +751,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
 
 
+        // export -xl
         describe('LForms data to Questionnaire conversion', function() {
 
           it('should convert to SDC Questionnaire with extensions', function() {
@@ -940,6 +943,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
         });
 
+        // import - xl
         describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
           it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function () {
             var qFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-questionnaire.json';

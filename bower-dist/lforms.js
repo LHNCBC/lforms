@@ -7549,6 +7549,29 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
+     * Compare if the two given codings are equal. Details see the code below.
+     * @param coding1
+     * @param coding2
+     * @return {boolean} true if the two codings are considerer equal, false otherwise.
+     * @private
+     */
+    _codingsEqual: function _codingsEqual(coding1, coding2) {
+      if ((coding1.system || coding2.system) && coding1.system !== coding2.system) {
+        return false;
+      }
+
+      if (coding1.code && coding2.code && coding1.code === coding2.code) {
+        return true;
+      }
+
+      if (!coding1.code && !coding2.code && coding1.text && coding2.text && coding1.text === coding2.text) {
+        return true;
+      }
+
+      return false;
+    },
+
+    /**
      * Check if a source item's value meet a skip logic condition/trigger
      * @param item a source item of a skip logic
      * @param trigger a trigger of a skip logic
@@ -7557,8 +7580,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _checkSkipLogicCondition: function _checkSkipLogicCondition(item, trigger) {
       var action = false;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
 
-      if (item && item.value !== undefined && item.value !== null && item.value !== "") {
+      if (trigger.hasOwnProperty('exists')) {
+        action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
+        action = trigger.not ? !action : action;
+      } else if (hasAnswer) {
         var currentValue = item.value;
 
         switch (item.dataType) {
@@ -7566,21 +7593,20 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger).filter(function (key) {
-              return key !== 'not';
-            })[0]; // trigger should have only one key, other than 'not'
-            // if the field accepts multiple values from the answer list
+            var answerValues = Array.isArray(currentValue) ? currentValue : [currentValue];
 
-            if (Array.isArray(currentValue)) {
-              for (var m = 0, mLen = currentValue.length; m < mLen; m++) {
-                if (trigger.hasOwnProperty(field) && currentValue[m].hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[m][field])) {
-                  action = true;
-                  break;
-                }
+            for (var m = 0, mLen = answerValues.length; m < mLen; m++) {
+              var answerValue = answerValues[m];
+
+              if (item.answerCodeSystem) {
+                answerValue = Object.assign({
+                  system: item.answerCodeSystem
+                }, answerValue);
               }
-            } else {
-              if (trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[field])) {
+
+              if (this._codingsEqual(trigger.value, answerValue)) {
                 action = true;
+                break;
               }
             }
 

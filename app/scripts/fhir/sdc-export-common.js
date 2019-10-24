@@ -589,36 +589,69 @@ function addCommonSDCExportFns(ns) {
   };
 
 
+  // known source data types (besides CNE/CWE) in skip logic export handling,
+  // see _createEnableWhenRulesForSkipLogicCondition below
+  self._SkipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
+    .reduce((map, type) => {map[type] = type; return map;}, {});
   /**
-   * A single condition in lforms translates to two enableWhen rules in core FHIR.
-   *
-   * @param answerKey - The answer[x] string
    * @param skipLogicCondition - Lforms skip logic condition object
    * @param sourceItem - Skip logic source item in lforms.
-   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @return {Array} FHIR enableWhen array
    * @private
    */
-  self._createEnableWhenRulesForRangeAndValue = function(answerKey, skipLogicCondition, sourceItem) {
-    var ret = [];
+  self._createEnableWhenRulesForSkipLogicCondition = function (skipLogicCondition, sourceItem) {
+    // dataTypes:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+    let sourceDataType = this._getAssumedDataTypeForExport(sourceItem);
+    let sourceValueKey = this._getValueKeyByDataType("answer", sourceItem);
+    let enableWhenRules = [];
+
+    // Per lforms spec, the trigger keys can be:
+    //   exists, value, minExclusive , minInclusive, , maxExclusive , maxInclusive
     Object.keys(skipLogicCondition.trigger).forEach(function(key) {
-      var rule = {
-        question: sourceItem.linkId,
-        operator: self._operatorMapping[key]
-      };
-      var answer = null;
-      if(answerKey === 'answerQuantity') {
-        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
+      let operator = self._operatorMapping[key];
+      let triggerValue = skipLogicCondition.trigger[key];
+      if(! operator || triggerValue !== 0 && triggerValue !== false && ! triggerValue) {
+        throw new Error('Invalid lforms skip logic trigger: ' + JSON.stringify(skipLogicCondition.trigger, null, 4));
+      }
+
+      let rule = null;
+      if (operator === 'exists') {
+        rule = { answerBoolean: triggerValue };
+      }
+      // for Coding
+      // multiple selections, item.value is an array
+      // NO support of multiple selections in FHIR SDC, just pick one
+      else if ( sourceDataType === 'CWE' || sourceDataType === 'CNE' ) {
+        let answerCoding = self._copyTriggerCoding(triggerValue, null, true);
+        if (! answerCoding) {
+          throw new Error('Invalid CNE/CWE trigger, , key=' + key + '; value=' + triggerValue);
+        }
+        rule = { answerCoding: answerCoding };
+      }
+      else if (sourceDataType && self._SkipLogicValueDataTypes[sourceDataType]) {
+        let answer = triggerValue;
+        if(sourceValueKey === 'answerQuantity') {
+          answer = self._makeQuantity(answer, sourceItem.units);
+        }
+        if(answer === 0 || answer === false || answer) {
+          rule = { [sourceValueKey]: answer };
+        }
+        else {
+          throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
+        }
       }
       else {
-        answer = skipLogicCondition.trigger[key];
+        throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
       }
-      if(answer) {
-        rule[answerKey] = answer;
-        ret.push(rule);
-      }
+
+      rule.question = sourceItem.linkId;
+      rule.operator = operator;
+      enableWhenRules.push(rule);
     });
 
-    return ret;
+    return enableWhenRules;
   };
 
 
