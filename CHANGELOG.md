@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [18.4.0] 2019-10-24
+### Added
+- Added "exists" support to skip logic
+- Removed trigger.code (internal) and implemented the function using trigger.value
+  where trigger.value is a Coding object.
+
 ## [18.3.0] 2019-10-22
 ### Added
 - The FHIRPath expressions are now cached after being parsed, which greatly
