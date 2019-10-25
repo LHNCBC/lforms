@@ -232,9 +232,9 @@ describe('formdata: ', function() {
         callback(fData);
       }).then(function (formData) {
         // console.log(formData);
-        expect(formData.items.length).toBe(3);
-        expect(formData.items[0].question).toBe("With data type CNE");
-        expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
+        expect(formData.items.length).toBe(4);
+        expect(formData.items[1].question).toBe("With data type CNE");
+        expect(formData.items[1].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
   });

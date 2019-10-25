@@ -4912,7 +4912,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options and assign field default values
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5078,7 +5078,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5501,7 +5501,24 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // if there is a new formHeaderItems array, set up autocomplete options
 
 
-        if (newOptions.formHeaderItems) this._setUpDefaultsAndAutocomp(true);
+        if (newOptions.formHeaderItems) {
+          for (var i = 0, iLen = newOptions.formHeaderItems.length; i < iLen; i++) {
+            var item = newOptions.formHeaderItems[i];
+
+            if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+              this._updateAutocompOptions(item);
+
+              this._resetItemValueWithModifiedAnswers(item);
+            } // if this is not a saved form with user data, and
+            // there is a default value, and
+            // there is no embedded data
+            else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+                item.value = item.defaultAnswer;
+              }
+
+            this._updateUnitAutocompOptions(item);
+          }
+        }
       }
     },
 
@@ -5582,7 +5599,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // reset item.value with modified answers if the item has a value (or an array of values)
 
 
-        this._resetItemValueWithModifiedAnswers(item); // normalize unit value if there is one, needed by calculationMethod
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._resetItemValueWithModifiedAnswers(item);
+        } // if this is not a saved form with user data, and
+        // there is a default value, and
+        // there is no embedded data
+        else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+            item.value = item.defaultAnswer;
+          } // normalize unit value if there is one, needed by calculationMethod
 
 
         if (item.unit && !item.unit.text) {
@@ -6949,29 +6973,25 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Set up autocomplete options for each items
-     * @param templateOptionsOnly (default false) set to true if only the
-     *  templateOptions items need processing.
+     * Set up autocomplete options for each item
+     * @param items a list items of the form or in the templateOptions.
      */
-    _setUpDefaultsAndAutocomp: function _setUpDefaultsAndAutocomp(templateOptionsOnly) {
-      var itemList;
-      var itemLists = [this.templateOptions.formHeaderItems];
-      if (!templateOptionsOnly) itemLists.push(this.itemList);
+    _setUpAnswerAndUnitAutoComp: function _setUpAnswerAndUnitAutoComp(items) {
+      // var itemList;
+      // var itemLists = [this.templateOptions.formHeaderItems];
+      // if (!templateOptionsOnly)
+      //   itemLists.push(this.itemList);
+      // for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        var item = items[i];
 
-      for (var j = 0, jLen = itemLists.length; j < jLen && (itemList = itemLists[j]); ++j) {
-        for (var i = 0, iLen = itemList.length; i < iLen; i++) {
-          var item = itemList[i];
-
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          } // if this is not a saved form with user data, and
-          // there is a default value, and
-          // there is no embedded data
-          else if (!this.hasSavedData && item.defaultAnswer && !item.value) item.value = item.defaultAnswer;
-
-          this._updateUnitAutocompOptions(item);
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
-      }
+
+        this._updateUnitAutocompOptions(item);
+      } //      }
+
     },
 
     /**

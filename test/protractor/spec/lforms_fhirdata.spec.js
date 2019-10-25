@@ -102,6 +102,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.resourceType).toBe("DiagnosticReport");
               expect(fhirData.result.length).toBe(0);
               expect(fhirData.contained).toEqual([]);
+
               // #2 has some values
               // ST, repeating
               ff.name.sendKeys("name 1");
@@ -145,6 +146,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
+
+              // // remove the default values on the 2 items
+              // expect(ff.related.getAttribute('value')).toEqual('No');
+              // ff.related.clear();
+              // expect(ff.related.getAttribute('value')).toEqual('');
+              //
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('72');
+              // ff.mockedHeight.clear();
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
 
               getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
                 [error, fhirData] = callbackData;
@@ -267,6 +277,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.entry.length).toBe(1);
               expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
               expect(fhirData.entry[0].resource.result).toEqual([]);
+
               // #2 has some values
               // ST, repeating
               ff.name.sendKeys("name 1");
@@ -311,6 +322,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
 
+              // // remove the default values on the 2 items
+              // expect(ff.related.getAttribute('value')).toEqual('No');
+              // ff.related.clear();
+              // expect(ff.related.getAttribute('value')).toEqual('');
+              //
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('72');
+              // ff.mockedHeight.clear();
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
 
               getFHIRResource("DiagnosticReport", fhirVersion,
                   {bundleType: "collection"}).then(function(callbackData) {
@@ -722,14 +741,18 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
+            // CNE field with a default value
             var cne = element(by.id('/type9/1'));
-
+            // ST field with a default value
+            var st = element(by.id('/type4/1'));
             browser.wait(function() {
               return cwe.isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
 
             // the default value should not be set
             expect(cne.getAttribute('value')).toBe('');
+            expect(st.getAttribute('value')).toBe('');
+
             expect(cwe.getAttribute('value')).toBe("user typed value");
             cwe.evaluate('item.value').then(function(val) {
               expect(val.code).toEqual(undefined);

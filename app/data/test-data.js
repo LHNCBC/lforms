@@ -847,7 +847,7 @@ var allInOne =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": "default value", "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},

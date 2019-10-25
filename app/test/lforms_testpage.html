@@ -143,6 +143,7 @@
               {text: 'Form Builder created test form', id: 'formC'},
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
               {text: 'Form With User Data', id: 'form-with-user-data'},
+              {text: 'Form With User Data, hasSavedData=true', id: 'form-with-user-data-with-has-saved-data'},
               {text: 'CDE sample form #1', id: 'cde1'},
               {text: 'RxTerms Demo', id: 'X-001'},
               {text: 'displayControls (answerLayout and questionLayout)', id: 'display-controls'},
@@ -474,8 +475,17 @@
                   //'Form With User Data'
                   lfOption2 = {
                     allowHTMLInInstructions: true
-                  }
+                  };
                   lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
+                  break;
+                case 'form-with-user-data-with-has-saved-data':
+                  //'Form With User Data'
+                  lfOption2 = {
+                    allowHTMLInInstructions: true
+                  };
+                  var formData = angular.copy(formWithUserData);
+                  formData.hasSavedData = true;
+                  lfData2 = new LForms.LFormsData(formData);
                   break;
                 case 'X-001':
                   //'RxTerms'

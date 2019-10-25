@@ -50,18 +50,20 @@ var TestPage = function() {
     FormBuilder: 5,
     MDS3: 6,
     FormWithUserData: 7,
-    RxTerms: 9,
-    DisplayControlsDemo: 10,
-    MatrixLayout1: 11,
-    MatrixLayout2: 12,
-    ValidationTest: 13,
-    QuestionInQuestionForm: 14,
-    HL7GeneticPanel: 15,
-    DefaultAnswerForm: 17,
-    NewGeneticForm: 19,
-    TwoTotalScoreForm: 20,
-    VitalSign: 21,
-    QTYDemo: 22
+    FormWithUserDataWithHasSavedData: 8,
+    CDESampleForm: 9,
+    RxTerms: 10,
+    DisplayControlsDemo: 11,
+    MatrixLayout1: 12,
+    MatrixLayout2: 13,
+    ValidationTest: 14,
+    QuestionInQuestionForm: 15,
+    HL7GeneticPanel: 16,
+    DefaultAnswerForm: 18,
+    NewGeneticForm: 20,
+    TwoTotalScoreForm: 21,
+    VitalSign: 22,
+    QTYDemo: 23
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {
@@ -82,6 +84,7 @@ var TestPage = function() {
     height: element(by.id('/54126-8/8302-2/1/1')), // number
     weight: element(by.id('/54126-8/29463-7/1/1')), // number
     bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
+    related : element(by.id('/54126-8/54135-9/1/1')), // parents related
 
     height1: element(by.id('/54126-8/8302-2/1/1')),
     weight1: element(by.id('/54126-8/29463-7/1/1')),
@@ -118,6 +121,7 @@ var TestPage = function() {
     fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
     btnAnotherFamily: element(by.id('add-/54114-4/1')),
     btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
+    mockedHeight: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
 
     fmName2: element(by.id('/54114-4/54138-3/2/1')),
     fmDisease2: element(by.id('/54114-4/54117-7/54116-9/2/1/1')),
