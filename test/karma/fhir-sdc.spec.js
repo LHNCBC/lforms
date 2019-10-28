@@ -455,10 +455,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
-            assert.equal(convertedLfData.codeSystem, 'LOINC');
             assert.equal(convertedLfData.codeList.length, 1);
             assert.equal(convertedLfData.codeList[0].code, '54127-6N');
-            assert.equal(convertedLfData.codeList[0].system, 'http://loinc.org');
             assert.equal(convertedLfData.codeList[0].display, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.items.length, 2);
             assert.equal(convertedLfData.items[0].question, "Your health information");

@@ -2,6 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [19.0.0] 2019-10-28
+### Changed
+- Removed the "type" field from the form definition (though it should not hurt to
+  include it).
+- The codeSystem field is no longer defaulted to LOINC.  The LOINC
+  default was causing problems for FHIR Questionnaires which did not have a code
+  system specified.
+
 ## [18.3.0] 2019-10-22
 ### Added
 - The FHIRPath expressions are now cached after being parsed, which greatly

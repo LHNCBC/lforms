@@ -855,16 +855,6 @@
       this._displayLevel = 0;
       this._activeItem = null;
 
-      // type
-      if (!this.type || this.type.length == 0) {
-        this.type = "LOINC"
-      }
-
-      // question coding system
-      if (this.type === "LOINC" && !this.codeSystem) {
-        this.codeSystem = "LOINC";
-      }
-
       // add a link to external site for item's definition
       if (this.codeSystem === "LOINC") {
         this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";

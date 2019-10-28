@@ -81,10 +81,8 @@ about the meaning of each key:
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
-* **codeSystem** - (optional) the code system for the code of the form. The default value
-  is "LOINC" when the form's **type** is "LOINC".
+* **codeSystem** - (optional) the code system for the code of the form.
 * **name** - (required) the name of the form (to be shown to the user).
-* **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form.
   'table' (default) is the only template supported. More supported templates would be added.

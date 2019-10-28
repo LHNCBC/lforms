@@ -8,8 +8,7 @@
  */
 var FHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
@@ -381,8 +380,7 @@ var FHTData = {
  */
 var horizontalFHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6H",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
