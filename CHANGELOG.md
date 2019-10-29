@@ -5,8 +5,13 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [18.4.0] 2019-10-24
 ### Added
 - Added "exists" support to skip logic
-- Removed trigger.code (internal) and implemented the function using trigger.value
-  where trigger.value is a Coding object.
+### Fixed
+- The trigger.code and triger.value.code were "hidden" features, but the issue of code system 
+  hasn't taken into consideration and are therefore broken.
+  This has been reimplemented so that when the source question is of type CNE or CWE,  
+  the trigger.value will be a hash with any or all of these three fields:
+  code, system, and text, and the trigger matching will consider all the 3 fields. Please
+  see the updated lforms definition for more details. 
 
 ## [18.3.0] 2019-10-22
 ### Added

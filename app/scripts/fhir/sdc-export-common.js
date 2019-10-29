@@ -591,8 +591,10 @@ function addCommonSDCExportFns(ns) {
 
   // known source data types (besides CNE/CWE) in skip logic export handling,
   // see _createEnableWhenRulesForSkipLogicCondition below
-  self._SkipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
+  self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
     .reduce((map, type) => {map[type] = type; return map;}, {});
+
+
   /**
    * @param skipLogicCondition - Lforms skip logic condition object
    * @param sourceItem - Skip logic source item in lforms.
@@ -608,7 +610,7 @@ function addCommonSDCExportFns(ns) {
     let enableWhenRules = [];
 
     // Per lforms spec, the trigger keys can be:
-    //   exists, value, minExclusive , minInclusive, , maxExclusive , maxInclusive
+    // exists, value, minExclusive, minInclusive, maxExclusive, maxInclusive
     Object.keys(skipLogicCondition.trigger).forEach(function(key) {
       let operator = self._operatorMapping[key];
       let triggerValue = skipLogicCondition.trigger[key];
@@ -626,11 +628,11 @@ function addCommonSDCExportFns(ns) {
       else if ( sourceDataType === 'CWE' || sourceDataType === 'CNE' ) {
         let answerCoding = self._copyTriggerCoding(triggerValue, null, true);
         if (! answerCoding) {
-          throw new Error('Invalid CNE/CWE trigger, , key=' + key + '; value=' + triggerValue);
+          throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
         }
         rule = { answerCoding: answerCoding };
       }
-      else if (sourceDataType && self._SkipLogicValueDataTypes[sourceDataType]) {
+      else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
         let answer = triggerValue;
         if(sourceValueKey === 'answerQuantity') {
           answer = self._makeQuantity(answer, sourceItem.units);

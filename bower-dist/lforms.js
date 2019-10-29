@@ -7618,10 +7618,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Compare if the two given codings are equal. Details see the code below.
-     * @param coding1
-     * @param coding2
-     * @return {boolean} true if the two codings are considerer equal, false otherwise.
+     * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
+     * following three fields: code, system, and text. See the code below for the precise matching rules.
+     * @param coding1 the first coding object
+     * @param coding2 the second coding object
+     * @return {boolean} true if the two codings are considered equal, false otherwise.
      * @private
      */
     _codingsEqual: function _codingsEqual(coding1, coding2) {

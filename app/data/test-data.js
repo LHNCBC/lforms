@@ -961,6 +961,29 @@ var allInOne =
       ]
     },
 
+    // skip logic, CNE trigger type; exists support
+    {"questionCode": "54139-1-cnesrc-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?",
+      "answers": [{"text": "Yes", "code": "LA33-6"}, {"text": "No", "code": "LA32-8"}, {"text": "Unknown", "code": "LA4489-6"}],
+      "dataType": "CNE", "units": "", "header": false,
+      "items": [
+        {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES)", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age (show if Living answered)", "answers": "", "dataType": "REAL", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": true}}], "action": "show"}
+        },
+        {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death (show if Living is NO)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death (show if Living not answered)",
+          "answers": [ {"text": "Pre-Birth", "code": "LA10402-8"}, {"text": "Newborn", "code": "LA10403-6"}, {"text": "Infancy", "code": "LA10394-7"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": false}}], "action": "show"}
+        }
+      ]
+    },
 
     // skip logic, with logic ALL
     {"questionCode": "slALLSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ALL)", "answers": null,

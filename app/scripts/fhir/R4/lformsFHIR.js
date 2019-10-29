@@ -22287,7 +22287,7 @@ function addCommonSDCExportFns(ns) {
   // see _createEnableWhenRulesForSkipLogicCondition below
 
 
-  self._SkipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"].reduce(function (map, type) {
+  self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"].reduce(function (map, type) {
     map[type] = type;
     return map;
   }, {});
@@ -22307,7 +22307,7 @@ function addCommonSDCExportFns(ns) {
     var sourceValueKey = this._getValueKeyByDataType("answer", sourceItem);
 
     var enableWhenRules = []; // Per lforms spec, the trigger keys can be:
-    //   exists, value, minExclusive , minInclusive, , maxExclusive , maxInclusive
+    // exists, value, minExclusive, minInclusive, maxExclusive, maxInclusive
 
     Object.keys(skipLogicCondition.trigger).forEach(function (key) {
       var operator = self._operatorMapping[key];
@@ -22330,13 +22330,13 @@ function addCommonSDCExportFns(ns) {
           var answerCoding = self._copyTriggerCoding(triggerValue, null, true);
 
           if (!answerCoding) {
-            throw new Error('Invalid CNE/CWE trigger, , key=' + key + '; value=' + triggerValue);
+            throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
           }
 
           rule = {
             answerCoding: answerCoding
           };
-        } else if (sourceDataType && self._SkipLogicValueDataTypes[sourceDataType]) {
+        } else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
           var answer = triggerValue;
 
           if (sourceValueKey === 'answerQuantity') {
@@ -23419,18 +23419,19 @@ function addCommonSDCFns(ns) {
   self.UCUM_URI = 'http://unitsofmeasure.org';
   /**
    * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
-   * @param obj can be null/undefined, and if so, a new object will be created and returned (only if the value is non-empty).
-   * @param key
-   * @param value
+   * @param obj the object to set the key/value to. It can be null/undefined, and if so, a new object will
+   *        be created and returned (only if the value is valid).
+   * @param key the key for the given value to be set to the given object, required.
+   * @param value the value to be set to the given object using the given key.
    * @return if the input object is not null/undefined, it will be returned;
    *         if the input object is null/undefined:
-   *         - return null if the given value is null/undefined/empty-string, or
+   *         - return the given object as is if the value is invalid, or
    *         - a newly created object with the given key/value set.
    * @private
    */
 
   self._setIfHasValue = function (obj, key, value) {
-    if (value === 0 || value === false || value) {
+    if (value !== undefined && value !== null && value !== '') {
       if (!obj) {
         obj = {};
       }

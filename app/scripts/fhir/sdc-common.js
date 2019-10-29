@@ -123,20 +123,20 @@ function addCommonSDCFns(ns) {
   self.UCUM_URI = 'http://unitsofmeasure.org';
 
 
-
   /**
    * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
-   * @param obj can be null/undefined, and if so, a new object will be created and returned (only if the value is non-empty).
-   * @param key
-   * @param value
+   * @param obj the object to set the key/value to. It can be null/undefined, and if so, a new object will
+   *        be created and returned (only if the value is valid).
+   * @param key the key for the given value to be set to the given object, required.
+   * @param value the value to be set to the given object using the given key.
    * @return if the input object is not null/undefined, it will be returned;
    *         if the input object is null/undefined:
-   *         - return null if the given value is null/undefined/empty-string, or
+   *         - return the given object as is if the value is invalid, or
    *         - a newly created object with the given key/value set.
    * @private
    */
   self._setIfHasValue = function (obj, key, value) {
-    if(value === 0 || value === false || value) {
+    if(value !== undefined && value !== null && value !== '') {
       if(! obj) {
         obj = {};
       }
@@ -144,6 +144,7 @@ function addCommonSDCFns(ns) {
     }
     return obj;
   };
+
 
   /**
    * Copy between lforms trigger value coding and FHIR enableWhen valueCoding. It only copies 3 fields:
@@ -167,5 +168,6 @@ function addCommonSDCFns(ns) {
     return dstCoding;
   };
 }
+
 
 export default addCommonSDCFns;
