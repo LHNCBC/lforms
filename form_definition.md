@@ -233,7 +233,7 @@ about the meaning of each key:
         * CNE - an answer list where the user is **not** permitted to enter something
           not on the list.
         * REAL - a number which might not be an integer
-        * QTY - a which has both a REAL and unit object (see "units" below for
+        * QTY - a type which has both a REAL value and unit object (see "units" below for
           the structure).
         * INT - an integer
         * DT - a date (displayed with a calendar widget)

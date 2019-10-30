@@ -17,7 +17,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   (quantity).  For backward compatibility with existing form definitions, INT or
   REAL fields with more than one unit will be changed to QTY, and a warning will
   be output.
-- The data type is no longer set to "ST" for fields with a calculationMethod.
+- The data type is no longer changed to "ST" if a question has a calculationMethod.
 
 ## [18.3.0] 2019-10-22
 ### Added
