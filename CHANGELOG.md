@@ -10,7 +10,7 @@ This project follows [Semantic Versioning](http://semver.org/).
   hasn't taken into consideration and are therefore broken.
   This has been reimplemented so that when the source question is of type CNE or CWE,  
   the trigger.value will be a hash with any or all of these three fields:
-  code, system, and text, and the trigger matching will consider all the 3 fields. Please
+  code, system, and text, and the trigger matching will be based on these fields. Please
   see the updated lforms definition for more details. 
 
 ## [18.3.0] 2019-10-22
