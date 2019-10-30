@@ -3060,23 +3060,27 @@
 
     /**
      * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
-     * following three fields: code, system, and text. See the code below for the precise matching rules.
+     * following three fields: code, system, and text. Two codings are considered equal if and only if:
+     * 1) The code systems are equal or unspecified, and
+     * 2) Either the codes are specified and equal, or, the codes are not specified and the texts are
+     *    specified and equal.
      * @param coding1 the first coding object
      * @param coding2 the second coding object
      * @return {boolean} true if the two codings are considered equal, false otherwise.
      * @private
      */
     _codingsEqual: function(coding1, coding2) {
-      if( (coding1.system || coding2.system) && coding1.system !== coding2.system) {
-        return false;
+      let equals = false;
+      if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
+        if(coding1.code || coding2.code) {
+          equals = coding1.code && coding2.code && coding1.code === coding2.code;
+        }
+        else {
+          equals = coding1.text && coding2.text && coding1.text === coding2.text;
+        }
       }
-      if(coding1.code && coding2.code && coding1.code === coding2.code) {
-        return true;
-      }
-      if(!coding1.code && !coding2.code && coding1.text && coding2.text && coding1.text === coding2.text) {
-        return true;
-      }
-      return false;
+
+      return !!equals;
     },
 
 
