@@ -7,7 +7,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Added "exists" support to skip logic
 ### Fixed
 - The trigger.code and triger.value.code were "hidden" features, but the issue of code system 
-  hasn't taken into consideration and are therefore broken.
+  wasn't taken into consideration and therefore was broken.
   This has been reimplemented so that when the source question is of type CNE or CWE,  
   the trigger.value will be a hash with any or all of these three fields:
   code, system, and text, and the trigger matching will be based on these fields. Please

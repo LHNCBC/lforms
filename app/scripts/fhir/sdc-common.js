@@ -125,7 +125,7 @@ function addCommonSDCFns(ns) {
 
   /**
    * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
-   * @param obj the object to set the key/value to. It can be null/undefined, and if so, a new object will
+   * @param obj the object to set the key/value on. It can be null/undefined, and if so, a new object will
    *        be created and returned (only if the value is valid).
    * @param key the key for the given value to be set to the given object, required.
    * @param value the value to be set to the given object using the given key.
