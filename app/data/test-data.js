@@ -462,7 +462,7 @@ var horizontalFHTData = {
       // level 2
       "items": [
         {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false,
-          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6"}}}],
             "action": "show"}
         },
         {"questionCode": "54138-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
@@ -475,19 +475,19 @@ var horizontalFHTData = {
           // level 3
           "items": [
             {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6", "system": "http://loinc.org"}}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}],
                 "action": "show"}
             },
             {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6", "system": "http://loinc.org"}}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}],
                 "action": "show"}
             },
             {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8"}}}],
                 "action": "show"}
             },
             {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8"}}}],
                 "action": "show"}
             }
           ]
@@ -508,7 +508,7 @@ var horizontalFHTData = {
           ]
         },
         {"questionCode": "54119-3R", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false,
-          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6"}}}],
             "action": "show"}
         }
       ]
@@ -1872,7 +1872,7 @@ var genetic = {
       "dataType": "CNE",
       "codingInstructions": "Not part of the HL7 specification. Used only to show different choices of codes for representing variants",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "answers": [
         {"code": "C01", "text": "dbSNP  --NCBI"},
@@ -1956,7 +1956,7 @@ var genetic = {
     {"questionCode": "XXXXX-9",
       "question": "Simple variation",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2213,7 +2213,7 @@ var genetic = {
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -2229,12 +2229,12 @@ var genetic = {
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         }
       ]
@@ -2244,7 +2244,7 @@ var genetic = {
     {"questionCode": "XXXX2-9",
       "question": "Structural (copy number) variation",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2340,13 +2340,13 @@ var genetic = {
       "question": "Gene mutations tested for",
       "dataType": "CWE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
     },
     {"questionCode": "XXXXX-11",
       "question": "Range(s) of DNA sequence examined",
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"}
     }
   ]
@@ -2379,7 +2379,7 @@ var genetic2 ={
       "dataType": "CNE",
       "codingInstructions": "Not part of the HL7 specification. Used only to show different choices of codes for representing variants",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "answers": [
         {"code": "C01", "text": "dbSNP  --NCBI"},
@@ -2450,13 +2450,13 @@ var genetic2 ={
       "question": "Gene mutations tested for",
       "dataType": "CWE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
     },
     {"questionCode": "XXXXX-11",
       "question": "Range(s) of DNA sequence examined",
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"}
     },
     {"questionCode": "XXXXX-0",
@@ -2477,7 +2477,7 @@ var genetic2 ={
       "questionCode": "titleHeader1",
       "question": "Simple Small Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true
     },
@@ -2485,7 +2485,7 @@ var genetic2 ={
     {"questionCode": "XXXXX-9",
       "question": "Simple variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2672,7 +2672,7 @@ var genetic2 ={
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -2688,12 +2688,12 @@ var genetic2 ={
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXX2-13",
@@ -2849,14 +2849,14 @@ var genetic2 ={
       "questionCode": "titleHeader2",
       "question": "Complex Small Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true
     },
     {"questionCode": "XXXXX-20",
       "question": "Complex variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -3044,7 +3044,7 @@ var genetic2 ={
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -3060,12 +3060,12 @@ var genetic2 ={
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "X1001-0",
@@ -3218,14 +3218,14 @@ var genetic2 ={
       "questionCode": "titleHeader3",
       "question": "Structural (Copy Number) Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03"}}}],
         "action": "show"},
       "header": true
     },
     {"questionCode": "XXXX2-9",
       "question": "Structural (copy number) variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -4488,14 +4488,14 @@ var newGenetic = {
       "questionCode": "81295-8",
       "question": "OID for other T RefSeq coding system",
       "dataType": "ST",
-      "skipLogic": {"conditions":[{"source": "81248-7", "trigger": {"value": {"code": "LA2635-6", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "81248-7", "trigger": {"value": {"code": "LA2635-6"}}}],
         "action": "show"}
     },
     {
       "questionCode": "81296-6",
       "question": "OID for other G RefSeq coding system",
       "dataType": "ST",
-      "skipLogic": {"conditions":[{"source": "81249-5", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "81249-5", "trigger": {"value": {"code": "C04"}}}],
         "action": "show"}
     },
 
@@ -4521,7 +4521,7 @@ var newGenetic = {
         },
         {"questionCode": "51963-7",
           "question": "Medications assessed",
-          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"},
           "dataType": "CWE",
           "answerCardinality": {"min":"0", "max":"*"},
@@ -4542,7 +4542,7 @@ var newGenetic = {
         },
         {"questionCode": "36908-2",
           "question": "Gene mutations tested",
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataType": "CWE",
           "answerCodeSystem": "CLINVAR-V",
@@ -4558,13 +4558,13 @@ var newGenetic = {
           "question": "Ranges of DNA sequences examined",
           "dataType": "NR",
           "questionCardinality": {"min":"0", "max":"*"},
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
             "action": "show"}
         },
         {"questionCode": "81293-3",
           "question": "Description of ranges of DNA sequences examined",
           "dataType": "TX",
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
             "action": "show"}
         },
         {
@@ -4641,8 +4641,7 @@ var newGenetic = {
     { "questionCode": "81250-3",
       "question": "Discrete genetic variant panel",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01", "system": "http://loinc.org"}}}],
-        "action": "show"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}], "action": "show"},
       "header": true,
       "items" : [
         { "questionCode": "83005-9",
@@ -5292,8 +5291,7 @@ var newGenetic = {
         ,
         { "questionCode": "81297-4",
           "question": "Structural variant addendum panel",
-          "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-                "code": "LA26802-1"}}], "action": "show"},
+          "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {"value": {"code": "LA26802-1"}}}], "action": "show"},
           "header": true,
           "items" : [
             {"questionCode": "82155-3",
@@ -5326,7 +5324,7 @@ var newGenetic = {
     },
     {"questionCode": "81251-1",
       "question": "Complex genetic variant - panel",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "questionCardinality": {"max": "*", "min":"0"},
       "header": true,
@@ -6138,8 +6136,7 @@ var newGenetic = {
             ,
             { "questionCode": "81297-4",
               "question": "Structural variant addendum panel",
-              "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-                    "code": "LA26802-1"}}], "action": "show"},
+              "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {"value": {"code": "LA26802-1"}}}], "action": "show"},
               "header": true,
               "items" : [
                 {"questionCode": "82155-3",
@@ -6175,7 +6172,7 @@ var newGenetic = {
     {
       "questionCode": "82118-1",
       "question": "Pharmacogenomics gene results panel",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04", "system": "http://loinc.org"}}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04"}}}],
         "action": "show"},
       "header": true,
       "layout": "vertical",
