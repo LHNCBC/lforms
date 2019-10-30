@@ -233,6 +233,8 @@ about the meaning of each key:
         * CNE - an answer list where the user is **not** permitted to enter something
           not on the list.
         * REAL - a number which might not be an integer
+        * QTY - a which has both a REAL and unit object (see "units" below for
+          the structure).
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
         * TM - a string in the time format
@@ -250,8 +252,9 @@ about the meaning of each key:
         * TITLE - a special type for separators that display some text.
 
     * units - For numeric answer fields, this is an optional list for the units
-      for the quantity being entered.  Each hash in this array can contain the
-      following keys:
+      for the quantity being entered.  If the data type is INT or REAL, units
+      should only have one unit; otherwise the data type will be converted to
+      QTY.  Each hash in this array can contain the following keys:
         * name - The display string for the unit
         * code - Code associated with the unit
         * system - Code system associated with the unit
