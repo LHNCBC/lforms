@@ -4199,7 +4199,7 @@ LForms.Validations = {
   "CNE", // complex type
   "CWE", // complex type
   "RTO", // complex type, not supported yet
-  "QTY", // complex type, not supported yet
+  "QTY", // complex type
   "NR", // complex type
   "YEAR", // sub-type of "ST"
   "MONTH", // sub-type of "ST"
@@ -4231,8 +4231,7 @@ LForms.Validations = {
     // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",
     // not supported
-    "QTY": "must be a quantity value.",
-    // not supported
+    "QTY": "must be a decimal number",
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
@@ -4285,6 +4284,7 @@ LForms.Validations = {
           break;
 
         case "REAL":
+        case "QTY":
           var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
@@ -4340,8 +4340,6 @@ LForms.Validations = {
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
 
         case "RTO": // TBD
-
-        case "QTY": // TBD
 
         case "CNE": // answers list with no exception, handled by autocomplete directive
 
@@ -5526,10 +5524,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // set data type for items with units (for unified display styles)
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
-          } // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
-          // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
-          // An error will be thrown in this case and an empty value will be set instead.
-          else if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod)) item.dataType = this._CONSTANTS.DATA_TYPE.ST;
+          } else if (!item.dataType) item.dataType = this._CONSTANTS.DATA_TYPE.ST; // default data type
+
         } // displayControl default values
 
 
@@ -6964,9 +6960,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // clean up unit autocomp options
 
 
-        item._unitAutocompOptions = null; // Per FHIR, if the item is of type integer or decimal, it can only have
-        // one unit, and that unit is not editable.
-
+        item._unitAutocompOptions = null;
         var listItems = [],
             answers = item.units; // Modify the label for each unit.
 
@@ -6989,10 +6983,21 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         }
 
         if (item.dataType === this._CONSTANTS.DATA_TYPE.INT || item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
-          item._unitReadonly = true;
-          if (!item.unit && defaultUnit) item.unit = defaultUnit;
-        } else {
-          // quanitity
+          // Per FHIR, if the item is of type integer or decimal, it can only have
+          // one unit, and that unit is not editable.
+          // However, this breaks our existing LOINC form definitions, so just
+          // output a warning and convert the type..
+          if (item.units && item.units.length > 1) {
+            console.log('Form definition warning: Data types of INT or REAL may ' + 'only have one unit.  Question "' + item.question + '" has ' + item.units.length + ' units.  For multiple ' + 'units, use type QTY instead.');
+            item.dataType = this._CONSTANTS.DATA_TYPE.QTY;
+          } else {
+            // we didn't change dateType to QTY
+            item._unitReadonly = true;
+            if (!item.unit) item.unit = listItems[0];
+          }
+        }
+
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.QTY) {
           var options = {
             listItems: listItems,
             matchListValue: true,
