@@ -3071,7 +3071,7 @@
       let equals = false;
       if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
         if(coding1.code || coding2.code) {
-          equals = coding1.code && coding2.code && coding1.code === coding2.code;
+          equals = coding1.code === coding2.code;
         }
         else {
           equals = coding1.text && coding2.text && coding1.text === coding2.text;
