@@ -2405,20 +2405,14 @@
      * @param items a list items of the form or in the templateOptions.
      */
     _setUpAnswerAndUnitAutoComp: function(items) {
-      // var itemList;
-      // var itemLists = [this.templateOptions.formHeaderItems];
-      // if (!templateOptionsOnly)
-      //   itemLists.push(this.itemList);
-      // for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
-        for (var i=0, iLen=items.length; i<iLen; i++) {
-          var item = items[i];
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
-              item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          }
-          this._updateUnitAutocompOptions(item);
+      for (var i=0, iLen=items.length; i<iLen; i++) {
+        var item = items[i];
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
-//      }
+        this._updateUnitAutocompOptions(item);
+      }
     },
 
 

@@ -147,15 +147,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
 
-              // // remove the default values on the 2 items
-              // expect(ff.related.getAttribute('value')).toEqual('No');
-              // ff.related.clear();
-              // expect(ff.related.getAttribute('value')).toEqual('');
-              //
-              // expect(ff.mockedHeight.getAttribute('value')).toEqual('72');
-              // ff.mockedHeight.clear();
-              // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
-
               getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
                 [error, fhirData] = callbackData;
 
