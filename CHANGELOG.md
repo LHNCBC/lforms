@@ -2,10 +2,27 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.3.1] 2019-10-23
+## [19.0.1] 2019-10-31
 ### Changed
 - Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
   and saved form data. 
+
+## [19.0.0] 2019-10-28
+### Added
+- Data type QTY is now documented as a supported data type, and is now validated like a REAL.
+  (Previously, there was no validation for type QTY).
+### Changed
+- Removed the "type" field from the form definition (though it should not hurt to
+  include it).
+- The codeSystem field is no longer defaulted to LOINC.  The LOINC
+  default was causing problems for FHIR Questionnaires which did not have a code
+  system specified.
+- Data types INT and REAL are now only allowed to have one unit defined in
+  field "units", for alignment with FHIR.  For more than one unit, use type QTY
+  (quantity).  For backward compatibility with existing form definitions, INT or
+  REAL fields with more than one unit will be changed to QTY, and a warning will
+  be output.
+- The data type is no longer changed to "ST" if a question has a calculationMethod.
 
 ## [18.3.0] 2019-10-22
 ### Added

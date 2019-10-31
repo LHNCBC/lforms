@@ -858,16 +858,6 @@
       this._displayLevel = 0;
       this._activeItem = null;
 
-      // type
-      if (!this.type || this.type.length == 0) {
-        this.type = "LOINC"
-      }
-
-      // question coding system
-      if (this.type === "LOINC" && !this.codeSystem) {
-        this.codeSystem = "LOINC";
-      }
-
       // add a link to external site for item's definition
       if (this.codeSystem === "LOINC") {
         this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
@@ -1012,12 +1002,8 @@
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
           }
-          // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
-          // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
-          // An error will be thrown in this case and an empty value will be set instead.
-          else if(!item.dataType || item.calculationMethod !== undefined &&
-              !jQuery.isEmptyObject(item.calculationMethod))
-            item.dataType = this._CONSTANTS.DATA_TYPE.ST;
+          else if(!item.dataType)
+            item.dataType = this._CONSTANTS.DATA_TYPE.ST; // default data type
         }
 
         // displayControl default values
@@ -2461,8 +2447,6 @@
         // clean up unit autocomp options
         item._unitAutocompOptions = null;
 
-        // Per FHIR, if the item is of type integer or decimal, it can only have
-        // one unit, and that unit is not editable.
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
         var defaultValue, defaultUnit;
@@ -2481,11 +2465,25 @@
 
         if (item.dataType === this._CONSTANTS.DATA_TYPE.INT ||
             item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
-          item._unitReadonly = true;
-          if (!item.unit && defaultUnit)
-            item.unit = defaultUnit;
+          // Per FHIR, if the item is of type integer or decimal, it can only have
+          // one unit, and that unit is not editable.
+          // However, this breaks our existing LOINC form definitions, so just
+          // output a warning and convert the type..
+          if (item.units && item.units.length > 1) {
+            console.log('Form definition warning: Data types of INT or REAL may '+
+              'only have one unit.  Question "'+ item.question+
+              '" has '+item.units.length+' units.  For multiple '+
+              'units, use type QTY instead.');
+            item.dataType = this._CONSTANTS.DATA_TYPE.QTY;
+          }
+          else { // we didn't change dateType to QTY
+            item._unitReadonly = true;
+            if (!item.unit)
+              item.unit = listItems[0];
+          }
         }
-        else { // quanitity
+
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.QTY) {
           var options = {
             listItems: listItems,
             matchListValue: true,
