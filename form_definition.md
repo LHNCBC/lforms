@@ -81,10 +81,8 @@ about the meaning of each key:
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
-* **codeSystem** - (optional) the code system for the code of the form. The default value
-  is "LOINC" when the form's **type** is "LOINC".
+* **codeSystem** - (optional) the code system for the code of the form.
 * **name** - (required) the name of the form (to be shown to the user).
-* **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form.
   'table' (default) is the only template supported. More supported templates would be added.
@@ -235,6 +233,8 @@ about the meaning of each key:
         * CNE - an answer list where the user is **not** permitted to enter something
           not on the list.
         * REAL - a number which might not be an integer
+        * QTY - a type which has both a REAL value and unit object (see "units" below for
+          the structure).
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
         * TM - a string in the time format
@@ -252,8 +252,9 @@ about the meaning of each key:
         * TITLE - a special type for separators that display some text.
 
     * units - For numeric answer fields, this is an optional list for the units
-      for the quantity being entered.  Each hash in this array can contain the
-      following keys:
+      for the quantity being entered.  If the data type is INT or REAL, units
+      should only have one unit; otherwise the data type will be converted to
+      QTY.  Each hash in this array can contain the following keys:
         * name - The display string for the unit
         * code - Code associated with the unit
         * system - Code system associated with the unit

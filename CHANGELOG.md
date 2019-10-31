@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.4.0] 2019-10-24
+## [19.1.0] 2019-10-24
 ### Added
 - Added "exists" support to skip logic
 ### Fixed
@@ -12,6 +12,23 @@ This project follows [Semantic Versioning](http://semver.org/).
   the trigger.value will be a hash with any or all of these three fields:
   code, system, and text, and the trigger matching will be based on these fields. Please
   see the updated lforms definition for more details. 
+
+## [19.0.0] 2019-10-28
+### Added
+- Data type QTY is now documented as a supported data type, and is now validated like a REAL.
+  (Previously, there was no validation for type QTY).
+### Changed
+- Removed the "type" field from the form definition (though it should not hurt to
+  include it).
+- The codeSystem field is no longer defaulted to LOINC.  The LOINC
+  default was causing problems for FHIR Questionnaires which did not have a code
+  system specified.
+- Data types INT and REAL are now only allowed to have one unit defined in
+  field "units", for alignment with FHIR.  For more than one unit, use type QTY
+  (quantity).  For backward compatibility with existing form definitions, INT or
+  REAL fields with more than one unit will be changed to QTY, and a warning will
+  be output.
+- The data type is no longer changed to "ST" if a question has a calculationMethod.
 
 ## [18.3.0] 2019-10-22
 ### Added

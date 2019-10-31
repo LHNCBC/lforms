@@ -455,10 +455,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             assert.equal(convertedLfData.name, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.code, '54127-6N');
-            assert.equal(convertedLfData.codeSystem, 'LOINC');
             assert.equal(convertedLfData.codeList.length, 1);
             assert.equal(convertedLfData.codeList[0].code, '54127-6N');
-            assert.equal(convertedLfData.codeList[0].system, 'http://loinc.org');
             assert.equal(convertedLfData.codeList[0].display, 'USSG-FHT, (with mock-up items for skip logic demo)');
             assert.equal(convertedLfData.items.length, 2);
             assert.equal(convertedLfData.items[0].question, "Your health information");
@@ -641,8 +639,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.isOk(convertedLfData.items[0].units[2].default);
             });
 
-            it('should convert a single unit to questionnaire unit extention', function() {
+            it('should convert a single unit for type REAL to questionnaire unit extention', function() {
               lforms.items[0].units.splice(1);
+              lforms.items[0].dataType = 'REAL';
               // Export
               var fhirQ = LForms.FHIR[fhirVersion].SDC.convertLFormsToQuestionnaire(lforms);
 
@@ -655,7 +654,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var qUnit = LForms.Util.findObjectInArray(fhirQ.item[0].extension, 'url', LForms.FHIR[fhirVersion].SDC.fhirExtUrlUnit);
 
               assert.equal(qUnit.valueCoding.code, lforms.items[0].units[0].code);
-            assert.equal(qUnit.valueCoding.display, lforms.items[0].units[0].name);
+              assert.equal(qUnit.valueCoding.display, lforms.items[0].units[0].name);
               assert.equal(qUnit.valueCoding.system, lforms.items[0].units[0].system);
 
               // Import

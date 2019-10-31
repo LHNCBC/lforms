@@ -8,8 +8,7 @@
  */
 var FHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
@@ -392,8 +391,7 @@ var FHTData = {
  */
 var horizontalFHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6H",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
@@ -418,7 +416,7 @@ var horizontalFHTData = {
         {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54135-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3
           "items": [
             {"questionCode": "8302-2X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
@@ -444,7 +442,7 @@ var horizontalFHTData = {
             {"questionCode": "54130-0X", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #2", "answers": 619, "answerCodeSystem": "http://loinc.org", "dataType": "CNE", "units": "", "header": false}
           ]
         },
-        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
         {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
         {"questionCode": "54134-2", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54133-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
@@ -502,8 +500,8 @@ var horizontalFHTData = {
           "items":[
             {"questionCode": "54116-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54115-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
-            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
             {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         },
@@ -801,7 +799,7 @@ var allInOne =
     {
       "questionCode": "q_lg",
       "question": "'lg' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "lg",
         "css": [{
@@ -814,7 +812,7 @@ var allInOne =
     {
       "questionCode": "q_md",
       "question": "'md' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "md"
       },
@@ -823,7 +821,7 @@ var allInOne =
     {
       "questionCode": "q_sm",
       "question": "'sm' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "sm"
       },
@@ -832,7 +830,7 @@ var allInOne =
     {
       "questionCode": "q_auto",
       "question": "'auto' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "auto"
       },
@@ -1421,7 +1419,7 @@ var formWithUserData =
     {"questionCode": "q3", "dataType": "ST", "header": false, "units": null, "codingInstructions": null, "value": "user input value",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015 10:10",
+    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q99", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null, "value": "11/20/2015 10:10",
@@ -1618,10 +1616,10 @@ var formWithUserData =
         }
       ]
     },
-    // value with unit
+    // values with unit
     {
       answerCardinality: {min: "0", max: "1"},
-      dataType: "REAL",
+      dataType: "QTY",
       header: false,
       question: "Weight, with value and unit",
       questionCardinality: {min: "1", max: "1"},
@@ -1633,7 +1631,7 @@ var formWithUserData =
     },
     {
       answerCardinality: {min: "0", max: "1"},
-      dataType: "REAL",
+      dataType: "QTY",
       header: false,
       question: "Weight, with value and unit, and a default unit",
       questionCardinality: {min: "1", max: "1"},
@@ -1642,6 +1640,18 @@ var formWithUserData =
       unit: {name: "kgs"},
       units: [{name: "lbs", default: true},{name: "kgs"}],
       value: 456
+    },
+    {
+      answerCardinality: {min: "0", max: "1"},
+      dataType: "REAL",
+      header: false,
+      question: "Weight as REAL with value and unit",
+      questionCardinality: {min: "1", max: "1"},
+      questionCode: "unit3",
+      questionCodeSystem: "LOINC",
+      unit: {name: "kgs"},
+      units: [{name: "kgs"}],
+      value: 789
     },
     // user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes
     {
@@ -7393,7 +7403,7 @@ var vitalSign = {
     {
       "questionCode": "3141-9",
       "localQuestionCode": null,
-      "dataType": "REAL",
+      "dataType": "QTY",
       "header": false,
       "units": [{"name": "lbs", "default": true}, {"name": "kgs"}],
       "codingInstructions": null,
@@ -7440,7 +7450,7 @@ var vitalSign = {
     {
       "questionCode": "8302-2",
       "localQuestionCode": null,
-      "dataType": "REAL",
+      "dataType": "QTY",
       "header": false,
       "units": [
         {
@@ -7485,7 +7495,7 @@ var vitalSign = {
     {
       "questionCode": "8306-3",
       "localQuestionCode": null,
-      "dataType": null,
+      "dataType": "QTY",
       "header": false,
       "units": [
         {
