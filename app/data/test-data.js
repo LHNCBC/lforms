@@ -6348,7 +6348,7 @@ var defaultAnswerForm = {
       "questionCode": "strField",
       "questionCardinality": {
         "min": "1",
-        "max": "1"
+        "max": "*"
       },
       "header": false,
       "editable": "1",

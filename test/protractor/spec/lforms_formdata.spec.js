@@ -331,6 +331,32 @@ describe('formdata: ', function() {
       // those are getting processed.
       expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
     });
+
+
+    it('should not be reset after they are cleared', function() {
+      tp.openDefaultAnswerForm();
+      var intField = element(by.id('/intField/1')),
+          whenDone = element(by.id('date_done')),
+          decField = element(by.id('/decField/1')),
+          strField = element(by.id('/strField/1')),
+          listField = element(by.id('/ansCodeDefault/1')),
+          btnAddStringField = element(by.id('add-/strField/1'));
+
+      whenDone.clear();
+      intField.clear();
+      decField.clear();
+      strField.clear();
+      listField.clear();
+
+      btnAddStringField.click();
+
+      expect(whenDone.getAttribute('value')).toBe("");
+      expect(intField.getAttribute('value')).toBe("");
+      expect(decField.getAttribute('value')).toBe("");
+      expect(strField.getAttribute('value')).toBe("");
+      expect(listField.getAttribute('value')).toBe("");
+    });
+
   });
 
   describe('lists with headings', function() {

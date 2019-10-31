@@ -636,7 +636,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (contained) data back into the form', function() {
 
-            tp.openUSSGFHTVertical();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
@@ -672,7 +671,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
-            tp.openUSSGFHTVertical();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
@@ -694,6 +692,40 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(ff.disease.getAttribute('value')).toBe("Hypertension");
             expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
           });
+
+
+          it('should merge all DiagnosticReport (contained) data back into the form without setting default values', function() {
+
+            //tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
+
+            element(by.id("merge-dr-default-values")).click();
+            browser.waitForAngular();
+
+            var intField = element(by.id('/intField/1')),
+                decField = element(by.id('/decField/1')),
+                strField = element(by.id('/strField/1')),
+                dateField = element(by.id('/dateField/1')),
+                listField = element(by.id('/ansCodeDefault/1'));
+
+            browser.wait(function() {
+              try {
+                return intField.isDisplayed(); // sometimes results in a "stale reference" error
+              }
+              catch (e) {
+                // Try to refresh the element
+                intField = element(by.id('/intField/1'));
+              }
+            }, tp.WAIT_TIMEOUT_1);
+
+            expect(intField.getAttribute('value')).toBe('24'); // it is a value in dr
+            expect(decField.getAttribute('value')).toBe('');
+            expect(strField.getAttribute('value')).toBe('');
+            expect(dateField.getAttribute('value')).toBe('');
+            expect(listField.getAttribute('value')).toBe('');
+
+          });
+
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
             tp.openUSSGFHTVertical();
