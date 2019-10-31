@@ -6963,11 +6963,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param items a list items of the form or in the templateOptions.
      */
     _setUpAnswerAndUnitAutoComp: function _setUpAnswerAndUnitAutoComp(items) {
-      // var itemList;
-      // var itemLists = [this.templateOptions.formHeaderItems];
-      // if (!templateOptionsOnly)
-      //   itemLists.push(this.itemList);
-      // for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
       for (var i = 0, iLen = items.length; i < iLen; i++) {
         var item = items[i];
 
@@ -6976,8 +6971,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         }
 
         this._updateUnitAutocompOptions(item);
-      } //      }
-
+      }
     },
 
     /**
