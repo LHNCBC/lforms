@@ -231,38 +231,39 @@ var self = {
    * @private
    */
   _processResponseItem: function(item, parentItem) {
-    var targetItem = {};
-    var linkId = item.linkId ? item.linkId : item._codePath;
-
-    // if it is a section
-    if (item.dataType === "SECTION") {
-      // linkId
-      targetItem.linkId = linkId;
-      // text
-      targetItem.text = item.question;
-      if (item.items && Array.isArray(item.items)) {
-        // header
-        targetItem.item = [];
-        for (var i=0, iLen=item.items.length; i<iLen; i++) {
-          if (!item.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(item.items[i], item);
-            targetItem.item.push(newItem);
-          }
-        }
-      }
+    if (item.dataType === "TITLE") {
+      return {};
     }
-    // if it is a question
-    else if (item.dataType !== "TITLE")
-    {
-      // linkId
-      targetItem.linkId = linkId;
-      // text
-      targetItem.text = item.question;
 
+    var linkId = item.linkId ? item.linkId : item._codePath;
+    var targetItem = {
+      linkId: linkId,
+      text: item.question
+    };
+    let isSection = item.dataType === "SECTION";
+
+    if (! isSection) {
       this._handleAnswerValues(targetItem, item, parentItem);
       // remove the processed values
       if (parentItem._questionValues) {
         delete parentItem._questionValues[linkId];
+      }
+    }
+
+    if (item.items && Array.isArray(item.items)) {
+      let qrItems = [];
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        if (!item.items[i]._repeatingItem) {
+          var newItem = this._processResponseItem(item.items[i], item);
+          qrItems.push(newItem);
+        }
+      }
+      if(isSection) {
+        targetItem.item = qrItems;
+      }
+      else {
+        targetItem.answer = targetItem.answer || {};
+        targetItem.answer.item = qrItems;
       }
     }
 
@@ -351,12 +352,8 @@ var self = {
     if (item.items) {
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
         var subItem = item.items[i];
-        // if it is a section
-        if (subItem.dataType === 'SECTION') {
-          this._processRepeatingItemValues(subItem);
-        }
         // if it is a question and the it repeats
-        else if (subItem.dataType !== 'TITLE' && this._questionRepeats(subItem)) {
+        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
           var linkId = subItem._codePath;
           if (!item._questionValues) {
             item._questionValues = {};
@@ -368,6 +365,10 @@ var self = {
             item._questionValues[linkId].push(subItem.value);
             subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
           }
+        }
+        // if it's a section or a question that has children items
+        if(subItem.items && Array.isArray(subItem.items)) {
+          this._processRepeatingItemValues(subItem);
         }
       }
     }
