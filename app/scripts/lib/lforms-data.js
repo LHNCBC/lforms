@@ -3069,8 +3069,9 @@
      */
     _codingsEqual: function(coding1, coding2) {
       let equals = false;
+      let hasValue = (v) => v !== null && v !== undefined && v !== '';
       if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
-        if(coding1.code || coding2.code) {
+        if(hasValue(coding1.code) || hasValue(coding2.code)) {
           equals = coding1.code === coding2.code;
         }
         else {
