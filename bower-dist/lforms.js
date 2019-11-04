@@ -2557,12 +2557,12 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
 
           break;
       }
@@ -4564,6 +4564,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     items: [],
     // a delimiter used in code path and id path
     PATH_DELIMITER: "/",
+    // whether the form data contains saved user data
+    hasSavedData: false,
     // repeatable question items derived from items
     _repeatableItems: {},
     // All accessory attributes of an item
@@ -4873,10 +4875,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function _initializeInternalData() {
@@ -4908,7 +4910,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options and assign field default values
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5074,7 +5076,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5487,7 +5489,24 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         } // if there is a new formHeaderItems array, set up autocomplete options
 
 
-        if (newOptions.formHeaderItems) this._setUpDefaultsAndAutocomp(true);
+        if (newOptions.formHeaderItems) {
+          for (var i = 0, iLen = newOptions.formHeaderItems.length; i < iLen; i++) {
+            var item = newOptions.formHeaderItems[i];
+
+            if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+              this._updateAutocompOptions(item);
+
+              this._resetItemValueWithModifiedAnswers(item);
+            } // if this is not a saved form with user data, and
+            // there is a default value, and
+            // there is no embedded data
+            else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+                item.value = item.defaultAnswer;
+              }
+
+            this._updateUnitAutocompOptions(item);
+          }
+        }
       }
     },
 
@@ -5566,7 +5585,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // reset item.value with modified answers if the item has a value (or an array of values)
 
 
-        this._resetItemValueWithModifiedAnswers(item); // normalize unit value if there is one, needed by calculationMethod
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._resetItemValueWithModifiedAnswers(item);
+        } // if this is not a saved form with user data, and
+        // there is a default value, and
+        // there is no embedded data
+        else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+            item.value = item.defaultAnswer;
+          } // normalize unit value if there is one, needed by calculationMethod
 
 
         if (item.unit && !item.unit.text) {
@@ -5851,7 +5877,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // check if there is user data
+
+      var hasSavedData = false;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -5864,9 +5902,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         copyrightNotice: this.copyrightNotice,
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
-      }; // reset obr fields
+      };
 
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      } // reset obr fields
+
+
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
       return defData;
     },
 
@@ -6916,26 +6959,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Set up autocomplete options for each items
-     * @param templateOptionsOnly (default false) set to true if only the
-     *  templateOptions items need processing.
+     * Set up autocomplete options for each item
+     * @param items a list items of the form or in the templateOptions.
      */
-    _setUpDefaultsAndAutocomp: function _setUpDefaultsAndAutocomp(templateOptionsOnly) {
-      var itemList;
-      var itemLists = [this.templateOptions.formHeaderItems];
-      if (!templateOptionsOnly) itemLists.push(this.itemList);
+    _setUpAnswerAndUnitAutoComp: function _setUpAnswerAndUnitAutoComp(items) {
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        var item = items[i];
 
-      for (var j = 0, jLen = itemLists.length; j < jLen && (itemList = itemLists[j]); ++j) {
-        for (var i = 0, iLen = itemList.length; i < iLen; i++) {
-          var item = itemList[i];
-
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          } else if (item.defaultAnswer && !item.value) // && not a list
-            item.value = item.defaultAnswer;
-
-          this._updateUnitAutocompOptions(item);
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
+
+        this._updateUnitAutocompOptions(item);
       }
     },
 
@@ -7075,8 +7110,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (item._modifiedAnswers) {
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null; // item.value has the priority over item.defaultAnswer
+        // if this is a saved form with user data, default answers are not to be used.
 
-        var answerValue = item.value || item.defaultAnswer;
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
 
         if (answerValue) {
           modifiedValue = []; // could be an array of multiple default values or a single value
@@ -7357,11 +7393,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
             options.codes = codes;
             options.itemToHeading = itemToHeading;
-          } // If there isn't already a default value set (handled elsewhere), and
+          } // If this is not a saved form with user data, and
+          // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
 
 
-          if (!options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
         }
 
         item._autocompOptions = options;

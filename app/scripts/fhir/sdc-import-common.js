@@ -562,6 +562,8 @@ function addCommonSDCImportFns(ns) {
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
       formData = (new LForms.LFormsData(formData)).getFormData();
     }
     // The reference to _mergeQR below is here because this function gets copied to

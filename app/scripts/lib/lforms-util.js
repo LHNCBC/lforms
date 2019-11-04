@@ -266,11 +266,11 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
     }

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [19.0.1] 2019-10-31
+### Changed
+- Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
+  and saved form data. 
+
 ## [19.0.0] 2019-10-28
 ### Added
 - Data type QTY is now documented as a supported data type, and is now validated like a REAL.
