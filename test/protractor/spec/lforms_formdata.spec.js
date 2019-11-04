@@ -20,6 +20,12 @@ describe('formdata: ', function() {
         expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         // #2 above fields have values, except dob is still empty
         ff.comment.sendKeys("Some comments");
+        ff.whereDone.click()
+        // pick the 2nd item, Hospital
+        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        ff.whereDone.sendKeys(protractor.Key.TAB);
+
         ff.name.sendKeys("Not Empty");
 
         ff.gender.click();
@@ -46,6 +52,7 @@ describe('formdata: ', function() {
           callback(fData);
         }).then(function (formData) {
           expect(formData.templateData.length).toBe(4);
+          expect(formData.templateData[2].value).toEqual({ code: '2', text: 'Hospital' })
           expect(formData.templateData[3].value).toBe("Some comments");
 
           expect(formData.itemsData.length).toBe(2);
