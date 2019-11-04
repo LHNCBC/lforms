@@ -261,9 +261,10 @@ var self = {
       if(isSection) {
         targetItem.item = qrItems;
       }
-      else {
-        targetItem.answer = targetItem.answer || {};
-        targetItem.answer.item = qrItems;
+      else if(qrItems.length) {
+        targetItem.answer = targetItem.answer || [];
+        targetItem.answer[0] = targetItem.answer[0] || {};
+        targetItem.answer[0].item = qrItems;
       }
     }
 
