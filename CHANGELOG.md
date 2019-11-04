@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [19.0.2] 2019-11-04
+### Fixed
+- Fixed a bug that autocompleter options are not set for items in templateOptions.
+
 ## [19.0.1] 2019-10-31
 ### Changed
 - Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport

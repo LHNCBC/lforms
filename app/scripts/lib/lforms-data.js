@@ -938,10 +938,10 @@
           this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
         }
 
-        // if there is a new formHeaderItems array, set up autocomplete options
-        if (newOptions.formHeaderItems) {
-          for (var i=0, iLen=newOptions.formHeaderItems.length; i<iLen; i++) {
-            var item = newOptions.formHeaderItems[i];
+        // if there is a formHeaderItems array, set up autocomplete options
+        if (this.templateOptions.formHeaderItems) {
+          for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
+            var item = this.templateOptions.formHeaderItems[i];
             if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
                 item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
               this._updateAutocompOptions(item);
