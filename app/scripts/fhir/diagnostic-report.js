@@ -671,8 +671,12 @@ var dr = {
    */
   mergeDiagnosticReportToLForms : function(formData, diagnosticReport) {
 
-    // get the default settings in case they are missing in the form data
-    var newFormData = (new LForms.LFormsData(formData)).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
+      formData = (new LForms.LFormsData(formData)).getFormData();
+    }
 
     var inBundle = diagnosticReport && diagnosticReport.resourceType === "Bundle";
 
@@ -682,16 +686,16 @@ var dr = {
 
     var reportStructure = this._getReportStructure(dr);
 
-    this._processObxAndItem(reportStructure, newFormData, dr);
+    this._processObxAndItem(reportStructure, formData, dr);
 
     // date
-    if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
+    if (dr.effectiveDateTime && formData.templateOptions.formHeaderItems) {
       var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
       if (whenDone) {
-        newFormData.templateOptions.formHeaderItems[0].value = whenDone;
+        formData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
-    return newFormData;
+    return formData;
   }
 
 };

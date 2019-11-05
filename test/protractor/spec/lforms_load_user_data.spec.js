@@ -222,3 +222,20 @@ describe('load saved user data', function() {
 
 
 });
+
+describe('load saved user data, where hasSavedData is set to true', function() {
+
+  it('should not load default values', function () {
+
+    tp.openFormWithUserDataWithHasSavedData();
+    expect(ff.q5.getAttribute('value')).toBe('');
+
+    var cwe5Other = element(by.id("/cwe-checkbox-default-answer/1_other")),
+        cwe7Other = element(by.id("/cwe-radio-default-answer/1_other"));
+
+    // default answer is not in the answer list,
+    expect(cwe5Other.isSelected()).toBe(false);
+    expect(cwe7Other.isSelected()).toBe(false);
+
+  });
+});
