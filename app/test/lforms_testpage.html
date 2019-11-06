@@ -55,6 +55,7 @@
           <button id="change-columns" class="btn btn-primary" ng-click="changeObxObr()">Change OBR/OBX Options</button>
           <button id="merge-dr" class="btn btn-primary" ng-click="testMergeDR2LForms()">Merge DiagnosticReport (contained) to LForms (USSGFH)</button>
           <button id="merge-bundle-dr" class="btn btn-primary" ng-click="testMergeBundleDR2LForms()">Merge DiagnosticReport (Bundle) to LForms (USSGFH)</button>
+          <button id="merge-dr-default-values" class="btn btn-primary" ng-click="testMergeDR2LFormsWithDefaultValues()">Merge DiagnosticReport (contained) to LForms (Default Values)</button>
           <button id="merge-qr" class="btn btn-primary" ng-click="testMergeQR2LForms()">Merge QuestionnaireResponse to LForms (USSGFH)</button>
           <button id="merge-qr-cwe" class="btn btn-primary" ng-click="testMergeQR2LForms_CWE()">Merge QuestionnaireResponse to LForms (Full-Featured, w/ CWE user data)</button>
           <button id="test" class="btn btn-primary" ng-click="testSearchOnFHIRServer()">Search on FHIR Server</button>
@@ -143,6 +144,7 @@
               {text: 'Form Builder created test form', id: 'formC'},
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
               {text: 'Form With User Data', id: 'form-with-user-data'},
+              {text: 'Form With User Data, hasSavedData=true', id: 'form-with-user-data-with-has-saved-data'},
               {text: 'CDE sample form #1', id: 'cde1'},
               {text: 'RxTerms Demo', id: 'X-001'},
               {text: 'displayControls (answerLayout and questionLayout)', id: 'display-controls'},
@@ -278,46 +280,21 @@
             };
 
             $scope.testMergeDR2LForms = function() {
-              // use the first form
-              $scope.getFhirResource(getFHIRVersion(),'contained-dr.json').then(function (fhirData) {
-
-                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                  'DiagnosticReport', fhirData, angular.copy(FHTData),
-                  getFHIRVersion());
-                mergedFormData = new LForms.LFormsData(mergedFormData);
-
-                $scope.lfData2 = mergedFormData;
-                $scope.lfOption2 = {
-                  useAnimation: !window._INTESTING_
-                };
-              }, function (err) {
-                window.alert('Unable to load '+getFHIRVersion()+': contained-dr.json');
-              });
-            };
-
+              $scope.loadFHIRDataFile('contained-dr.json', FHTData, 'DiagnosticReport');
+            }
             $scope.testMergeBundleDR2LForms = function() {
-              // use the first form
-              $scope.getFhirResource(getFHIRVersion(),'searchset-bundle-dr.json').then(function (fhirData) {
+              $scope.loadFHIRDataFile('searchset-bundle-dr.json', FHTData, 'DiagnosticReport');
+            }
 
-                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                  'DiagnosticReport',fhirData,angular.copy(FHTData),
-                  getFHIRVersion());
-                mergedFormData = new LForms.LFormsData(mergedFormData);
+            $scope.testMergeDR2LFormsWithDefaultValues = function() {
+              $scope.loadFHIRDataFile('with-defaultvalues-contained-dr.json', defaultAnswerForm, 'DiagnosticReport');
+            }
 
-                $scope.lfData2 = mergedFormData;
-                $scope.lfOption2 = {
-                  useAnimation: !window._INTESTING_
-                };
-              }, function (err) {
-                window.alert('Unable to load '+getFHIRVersion()+': searchset-bundle-dr.json');
-              });
-            };
-
-            $scope.loadFHIRDataFile = function(fileName, lfData) {
+            $scope.loadFHIRDataFile = function(fileName, lfData, resType) {
               $scope.getFhirResource(getFHIRVersion(), fileName).then(function (fhirData) {
 
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                        'QuestionnaireResponse', fhirData, angular.copy(lfData),
+                        resType, fhirData, angular.copy(lfData),
                         getFHIRVersion());
                 mergedFormData = new LForms.LFormsData(mergedFormData);
 
@@ -333,12 +310,12 @@
 
 
             $scope.testMergeQR2LForms = function() {
-              $scope.loadFHIRDataFile('fhir-sdc-response-ussgfht.json', FHTData);
+              $scope.loadFHIRDataFile('fhir-sdc-response-ussgfht.json', FHTData, 'QuestionnaireResponse');
             };
 
 
             $scope.testMergeQR2LForms_CWE = function() {
-              $scope.loadFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', allInOne)
+              $scope.loadFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', allInOne, 'QuestionnaireResponse')
             };
 
 
@@ -474,8 +451,17 @@
                   //'Form With User Data'
                   lfOption2 = {
                     allowHTMLInInstructions: true
-                  }
+                  };
                   lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
+                  break;
+                case 'form-with-user-data-with-has-saved-data':
+                  //'Form With User Data'
+                  lfOption2 = {
+                    allowHTMLInInstructions: true
+                  };
+                  var formData = angular.copy(formWithUserData);
+                  formData.hasSavedData = true;
+                  lfData2 = new LForms.LFormsData(formData);
                   break;
                 case 'X-001':
                   //'RxTerms'

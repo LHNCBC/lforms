@@ -20,6 +20,12 @@ describe('formdata: ', function() {
         expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         // #2 above fields have values, except dob is still empty
         ff.comment.sendKeys("Some comments");
+        ff.whereDone.click()
+        // pick the 2nd item, Hospital
+        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
+        ff.whereDone.sendKeys(protractor.Key.TAB);
+
         ff.name.sendKeys("Not Empty");
 
         ff.gender.click();
@@ -46,6 +52,7 @@ describe('formdata: ', function() {
           callback(fData);
         }).then(function (formData) {
           expect(formData.templateData.length).toBe(4);
+          expect(formData.templateData[2].value).toEqual({ code: '2', text: 'Hospital' })
           expect(formData.templateData[3].value).toBe("Some comments");
 
           expect(formData.itemsData.length).toBe(2);
@@ -230,9 +237,9 @@ describe('formdata: ', function() {
         callback(fData);
       }).then(function (formData) {
         // console.log(formData);
-        expect(formData.items.length).toBe(3);
-        expect(formData.items[0].question).toBe("With data type CNE");
-        expect(formData.items[0].value).toEqual({code:"c2",other:null,text:"Answer 2"});
+        expect(formData.items.length).toBe(4);
+        expect(formData.items[1].question).toBe("With data type CNE");
+        expect(formData.items[1].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
   });
@@ -329,6 +336,32 @@ describe('formdata: ', function() {
       // those are getting processed.
       expect(element(by.id('date_done')).getAttribute('value')).toEqual(today);
     });
+
+
+    it('should not be reset after they are cleared', function() {
+      tp.openDefaultAnswerForm();
+      var intField = element(by.id('/intField/1')),
+          whenDone = element(by.id('date_done')),
+          decField = element(by.id('/decField/1')),
+          strField = element(by.id('/strField/1')),
+          listField = element(by.id('/ansCodeDefault/1')),
+          btnAddStringField = element(by.id('add-/strField/1'));
+
+      whenDone.clear();
+      intField.clear();
+      decField.clear();
+      strField.clear();
+      listField.clear();
+
+      btnAddStringField.click();
+
+      expect(whenDone.getAttribute('value')).toBe("");
+      expect(intField.getAttribute('value')).toBe("");
+      expect(decField.getAttribute('value')).toBe("");
+      expect(strField.getAttribute('value')).toBe("");
+      expect(listField.getAttribute('value')).toBe("");
+    });
+
   });
 
   describe('lists with headings', function() {
