@@ -4754,7 +4754,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
-      this.fhirVersion = data.fhirVersion || 'R4';
+      this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
+
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
