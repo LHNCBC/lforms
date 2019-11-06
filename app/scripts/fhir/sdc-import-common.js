@@ -134,12 +134,6 @@ function addCommonSDCImportFns(ns) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
     }
-
-    // form-level variables (really only R4+)
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
-      self.fhirExtVariable, 0, true);
-    if (ext.length > 0)
-      lfData._variableExt = ext;
   };
 
 

@@ -183,7 +183,7 @@
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR && data.fhirVersion) {
+      if (LForms.FHIR) {
         this._initializeFormFHIRData(data);
       }
 
@@ -226,12 +226,17 @@
      */
     _initializeFormFHIRData: function(data) {
       var lfData = this;
-      this.fhirVersion = data.fhirVersion;
+      this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension;
-      this._variableExt = data._variableExt; // FHIR "variable" extensions
+  
+      // form-level variables (really only R4+)
+      var ext = LForms.Util.findObjectInArray(data.extension, 'url',
+        this._fhir.SDC.fhirExtVariable, 0, true);
+      if (ext.length > 0)
+        lfData._variableExt = ext;
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
 
