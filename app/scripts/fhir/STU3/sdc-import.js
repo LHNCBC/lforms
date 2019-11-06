@@ -143,15 +143,20 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
-        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-        if(source.dataType === 'CWE' || source.dataType === 'CNE') {
-          condition.trigger = {code: answer.code};
-        }
-        else if(source.dataType === 'QTY') {
-            condition.trigger = {value: answer.value};
+        if(qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
+          condition.trigger = {exists: qItem.enableWhen[i].hasAnswer};
         }
         else {
-          condition.trigger = {value: answer};
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          if(source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger = {value: self._copyTriggerCoding(answer, null, false)};
+          }
+          else if(source.dataType === 'QTY') {
+            condition.trigger = {value: answer.value};
+          }
+          else {
+            condition.trigger = {value: answer};
+          }
         }
         lfItem.skipLogic.conditions.push(condition);
       }

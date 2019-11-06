@@ -11,6 +11,49 @@ describe('skip logic', function() {
     expect(ff.t5.isPresent()).toBeFalsy();
   });
 
+  it('should have correct initial state for CNE/exists trigger targets', function() {
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeTruthy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answered Yes', function() {
+    // select "Yes" for is Living
+    ff.cneTriggerSrc1.click();
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes.isDisplayed()).toBe(true);
+    expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answered No', function() {
+    // select "No" for is Living
+    ff.cneTriggerSrc1.click();
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNo.isDisplayed()).toBe(true);
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answer cleared', function() {
+    // clear the answer to Living
+    ff.cneTriggerSrc1.clear();
+
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isDisplayed()).toBe(true);
+  });
+
+
   it('should show a sibling and two items in a sibling section', function() {
     ff.src.sendKeys('1');
     expect(ff.t1.isDisplayed()).toBe(true);

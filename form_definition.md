@@ -55,7 +55,7 @@ about the meaning of each key:
           "conditions": [{
             "source": string
             "trigger": {
-              "value": string/number/boolean, or
+              "value": string/number/boolean/code-object, or
               "minExclusive": number,
               "minInclusive": number,
               "maxExclusive": number,
@@ -277,9 +277,16 @@ about the meaning of each key:
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
               or maxInclusive.  The meaning of the keys is as follows:
-                * value - a value which the value for question "source" must
-                  exactly match.  For questions with lists, the can either be
-                  the text of the answer, its code, or its label.
+                * value - A value that the answer for the “source” question must match to fire the trigger.
+                    * For value types string, number, or boolean, the answer and trigger value 
+                      must exactly match.
+                    * For (source) questions with lists (CNE/CWE), the trigger value should 
+                      be a "code object" with any or all of these three fields: code, system, and text,
+                      for example: {"code": "LA2-8", "system": "http://loinc.org"}. 
+                      The trigger value will be considered to match the answer if 1) code systems 
+                      either match or are unspecified, and 2) either a) codes are specified and match 
+                      or b) codes are unspecified and the texts are specified and match. 
+                      Other trigger value fields, if any, are not used for matching.
                 * minExclusive - a value which the source question's value must exceed
                 * minInclusive - a value which the source question's value must equal
                   or exceed
