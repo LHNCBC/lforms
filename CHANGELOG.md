@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [19.0.3] 2019-11-06
+### Changed
+- Added a vertical scrollbar for long text of coding instructions and copyright notice
+  in popover windows.
+ 
 ## [19.0.2] 2019-11-04
 ### Fixed
 - Fixed a bug that autocompleter options are not set for items in templateOptions.
