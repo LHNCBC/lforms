@@ -21674,41 +21674,41 @@ var self = {
 
         var valueKey = this._getValueKeyByDataType("answer", sourceItem);
 
-        var dataType = this._getAssumedDataTypeForExport(sourceItem); // for Coding
+        var dataType = this._getAssumedDataTypeForExport(sourceItem);
+
+        if (condition.trigger.hasOwnProperty('exists')) {
+          enableWhenRule.hasAnswer = condition.trigger.exists;
+        } // for Coding
         // multiple selections, item.value is an array
         // NO support of multiple selections in FHIR SDC, just pick one
+        else if (dataType === 'CWE' || dataType === 'CNE') {
+            var answerCoding = self._copyTriggerCoding(condition.trigger.value, null, true);
 
-
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          if (condition.trigger.code) {
-            enableWhenRule[valueKey] = {
-              "code": condition.trigger.code
-            };
-          } else {
-            enableWhenRule[valueKey] = {
-              "code": "only 'code' attribute is supported"
-            };
-          }
-        } // for Quantity,
-        // [{
-        //   // from Element: extension
-        //   "value" : <decimal>, // Numerical value (with implicit precision)
-        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-        //   "unit" : "<string>", // Unit representation
-        //   "system" : "<uri>", // Code System that defines coded unit form
-        //   "code" : "<code>" // Coded form of the unit
-        // }]
-        else if (dataType === 'QTY') {
-            // for now, handling only simple quantities without the comparators.
-            var fhirQuantity = this._makeQuantity(condition.trigger.value, sourceItem.units);
-
-            if (fhirQuantity) {
-              enableWhenRule[valueKey] = fhirQuantity;
+            if (answerCoding) {
+              enableWhenRule[valueKey] = answerCoding;
+            } else {
+              throw new Error("Unable to convert trigger to answerCoding: " + condition.trigger.value);
             }
-          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-              enableWhenRule[valueKey] = condition.trigger.value; // TODO luanx2: similarly, REAL, INT with unit should be valueQuantity? Leave as is for now.
-            } // add a rule to enableWhen
+          } // for Quantity,
+          // [{
+          //   // from Element: extension
+          //   "value" : <decimal>, // Numerical value (with implicit precision)
+          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+          //   "unit" : "<string>", // Unit representation
+          //   "system" : "<uri>", // Code System that defines coded unit form
+          //   "code" : "<code>" // Coded form of the unit
+          // }]
+          else if (dataType === 'QTY') {
+              // for now, handling only simple quantities without the comparators.
+              var fhirQuantity = this._makeQuantity(condition.trigger.value, sourceItem.units);
+
+              if (fhirQuantity) {
+                enableWhenRule[valueKey] = fhirQuantity;
+              }
+            } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+            else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+                enableWhenRule[valueKey] = condition.trigger.value; // TODO luanx2: similarly, REAL, INT with unit should be valueQuantity? Leave as is for now.
+              } // add a rule to enableWhen
 
 
         enableWhen.push(enableWhenRule);
@@ -22288,39 +22288,80 @@ function addCommonSDCExportFns(ns) {
     return _defineProperty({
       url: fhirExtUrl
     }, valueKey, fhirValue);
-  };
+  }; // known source data types (besides CNE/CWE) in skip logic export handling,
+  // see _createEnableWhenRulesForSkipLogicCondition below
+
+
+  self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"].reduce(function (map, type) {
+    map[type] = type;
+    return map;
+  }, {});
   /**
-   * A single condition in lforms translates to two enableWhen rules in core FHIR.
-   *
-   * @param answerKey - The answer[x] string
    * @param skipLogicCondition - Lforms skip logic condition object
    * @param sourceItem - Skip logic source item in lforms.
-   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @return {Array} FHIR enableWhen array
    * @private
    */
 
+  self._createEnableWhenRulesForSkipLogicCondition = function (skipLogicCondition, sourceItem) {
+    // dataTypes:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+    var sourceDataType = this._getAssumedDataTypeForExport(sourceItem);
 
-  self._createEnableWhenRulesForRangeAndValue = function (answerKey, skipLogicCondition, sourceItem) {
-    var ret = [];
+    var sourceValueKey = this._getValueKeyByDataType("answer", sourceItem);
+
+    var enableWhenRules = []; // Per lforms spec, the trigger keys can be:
+    // exists, value, minExclusive, minInclusive, maxExclusive, maxInclusive
+
     Object.keys(skipLogicCondition.trigger).forEach(function (key) {
-      var rule = {
-        question: sourceItem.linkId,
-        operator: self._operatorMapping[key]
-      };
-      var answer = null;
+      var operator = self._operatorMapping[key];
+      var triggerValue = skipLogicCondition.trigger[key];
 
-      if (answerKey === 'answerQuantity') {
-        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
-      } else {
-        answer = skipLogicCondition.trigger[key];
+      if (!operator || triggerValue !== 0 && triggerValue !== false && !triggerValue) {
+        throw new Error('Invalid lforms skip logic trigger: ' + JSON.stringify(skipLogicCondition.trigger, null, 4));
       }
 
-      if (answer) {
-        rule[answerKey] = answer;
-        ret.push(rule);
-      }
+      var rule = null;
+
+      if (operator === 'exists') {
+        rule = {
+          answerBoolean: triggerValue
+        };
+      } // for Coding
+      // multiple selections, item.value is an array
+      // NO support of multiple selections in FHIR SDC, just pick one
+      else if (sourceDataType === 'CWE' || sourceDataType === 'CNE') {
+          var answerCoding = self._copyTriggerCoding(triggerValue, null, true);
+
+          if (!answerCoding) {
+            throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
+          }
+
+          rule = {
+            answerCoding: answerCoding
+          };
+        } else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
+          var answer = triggerValue;
+
+          if (sourceValueKey === 'answerQuantity') {
+            answer = self._makeQuantity(answer, sourceItem.units);
+          }
+
+          if (answer === 0 || answer === false || answer) {
+            rule = _defineProperty({}, sourceValueKey, answer);
+          } else {
+            throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
+          }
+        } else {
+          throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
+        }
+
+      rule.question = sourceItem.linkId;
+      rule.operator = operator;
+      enableWhenRules.push(rule);
     });
-    return ret;
+    return enableWhenRules;
   };
   /**
    * Set form level attribute
@@ -22679,20 +22720,26 @@ function addSDCImportFns(ns) {
           source: source.questionCode
         };
 
-        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-
-        if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+        if (qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
           condition.trigger = {
-            code: answer.code
-          };
-        } else if (source.dataType === 'QTY') {
-          condition.trigger = {
-            value: answer.value
+            exists: qItem.enableWhen[i].hasAnswer
           };
         } else {
-          condition.trigger = {
-            value: answer
-          };
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+
+          if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger = {
+              value: self._copyTriggerCoding(answer, null, false)
+            };
+          } else if (source.dataType === 'QTY') {
+            condition.trigger = {
+              value: answer.value
+            };
+          } else {
+            condition.trigger = {
+              value: answer
+            };
+          }
         }
 
         lfItem.skipLogic.conditions.push(condition);
@@ -23249,7 +23296,8 @@ function addCommonSDCFns(ns) {
     '>=': 'minInclusive',
     '<=': 'maxInclusive',
     '=': 'value',
-    '!=': 'not'
+    '!=': 'not',
+    'exists': 'exists'
   };
   /**
    * Check if a LForms item has repeating questions
@@ -23314,6 +23362,51 @@ function addCommonSDCFns(ns) {
 
 
   self.UCUM_URI = 'http://unitsofmeasure.org';
+  /**
+   * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
+   * @param obj the object to set the key/value on. It can be null/undefined, and if so, a new object will
+   *        be created and returned (only if the value is valid).
+   * @param key the key for the given value to be set to the given object, required.
+   * @param value the value to be set to the given object using the given key.
+   * @return if the input object is not null/undefined, it will be returned;
+   *         if the input object is null/undefined:
+   *         - return the given object as is if the value is invalid, or
+   *         - a newly created object with the given key/value set.
+   * @private
+   */
+
+  self._setIfHasValue = function (obj, key, value) {
+    if (value !== undefined && value !== null && value !== '') {
+      if (!obj) {
+        obj = {};
+      }
+
+      obj[key] = value;
+    }
+
+    return obj;
+  };
+  /**
+   * Copy between lforms trigger value coding and FHIR enableWhen valueCoding. It only copies 3 fields:
+   * code, system, and display/text (called "text" in lforms, "display" in FHIR)
+   * @param srcCoding the coding object to copy from
+   * @param dstCoding the coding object to copy to, may be null/undefined, and if null/undefined, a new object
+   *        will be created but only if the srcCoding has at least one of code, system, display/text
+   * @param lforms2Fhir The direction of copying, can be true or false. The direction matters because in lforms,
+   *        the text/display field is called "text", while in FHIR, it's called "display"
+   * @return the resulting dstCoding object.
+   * @private
+   */
+
+
+  self._copyTriggerCoding = function (srcCoding, dstCoding, lforms2Fhir) {
+    var srcTextField = lforms2Fhir ? 'text' : 'display';
+    var dstTextField = lforms2Fhir ? 'display' : 'text';
+    dstCoding = self._setIfHasValue(dstCoding, 'code', srcCoding.code);
+    dstCoding = self._setIfHasValue(dstCoding, 'system', srcCoding.system);
+    dstCoding = self._setIfHasValue(dstCoding, dstTextField, srcCoding[srcTextField]);
+    return dstCoding;
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);

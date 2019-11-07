@@ -3096,6 +3096,33 @@
 
 
     /**
+     * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
+     * following three fields: code, system, and text. Two codings are considered equal if and only if:
+     * 1) The code systems are equal or unspecified, and
+     * 2) Either the codes are specified and equal, or, the codes are not specified and the texts are
+     *    specified and equal.
+     * @param coding1 the first coding object
+     * @param coding2 the second coding object
+     * @return {boolean} true if the two codings are considered equal, false otherwise.
+     * @private
+     */
+    _codingsEqual: function(coding1, coding2) {
+      let equals = false;
+      let hasValue = (v) => v !== null && v !== undefined && v !== '';
+      if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
+        if(hasValue(coding1.code) || hasValue(coding2.code)) {
+          equals = coding1.code === coding2.code;
+        }
+        else {
+          equals = coding1.text && coding2.text && coding1.text === coding2.text;
+        }
+      }
+
+      return !!equals;
+    },
+
+
+    /**
      * Check if a source item's value meet a skip logic condition/trigger
      * @param item a source item of a skip logic
      * @param trigger a trigger of a skip logic
@@ -3104,31 +3131,28 @@
      */
     _checkSkipLogicCondition: function(item, trigger) {
       var action = false;
-      if (item && item.value !== undefined && item.value !== null && item.value !== "") {
-        var currentValue = item.value;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
 
+      if(trigger.hasOwnProperty('exists')) {
+        action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
+        action = trigger.not? !action: action;
+      }
+      else if (hasAnswer) {
+        var currentValue = item.value;
         switch (item.dataType) {
           // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger).filter(function(key) {
-              return key !== 'not';
-            })[0] ; // trigger should have only one key, other than 'not'
-            // if the field accepts multiple values from the answer list
-            if (Array.isArray(currentValue)) {
-              for (var m= 0, mLen = currentValue.length; m<mLen; m++) {
-                if (trigger.hasOwnProperty(field) && currentValue[m].hasOwnProperty(field) &&
-                  this._objectEqual(trigger[field], currentValue[m][field]) ) {
-                  action = true;
-                  break;
-                }
+            var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
+            for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
+              let answerValue = answerValues[m];
+              if(item.answerCodeSystem) {
+                answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
               }
-            }
-            else {
-              if (trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) &&
-                this._objectEqual(trigger[field], currentValue[field]) ) {
+              if(this._codingsEqual(trigger.value, answerValue)) {
                 action = true;
+                break;
               }
             }
             break;
