@@ -975,18 +975,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
 
         describe('Export to QuestionnaireResponse', function() {
-          if(fhirVersion === 'R4') {
-            var lfFile = 'test/data/' + fhirVersion + '/item-answer-item.json';
-            $.get(lfFile, function(lfData) { // load the lforms json
-              var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
-              var answer = fhirQr.item[0].item[0].answer[0];
+          var lfFile = 'test/data/item-answer-item.json';
+          $.get(lfFile, function(lfData) { // load the lforms json
+            var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
+            var answer = fhirQr.item[0].item[0].answer[0];
 
-              it('should convert to item.answer.item as appropriate', function () {
-                assert.equal(answer.valueCoding.code, 'LA33-6');
-                assert.equal(answer.item[0].answer[0].valueDate, '2019-09-09');
-              });
-            }).done().fail(function(err){console.log(': Unable to load ' + lfFile);});
-          }
+            it('should convert to item.answer.item as appropriate', function () {
+              assert.equal(answer.valueCoding.code, 'LA33-6');
+              assert.equal(answer.item[0].answer[0].valueDate, '2019-09-09');
+            });
+          }).done().fail(function(err){console.log(': Unable to load ' + lfFile);});
         });
       });
     });

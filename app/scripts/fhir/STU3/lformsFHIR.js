@@ -21390,53 +21390,6 @@ var self = {
   },
 
   /**
-   * Process an item of the form
-   * @param item an item in LForms form object
-   * @param parentItem a parent item of the item
-   * @returns {{}}
-   * @private
-   */
-  _processResponseItem: function _processResponseItem(item, parentItem) {
-    var targetItem = {};
-    var linkId = item.linkId ? item.linkId : item._codePath; // if it is a section
-
-    if (item.dataType === "SECTION") {
-      // linkId
-      targetItem.linkId = linkId; // text
-
-      targetItem.text = item.question;
-
-      if (item.items && Array.isArray(item.items)) {
-        // header
-        targetItem.item = [];
-
-        for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-          if (!item.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(item.items[i], item);
-
-            targetItem.item.push(newItem);
-          }
-        }
-      }
-    } // if it is a question
-    else if (item.dataType !== "TITLE") {
-        // linkId
-        targetItem.linkId = linkId; // text
-
-        targetItem.text = item.question;
-
-        this._handleAnswerValues(targetItem, item, parentItem); // remove the processed values
-
-
-        if (parentItem._questionValues) {
-          delete parentItem._questionValues[linkId];
-        }
-      }
-
-    return targetItem;
-  },
-
-  /**
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
@@ -21504,39 +21457,6 @@ var self = {
     }
 
     return optionArray;
-  },
-
-  /**
-   * Group values of the questions that have the same linkId
-   * @param item an item in the LForms form object or a form item object
-   * @private
-   *
-   */
-  _processRepeatingItemValues: function _processRepeatingItemValues(item) {
-    if (item.items) {
-      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-        var subItem = item.items[i]; // if it is a section
-
-        if (subItem.dataType === 'SECTION') {
-          this._processRepeatingItemValues(subItem);
-        } // if it is a question and the it repeats
-        else if (subItem.dataType !== 'TITLE' && this._questionRepeats(subItem)) {
-            var linkId = subItem._codePath;
-
-            if (!item._questionValues) {
-              item._questionValues = {};
-            }
-
-            if (!item._questionValues[linkId]) {
-              item._questionValues[linkId] = [subItem.value];
-            } else {
-              item._questionValues[linkId].push(subItem.value);
-
-              subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
-            }
-          }
-      }
-    }
   },
 
   /**
@@ -22493,6 +22413,94 @@ function addCommonSDCExportFns(ns) {
       }
 
       targetItem.answer = answer;
+    }
+  };
+  /**
+   * Process an item of the form
+   * @param item an item in LForms form object
+   * @param parentItem a parent item of the item
+   * @returns {{}}
+   * @private
+   */
+
+
+  self._processResponseItem = function (item, parentItem) {
+    if (item.dataType === "TITLE") {
+      return {};
+    }
+
+    var linkId = item.linkId ? item.linkId : item._codePath;
+    var targetItem = {
+      linkId: linkId,
+      text: item.question
+    };
+    var isSection = item.dataType === "SECTION";
+
+    if (!isSection) {
+      this._handleAnswerValues(targetItem, item, parentItem); // remove the processed values
+
+
+      if (parentItem._questionValues) {
+        delete parentItem._questionValues[linkId];
+      }
+    }
+
+    if (item.items && Array.isArray(item.items)) {
+      var qrItems = [];
+
+      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+        if (!item.items[i]._repeatingItem) {
+          var newItem = this._processResponseItem(item.items[i], item);
+
+          qrItems.push(newItem);
+        }
+      }
+
+      if (isSection) {
+        targetItem.item = qrItems;
+      } else if (qrItems.length) {
+        targetItem.answer = targetItem.answer || [];
+        targetItem.answer[0] = targetItem.answer[0] || {};
+        targetItem.answer[0].item = qrItems;
+      }
+    }
+
+    return targetItem;
+  };
+  /**
+   * Group values of the questions that have the same linkId
+   * @param item an item in the LForms form object or a form item object
+   * @private
+   *
+   */
+
+
+  self._processRepeatingItemValues = function (item) {
+    if (item.items) {
+      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+        var subItem = item.items[i]; // if it is a question and the it repeats
+
+        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
+          var linkId = subItem._codePath;
+
+          if (!item._questionValues) {
+            item._questionValues = {};
+          }
+
+          if (!item._questionValues[linkId]) {
+            item._questionValues[linkId] = [subItem.value];
+          } else {
+            item._questionValues[linkId].push(subItem.value);
+
+            subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
+          }
+        } // if it's a section or a question that has children items
+
+
+        if (subItem.items && Array.isArray(subItem.items)) {
+          this._processRepeatingItemValues(subItem);
+        }
+      }
     }
   };
 }
