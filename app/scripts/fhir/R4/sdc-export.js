@@ -449,46 +449,11 @@ var self = {
       for (var i=0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
+        let enableWhenRules = self._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
 
-        var enableWhenRules = [{
-          "question": sourceItem.linkId
-        }];
-        // dataTypes:
-        // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-        // Attachment, Coding, Quantity, Reference(Resource)
-        var valueKey = this._getValueKeyByDataType("answer", sourceItem);
-        var dataType = this._getAssumedDataTypeForExport(sourceItem);
-
-        // for Coding
-        // multiple selections, item.value is an array
-        // NO support of multiple selections in FHIR SDC, just pick one
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          if (condition.trigger.code) {
-            enableWhenRules[0][valueKey] = {
-              "code": condition.trigger.code
-            }
-          }
-          else {
-            enableWhenRules[0][valueKey] = {
-              "code": "only 'code' attribute is supported"
-            }
-          }
+        if(enableWhenRules.length > 1) {
+          rangeFound = true;
         }
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if(dataType === "BL") {
-          enableWhenRules[0].operator = 'exists';
-          // Spec says exists implies answer is boolean, then 'exists' is redundant, isn't it?
-          enableWhenRules[0][valueKey] = condition.trigger.value;
-        }
-        else if (dataType === "REAL" || dataType === "INT" || dataType === 'QTY' ||
-            dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-            dataType === "ST" || dataType === "TX" || dataType === "URL") {
-          enableWhenRules = this._createEnableWhenRulesForRangeAndValue(valueKey, condition, sourceItem);
-          if(enableWhenRules.length > 1) {
-            rangeFound = true;
-          }
-        }
-        // add rule(s) to enableWhen
         enableWhen = enableWhen.concat(enableWhenRules);
       }
 
@@ -496,8 +461,9 @@ var self = {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
         // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
-        return;
+        throw new Error('Multiple skip logic conditons included with range specification is not supported yet.');
       }
+
       targetItem.enableWhen = enableWhen;
       if(item.skipLogic.logic === 'ALL' || rangeFound) {
         targetItem.enableBehavior = 'all';

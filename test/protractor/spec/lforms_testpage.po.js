@@ -186,7 +186,13 @@ var TestPage = function() {
       dcTarget1: element(by.id('/dataControlExamples/controlledItem_LIST/1/1')),
       dcTarget2: element(by.id('/dataControlExamples/controlledItem_TEXT/1/1')),
 
-      searchResults: element(by.id('searchResults'))
+      searchResults: element(by.id('searchResults')),
+
+      cneTriggerSrc1: element(by.id('/54139-1-cnesrc-1/1')),
+      dobIfLivingYes: element(by.id('/54139-1-cnesrc-1/54124-3/1/1')),
+      ageIfLivingAnswered: element(by.id('/54139-1-cnesrc-1/54141-7/1/1')),
+      deathCauseIfLivingNo: element(by.id('/54139-1-cnesrc-1/54112-8/1/1')),
+      ageDeathIfLivingNotAnswered: element(by.id('/54139-1-cnesrc-1/54113-6/1/1'))
     },
 
     HL7GeneticPanel: {
