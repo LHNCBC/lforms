@@ -2,7 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.0.0] 2019-10-24
+## [20.0.1] 2019-11-07
+### Changed
+- Added a vertical scrollbar for long text of coding instructions and copyright notice
+  in popover windows.
+ 
+## [20.0.0] 2019-11-06
 ### Added
 - Added "exists" support to skip logic
 ### Changes

@@ -578,6 +578,11 @@ Override color of select boxes in calendar widget title bar.
   max-width: 600px;
   width: auto;
 }
+.lf-form .popover-content {
+  max-height: 600px;
+  height: auto;
+  overflow-y: auto;
+}
 
 /*** matrix layout ***/
 .lf-layout-matrix.lf-table-item  {
