@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.0.2] 2019-11-08
+### Fixed
+- Fixed the issue where the child items were not properly exported to FHIR item.answer.item.
+
 ## [20.0.1] 2019-11-07
 ### Changed
 - Added a vertical scrollbar for long text of coding instructions and copyright notice
