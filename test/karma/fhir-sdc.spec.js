@@ -936,7 +936,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/weight",
               "value": 128
             };
-            var out = fhir.SDC._processResponseItem(item, {});
+            var out = fhir.SDC._processResponseItem(item);
             assert.equal(out.linkId, "/weight");
             assert.equal(out.answer[0].valueQuantity.value, 128);
           });
@@ -980,15 +980,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         describe('Export to QuestionnaireResponse', function() {
           var lfFile = 'test/data/item-answer-item.json';
-          $.get(lfFile, function(lfData) { // load the lforms json
-            var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
-            var answer = fhirQr.item[0].item[0].answer[0];
-
-            it('should convert to item.answer.item as appropriate', function () {
-              assert.equal(answer.valueCoding.code, 'LA33-6');
-              assert.equal(answer.item[0].answer[0].valueDate, '2019-09-09');
-            });
-          }).done().fail(function(err){console.log(': Unable to load ' + lfFile);});
+          it('should convert to item.answer.item as appropriate', function (itDone) {
+            $.get(lfFile, function(lfData) { // load the lforms json
+              var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
+              var answer = fhirQr.item[0].item[0].answer;
+              assert.equal(answer[0].valueCoding.code, 'LA33-6');
+              assert.equal(answer[0].item[0].answer[0].valueDate, '2019-09-09');
+              assert.equal(answer[0].item[1].answer[0].valueDecimal, 99);
+            }).done(function () { itDone(); })
+              .fail(function(err){console.log(': Unable to load ' + lfFile);});
+          });
         });
       });
     });
