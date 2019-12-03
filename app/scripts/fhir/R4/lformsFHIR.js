@@ -21681,7 +21681,9 @@ function addCommonSDCExportFns(ns) {
       if (source.items && Array.isArray(source.items)) {
         var tmp = this._processResponseItem(source, true);
 
-        target.item = tmp.item || [];
+        if (tmp && tmp.item && tmp.item.length) {
+          target.item = tmp.item;
+        }
       }
     } // FHIR doesn't allow null values, strip them out.
 
@@ -22411,44 +22413,45 @@ function addCommonSDCExportFns(ns) {
 
     for (var i = 0; i < values.length; ++i) {
       var itemValue = values[i];
-      var answer = null; // for Coding
 
-      if (dataType === 'CWE' || dataType === 'CNE') {
-        // for CWE, the value could be string if it is a user typed, not-on-list value
-        if (dataType === 'CWE' && typeof itemValue === 'string') {
-          if (itemValue !== '') {
+      if (itemValue !== undefined && itemValue !== null && itemValue !== '') {
+        var answer = null; // for Coding
+
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof itemValue === 'string') {
             answer = {
               "valueString": itemValue
             };
-          }
-        } else if (!jQuery.isEmptyObject(itemValue)) {
-          var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.codeSystem));
+          } else if (!jQuery.isEmptyObject(itemValue)) {
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.codeSystem));
 
-          answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
-          answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
-          answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+          }
+        } // for Quantity
+        else if (dataType === "QTY") {
+            // For now, handling only simple quantities without the comparators.
+            // [{
+            //   // from Element: extension
+            //   "value" : <decimal>, // Numerical value (with implicit precision)
+            //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+            //   "unit" : "<string>", // Unit representation
+            //   "system" : "<uri>", // Code System that defines coded unit form
+            //   "code" : "<code>" // Coded form of the unit
+            // }]
+            answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+              var valueKey = this._getValueKeyByDataType("value", item);
+
+              answer = _defineProperty({}, valueKey, itemValue);
+            }
+
+        if (answer !== null) {
+          answers.push(answer);
         }
-      } // for Quantity
-      else if (dataType === "QTY") {
-          // For now, handling only simple quantities without the comparators.
-          // [{
-          //   // from Element: extension
-          //   "value" : <decimal>, // Numerical value (with implicit precision)
-          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-          //   "unit" : "<string>", // Unit representation
-          //   "system" : "<uri>", // Code System that defines coded unit form
-          //   "code" : "<code>" // Coded form of the unit
-          // }]
-          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
-        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-            var valueKey = this._getValueKeyByDataType("value", item);
-
-            answer = _defineProperty({}, valueKey, typeof itemValue === 'undefined' ? null : itemValue);
-          }
-
-      if (answer !== null) {
-        answers.push(answer);
       }
     }
 
@@ -22510,37 +22513,19 @@ function addCommonSDCExportFns(ns) {
               text: lfSubItem.question,
               answer: []
             };
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
 
-            try {
-              for (var _iterator = repeats[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                var rptItem = _step.value;
+            for (var rpt = 0; rpt < repeats.length; ++rpt) {
+              var rptItem = repeats[rpt];
 
-                var tmpFhirItem = this._processResponseItem(rptItem);
+              var tmpFhirItem = this._processResponseItem(rptItem);
 
-                if (tmpFhirItem.answer) {
-                  // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
-                  // For now, just put all the answers from question and answer repeats into the answer (array).
-                  Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
-                }
-
-                rptItem._isProcessed = true;
+              if (tmpFhirItem.answer) {
+                // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
+                // For now, just put all the answers from question and answer repeats into the answer (array).
+                Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
               }
-            } catch (err) {
-              _didIteratorError = true;
-              _iteratorError = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                  _iterator.return();
-                }
-              } finally {
-                if (_didIteratorError) {
-                  throw _iteratorError;
-                }
-              }
+
+              rptItem._isProcessed = true;
             }
 
             fhirItems.push(fhirItem);
@@ -22583,7 +22568,7 @@ function addCommonSDCExportFns(ns) {
   self._processRepeatingItemValues = function (item) {
     if (item.items) {
       for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-        var subItem = item.items[i]; // if it is a question and the it repeats
+        var subItem = item.items[i]; // if it is a question and it repeats
 
         if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
           var linkId = this._getItemLinkId(subItem);

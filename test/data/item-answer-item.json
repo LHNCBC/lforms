@@ -16,105 +16,76 @@
     "items": [
         {
             "questionCode": "54114-4",
-            "_idPath": "/1",
-            "_codePath": "/54114-4",
             "parentQuestionCode": "",
-            "questionCardinality": {
-                "min": "1",
-                "max": "*"
-            },
+            "questionCardinality": { "min": "1", "max": "*" },
             "question": "Family member health information",
             "answers": "",
             "dataType": "SECTION",
             "units": "",
             "header": true,
+            "codeList": [ { "code": "54114-4", "display": "Family member health information" } ],
+            "answerCardinality": { "min": "0", "max": "1" },
             "items": [
                 {
                     "questionCode": "54139-1",
-                    "_idPath": "/1/1",
-                    "_codePath": "/54114-4/54139-1",
-                    "questionCardinality": {
-                        "min": "1",
-                        "max": "1"
-                    },
+                    "questionCardinality": { "min": "1", "max": "*" },
                     "question": "Living?",
                     "dataType": "CNE",
-                    "units": "",
                     "header": false,
-                    "codeList": [
-                        {
-                            "code": "54139-1",
-                            "display": "Living?"
-                        }
-                    ],
-                    "answerCardinality": {
-                        "min": "0",
-                        "max": "1"
-                    },
-                    "linkId": "/54114-4/54139-1",
-                    "value": {
-                        "text": "Yes",
-                        "code": "LA33-6"
-                    },
+                    "codeList": [ { "code": "54139-1", "display": "Living?"} ],
+                    "answerCardinality": { "min": "0", "max": "1" },
+                    "value": { "text": "Yes", "code": "LA33-6" },
                     "items": [
                         {
-                            "skipLogic": {
-                                "conditions":[
-                                    {"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}
-                                ],
-                                "action": "show"
-                            },
                             "questionCode": "54124-3",
-                            "_idPath": "/1/1/1",
-                            "_codePath": "/54114-4/54139-1/54124-3",
-                            "questionCardinality": {
-                                "min": "1",
-                                "max": "1"
-                            },
+                            "questionCardinality": { "min": "1", "max": "*" },
                             "question": "Date of Birth",
                             "dataType": "DT",
                             "header": false,
-                            "codeList": [
-                                {
-                                    "code": "54124-3",
-                                    "display": "Date of Birth"
-                                }
-                            ],
-                            "answerCardinality": {
-                                "min": "0",
-                                "max": "1"
-                            },
-                            "linkId": "/54114-4/54139-1/54124-3",
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
                             "value": "2019-09-09"
+                        },
+                        {
+                            "questionCode": "54124-3",
+                            "questionCardinality": { "min": "1", "max": "*" },
+                            "question": "Date of Birth",
+                            "dataType": "DT",
+                            "header": false,
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
+                            "value": "2019-09-10"
                         },
                         {
                             "questionCode": "54141-7",
                             "questionCardinality": {"min": "1", "max": "1"},
-                            "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false, "value": 99,
-                            "skipLogic": {
-                                "conditions":[
-                                    {"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}
-                                ],
-                                "action": "show"
-                            }
+                            "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false, "value": 99
+                        }
+                    ]
+                },
+                {
+                    "questionCode": "54139-1",
+                    "questionCardinality": { "min": "1", "max": "*" },
+                    "question": "Living?",
+                    "dataType": "CNE",
+                    "header": false,
+                    "codeList": [ { "code": "54139-1", "display": "Living?"} ],
+                    "answerCardinality": { "min": "0", "max": "1" },
+                    "value": { "text": "Yes", "code": "LA33-6" },
+                    "items": [
+                        {
+                            "questionCode": "54124-3",
+                            "questionCardinality": { "min": "1", "max": "*" },
+                            "question": "Date of Birth",
+                            "dataType": "DT",
+                            "header": false,
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
+                            "value": "2019-09-11"
                         }
                     ]
                 }
-            ],
-            "codeList": [
-                {
-                    "code": "54114-4",
-                    "display": "Family member health information"
-                }
-            ],
-            "displayControl": {
-                "questionLayout": "vertical"
-            },
-            "answerCardinality": {
-                "min": "0",
-                "max": "1"
-            },
-            "linkId": "/54114-4"
+            ]
         }
     ]
 }

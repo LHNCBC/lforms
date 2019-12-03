@@ -986,7 +986,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               var answer = fhirQr.item[0].item[0].answer;
               assert.equal(answer[0].valueCoding.code, 'LA33-6');
               assert.equal(answer[0].item[0].answer[0].valueDate, '2019-09-09');
+              assert.equal(answer[0].item[0].answer[1].valueDate, '2019-09-10');
               assert.equal(answer[0].item[1].answer[0].valueDecimal, 99);
+              assert.equal(fhirQr.item[0].item[0].answer[1].item[0].answer[0].valueDate, '2019-09-11');
             }).done(function () { itDone(); })
               .fail(function(err){console.log(': Unable to load ' + lfFile);});
           });
