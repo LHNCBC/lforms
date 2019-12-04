@@ -770,8 +770,8 @@ function addCommonSDCExportFns(ns) {
    * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
    *   either (or both) item value or item unit is available.
    * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, and url,
-   *   always converts to a FHIR value{TYPE} entry.
-   *   If the item value is undefined, null will be used as the item value.
+   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
+   *   an empty string.
    * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
    *   is available
    * - No answer entry will be created in all other cases, e.g., for types reference, title, section, attachment, etc.
