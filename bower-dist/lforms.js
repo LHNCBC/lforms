@@ -5501,12 +5501,32 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             // there is a default value, and
             // there is no embedded data
             else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-                item.value = item.defaultAnswer;
+                this._lfItemValueAssign(item, item.defaultAnswer);
               }
 
             this._updateUnitAutocompOptions(item);
           }
         }
+      }
+    },
+
+    /**
+     * Assign the given value to item.value, potentially with data type conversion/transformation.
+     * For now, only converting DT/DTM string to a date object. When allowNE is true and item.dataType
+     * is DT or DTM, the value null will be assigned to item.value.
+     * @param item the item to assign value to
+     * @param value the given value to assign to the item
+     * @param allowNE optional, default false. If true, will allow empty and null (but not undefined) value.
+     * @private
+     */
+    _lfItemValueAssign: function _lfItemValueAssign(item, value, allowNE) {
+      if (value !== undefined && (allowNE || value !== null && value !== '')) {
+        if ((item.dataType === this._CONSTANTS.DATA_TYPE.DTM || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
+          console.log('======= defaultAnswer of type %s is string: %s', item.dataType, value);
+          value = value ? LForms.Util.stringToDate(value) : null; // use null if value is empty string.
+        }
+
+        item.value = value;
       }
     },
 
@@ -5591,7 +5611,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // there is a default value, and
         // there is no embedded data
         else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            item.value = item.defaultAnswer;
+            this._lfItemValueAssign(item, item.defaultAnswer);
           } // normalize unit value if there is one, needed by calculationMethod
 
 
