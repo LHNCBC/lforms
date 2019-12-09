@@ -50,6 +50,37 @@
       "text": "Weight of clothes/shoes in kg.",
       "type": "decimal",
       "required": false
+    },
+    {
+      "linkId": "/answer_item",
+      "text": "item.answer.item test main item",
+      "type": "string",
+      "item": [
+        {
+          "linkId": "/answer_item/answer_item_name",
+          "text": "item.answer.item name",
+          "type": "string",
+          "enableWhen": [
+            {
+              "question": "/answer_item",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ]
+        },
+        {
+          "linkId": "/answer_item/answer_item_age",
+          "text": "item.answer.item age",
+          "type": "integer",
+          "enableWhen": [
+            {
+              "question": "/answer_item",
+              "operator": "exists",
+              "answerBoolean": true
+            }
+          ]
+        }
+      ]
     }
   ]
 }

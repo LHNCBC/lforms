@@ -601,10 +601,19 @@ function addCommonSDCImportFns(ns) {
                 var newQRItemInfo = angular.copy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+                if(qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[j]) {
+                  newQRItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[j]];
+                }
                 parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
+              if(qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[0]) {
+                qrItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[0]];
+              }
+              else {
+                delete qrItemInfo.qrAnswersItemsInfo;
+              }
             }
           }
           // reset the total number of questions when it is the answers that repeats
@@ -620,6 +629,15 @@ function addCommonSDCImportFns(ns) {
           var qrAnswer = qrItem.answer;
           if (qrAnswer && qrAnswer.length > 0) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
+            // process item.answer.item, if applicable
+            if(qrItemInfo.qrAnswersItemsInfo) {
+              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CNE/CWE
+              // moreover, each answer has already got its own item above if question repeats
+              if(qrItemInfo.qrAnswersItemsInfo.length > 1) {
+                throw new Error('item.answer.item with item.answer.length > 1 is not yet supported');
+              }
+              this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
+            }
           }
         }
 
@@ -1010,6 +1028,52 @@ function addCommonSDCImportFns(ns) {
           targetItem.items.push(item);
         }
       }
+    }
+  };
+
+
+  /**
+   * If the given entity is an array, it will return the array length, return -1 otherwise.
+   * @param entity
+   * @return {number} the array length or -1 if the given entity is not an array.
+   * @private
+   */
+  self._arrayLen = function(entity) {
+    return entity && Array.isArray(entity)? entity.length: -1;
+  };
+
+
+  /**
+   * Get structural info of a QuestionnaireResponse item.answer.item in a way similar to that of item.item.
+   * If any answer entry in item.answer has items, the qrItemInfo.qrAnswersItemsInfo will be assigned, which
+   * will be an array where each element corresponds to one answer element in item.answer. When an answer entry
+   * does not have any items, null will be used to fill the position.
+   * @param qrItemInfo the structural info of the given item
+   * @param item the item in a QuestionnaireResponse object whose answer.item structure is to be created.
+   * @private
+   */
+  self._checkQRItemAnswerItems = function(qrItemInfo, item) {
+    var answerLen = self._arrayLen(item.answer);
+    if(answerLen < 1) {
+      return;
+    }
+
+    var numAnswersWithItems = 0;
+    var answersItemsInfo = []; // one entry for each answer; each entry is an qrItemsInfo array for the answer.item
+    for (var i = 0; i < answerLen; i++) {
+      if(this._arrayLen(item.answer[i].item) > 0) {
+        answersItemsInfo.push({});
+        self._mergeQR._checkQRItems(answersItemsInfo[i], item.answer[i]);
+        ++ numAnswersWithItems;
+      }
+      else {
+        answersItemsInfo.push(null);
+      }
+    }
+
+    if(numAnswersWithItems > 0) {
+      qrItemInfo.numAnswersWithItems = numAnswersWithItems;
+      qrItemInfo.qrAnswersItemsInfo = answersItemsInfo;
     }
   };
 
