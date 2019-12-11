@@ -453,10 +453,8 @@ var self = {
             LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
           targetItem.initial.push({[valueKey]: dateValue});
         }
-        else {
-          // LForms.Util.stringToDate returns null on invalid string
-          // should throw an error here but that changes the behavior and may break things.
-          console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        else { // LForms.Util.stringToDate returns null on invalid string
+          throw new Error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference

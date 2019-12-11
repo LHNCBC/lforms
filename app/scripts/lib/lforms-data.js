@@ -966,7 +966,6 @@
      * For now, only converting DT/DTM string to a date object. The assignment happens only if item.defaultAnswer
      * is not undefined, null, or empty string.
      * @param item the lforms item to assign value to (from its defaultAnswer)
-     * @return a boolean indicating whether the value has been assigned to the item.
      * @private
      */
     _lfItemValueFromDefaultAnswer: function(item) {
@@ -974,19 +973,14 @@
       if(value === undefined || value === null || value === '') {
         return false;
       }
-      var isValidValue = true;
       if((item.dataType === this._CONSTANTS.DATA_TYPE.DTM
           || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
         value = LForms.Util.stringToDate(value);
         if(! value) { // LForms.Util.stringToDate returns null on invalid string
-          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
-          isValidValue = false;
+          throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
-      if(isValidValue) {
-        item.value = value;
-      }
-      return isValidValue;
+      item.value = value;
     },
 
 

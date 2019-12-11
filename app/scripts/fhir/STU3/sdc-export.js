@@ -401,7 +401,7 @@ var self = {
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
 
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined && item.defaultAnswer !== '') {
 
       var dataType = this._getAssumedDataTypeForExport(item);
       var valueKey = this._getValueKeyByDataType("initial", item);
@@ -461,10 +461,8 @@ var self = {
             LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
           targetItem[valueKey] = dateValue;
         }
-        else {
-          // LForms.Util.stringToDate returns null on invalid string
-          // should throw an error here but that changes the behavior and may break things.
-          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        else { // LForms.Util.stringToDate returns null on invalid string
+          throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference
