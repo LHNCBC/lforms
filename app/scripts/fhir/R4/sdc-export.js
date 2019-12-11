@@ -382,46 +382,47 @@ var self = {
    * @private
    */
   _handleInitialValues: function(targetItem, item) {
+    if(item.defaultAnswer === null || item.defaultAnswer === undefined || item.defaultAnswer === '') {
+      return;
+    }
+    // item.defaultAnswer could be an array of multiple default values or a single value
+    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+      item.defaultAnswer : [item.defaultAnswer];
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var valueKey = this._getValueKeyByDataType("value", item);
     var answer = null;
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
+    targetItem.initial = [];
 
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+    // go through each default value and handle it based on the data type.
+    for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
+      // dataType:
+      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+      // Attachment, Coding, Quantity, Reference(Resource)
 
-      targetItem.initial = [];
-      var dataType = this._getAssumedDataTypeForExport(item);
-      var valueKey = this._getValueKeyByDataType("value", item);
       // for Coding
       if (dataType === 'CWE' || dataType === 'CNE' ) {
-        var codeSystem = null, coding = null;
-
-        // item.defaultAnswer could be an array of multiple default values or a single value
-        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
-            item.defaultAnswer : [item.defaultAnswer];
-        // go through each default value, which could be a code object or a string
-        for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
-          if (typeof defaultAnswers[i] === 'object') {
-            coding = {"code": defaultAnswers[i].code};
-            if(defaultAnswers[i].text !== undefined) {
-              coding.display = defaultAnswers[i].text;
-            }
-            // code system
-            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
-
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
+        // could be a code object or a string
+        if (typeof defaultAnswers[i] === 'object') {
+          var coding = {"code": defaultAnswers[i].code};
+          if(defaultAnswers[i].text !== undefined) {
+            coding.display = defaultAnswers[i].text;
           }
-          // user typed answer that is not on the answer list.
-          else if (typeof defaultAnswers[i] === 'string') {
-            targetItem.initial.push({
-              "valueString": defaultAnswers[i]
-            })
+          // code system
+          var codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
+
+          answer = {};
+          answer[valueKey] = coding;
+          targetItem.initial.push(answer);
+        }
+        // user typed answer that is not on the answer list.
+        else if (typeof defaultAnswers[i] === 'string') {
+          targetItem.initial.push({
+            "valueString": defaultAnswers[i]
+          })
         }
       }
       // for Quantity,
@@ -434,34 +435,28 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
-        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          for(var j = 0; j < item.defaultAnswer.length; j++) {
-            answer = {};
-            answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
-            targetItem.initial.push(answer);
-          }
-        }
-        else {
-          answer = {};
-          answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
-          targetItem.initial.push(answer);
-        }
+        answer = {};
+        answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
+        targetItem.initial.push(answer);
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
-        dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-        dataType === "ST" || dataType === "TX" || dataType === "URL") {
-        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          for(var k = 0; k < item.defaultAnswer.length; k++) {
-            answer = {};
-            answer[valueKey] = item.defaultAnswer[k];
-            targetItem.initial.push(answer);
-          }
+        dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        answer = {};
+        answer[valueKey] = defaultAnswers[i];
+        targetItem.initial.push(answer);
+      }
+      else if (dataType === "DT" || dataType === "DTM") { // transform to FHIR date/datetime format.
+        var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
+        if(dateValue) {
+          dateValue = dataType === "DTM"?
+            LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
+          targetItem.initial.push({[valueKey]: dateValue});
         }
         else {
-          answer = {};
-          answer[valueKey] = item.defaultAnswer;
-          targetItem.initial.push(answer);
+          // LForms.Util.stringToDate returns null on invalid string
+          // should throw an error here but that changes the behavior and may break things.
+          console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference

@@ -451,9 +451,21 @@ var self = {
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
-        dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-        dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
         targetItem[valueKey] = item.defaultAnswer;
+      }
+      else if (dataType === "DT" || dataType === "DTM") { // transform to FHIR date/datetime format.
+        var dateValue = LForms.Util.stringToDate(item.defaultAnswer);
+        if(dateValue) {
+          dateValue = dataType === "DTM"?
+            LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
+          targetItem[valueKey] = dateValue;
+        }
+        else {
+          // LForms.Util.stringToDate returns null on invalid string
+          // should throw an error here but that changes the behavior and may break things.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        }
       }
       // no support for reference
     }

@@ -5501,7 +5501,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             // there is a default value, and
             // there is no embedded data
             else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-                this._lfItemValueAssign(item, item.defaultAnswer);
+                this._lfItemValueFromDefaultAnswer(item);
               }
 
             this._updateUnitAutocompOptions(item);
@@ -5511,23 +5511,37 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Assign the given value to item.value, potentially with data type conversion/transformation.
-     * For now, only converting DT/DTM string to a date object. When allowNE is true and item.dataType
-     * is DT or DTM, the value null will be assigned to item.value.
-     * @param item the item to assign value to
-     * @param value the given value to assign to the item
-     * @param allowNE optional, default false. If true, will allow empty and null (but not undefined) value.
+     * Assign the given item's defaultAnswer as its value, potentially with data type conversion/transformation.
+     * For now, only converting DT/DTM string to a date object. The assignment happens only if item.defaultAnswer
+     * is not undefined, null, or empty string.
+     * @param item the lforms item to assign value to (from its defaultAnswer)
+     * @return a boolean indicating whether the value has been assigned to the item.
      * @private
      */
-    _lfItemValueAssign: function _lfItemValueAssign(item, value, allowNE) {
-      if (value !== undefined && (allowNE || value !== null && value !== '')) {
-        if ((item.dataType === this._CONSTANTS.DATA_TYPE.DTM || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
-          console.log('======= defaultAnswer of type %s is string: %s', item.dataType, value);
-          value = value ? LForms.Util.stringToDate(value) : null; // use null if value is empty string.
-        }
+    _lfItemValueFromDefaultAnswer: function _lfItemValueFromDefaultAnswer(item) {
+      var value = item.defaultAnswer;
 
+      if (value === undefined || value === null || value === '') {
+        return false;
+      }
+
+      var isValidValue = true;
+
+      if ((item.dataType === this._CONSTANTS.DATA_TYPE.DTM || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
+        value = LForms.Util.stringToDate(value);
+
+        if (!value) {
+          // LForms.Util.stringToDate returns null on invalid string
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+          isValidValue = false;
+        }
+      }
+
+      if (isValidValue) {
         item.value = value;
       }
+
+      return isValidValue;
     },
 
     /**
@@ -5611,7 +5625,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // there is a default value, and
         // there is no embedded data
         else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            this._lfItemValueAssign(item, item.defaultAnswer);
+            this._lfItemValueFromDefaultAnswer(item);
           } // normalize unit value if there is one, needed by calculationMethod
 
 
