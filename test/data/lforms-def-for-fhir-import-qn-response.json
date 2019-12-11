@@ -1,0 +1,114 @@
+{
+  "code": "my-bmi",
+  "name": "Height and Weight test",
+  "codeList": [
+    {
+      "system": "http://loinc.org",
+      "display": "Height and Weight test",
+      "code": "my-bmi"
+    }
+  ],
+  "codeSystem": "LOINC",
+  "items": [
+    {
+      "dataType": "QTY",
+      "question": "Patient's height in meters",
+      "questionCode": "height",
+      "questionCodeSystem": "LinkId",
+      "linkId": "height",
+      "questionCardinality": {
+        "min": "1"
+      },
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "REAL",
+      "question": "Patient's height in kg.",
+      "questionCode": "weight",
+      "questionCodeSystem": "LinkId",
+      "linkId": "weight",
+      "questionCardinality": {
+        "min": "1"
+      },
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "REAL",
+      "question": "Weight of clothes/shoes in kg.",
+      "questionCode": "clothes",
+      "questionCodeSystem": "LinkId",
+      "linkId": "clothes",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      }
+    },
+    {
+      "dataType": "ST",
+      "question": "item.answer.item test main item",
+      "questionCode": "/answer_item",
+      "questionCodeSystem": "LinkId",
+      "linkId": "/answer_item",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "items": [
+        {
+          "dataType": "ST",
+          "question": "item.answer.item name",
+          "questionCode": "/answer_item/answer_item_name",
+          "questionCodeSystem": "LinkId",
+          "linkId": "/answer_item/answer_item_name",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "skipLogic": {
+            "conditions": [
+              {
+                "source": "/answer_item",
+                "trigger": {
+                  "exists": true
+                }
+              }
+            ],
+            "action": "show"
+          }
+        },
+        {
+          "dataType": "INT",
+          "question": "item.answer.item age",
+          "questionCode": "/answer_item/answer_item_age",
+          "questionCodeSystem": "LinkId",
+          "linkId": "/answer_item/answer_item_age",
+          "answerCardinality": {
+            "min": "0",
+            "max": "1"
+          },
+          "skipLogic": {
+            "conditions": [
+              {
+                "source": "/answer_item",
+                "trigger": {
+                  "exists": true
+                }
+              }
+            ],
+            "action": "show"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -4158,9 +4158,8 @@ LForms.HL7 = function () {
 
       sectionItem._emptySection = empty;
       return empty;
-    } // return
-
-  };
+    }
+  }; // return
 }();
 
 /***/ }),
