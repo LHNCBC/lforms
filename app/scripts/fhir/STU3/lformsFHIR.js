@@ -545,7 +545,7 @@ engine.invocationTable = {
   "-": {
     fn: math.minus,
     arity: {
-      2: ["Number", "Number"]
+      2: ["Any", "Any"]
     },
     nullable: true
   },
@@ -17635,8 +17635,6 @@ var util = __webpack_require__(55);
 
 var types = __webpack_require__(62);
 
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time;
 var engine = {};
 
 engine.iifMacro = function (data, cond, ok, fail) {
@@ -17730,19 +17728,19 @@ engine.toString = function (coll) {
 };
 /**
  *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
- * @param timeType a class (contsructor) for a time type (e.g. FP_DateTime).
+ * @param timeType The string name of a class for a time type (e.g. "FP_DateTime").
  */
 
 
 function defineTimeConverter(timeType) {
-  var timeName = timeType.name.slice(3);
+  var timeName = timeType.slice(3); // Remove 'FP_'
 
   engine['to' + timeName] = function (coll) {
     var rtn = [];
     if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
 
     if (coll.length === 1) {
-      var t = timeType.checkString(coll[0]);
+      var t = types[timeType].checkString(coll[0]);
       if (t) rtn[0] = t;
     }
 
@@ -17750,8 +17748,8 @@ function defineTimeConverter(timeType) {
   };
 }
 
-defineTimeConverter(FP_DateTime);
-defineTimeConverter(FP_Time);
+defineTimeConverter('FP_DateTime');
+defineTimeConverter('FP_Time');
 module.exports = engine;
 
 /***/ }),
@@ -19817,6 +19815,7 @@ function isEmpty(x) {
 engine.amp = function (x, y) {
   return (x || "") + (y || "");
 }; //HACK: for only polymorphic function
+//  Actually, "minus" is now also polymorphic
 
 
 engine.plus = function (xs, ys) {
@@ -19840,8 +19839,15 @@ engine.plus = function (xs, ys) {
   throw new Error("Can not " + JSON.stringify(xs) + " + " + JSON.stringify(ys));
 };
 
-engine.minus = function (x, y) {
-  return x - y;
+engine.minus = function (xs, ys) {
+  if (xs.length == 1 && ys.length == 1) {
+    var x = xs[0];
+    var y = ys[0];
+    if (typeof x == "number" && typeof y == "number") return x - y;
+    if (x instanceof FP_TimeBase && y instanceof FP_Quantity) return x.plus(new FP_Quantity(-y.value, y.unit));
+  }
+
+  throw new Error("Can not " + JSON.stringify(xs) + " - " + JSON.stringify(ys));
 };
 
 engine.mul = function (x, y) {
@@ -21549,7 +21555,7 @@ var self = {
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined && item.defaultAnswer !== '') {
       var dataType = this._getAssumedDataTypeForExport(item);
 
       var valueKey = this._getValueKeyByDataType("initial", item); // for Coding
@@ -21613,7 +21619,7 @@ var self = {
               targetItem[valueKey] = dateValue;
             } else {
               // LForms.Util.stringToDate returns null on invalid string
-              console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+              throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
             }
           } // no support for reference
 

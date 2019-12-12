@@ -236,10 +236,9 @@ describe('formdata: ', function() {
         var fData = LForms.Util.getFormData(null, true, true);
         callback(fData);
       }).then(function (formData) {
-        // console.log(formData);
-        expect(formData.items.length).toBe(4);
-        expect(formData.items[1].question).toBe("With data type CNE");
-        expect(formData.items[1].value).toEqual({code:"c2",other:null,text:"Answer 2"});
+        expect(formData.items.length).toBe(5);
+        expect(formData.items[2].question).toBe("With data type CNE");
+        expect(formData.items[2].value).toEqual({code:"c2",other:null,text:"Answer 2"});
       });
     });
   });

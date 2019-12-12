@@ -1,5 +1,6 @@
 var po = require('./addFormToPageTest.po');
 var tp = require('./lforms_testpage.po');
+var testUtil = require('./util');
 
 describe('addFormToPage test page', function() {
   it('should have two forms on the page', function() {
@@ -29,10 +30,12 @@ describe('addFormToPage test page', function() {
   });
 
   it('DTM datetime picker should work', function () {
+    var minMax = [testUtil.getCurrentDTMString(-60000), testUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     po.openPage();
     element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
     element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
-    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBeGreaterThanOrEqual(minMax[0]);
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBeLessThanOrEqual(minMax[1]);
   });
 
   describe('addFormToPage', function () {
