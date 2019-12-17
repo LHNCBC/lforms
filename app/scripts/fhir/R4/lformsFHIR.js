@@ -24618,7 +24618,7 @@ function addCommonSDCImportFns(ns) {
   };
   /**
    * If the given entity is an array, it will return the array length, return -1 otherwise.
-   * @param entity
+   * @param entity the given entity (can be anything) that needs to be tested to see if it's an array
    * @return {number} the array length or -1 if the given entity is not an array.
    * @private
    */

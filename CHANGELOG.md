@@ -2,9 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.0.2] 2019-11-08
-### Fixed
-- Fixed the issue where the child items were not properly exported to FHIR item.answer.item.
+## [20.1.0] 2019-12-17
+### Added
+- Added support for item.answer.item when importing from/exporting to FHIR.
 
 ## [20.0.1] 2019-11-07
 ### Changed
