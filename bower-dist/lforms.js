@@ -5528,7 +5528,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (!value) {
           // LForms.Util.stringToDate returns null on invalid string
-          throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+          //TODO: should save the errors or emitting events.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
 

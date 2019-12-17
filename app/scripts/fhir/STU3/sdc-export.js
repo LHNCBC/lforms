@@ -462,7 +462,8 @@ var self = {
           targetItem[valueKey] = dateValue;
         }
         else { // LForms.Util.stringToDate returns null on invalid string
-          throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+          //TODO: should save the errors or emitting events.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference

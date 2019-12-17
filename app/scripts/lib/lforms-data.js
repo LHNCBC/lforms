@@ -977,7 +977,8 @@
           || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
         value = LForms.Util.stringToDate(value);
         if(! value) { // LForms.Util.stringToDate returns null on invalid string
-          throw new Error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+          //TODO: should save the errors or emitting events.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       item.value = value;
