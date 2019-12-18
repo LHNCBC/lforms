@@ -632,6 +632,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             element(by.id("merge-dr")).click();
             browser.waitForAngular();
 
+            browser.wait(EC.visibilityOf(ff.name), 2000);
             browser.wait(function() {
               try {
                 return ff.name.isDisplayed(); // sometimes results in a "stale reference" error
