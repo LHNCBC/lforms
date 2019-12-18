@@ -936,7 +936,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/weight",
               "value": 128
             };
-            var out = fhir.SDC._processResponseItem(item, {});
+            var out = fhir.SDC._processResponseItem(item);
             assert.equal(out.linkId, "/weight");
             assert.equal(out.answer[0].valueQuantity.value, 128);
           });
@@ -944,20 +944,38 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         // import - xl
         describe('Load/convert/merge FHIR questionnaire/response into LForms data', function() {
-          it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function () {
-            var qFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-questionnaire.json';
-            var qrFile = 'test/data/' + fhirVersion + '/fhir-valueQuantity-qn-response.json';
+          it('FHIR quantity should become LForms QTY with correct value from QuestionnaireResponse', function (itDone) {
+            var lfDefFile = 'test/data/lforms-def-for-fhir-import-qn-response.json';
+            var qrFile = 'test/data/fhir-import-qn-response.json';
 
             // Test loading FHIR Questionnaire QuestionnaireResponse for it, then merge into an lforms.
-            $.get(qFile, function(fhirQnData) { // load the questionnaire json
+            $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
               $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
-                var qnForm = LForms.Util.convertFHIRQuestionnaireToLForms(fhirQnData, fhirVersion);
                 var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                    'QuestionnaireResponse', fhirQnRespData, qnForm, fhirVersion);
+                    'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
                 assert.equal(mergedFormData.items[0].value, 333.0);
                 assert.equal(mergedFormData.items[0].dataType, 'QTY');
+                itDone();
               }).done().fail(function(err){console.log('Unable to load ' + qrFile);});
-            }).done().fail(function(err){console.log('Unable to load ' + qFile);});
+            }).done().fail(function(err){console.log('Unable to load ' + lfDefFile);});
+          });
+        });
+
+        describe('import/merge FHIR QuestionnaireResponse into LForms data', function() {
+          it('should properly process item.answer.item', function (itDone) {
+            var lfDefFile = 'test/data/lforms-def-for-fhir-import-qn-response.json';
+            var qrFile = 'test/data/fhir-import-qn-response.json';
+            $.get(lfDefFile, function(lfFormDef) { // load the questionnaire json
+              $.get(qrFile, function(fhirQnRespData) { // load the questionnaire response json
+                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                  'QuestionnaireResponse', fhirQnRespData, lfFormDef, fhirVersion);
+                assert.equal(mergedFormData.items[3].value, "item.answer.item main item value");
+                assert.equal(mergedFormData.items[3].items[1].value, 20);
+                assert.equal(mergedFormData.items[4].value, "item.answer.item main item value2");
+                assert.equal(mergedFormData.items[4].items[1].value, 30);
+                itDone();
+              }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + qrFile);});
+            }).done().fail(function(err){console.log('answer.item.answer - unable to load ' + lfDefFile);});
           });
         });
 
@@ -976,6 +994,22 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.equal(item.answers[1].score, 1);
             });
           }).done().fail(function(err){console.log(': Unable to load ' + qFile);});
+        });
+
+        describe('Export to QuestionnaireResponse', function() {
+          var lfFile = 'test/data/item-answer-item.json';
+          it('should convert to item.answer.item as appropriate', function (itDone) {
+            $.get(lfFile, function(lfData) { // load the lforms json
+              var fhirQr = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, lfData);
+              var answer = fhirQr.item[0].item[0].answer;
+              assert.equal(answer[0].valueCoding.code, 'LA33-6');
+              assert.equal(answer[0].item[0].answer[0].valueDate, '2019-09-09');
+              assert.equal(answer[0].item[0].answer[1].valueDate, '2019-09-10');
+              assert.equal(answer[0].item[1].answer[0].valueDecimal, 99);
+              assert.equal(fhirQr.item[0].item[0].answer[1].item[0].answer[0].valueDate, '2019-09-11');
+            }).done(function () { itDone(); })
+              .fail(function(err){console.log(': Unable to load ' + lfFile);});
+          });
         });
       });
     });

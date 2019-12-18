@@ -1,0 +1,60 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "status": "completed",
+  "questionnaire": {
+    "reference": "Questionnaire/{{questionnaireId}}"
+  },
+  "item": [
+    {
+      "linkId": "height",
+      "text": "Patient's height in meters",
+      "answer": [{"valueQuantity": {
+        "value": 333.0,
+        "unit": "m",
+        "code": "m",
+        "system": "http://unitsofmeasure.org"
+      }}]
+    },
+    {
+      "linkId": "weight",
+      "text": "Patient's height in kg.",
+      "answer": [{"valueDecimal": 444.0}]
+    },
+    {
+      "linkId": "/answer_item",
+      "text": "item.answer.item test main item",
+      "answer": [
+        {
+          "valueString": "item.answer.item main item value",
+          "item": [
+            {
+              "linkId": "/answer_item/answer_item_name",
+              "text": "item.answer.item name",
+              "answer": [ { "valueString": "item.answer.item name value"} ]
+            },
+            {
+              "linkId": "/answer_item/answer_item_age",
+              "text": "item.answer.item age",
+              "answer": [ { "valueInteger": 20 } ]
+            }
+          ]
+        },
+        {
+          "valueString": "item.answer.item main item value2",
+          "item": [
+            {
+              "linkId": "/answer_item/answer_item_name",
+              "text": "item.answer.item name2",
+              "answer": [ { "valueString": "item.answer.item name value2"} ]
+            },
+            {
+              "linkId": "/answer_item/answer_item_age",
+              "text": "item.answer.item age2",
+              "answer": [ { "valueInteger": 30 } ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

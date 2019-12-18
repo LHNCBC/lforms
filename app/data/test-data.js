@@ -1302,6 +1302,26 @@ var allInOne =
         {"code": "c3", "text": "Answer 3", "other": null}]
     },
 
+    {
+      "questionCode": "answer_item",
+      "dataType": "ST",
+      "header": false,
+      "question": "item.answer.item test main item",
+      "items": [
+        {
+          "questionCode": "answer_item_name",
+          "dataType": "ST",
+          "header": false,
+          "question": "item.answer.item name"
+        },
+        {
+          "questionCode": "answer_item_age",
+          "dataType": "INT",
+          "header": false,
+          "question": "item.answer.item age"
+        }
+      ]
+    },
 
 
     // skip logic, controlling child items and headers (one level below)
