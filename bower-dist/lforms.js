@@ -5500,13 +5500,40 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             // there is a default value, and
             // there is no embedded data
             else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-                item.value = item.defaultAnswer;
+                this._lfItemValueFromDefaultAnswer(item);
               }
 
             this._updateUnitAutocompOptions(item);
           }
         }
       }
+    },
+
+    /**
+     * Assign the given item's defaultAnswer as its value, potentially with data type conversion/transformation.
+     * For now, only converting DT/DTM string to a date object. The assignment happens only if item.defaultAnswer
+     * is not undefined, null, or empty string.
+     * @param item the lforms item to assign value to (from its defaultAnswer)
+     * @private
+     */
+    _lfItemValueFromDefaultAnswer: function _lfItemValueFromDefaultAnswer(item) {
+      var value = item.defaultAnswer;
+
+      if (value === undefined || value === null || value === '') {
+        return false;
+      }
+
+      if ((item.dataType === this._CONSTANTS.DATA_TYPE.DTM || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
+        value = LForms.Util.stringToDate(value);
+
+        if (!value) {
+          // LForms.Util.stringToDate returns null on invalid string
+          //TODO: should save the errors or emitting events.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        }
+      }
+
+      item.value = value;
     },
 
     /**
@@ -5590,7 +5617,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // there is a default value, and
         // there is no embedded data
         else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
-            item.value = item.defaultAnswer;
+            this._lfItemValueFromDefaultAnswer(item);
           } // normalize unit value if there is one, needed by calculationMethod
 
 

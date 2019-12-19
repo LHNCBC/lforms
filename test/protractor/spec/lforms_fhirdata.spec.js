@@ -1082,8 +1082,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             // dateTime
             expect(fhirData.item[5].initial).toEqual([
-              {
-                "valueDateTime": "2015-02-07T13:28:17-05:00"
+              { // Use converted FHIR datetime format.
+                "valueDateTime": "2015-02-07T18:28:17.000Z"
               }
             ]);
 
@@ -1161,7 +1161,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             // date
             expect(fhirData.item[4].initialDate).toBe( "2019-09-03");
             // dateTime
-            expect(fhirData.item[5].initialDateTime).toBe("2015-02-07T13:28:17-05:00");
+            expect(fhirData.item[5].initialDateTime).toBe("2015-02-07T18:28:17.000Z"); // use converted FHIR format
             // time
             expect(fhirData.item[6].initialTime).toBe("13:28:17");
             // choice

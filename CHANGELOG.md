@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.1.1] 2019-12-18
+### Fixed
+- defaultAnswer was not handled correctly for DT and DTM.
+
 ## [20.1.0] 2019-12-17
 ### Added
 - Added support for item.answer.item when importing from/exporting to FHIR.

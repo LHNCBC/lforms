@@ -21475,7 +21475,7 @@ var self = {
     // dataType:
     // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
     // Attachment, Coding, Quantity, Reference(Resource)
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined && item.defaultAnswer !== '') {
       var dataType = this._getAssumedDataTypeForExport(item);
 
       var valueKey = this._getValueKeyByDataType("initial", item); // for Coding
@@ -21528,8 +21528,20 @@ var self = {
             targetItem[valueKey] = fhirQuantity;
           }
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
             targetItem[valueKey] = item.defaultAnswer;
+          } else if (dataType === "DT" || dataType === "DTM") {
+            // transform to FHIR date/datetime format.
+            var dateValue = LForms.Util.stringToDate(item.defaultAnswer);
+
+            if (dateValue) {
+              dateValue = dataType === "DTM" ? LForms.Util.dateToDTMString(dateValue) : LForms.Util.dateToDTStringISO(dateValue);
+              targetItem[valueKey] = dateValue;
+            } else {
+              // LForms.Util.stringToDate returns null on invalid string
+              //TODO: should save the errors or emitting events.
+              console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+            }
           } // no support for reference
 
     }
