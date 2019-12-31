@@ -21958,7 +21958,16 @@ function addCommonSDCExportFns(ns) {
 
     target.name = source.shortName; // computer friendly
 
-    target.title = source.name; // Handle extensions on title
+    target.title = source.name; // Handle variable extensions.
+
+    if (source._variableExt) {
+      if (!target.extension) {
+        target.extension = [];
+      }
+
+      target.extension.concat(source._variableExt);
+    } // Handle extensions on title
+
 
     if (source.obj_title) target._title = source.obj_title;
     target.code = source.codeList; // resourceType

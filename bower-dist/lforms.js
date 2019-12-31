@@ -4877,7 +4877,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._fhirVariables = {};
       this.extension = data.extension; // form-level variables (really only R4+)
 
-      var ext = LForms.Util.findObjectInArray(data.extension, 'url', this._fhir.SDC.fhirExtVariable, 0, true);
+      var ext = LForms.Util.removeObjectsFromArray(data.extension, 'url', this._fhir.SDC.fhirExtVariable, 0, true);
       if (ext.length > 0) lfData._variableExt = ext;
 
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
