@@ -2,7 +2,24 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.0.0] 2019-10-24
+## [20.1.2] 2019-12-31
+### Fixed
+- Export calculatedExpression, variable and other FHIR extensions.
+
+## [20.1.1] 2019-12-18
+### Fixed
+- defaultAnswer was not handled correctly for DT and DTM.
+
+## [20.1.0] 2019-12-17
+### Added
+- Added support for item.answer.item when importing from/exporting to FHIR.
+
+## [20.0.1] 2019-11-07
+### Changed
+- Added a vertical scrollbar for long text of coding instructions and copyright notice
+  in popover windows.
+ 
+## [20.0.0] 2019-11-06
 ### Added
 - Added "exists" support to skip logic
 ### Changes

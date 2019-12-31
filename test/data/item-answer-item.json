@@ -1,0 +1,91 @@
+{
+    "PATH_DELIMITER": "/",
+    "code": "54127-6H",
+    "codeList": [
+        {
+            "code": "54127-6H",
+            "display": "USSG-FHT, (with mock-up items for horizontal layout demo)",
+            "system": "http://loinc.org"
+        }
+    ],
+    "identifier": null,
+    "codeSystem": "LOINC",
+    "name": "USSG-FHT, (with mock-up items for horizontal layout demo)",
+    "type": null,
+    "template": "table",
+    "items": [
+        {
+            "questionCode": "54114-4",
+            "parentQuestionCode": "",
+            "questionCardinality": { "min": "1", "max": "*" },
+            "question": "Family member health information",
+            "answers": "",
+            "dataType": "SECTION",
+            "units": "",
+            "header": true,
+            "codeList": [ { "code": "54114-4", "display": "Family member health information" } ],
+            "answerCardinality": { "min": "0", "max": "1" },
+            "items": [
+                {
+                    "questionCode": "54139-1",
+                    "questionCardinality": { "min": "1", "max": "*" },
+                    "question": "Living?",
+                    "dataType": "CNE",
+                    "header": false,
+                    "codeList": [ { "code": "54139-1", "display": "Living?"} ],
+                    "answerCardinality": { "min": "0", "max": "1" },
+                    "value": { "text": "Yes", "code": "LA33-6" },
+                    "items": [
+                        {
+                            "questionCode": "54124-3",
+                            "questionCardinality": { "min": "1", "max": "*" },
+                            "question": "Date of Birth",
+                            "dataType": "DT",
+                            "header": false,
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
+                            "value": "2019-09-09"
+                        },
+                        {
+                            "questionCode": "54124-3",
+                            "questionCardinality": { "min": "1", "max": "*" },
+                            "question": "Date of Birth",
+                            "dataType": "DT",
+                            "header": false,
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
+                            "value": "2019-09-10"
+                        },
+                        {
+                            "questionCode": "54141-7",
+                            "questionCardinality": {"min": "1", "max": "1"},
+                            "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false, "value": 99
+                        }
+                    ]
+                },
+                {
+                    "questionCode": "54139-1",
+                    "questionCardinality": { "min": "1", "max": "*" },
+                    "question": "Living?",
+                    "dataType": "CNE",
+                    "header": false,
+                    "codeList": [ { "code": "54139-1", "display": "Living?"} ],
+                    "answerCardinality": { "min": "0", "max": "1" },
+                    "value": { "text": "Yes", "code": "LA33-6" },
+                    "items": [
+                        {
+                            "questionCode": "54124-3",
+                            "questionCardinality": { "min": "1", "max": "*" },
+                            "question": "Date of Birth",
+                            "dataType": "DT",
+                            "header": false,
+                            "codeList": [ { "code": "54124-3", "display": "Date of Birth" } ],
+                            "answerCardinality": { "min": "0", "max": "1" },
+                            "value": "2019-09-11"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

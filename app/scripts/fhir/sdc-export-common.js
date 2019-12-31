@@ -26,12 +26,9 @@ function addCommonSDCExportFns(ns) {
       this._setResponseFormLevelFields(target, source, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
-        target.item = [];
-        for (var i=0, iLen=source.items.length; i<iLen; i++) {
-          if (!source.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(source.items[i], source);
-            target.item.push(newItem);
-          }
+        var tmp = this._processResponseItem(source, true);
+        if(tmp && tmp.item && tmp.item.length) {
+          target.item = tmp.item;
         }
       }
     }
@@ -76,6 +73,18 @@ function addCommonSDCExportFns(ns) {
     // FHIR doesn't allow null values, strip them out.
     LForms.Util.pruneNulls(target);
     return target;
+  };
+
+
+  /**
+   * Get the linkId for the given item - this is to ensure that getting linkId for an item
+   * is done consistently.
+   * @param item the lforms item whose linkId is to be retrieved.
+   * @return the linkId for the item
+   * @private
+   */
+  self._getItemLinkId = function(item) {
+    return item.linkId || item._codePath;
   };
 
 
@@ -146,7 +155,7 @@ function addCommonSDCExportFns(ns) {
 
 
     // linkId
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath;
+    targetItem.linkId = this._getItemLinkId(item);
 
     // Text & prefix
     targetItem.text = item.question;
@@ -753,83 +762,83 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   * Process captured user data
-   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
-   * @param item an item in LForms form object
+   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
+   * This is almost straightly refactored out of the original function self._handleAnswerValues.
+   * This function only looks at the item value itself and not its sub-items, if any.
+   * Here are the details for a single value's conversion (to an element in the returned answer array)
+   * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
+   *   either (or both) item value or item unit is available.
+   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, and url,
+   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
+   *   an empty string.
+   * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
+   *   is available
+   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, attachment, etc.
+   * @param item the item whose value is to be converted
+   * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
+   *         see the function description above for more details.
    * @private
    */
-  self._handleAnswerValues = function(targetItem, item, parentItem) {
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
-
-    var answer = [];
-    var linkId = item._codePath;
+  self._lfItemValueToFhirAnswer = function(item) {
     var dataType = this._getAssumedDataTypeForExport(item);
-    // value not processed by previous repeating items
-    if (dataType !== "SECTION" && dataType !=="TITLE") {
+    var values = this._answerRepeats(item)? item.value: [item.value];
+    var answers = [];
 
-      var valueKey = this._getValueKeyByDataType("value", item);
-
-      if (this._questionRepeats(item)) {
-        var values = parentItem._questionValues[linkId];
-      }
-      else if (this._answerRepeats(item)) {
-        values = item.value;
-      }
-      else {
-        values = [item.value];
-      }
-
-      for (var i=0, iLen= values.length; i<iLen; i++) {
+    for(var i=0; i < values.length; ++i) {
+      var itemValue = values[i];
+      if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
+        var answer = null;
         // for Coding
         if (dataType === 'CWE' || dataType === 'CNE') {
           // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof values[i] === 'string') {
-            if (values[i] !== '') {
-              answer.push({
-                "valueString" : values[i]
-              })
-            }
+          if (dataType === 'CWE' && typeof itemValue === 'string') {
+            answer = { "valueString" : itemValue };
           }
-          else if (!jQuery.isEmptyObject(values[i])) {
-            var oneAnswer = {};
-            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
-            if (codeSystem) oneAnswer.system = codeSystem;
-            if (values[i].code) oneAnswer.code = values[i].code;
-            if (values[i].text) oneAnswer.display = values[i].text;
-            answer.push({
-              "valueCoding": oneAnswer
-            })
+          else if (!jQuery.isEmptyObject(itemValue)) {
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.codeSystem));
+            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
           }
         }
-        // for Quantity,
-        // [{
-        //   // from Element: extension
-        //   "value" : <decimal>, // Numerical value (with implicit precision)
-        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-        //   "unit" : "<string>", // Unit representation
-        //   "system" : "<uri>", // Code System that defines coded unit form
-        //   "code" : "<code>" // Coded form of the unit
-        // }]
-        else if (dataType === "QTY") { // for now, handling only simple quantities without the comparators.
-          var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
-          if(fhirQuantity) {
-            answer.push({valueQuantity: fhirQuantity});
-          }
+        // for Quantity
+        else if (dataType === "QTY") {
+          // For now, handling only simple quantities without the comparators.
+          // [{
+          //   // from Element: extension
+          //   "value" : <decimal>, // Numerical value (with implicit precision)
+          //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+          //   "unit" : "<string>", // Unit representation
+          //   "system" : "<uri>", // Code System that defines coded unit form
+          //   "code" : "<code>" // Coded form of the unit
+          // }]
+          answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
         }
         // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
         else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
           dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
           dataType === "ST" || dataType === "TX" || dataType === "URL") {
-          var answerValue = {};
-          answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
-          answer.push(answerValue);
+          var valueKey = this._getValueKeyByDataType("value", item);
+          answer = {[valueKey]: itemValue};
         }
-        // no support for reference yet
+        if(answer !== null) {
+          answers.push(answer);
+        }
       }
-      targetItem.answer = answer;
     }
+
+    return answers.length === 0? null: answers;
+  };
+
+
+  /**
+   * Check if an lform item has sub-items, that is, having an "items" field whose value is an array with non-zero length.
+   * @param item the item to be checked for the presense of sub-items.
+   * @return {*|boolean} true if the item has sub-items, false otherwise.
+   * @private
+   */
+  self._lfHasSubItems = function(item) {
+    return item && item.items && Array.isArray(item.items) && item.items.length > 0;
   };
   
   /**
@@ -863,6 +872,109 @@ function addCommonSDCExportFns(ns) {
     
   };
 
+
+  /**
+   * Process an item of the form or the form itself - if it's the form itself, the form-level
+   * properties will not be set here and will need to be managed outside of this function.
+   * If the lforms item is repeatable, this function handles one particular occurrence of the item.
+   * @param lfItem an item in LForms form object, or the form object itself
+   * @param isForm optional, default false. If true, the given item is the form object itself.
+   * @returns {{}} the converted FHIR item
+   * @private
+   */
+  self._processResponseItem = function(lfItem, isForm) {
+    if(isForm && (typeof isForm) !== 'boolean') { // just in case some are invoking it the old way.
+      throw new Error('_processResponseItem function signature has been changed, please check/fix.');
+    }
+    var targetItem = (isForm || lfItem.dataType === 'TITLE')? {}: {
+        linkId: this._getItemLinkId(lfItem),
+        text: lfItem.question
+      };
+
+    // just handle/convert the current item's value, no-recursion to sub-items at this step.
+    if (!isForm && lfItem.dataType !== 'TITLE' && lfItem.dataType !== 'SECTION') {
+      this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+    }
+
+    if(this._lfHasSubItems(lfItem)) {
+      var fhirItems = [];
+      for (var i=0; i < lfItem.items.length; ++i) {
+        var lfSubItem = lfItem.items[i];
+        if(! lfSubItem._isProcessed) {
+          var linkId = this._getItemLinkId(lfSubItem);
+          var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
+          if(repeats) {      // Can only be questions here per _processRepeatingItemValues
+            let fhirItem = { // one FHIR item for all repeats with the same linkId
+              linkId: linkId,
+              text: lfSubItem.question,
+              answer: []
+            };
+            for(var rpt=0; rpt < repeats.length; ++rpt) {
+              var rptItem = repeats[rpt];
+              var tmpFhirItem = this._processResponseItem(rptItem);
+              if(tmpFhirItem.answer) {
+                // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
+                // For now, just put all the answers from question and answer repeats into the answer (array).
+                Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
+              }
+              rptItem._isProcessed = true;
+            }
+            fhirItems.push(fhirItem);
+            delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
+          }
+          else {
+            let fhirItem = this._processResponseItem(lfSubItem);
+            fhirItems.push(fhirItem);
+          }
+        }
+
+        if(lfSubItem._isProcessed) {
+          delete lfSubItem._isProcessed; // cleanup, no longer needed
+        }
+      }
+
+      if(fhirItems.length > 0) {
+        if(! isForm && lfItem.dataType !== 'SECTION') {
+          // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
+          // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
+          targetItem.answer = targetItem.answer || [];
+          targetItem.answer[0] = targetItem.answer[0] || {};
+          targetItem.answer[0].item = fhirItems;
+        }
+        else {
+          targetItem.item = fhirItems;
+        }
+      }
+    }
+
+    return targetItem;
+  };
+
+
+  /**
+   * Group values of the questions that have the same linkId
+   * @param item an item in the LForms form object or a form item object
+   * @private
+   *
+   */
+  self._processRepeatingItemValues = function(item) {
+    if (item.items) {
+      for (var i=0, iLen=item.items.length; i<iLen; i++) {
+        var subItem = item.items[i];
+        // if it is a question and it repeats
+        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
+          var linkId = this._getItemLinkId(subItem);
+          item._repeatingItems = item._repeatingItems || {};
+          item._repeatingItems[linkId] = item._repeatingItems[linkId] || [];
+          item._repeatingItems[linkId].push(subItem);
+        }
+        // if it's a section or a question that has children items
+        if(this._lfHasSubItems(subItem)) {
+          this._processRepeatingItemValues(subItem);
+        }
+      }
+    }
+  };
 }
 
 export default addCommonSDCExportFns;

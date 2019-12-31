@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util');
 
 describe('Data Type', function() {
 
@@ -11,10 +12,12 @@ describe('Data Type', function() {
   });
 
   it('DTM datetime picker should work', function () {
+    var minMax = [testUtil.getCurrentDTMString(-60000), testUtil.getCurrentDTMString(+60000)]; // -/+ a minute
     tp.openFullFeaturedForm();
     element(by.css('div.lf-dtm-picker-block > button.ui-datepicker-trigger')).click();
     element(by.css('div.lf-dtm-picker-block ul.datetime-picker-dropdown li span button')).click();
-    expect(element(by.id('/type7/1')).getAttribute('value')).toBe(require('./test_utils').dtmTodayZeroHour());
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBeGreaterThanOrEqual(minMax[0]);
+    expect(element(by.id('/type7/1')).getAttribute('value')).toBeLessThanOrEqual(minMax[1]);
   });
 
   it('DT data type should work', function () {

@@ -407,6 +407,7 @@ function addSDCImportFns(ns) {
               };
               // check observation instances in the sub level
               this._checkQRItems(qrItemInfo, repeatingItems[j]);
+              self._checkQRItemAnswerItems(qrItemInfo, repeatingItems[j]);
               qrItemsInfo.push(qrItemInfo);
             }
             repeatingItemProcessed[linkId] = true;
