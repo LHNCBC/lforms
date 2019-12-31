@@ -16,18 +16,43 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
-  self.fhirExtUrlRestrictionArray = [
-    "http://hl7.org/fhir/StructureDefinition/minValue",
-    "http://hl7.org/fhir/StructureDefinition/maxValue",
-    "http://hl7.org/fhir/StructureDefinition/minLength",
-    "http://hl7.org/fhir/StructureDefinition/regex"
-  ];
+  self.fhirExtUrlMinValue = "http://hl7.org/fhir/StructureDefinition/minValue";
+  self.fhirExtUrlMaxValue = "http://hl7.org/fhir/StructureDefinition/maxValue";
+  self.fhirExtUrlMinLength = "http://hl7.org/fhir/StructureDefinition/minLength";
+  self.fhirExtUrlRegex = "http://hl7.org/fhir/StructureDefinition/regex";
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
 
+  self.fhirExtUrlRestrictionArray = [
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex
+  ];
+  
+  // One way or the other, the following extensions are converted to lforms internal fields.
+  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  self.handledExtensionSet = LForms.Util.createSet([
+    self.fhirExtUrlCardinalityMin,
+    self.fhirExtUrlCardinalityMax,
+    self.fhirExtUrlItemControl,
+    self.fhirExtUrlUnit,
+    self.fhirExtUrlUnitOption,
+    self.fhirExtUrlOptionPrefix,
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex,
+    self.fhirExtUrlAnswerRepeats,
+    self.fhirExtUrlExternallyDefined,
+    self.argonautExtUrlExtensionScore,
+    self.fhirExtUrlHidden,
+    self.fhirExtTerminologyServer,
+  ]);
+  
   self.formLevelFields = [
     // Resource
     'id',
@@ -67,9 +92,7 @@ function addCommonSDCImportFns(ns) {
   ];
 
   self.itemLevelIgnoredFields = [
-    'definition',
-    'prefix',
-    'extension'
+    'definition'
   ];
 
   /**
@@ -181,7 +204,7 @@ function addCommonSDCImportFns(ns) {
       // Accept initial value of type Quantity for these types.
       val = obs.valueQuantity;
       if (val)
-        val._type = 'Quantity'
+        val._type = 'Quantity';
     }
 
     if (val) {
@@ -384,7 +407,7 @@ function addCommonSDCImportFns(ns) {
     // use linkId as questionCode, which should not be exported as code
     else {
       lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
+      lfItem.questionCodeSystem = "LinkId";
     }
 
     lfItem.linkId = qItem.linkId;
@@ -420,6 +443,81 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processUnitList = function (lfItem, qItem) {
+
+    var lformsUnits = [];
+    var lformsDefaultUnit = null;
+    // The questionnaire-unit extension is only for item.type = quantity
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+    if(unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Error('The extension '+self.fhirExtUrlUnitOption+
+          ' can only be used with type quantity.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
+      }
+      for(var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    }
+
+    // The questionnaire-unit extension is only for item.type = integer or decimal
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+    if (unit) {
+      if (qItem.type !== 'integer' && qItem.type !== 'decimal') {
+        throw new Error('The extension '+self.fhirExtUrlUnit+
+          ' can only be used with types integer or decimal.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
+      }
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      let initialQ = this.getFirstInitialQuantity(qItem);
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+        if(lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        }
+        else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+      lfItem.units = lformsUnits;
+    }
+  };
+
+
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -436,6 +534,7 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+          // continue to drop-down case
         case 'drop-down':
           displayControl.answerLayout = {type: 'COMBO_BOX'};
           break;
@@ -481,6 +580,8 @@ function addCommonSDCImportFns(ns) {
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
       formData = (new LForms.LFormsData(formData)).getFormData();
     }
     // The reference to _mergeQR below is here because this function gets copied to
@@ -521,7 +622,7 @@ function addCommonSDCImportFns(ns) {
                 parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
             }
           }
           // reset the total number of questions when it is the answers that repeats
@@ -859,7 +960,7 @@ function addCommonSDCImportFns(ns) {
     else if (qrItemValue.valueString) {
       retValue = qrItemValue.valueString;
     }
-    return retValue
+    return retValue;
   };
 
 
@@ -902,7 +1003,8 @@ function addCommonSDCImportFns(ns) {
 
     return ret;
   };
-
+  
+  
   /**
    *  Processes the child items of the item.
    * @param targetItem the LForms node being populated with data
@@ -928,8 +1030,29 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
-
-
+  
+  
+  /**
+   *  Copy extensions that haven't been handled before.
+   *
+   * @param lfItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   */
+  self._processExtensions = function(lfItem, qItem) {
+    var extensions = [];
+    if (Array.isArray(qItem.extension)) {
+      for (var i=0; i < qItem.extension.length; i++) {
+        if(!self.handledExtensionSet[qItem.extension[i].url]) {
+          extensions.push(qItem.extension[i]);
+        }
+      }
+    }
+    if(extensions.length > 0) {
+      lfItem.extension = extensions;
+    }
+  };
+  
+  
 }
 
 export default addCommonSDCImportFns;

@@ -69,6 +69,87 @@ describe('Util library', function() {
       assert.deepEqual(target, expected);
     });
   });
+  
+  describe('removeObjectsFromArray', function () {
+    [
+      {
+        message: 'should only remove first matching object',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'b',
+        value: "true",
+        startIndex: 0,
+        all: false,
+        removed: {b: "true", id: 2},
+        expected: [{a: 1, id: 1}, {b: "true", id: 3}]
+      },
+      {
+        message: 'should remove all matching objects',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'b',
+        value: "true",
+        startIndex: 0,
+        all: true,
+        removed: [{b: "true", id: 2}, {b: "true", id: 3}],
+        expected: [{a: 1, id: 1}]
+      },
+      {
+        message: 'should remove all matching objects starting from start index',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'b',
+        value: "true",
+        startIndex: 2,
+        all: true,
+        removed: [{b: "true", id: 3}],
+        expected: [{a: 1, id: 1},{b: "true", id: 2}]
+      },
+      {
+        message: 'should remove first matching object starting from start index',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'b',
+        value: "true",
+        startIndex: 1,
+        all: false,
+        removed: {b: "true", id: 2},
+        expected: [{a: 1, id: 1},{b: "true", id: 3}]
+      },
+      {
+        message: 'should return null when matching no object and all is false',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'c',
+        value: "true",
+        startIndex: 0,
+        all: false,
+        removed: null,
+        expected: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}]
+      },
+      {
+        message: 'should return empty array when matching no objects and all is true',
+        // arguments
+        target: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}],
+        key: 'c',
+        value: "true",
+        startIndex: 0,
+        all: true,
+        removed: [],
+        expected: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}]
+      },
+
+
+
+    ].forEach(function (test) {
+      it(test.message, function () {
+        var removed = LForms.Util.removeObjectsFromArray(test.target, test.key, test.value, test.startIndex, test.all);
+        assert.deepEqual(removed, test.removed);
+        assert.deepEqual(test.target, test.expected);
+      });
+    });
+    
+  });
 
   describe('findItem', function() {
     var items = [{linkId: 'aa'}, {linkId: 'bb', items:[{linkId: 'bb1'}, {linkId:'bb2'}]}, {linkId:'ccc'}];

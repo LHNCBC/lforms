@@ -48,7 +48,7 @@
         }
       ],
       "text": "Weight",
-      "type": "string"
+      "type": "decimal"
     },
     {
       "extension": [
@@ -121,7 +121,7 @@
         }
       ],
       "text": "Body height",
-      "type": "string"
+      "type": "decimal"
     },
     {
       "extension": [
@@ -137,7 +137,7 @@
           "valueExpression": {
             "description": "BMI calculation",
             "language" : "text/fhirpath",
-            "expression": "((%resource.item.where(linkId='/29463-7').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/%resource.item.where(linkId='/8302-2').answer.valueQuantity.value/0.0254/0.0254*10) div 1)/10"
+            "expression": "((%resource.item.where(linkId='/29463-7').answer.valueDecimal/%resource.item.where(linkId='/8302-2').answer.valueDecimal/%resource.item.where(linkId='/8302-2').answer.valueDecimal/0.0254/0.0254*10) div 1)/10"
           }
         }
       ],

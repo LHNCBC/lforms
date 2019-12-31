@@ -181,6 +181,8 @@ function addCommonSDCExportFns(ns) {
       this._handleLFormsUnits(targetItem, item);
     }
 
+    this._handleExtensions(targetItem, item);
+    
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -586,36 +588,71 @@ function addCommonSDCExportFns(ns) {
   };
 
 
+  // known source data types (besides CNE/CWE) in skip logic export handling,
+  // see _createEnableWhenRulesForSkipLogicCondition below
+  self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"]
+    .reduce((map, type) => {map[type] = type; return map;}, {});
+
+
   /**
-   * A single condition in lforms translates to two enableWhen rules in core FHIR.
-   *
-   * @param answerKey - The answer[x] string
    * @param skipLogicCondition - Lforms skip logic condition object
    * @param sourceItem - Skip logic source item in lforms.
-   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @return {Array} FHIR enableWhen array
    * @private
    */
-  self._createEnableWhenRulesForRangeAndValue = function(answerKey, skipLogicCondition, sourceItem) {
-    var ret = [];
+  self._createEnableWhenRulesForSkipLogicCondition = function (skipLogicCondition, sourceItem) {
+    // dataTypes:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+    let sourceDataType = this._getAssumedDataTypeForExport(sourceItem);
+    let sourceValueKey = this._getValueKeyByDataType("answer", sourceItem);
+    let enableWhenRules = [];
+
+    // Per lforms spec, the trigger keys can be:
+    // exists, value, minExclusive, minInclusive, maxExclusive, maxInclusive
     Object.keys(skipLogicCondition.trigger).forEach(function(key) {
-      var rule = {
-        question: sourceItem.linkId,
-        operator: self._operatorMapping[key]
-      };
-      var answer = null;
-      if(answerKey === 'answerQuantity') {
-        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
+      let operator = self._operatorMapping[key];
+      let triggerValue = skipLogicCondition.trigger[key];
+      if(! operator || triggerValue !== 0 && triggerValue !== false && ! triggerValue) {
+        throw new Error('Invalid lforms skip logic trigger: ' + JSON.stringify(skipLogicCondition.trigger, null, 4));
+      }
+
+      let rule = null;
+      if (operator === 'exists') {
+        rule = { answerBoolean: triggerValue };
+      }
+      // for Coding
+      // multiple selections, item.value is an array
+      // NO support of multiple selections in FHIR SDC, just pick one
+      else if ( sourceDataType === 'CWE' || sourceDataType === 'CNE' ) {
+        let answerCoding = self._copyTriggerCoding(triggerValue, null, true);
+        if (! answerCoding) {
+          throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
+        }
+        rule = { answerCoding: answerCoding };
+      }
+      else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
+        let answer = triggerValue;
+        if(sourceValueKey === 'answerQuantity') {
+          answer = self._makeQuantity(answer, sourceItem.units);
+        }
+        if(answer === 0 || answer === false || answer) {
+          rule = { [sourceValueKey]: answer };
+        }
+        else {
+          throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
+        }
       }
       else {
-        answer = skipLogicCondition.trigger[key];
+        throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
       }
-      if(answer) {
-        rule[answerKey] = answer;
-        ret.push(rule);
-      }
+
+      rule.question = sourceItem.linkId;
+      rule.operator = operator;
+      enableWhenRules.push(rule);
     });
 
-    return ret;
+    return enableWhenRules;
   };
 
 
@@ -716,25 +753,115 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
-   * Set questionnaire-unitOption extensions using lforms units.
-   *
-   * @param targetFhirItem - FHIR Questionnaire item
-   * @param units - lforms units array
+   * Process captured user data
+   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
+   * @param item an item in LForms form object
    * @private
    */
-  self._setUnitOptions = function(targetFhirItem, units) {
-    for (var i=0, iLen=units.length; i<iLen; i++) {
-      var unit = units[i];
-      var fhirUnitExt = {
-        "url": this.fhirExtUrlUnitOption,
-        "valueCoding": self._createFhirUnitCoding(unit)
-      };
-      if(!targetFhirItem.extension) {
-        targetFhirItem.extension = [];
+  self._handleAnswerValues = function(targetItem, item, parentItem) {
+    // dataType:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+
+    var answer = [];
+    var linkId = item._codePath;
+    var dataType = this._getAssumedDataTypeForExport(item);
+    // value not processed by previous repeating items
+    if (dataType !== "SECTION" && dataType !=="TITLE") {
+
+      var valueKey = this._getValueKeyByDataType("value", item);
+
+      if (this._questionRepeats(item)) {
+        var values = parentItem._questionValues[linkId];
       }
-      targetFhirItem.extension.push(fhirUnitExt);
+      else if (this._answerRepeats(item)) {
+        values = item.value;
+      }
+      else {
+        values = [item.value];
+      }
+
+      for (var i=0, iLen= values.length; i<iLen; i++) {
+        // for Coding
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof values[i] === 'string') {
+            if (values[i] !== '') {
+              answer.push({
+                "valueString" : values[i]
+              })
+            }
+          }
+          else if (!jQuery.isEmptyObject(values[i])) {
+            var oneAnswer = {};
+            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
+            if (codeSystem) oneAnswer.system = codeSystem;
+            if (values[i].code) oneAnswer.code = values[i].code;
+            if (values[i].text) oneAnswer.display = values[i].text;
+            answer.push({
+              "valueCoding": oneAnswer
+            })
+          }
+        }
+        // for Quantity,
+        // [{
+        //   // from Element: extension
+        //   "value" : <decimal>, // Numerical value (with implicit precision)
+        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+        //   "unit" : "<string>", // Unit representation
+        //   "system" : "<uri>", // Code System that defines coded unit form
+        //   "code" : "<code>" // Coded form of the unit
+        // }]
+        else if (dataType === "QTY") { // for now, handling only simple quantities without the comparators.
+          var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
+          if(fhirQuantity) {
+            answer.push({valueQuantity: fhirQuantity});
+          }
+        }
+        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
+          dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
+          dataType === "ST" || dataType === "TX" || dataType === "URL") {
+          var answerValue = {};
+          answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
+          answer.push(answerValue);
+        }
+        // no support for reference yet
+      }
+      targetItem.answer = answer;
     }
-  }
+  };
+  
+  /**
+   * Process FHIR questionnaire extensions related conversions.
+   *
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  self._handleExtensions = function (targetItem, item) {
+    var extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      var _ext = item[extName];
+      if(_ext) {
+        if(Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        }else {
+          extension.push(_ext);
+        }
+      }
+    });
+    
+    if(extension.length > 0) {
+      if(!targetItem.extension) {
+        targetItem.extension = [];
+      }
+      targetItem.extension.push.apply(targetItem.extension, extension);
+    }
+  
+    targetItem.extension.push.apply(targetItem.extension, item.extension);
+    
+  };
 
 }
 

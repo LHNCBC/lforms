@@ -2566,12 +2566,12 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
 
           break;
       }
@@ -3269,12 +3269,93 @@ LForms.Util = {
       var extInfo = copiedExtensions[url];
       var prop = extInfo[0],
           multiple = extInfo[1];
-      var ext = LForms.Util.findObjectInArray(extensionArray, 'url', url, 0, multiple);
+      var ext = LForms.Util.removeObjectsFromArray(extensionArray, 'url', url, 0, multiple);
 
-      if (!multiple || ext.length > 0) {
+      if (multiple && ext.length > 0 || !multiple && ext) {
+        // If array, avoid assigning empty array
         lfItem[prop] = ext;
       }
     }
+  },
+
+  /**
+   * Removes an object(s) from an array searching it using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   *
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - key of the object to match the value
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   * @param all - if false, removes the first matched object otherwise removes all matched objects.
+   *   Default is false.
+   *
+   * @returns {Object|Array} - Returns removed object or array of objects.
+   */
+  removeObjectsFromArray: function removeObjectsFromArray(targetObjects, key, matchingValue, starting_index, all) {
+    var ind = all ? [] : null;
+    var ret = all ? [] : null;
+
+    if (Array.isArray(targetObjects)) {
+      var start = 0; // Figure out start index.
+
+      if (starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if (starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        } else {
+          start = starting_index;
+        }
+      }
+
+      var len = targetObjects.length;
+
+      for (var i = start; i < len; i++) {
+        if (targetObjects[i][key] === matchingValue) {
+          var match = targetObjects[i];
+
+          if (all) {
+            ind.push(i);
+            ret.push(match);
+          } else {
+            ind = i;
+            ret = match;
+            break;
+          }
+        }
+      }
+
+      if (Array.isArray(ind)) {
+        for (var i = ind.length - 1; i >= 0; i--) {
+          targetObjects.splice(ind[i], 1);
+        }
+      } else {
+        if (ind !== null) {
+          targetObjects.splice(ind, 1);
+        }
+      }
+    }
+
+    return ret;
+  },
+
+  /**
+   * Create a rudimentary Set object. Can be improved to include add(), delete(), has() functions etc.
+   * For now using like a plain javascript object. Beware of 0 or false inputs for lookups.
+   *
+   * @param elemArray
+   */
+  createSet: function createSet(elemArray) {
+    var ret = {};
+
+    for (var i = 0; i < elemArray.length; i++) {
+      ret[elemArray[i]] = elemArray[i];
+    }
+
+    return ret;
   }
 };
 
@@ -3289,9 +3370,45 @@ module.exports = moment;
 /***/ (function(module, exports) {
 
 // HTML5 polyfills
-// Polyfill for String.repeat
+// Polyill for Object.assign
+//import 'core-js/features/object/assign'; // adds about 8k; use Mozilla's
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (typeof Object.assign !== 'function') {
+  // Must be writable: true, enumerable: false, configurable: true
+  Object.defineProperty(Object, "assign", {
+    value: function assign(target, varArgs) {
+      // .length of function is 2
+      'use strict';
+
+      if (target === null || target === undefined) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+
+      var to = Object(target);
+
+      for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+
+        if (nextSource !== null && nextSource !== undefined) {
+          for (var nextKey in nextSource) {
+            // Avoid bugs when hasOwnProperty is shadowed
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+
+      return to;
+    },
+    writable: true,
+    configurable: true
+  });
+} // Polyfill for String.repeat
 // Taken from
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+
+
 if (!String.prototype.repeat) {
   String.prototype.repeat = function (count) {
     'use strict';
@@ -3816,6 +3933,7 @@ LForms.HL7 = function () {
       switch (lformsDataType) {
         case "INT":
         case "REAL":
+        case "QTY":
           ret = "NM";
           break;
 
@@ -3834,7 +3952,6 @@ LForms.HL7 = function () {
         /*
         case "BIN":
         case "RTO":
-        case "QTY":
         case "YEAR":
         case "MONTH":
         case "DAY":
@@ -4200,7 +4317,7 @@ LForms.Validations = {
   "CNE", // complex type
   "CWE", // complex type
   "RTO", // complex type, not supported yet
-  "QTY", // complex type, not supported yet
+  "QTY", // complex type
   "NR", // complex type
   "YEAR", // sub-type of "ST"
   "MONTH", // sub-type of "ST"
@@ -4232,8 +4349,7 @@ LForms.Validations = {
     // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",
     // not supported
-    "QTY": "must be a quantity value.",
-    // not supported
+    "QTY": "must be a decimal number",
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
@@ -4286,6 +4402,7 @@ LForms.Validations = {
           break;
 
         case "REAL":
+        case "QTY":
           var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
@@ -4341,8 +4458,6 @@ LForms.Validations = {
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
 
         case "RTO": // TBD
-
-        case "QTY": // TBD
 
         case "CNE": // answers list with no exception, handled by autocomplete directive
 
@@ -4567,6 +4682,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     items: [],
     // a delimiter used in code path and id path
     PATH_DELIMITER: "/",
+    // whether the form data contains saved user data
+    hasSavedData: false,
     // repeatable question items derived from items
     _repeatableItems: {},
     // All accessory attributes of an item
@@ -4696,7 +4813,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     init: function init(data) {
       if (data && data._initializeInternalData) {
-        // This is aleady a lformsData object.
+        // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
 
         for (var i = 0; i < props.length; i++) {
@@ -4879,10 +4996,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function _initializeInternalData() {
@@ -4914,14 +5031,38 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options and assign field default values
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
       this._setupSourceToTargetMap(); // run the form controls
 
 
-      this._checkFormControls();
+      this._checkFormControls(); // adjust template options
+
+
+      this._adjustTemplateOptions();
+    },
+
+    /**
+     * Adjust hideUnits value depending on whether units are included in the form.
+     * It is to be called only in the initialization of the form data object.
+     * @private
+     */
+    _adjustTemplateOptions: function _adjustTemplateOptions() {
+      // if none of the items has 'units', reset the 'hideUnits' to be true
+      var noUnits = true;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0) {
+          noUnits = false;
+          break;
+        }
+      }
+
+      if (noUnits) {
+        this.templateOptions.hideUnits = true;
+      }
     },
 
     /**
@@ -5056,7 +5197,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5395,17 +5536,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._codePath = "";
       this._idPath = "";
       this._displayLevel = 0;
-      this._activeItem = null; // type
-
-      if (!this.type || this.type.length == 0) {
-        this.type = "LOINC";
-      } // question coding system
-
-
-      if (this.type === "LOINC" && !this.codeSystem) {
-        this.codeSystem = "LOINC";
-      } // add a link to external site for item's definition
-
+      this._activeItem = null; // add a link to external site for item's definition
 
       if (this.codeSystem === "LOINC") {
         this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
@@ -5476,10 +5607,27 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (columnHeaders) {
           this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
-        } // if there is a new formHeaderItems array, set up autocomplete options
+        } // if there is a formHeaderItems array, set up autocomplete options
 
 
-        if (newOptions.formHeaderItems) this._setUpDefaultsAndAutocomp(true);
+        if (this.templateOptions.formHeaderItems) {
+          for (var i = 0, iLen = this.templateOptions.formHeaderItems.length; i < iLen; i++) {
+            var item = this.templateOptions.formHeaderItems[i];
+
+            if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+              this._updateAutocompOptions(item);
+
+              this._resetItemValueWithModifiedAnswers(item);
+            } // if this is not a saved form with user data, and
+            // there is a default value, and
+            // there is no embedded data
+            else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+                item.value = item.defaultAnswer;
+              }
+
+            this._updateUnitAutocompOptions(item);
+          }
+        }
       }
     },
 
@@ -5516,10 +5664,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // set data type for items with units (for unified display styles)
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
-          } // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
-          // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
-          // An error will be thrown in this case and an empty value will be set instead.
-          else if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod)) item.dataType = this._CONSTANTS.DATA_TYPE.ST;
+          } else if (!item.dataType) item.dataType = this._CONSTANTS.DATA_TYPE.ST; // default data type
+
         } // displayControl default values
 
 
@@ -5560,7 +5706,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // reset item.value with modified answers if the item has a value (or an array of values)
 
 
-        this._resetItemValueWithModifiedAnswers(item); // normalize unit value if there is one, needed by calculationMethod
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._resetItemValueWithModifiedAnswers(item);
+        } // if this is not a saved form with user data, and
+        // there is a default value, and
+        // there is no embedded data
+        else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+            item.value = item.defaultAnswer;
+          } // normalize unit value if there is one, needed by calculationMethod
 
 
         if (item.unit && !item.unit.text) {
@@ -5846,7 +5999,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // check if there is user data
+
+      var hasSavedData = false;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -5859,9 +6024,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         copyrightNotice: this.copyrightNotice,
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
-      }; // reset obr fields
+      };
 
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      } // reset obr fields
+
+
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
       return defData;
     },
 
@@ -6911,26 +7081,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Set up autocomplete options for each items
-     * @param templateOptionsOnly (default false) set to true if only the
-     *  templateOptions items need processing.
+     * Set up autocomplete options for each item
+     * @param items a list items of the form or in the templateOptions.
      */
-    _setUpDefaultsAndAutocomp: function _setUpDefaultsAndAutocomp(templateOptionsOnly) {
-      var itemList;
-      var itemLists = [this.templateOptions.formHeaderItems];
-      if (!templateOptionsOnly) itemLists.push(this.itemList);
+    _setUpAnswerAndUnitAutoComp: function _setUpAnswerAndUnitAutoComp(items) {
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        var item = items[i];
 
-      for (var j = 0, jLen = itemLists.length; j < jLen && (itemList = itemLists[j]); ++j) {
-        for (var i = 0, iLen = itemList.length; i < iLen; i++) {
-          var item = itemList[i];
-
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          } else if (item.defaultAnswer && !item.value) // && not a list
-            item.value = item.defaultAnswer;
-
-          this._updateUnitAutocompOptions(item);
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
+
+        this._updateUnitAutocompOptions(item);
       }
     },
 
@@ -6959,7 +7121,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var listItems = [],
             answers = item.units; // Modify the label for each unit.
 
-        var defaultValue;
+        var defaultValue, defaultUnit;
 
         for (var i = 0, iLen = answers.length; i < iLen; i++) {
           var listItem = angular.copy(answers[i]);
@@ -6967,6 +7129,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           this._setUnitDisplay(listItem);
 
           if (answers[i].default) {
+            defaultUnit = listItem;
             defaultValue = listItem._displayUnit;
           } // Include only if name or code is specified.
 
@@ -6976,20 +7139,37 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
 
-        var options = {
-          listItems: listItems,
-          matchListValue: true,
-          autoFill: true,
-          display: "_displayUnit"
-        };
-
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
-        } else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.INT || item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
+          // Per FHIR, if the item is of type integer or decimal, it can only have
+          // one unit, and that unit is not editable.
+          // However, this breaks our existing LOINC form definitions, so just
+          // output a warning and convert the type..
+          if (item.units && item.units.length > 1) {
+            console.log('Form definition warning: Data types of INT or REAL may ' + 'only have one unit.  Question "' + item.question + '" has ' + item.units.length + ' units.  For multiple ' + 'units, use type QTY instead.');
+            item.dataType = this._CONSTANTS.DATA_TYPE.QTY;
+          } else {
+            // we didn't change dateType to QTY
+            item._unitReadonly = true;
+            if (!item.unit) item.unit = listItems[0];
+          }
         }
 
-        item._unitAutocompOptions = options;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.QTY) {
+          var options = {
+            listItems: listItems,
+            matchListValue: true,
+            autoFill: true,
+            display: "_displayUnit"
+          };
+
+          if (defaultValue !== undefined) {
+            options.defaultValue = defaultValue;
+          } else if (listItems.length === 1) {
+            options.defaultValue = listItems[0]._displayUnit;
+          }
+
+          item._unitAutocompOptions = options;
+        }
       }
     },
 
@@ -7052,8 +7232,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (item._modifiedAnswers) {
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null; // item.value has the priority over item.defaultAnswer
+        // if this is a saved form with user data, default answers are not to be used.
 
-        var answerValue = item.value || item.defaultAnswer;
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
 
         if (answerValue) {
           modifiedValue = []; // could be an array of multiple default values or a single value
@@ -7334,11 +7515,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
             options.codes = codes;
             options.itemToHeading = itemToHeading;
-          } // If there isn't already a default value set (handled elsewhere), and
+          } // If this is not a saved form with user data, and
+          // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
 
 
-          if (!options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
         }
 
         item._autocompOptions = options;
@@ -7590,6 +7772,35 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
+     * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
+     * following three fields: code, system, and text. Two codings are considered equal if and only if:
+     * 1) The code systems are equal or unspecified, and
+     * 2) Either the codes are specified and equal, or, the codes are not specified and the texts are
+     *    specified and equal.
+     * @param coding1 the first coding object
+     * @param coding2 the second coding object
+     * @return {boolean} true if the two codings are considered equal, false otherwise.
+     * @private
+     */
+    _codingsEqual: function _codingsEqual(coding1, coding2) {
+      var equals = false;
+
+      var hasValue = function hasValue(v) {
+        return v !== null && v !== undefined && v !== '';
+      };
+
+      if (coding1.system === coding2.system || !coding1.system && !coding2.system) {
+        if (hasValue(coding1.code) || hasValue(coding2.code)) {
+          equals = coding1.code === coding2.code;
+        } else {
+          equals = coding1.text && coding2.text && coding1.text === coding2.text;
+        }
+      }
+
+      return !!equals;
+    },
+
+    /**
      * Check if a source item's value meet a skip logic condition/trigger
      * @param item a source item of a skip logic
      * @param trigger a trigger of a skip logic
@@ -7598,8 +7809,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _checkSkipLogicCondition: function _checkSkipLogicCondition(item, trigger) {
       var action = false;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
 
-      if (item && item.value !== undefined && item.value !== null && item.value !== "") {
+      if (trigger.hasOwnProperty('exists')) {
+        action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
+        action = trigger.not ? !action : action;
+      } else if (hasAnswer) {
         var currentValue = item.value;
 
         switch (item.dataType) {
@@ -7607,21 +7822,20 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger).filter(function (key) {
-              return key !== 'not';
-            })[0]; // trigger should have only one key, other than 'not'
-            // if the field accepts multiple values from the answer list
+            var answerValues = Array.isArray(currentValue) ? currentValue : [currentValue];
 
-            if (Array.isArray(currentValue)) {
-              for (var m = 0, mLen = currentValue.length; m < mLen; m++) {
-                if (trigger.hasOwnProperty(field) && currentValue[m].hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[m][field])) {
-                  action = true;
-                  break;
-                }
+            for (var m = 0, mLen = answerValues.length; m < mLen; m++) {
+              var answerValue = answerValues[m];
+
+              if (item.answerCodeSystem) {
+                answerValue = Object.assign({
+                  system: item.answerCodeSystem
+                }, answerValue);
               }
-            } else {
-              if (trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[field])) {
+
+              if (this._codingsEqual(trigger.value, answerValue)) {
                 action = true;
+                break;
               }
             }
 
@@ -7680,8 +7894,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var takeAction = false;
 
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY"; // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
+        // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
 
         takeAction = hasAll;
@@ -8049,6 +8264,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   LForms.ExpressionProcessor = function (lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
+    this._compiledExpressions = {};
   };
 
   LForms.ExpressionProcessor.prototype = {
@@ -8069,6 +8285,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       var firstRun = true;
       var changed = true;
+      var start = new Date();
 
       while (changed) {
         if (changed || firstRun) {
@@ -8080,6 +8297,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (changed || firstRun) changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
+
+      console.log("Ran FHIRPath expressions in " + (new Date() - start) + " ms");
     },
 
     /**
@@ -8119,8 +8338,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateVariables(item.items[i]);
+        for (var _i = 0, _len = item.items.length; _i < _len; ++_i) {
+          var changed = this._evaluateVariables(item.items[_i]);
 
           if (!rtn) rtn = changed;
         }
@@ -8174,10 +8393,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
       if (item.items) {
-        for (var i = 0, len = item.items.length; i < len; ++i) {
-          var changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
+        for (var _i2 = 0, _len2 = item.items.length; _i2 < _len2; ++_i2) {
+          var _changed = this._evaluateFieldExpressions(item.items[_i2], includeInitialExpr, changesOnly);
 
-          if (!rtn) rtn = changed;
+          if (!rtn) rtn = _changed;
         }
       }
 
@@ -8230,7 +8449,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           fVars[k] = itemVars[k];
         }
 
-        fhirPathVal = this._fhir.fhirpath.evaluate(this._elemIDToQRItem[item._elementId], expression, fVars);
+        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+        var compiledExpr = this._compiledExpressions[expression];
+
+        if (!compiledExpr) {
+          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression);
+        }
+
+        fhirPathVal = compiledExpr(fhirContext, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
@@ -8305,13 +8531,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 for (var a = 0; a < numAnswers; ++a, ++i) {
                   if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
 
-                  var newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
 
-                  if (newlyAdded === 0) {
+                  if (_newlyAdded === 0) {
                     // lfItems[i] was blank; try next lfItem
                     --a;
                   } else {
-                    added += newlyAdded;
+                    added += _newlyAdded;
                   }
                 }
               }
@@ -8343,7 +8569,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
       var oldVal = item.value;
-      if (fhirPathRes !== undefined) var fhirPathVal = fhirPathRes[0];
+      var fhirPathVal;
+      if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
         if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
           item.value = new Date(fhirPathVal);
@@ -8376,7 +8603,7 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
   'use strict';
 
   $templateCache.put('field-answers.html', "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" + "   role=\"radiogroup\" aria-labeledby=\"label-{{ item._elementId }}\"\n" + "   aria-describedby=\"help-{{ item._elementId }}\">\n" + "    <span ng-repeat=\"answer in item._modifiedAnswers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(item, answer)\" ng-disabled=\"item._readOnly\"\n" + "               ng-checked=\"checkAnswer(item,answer)\">\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" + "               ng-click=\"updateRadioList(item)\" ng-disabled=\"item._readOnly\" >\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "    </span>\n" + "    <!--extra OTHER field-->\n" + "    <!--<div class=\"lf-answer-type-list-other\">-->\n" + "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" + "                 id=\"{{item._elementId + '_other'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-click=\"updateCheckboxListForOther(item, item._answerOther)\"\n" + "                 ng-checked=\"checkAnswer(item,{'text':item._answerOther})\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item._answerOther\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-change=\"updateCheckboxListForOther(item, item._answerOther)\">\n" + "      </div>\n" + "\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\"\n" + "                 ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" + "                 name=\"{{item._elementId}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-click=\"updateRadioListForOther(item, item._answerOther)\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item._answerOther\"\n" + "                 ng-change=\"updateRadioListForOther(item, item._answerOther)\"\n" + "                 ng-disabled=\"item._readOnly\">\n" + "      </div>\n" + "    </span>\n" + "    <!--</div>-->\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" + "    <input name=\"{{item._text +'_'+ $id}}\" type=\"text\"\n" + "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" + "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" + "           id=\"{{item._elementId}}\"\n" + "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" + "  </div>\n" + "</div>\n");
-  $templateCache.put('field-units.html', "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" + "    <span ng-repeat=\"unit in item.units\">\n" + "      <label>\n" + "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit._displayUnit}}\n" + "      </label>\n" + "    </span>\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default>\n" + "    <input class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" + "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" + "  </div>\n" + "\n" + "</div>\n" + "\n");
+  $templateCache.put('field-units.html', "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" + "    <span ng-repeat=\"unit in item.units\">\n" + "      <label>\n" + "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\"\n" + "         ng-readonly=\"item._unitReadonly\">{{unit._displayUnit}}\n" + "      </label>\n" + "    </span>\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default>\n" + "    <input ng-if=\"!item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" + "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\"\n" + "           aria-labelledby=\"th_Units\">\n" + "    <input ng-if=\"item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           id=\"unit_{{item._elementId}}\" value=\"{{item.unit._displayUnit}}\"\n" + "           aria-labelledby=\"th_Units\" readonly>\n" + "  </div>\n" + "\n" + "</div>\n" + "\n");
   $templateCache.put('form-controls.html', "<div class=\"stopped\" ng-show=\"isFormDone()\">\n" + "  <img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\">\n" + "  <span>This form is complete.</span>\n" + "</div>\n" + "<div class=\"lf-form-controls\" ng-if=\"!lfData.templateOptions.hideFormControls\">\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\"> Display Question Code</label>\n" + "  </div>\n" + "\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\"> Show Help/Description</label>\n" + "  </div>\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\"> Keyboard Navigation On Input Fields</label>\n" + "  </div>\n" + "  <div class=\"lf-form-control\">\n" + "    <div class=\"text-info\" >Total # of Questions: {{getNumberOfQuestions()}}</div>\n" + "  </div>\n" + "</div>\n");
   $templateCache.put('form-header.html', "  <div class=\"lf-form-header\" ng-if=\"lfData.templateOptions.showFormHeader\">\n" + "    <div class=\"lf-header-de\" ng-style=\"getHeaderItemStyle(item)\"\n" + "         ng-repeat=\"item in lfData.templateOptions.formHeaderItems\">\n" + "      <div class=\"lf-header-de-label\">\n" + "        <span class=\"lf-question\"><label for=\"{{item.questionCode}}\">{{item.question}}</label></span>\n" + "      </div>\n" + "      <div class=\"lf-header-de-input\" ng-switch on=\"item.dataType\">\n" + "        <ng-form name=\"innerForm\">\n" + "          <div class=\"lf-form-item-data tooltipContainer\">\n" + "            <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\"></div>\n" + "            <input ng-switch-when=\"CWE\" name=\"{{item.question}}\" type=\"text\"\n" + "                   placeholder=\"Select or type a value\"\n" + "                   ng-model=\"item.value\"\n" + "                   autocomplete-lhc=\"item._autocompOptions\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" + "                   ng-model=\"item.value\" lf-date=\"dateOptions\"\n" + "                   placeholder=\"MM/DD/YYYY\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" + "                   ng-model=\"item.value\" placeholder=\"Type a value\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" + "                      ng-model=\"item.value\" placeholder=\"Type a value\"\n" + "                      id=\"{{item.questionCode}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" + "                      ng-blur=\"activeRowOnBlur(item)\">\n" + "                      </textarea>\n" + "          </div>\n" + "        </ng-form>\n" + "      </div>\n" + "    </div>\n" + "  </div>\n");
   $templateCache.put('form-options.html', "<div class=\"lf-form-options\" ng-if=\"lfData.templateOptions.showFormOptionPanel\">\n" + "\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display question code</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show help/description</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.hideFormControls\">Hide form controls</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormOptionPanelButton\">Display form's option button</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormOptionPanel\">Display form's option panel</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showItemOptionPanelButton\">Display item's option button</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.hideUnits\">Hide units</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.allowMultipleEmptyRepeatingItems\">Allow multiple empty repeating questions/sections</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.allowHTMLInInstructions\">Allow HTML content in instructions</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormHeader\">Display form header questions</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showColumnHeaders\">Display column headers</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.useTreeLineStyle\">Tree line style</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label for=\"viewMode\">View mode</label>\n" + "    <select name=\"viewMode\" ng-model=\"lfData.templateOptions.viewMode\">\n" + "      <option value=\"auto\">Responsive [auto]</option>\n" + "      <option value=\"lg\">For large screen [lg]</option>\n" + "      <option value=\"md\">For medium screen [md]</option>\n" + "      <option value=\"sm\">For small screen [sm]</option>\n" + "    </select>\n" + "\n" + "  </div>\n" + "\n" + "</div>\n");

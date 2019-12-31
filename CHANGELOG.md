@@ -2,8 +2,69 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.0.0] 2019-10-24
+### Added
+- Added "exists" support to skip logic
+### Changes
+- The trigger.code and triger.value.code were "hidden" features, but the issue of code system 
+  wasn't taken into consideration and therefore was broken.
+  This has been reimplemented so that when the source question is of type CNE or CWE,  
+  the trigger.value will be a hash with any or all of these three fields:
+  code, system, and text, and the trigger matching will be based on these fields. Please
+  see the updated lforms definition for more details. 
+
+## [19.0.2] 2019-11-04
+### Fixed
+- Fixed a bug that autocompleter options are not set for items in templateOptions.
+
+## [19.0.1] 2019-10-31
+### Changed
+- Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
+  and saved form data. 
+
+## [19.0.0] 2019-10-28
+### Added
+- Data type QTY is now documented as a supported data type, and is now validated like a REAL.
+  (Previously, there was no validation for type QTY).
+### Changed
+- Removed the "type" field from the form definition (though it should not hurt to
+  include it).
+- The codeSystem field is no longer defaulted to LOINC.  The LOINC
+  default was causing problems for FHIR Questionnaires which did not have a code
+  system specified.
+- Data types INT and REAL are now only allowed to have one unit defined in
+  field "units", for alignment with FHIR.  For more than one unit, use type QTY
+  (quantity).  For backward compatibility with existing form definitions, INT or
+  REAL fields with more than one unit will be changed to QTY, and a warning will
+  be output.
+- The data type is no longer changed to "ST" if a question has a calculationMethod.
+
+## [18.3.0] 2019-10-22
+### Added
+- The FHIRPath expressions are now cached after being parsed, which greatly
+  speeds up the processing.
+
+## [18.2.2] 2019-10-17
+### Fixed
+- Corrected FHIR export and import of integer, decimal, and quantity types, and
+  the unit extensions used.
+
+## [18.2.1] 2019-10-15
+### Fixed
+- Corrected the default for handling multiple skip logic conditions to be "ANY"
+  instead of "ALL" (i.e. now "ANY" of the conditions being true will make the
+  field visible).  The "ANY" default was what should have been the case per the
+  documentation in form_definition.md, and also matches the equivalent default
+  in FHIR.
+- Fixed the setting of the FHIR context for evaluating FHIR variables defined on
+  Questionnaire.
+
+## [18.2.0] 2019-10-15
+### Changed
+- Units column is no longer shown if there is no units values in the form data.
+
 ## [18.1.1] 2019-10-08
-### FIxed
+### Fixed
 - Display of item with TITLE data type is fixed without setting header flag.
 
 ## [18.1.0] 2019-10-03

@@ -77,6 +77,9 @@
     // a delimiter used in code path and id path
     PATH_DELIMITER : "/",
 
+    // whether the form data contains saved user data
+    hasSavedData : false,
+
     // repeatable question items derived from items
     _repeatableItems : {},
 
@@ -167,7 +170,7 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
-      if(data && data._initializeInternalData) { // This is aleady a lformsData object.
+      if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
         for(var i = 0; i < props.length; i++) {
           if(props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
@@ -352,10 +355,10 @@
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function() {
@@ -385,7 +388,7 @@
       this.Navigation.setupNavigationMap(this);
 
       // create auto-completer options and assign field default values
-      this._setUpDefaultsAndAutocomp();
+      this._setUpAnswerAndUnitAutoComp(this.itemList);
 
       // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
@@ -394,6 +397,27 @@
       // run the form controls
       this._checkFormControls();
 
+      // adjust template options
+      this._adjustTemplateOptions();
+    },
+
+    /**
+     * Adjust hideUnits value depending on whether units are included in the form.
+     * It is to be called only in the initialization of the form data object.
+     * @private
+     */
+    _adjustTemplateOptions: function() {
+      // if none of the items has 'units', reset the 'hideUnits' to be true
+      var noUnits = true;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        if (Array.isArray(this.itemList[i].units) && this.itemList[i].units.length > 0 ) {
+          noUnits = false;
+          break;
+        }
+      }
+      if (noUnits) {
+        this.templateOptions.hideUnits = true;
+      }
     },
 
 
@@ -504,7 +528,7 @@
       this.Navigation.setupNavigationMap(this);
 
       // create auto-completer options
-      this._setUpDefaultsAndAutocomp();
+      this._setUpAnswerAndUnitAutoComp(this.itemList);
 
       // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
@@ -839,16 +863,6 @@
       this._displayLevel = 0;
       this._activeItem = null;
 
-      // type
-      if (!this.type || this.type.length == 0) {
-        this.type = "LOINC"
-      }
-
-      // question coding system
-      if (this.type === "LOINC" && !this.codeSystem) {
-        this.codeSystem = "LOINC";
-      }
-
       // add a link to external site for item's definition
       if (this.codeSystem === "LOINC") {
         this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
@@ -928,9 +942,27 @@
           this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
         }
 
-        // if there is a new formHeaderItems array, set up autocomplete options
-        if (newOptions.formHeaderItems)
-          this._setUpDefaultsAndAutocomp(true);
+        // if there is a formHeaderItems array, set up autocomplete options
+        if (this.templateOptions.formHeaderItems) {
+          for (var i=0, iLen=this.templateOptions.formHeaderItems.length; i<iLen; i++) {
+            var item = this.templateOptions.formHeaderItems[i];
+            if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
+                item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+              this._updateAutocompOptions(item);
+              this._resetItemValueWithModifiedAnswers(item);
+            }
+            // if this is not a saved form with user data, and
+            // there is a default value, and
+            // there is no embedded data
+            else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+              item.value = item.defaultAnswer;
+            }
+            this._updateUnitAutocompOptions(item);
+          }
+
+        }
+
+
       }
     },
 
@@ -974,12 +1006,8 @@
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
           }
-          // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
-          // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
-          // An error will be thrown in this case and an empty value will be set instead.
-          else if(!item.dataType || item.calculationMethod !== undefined &&
-              !jQuery.isEmptyObject(item.calculationMethod))
-            item.dataType = this._CONSTANTS.DATA_TYPE.ST;
+          else if(!item.dataType)
+            item.dataType = this._CONSTANTS.DATA_TYPE.ST; // default data type
         }
 
         // displayControl default values
@@ -1020,7 +1048,16 @@
         this._setModifiedAnswers(item); // sets item._modifiedAnswers
 
         // reset item.value with modified answers if the item has a value (or an array of values)
-        this._resetItemValueWithModifiedAnswers(item)
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._resetItemValueWithModifiedAnswers(item);
+        }
+        // if this is not a saved form with user data, and
+        // there is a default value, and
+        // there is no embedded data
+        else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+          item.value = item.defaultAnswer;
+        }
 
         // normalize unit value if there is one, needed by calculationMethod
         if (item.unit && !item.unit.text) {
@@ -1318,6 +1355,16 @@
       // get the form data
       var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
 
+      // check if there is user data
+      var hasSavedData = false;
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        var item = this.itemList[i];
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -1331,8 +1378,13 @@
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
       };
+
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      }
+
       // reset obr fields
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
 
       return defData;
     },
@@ -2354,26 +2406,17 @@
 
 
     /**
-     * Set up autocomplete options for each items
-     * @param templateOptionsOnly (default false) set to true if only the
-     *  templateOptions items need processing.
+     * Set up autocomplete options for each item
+     * @param items a list items of the form or in the templateOptions.
      */
-    _setUpDefaultsAndAutocomp: function(templateOptionsOnly) {
-      var itemList;
-      var itemLists = [this.templateOptions.formHeaderItems];
-      if (!templateOptionsOnly)
-        itemLists.push(this.itemList);
-      for (var j=0, jLen=itemLists.length; j<jLen && (itemList = itemLists[j]); ++j) {
-        for (var i=0, iLen=itemList.length; i<iLen; i++) {
-          var item = itemList[i];
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
-              item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          }
-          else if (item.defaultAnswer && !item.value) // && not a list
-            item.value = item.defaultAnswer;
-          this._updateUnitAutocompOptions(item);
+    _setUpAnswerAndUnitAutoComp: function(items) {
+      for (var i=0, iLen=items.length; i<iLen; i++) {
+        var item = items[i];
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
+        this._updateUnitAutocompOptions(item);
       }
     },
 
@@ -2405,11 +2448,12 @@
 
         var listItems = [], answers = item.units;
         // Modify the label for each unit.
-        var defaultValue;
+        var defaultValue, defaultUnit;
         for (var i= 0, iLen = answers.length; i<iLen; i++) {
           var listItem = angular.copy(answers[i]);
           this._setUnitDisplay(listItem);
           if (answers[i].default) {
+            defaultUnit = listItem;
             defaultValue = listItem._displayUnit;
           }
           // Include only if name or code is specified.
@@ -2418,20 +2462,42 @@
           }
         }
 
-        var options = {
-          listItems: listItems,
-          matchListValue: true,
-          autoFill: true,
-          display: "_displayUnit"
-        };
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
-        }
-        else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.INT ||
+            item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
+          // Per FHIR, if the item is of type integer or decimal, it can only have
+          // one unit, and that unit is not editable.
+          // However, this breaks our existing LOINC form definitions, so just
+          // output a warning and convert the type..
+          if (item.units && item.units.length > 1) {
+            console.log('Form definition warning: Data types of INT or REAL may '+
+              'only have one unit.  Question "'+ item.question+
+              '" has '+item.units.length+' units.  For multiple '+
+              'units, use type QTY instead.');
+            item.dataType = this._CONSTANTS.DATA_TYPE.QTY;
+          }
+          else { // we didn't change dateType to QTY
+            item._unitReadonly = true;
+            if (!item.unit)
+              item.unit = listItems[0];
+          }
         }
 
-        item._unitAutocompOptions = options;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.QTY) {
+          var options = {
+            listItems: listItems,
+            matchListValue: true,
+            autoFill: true,
+            display: "_displayUnit"
+          };
+          if (defaultValue !== undefined) {
+            options.defaultValue = defaultValue;
+          }
+          else if (listItems.length === 1) {
+            options.defaultValue = listItems[0]._displayUnit;
+          }
+
+          item._unitAutocompOptions = options;
+        }
       }
     },
 
@@ -2506,7 +2572,8 @@
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null;
         // item.value has the priority over item.defaultAnswer
-        var answerValue = item.value || item.defaultAnswer;
+        // if this is a saved form with user data, default answers are not to be used.
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
         if (answerValue) {
           modifiedValue = [];
           // could be an array of multiple default values or a single value
@@ -2779,9 +2846,10 @@
             options.itemToHeading = itemToHeading;
           }
 
-          // If there isn't already a default value set (handled elsewhere), and
+          // If this is not a saved form with user data, and
+          // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
-          if (!options.defaultValue && options.listItems.length === 1)
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1)
             options.defaultValue = options.listItems[0];
         }
         item._autocompOptions = options;
@@ -3033,6 +3101,33 @@
 
 
     /**
+     * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
+     * following three fields: code, system, and text. Two codings are considered equal if and only if:
+     * 1) The code systems are equal or unspecified, and
+     * 2) Either the codes are specified and equal, or, the codes are not specified and the texts are
+     *    specified and equal.
+     * @param coding1 the first coding object
+     * @param coding2 the second coding object
+     * @return {boolean} true if the two codings are considered equal, false otherwise.
+     * @private
+     */
+    _codingsEqual: function(coding1, coding2) {
+      let equals = false;
+      let hasValue = (v) => v !== null && v !== undefined && v !== '';
+      if(coding1.system === coding2.system || !coding1.system && !coding2.system) {
+        if(hasValue(coding1.code) || hasValue(coding2.code)) {
+          equals = coding1.code === coding2.code;
+        }
+        else {
+          equals = coding1.text && coding2.text && coding1.text === coding2.text;
+        }
+      }
+
+      return !!equals;
+    },
+
+
+    /**
      * Check if a source item's value meet a skip logic condition/trigger
      * @param item a source item of a skip logic
      * @param trigger a trigger of a skip logic
@@ -3041,31 +3136,28 @@
      */
     _checkSkipLogicCondition: function(item, trigger) {
       var action = false;
-      if (item && item.value !== undefined && item.value !== null && item.value !== "") {
-        var currentValue = item.value;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
 
+      if(trigger.hasOwnProperty('exists')) {
+        action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
+        action = trigger.not? !action: action;
+      }
+      else if (hasAnswer) {
+        var currentValue = item.value;
         switch (item.dataType) {
           // answer lists: {"code", "LA-83"}, {"label","A"} and etc.
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger).filter(function(key) {
-              return key !== 'not';
-            })[0] ; // trigger should have only one key, other than 'not'
-            // if the field accepts multiple values from the answer list
-            if (Array.isArray(currentValue)) {
-              for (var m= 0, mLen = currentValue.length; m<mLen; m++) {
-                if (trigger.hasOwnProperty(field) && currentValue[m].hasOwnProperty(field) &&
-                  this._objectEqual(trigger[field], currentValue[m][field]) ) {
-                  action = true;
-                  break;
-                }
+            var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
+            for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
+              let answerValue = answerValues[m];
+              if(item.answerCodeSystem) {
+                answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
               }
-            }
-            else {
-              if (trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) &&
-                this._objectEqual(trigger[field], currentValue[field]) ) {
+              if(this._codingsEqual(trigger.value, answerValue)) {
                 action = true;
+                break;
               }
             }
             break;
@@ -3120,8 +3212,8 @@
     _checkSkipLogic: function(item) {
       var takeAction = false;
       if (item.skipLogic) {
-        var hasAll = !item.skipLogic.logic || item.skipLogic.logic === "ALL";
-        var hasAny = item.skipLogic.logic === "ANY";
+        var hasAll = item.skipLogic.logic === "ALL";
+        var hasAny = !item.skipLogic.logic || item.skipLogic.logic === "ANY"; // per spec, default is ANY
         // set initial value takeAction to true if the 'logic' is not set or its value is 'ALL'
         // otherwise its value is false, including when the 'logic' value is 'ANY'
         takeAction = hasAll;

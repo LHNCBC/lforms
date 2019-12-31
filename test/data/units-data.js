@@ -5,7 +5,7 @@ var units_example = {
   items: [{
     question: 'Ex Q1',
     questionCode: "Q1",
-    dataType: "REAL",
+    dataType: "QTY",
     units: [
       {"name": "unit name 0"},
       {"code": "unitCode1"},

@@ -8,8 +8,7 @@
  */
 var FHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6N",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
@@ -38,8 +37,19 @@ var FHTData = {
           "skipLogic": {"conditions":[{"source": "54125-0", "trigger": {"value": "Alex"}}],
             "action": "show"}
         },
-        {"questionCode": "54135-9", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+        {"questionCode": "54135-9", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false,
+          "items": [
+            {"questionCode": "54124-3X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54135-9", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}],
+                "action": "show"}
+            },
+            {"questionCode": "54124-3Y", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
+              "skipLogic": {"conditions":[{"source": "54135-9", "trigger": {"exists": true}}],
+                "action": "show"}
+            }
+          ]
+        },
+        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3
           "items": [
             {"questionCode": "8302-2X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
@@ -65,7 +75,7 @@ var FHTData = {
             {"questionCode": "54130-0X", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #2", "answers": 619, "dataType": "CNE", "units": "", "header": false}
           ]
         },
-        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
         {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
         {"questionCode": "54134-2", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54133-4", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
@@ -75,7 +85,7 @@ var FHTData = {
             {"questionCode": "54140-9", "questionCodeSystem": "LOINC", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54130-0", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54137-5XA", "questionCardinality": {"min": "1", "max": "*"}, "question": "Mock-up section: Shown when Age at Diagnosis is Pre-Birth", "answers": "", "dataType": "", "units": "", "header": true,
-              "skipLogic": {"conditions":[{"source": "54130-0", "trigger": {"code": "LA10402-8"}}],
+              "skipLogic": {"conditions":[{"source": "54130-0", "trigger": {"value": {"code": "LA10402-8", "system":"http://loinc.org"}}}],
                 "action": "show"},
               // level 4
               "items": [
@@ -102,19 +112,19 @@ var FHTData = {
           // level 3
           "items": [
             {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}],
                 "action": "show"}
             },
             {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6", "system": "http://loinc.org"}}}],
                 "action": "show"}
             },
             {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}],
                 "action": "show"}
             },
             {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}],
                 "action": "show"}
             }
           ]
@@ -129,8 +139,8 @@ var FHTData = {
           "items":[
             {"questionCode": "54116-9", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54115-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
-            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
             {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         }
@@ -381,8 +391,7 @@ var FHTData = {
  */
 var horizontalFHTData = {
   // this is an example showing the JSON format based on the US Surgeon General family health portrait.
-  // form type, required. Other possible types: "SDC"
-  type: "LOINC",
+  codeSystem: "LOINC",
   // form code, required, the top-level LOINC item's LOINC code in a panel is listed here.
   code: "54127-6H",
   // form name, required. the top-level LOINC item's name in a panel is listed here.
@@ -407,7 +416,7 @@ var horizontalFHTData = {
         {"questionCode": "54132-6", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you born a twin?", "answers": 623, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54128-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Were you adopted?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54135-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Are your parents related to each other in any way other than marriage?", "answers": 361, "dataType": "CNE", "units": "", "header": false},
-        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
+        {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Height", "answerCardinality": {"min": "1", "max": "1"},"codingInstructions": "Try to type 10, 12, 15, 16, 25", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false,
           // level 3
           "items": [
             {"questionCode": "8302-2X", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Shown when Height is 12", "answers": "", "dataType": "REAL", "units": "", "header": false,
@@ -433,7 +442,7 @@ var horizontalFHTData = {
             {"questionCode": "54130-0X", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up sub item #2", "answers": 619, "answerCodeSystem": "http://loinc.org", "dataType": "CNE", "units": "", "header": false}
           ]
         },
-        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+        {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
         {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}},
         {"questionCode": "54134-2", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false},
         {"questionCode": "54133-4", "questionCardinality": {"min": "1", "max": "1"}, "question": "Ethnicity", "answerCardinality": {"min": "0", "max": "*"}, "answers": 628, "dataType": "CNE", "units": "", "header": false},
@@ -451,7 +460,7 @@ var horizontalFHTData = {
       // level 2
       "items": [
         {"questionCode": "54136-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Relationship to you", "answers": 621, "dataType": "CNE", "units": "", "header": false,
-          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"code": "LA33-6"}}],
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6"}}}],
             "action": "show"}
         },
         {"questionCode": "54138-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Name", "answers": "", "dataType": "ST", "units": "", "header": false},
@@ -464,19 +473,19 @@ var horizontalFHTData = {
           // level 3
           "items": [
             {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth", "answers": "", "dataType": "DT", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}],
                 "action": "show"}
             },
             {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age", "answers": "", "dataType": "REAL", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA33-6"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA33-6"}}}],
                 "action": "show"}
             },
             {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death", "answers": 627, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8"}}}],
                 "action": "show"}
             },
             {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death", "answers": 619, "dataType": "CNE", "units": "", "header": false,
-              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"code": "LA32-8"}}],
+              "skipLogic": {"conditions":[{"source": "54139-1", "trigger": {"value": {"code": "LA32-8"}}}],
                 "action": "show"}
             }
           ]
@@ -491,13 +500,13 @@ var horizontalFHTData = {
           "items":[
             {"questionCode": "54116-9", "questionCardinality": {"min": "1", "max": "1"}, "question": "Disease or Condition", "answers": 626, "dataType": "CNE", "units": "", "header": false},
             {"questionCode": "54115-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Diagnosis", "answers": 619, "dataType": "CNE", "units": "", "header": false},
-            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "REAL", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
-            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "REAL", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
+            {"questionCode": "8302-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Height", "codingInstructions": "", "answers": "", "dataType": "QTY", "units": [{"name": "inches", "default": true}, {"name": "centimeters"}], "header": false},
+            {"questionCode": "29463-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Weight", "answers": "", "dataType": "QTY", "units": [{"name": "lbs", "default": true}, {"name": "kgs"}], "header": false},
             {"questionCode": "39156-5", "questionCardinality": {"min": "1", "max": "1"}, "question": "Mock-up item: Body mass index (BMI) [Ratio]", "answers": "", "dataType": "", "units": "", "header": false, "calculationMethod":{"name":"BMI","value":["29463-7","8302-2"]}}
           ]
         },
         {"questionCode": "54119-3R", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Race", "answerCardinality": {"min": "0", "max": "*"}, "answers": 629, "dataType": "CNE", "units": "", "header": false,
-          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"code": "LA33-6"}}],
+          "skipLogic": {"conditions":[{"source": "54122-7", "trigger": {"value": {"code": "LA33-6"}}}],
             "action": "show"}
         }
       ]
@@ -790,7 +799,7 @@ var allInOne =
     {
       "questionCode": "q_lg",
       "question": "'lg' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "lg",
         "css": [{
@@ -803,7 +812,7 @@ var allInOne =
     {
       "questionCode": "q_md",
       "question": "'md' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "md"
       },
@@ -812,7 +821,7 @@ var allInOne =
     {
       "questionCode": "q_sm",
       "question": "'sm' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "sm"
       },
@@ -821,7 +830,7 @@ var allInOne =
     {
       "questionCode": "q_auto",
       "question": "'auto' view mode",
-      "dataType": "INT",
+      "dataType": "QTY",
       "displayControl": {
         "viewMode": "auto"
       },
@@ -847,7 +856,7 @@ var allInOne =
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type4", "dataType": "ST", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
-      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+      "skipLogic": null, "editable": null, "defaultAnswer": "default value", "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
@@ -950,6 +959,29 @@ var allInOne =
       ]
     },
 
+    // skip logic, CNE trigger type; exists support
+    {"questionCode": "54139-1-cnesrc-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?",
+      "answers": [{"text": "Yes", "code": "LA33-6"}, {"text": "No", "code": "LA32-8"}, {"text": "Unknown", "code": "LA4489-6"}],
+      "dataType": "CNE", "units": "", "header": false,
+      "items": [
+        {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES)", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age (show if Living answered)", "answers": "", "dataType": "REAL", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": true}}], "action": "show"}
+        },
+        {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death (show if Living is NO)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death (show if Living not answered)",
+          "answers": [ {"text": "Pre-Birth", "code": "LA10402-8"}, {"text": "Newborn", "code": "LA10403-6"}, {"text": "Infancy", "code": "LA10394-7"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": false}}], "action": "show"}
+        }
+      ]
+    },
 
     // skip logic, with logic ALL
     {"questionCode": "slALLSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ALL)", "answers": null,
@@ -1387,7 +1419,7 @@ var formWithUserData =
     {"questionCode": "q3", "dataType": "ST", "header": false, "units": null, "codingInstructions": null, "value": "user input value",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
-    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015 10:10",
+    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015",
       "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "q99", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null, "value": "11/20/2015 10:10",
@@ -1584,10 +1616,10 @@ var formWithUserData =
         }
       ]
     },
-    // value with unit
+    // values with unit
     {
       answerCardinality: {min: "0", max: "1"},
-      dataType: "REAL",
+      dataType: "QTY",
       header: false,
       question: "Weight, with value and unit",
       questionCardinality: {min: "1", max: "1"},
@@ -1599,7 +1631,7 @@ var formWithUserData =
     },
     {
       answerCardinality: {min: "0", max: "1"},
-      dataType: "REAL",
+      dataType: "QTY",
       header: false,
       question: "Weight, with value and unit, and a default unit",
       questionCardinality: {min: "1", max: "1"},
@@ -1608,6 +1640,18 @@ var formWithUserData =
       unit: {name: "kgs"},
       units: [{name: "lbs", default: true},{name: "kgs"}],
       value: 456
+    },
+    {
+      answerCardinality: {min: "0", max: "1"},
+      dataType: "REAL",
+      header: false,
+      question: "Weight as REAL with value and unit",
+      questionCardinality: {min: "1", max: "1"},
+      questionCode: "unit3",
+      questionCodeSystem: "LOINC",
+      unit: {name: "kgs"},
+      units: [{name: "kgs"}],
+      value: 789
     },
     // user value and default answers on CWE typed items when answers are displayed as radio buttons and checkboxes
     {
@@ -1838,7 +1882,7 @@ var genetic = {
       "dataType": "CNE",
       "codingInstructions": "Not part of the HL7 specification. Used only to show different choices of codes for representing variants",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "answers": [
         {"code": "C01", "text": "dbSNP  --NCBI"},
@@ -1922,7 +1966,7 @@ var genetic = {
     {"questionCode": "XXXXX-9",
       "question": "Simple variation",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2179,7 +2223,7 @@ var genetic = {
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -2195,12 +2239,12 @@ var genetic = {
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         }
       ]
@@ -2210,7 +2254,7 @@ var genetic = {
     {"questionCode": "XXXX2-9",
       "question": "Structural (copy number) variation",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2306,13 +2350,13 @@ var genetic = {
       "question": "Gene mutations tested for",
       "dataType": "CWE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
     },
     {"questionCode": "XXXXX-11",
       "question": "Range(s) of DNA sequence examined",
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"}
     }
   ]
@@ -2345,7 +2389,7 @@ var genetic2 ={
       "dataType": "CNE",
       "codingInstructions": "Not part of the HL7 specification. Used only to show different choices of codes for representing variants",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "answers": [
         {"code": "C01", "text": "dbSNP  --NCBI"},
@@ -2416,13 +2460,13 @@ var genetic2 ={
       "question": "Gene mutations tested for",
       "dataType": "CWE",
       "answerCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "externallyDefined":"https://lhcs-lynch-rh:4433/alleles?df=AlleleID,GeneSymbol,NucleotideChange,AminoAcidChange"
     },
     {"questionCode": "XXXXX-11",
       "question": "Range(s) of DNA sequence examined",
-      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"}
     },
     {"questionCode": "XXXXX-0",
@@ -2443,7 +2487,7 @@ var genetic2 ={
       "questionCode": "titleHeader1",
       "question": "Simple Small Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true
     },
@@ -2451,7 +2495,7 @@ var genetic2 ={
     {"questionCode": "XXXXX-9",
       "question": "Simple variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -2638,7 +2682,7 @@ var genetic2 ={
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -2654,12 +2698,12 @@ var genetic2 ={
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXX2-13",
@@ -2815,14 +2859,14 @@ var genetic2 ={
       "questionCode": "titleHeader2",
       "question": "Complex Small Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true
     },
     {"questionCode": "XXXXX-20",
       "question": "Complex variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -3010,7 +3054,7 @@ var genetic2 ={
           "dataType": "CNE",
           "answerCardinality": {"max": "1", "min":"0"},
           "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/snps/v3/search",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C01"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataControl": [
             {
@@ -3026,12 +3070,12 @@ var genetic2 ={
         },
         {"questionCode": "XXXXX-7",
           "question": "COSMIC ID for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C05"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C05"}}}],
             "action": "show"}
         },
         {"questionCode": "XXXXX-6",
           "question": "CIGAR specification for mutations",
-          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"code": "C04"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-2", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"}
         },
         {"questionCode": "X1001-0",
@@ -3184,14 +3228,14 @@ var genetic2 ={
       "questionCode": "titleHeader3",
       "question": "Structural (Copy Number) Variants Section",
       "dataType": "TITLE",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C03"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03"}}}],
         "action": "show"},
       "header": true
     },
     {"questionCode": "XXXX2-9",
       "question": "Structural (copy number) variants",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C03"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C03"}}}],
         "action": "show"},
       "header": true,
       "items" : [
@@ -4454,14 +4498,14 @@ var newGenetic = {
       "questionCode": "81295-8",
       "question": "OID for other T RefSeq coding system",
       "dataType": "ST",
-      "skipLogic": {"conditions":[{"source": "81248-7", "trigger": {"code": "LA2635-6"}}],
+      "skipLogic": {"conditions":[{"source": "81248-7", "trigger": {"value": {"code": "LA2635-6"}}}],
         "action": "show"}
     },
     {
       "questionCode": "81296-6",
       "question": "OID for other G RefSeq coding system",
       "dataType": "ST",
-      "skipLogic": {"conditions":[{"source": "81249-5", "trigger": {"code": "C04"}}],
+      "skipLogic": {"conditions":[{"source": "81249-5", "trigger": {"value": {"code": "C04"}}}],
         "action": "show"}
     },
 
@@ -4487,7 +4531,7 @@ var newGenetic = {
         },
         {"questionCode": "51963-7",
           "question": "Medications assessed",
-          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C04"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04"}}}],
             "action": "show"},
           "dataType": "CWE",
           "answerCardinality": {"min":"0", "max":"*"},
@@ -4508,7 +4552,7 @@ var newGenetic = {
         },
         {"questionCode": "36908-2",
           "question": "Gene mutations tested",
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C01"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C01"}}}],
             "action": "show"},
           "dataType": "CWE",
           "answerCodeSystem": "CLINVAR-V",
@@ -4524,13 +4568,13 @@ var newGenetic = {
           "question": "Ranges of DNA sequences examined",
           "dataType": "NR",
           "questionCardinality": {"min":"0", "max":"*"},
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
             "action": "show"}
         },
         {"questionCode": "81293-3",
           "question": "Description of ranges of DNA sequences examined",
           "dataType": "TX",
-          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"code": "C02"}}],
+          "skipLogic": {"conditions":[{"source": "XXXXX-10", "trigger": {"value": {"code": "C02"}}}],
             "action": "show"}
         },
         {
@@ -4607,8 +4651,7 @@ var newGenetic = {
     { "questionCode": "81250-3",
       "question": "Discrete genetic variant panel",
       "questionCardinality": {"max": "*", "min":"0"},
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C01"}}],
-        "action": "show"},
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C01"}}}], "action": "show"},
       "header": true,
       "items" : [
         { "questionCode": "83005-9",
@@ -5258,8 +5301,7 @@ var newGenetic = {
         ,
         { "questionCode": "81297-4",
           "question": "Structural variant addendum panel",
-          "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-                "code": "LA26802-1"}}], "action": "show"},
+          "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {"value": {"code": "LA26802-1"}}}], "action": "show"},
           "header": true,
           "items" : [
             {"questionCode": "82155-3",
@@ -5292,7 +5334,7 @@ var newGenetic = {
     },
     {"questionCode": "81251-1",
       "question": "Complex genetic variant - panel",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C02"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C02"}}}],
         "action": "show"},
       "questionCardinality": {"max": "*", "min":"0"},
       "header": true,
@@ -6104,8 +6146,7 @@ var newGenetic = {
             ,
             { "questionCode": "81297-4",
               "question": "Structural variant addendum panel",
-              "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {
-                    "code": "LA26802-1"}}], "action": "show"},
+              "skipLogic": {"conditions":[{"source": "83005-9", "trigger": {"value": {"code": "LA26802-1"}}}], "action": "show"},
               "header": true,
               "items" : [
                 {"questionCode": "82155-3",
@@ -6141,7 +6182,7 @@ var newGenetic = {
     {
       "questionCode": "82118-1",
       "question": "Pharmacogenomics gene results panel",
-      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"code": "C04"}}],
+      "skipLogic": {"conditions":[{"source": "XXXXX-12", "trigger": {"value": {"code": "C04"}}}],
         "action": "show"},
       "header": true,
       "layout": "vertical",
@@ -6348,7 +6389,7 @@ var defaultAnswerForm = {
       "questionCode": "strField",
       "questionCardinality": {
         "min": "1",
-        "max": "1"
+        "max": "*"
       },
       "header": false,
       "editable": "1",
@@ -7362,7 +7403,7 @@ var vitalSign = {
     {
       "questionCode": "3141-9",
       "localQuestionCode": null,
-      "dataType": "REAL",
+      "dataType": "QTY",
       "header": false,
       "units": [{"name": "lbs", "default": true}, {"name": "kgs"}],
       "codingInstructions": null,
@@ -7409,7 +7450,7 @@ var vitalSign = {
     {
       "questionCode": "8302-2",
       "localQuestionCode": null,
-      "dataType": "REAL",
+      "dataType": "QTY",
       "header": false,
       "units": [
         {
@@ -7454,7 +7495,7 @@ var vitalSign = {
     {
       "questionCode": "8306-3",
       "localQuestionCode": null,
-      "dataType": null,
+      "dataType": "QTY",
       "header": false,
       "units": [
         {

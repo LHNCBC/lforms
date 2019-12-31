@@ -2,10 +2,10 @@ var util = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
+  beforeAll(()=>tp.openFormWithUserData());
 
   it('should load ST, DT, DTM, INT, answer lists', function() {
 
-    tp.openFormWithUserData();
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');
     expect(ff.q3.getAttribute('value')).toBe('user input value');
@@ -32,6 +32,8 @@ describe('load saved user data', function() {
     expect(ff.unit1_unit.getAttribute('value')).toBe('kgs');
     expect(ff.unit2.getAttribute('value')).toBe('456');
     expect(ff.unit2_unit.getAttribute('value')).toBe('kgs');
+    expect($('#\\/unit3\\/1').getAttribute('value')).toBe('789');
+    expect($('#unit_\\/unit3\\/1').getAttribute('value')).toBe('kgs');
   });
 
   it('skip logic should work with loaded user data', function() {
@@ -219,4 +221,21 @@ describe('load saved user data', function() {
   });
 
 
+});
+
+describe('load saved user data, where hasSavedData is set to true', function() {
+
+  it('should not load default values', function () {
+
+    tp.openFormWithUserDataWithHasSavedData();
+    expect(ff.q5.getAttribute('value')).toBe('');
+
+    var cwe5Other = element(by.id("/cwe-checkbox-default-answer/1_other")),
+        cwe7Other = element(by.id("/cwe-radio-default-answer/1_other"));
+
+    // default answer is not in the answer list,
+    expect(cwe5Other.isSelected()).toBe(false);
+    expect(cwe7Other.isSelected()).toBe(false);
+
+  });
 });

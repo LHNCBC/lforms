@@ -74,6 +74,7 @@ function addSDCImportFns(ns) {
     self._processExternallyDefined(targetItem, qItem);
     self._processTerminologyServer(targetItem, qItem);
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
+    self._processExtensions(targetItem, qItem);
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
@@ -124,25 +125,24 @@ function addSDCImportFns(ns) {
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
-          var condition = {source: source.questionCode};
+          var condition = {source: source.questionCode, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-          var opMapping = null;
-          if(source.dataType === 'CWE' || source.dataType === 'CNE') {
-            condition.trigger = {code: answer.code};
+          var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
+          if(! opMapping) {
+            throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+          }
+
+          if(opMapping === 'exists') {
+            condition.trigger.exists = answer; // boolean value here regardless of data type
+          }
+          else if(source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger.value = self._copyTriggerCoding(answer, null, false);
           }
           else if(source.dataType === 'QTY') {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-            if(opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer.value;
-            }
+            condition.trigger[opMapping] = answer.value;
           }
           else {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-            if(opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer;
-            }
+            condition.trigger[opMapping] = answer;
           }
           lfItem.skipLogic.conditions.push(condition);
         }
@@ -320,68 +320,11 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
-  self._processUnitList = function (lfItem, qItem) {
-
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-    if(unitOption && unitOption.length > 0) {
-      for(var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-    if(unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
-      // If this unit is already in the list, set its default flag, otherwise create new
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-    else if(qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: qItem.initial[0].valueQuantity.unit,
-          code: qItem.initial[0].valueQuantity.code,
-          system: qItem.initial[0].valueQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if(lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-      lfItem.units = lformsUnits;
-    }
+  self.getFirstInitialQuantity = function(qItem) {
+    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
 
 
@@ -453,7 +396,7 @@ function addSDCImportFns(ns) {
    */
   self._processDataType = function (lfItem, qItem) {
     var type = self._getDataType(qItem);
-    if(type === 'SECTION' || type === 'TITLE') {
+    if(type === 'SECTION') {
       lfItem.header = true;
     }
     lfItem.dataType = type;

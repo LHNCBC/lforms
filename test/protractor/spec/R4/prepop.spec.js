@@ -41,13 +41,16 @@ describe('Form pre-population', function() {
       tp.openBaseTestPage();
       setServerFHIRContext(serverFHIRNum);
       tp.loadFromTestData('phq9.json', 'R4');
+      browser.sleep(5000);
       // This test form does prepoluation of the first answer.
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));
-      browser.wait(function() {return firstQ.getAttribute('value')}, 2000)
+      browser.sleep(5000);
+      browser.wait(function() {return firstQ.getAttribute('value')}, 2000);
       expect(firstQ.getAttribute('value')).toBe('0. Not at all - 0');
       var sum = element(by.id('/44261-6/1'));
-      browser.wait(function() {return sum.getAttribute('value')}, 2000)
+      browser.sleep(5000);
+      browser.wait(function() {return sum.getAttribute('value')}, 2000);
       expect(sum.getAttribute('value')).toBe('0');
     });
   }

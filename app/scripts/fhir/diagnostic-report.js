@@ -336,9 +336,25 @@ var dr = {
 
       switch (dataType) {
         case "INT":
-        case "REAL":
-          item.value = obx.valueQuantity.value;
-          item.unit = {name: obx.valueQuantity.code};
+          if (obx.valueInteger) {
+            item.value = obx.valueInteger;
+            break;
+          }
+          // else handle as Quantity
+        case "REAL": // handle as Quantity
+        case "QTY":
+          let qty = obx.valueQuantity;
+          item.value = qty.value;
+          let unitName = qty.unit || qty.code;
+          if (unitName || qty.code || qty.system) {
+            item.unit = {};
+            if (unitName)
+              item.unit.name = unitName;
+            if (qty.code)
+              item.unit.code = qty.code;
+            if (qty.system)
+              item.unit.system = qty.system;
+          }
           break;
         case "DT":
           item.value = LForms.Util.stringToDTDateISO(obx.valueDate);
@@ -655,8 +671,12 @@ var dr = {
    */
   mergeDiagnosticReportToLForms : function(formData, diagnosticReport) {
 
-    // get the default settings in case they are missing in the form data
-    var newFormData = (new LForms.LFormsData(formData)).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
+      formData = (new LForms.LFormsData(formData)).getFormData();
+    }
 
     var inBundle = diagnosticReport && diagnosticReport.resourceType === "Bundle";
 
@@ -666,16 +686,16 @@ var dr = {
 
     var reportStructure = this._getReportStructure(dr);
 
-    this._processObxAndItem(reportStructure, newFormData, dr);
+    this._processObxAndItem(reportStructure, formData, dr);
 
     // date
-    if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
+    if (dr.effectiveDateTime && formData.templateOptions.formHeaderItems) {
       var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
       if (whenDone) {
-        newFormData.templateOptions.formHeaderItems[0].value = whenDone;
+        formData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
-    return newFormData;
+    return formData;
   }
 
 };

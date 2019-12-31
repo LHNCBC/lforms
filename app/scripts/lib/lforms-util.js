@@ -280,11 +280,11 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
           break;
       }
     }
@@ -1002,10 +1002,88 @@ LForms.Util = {
       var url = copiedExtURLs[i];
       var extInfo = copiedExtensions[url];
       var prop = extInfo[0],multiple = extInfo[1];
-      var ext = LForms.Util.findObjectInArray(extensionArray,'url',url,0,multiple);
-      if (!multiple || ext.length > 0) {
+      var ext = LForms.Util.removeObjectsFromArray(extensionArray,'url', url,0, multiple);
+      if ((multiple && ext.length > 0) || !multiple && ext) { // If array, avoid assigning empty array
         lfItem[prop] = ext;
       }
     }
   },
+  
+  /**
+   * Removes an object(s) from an array searching it using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   *
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - key of the object to match the value
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   * @param all - if false, removes the first matched object otherwise removes all matched objects.
+   *   Default is false.
+   *
+   * @returns {Object|Array} - Returns removed object or array of objects.
+   */
+  removeObjectsFromArray: function(targetObjects, key, matchingValue, starting_index, all) {
+    var ind = all ? [] : null;
+    var ret = all ? [] : null;
+    if(Array.isArray(targetObjects)) {
+      var start = 0;
+      // Figure out start index.
+      if(starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if(starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        }
+        else {
+          start = starting_index;
+        }
+      }
+      var len = targetObjects.length;
+      
+      for(var i = start; i < len; i++) {
+        if(targetObjects[i][key] === matchingValue) {
+          var match = targetObjects[i];
+          if (all) {
+            ind.push(i);
+            ret.push(match);
+          }
+          else {
+            ind = i;
+            ret = match;
+            break;
+          }
+        }
+      }
+      if(Array.isArray(ind)) {
+        for(var i = ind.length - 1; i >= 0; i--) {
+          targetObjects.splice(ind[i], 1);
+        }
+      }
+      else {
+        if(ind !== null) {
+          targetObjects.splice(ind, 1);
+        }
+      }
+    }
+    
+    return ret;
+  },
+  
+  /**
+   * Create a rudimentary Set object. Can be improved to include add(), delete(), has() functions etc.
+   * For now using like a plain javascript object. Beware of 0 or false inputs for lookups.
+   *
+   * @param elemArray
+   */
+  createSet: function(elemArray) {
+    var ret = {};
+    for(var i = 0; i < elemArray.length; i++) {
+      ret[elemArray[i]] = elemArray[i];
+    }
+    return ret;
+  },
+  
 };

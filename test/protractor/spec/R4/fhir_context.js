@@ -73,7 +73,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
                   }
                 ],
                 "text": "Little interest or pleasure in doing things?"
-              },
+              };
               entry.resource.valueCodeableConcept = {
                 "coding": [
                   {
@@ -83,7 +83,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
                   }
                 ],
                 "text": "Not at all"
-              }
+              };
               break;
             default:
               entry = null;
@@ -107,4 +107,4 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
       }
     }
   }
-}
+};

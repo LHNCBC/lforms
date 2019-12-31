@@ -6,7 +6,7 @@ describe('Data Type', function() {
     tp.openFullFeaturedForm();
     let titleRow = element(by.css(".lf-form-table-row.lf-question.lf-datatype-TITLE.lf-title-row"));
     let typeTitle = titleRow.element(by.css("label[for='/titleHeader/1']"));
-  
+
     expect(typeTitle.isDisplayed()).toBe(true);
   });
 
@@ -35,15 +35,15 @@ describe('Data Type', function() {
     expect(dtEl.getAttribute('value')).toEqual(dateStr);
     expect(dtEl.getAttribute('class')).toContain('ng-valid-parse');
   });
-  
-  
+
+
   it('DTM data type should work', function () {
     tp.openFullFeaturedForm();
     let dtmEl = element(by.id('/type7/1'));
     dtmEl.clear();
     dtmEl.sendKeys('02/03/201923:59');
     expect(dtmEl.getAttribute('class')).toContain('ng-invalid-datetime');
-    
+
     dtmEl.clear();
     dtmEl.sendKeys('02/03/2019 23:59');
     expect(dtmEl.getAttribute('class')).toContain('ng-valid-datetime');
@@ -66,31 +66,38 @@ describe('Data Type', function() {
   });
 
   describe("Items with units", function() {
-    
-    it("should have the REAL data type", function() {
-      tp.openVitalSign();
-      var field1 = element(by.id('/3140-1/1')),
-          field2 = element(by.id('/9279-1/1')),
-          field3 = element(by.id('/8310-5/1'));
 
-      expect(field1.getAttribute('type')).toBe("text");
-      field1.evaluate("item.dataType").then(function (value) {
-        expect(value).toBe('INT');
-      });
-      expect(field2.getAttribute('type')).toBe("text");
-      field2.evaluate("item.dataType").then(function (value) {
-        expect(value).toBe('REAL');
-      });
-      expect(field3.getAttribute('type')).toBe("text");
-      field3.evaluate("item.dataType").then(function (value) {
-        expect(value).toBe('REAL');
+    describe("with a REAL or INT data type", function () {
+      beforeAll(() => {tp.openVitalSign()});
+
+      it("should have data type set", function() {
+        var field1 = element(by.id('/3140-1/1')),
+            field2 = element(by.id('/9279-1/1')),
+            field3 = element(by.id('/8310-5/1')); // temperature
+        expect(field1.getAttribute('type')).toBe("text");
+        field1.evaluate("item.dataType").then(function (value) {
+          expect(value).toBe('INT');
+        });
+        expect(field2.getAttribute('type')).toBe("text");
+        field2.evaluate("item.dataType").then(function (value) {
+          expect(value).toBe('REAL');
+        });
+        expect(field3.getAttribute('type')).toBe("text");
+        field3.evaluate("item.dataType").then(function (value) {
+          expect(value).toBe('REAL');
+        });
+
       });
 
+      it('should show the unit', function() {
+        var field3Unit = element(by.id('unit_/8310-5/1')); // temperature
+        expect(field3Unit.getAttribute('value')).toBe('Cel');
+      });
     });
   });
 
   describe("Items with QTY dataType", function() {
-    
+
     it("should render QTY data type with associated units", function() {
       tp.openQTYDemo();
       var field1 = element(by.id('/q1/1')),
@@ -99,19 +106,19 @@ describe('Data Type', function() {
           units3 = element(by.id('unit_/q3/1')),
           units4 = element(by.id('unit_/q4/1')),
           units5 = element(by.id('unit_/q5/1'));
-  
+
       expect(field1.getAttribute('type')).toBe("text");
       expect(field1.getAttribute('value')).toBe("2.5");
       field1.evaluate("item.dataType").then(function (value) {
         expect(value).toBe('QTY');
       });
       expect(units1.isPresent()).toBe(false);
-  
+
       expect(field2.getAttribute('placeholder')).toBe("Type a number");
       expect(field2.getAttribute('value')).toBe("");
-  
+
       expect(units3.getAttribute("value")).toBe("kgs");
-      
+
       var ac = tp.Autocomp;
       expect(units4.getAttribute("value")).toBe("lbs");
       units4.evaluate("item.unit").then(function (unit) {
@@ -135,7 +142,7 @@ describe('Data Type', function() {
       units4.evaluate("item.unit").then(function (unit) {
         expect(unit).toEqual({_displayUnit: "grams", name: "grams", system: "http://unitsofmeasure.org"});
       });
-  
+
       field1.click(); // Close auto complete pull down.
       expect(ac.searchResults.isDisplayed()).toBe(false);
       expect(units5.getAttribute("value")).toBe("");

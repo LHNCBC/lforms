@@ -64,6 +64,33 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
       describe('FHIR Data: ', function () {
         describe('get FHIR data from LForms forms', function() {
+          it('should generate correct Observations for type integer', function() {
+            tp.openFullFeaturedForm();
+            let integerWithUnit = $('#\\/q_lg\\/1')
+            integerWithUnit.sendKeys(3);
+            let integerNoUnit = $('#\\/type2\\/1');
+            integerNoUnit.sendKeys(4);
+            getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("DiagnosticReport");
+              // integer with unit
+              expect(fhirData.contained[0].resourceType).toBe("Observation");
+              expect(fhirData.contained[0].id).not.toBe(undefined);
+              expect(fhirData.contained[0].code.coding[0].code).toBe("q_lg");
+              expect(fhirData.contained[0].valueQuantity).toEqual({value: 3, unit: 'lbs'});
+
+              // integer without unit
+              expect(fhirData.contained[1].resourceType).toBe("Observation");
+              expect(fhirData.contained[1].id).not.toBe(undefined);
+              expect(fhirData.contained[1].code.coding[0].code).toBe("type2");
+              if (fhirVersion === 'STU3')
+                expect(fhirData.contained[1].valueQuantity).toEqual({value: 4});
+              else
+                expect(fhirData.contained[1].valueInteger).toBe(4);
+            });
+          });
 
           it('should get a DiagnosticReport (contained) data from a form', function() {
 
@@ -75,6 +102,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.resourceType).toBe("DiagnosticReport");
               expect(fhirData.result.length).toBe(0);
               expect(fhirData.contained).toEqual([]);
+
               // #2 has some values
               // ST, repeating
               ff.name.sendKeys("name 1");
@@ -240,6 +268,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.entry.length).toBe(1);
               expect(fhirData.entry[0].resource.resourceType).toBe("DiagnosticReport");
               expect(fhirData.entry[0].resource.result).toEqual([]);
+
               // #2 has some values
               // ST, repeating
               ff.name.sendKeys("name 1");
@@ -284,6 +313,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
 
+              // // remove the default values on the 2 items
+              // expect(ff.related.getAttribute('value')).toEqual('No');
+              // ff.related.clear();
+              // expect(ff.related.getAttribute('value')).toEqual('');
+              //
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('72');
+              // ff.mockedHeight.clear();
+              // expect(ff.mockedHeight.getAttribute('value')).toEqual('');
 
               getFHIRResource("DiagnosticReport", fhirVersion,
                   {bundleType: "collection"}).then(function(callbackData) {
@@ -590,7 +627,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (contained) data back into the form', function() {
 
-            tp.openUSSGFHTVertical();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr")).click();
@@ -626,7 +662,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
-            tp.openUSSGFHTVertical();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
@@ -648,6 +683,40 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             expect(ff.disease.getAttribute('value')).toBe("Hypertension");
             expect(ff.ageAtDiag.getAttribute('value')).toBe("Newborn");
           });
+
+
+          it('should merge all DiagnosticReport (contained) data back into the form without setting default values', function() {
+
+            //tp.openUSSGFHTVertical();
+            tp.setFHIRVersion(fhirVersion);
+
+            element(by.id("merge-dr-default-values")).click();
+            browser.waitForAngular();
+
+            var intField = element(by.id('/intField/1')),
+                decField = element(by.id('/decField/1')),
+                strField = element(by.id('/strField/1')),
+                dateField = element(by.id('/dateField/1')),
+                listField = element(by.id('/ansCodeDefault/1'));
+
+            browser.wait(function() {
+              try {
+                return intField.isDisplayed(); // sometimes results in a "stale reference" error
+              }
+              catch (e) {
+                // Try to refresh the element
+                intField = element(by.id('/intField/1'));
+              }
+            }, tp.WAIT_TIMEOUT_1);
+
+            expect(intField.getAttribute('value')).toBe('24'); // it is a value in dr
+            expect(decField.getAttribute('value')).toBe('');
+            expect(strField.getAttribute('value')).toBe('');
+            expect(dateField.getAttribute('value')).toBe('');
+            expect(listField.getAttribute('value')).toBe('');
+
+          });
+
 
           it('should merge FHIR SDC QuestionnaireResponse data back into the form', function() {
             tp.openUSSGFHTVertical();
@@ -695,10 +764,17 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
-
+            // CNE field with a default value
+            var cne = element(by.id('/type9/1'));
+            // ST field with a default value
+            var st = element(by.id('/type4/1'));
             browser.wait(function() {
               return cwe.isDisplayed();
             }, tp.WAIT_TIMEOUT_1);
+
+            // the default value should not be set
+            expect(cne.getAttribute('value')).toBe('');
+            expect(st.getAttribute('value')).toBe('');
 
             expect(cwe.getAttribute('value')).toBe("user typed value");
             cwe.evaluate('item.value').then(function(val) {
