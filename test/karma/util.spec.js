@@ -138,9 +138,6 @@ describe('Util library', function() {
         removed: [],
         expected: [{a: 1, id: 1}, {b: "true", id: 2}, {b: "true", id: 3}]
       },
-
-
-
     ].forEach(function (test) {
       it(test.message, function () {
         var removed = LForms.Util.removeObjectsFromArray(test.target, test.key, test.value, test.startIndex, test.all);

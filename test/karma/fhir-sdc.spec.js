@@ -1062,6 +1062,8 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
             // Confirm that we got the exension back.
             var fhirQExts = fhirQ.item[0].extension;
             var convertedExts = convertedFHIRQ.item[0].extension;
+            // After the conversion, the order of extension array might change,
+            // but atleast make sure the content of each element is the same.
             assert.equal(convertedExts.length, fhirQExts.length);
             for (var i=0, len=convertedExts.length; i<len; ++i) {
               assert.isOk(fhirQExts.some(function(qExt) {
