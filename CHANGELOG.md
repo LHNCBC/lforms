@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.1.2] 2019-12-26
+### Fixed
+- Exporting to FHIR no longer include the minOccurs extension if the value is 1
+  and "required" is true.
+
 ## [20.1.1] 2019-12-18
 ### Fixed
 - defaultAnswer was not handled correctly for DT and DTM.
