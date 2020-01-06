@@ -177,6 +177,7 @@
             this[props[i]] = data[props[i]];
           }
         }
+        // Paul thinks _variableExt at the form level should be preserved if constructing from lforms object.
         if(data._variableExt) {
           this._variableExt = data._variableExt;
         }
