@@ -114,6 +114,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               "_codePath": "/54126-8/54125-0",
               "_idPath": "/1/1"
             };
+            var item2 = Object.assign({_answerRequired: true}, item);
+            var item3 = Object.assign({}, item2, {questionCardinality: {"min": "2", "max": "*"}});
 
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
             assert.equal(out.required, undefined);
@@ -124,6 +126,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.code[0].system,"http://loinc.org");
             assert.equal(out.code[0].code,"54125-0");
 
+            var out2 = fhir.SDC._processItem(LForms.Util.initializeCodes(item2), {});
+            assert.equal(out2.required, true);
+            assert.equal(out2.extension, undefined);
+
+            var out3 = fhir.SDC._processItem(LForms.Util.initializeCodes(item3), {});
+            assert.equal(out3.required, true);
+            assert.equal(out3.extension[0].valueInteger, 2);
           });
 
           it('should covert an item with QTY data type to type quantity in FHIR Questionnaire', function () {
@@ -310,7 +319,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 required: true,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-                  "valueInteger": 1
+                  "valueInteger": 2
                 }],
                 text: 'FHIR Item with multiple codes',
                 linkId: '12345',
@@ -391,7 +400,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 required: true,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-                  "valueInteger": 1
+                  "valueInteger": 2
                 }],
                 text: 'FHIR Item with multiple codes',
                 linkId: '12345',
@@ -762,8 +771,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(FHTData)));
 
             assert.equal(fhirQ.meta.profile[0], fhir.SDC.QProfile);
-            assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs");
-            assert.equal(fhirQ.item[0].item[1].extension[1].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
+            assert.equal(fhirQ.item[0].item[1].extension[0].url, "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl");
 
           });
 

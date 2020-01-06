@@ -21772,10 +21772,14 @@ function addCommonSDCExportFns(ns) {
     targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
 
     if (targetItem.required) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-        "valueInteger": parseInt(item.questionCardinality.min)
-      });
+      var minOccurInt = parseInt(item.questionCardinality.min);
+
+      if (minOccurInt > 1) {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+          "valueInteger": minOccurInt
+        });
+      }
     } // question repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
 
