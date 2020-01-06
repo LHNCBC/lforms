@@ -3283,8 +3283,6 @@ LForms.Util = {
    * The matching value should be a primitive type. If start index is not specified,
    * it is assumed to be 0.
    *
-   *
-   *
    * @param targetObjects - Array of objects to search using key and value
    * @param key - key of the object to match the value
    * @param matchingValue - Matching value of the specified key.
@@ -5717,6 +5715,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
 
+        LForms.Util.processCopiedItemExtensions(item, item.extension);
+
         this._updateItemAttrs(item); // reset answers if it is an answer list id
 
 
@@ -5920,11 +5920,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       item._readOnly = item.editable && item.editable === "0" || !!(item.calculationMethod || item._calculatedExprExt);
       var lfData = this;
-      LForms.Util.processCopiedItemExtensions(item, item.extension);
 
       if (LForms.FHIR && lfData.fhirVersion) {
-        lfData.hasFHIRPath = lfData.hasFHIRPath || item._calculatedExprExt && item._calculatedExprExt.valueExpression.language == "text/fhirpath";
-        lfData._hasInitialExpr = lfData._hasInitialExpr || item._initialExprExt && item._initialExprExt.valueExpression.language == "text/fhirpath";
+        lfData.hasFHIRPath = lfData.hasFHIRPath || item._calculatedExprExt && item._calculatedExprExt.valueExpression.language === "text/fhirpath";
+        lfData._hasInitialExpr = lfData._hasInitialExpr || item._initialExprExt && item._initialExprExt.valueExpression.language === "text/fhirpath";
       }
 
       if (this._fhir) {

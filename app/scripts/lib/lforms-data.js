@@ -1054,7 +1054,8 @@
             item.displayControl.answerLayout =angular.copy(this.templateOptions.defaultAnswerLayout.answerLayout);
           }
         }
-
+  
+        LForms.Util.processCopiedItemExtensions(item, item.extension);
         this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id
@@ -1267,12 +1268,11 @@
          !!(item.calculationMethod || item._calculatedExprExt);
 
       var lfData = this;
-      LForms.Util.processCopiedItemExtensions(item, item.extension);
       if (LForms.FHIR && lfData.fhirVersion) {
         lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
-             item._calculatedExprExt.valueExpression.language=="text/fhirpath");
+             item._calculatedExprExt.valueExpression.language === "text/fhirpath");
         lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
-           item._initialExprExt.valueExpression.language=="text/fhirpath");
+           item._initialExprExt.valueExpression.language === "text/fhirpath");
       }
 
       if (this._fhir) {

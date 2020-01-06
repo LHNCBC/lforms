@@ -1014,8 +1014,6 @@ LForms.Util = {
    * The matching value should be a primitive type. If start index is not specified,
    * it is assumed to be 0.
    *
-   *
-   *
    * @param targetObjects - Array of objects to search using key and value
    * @param key - key of the object to match the value
    * @param matchingValue - Matching value of the specified key.
