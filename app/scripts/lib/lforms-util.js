@@ -28,7 +28,7 @@ var parseDateFormats = [
 // A map of FHIR extensions involving Expressions to the property names on
 // which they will be stored in LFormsData, and a boolean indicating whether
 // more than one extension of the type is permitted.
-var copiedExtensions = {
+var _copiedExtensions = {
   "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
     ["_calculatedExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
@@ -997,10 +997,10 @@ LForms.Util = {
       return;
     }
     // Go through selected extensions.
-    var copiedExtURLs = Object.keys(copiedExtensions);
+    var copiedExtURLs = Object.keys(_copiedExtensions);
     for (var i = 0,len = copiedExtURLs.length; i < len; ++i) {
       var url = copiedExtURLs[i];
-      var extInfo = copiedExtensions[url];
+      var extInfo = _copiedExtensions[url];
       var prop = extInfo[0],multiple = extInfo[1];
       var ext = LForms.Util.removeObjectsFromArray(extensionArray,'url', url,0, multiple);
       if ((multiple && ext.length > 0) || !multiple && ext) { // If array, avoid assigning empty array

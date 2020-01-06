@@ -2336,7 +2336,7 @@ var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D'
 // which they will be stored in LFormsData, and a boolean indicating whether
 // more than one extension of the type is permitted.
 
-var copiedExtensions = {
+var _copiedExtensions = {
   "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false],
@@ -3262,11 +3262,11 @@ LForms.Util = {
     } // Go through selected extensions.
 
 
-    var copiedExtURLs = Object.keys(copiedExtensions);
+    var copiedExtURLs = Object.keys(_copiedExtensions);
 
     for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
       var url = copiedExtURLs[i];
-      var extInfo = copiedExtensions[url];
+      var extInfo = _copiedExtensions[url];
       var prop = extInfo[0],
           multiple = extInfo[1];
       var ext = LForms.Util.removeObjectsFromArray(extensionArray, 'url', url, 0, multiple);
@@ -4817,6 +4817,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           if (props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
             this[props[i]] = data[props[i]];
           }
+        }
+
+        if (data._variableExt) {
+          this._variableExt = data._variableExt;
         }
       } else {
         jQuery.extend(this, data);

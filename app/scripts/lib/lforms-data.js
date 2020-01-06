@@ -177,6 +177,9 @@
             this[props[i]] = data[props[i]];
           }
         }
+        if(data._variableExt) {
+          this._variableExt = data._variableExt;
+        }
       }
       else {
         jQuery.extend(this, data);
