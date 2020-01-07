@@ -395,6 +395,15 @@ user to save the form so it can be redisplayed later for completion or editing.<
   <p>As with the prebuilt files, you may include either the R4 or the STU3 version,
    or both.</p>
 
+  <p>If you are installing via npm, the additional files to require
+  are:</p>
+  <ul>
+    <li>For version R4:
+     require('lforms/app/scripts/fhir/R4/fhirRequire.js');</li>
+    <li>For version STU3:
+     require('lforms/app/scripts/fhir/STU3/fhirRequire.js');</li>
+  </ul>
+
   <h3>
     <a id="retrieving-fhir-data" class="anchor" href="#retrieving-fhir-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
     Exporting FHIR Resources
