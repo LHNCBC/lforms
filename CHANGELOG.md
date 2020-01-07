@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.1.2] 2019-12-31
+## [20.1.3] 2019-12-31
 ### Fixed
 - Export calculatedExpression, variable and other FHIR extensions in lforms format.
 

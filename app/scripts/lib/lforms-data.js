@@ -177,7 +177,7 @@
             this[props[i]] = data[props[i]];
           }
         }
-        // Paul thinks _variableExt at the form level should be preserved if constructing from lforms object.
+        // Preserve _variableExt as FHIR variable extensions have been moved to _variableExt during the LFormsData construction.
         if(data._variableExt) {
           this._variableExt = data._variableExt;
         }
