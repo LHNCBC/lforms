@@ -237,10 +237,10 @@
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
-      this.extension = data.extension;
+      this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
   
       // form-level variables (really only R4+)
-      var ext = LForms.Util.removeObjectsFromArray(data.extension,'url',
+      var ext = LForms.Util.removeObjectsFromArray(this.extension,'url',
         this._fhir.SDC.fhirExtVariable,0,true);
       if (ext.length > 0)
         lfData._variableExt = ext;
@@ -1059,7 +1059,10 @@
           }
         }
   
-        LForms.Util.processCopiedItemExtensions(item, item.extension);
+        if(item.extension) {
+          item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
+          LForms.Util.processCopiedItemExtensions(item, item.extension);
+        }
         this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id

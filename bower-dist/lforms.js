@@ -4817,7 +4817,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           if (props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
             this[props[i]] = data[props[i]];
           }
-        }
+        } // Preserve _variableExt as FHIR variable extensions have been moved to _variableExt during the LFormsData construction.
+
 
         if (data._variableExt) {
           this._variableExt = data._variableExt;
@@ -4877,9 +4878,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
-      this.extension = data.extension; // form-level variables (really only R4+)
+      this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
+      // form-level variables (really only R4+)
 
-      var ext = LForms.Util.removeObjectsFromArray(data.extension, 'url', this._fhir.SDC.fhirExtVariable, 0, true);
+      var ext = LForms.Util.removeObjectsFromArray(this.extension, 'url', this._fhir.SDC.fhirExtVariable, 0, true);
       if (ext.length > 0) lfData._variableExt = ext;
 
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
@@ -5719,7 +5721,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
 
-        LForms.Util.processCopiedItemExtensions(item, item.extension);
+        if (item.extension) {
+          item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
+
+          LForms.Util.processCopiedItemExtensions(item, item.extension);
+        }
 
         this._updateItemAttrs(item); // reset answers if it is an answer list id
 

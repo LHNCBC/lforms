@@ -21969,7 +21969,7 @@ function addCommonSDCExportFns(ns) {
         target.extension = [];
       }
 
-      target.extension.concat(source._variableExt);
+      target.extension = target.extension.concat(source._variableExt);
     } // Handle extensions on title
 
 
