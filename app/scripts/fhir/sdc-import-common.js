@@ -35,7 +35,7 @@ function addCommonSDCImportFns(ns) {
   
   // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
-  self.handledExtensionSet = LForms.Util.createSet([
+  self.handledExtensionSet = new Set([
     self.fhirExtUrlCardinalityMin,
     self.fhirExtUrlCardinalityMax,
     self.fhirExtUrlItemControl,
@@ -1060,7 +1060,7 @@ function addCommonSDCImportFns(ns) {
     var extensions = [];
     if (Array.isArray(qItem.extension)) {
       for (var i=0; i < qItem.extension.length; i++) {
-        if(!self.handledExtensionSet[qItem.extension[i].url]) {
+        if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

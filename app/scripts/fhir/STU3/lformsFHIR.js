@@ -23544,7 +23544,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
-  self.handledExtensionSet = LForms.Util.createSet([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer]);
+  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer]);
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
@@ -24610,7 +24610,7 @@ function addCommonSDCImportFns(ns) {
 
     if (Array.isArray(qItem.extension)) {
       for (var i = 0; i < qItem.extension.length; i++) {
-        if (!self.handledExtensionSet[qItem.extension[i].url]) {
+        if (!self.handledExtensionSet.has(qItem.extension[i].url)) {
           extensions.push(qItem.extension[i]);
         }
       }

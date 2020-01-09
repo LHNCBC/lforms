@@ -1070,18 +1070,4 @@ LForms.Util = {
     return ret;
   },
   
-  /**
-   * Create a rudimentary Set object. Can be improved to include add(), delete(), has() functions etc.
-   * For now using like a plain javascript object. Beware of 0 or false inputs for lookups.
-   *
-   * @param elemArray
-   */
-  createSet: function(elemArray) {
-    var ret = {};
-    for(var i = 0; i < elemArray.length; i++) {
-      ret[elemArray[i]] = elemArray[i];
-    }
-    return ret;
-  },
-  
 };

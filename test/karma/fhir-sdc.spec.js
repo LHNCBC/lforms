@@ -1143,7 +1143,7 @@ for (var i=0, len=nonSTU3FHIRVersions.length; i<len; ++i) {
 
             fhirQExts = fhirQ.item[0].extension;
             convertedExts = convertedFHIRQ.item[0].extension;
-           assert.equal(convertedExts.length, fhirQExts.length);
+            assert.equal(convertedExts.length, fhirQExts.length);
             for (i=0, len=convertedExts.length; i<len; ++i) {
               assert.isOk(fhirQExts.some(function(qExt) {
                 return JSON.stringify(convertedExts[i]) === JSON.stringify(qExt);
