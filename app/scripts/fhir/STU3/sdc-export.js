@@ -106,20 +106,6 @@ var self = {
 
 
   /**
-   *  Processes FHIRPath and related item extensions (e.g. for pre-population
-   *  and extraction.)
-   *
-   * @param targetItem an item in Questionnaire
-   * @param item a LForms item
-   */
-  _processFHIRPathExtensions: function(targetItem, item) {
-    // calcuatedValue
-    if (item._calculatedExprExt)
-      targetItem.extension.push(item._calculatedExprExt);
-  },
-
-
-  /**
    * Handle special requirements for 'display' items
    * @param targetItem an item in Questionnaire
    * @param item a LForms item

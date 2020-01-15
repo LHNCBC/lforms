@@ -16,18 +16,43 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
-  self.fhirExtUrlRestrictionArray = [
-    "http://hl7.org/fhir/StructureDefinition/minValue",
-    "http://hl7.org/fhir/StructureDefinition/maxValue",
-    "http://hl7.org/fhir/StructureDefinition/minLength",
-    "http://hl7.org/fhir/StructureDefinition/regex"
-  ];
+  self.fhirExtUrlMinValue = "http://hl7.org/fhir/StructureDefinition/minValue";
+  self.fhirExtUrlMaxValue = "http://hl7.org/fhir/StructureDefinition/maxValue";
+  self.fhirExtUrlMinLength = "http://hl7.org/fhir/StructureDefinition/minLength";
+  self.fhirExtUrlRegex = "http://hl7.org/fhir/StructureDefinition/regex";
   self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
 
+  self.fhirExtUrlRestrictionArray = [
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex
+  ];
+  
+  // One way or the other, the following extensions are converted to lforms internal fields.
+  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  self.handledExtensionSet = new Set([
+    self.fhirExtUrlCardinalityMin,
+    self.fhirExtUrlCardinalityMax,
+    self.fhirExtUrlItemControl,
+    self.fhirExtUrlUnit,
+    self.fhirExtUrlUnitOption,
+    self.fhirExtUrlOptionPrefix,
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex,
+    self.fhirExtUrlAnswerRepeats,
+    self.fhirExtUrlExternallyDefined,
+    self.argonautExtUrlExtensionScore,
+    self.fhirExtUrlHidden,
+    self.fhirExtTerminologyServer,
+  ]);
+  
   self.formLevelFields = [
     // Resource
     'id',
@@ -67,8 +92,7 @@ function addCommonSDCImportFns(ns) {
   ];
 
   self.itemLevelIgnoredFields = [
-    'definition',
-    'prefix'
+    'definition'
   ];
 
   /**
@@ -133,12 +157,6 @@ function addCommonSDCImportFns(ns) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
     }
-
-    // form-level variables (really only R4+)
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
-      self.fhirExtVariable, 0, true);
-    if (ext.length > 0)
-      lfData._variableExt = ext;
   };
 
 
@@ -178,7 +196,7 @@ function addCommonSDCImportFns(ns) {
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
     // fhirValType is now the FHIR data type for a Questionnaire.  However,
     // where Questionnaire uses Coding, Observation uses CodeableConcept.
-    if (fhirValType == 'Coding')
+    if (fhirValType === 'Coding')
       fhirValType = 'CodeableConcept';
     if (fhirValType)
       val = obs['value'+fhirValType];
@@ -260,10 +278,10 @@ function addCommonSDCImportFns(ns) {
       var answer = null;
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
         var codings = null;
-        if (fhirVal._type == 'CodeableConcept') {
+        if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
         }
-        else if (fhirVal._type == 'Coding') {
+        else if (fhirVal._type === 'Coding') {
           codings = [fhirVal];
         }
         if (!codings) {
@@ -281,8 +299,8 @@ function addCommonSDCImportFns(ns) {
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
                 var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
-                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) &&
-                    coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
+                    coding.code === listAnswer.code) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -1003,8 +1021,8 @@ function addCommonSDCImportFns(ns) {
 
     return ret;
   };
-
-
+  
+  
   /**
    *  Processes the child items of the item.
    * @param targetItem the LForms node being populated with data
@@ -1030,8 +1048,29 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
-
-
+  
+  
+  /**
+   *  Copy extensions that haven't been handled before.
+   *
+   * @param lfItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   */
+  self._processExtensions = function(lfItem, qItem) {
+    var extensions = [];
+    if (Array.isArray(qItem.extension)) {
+      for (var i=0; i < qItem.extension.length; i++) {
+        if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
+          extensions.push(qItem.extension[i]);
+        }
+      }
+    }
+    if(extensions.length > 0) {
+      lfItem.extension = extensions;
+    }
+  };
+  
+  
   /**
    * If the given entity is an array, it will return the array length, return -1 otherwise.
    * @param entity the given entity (can be anything) that needs to be tested to see if it's an array

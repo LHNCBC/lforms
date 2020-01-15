@@ -177,6 +177,10 @@
             this[props[i]] = data[props[i]];
           }
         }
+        // Preserve _variableExt as FHIR variable extensions have been moved to _variableExt during the LFormsData construction.
+        if(data._variableExt) {
+          this._variableExt = data._variableExt;
+        }
       }
       else {
         jQuery.extend(this, data);
@@ -186,7 +190,7 @@
       // when the skip logic rule says the form is done
       this._formDone = false;
 
-      if (LForms.FHIR && data.fhirVersion) {
+      if (LForms.FHIR) {
         this._initializeFormFHIRData(data);
       }
 
@@ -229,12 +233,17 @@
      */
     _initializeFormFHIRData: function(data) {
       var lfData = this;
-      this.fhirVersion = data.fhirVersion;
+      this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
-      this.extension = data.extension;
-      this._variableExt = data._variableExt; // FHIR "variable" extensions
+      this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
+  
+      // form-level variables (really only R4+)
+      var ext = LForms.Util.removeObjectsFromArray(this.extension,'url',
+        this._fhir.SDC.fhirExtVariable,0,true);
+      if (ext.length > 0)
+        lfData._variableExt = ext;
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
 
@@ -886,7 +895,6 @@
           if (item.value && (item.dataType === this._CONSTANTS.DATA_TYPE.DT || item.dataType === this._CONSTANTS.DATA_TYPE.DTM)) {
               item.value = LForms.Util.stringToDate(item.value);
           }
-
         }
       }
     },
@@ -1050,7 +1058,11 @@
             item.displayControl.answerLayout =angular.copy(this.templateOptions.defaultAnswerLayout.answerLayout);
           }
         }
-
+  
+        if(item.extension) {
+          item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
+          LForms.Util.processCopiedItemExtensions(item, item.extension);
+        }
         this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id
@@ -1265,9 +1277,9 @@
       var lfData = this;
       if (LForms.FHIR && lfData.fhirVersion) {
         lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
-             item._calculatedExprExt.valueExpression.language=="text/fhirpath");
+             item._calculatedExprExt.valueExpression.language === "text/fhirpath");
         lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
-           item._initialExprExt.valueExpression.language=="text/fhirpath");
+           item._initialExprExt.valueExpression.language === "text/fhirpath");
       }
 
       if (this._fhir) {

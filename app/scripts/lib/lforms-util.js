@@ -25,6 +25,20 @@ var parseDateFormats = [
   'M-D HH:mm',
 ];
 
+// A map of FHIR extensions involving Expressions to the property names on
+// which they will be stored in LFormsData, and a boolean indicating whether
+// more than one extension of the type is permitted.
+var _copiedExtensions = {
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
+    ["_calculatedExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
+    ["_initialExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod":
+    ["_obsLinkPeriodExt", false],
+  "http://hl7.org/fhir/StructureDefinition/variable":
+    ["_variableExt", true],
+};
+
 var LForms = require('../../lforms');
 
 LForms.Util = {
@@ -970,7 +984,90 @@ LForms.Util = {
 
     return codeSystem;
   },
-
-
-
+  
+  /**
+   *  Some extensions are simply copied over to the LForms data structure.
+   *  This copies those extensions from qItem.extension to lfItem if they exist, and
+   *  LForms can support them.
+   * @param extensionArray - Questionnaire.item.extension
+   * @param lfItem an item from the LFormsData structure
+   */
+  processCopiedItemExtensions: function (lfItem, extensionArray) {
+    if(!extensionArray || extensionArray.length === 0) {
+      return;
+    }
+    // Go through selected extensions.
+    var copiedExtURLs = Object.keys(_copiedExtensions);
+    for (var i = 0,len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = _copiedExtensions[url];
+      var prop = extInfo[0],multiple = extInfo[1];
+      var ext = LForms.Util.removeObjectsFromArray(extensionArray,'url', url,0, multiple);
+      if ((multiple && ext.length > 0) || !multiple && ext) { // If array, avoid assigning empty array
+        lfItem[prop] = ext;
+      }
+    }
+  },
+  
+  /**
+   * Removes an object(s) from an array searching it using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - key of the object to match the value
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   * @param all - if false, removes the first matched object otherwise removes all matched objects.
+   *   Default is false.
+   *
+   * @returns {Object|Array} - Returns removed object or array of objects.
+   */
+  removeObjectsFromArray: function(targetObjects, key, matchingValue, starting_index, all) {
+    var ind = all ? [] : null;
+    var ret = all ? [] : null;
+    if(Array.isArray(targetObjects)) {
+      var start = 0;
+      // Figure out start index.
+      if(starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if(starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        }
+        else {
+          start = starting_index;
+        }
+      }
+      var len = targetObjects.length;
+      
+      for(var i = start; i < len; i++) {
+        if(targetObjects[i][key] === matchingValue) {
+          var match = targetObjects[i];
+          if (all) {
+            ind.push(i);
+            ret.push(match);
+          }
+          else {
+            ind = i;
+            ret = match;
+            break;
+          }
+        }
+      }
+      if(Array.isArray(ind)) {
+        for(var i = ind.length - 1; i >= 0; i--) {
+          targetObjects.splice(ind[i], 1);
+        }
+      }
+      else {
+        if(ind !== null) {
+          targetObjects.splice(ind, 1);
+        }
+      }
+    }
+    
+    return ret;
+  },
+  
 };

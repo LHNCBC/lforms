@@ -140,9 +140,6 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
-    // Copied FHIRPath-related (pre-pop & extraction) extensions
-    this._processFHIRPathExtensions(targetItem, item);
-
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
 
@@ -196,6 +193,8 @@ function addCommonSDCExportFns(ns) {
       this._handleLFormsUnits(targetItem, item);
     }
 
+    this._handleExtensions(targetItem, item);
+    
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -256,7 +255,7 @@ function addCommonSDCExportFns(ns) {
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem
-  },
+  };
 
 
   /**
@@ -313,6 +312,14 @@ function addCommonSDCExportFns(ns) {
     target.name = source.shortName; // computer friendly
     target.title = source.name;
 
+    // Handle variable extensions.
+    if(source._variableExt) {
+      if(!target.extension) {
+        target.extension = [];
+      }
+      target.extension = target.extension.concat(source._variableExt);
+    }
+    
     // Handle extensions on title
     if (source.obj_title)
       target._title = source.obj_title;
@@ -423,7 +430,7 @@ function addCommonSDCExportFns(ns) {
         "valueUrl": item.terminologyServer
       });
     }
-  },
+  };
 
 
 
@@ -843,6 +850,37 @@ function addCommonSDCExportFns(ns) {
    */
   self._lfHasSubItems = function(item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
+  };
+  
+  /**
+   * Process FHIR questionnaire extensions related conversions.
+   *
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+  self._handleExtensions = function (targetItem, item) {
+    var extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      var _ext = item[extName];
+      if(_ext) {
+        if(Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        }else {
+          extension.push(_ext);
+        }
+      }
+    });
+    
+    if(extension.length > 0) {
+      if(!targetItem.extension) {
+        targetItem.extension = [];
+      }
+      targetItem.extension.push.apply(targetItem.extension, extension);
+    }
+  
+    targetItem.extension.push.apply(targetItem.extension, item.extension);
+    
   };
 
 
