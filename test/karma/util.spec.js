@@ -61,7 +61,7 @@ describe('Util library', function() {
       LForms.Util.pruneNulls(target);
       assert.deepEqual(target, expected);
     });
-    
+
     it('should prune from nested array elements', function () {
       var target   = [undefined, [null, undefined, 1, 'str', true,{a: {x: {m: null, n: undefined, o: false}, y: null, z: undefined}, b: null,c: undefined,d: [{f: null, g: undefined, h:1}]}], null];
       var expected = [           [                 1, 'str', true,{a: {x: {                       o: false}                       },                      d: [{                       h:1}]}]      ];
@@ -69,7 +69,7 @@ describe('Util library', function() {
       assert.deepEqual(target, expected);
     });
   });
-  
+
   describe('removeObjectsFromArray', function () {
     [
       {
@@ -145,7 +145,7 @@ describe('Util library', function() {
         assert.deepEqual(test.target, test.expected);
       });
     });
-    
+
   });
 
   describe('findItem', function() {
@@ -159,12 +159,13 @@ describe('Util library', function() {
       assert.equal(item.linkId, 'bb1');
     });
   });
-  
+
+
   describe('Date conversions', function () {
-    
-    
+
+
     it('stringToDate()', function () {
-  
+
       var dt_format = 'YYYY-MM-DD';
       // Date type
       assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('01/02/2018'), dt_format), '2018-01-02');
@@ -180,7 +181,7 @@ describe('Util library', function() {
       assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('5-6'), dt_format), new Date().getFullYear()+'-05-06');
       // Only  year, should default to Jan 1st.
       assert.equal(LForms.Util.formatDate(LForms.Util.stringToDate('2018'), dt_format), '2018-01-01');
-  
+
       // DateTime type
       // ISO parsing
       assert.equal(LForms.Util.stringToDate('2018-01-02T12:34:56.789').toISOString(), '2018-01-02T17:34:56.789Z');
@@ -203,7 +204,7 @@ describe('Util library', function() {
       assert.equal(LForms.Util.formatDate(dt, LForms.HL7._DT_FMT), '20190505');
       assert.equal(LForms.Util.formatDate(dt, 'HHmmssZZ'), '230000-0400');
     });
-    
+
     it('dateToDTMString()', function () {
       var str = '2019-05-06T03:00:00.000Z';
       var dt = LForms.Util.dateToDTMString(str);
@@ -211,5 +212,15 @@ describe('Util library', function() {
       assert.equal(LForms.Util.dateToDTMString(new Date(str)), str);
     });
   })
+
+
+  describe('getFormData', ()=>{
+    it('should include lformsVersion', ()=>{
+      var lfData = new LForms.LFormsData({name: 'test form', items: []});
+      var formData = lfData.getFormData();
+      assert(typeof formData.lformsVersion === 'string');
+      assert(formData.lformsVersion.length > 0);
+    });
+  });
 });
 

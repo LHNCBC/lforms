@@ -1397,6 +1397,7 @@
       }
 
       var defData = {
+        lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         codeList: this.codeList,

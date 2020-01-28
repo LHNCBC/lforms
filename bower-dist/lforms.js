@@ -6040,6 +6040,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       var defData = {
+        lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         codeList: this.codeList,
