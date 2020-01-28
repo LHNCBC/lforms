@@ -13,5 +13,11 @@ describe('LFormsData class', function() {
       assert.equal(lfd.items[0].dataType, 'QTY');
     });
 
+    it('should have lformsVersion set', function() {
+      var lfData = new LForms.LFormsData({name: 'test form', items: []});
+      assert(typeof lfData.lformsVersion === 'string');
+      assert(lfData.lformsVersion.length > 0);
+    });
+
   });
 });

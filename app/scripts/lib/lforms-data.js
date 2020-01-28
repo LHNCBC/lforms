@@ -170,6 +170,8 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
+      this.lformsVersion = LForms.lformsVersion;
+
       if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
         for(var i = 0; i < props.length; i++) {
@@ -238,7 +240,7 @@
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
-  
+
       // form-level variables (really only R4+)
       var ext = LForms.Util.removeObjectsFromArray(this.extension,'url',
         this._fhir.SDC.fhirExtVariable,0,true);
@@ -1058,7 +1060,7 @@
             item.displayControl.answerLayout =angular.copy(this.templateOptions.defaultAnswerLayout.answerLayout);
           }
         }
-  
+
         if(item.extension) {
           item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
           LForms.Util.processCopiedItemExtensions(item, item.extension);
