@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.1.4] 2020-02-12
+### Fixed
+- Fix missing click event on CNE/CWE control. 
+  Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
+- Fix date time parsing test
+
 ## [20.1.3] 2019-12-31
 ### Fixed
 - Export calculatedExpression, variable and other FHIR extensions in lforms format.

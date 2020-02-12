@@ -45,7 +45,7 @@ describe('Data Type', function() {
     let dtmEl = element(by.id('/type7/1'));
     dtmEl.clear();
     dtmEl.sendKeys('02/03/201923:59');
-    expect(dtmEl.getAttribute('class')).toContain('ng-invalid-datetime');
+    expect(dtmEl.getAttribute('class')).toContain('ng-invalid-parse');
 
     dtmEl.clear();
     dtmEl.sendKeys('02/03/2019 23:59');
