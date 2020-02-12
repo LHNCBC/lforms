@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [20.1.4] 2020-02-12
 ### Fixed
-- Fix missing click event on CNE/CWE control. 
+- Fixed a bug in click event in CNE/CWE control. 
   Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
 - Fix date time parsing test
 
