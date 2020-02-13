@@ -8472,7 +8472,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var compiledExpr = this._compiledExpressions[expression];
 
         if (!compiledExpr) {
-          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression);
+          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
         }
 
         fhirPathVal = compiledExpr(fhirContext, fVars);

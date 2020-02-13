@@ -1,5 +1,27 @@
 // Tests for ExpressionProcessor
 describe('ExpresssionProcessor', function () {
+  describe('_evaluateFHIRPath', function() {
+    it('should use the FHIR model', function() {
+      // Test by checking that QR.item.answer.value works to return a value (as
+      // opposed to "valueString", which is what it would be withou model information).
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
+        questionCode: 'q1', dataType: 'ST', value: "green"
+      }, {
+        questionCode: 'q2', dataType: 'ST',
+        extension: [{
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+          "valueExpression": {
+            "language": "text/fhirpath",
+            "expression": "%resource.item.where(linkId='/q1').answer.value"
+          }
+        }]
+      }]});
+      var exp = new LForms.ExpressionProcessor(lfData)
+      exp.runCalculations();
+      assert.equal(lfData.items[1].value, lfData.items[0].value);
+    });
+  }),
+
   describe('_addToIDtoQRItemMap', function() {
     it('should handle repeating items with missing data', function() {
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{questionCode: 'g1', items:  [{
