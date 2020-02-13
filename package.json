@@ -24,7 +24,7 @@
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",
     "ngSmoothScroll": "^2.0.1",
-    "ui.bootstrap.datetimepicker": "^1.0.3",
+    "bootstrap-ui-datetime-picker": "^2.6.4",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
