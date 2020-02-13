@@ -2,11 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.1.4] 2020-02-12
+## [21.0.0] 2020-02-12
+### Changed
+- Bumped up angularjs version to 1.7.x. This could potentially break applications still
+  running prior angularjs versions, hence bumped up the major version.
+  
 ### Fixed
 - Fixed a bug in click event in CNE/CWE control. 
   Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
-- Fix date time parsing test
+- Fix date time parsing test.
 
 ## [20.1.3] 2019-12-31
 ### Fixed
