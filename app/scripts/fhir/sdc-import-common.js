@@ -32,7 +32,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlMinLength,
     self.fhirExtUrlRegex
   ];
-  
+
   // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
   self.handledExtensionSet = new Set([
@@ -52,7 +52,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
   ]);
-  
+
   self.formLevelFields = [
     // Resource
     'id',
@@ -265,7 +265,9 @@ function addCommonSDCImportFns(ns) {
    *   Assigns FHIR values to an LForms item.
    *  @param lfItem the LForms item to receive the values from fhirVals
    *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
+   *   Complex types like Quantity should have _type set to the type, if
+   *   possible, or an attempt will be made to guess the FHIR type from the
+   *   lfItem's data type.
    *  @param setDefault if true, the default value in lfItem will be set instead
    *   of the value.
    */
@@ -281,7 +283,7 @@ function addCommonSDCImportFns(ns) {
         if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
         }
-        else if (fhirVal._type === 'Coding') {
+        else if (fhirVal._type === 'Coding' || typeof fhirVal === 'object') {
           codings = [fhirVal];
         }
         if (!codings) {
@@ -300,7 +302,10 @@ function addCommonSDCImportFns(ns) {
                 var listAnswer = itemAnswers[j];
                 var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
                 if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
-                    coding.code === listAnswer.code) {
+                    ((coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') &&
+                      coding.code===listAnswer.code) ||
+                     (coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') &&
+                      coding.display === listAnswer.text))) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -314,10 +319,16 @@ function addCommonSDCImportFns(ns) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
         }
       }
+      // For date types, convert them to date objects, but only for values.
+      // If we're setting defaultAnswer, leave them as strings.
+      else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
+        answer = new Date(fhirVal);
+      else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
+        answer = LForms.Util.stringToDTDateISO(fhirVal);
       else {
         answer = fhirVal;
       }
-      if (answer)
+      if (answer !== undefined)
         answers.push(answer);
     }
     if (isMultiple) {
@@ -1021,8 +1032,8 @@ function addCommonSDCImportFns(ns) {
 
     return ret;
   };
-  
-  
+
+
   /**
    *  Processes the child items of the item.
    * @param targetItem the LForms node being populated with data
@@ -1048,8 +1059,8 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
-  
-  
+
+
   /**
    *  Copy extensions that haven't been handled before.
    *
@@ -1069,8 +1080,8 @@ function addCommonSDCImportFns(ns) {
       lfItem.extension = extensions;
     }
   };
-  
-  
+
+
   /**
    * If the given entity is an array, it will return the array length, return -1 otherwise.
    * @param entity the given entity (can be anything) that needs to be tested to see if it's an array

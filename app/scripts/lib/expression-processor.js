@@ -303,16 +303,8 @@
         fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
-      else {
-        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
-          item.value = new Date(fhirPathVal);
-        }
-        else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          item.value = LForms.Util.stringToDTDateISO(fhirPathVal);
-        }
-        else
-          item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
-      }
+      else
+        this._fhir.SDC._processFHIRValues(item, fhirPathRes);
       return oldVal != item.value;
     }
   };
