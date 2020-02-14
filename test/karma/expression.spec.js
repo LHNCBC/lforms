@@ -3,7 +3,7 @@ describe('ExpresssionProcessor', function () {
   describe('_evaluateFHIRPath', function() {
     it('should use the FHIR model', function() {
       // Test by checking that QR.item.answer.value works to return a value (as
-      // opposed to "valueString", which is what it would be withou model information).
+      // opposed to "valueString", which is what it would be without model information).
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
         questionCode: 'q1', dataType: 'ST', value: "green"
       }, {

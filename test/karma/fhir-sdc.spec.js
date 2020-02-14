@@ -68,11 +68,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                         lfItem.answerCardinality = {max: '*'};
                       }
                       if (type === 'CodeableConcept') {
-                        fhirValCopy = {coding: fhirVals};
-                        if (type != undefined)
-                          fhirValCopy._type = type;
+                        // Make each value a CodeableConcept (containing the
+                        // coding), and add an extra off-list coding (which
+                        // should not show up in the processed answers).
+                        fhirVals = fhirVals.map((c)=>{return {coding: [c]}});
+                        fhirVals[0].coding.push({display: 'four', code: '4', system: 'cs1'});
                       }
-                      else if (type != undefined)
+                      if (type != undefined)
                         fhirVals.forEach((v)=>v._type=type);
                       fhir.SDC._processFHIRValues(lfItem, fhirVals);
                       let expected = multiselect ? [lfItem.answers[1], lfItem.answers[2]] : lfItem.answers[1];
