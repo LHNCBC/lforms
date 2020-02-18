@@ -6,7 +6,7 @@ angular.module('lformsWidget')
         function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = false;
+        $scope.debug = true;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};

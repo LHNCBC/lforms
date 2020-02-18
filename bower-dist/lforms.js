@@ -792,7 +792,7 @@ var LForms = __webpack_require__(4);
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
 
-  $scope.debug = false;
+  $scope.debug = true;
   $scope.hasUnused = false;
   $scope.repeatingSectionStatus = {};
   $scope.validationInitialShowTime = LF_CONSTANTS.VALIDATION_MESSAGE_INITIAL_SHOW_TIME; // Provide blank image to satisfy img tag. Bower packaging forces us to
@@ -7828,11 +7828,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _checkSkipLogicCondition: function _checkSkipLogicCondition(item, trigger) {
       var action = false;
-      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""; // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
+      // maxExclusive or maxInclusive.
+      // 'not' means '!=', 'value' means '='.
 
       if (trigger.hasOwnProperty('exists')) {
         action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
-        action = trigger.not ? !action : action;
       } else if (hasAnswer) {
         var currentValue = item.value;
 
@@ -7841,7 +7842,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('not') ? trigger.not : null;
             var answerValues = Array.isArray(currentValue) ? currentValue : [currentValue];
+            var isEqual = false;
 
             for (var m = 0, mLen = answerValues.length; m < mLen; m++) {
               var answerValue = answerValues[m];
@@ -7852,15 +7855,25 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
                 }, answerValue);
               }
 
-              if (this._codingsEqual(trigger.value, answerValue)) {
-                action = true;
+              if (this._codingsEqual(triggerValue, answerValue)) {
+                isEqual = true;
                 break;
+              }
+            }
+
+            if (trigger.hasOwnProperty('value')) {
+              if (isEqual) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('not')) {
+              if (!isEqual) {
+                action = true;
               }
             }
 
             break;
           // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
-          // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
+          // available keys: (1) "value", (2) "not" or (3) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
 
           case this._CONSTANTS.DATA_TYPE.INT:
           case this._CONSTANTS.DATA_TYPE.REAL:
@@ -7868,7 +7881,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             var numCurrentValue = parseFloat(currentValue); // the skip logic rule has a "value" key
 
             if (trigger.hasOwnProperty("value")) {
-              if (trigger["value"] == numCurrentValue) {
+              if (trigger["value"] === numCurrentValue) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('not')) {
+              if (trigger["not"] != numCurrentValue) {
                 action = true;
               }
             } // the skip logic rule has a range
@@ -7887,18 +7904,23 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the only key is "value"
 
           case this._CONSTANTS.DATA_TYPE.BL:
-            if (trigger.hasOwnProperty("value") && trigger["value"] === currentValue) {
-              action = true;
+            if (trigger.hasOwnProperty("value")) {
+              if (trigger["value"] === currentValue) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('not')) {
+              if (trigger["not"] != currentValue) {
+                action = true;
+              }
             }
 
             break;
         } // end case
 
-
-        if (trigger.not) {
-          action = !action;
+      } // no answer and 'not' has a value
+      else if (trigger.hasOwnProperty('not') && trigger.not !== undefined && trigger.not !== null && trigger.not !== "") {
+          action = true;
         }
-      }
 
       return action;
     },

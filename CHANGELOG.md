@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.1.4] 2020-02-18
+### Added
+- Added support for 'not' in skip logic, to support '!=' in the 'enableWhen' of 
+  FHIR Questionnaire.
+
 ## [20.1.3] 2019-12-31
 ### Fixed
 - Export calculatedExpression, variable and other FHIR extensions in lforms format.

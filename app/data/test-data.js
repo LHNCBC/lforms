@@ -968,6 +968,13 @@ var allInOne =
           "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
       ]
     },
+    {
+      "questionCode": "slTargetItem6", "dataType": "INT", "question": "T6: Shown when 'Skip Logic Source #1' != 2",
+      "skipLogic": {
+        "conditions": [{"source": "slSource1", "trigger": {"not": 2}}],
+        "action": "show"
+      }
+    },
 
     // skip logic, CNE trigger type; exists support
     {"questionCode": "54139-1-cnesrc-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?",
@@ -989,7 +996,13 @@ var allInOne =
           "answers": [ {"text": "Pre-Birth", "code": "LA10402-8"}, {"text": "Newborn", "code": "LA10403-6"}, {"text": "Infancy", "code": "LA10394-7"}],
           "dataType": "CNE", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": false}}], "action": "show"}
-        }
+        },
+        {"questionCode": "skiplogic_not", "question": "Cause of Death #2 (show if Living is _not_ YES)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE",
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"not": {"code": "LA33-6", "system": "http://loinc.org"}}}], "action": "show"}
+        },
+
       ]
     },
 
