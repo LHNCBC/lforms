@@ -170,9 +170,10 @@ other questions</li>
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>LHC-Forms can be used either as a prebuilt package or installed using the using the
+<p>LHC-Forms can be used either as a prebuilt package or installed using either the
 <a href="http://bower.io">bower</a> package manager (i.e. <code>bower
-install lforms</code>).  If you aren't using bower, the simplest way to start
+install lforms</code>) or <a href="https://www.npmjs.com/">npm</a> (<code>npm
+install lforms</code>).  If you aren't using bower or npm, the simplest way to start
 using LHC-Forms is by linking to the prebuilt version hosted on
 clinicaltables.nlm.nih.gov.  The
 URLs for the JavaScript and the CSS are:
@@ -185,6 +186,14 @@ URLs for the JavaScript and the CSS are:
 <p>(Note that the URLs contain a release version number, 17.0.0, for which you
 can substitute any of the other prebuilt versions available at
 https://clinicaltables.nlm.nih.gov/lforms-versions).</p>
+
+<p>If you decide to use the npm package, you will probably need to use webpack
+before it will be usable in a browser, so this option is likely only useful if
+you are already using webpack.  (See the <a
+href="https://github.com/lhncbc/lforms/blob/master/webpack.config.js">webpack.config.js</a>
+file for how we build the bower and browser-ready versions, but if you are using
+webpack for your application, you should be able to just require the lforms
+package to pull it in.)</p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
@@ -378,9 +387,9 @@ user to save the form so it can be redisplayed later for completion or editing.<
   <p>Because adding support for FHIR (and multiple versions of FHIR) would
   increase the size of the LHC-Forms library, support for FHIR is added through
   separate files.  If you are using one of the prebuilt versions, you can
-  include:
+  include (for FHIR version "R4"):
 <pre><code>&lt;script src="https://clinicaltables.nlm.nih.gov/lforms-versions/17.0.0/fhir/R4/lformsFHIR.min.js"&gt;&lt;/script&gt;</code></pre>
-  for FHIR version "R4", or for version "STU3", replace the "R4" in the URL with
+  For support for version "STU3", replace the "R4" in the URL with
   "STU3".  It is safe to include both versions if your application needs
   both.  Note that these files depend on the lforms.min.js file, so the script
   tag should follow that one.  See the <a href="demos.html">demo page</a> for an example.</p>
