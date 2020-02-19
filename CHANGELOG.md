@@ -2,10 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.1.4] 2020-02-18
+## [20.2.1] 2020-02-18
 ### Added
 - Added support for 'not' in skip logic, to support '!=' in the 'enableWhen' of 
   FHIR Questionnaire.
+
+## [20.2.0] 2019-02-13
+### Changed
+- Updated the fhirpath dependency to 1.0.1 (which was a breaking fhirpath
+  change, but should not affect LForms).  This adds some FHIR model information to
+  the evalution of FHIRPath expressions, paritcularly knowledge of choice-types,
+  so that expressions like "item.answer.value" can work.
+### Added
+- Implemented calculated value support for additional FHIR types, particularly
+  Coding, so that list fields can be set via a FHIRPath expression.
 
 ## [20.1.3] 2019-12-31
 ### Fixed
@@ -28,17 +38,17 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Added a vertical scrollbar for long text of coding instructions and copyright notice
   in popover windows.
- 
+
 ## [20.0.0] 2019-11-06
 ### Added
 - Added "exists" support to skip logic
 ### Changes
-- The trigger.code and triger.value.code were "hidden" features, but the issue of code system 
+- The trigger.code and triger.value.code were "hidden" features, but the issue of code system
   wasn't taken into consideration and therefore was broken.
-  This has been reimplemented so that when the source question is of type CNE or CWE,  
+  This has been reimplemented so that when the source question is of type CNE or CWE,
   the trigger.value will be a hash with any or all of these three fields:
   code, system, and text, and the trigger matching will be based on these fields. Please
-  see the updated lforms definition for more details. 
+  see the updated lforms definition for more details.
 
 ## [19.0.2] 2019-11-04
 ### Fixed
@@ -47,7 +57,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [19.0.1] 2019-10-31
 ### Changed
 - Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
-  and saved form data. 
+  and saved form data.
 
 ## [19.0.0] 2019-10-28
 ### Added
