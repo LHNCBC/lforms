@@ -663,6 +663,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (Bundle) data back into the form', function() {
 
+            tp.openBaseTestPage();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-bundle-dr")).click();
@@ -846,335 +847,335 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
         });
       });
-    });
 
-    describe('Subject option with a Patient resource', function() {
-      beforeAll(function() {
-        tp.openBaseTestPage();
-        tp.setFHIRVersion(fhirVersion);
-        tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
-        var height = element(by.id('/8302-2/1'));
-        height.sendKeys('70');
-      });
+      describe('Subject option with a Patient resource', function() {
+       beforeAll(function() {
+          tp.openBaseTestPage();
+          tp.setFHIRVersion(fhirVersion);
+          tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
+          var height = element(by.id('/8302-2/1'));
+          height.sendKeys('70');
+        });
 
-      var patientRes = {
-        id: 3,
-        resourceType: 'Patient',
-        name: [ {
-          family: 'Smith',
-          given: ['John']
-        }]
-      };
+        var patientRes = {
+          id: 3,
+          resourceType: 'Patient',
+          name: [ {
+            family: 'Smith',
+            given: ['John']
+          }]
+        };
 
-      it('should put the patient ID into the QuestionnaireResponse', function() {
-        getFHIRResource("QuestionnaireResponse", fhirVersion, {subject: patientRes}).
-            then(function(callbackData) {
-          let [error, fhirData] = callbackData;
-          expect(error).toBeNull();
-          expect(fhirData.resourceType).toBe("QuestionnaireResponse");
-          expect(fhirData.subject.reference).toBe('Patient/3');
-          expect(fhirData.subject.display).toBe('John Smith');
+        it('should put the patient ID into the QuestionnaireResponse', function() {
+          getFHIRResource("QuestionnaireResponse", fhirVersion, {subject: patientRes}).
+              then(function(callbackData) {
+            let [error, fhirData] = callbackData;
+            expect(error).toBeNull();
+            expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+            expect(fhirData.subject.reference).toBe('Patient/3');
+            expect(fhirData.subject.display).toBe('John Smith');
+          });
+        });
+
+        it('should put the patient ID into the DiagnosticReport', function() {
+          getFHIRResource("DiagnosticReport", fhirVersion, {subject: patientRes}).
+              then(function(callbackData) {
+            let [error, fhirData] = callbackData;
+            expect(error).toBeNull();
+            expect(fhirData.resourceType).toBe("DiagnosticReport");
+            expect(fhirData.subject.reference).toBe('Patient/3');
+            expect(fhirData.subject.display).toBe('John Smith');
+          });
         });
       });
 
-      it('should put the patient ID into the DiagnosticReport', function() {
-        getFHIRResource("DiagnosticReport", fhirVersion, {subject: patientRes}).
-            then(function(callbackData) {
-          let [error, fhirData] = callbackData;
-          expect(error).toBeNull();
-          expect(fhirData.resourceType).toBe("DiagnosticReport");
-          expect(fhirData.subject.reference).toBe('Patient/3');
-          expect(fhirData.subject.display).toBe('John Smith');
+      describe('initial[x] in Questionnaire', function() {
+        beforeAll(function() {
+          tp.openBaseTestPage();
+          tp.setFHIRVersion(fhirVersion);
+          tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);
         });
-      });
-    });
 
-    describe('initial[x] in Questionnaire', function() {
-      beforeAll(function() {
-        tp.openBaseTestPage();
-        tp.setFHIRVersion(fhirVersion);
-        tp.loadFromTestData('questionnaire-initialx.json', fhirVersion);
-      });
+        it('should display initial[x] values correctly', function() {
+          var typeBoolean = element(by.id('/type-boolean/1')),
+              typeInteger = element(by.id('/type-integer/1')),
+              typeDecimal = element(by.id('/type-decimal/1')),
+              typeString = element(by.id('/type-string/1')),
+              typeDate = element(by.id('/type-date/1')),
+              typeDateTime = element(by.id('/type-dateTime/1')),
+              typeTime = element(by.id('/type-time/1')),
+              typeChoice = element(by.id('/type-choice/1')),
+              typeOpenChoice = element(by.id('/type-open-choice/1')),
+              typeChoiceMulti = element(by.id('/type-choice-m/1')),
+              typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
 
-      it('should display initial[x] values correctly', function() {
-        var typeBoolean = element(by.id('/type-boolean/1')),
-            typeInteger = element(by.id('/type-integer/1')),
-            typeDecimal = element(by.id('/type-decimal/1')),
-            typeString = element(by.id('/type-string/1')),
-            typeDate = element(by.id('/type-date/1')),
-            typeDateTime = element(by.id('/type-dateTime/1')),
-            typeTime = element(by.id('/type-time/1')),
-            typeChoice = element(by.id('/type-choice/1')),
-            typeOpenChoice = element(by.id('/type-open-choice/1')),
-            typeChoiceMulti = element(by.id('/type-choice-m/1')),
-            typeOpenChoiceMulti = element(by.id('/type-open-choice-m/1'));
+          browser.wait(function() {
+            return typeBoolean.isDisplayed();
+          }, tp.WAIT_TIMEOUT_1);
 
-        browser.wait(function() {
-          return typeBoolean.isDisplayed();
-        }, tp.WAIT_TIMEOUT_1);
+          if (fhirVersion === "R4") {
 
-        if (fhirVersion === "R4") {
-
-          expect(typeBoolean.getAttribute('value')).toBe('on');
-          typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(true);
-          });
-
-          expect(typeInteger.getAttribute('value')).toBe('123');
-          typeInteger.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(123);
-          });
-
-          expect(typeDecimal.getAttribute('value')).toBe('123.45');
-          typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(123.45);
-          });
-
-          expect(typeString.getAttribute('value')).toBe("abc123");
-          typeString.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("abc123");
-          });
-
-          expect(typeDate.getAttribute('value')).toBe("09/03/2019");
-          typeDate.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("2019-09-03");
-          });
-
-          // initial[x] valueDateTime does not work yet
-          //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
-          typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("2015-02-07T13:28:17-05:00");
-          });
-
-          expect(typeTime.getAttribute('value')).toBe("13:28:17");
-          typeTime.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("13:28:17");
-          });
-
-          expect(typeChoice.getAttribute('value')).toBe("Answer 2");
-          typeChoice.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val.code).toEqual("c2");
-            expect(val.text).toEqual('Answer 2');
-          });
-
-          expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
-          typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("User typed answer");
-
-          });
-
-          var repeatsElements = element.all(by.css('.autocomp_selected li'));
-          expect(repeatsElements.get(0).getText()).toBe('×Answer 1');
-          expect(repeatsElements.get(1).getText()).toBe('×Answer 3');
-          typeChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val.length).toEqual(2);
-            expect(val[0].code).toEqual('c1');
-            expect(val[0].text).toEqual('Answer 1');
-            expect(val[1].code).toEqual('c3');
-            expect(val[1].text).toEqual('Answer 3');
-          });
-
-          expect(repeatsElements.get(2).getText()).toBe('×Answer 1');
-          expect(repeatsElements.get(3).getText()).toBe('×Answer 3');
-          expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
-          expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
-          typeOpenChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val.length).toEqual(4);
-            expect(val[0].code).toEqual('c1');
-            expect(val[0].text).toEqual('Answer 1');
-            expect(val[1].code).toEqual('c3');
-            expect(val[1].text).toEqual('Answer 3');
-            expect(val[2]).toEqual('User typed answer a');
-            expect(val[3]).toEqual('User typed answer b');
-          });
-
-        }
-        if (fhirVersion === "STU3") {
-          expect(typeBoolean.getAttribute('value')).toBe('on');
-          typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(true);
-          });
-
-          expect(typeInteger.getAttribute('value')).toBe('123');
-          typeInteger.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(123);
-          });
-
-          expect(typeDecimal.getAttribute('value')).toBe('123.45');
-          typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual(123.45);
-          });
-
-          expect(typeString.getAttribute('value')).toBe("abc123");
-          typeString.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("abc123");
-          });
-
-          expect(typeDate.getAttribute('value')).toBe("09/03/2019");
-          typeDate.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("2019-09-03");
-          });
-
-          // initial[x] valueDateTime does not work yet
-          //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
-          typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("2015-02-07T13:28:17-05:00");
-          });
-
-          expect(typeTime.getAttribute('value')).toBe("13:28:17");
-          typeTime.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("13:28:17");
-          });
-
-          expect(typeChoice.getAttribute('value')).toBe("Answer 2");
-          typeChoice.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val.code).toEqual("c2");
-            expect(val.text).toEqual('Answer 2');
-          });
-
-          expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
-          typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
-            expect(val).toEqual("User typed answer");
-
-          });
-
-        }
-      });
-
-      it('should keep the initial[x] values when converted back to Questionnaire', function() {
-        if (fhirVersion === "R4") {
-          getFHIRResource("Questionnaire", fhirVersion).
-          then(function(callbackData) {
-            let [error, fhirData] = callbackData;
-            expect(error).toBeNull();
-            // boolean
-            expect(fhirData.item[0].initial).toEqual([
-              {
-                "valueBoolean": true
-              }
-            ]);
-            // integer
-            expect(fhirData.item[1].initial).toEqual([
-              {
-                "valueInteger": 123
-              }
-            ]);
-            // decimal
-            expect(fhirData.item[2].initial).toEqual([
-              {
-                "valueDecimal": 123.45
-              }
-            ]);
-
-            // string
-            expect(fhirData.item[3].initial).toEqual([
-              {
-                "valueString": "abc123"
-              }
-            ]);
-
-            // date
-            expect(fhirData.item[4].initial).toEqual([
-              {
-                "valueDate": "2019-09-03"
-              }
-            ]);
-
-            // dateTime
-            expect(fhirData.item[5].initial).toEqual([
-              { // Use converted FHIR datetime format.
-                "valueDateTime": "2015-02-07T18:28:17.000Z"
-              }
-            ]);
-
-            // time
-            expect(fhirData.item[6].initial).toEqual([
-              {
-                "valueTime": "13:28:17"
-              }
-            ]);
-            // choice
-            expect(fhirData.item[7].initial).toEqual([
-              {
-                "valueCoding": {
-                  "code": "c2",
-                  "display": "Answer 2"
-                }
-              }
-            ]);
-            // open-choice
-            expect(fhirData.item[8].initial).toEqual([
-              {
-                "valueString":"User typed answer"
-              }
-            ]);
-
-
-            // choice, multiple selection
-            expect(fhirData.item[9].initial).toEqual([
-              {
-                "valueCoding": {
-                  "code": "c1",
-                  "display": "Answer 1"
-                }
-              },
-              {
-                "valueCoding": {
-                  "code": "c3",
-                  "display": "Answer 3"
-                }
-              }
-            ]);
-            // open-choice, multiple selection
-            expect(fhirData.item[10].initial).toEqual([
-              {
-                "valueCoding": {
-                  "code": "c1",
-                  "display": "Answer 1"
-                }
-              },
-              {
-                "valueCoding": {
-                  "code": "c3",
-                  "display": "Answer 3"
-                }
-              },
-              { "valueString" :  "User typed answer a"},
-              { "valueString" :  "User typed answer b"}
-            ]);
-          });
-        }
-
-        if (fhirVersion === "STU3") {
-          getFHIRResource("Questionnaire", fhirVersion).
-          then(function(callbackData) {
-            let [error, fhirData] = callbackData;
-            expect(error).toBeNull();
-            // boolean
-            expect(fhirData.item[0].initialBoolean).toBe(true);
-            // integer
-            expect(fhirData.item[1].initialInteger).toBe(123);
-            // decimal
-            expect(fhirData.item[2].initialDecimal).toBe(123.45);
-            // string
-            expect(fhirData.item[3].initialString).toBe("abc123");
-            // date
-            expect(fhirData.item[4].initialDate).toBe( "2019-09-03");
-            // dateTime
-            expect(fhirData.item[5].initialDateTime).toBe("2015-02-07T18:28:17.000Z"); // use converted FHIR format
-            // time
-            expect(fhirData.item[6].initialTime).toBe("13:28:17");
-            // choice
-            expect(fhirData.item[7].initialCoding).toEqual({
-              "code": "c2",
-              "display": "Answer 2"
+            expect(typeBoolean.getAttribute('value')).toBe('on');
+            typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(true);
             });
-            // open-choice
-            expect(fhirData.item[8].initialString).toBe("User typed answer");
-          });
-        }
+
+            expect(typeInteger.getAttribute('value')).toBe('123');
+            typeInteger.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(123);
+            });
+
+            expect(typeDecimal.getAttribute('value')).toBe('123.45');
+            typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(123.45);
+            });
+
+            expect(typeString.getAttribute('value')).toBe("abc123");
+            typeString.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("abc123");
+            });
+
+            expect(typeDate.getAttribute('value')).toBe("09/03/2019");
+            typeDate.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("2019-09-03");
+            });
+
+            // initial[x] valueDateTime does not work yet
+            //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
+            typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("2015-02-07T13:28:17-05:00");
+            });
+
+            expect(typeTime.getAttribute('value')).toBe("13:28:17");
+            typeTime.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("13:28:17");
+            });
+
+            expect(typeChoice.getAttribute('value')).toBe("Answer 2");
+            typeChoice.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val.code).toEqual("c2");
+              expect(val.text).toEqual('Answer 2');
+            });
+
+            expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
+            typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("User typed answer");
+
+            });
+
+            var repeatsElements = element.all(by.css('.autocomp_selected li'));
+            expect(repeatsElements.get(0).getText()).toBe('×Answer 1');
+            expect(repeatsElements.get(1).getText()).toBe('×Answer 3');
+            typeChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val.length).toEqual(2);
+              expect(val[0].code).toEqual('c1');
+              expect(val[0].text).toEqual('Answer 1');
+              expect(val[1].code).toEqual('c3');
+              expect(val[1].text).toEqual('Answer 3');
+            });
+
+            expect(repeatsElements.get(2).getText()).toBe('×Answer 1');
+            expect(repeatsElements.get(3).getText()).toBe('×Answer 3');
+            expect(repeatsElements.get(4).getText()).toBe('×User typed answer a');
+            expect(repeatsElements.get(5).getText()).toBe('×User typed answer b');
+            typeOpenChoiceMulti.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val.length).toEqual(4);
+              expect(val[0].code).toEqual('c1');
+              expect(val[0].text).toEqual('Answer 1');
+              expect(val[1].code).toEqual('c3');
+              expect(val[1].text).toEqual('Answer 3');
+              expect(val[2]).toEqual('User typed answer a');
+              expect(val[3]).toEqual('User typed answer b');
+            });
+
+          }
+          if (fhirVersion === "STU3") {
+            expect(typeBoolean.getAttribute('value')).toBe('on');
+            typeBoolean.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(true);
+            });
+
+            expect(typeInteger.getAttribute('value')).toBe('123');
+            typeInteger.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(123);
+            });
+
+            expect(typeDecimal.getAttribute('value')).toBe('123.45');
+            typeDecimal.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual(123.45);
+            });
+
+            expect(typeString.getAttribute('value')).toBe("abc123");
+            typeString.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("abc123");
+            });
+
+            expect(typeDate.getAttribute('value')).toBe("09/03/2019");
+            typeDate.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("2019-09-03");
+            });
+
+            // initial[x] valueDateTime does not work yet
+            //expect(typeDateTime.getAttribute('value')).toBe("2015-02-07T13:28:17-05:00");
+            typeDateTime.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("2015-02-07T13:28:17-05:00");
+            });
+
+            expect(typeTime.getAttribute('value')).toBe("13:28:17");
+            typeTime.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("13:28:17");
+            });
+
+            expect(typeChoice.getAttribute('value')).toBe("Answer 2");
+            typeChoice.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val.code).toEqual("c2");
+              expect(val.text).toEqual('Answer 2');
+            });
+
+            expect(typeOpenChoice.getAttribute('value')).toBe("User typed answer");
+            typeOpenChoice.evaluate('item.defaultAnswer').then(function(val) {
+              expect(val).toEqual("User typed answer");
+
+            });
+
+          }
+        });
+
+        it('should keep the initial[x] values when converted back to Questionnaire', function() {
+          if (fhirVersion === "R4") {
+            getFHIRResource("Questionnaire", fhirVersion).
+            then(function(callbackData) {
+              let [error, fhirData] = callbackData;
+              expect(error).toBeNull();
+              // boolean
+              expect(fhirData.item[0].initial).toEqual([
+                {
+                  "valueBoolean": true
+                }
+              ]);
+              // integer
+              expect(fhirData.item[1].initial).toEqual([
+                {
+                  "valueInteger": 123
+                }
+              ]);
+              // decimal
+              expect(fhirData.item[2].initial).toEqual([
+                {
+                  "valueDecimal": 123.45
+                }
+              ]);
+
+              // string
+              expect(fhirData.item[3].initial).toEqual([
+                {
+                  "valueString": "abc123"
+                }
+              ]);
+
+              // date
+              expect(fhirData.item[4].initial).toEqual([
+                {
+                  "valueDate": "2019-09-03"
+                }
+              ]);
+
+              // dateTime
+              expect(fhirData.item[5].initial).toEqual([
+                { // Use converted FHIR datetime format.
+                  "valueDateTime": "2015-02-07T18:28:17.000Z"
+                }
+              ]);
+
+              // time
+              expect(fhirData.item[6].initial).toEqual([
+                {
+                  "valueTime": "13:28:17"
+                }
+              ]);
+              // choice
+              expect(fhirData.item[7].initial).toEqual([
+                {
+                  "valueCoding": {
+                    "code": "c2",
+                    "display": "Answer 2"
+                  }
+                }
+              ]);
+              // open-choice
+              expect(fhirData.item[8].initial).toEqual([
+                {
+                  "valueString":"User typed answer"
+                }
+              ]);
 
 
+              // choice, multiple selection
+              expect(fhirData.item[9].initial).toEqual([
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer 1"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c3",
+                    "display": "Answer 3"
+                  }
+                }
+              ]);
+              // open-choice, multiple selection
+              expect(fhirData.item[10].initial).toEqual([
+                {
+                  "valueCoding": {
+                    "code": "c1",
+                    "display": "Answer 1"
+                  }
+                },
+                {
+                  "valueCoding": {
+                    "code": "c3",
+                    "display": "Answer 3"
+                  }
+                },
+                { "valueString" :  "User typed answer a"},
+                { "valueString" :  "User typed answer b"}
+              ]);
+            });
+          }
+
+          if (fhirVersion === "STU3") {
+            getFHIRResource("Questionnaire", fhirVersion).
+            then(function(callbackData) {
+              let [error, fhirData] = callbackData;
+              expect(error).toBeNull();
+              // boolean
+              expect(fhirData.item[0].initialBoolean).toBe(true);
+              // integer
+              expect(fhirData.item[1].initialInteger).toBe(123);
+              // decimal
+              expect(fhirData.item[2].initialDecimal).toBe(123.45);
+              // string
+              expect(fhirData.item[3].initialString).toBe("abc123");
+              // date
+              expect(fhirData.item[4].initialDate).toBe( "2019-09-03");
+              // dateTime
+              expect(fhirData.item[5].initialDateTime).toBe("2015-02-07T18:28:17.000Z"); // use converted FHIR format
+              // time
+              expect(fhirData.item[6].initialTime).toBe("13:28:17");
+              // choice
+              expect(fhirData.item[7].initialCoding).toEqual({
+                "code": "c2",
+                "display": "Answer 2"
+              });
+              // open-choice
+              expect(fhirData.item[8].initialString).toBe("User typed answer");
+            });
+          }
+
+
+        });
       });
     });
 
