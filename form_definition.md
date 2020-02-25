@@ -287,7 +287,7 @@ about the meaning of each key:
                       either match or are unspecified, and 2) either a) codes are specified and match 
                       or b) codes are unspecified and the texts are specified and match. 
                       Other trigger value fields, if any, are not used for matching.
-                * not - a value which the source question's value is not equal to. it's value could be
+                * notEqual - a value which the source question's value is not equal to. it's value could be
                   a string, number, or boolean, or a 'code object'. See "value" above.
                 * exists - if it is true, the condition is met if the source question has a answer.
                   if it is false, the condition is met if the source question has no answers.    

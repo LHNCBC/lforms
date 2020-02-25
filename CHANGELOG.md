@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [20.2.1] 2020-02-18
 ### Added
-- Added support for 'not' in skip logic, to support '!=' in the 'enableWhen' of 
+- Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of 
   FHIR Questionnaire.
 
 ## [20.2.0] 2019-02-13

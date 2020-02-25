@@ -971,7 +971,7 @@ var allInOne =
     {
       "questionCode": "slTargetItem6", "dataType": "INT", "question": "T6: Shown when 'Skip Logic Source #1' != 2",
       "skipLogic": {
-        "conditions": [{"source": "slSource1", "trigger": {"not": 2}}],
+        "conditions": [{"source": "slSource1", "trigger": {"notEqual": 2}}],
         "action": "show"
       }
     },
@@ -1000,7 +1000,7 @@ var allInOne =
         {"questionCode": "skiplogic_not", "question": "Cause of Death #2 (show if Living is _not_ YES)",
           "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
           "dataType": "CNE",
-          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"not": {"code": "LA33-6", "system": "http://loinc.org"}}}], "action": "show"}
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"notEqual": {"code": "LA33-6", "system": "http://loinc.org"}}}], "action": "show"}
         },
 
       ]

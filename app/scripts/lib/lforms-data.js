@@ -3180,7 +3180,7 @@
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('not') ? trigger.not : null;
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.not : null;
             var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
             var isEqual = false;
             for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
@@ -3198,7 +3198,7 @@
                 action = true;
               }
             }
-            else if (trigger.hasOwnProperty('not')) {
+            else if (trigger.hasOwnProperty('notEqual')) {
               if (!isEqual) {
                 action = true;
               }
@@ -3216,8 +3216,8 @@
                 action = true;
               }
             }
-            else if (trigger.hasOwnProperty('not')) {
-              if (trigger["not"] != numCurrentValue) {
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != numCurrentValue) {
                 action = true;
               }
             }
@@ -3240,17 +3240,17 @@
                 action = true;
               }
             }
-            else if (trigger.hasOwnProperty('not')) {
-              if (trigger["not"] != currentValue) {
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != currentValue) {
                 action = true;
               }
             }
             break;
         } // end case
       }
-      // no answer and 'not' has a value
-      else if (trigger.hasOwnProperty('not') &&
-          trigger.not !==undefined && trigger.not !== null && trigger.not !== "") {
+      // no answer and 'notEqual' has a value
+      else if (trigger.hasOwnProperty('notEqual') &&
+          trigger.notEqual !==undefined && trigger.notEqual !== null && trigger.notEqual !== "") {
         action = true;
       }
 
