@@ -2,7 +2,7 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [21.0.0] 2020-02-12
+## [21.0.0] 2020-02-26
 ### Changed
 - Bumped up angularjs version to 1.7.x. This could potentially break applications still
   running prior angularjs versions, hence bumped up the major version.
@@ -11,6 +11,11 @@ This project follows [Semantic Versioning](http://semver.org/).
 - Fixed a bug in click event in CNE/CWE control. 
   Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
 - Fix date time parsing test.
+
+## [20.2.1] 2020-02-18
+### Added
+- Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of 
+  FHIR Questionnaire.
 
 ## [20.2.0] 2019-02-13
 ### Changed
