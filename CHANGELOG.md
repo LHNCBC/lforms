@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [20.2.2] 2020-02-26
+### Fixed
+- Fixed a bug that valueBoolean in Questionnaire was not converted to LForms BL value.
+
 ## [20.2.1] 2020-02-18
 ### Added
 - Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of 
