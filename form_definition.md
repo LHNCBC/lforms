@@ -115,8 +115,9 @@ about the meaning of each key:
     * useAnimation - a boolean that controls whether to use animation on the form.
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
-      question.  For an answer list, it can be an answer label, text, code or
-      their combination, using the syntax:  {"code": "B12"}, or {"label: "A"}.
+      question. For an answer list, it can be an answer label, text, code or
+      their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
+      {"text": "Male"}, {"text": "Male", "code": "LA2-8"} and etc.
       For "CWE" answer lists, off-list answers need to be specified as a string.
       For a date field, it can be a date shortcut (like "t" for today).
       For other field types, it can be a text string or a number.
@@ -287,6 +288,10 @@ about the meaning of each key:
                       either match or are unspecified, and 2) either a) codes are specified and match 
                       or b) codes are unspecified and the texts are specified and match. 
                       Other trigger value fields, if any, are not used for matching.
+                * notEqual - a value which the source question's value is not equal to. it's value could be
+                  a string, number, or boolean, or a 'code object'. See "value" above.
+                * exists - if it is true, the condition is met if the source question has a answer.
+                  if it is false, the condition is met if the source question has no answers.    
                 * minExclusive - a value which the source question's value must exceed
                 * minInclusive - a value which the source question's value must equal
                   or exceed

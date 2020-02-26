@@ -49,13 +49,13 @@ function addCommonSDCFns(ns) {
     'minInclusive': '>=',
     'maxInclusive': '<=',
     'value': '=',
-    'not': '!=',
+    'notEqual': '!=',
     '>': 'minExclusive',
     '<': 'maxExclusive',
     '>=': 'minInclusive',
     '<=': 'maxInclusive',
     '=': 'value',
-    '!=': 'not',
+    '!=': 'notEqual',
     'exists': 'exists'
   };
 

@@ -164,6 +164,7 @@ var TestPage = function() {
       t2: element(by.id('/slTargetItem2/1')),
       t4: element(by.id('/slTargetHeader1/slTargetSubItem1/1/1')),
       t5: element(by.id('/slTargetHeader1/slTargetSubItem2/1/1')),
+      t6: element(by.id('/slTargetItem6/1')),
 
       allSrc1: element(by.id('/slALLSource1/1')),
       allSrc2: element(by.id('/slALLSource2/1')),
