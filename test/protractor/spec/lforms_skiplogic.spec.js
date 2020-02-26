@@ -73,7 +73,7 @@ describe('skip logic', function() {
     expect(ff.t5.isDisplayed()).toBe(true);
   });
 
-  it('should show/hide a sibling controlled by "not"', function() {
+  it('should show/hide a sibling controlled by "notEqual"', function() {
     ff.src.clear();
     expect(ff.t6.isDisplayed()).toBe(true);
     ff.src.sendKeys('2');
