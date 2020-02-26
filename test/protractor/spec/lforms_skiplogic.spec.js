@@ -53,7 +53,6 @@ describe('skip logic', function() {
     expect(ff.ageDeathIfLivingNotAnswered.isDisplayed()).toBe(true);
   });
 
-
   it('should show a sibling and two items in a sibling section', function() {
     ff.src.sendKeys('1');
     expect(ff.t1.isDisplayed()).toBe(true);
@@ -72,6 +71,16 @@ describe('skip logic', function() {
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
+  });
+
+  it('should show/hide a sibling controlled by "notEqual"', function() {
+    ff.src.clear();
+    expect(ff.t6.isDisplayed()).toBe(true);
+    ff.src.sendKeys('2');
+    expect(ff.t6.isPresent()).toBeFalsy();
+    ff.src.clear();
+    ff.src.sendKeys('6');
+    expect(ff.t6.isDisplayed()).toBe(true);
   });
 
   it('should show another sibling and hide two items in a sibling section', function() {
