@@ -105,7 +105,7 @@
             <label ng-if="!subItem._multipleAnswers">
               <input type="radio" id="{{subItem._elementId + answer.code}}"
                aria-labeledby="answer-{{$index}}" ng-model="subItem.value" ng-value="answer"
-                     name="{{subItem._elementId}}" ng-click="updateRadioList(subItem)">
+                     name="{{subItem._elementId}}" ng-change="updateRadioList(subItem)">
             </label>
           </span>
         </td>
@@ -116,7 +116,7 @@
             <label>
               <input type="checkbox" ng-model="subItem._otherValueChecked"
                      id="{{subItem._elementId + '_other'}}"
-                     ng-click="updateCheckboxListForOther(subItem, subitem._answerOther)">
+                     ng-change="updateCheckboxListForOther(subItem, subitem._answerOther)">
             </label>
             <label>
               <input type="text" ng-model="subitem._answerOther"
@@ -129,7 +129,7 @@
             <label>
               <input type="radio" id="{{subItem._elementId + '_other'}}" ng-model="subItem._otherValueChecked"
                      ng-value="true" name="{{subItem._elementId}}"
-                     ng-click="updateRadioListForOther(subItem, subitem._answerOther)">
+                     ng-change="updateRadioListForOther(subItem, subitem._answerOther)">
             </label>
             <label>
               <input type="text" id="{{subItem._elementId + '_otherValue'}}" ng-model="subitem._answerOther"
