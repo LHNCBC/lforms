@@ -247,6 +247,12 @@ describe('formdata: ', function() {
   describe('defaultAnswer', function() {
     it('should work for various data types', function() {
       tp.openDefaultAnswerForm();
+      var blField = element(by.id('/blField/1'));
+      expect(blField.isSelected()).toBe(true);
+      blField.evaluate('item.value').then(function(val) {
+        expect(val).toEqual(true);
+      });
+
       var intField = element(by.id('/intField/1'));
       expect(intField.getAttribute('value')).toBe("24");
       expect(element(by.id('/decField/1')).getAttribute('value')).toBe("3.14159");

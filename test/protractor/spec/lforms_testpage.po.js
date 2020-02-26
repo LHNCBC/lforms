@@ -201,6 +201,7 @@ var TestPage = function() {
     },
 
     FormWithUserData: {
+      q0: element(by.id('/q0/1')),
       q1: element(by.id('/q1/1')),
       q2: element(by.id('/q2/1')),
       q3: element(by.id('/q3/1')),

@@ -1443,6 +1443,7 @@ var formWithUserData =
       "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q0", "dataType": "BL", "value": true, "question": "With data type BL"},
     {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
@@ -6378,6 +6379,12 @@ var defaultAnswerForm = {
   "code": "defaultAnswerForm",
   "name": "Fields with default answers",
   "items": [
+    {
+      "question": "Boolean field with default",
+      "questionCode": "blField",
+      "dataType": "BL",
+      "defaultAnswer": true
+    },
     {
       "question": "Integer field with default",
       "questionCode": "intField",
