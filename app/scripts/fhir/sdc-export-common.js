@@ -192,9 +192,11 @@ function addCommonSDCExportFns(ns) {
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
     }
+    // data control
+    this._handleDataControl(targetItem, item);
 
     this._handleExtensions(targetItem, item);
-    
+
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -276,6 +278,23 @@ function addCommonSDCExportFns(ns) {
 
 
   /**
+   * Process an item's data control
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleDataControl = function(targetItem, item) {
+    if (item.dataControl) {
+      targetItem.extension.push({
+        "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
+        "valueString": JSON.stringify(item.dataControl)
+      })
+    }
+  };
+
+
+  /**
    * Remove repeating items in a form data object
    * @param source a LForms form data object
    * @private
@@ -319,7 +338,7 @@ function addCommonSDCExportFns(ns) {
       }
       target.extension = target.extension.concat(source._variableExt);
     }
-    
+
     // Handle extensions on title
     if (source.obj_title)
       target._title = source.obj_title;
@@ -851,7 +870,7 @@ function addCommonSDCExportFns(ns) {
   self._lfHasSubItems = function(item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
   };
-  
+
   /**
    * Process FHIR questionnaire extensions related conversions.
    *
@@ -871,16 +890,16 @@ function addCommonSDCExportFns(ns) {
         }
       }
     });
-    
+
     if(extension.length > 0) {
       if(!targetItem.extension) {
         targetItem.extension = [];
       }
       targetItem.extension.push.apply(targetItem.extension, extension);
     }
-  
+
     targetItem.extension.push.apply(targetItem.extension, item.extension);
-    
+
   };
 
 

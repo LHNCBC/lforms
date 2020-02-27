@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [21.1.0] 2020-02-27
+### Added
+- Added support for a custom extension in FHI SDC Questionnaire to contain the dataControl
+  data in LHC-Forms.
+  
 ## [21.0.1] 2020-02-26
 ### Fixed
 - Fixed a bug that valueBoolean in Questionnaire was not converted to LForms BL value.

@@ -199,6 +199,51 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(qData.item[0]._text, questionnaire.item[0]._text);
           });
 
+          it('should correctly convert data control', function (){
+            var questionnaire = {
+              item: [ {
+                "type": "choice",
+                "code": [
+                  {
+                    "code": "itemWithExtraData",
+                    "display": "Drug (with extra data of strengths and forms)"
+                  }
+                ],
+                "linkId": "/dataControlExamples/itemWithExtraData",
+                "text": "Drug (with extra data of strengths and forms)"
+              },{
+                "type": "string",
+                "code": [
+                  {
+                    "code": "controlledItem_TEXT",
+                    "display": "The First Strength (from 'Drugs')"
+                  }
+                ],
+                "extension": [
+                  {
+                    "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
+                    "valueString": "[{\"source\":{\"sourceItemCode\":\"itemWithExtraData\"},\"construction\":\"SIMPLE\",\"dataFormat\":\"value.data.STRENGTHS_AND_FORMS[0]\",\"onAttribute\":\"value\"}]"
+                  }
+                ],
+                "required": false,
+                "linkId": "/dataControlExamples/controlledItem_TEXT",
+                "text": "The First Strength (from 'Drugs')"
+              }]
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            assert.deepEqual(lfData.items[1].dataControl, [
+              {
+                "source": {
+                  "sourceItemCode":"itemWithExtraData"
+                },
+                "construction":"SIMPLE",
+                "dataFormat": "value.data.STRENGTHS_AND_FORMS[0]",
+                "onAttribute":"value"
+              }
+            ]);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            assert.deepEqual(qData.item[1].extension, questionnaire.item[1].extension);
+          });
         });
 
         describe('itemToQuestionnaireItem', function() {

@@ -899,6 +899,33 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         });
       });
 
+      describe('data control in Questionnaire', function() {
+        beforeAll(function () {
+          tp.openBaseTestPage();
+          tp.setFHIRVersion(fhirVersion);
+          tp.loadFromTestData('questionnaire-data-control.json', fhirVersion);
+        });
+
+        it('should have data control working correctly', function () {
+          var dcSource = element(by.id('/dataControlSource/1')),
+              dcTarget1 = element(by.id('/controlledItem_LIST/1')),
+              dcTarget2 = element(by.id('/controlledItem_TEXT/1'));
+
+          browser.wait(function () {
+            return dcSource.isDisplayed();
+          }, tp.WAIT_TIMEOUT_1);
+
+          dcSource.click();
+          dcSource.sendKeys("ALTABAX (Topical)")
+          dcSource.sendKeys(protractor.Key.ARROW_DOWN);
+          dcSource.sendKeys(protractor.Key.TAB);
+
+          expect(dcTarget1.getAttribute('value')).toBe('1% Ointment');
+          expect(dcTarget2.getAttribute('value')).toBe('1% Ointment');
+        });
+      });
+
+
       describe('initial[x] in Questionnaire', function() {
         beforeAll(function() {
           tp.openBaseTestPage();
