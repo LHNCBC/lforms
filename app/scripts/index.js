@@ -10,7 +10,7 @@ window.angular = require('angular');
 require('./angular-packages.js');
 require('ngSmoothScroll');
 require('angular-ui-bootstrap');
-require('ui.bootstrap.datetimepicker');
+require('bootstrap-ui-datetime-picker');
 var LForms = require('./lforms-index.js');
 LForms.Def = require('autocomplete-lhc');
 LForms.ucumPkg = require('@lhncbc/ucum-lhc');

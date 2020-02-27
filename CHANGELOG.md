@@ -2,9 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [20.2.2] 2020-02-26
+## [21.0.1] 2020-02-26
 ### Fixed
 - Fixed a bug that valueBoolean in Questionnaire was not converted to LForms BL value.
+
+## [21.0.0] 2020-02-26
+### Changed
+- Bumped up angularjs version to 1.7.x. This could potentially break applications still
+  running prior angularjs versions, hence bumped up the major version.
+  
+### Fixed
+- Fixed a bug in click event in CNE/CWE control. 
+  Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
+- Fix date time parsing test.
 
 ## [20.2.1] 2020-02-18
 ### Added
