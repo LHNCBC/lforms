@@ -10,10 +10,19 @@
   "item": [
     {
       "linkId": "/type1",
-      "text": "With data type BL",
+      "text": "With data type BL, #1",
       "answer": [
         {
           "valueBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "/type1b",
+      "text": "With data type BL, #2",
+      "answer": [
+        {
+          "valueBoolean": false
         }
       ]
     },
