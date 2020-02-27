@@ -595,6 +595,11 @@ function addSDCImportFns(ns) {
         var qrValue = answer[0];
 
         switch (dataType) {
+          case "BL":
+            if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
+              item.value = qrValue.valueBoolean;
+            }
+            break;
           case "INT":
             if (qrValue.valueQuantity) {
               item.value = qrValue.valueQuantity.value;

@@ -841,8 +841,9 @@ var allInOne =
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
-      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null, "questionCodeSystem": "NON_LOINC",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL, #1", "answers": null, "questionCodeSystem": "NON_LOINC",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type1b", "dataType": "BL", "question": "With data type BL, #2", "answers": null, "questionCodeSystem": "NON_LOINC"},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
       "codingInstructionsFormat": "text",
       "copyrightNotice": "not copyrighted",
@@ -1456,6 +1457,7 @@ var formWithUserData =
       "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q0", "dataType": "BL", "value": true, "question": "With data type BL"},
     {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
@@ -6391,6 +6393,12 @@ var defaultAnswerForm = {
   "code": "defaultAnswerForm",
   "name": "Fields with default answers",
   "items": [
+    {
+      "question": "Boolean field with default",
+      "questionCode": "blField",
+      "dataType": "BL",
+      "defaultAnswer": true
+    },
     {
       "question": "Integer field with default",
       "questionCode": "intField",

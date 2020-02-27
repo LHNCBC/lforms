@@ -4,8 +4,9 @@ var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
   beforeAll(()=>tp.openFormWithUserData());
 
-  it('should load ST, DT, DTM, INT, answer lists', function() {
+  it('should load BL, ST, DT, DTM, INT, answer lists', function() {
 
+    expect(ff.q0.isSelected()).toBe(true);
     expect(ff.q1.getAttribute('value')).toBe('no data type');
     expect(ff.q2.getAttribute('value')).toBe('100');
     expect(ff.q3.getAttribute('value')).toBe('user input value');

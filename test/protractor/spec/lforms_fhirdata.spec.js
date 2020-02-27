@@ -764,6 +764,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             element(by.id("merge-qr-cwe")).click();
 
+            var bl1 = element(by.id('/type1/1')), bl2 = element(by.id('/type1b/1'));
             var cwe = element(by.id('/type10/1'));
             var cweRepeats = element(by.id('/multiSelectCWE/1'));
             // CNE field with a default value
@@ -777,6 +778,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             // the default value should not be set
             expect(cne.getAttribute('value')).toBe('');
             expect(st.getAttribute('value')).toBe('');
+
+            expect(bl1.isSelected()).toBe(true);
+            bl1.evaluate('item.value').then(function(val) {
+              expect(val).toEqual(true);
+            });
+            expect(bl2.isSelected()).toBe(false);
+            bl2.evaluate('item.value').then(function(val) {
+              expect(val).toBeFalsy(); //null, not false
+            });
 
             expect(cwe.getAttribute('value')).toBe("user typed value");
             cwe.evaluate('item.value').then(function(val) {
