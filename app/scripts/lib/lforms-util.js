@@ -305,8 +305,10 @@ LForms.Util = {
         'http://build.fhir.org/versioning.html#mp-version and '+
         'https://www.hl7.org/fhir/references.html#canonical).  '+
         'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire'+
-        ' (for Questionnaire version 4.0).'+
-        'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 '+
+        ' (for Questionnaire version 4.0, a.k.a. R4).'+
+        'Example 2:  http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire'+
+        ' (for Questionnaire version 3.0, a.k.a. STU3).'+
+        'Example 3:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 '+
         ' (for SDC Questionnaire version 2.7).');
     }
     else
@@ -984,7 +986,7 @@ LForms.Util = {
 
     return codeSystem;
   },
-  
+
   /**
    *  Some extensions are simply copied over to the LForms data structure.
    *  This copies those extensions from qItem.extension to lfItem if they exist, and
@@ -1008,7 +1010,7 @@ LForms.Util = {
       }
     }
   },
-  
+
   /**
    * Removes an object(s) from an array searching it using key/value pair with an optional start index.
    * The matching value should be a primitive type. If start index is not specified,
@@ -1040,7 +1042,7 @@ LForms.Util = {
         }
       }
       var len = targetObjects.length;
-      
+
       for(var i = start; i < len; i++) {
         if(targetObjects[i][key] === matchingValue) {
           var match = targetObjects[i];
@@ -1066,8 +1068,8 @@ LForms.Util = {
         }
       }
     }
-    
+
     return ret;
   },
-  
+
 };
