@@ -5,6 +5,8 @@
 import {LOINC_URI} from './fhir-common';
 var LForms = require('../lforms-index');
 
+var _versionTagStr = 'lformsVersion: ';
+
 /**
  *  Defines export functions that are the same across the different FHIR
  *  versions and that are used by both the SDC and DiagnosticReport exports.
@@ -111,6 +113,7 @@ var self = {
           "text": item.question
         }
       };
+      this._addVersionTag(obx);
       if (setId) {
         obx.id = this._getUniqueId(item.questionCode);
       }
@@ -148,8 +151,52 @@ var self = {
       if (unit.code) qty.code = unit.code;
       if (unit.system) qty.system = unit.system;
     }
-  }
+  },
 
+
+  /**
+   *  Returns and creates if necessary the tag array object on the resource.  If
+   *  created, the given resource will be modified.
+   * @param res the resource whose tag array is needed.
+   */
+  _resTags: function(res) {
+    var meta = res.meta;
+    if (!meta)
+      meta = (res.meta = {});
+    var tag = meta.tag;
+    if (!tag)
+      tag = (meta.tag = []);
+    return tag;
+  },
+
+  /**
+   *  Sets the LForms version tag on a FHIR resource to indicate the LForms version used to
+   *  export it.  This will replace any version tag already present.
+   * @param res the resource object to be tagged.
+   */
+  _setVersionTag: function(res) {
+    var tags = this._resTags(res);
+    // Delete any lformsVersion tag present.  There should be at most one
+    for (var i=0, len=tags.length; i<len; ++i) {
+      var t = tags[i];
+      if (t.display && t.display.indexOf(_versionTagStr)===0) {
+        tags.splice(i, 1);
+        break;
+      }
+    }
+    this._addVersionTag(res);
+  },
+
+
+  /**
+   *  Adds a tag to a FHIR resource to indicate the LForms version used to
+   *  export it.  Assumes the version tag does not already exist.
+   * @param res the resource object to be tagged.
+   */
+  _addVersionTag: function(res) {
+    var tag = this._resTags(res);
+    tag.push({display: _versionTagStr+LForms.lformsVersion});
+  }
 };
 
 export default self;

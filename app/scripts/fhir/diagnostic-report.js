@@ -27,6 +27,8 @@ var dr = {
    */
   _getFormattedDate : function (dateObj) {
     //"2013-01-27T11:45:33+11:00",
+    // TBD -LForms is not defined in this file.  The following line will break
+    // if someone build the package and exports a different global variable.
     return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
@@ -258,10 +260,10 @@ var dr = {
       var drContent = this._createDiagnosticReportContent(formAndUserData, contained);
 
       dr = {
-        "resourceType": "DiagnosticReport",
-        "id":  this._commonExport._getUniqueId(formAndUserData.code),
-        "status": "final",
-        "code": {
+        resourceType: "DiagnosticReport",
+        id: this._commonExport._getUniqueId(formAndUserData.code),
+        status: "final",
+        code: {
           "coding": [
             {
               "system": "http://loinc.org",
@@ -271,9 +273,10 @@ var dr = {
           ],
           "text": formAndUserData.name
         },
-        "result": drContent.result,
-        "contained": contained
+        result: drContent.result,
+        contained: contained
       };
+      this._commonExport._addVersionTag(dr);
 
       if (subject)
         dr.subject = LForms.Util.createLocalFHIRReference(subject);

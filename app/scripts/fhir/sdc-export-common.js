@@ -38,6 +38,7 @@ function addCommonSDCExportFns(ns) {
     if (subject)
       target["subject"] = LForms.Util.createLocalFHIRReference(subject);
 
+    this._commonExport._setVersionTag(target);
     return target;
   };
 
@@ -66,12 +67,12 @@ function addCommonSDCExportFns(ns) {
           var newItem = this._processItem(source.items[i], source, noExtensions);
           target.item.push(newItem);
         }
-
       }
     }
 
     // FHIR doesn't allow null values, strip them out.
     LForms.Util.pruneNulls(target);
+    this._commonExport._setVersionTag(target);
     return target;
   };
 
@@ -194,7 +195,7 @@ function addCommonSDCExportFns(ns) {
     }
 
     this._handleExtensions(targetItem, item);
-    
+
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
       for (var i=0, iLen=item.items.length; i<iLen; i++) {
@@ -305,7 +306,6 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._setFormLevelFields = function(target, source, noExtensions) {
-
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.
@@ -319,7 +319,7 @@ function addCommonSDCExportFns(ns) {
       }
       target.extension = target.extension.concat(source._variableExt);
     }
-    
+
     // Handle extensions on title
     if (source.obj_title)
       target._title = source.obj_title;
@@ -851,7 +851,7 @@ function addCommonSDCExportFns(ns) {
   self._lfHasSubItems = function(item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
   };
-  
+
   /**
    * Process FHIR questionnaire extensions related conversions.
    *
@@ -871,16 +871,16 @@ function addCommonSDCExportFns(ns) {
         }
       }
     });
-    
+
     if(extension.length > 0) {
       if(!targetItem.extension) {
         targetItem.extension = [];
       }
       targetItem.extension.push.apply(targetItem.extension, extension);
     }
-  
+
     targetItem.extension.push.apply(targetItem.extension, item.extension);
-    
+
   };
 
 

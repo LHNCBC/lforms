@@ -1,3 +1,5 @@
+var LForms = require('../lforms-index');
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -32,7 +34,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlMinLength,
     self.fhirExtUrlRegex
   ];
-  
+
   // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
   self.handledExtensionSet = new Set([
@@ -52,7 +54,7 @@ function addCommonSDCImportFns(ns) {
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
   ]);
-  
+
   self.formLevelFields = [
     // Resource
     'id',
@@ -105,7 +107,7 @@ function addCommonSDCImportFns(ns) {
     var target = null;
 
     if(fhirData) {
-      target = {};
+      target = LForms.Util.baseFormDef();
       self._processFormLevelFields(target, fhirData);
       var containedVS = self._extractContainedVS(fhirData);
 
@@ -120,7 +122,6 @@ function addCommonSDCImportFns(ns) {
       }
       target.fhirVersion = self.fhirVersion;
     }
-
     return target;
   };
 
@@ -1021,8 +1022,8 @@ function addCommonSDCImportFns(ns) {
 
     return ret;
   };
-  
-  
+
+
   /**
    *  Processes the child items of the item.
    * @param targetItem the LForms node being populated with data
@@ -1048,8 +1049,8 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
-  
-  
+
+
   /**
    *  Copy extensions that haven't been handled before.
    *
@@ -1069,8 +1070,8 @@ function addCommonSDCImportFns(ns) {
       lfItem.extension = extensions;
     }
   };
-  
-  
+
+
   /**
    * If the given entity is an array, it will return the array length, return -1 otherwise.
    * @param entity the given entity (can be anything) that needs to be tested to see if it's an array

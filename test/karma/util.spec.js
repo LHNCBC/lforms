@@ -1,4 +1,4 @@
-// Tests for the HL7 generation library
+// Tests for LForms.Util
 describe('Util library', function() {
   describe('getNextLetter', function() {
     it('should return correct letters', function() {
