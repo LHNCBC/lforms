@@ -29,6 +29,112 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     var fhir = LForms.FHIR[fhirVersion];
     describe(fhirVersion, function() {
       describe('FHIR SDC library', function() {
+        describe('_processFHIRValues', function() {
+        let i=0;
+          describe('list fields with coding values', function () {
+            let answerValCases = [{
+              answers: [{codeSystem: 'cs1', code: '1', text: 'one'},
+                {codeSystem: 'cs1', code: '2', text: 'two'},
+                {codeSystem: 'cs1', code: '3', text: 'three'}],
+              fhirVal: {display: 'two', code: '2', system: 'cs1'},
+              fhirVal2: {display: 'three', code: '3', system: 'cs1'}
+            }, {
+              answers: [{code: '1', text: 'one'},
+                {code: '2', text: 'two'},
+                {code: '3', text: 'three'}],
+              fhirVal: {display: 'two', code: '2'}, fhirVal2: {display: 'three', code: '3'}
+            }, {
+              answers: [{text: 'one'}, {text: 'two'}, {text: 'three'}],
+              fhirVal: {display: 'two'}, fhirVal2: {display: 'three'}
+            }, {
+              answers: [{codeSystem: 'cs1', code: '1'},
+                {codeSystem: 'cs1', code: '2'},
+                {codeSystem: 'cs1', code: '3'}],
+              fhirVal: {code: '2', system: 'cs1'}, fhirVal2: {code: '3', system: 'cs1'}
+            }, {
+              answers: [{code: '1'}, {code: '2'}, {code: '3'}],
+              fhirVal: {code: '2'}, fhirVal2: {code: '3'}
+            }];
+            for (let multiselect of [false, true]) {
+              for (let {answers, fhirVal, fhirVal2} of answerValCases) {
+                for (let dataType of ['CNE', 'CWE']) {
+                  for (let type of [undefined, 'Coding', 'CodeableConcept']) {
+                    it('should set a '+(multiselect ? 'multiselect ' : 'single-select ')+
+                       dataType+' value with '+Object.keys(fhirVal)+', and _type='+type, function() {
+                      let lfItem = {dataType, answers};
+                      let fhirVals = [JSON.parse(JSON.stringify(fhirVal))];
+                      if (multiselect) {
+                        fhirVals.push(JSON.parse(JSON.stringify(fhirVal2)));
+                        lfItem.answerCardinality = {max: '*'};
+                      }
+                      if (type === 'CodeableConcept') {
+                        // Make each value a CodeableConcept (containing the
+                        // coding), and add an extra off-list coding (which
+                        // should not show up in the processed answers).
+                        fhirVals = fhirVals.map((c)=>{return {coding: [c]}});
+                        fhirVals[0].coding.push({display: 'four', code: '4', system: 'cs1'});
+                      }
+                      if (type != undefined)
+                        fhirVals.forEach((v)=>v._type=type);
+                      fhir.SDC._processFHIRValues(lfItem, fhirVals);
+                      let expected = multiselect ? [lfItem.answers[1], lfItem.answers[2]] : lfItem.answers[1];
+                      assert.deepEqual(lfItem.value, expected);
+                    });
+                  }
+                }
+              }
+            }
+          });
+
+          describe('list fields and off-list string values', function() {
+            let answers = [{codeSystem: 'cs1', code: '1', text: 'one'},
+                {codeSystem: 'cs1', code: '2', text: 'two'},
+                {codeSystem: 'cs1', code: '3', text: 'three'}];
+            for (let multiselect of [false, true]) {
+              it('should handle off-list answers for '+
+                 (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
+                let lfItem = {dataType: 'CWE', answers};
+                let fhirVals = ['four'];
+                if (multiselect) {
+                  fhirVals.push('five');
+                  lfItem.answerCardinality = {max: '*'};
+                }
+                fhir.SDC._processFHIRValues(lfItem, fhirVals);
+                let expected = multiselect ? fhirVals : fhirVals[0];
+                assert.deepEqual(lfItem.value, expected);
+              });
+            }
+          });
+
+          describe('date/time fields', function() {
+            let dateStr = '2020-02-12';
+            let dateTimeStr = '2020-02-12T18:45-05:00'
+            for (let dataType of ['DT', 'DTM']) {
+              it ('should set the string value on defaultAnswer for data type '+dataType, function() {
+                let lfItem = {dataType};
+                let fhirVal = dataType==='DT' ? dateStr : dateTimeStr;
+                fhir.SDC._processFHIRValues(lfItem, [fhirVal], true);
+                assert.equal(lfItem.defaultAnswer, fhirVal);
+              });
+
+              it ('should set a Date value on .value for data type '+dataType, function() {
+                let lfItem = {dataType};
+                let fhirVal, expected;
+                if (dataType==='DT') {
+                  fhirVal = dateStr;
+                  expected = LForms.Util.stringToDTDateISO(fhirVal);
+                }
+                else {
+                  fhirVal = dateTimeStr;
+                  expected = new Date(fhirVal);
+                }
+                fhir.SDC._processFHIRValues(lfItem, [fhirVal]);
+                assert.equal(lfItem.value.getTime(), expected.getTime());
+              });
+            }
+          });
+        }); // _processFHIRValues
+
         describe('_significantDigits', function() {
           it('should count zeros left of the decimal', function() {
             // This is because users are not likely to enter number in

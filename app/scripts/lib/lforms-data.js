@@ -3170,9 +3170,11 @@
       var action = false;
       var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
 
+      // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
+      // maxExclusive or maxInclusive.
+      // 'not' means '!=', 'value' means '='.
       if(trigger.hasOwnProperty('exists')) {
         action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
-        action = trigger.not? !action: action;
       }
       else if (hasAnswer) {
         var currentValue = item.value;
@@ -3181,27 +3183,44 @@
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.not : null;
             var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
+            var isEqual = false;
             for (var m= 0, mLen = answerValues.length; m<mLen; m++) {
               let answerValue = answerValues[m];
               if(item.answerCodeSystem) {
                 answerValue = Object.assign({system: item.answerCodeSystem}, answerValue);
               }
-              if(this._codingsEqual(trigger.value, answerValue)) {
-                action = true;
+              if(this._codingsEqual(triggerValue, answerValue)) {
+                isEqual = true;
                 break;
+              }
+            }
+            if (trigger.hasOwnProperty('value')) {
+              if (isEqual) {
+                action = true;
+              }
+            }
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (!isEqual) {
+                action = true;
               }
             }
             break;
           // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
-          // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
+          // available keys: (1) "value", (2) "not" or (3) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
           case this._CONSTANTS.DATA_TYPE.INT:
           case this._CONSTANTS.DATA_TYPE.REAL:
           case this._CONSTANTS.DATA_TYPE.QTY:
             var numCurrentValue = parseFloat(currentValue);
             // the skip logic rule has a "value" key
             if (trigger.hasOwnProperty("value")) {
-              if (trigger["value"] == numCurrentValue) {
+              if (trigger["value"] === numCurrentValue) {
+                action = true;
+              }
+            }
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != numCurrentValue) {
                 action = true;
               }
             }
@@ -3219,16 +3238,23 @@
           // boolean: {"value": true}, {"value": false}
           // the only key is "value"
           case this._CONSTANTS.DATA_TYPE.BL:
-            if (trigger.hasOwnProperty("value") &&
-              trigger["value"] === currentValue ) {
-              action = true;
+            if (trigger.hasOwnProperty("value")) {
+              if (trigger["value"] === currentValue ) {
+                action = true;
+              }
+            }
+            else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != currentValue) {
+                action = true;
+              }
             }
             break;
         } // end case
-
-        if(trigger.not) {
-          action = !action;
-        }
+      }
+      // no answer and 'notEqual' has a value
+      else if (trigger.hasOwnProperty('notEqual') &&
+          trigger.notEqual !==undefined && trigger.notEqual !== null && trigger.notEqual !== "") {
+        action = true;
       }
 
       return action;

@@ -91,14 +91,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(88);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(89);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(90);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(91);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(92);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(93);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(87);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(92);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(93);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(94);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(95);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(96);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -107,6 +107,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
 fhir.fhirpath = __webpack_require__(2);
+fhir.fhirpathModel = __webpack_require__(84);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -145,6 +146,8 @@ var LOINC_URI = 'http://loinc.org';
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 // This is fhirpath interpreter
 // everything starts at evaluate function,
 // which is passed  fhirpath AST and resource.
@@ -178,19 +181,19 @@ var parser = __webpack_require__(3);
 
 var util = __webpack_require__(55);
 
-__webpack_require__(56);
+__webpack_require__(70);
 
-var constants = __webpack_require__(57);
+var constants = __webpack_require__(71);
 
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(58);
+var existence = __webpack_require__(72);
 
-var filtering = __webpack_require__(59);
+var filtering = __webpack_require__(73);
 
-var combining = __webpack_require__(60);
+var combining = __webpack_require__(74);
 
-var misc = __webpack_require__(61);
+var misc = __webpack_require__(75);
 
 var equality = __webpack_require__(76);
 
@@ -206,11 +209,14 @@ var datetime = __webpack_require__(82);
 
 var logic = __webpack_require__(83);
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time;
-var FP_Quantity = types.FP_Quantity; // * fn: handler
+var FP_DateTime = types.FP_DateTime,
+    FP_Time = types.FP_Time,
+    FP_Quantity = types.FP_Quantity,
+    FP_Type = types.FP_Type,
+    ResourceNode = types.ResourceNode;
+var makeResNode = ResourceNode.makeResNode; // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
 //   function accepts value of this type or empty value {}
@@ -725,22 +731,68 @@ engine.InvocationTerm = function (ctx, parentData, node) {
 
 engine.MemberInvocation = function (ctx, parentData, node) {
   var key = engine.doEval(ctx, parentData, node.children[0])[0];
+  var model = ctx.model;
 
   if (parentData) {
     if (util.isCapitalized(key)) {
       return parentData.filter(function (x) {
         return x.resourceType === key;
+      }).map(function (x) {
+        return makeResNode(x, key);
       });
     } else {
       return parentData.reduce(function (acc, res) {
-        var toAdd = res[key];
+        res = makeResNode(res);
+        var childPath = res.path + '.' + key;
+
+        if (model) {
+          var defPath = model.pathsDefinedElsewhere[childPath];
+          if (defPath) childPath = defPath;
+        }
+
+        var toAdd;
+        var actualTypes = model && model.choiceTypePaths[childPath];
+
+        if (actualTypes) {
+          // Use actualTypes to find the field's value
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = actualTypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var t = _step.value;
+              var field = key + t;
+              toAdd = res.data[field];
+
+              if (toAdd) {
+                childPath = t;
+                break;
+              }
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+        } else toAdd = res.data[key];
 
         if (util.isSome(toAdd)) {
           if (Array.isArray(toAdd)) {
-            // replace with array modification
-            acc = acc.concat(toAdd);
+            acc = acc.concat(toAdd.map(function (x) {
+              return makeResNode(x, childPath);
+            }));
           } else {
-            acc.push(toAdd);
+            acc.push(makeResNode(toAdd, childPath));
           }
 
           return acc;
@@ -791,32 +843,40 @@ engine.realizeParams = function (ctx, parentData, args) {
 
 var paramTable = {
   "Integer": function Integer(val) {
-    if (typeof val !== "number" || !Number.isInteger(val)) {
-      throw new Error("Expected integer, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "number" || !Number.isInteger(d)) {
+      throw new Error("Expected integer, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   },
   "Boolean": function Boolean(val) {
-    if (val === true || val === false) {
-      return val;
+    var d = util.valData(val);
+
+    if (d === true || d === false) {
+      return d;
     }
 
-    throw new Error("Expected boolean, got: " + JSON.stringify(val));
+    throw new Error("Expected boolean, got: " + JSON.stringify(d));
   },
   "Number": function Number(val) {
-    if (typeof val !== "number") {
-      throw new Error("Expected number, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "number") {
+      throw new Error("Expected number, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   },
   "String": function String(val) {
-    if (typeof val !== "string") {
-      throw new Error("Expected string, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "string") {
+      throw new Error("Expected string, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   }
 };
 
@@ -1061,10 +1121,12 @@ var parse = function parse(path) {
  *  This resource will be modified by this function to add type information.
  * @param {string} parsedPath - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-function applyParsedPath(resource, parsedPath, context) {
+function applyParsedPath(resource, parsedPath, context, model) {
   constants.reset();
   var dataRoot = util.arraify(resource); // doEval takes a "ctx" object, and we store things in that as we parse, so we
   // need to put user-provided variable data in a sub-object, ctx.vars.
@@ -1077,9 +1139,30 @@ function applyParsedPath(resource, parsedPath, context) {
   };
   var ctx = {
     dataRoot: dataRoot,
-    vars: Object.assign(vars, context)
+    vars: Object.assign(vars, context),
+    model: model
   };
-  return engine.doEval(ctx, dataRoot, parsedPath.children[0]);
+  var rtn = engine.doEval(ctx, dataRoot, parsedPath.children[0]); // Resolve any internal "ResourceNode" instances.  Continue to let FP_Type
+  // subclasses through.
+
+  rtn = function visit(n) {
+    n = util.valData(n);
+
+    if (Array.isArray(n)) {
+      for (var i = 0, len = n.length; i < len; ++i) {
+        n[i] = visit(n[i]);
+      }
+    } else if (_typeof(n) === 'object' && !(n instanceof FP_Type)) {
+      for (var _i = 0, _Object$keys = Object.keys(n); _i < _Object$keys.length; _i++) {
+        var k = _Object$keys[_i];
+        n[k] = visit(n[k]);
+      }
+    }
+
+    return n;
+  }(rtn);
+
+  return rtn;
 }
 /**
  *  Evaluates the "path" FHIRPath expression on the given resource, using data
@@ -1088,12 +1171,14 @@ function applyParsedPath(resource, parsedPath, context) {
  *  This resource will be modified by this function to add type information.
  * @param {string} path - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-var evaluate = function evaluate(resource, path, context) {
+var evaluate = function evaluate(resource, path, context, model) {
   var node = parser.parse(path);
-  return applyParsedPath(resource, node, context);
+  return applyParsedPath(resource, node, context, model);
 };
 /**
  *  Returns a function that takes a resource and an optional context hash (see
@@ -1102,20 +1187,15 @@ var evaluate = function evaluate(resource, path, context) {
  *  is that if you have multiple resources, the given FHIRPath expression will
  *  only be parsed once.
  * @param path the FHIRPath expression to be parsed.
- * @param {object} (deprecated) context - a hash of variable name/value pairs.  This is
- *  optional now, and is deprecated, because it was probably a mistake.  Instead
- *  of passing in this hash of variables here, pass it to the returned function
- *  as a second argument.  If context is provided both here and to the returned
- *  function, the argument to the returned function will be used instead of this
- *  one.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-var compile = function compile(path, context) {
+var compile = function compile(path, model) {
   var node = parse(path);
-  return function (resource, contextOverride) {
-    if (contextOverride) context = contextOverride;
-    return applyParsedPath(resource, node, context);
+  return function (resource, context) {
+    return applyParsedPath(resource, node, context, model);
   };
 };
 
@@ -1124,7 +1204,7 @@ module.exports = {
   compile: compile,
   evaluate: evaluate,
   // Might as well export the UCUM library, since we are using it.
-  ucumUtils: __webpack_require__(68).UcumLhcUtils.getInstance()
+  ucumUtils: __webpack_require__(62).UcumLhcUtils.getInstance()
 };
 
 /***/ }),
@@ -2052,7 +2132,9 @@ AltDict.prototype.values = function () {
   });
 };
 
-function DoubleDict() {
+function DoubleDict(defaultMapCtor) {
+  this.defaultMapCtor = defaultMapCtor || Map;
+  this.cacheMap = new this.defaultMapCtor();
   return this;
 }
 
@@ -2066,7 +2148,7 @@ Hash.prototype.update = function () {
   for (var i = 0; i < arguments.length; i++) {
     var value = arguments[i];
     if (value == null) continue;
-    if (Array.isArray(value)) this.update.apply(value);else {
+    if (Array.isArray(value)) this.update.apply(this, value);else {
       var k = 0;
 
       switch (_typeof(value)) {
@@ -2084,7 +2166,7 @@ Hash.prototype.update = function () {
           break;
 
         default:
-          value.updateHashCode(this);
+          if (value.updateHashCode) value.updateHashCode(this);else console.log("No updateHashCode for " + value.toString());
           continue;
       }
 
@@ -2112,24 +2194,24 @@ Hash.prototype.finish = function () {
 
 function hashStuff() {
   var hash = new Hash();
-  hash.update.apply(arguments);
+  hash.update.apply(hash, arguments);
   return hash.finish();
 }
 
 DoubleDict.prototype.get = function (a, b) {
-  var d = this[a] || null;
-  return d === null ? null : d[b] || null;
+  var d = this.cacheMap.get(a) || null;
+  return d === null ? null : d.get(b) || null;
 };
 
 DoubleDict.prototype.set = function (a, b, o) {
-  var d = this[a] || null;
+  var d = this.cacheMap.get(a) || null;
 
   if (d === null) {
-    d = {};
-    this[a] = d;
+    d = new this.defaultMapCtor();
+    this.cacheMap.put(a, d);
   }
 
-  d[b] = o;
+  d.put(b, o);
 };
 
 function escapeWhitespace(s, escapeSpaces) {
@@ -3856,6 +3938,8 @@ var RuleContext = __webpack_require__(16).RuleContext;
 
 var Hash = __webpack_require__(8).Hash;
 
+var Map = __webpack_require__(8).Map;
+
 function PredictionContext(cachedHashCode) {
   this.cachedHashCode = cachedHashCode;
 } // Represents {@code $} in local context prediction, which means wildcard.
@@ -3922,7 +4006,7 @@ function calculateHashString(parent, returnState) {
 
 
 function PredictionContextCache() {
-  this.cache = {};
+  this.cache = new Map();
   return this;
 } // Add a context to the cache and return it. If the context already exists,
 // return that one instead and do not add a new context to the cache.
@@ -3935,18 +4019,18 @@ PredictionContextCache.prototype.add = function (ctx) {
     return PredictionContext.EMPTY;
   }
 
-  var existing = this.cache[ctx] || null;
+  var existing = this.cache.get(ctx) || null;
 
   if (existing !== null) {
     return existing;
   }
 
-  this.cache[ctx] = ctx;
+  this.cache.put(ctx, ctx);
   return ctx;
 };
 
 PredictionContextCache.prototype.get = function (ctx) {
-  return this.cache[ctx] || null;
+  return this.cache.get(ctx) || null;
 };
 
 Object.defineProperty(PredictionContextCache.prototype, "length", {
@@ -3957,13 +4041,15 @@ Object.defineProperty(PredictionContextCache.prototype, "length", {
 
 function SingletonPredictionContext(parent, returnState) {
   var hashCode = 0;
+  var hash = new Hash();
 
   if (parent !== null) {
-    var hash = new Hash();
     hash.update(parent, returnState);
-    hashCode = hash.finish();
+  } else {
+    hash.update(1);
   }
 
+  hashCode = hash.finish();
   PredictionContext.call(this, hashCode);
   this.parentCtx = parent;
   this.returnState = returnState;
@@ -4550,18 +4636,18 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
 
 
 function combineCommonParents(parents) {
-  var uniqueParents = {};
+  var uniqueParents = new Map();
 
   for (var p = 0; p < parents.length; p++) {
     var parent = parents[p];
 
-    if (!(parent in uniqueParents)) {
-      uniqueParents[parent] = parent;
+    if (!uniqueParents.containsKey(parent)) {
+      uniqueParents.put(parent, parent);
     }
   }
 
   for (var q = 0; q < parents.length; q++) {
-    parents[q] = uniqueParents[parents[q]];
+    parents[q] = uniqueParents.get(parents[q]);
   }
 }
 
@@ -4570,7 +4656,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
     return context;
   }
 
-  var existing = visited[context] || null;
+  var existing = visited.get(context) || null;
 
   if (existing !== null) {
     return existing;
@@ -4579,7 +4665,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
   existing = contextCache.get(context);
 
   if (existing !== null) {
-    visited[context] = existing;
+    visited.put(context, existing);
     return existing;
   }
 
@@ -4606,7 +4692,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
 
   if (!changed) {
     contextCache.add(context);
-    visited[context] = context;
+    visited.put(context, context);
     return context;
   }
 
@@ -4621,8 +4707,8 @@ function getCachedPredictionContext(context, contextCache, visited) {
   }
 
   contextCache.add(updated);
-  visited[updated] = updated;
-  visited[context] = updated;
+  visited.put(updated, updated);
+  visited.put(context, updated);
   return updated;
 } // ter's recursive version of Sam's getAllNodes()
 
@@ -4632,14 +4718,14 @@ function getAllContextNodes(context, nodes, visited) {
     nodes = [];
     return getAllContextNodes(context, nodes, visited);
   } else if (visited === null) {
-    visited = {};
+    visited = new Map();
     return getAllContextNodes(context, nodes, visited);
   } else {
-    if (context === null || visited[context] !== null) {
+    if (context === null || visited.containsKey(context)) {
       return nodes;
     }
 
-    visited[context] = context;
+    visited.put(context, context);
     nodes.push(context);
 
     for (var i = 0; i < context.length; i++) {
@@ -5619,7 +5705,7 @@ ATNDeserializer.prototype.deserialize = function (data) {
 ATNDeserializer.prototype.reset = function (data) {
   var adjust = function adjust(c) {
     var v = c.charCodeAt(0);
-    return v > 1 ? v - 2 : v + 65533;
+    return v > 1 ? v - 2 : v + 65534;
   };
 
   var temp = data.split("").map(adjust); // don't adjust the first value since that's the version number
@@ -7823,7 +7909,7 @@ Recognizer.tokenTypeMapCache = {};
 Recognizer.ruleIndexMapCache = {};
 
 Recognizer.prototype.checkVersion = function (toolVersion) {
-  var runtimeVersion = "4.7.2";
+  var runtimeVersion = "4.8";
 
   if (runtimeVersion !== toolVersion) {
     console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
@@ -8338,6 +8424,8 @@ var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
 var getCachedPredictionContext = __webpack_require__(15).getCachedPredictionContext;
 
+var Map = __webpack_require__(8).Map;
+
 function ATNSimulator(atn, sharedContextCache) {
   // The context cache maps all PredictionContext objects that are ==
   //  to a single cached copy. This cache is shared across all contexts
@@ -8372,7 +8460,7 @@ ATNSimulator.prototype.getCachedContext = function (context) {
     return context;
   }
 
-  var visited = {};
+  var visited = new Map();
   return getCachedPredictionContext(context, this.sharedContextCache, visited);
 };
 
@@ -8523,11 +8611,6 @@ DFAState.prototype.toString = function () {
 DFAState.prototype.hashCode = function () {
   var hash = new Hash();
   hash.update(this.configs);
-
-  if (this.isAcceptState) {
-    if (this.predicates !== null) hash.update(this.predicates);else hash.update(this.prediction);
-  }
-
   return hash.finish();
 };
 
@@ -8722,21 +8805,19 @@ ATNConfigSet.prototype.equals = function (other) {
 
 ATNConfigSet.prototype.hashCode = function () {
   var hash = new Hash();
-  this.updateHashCode(hash);
+  hash.update(this.configs);
   return hash.finish();
 };
 
 ATNConfigSet.prototype.updateHashCode = function (hash) {
   if (this.readOnly) {
     if (this.cachedHashCode === -1) {
-      var hash = new Hash();
-      hash.update(this.configs);
-      this.cachedHashCode = hash.finish();
+      this.cachedHashCode = this.hashCode();
     }
 
     hash.update(this.cachedHashCode);
   } else {
-    hash.update(this.configs);
+    hash.update(this.hashCode());
   }
 };
 
@@ -17165,12 +17246,16 @@ exports.FHIRPathListener = FHIRPathListener;
 
 /***/ }),
 /* 55 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds utility functions used in implementing the public functions.
 var util = {};
+
+var types = __webpack_require__(56);
+
+var ResourceNode = types.ResourceNode;
 /**
  *  Reports and error to the calling environment and stops processing.
  * @param message the error message
@@ -17196,18 +17281,24 @@ util.assertAtMostOne = function (collection, errorMsgPrefix) {
 };
 /**
  *  Throws an exception if the data is not one of the expected types.
- * @param data the value to be checked
+ * @param data the value to be checked.  This may be a ResourceNode.
  * @param types an array of the permitted types
  * @param errorMsgPrefix An optional prefix for the error message to assist in
  *  debugging.
+ * @return the value that was checked.  If "data" was a ResourceNode, this will
+ *  be the ReourceNode's data.
  */
 
 
 util.assertType = function (data, types, errorMsgPrefix) {
-  if (types.indexOf(_typeof(data)) < 0) {
+  var val = this.valData(data);
+
+  if (types.indexOf(_typeof(val)) < 0) {
     var typeList = types.length > 1 ? "one of " + types.join(", ") : types[0];
     util.raiseError("Found type '" + _typeof(data) + "' but was expecting " + typeList, errorMsgPrefix);
   }
+
+  return val;
 };
 
 util.isEmpty = function (x) {
@@ -17254,506 +17345,20 @@ util.arraify = function (x) {
 
   return [];
 };
+/**
+ *  Returns the data value of the given parameter, which might be a ResourceNode.
+ *  Otherwise, it returns the value that was passed in.
+ */
+
+
+util.valData = function (val) {
+  return val instanceof ResourceNode ? val.data : val;
+};
 
 module.exports = util;
 
 /***/ }),
 /* 56 */
-/***/ (function(module, exports) {
-
-// isInteger (not in IE)
-// From Mozilla docs
-Number.isInteger = Number.isInteger || function (value) {
-  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
-};
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports) {
-
-// These are values that should not change during an evaluation of a FHIRPath
-// expression (e.g. the return value of today(), per the spec.)  They are
-// constant during at least one evaluation.
-module.exports = {
-  /**
-   *  Resets the constants.  Should be called when before the engine starts its
-   *  processing.
-   */
-  reset: function reset() {
-    this.nowDate = new Date(); // a Date object representint "now"
-
-    this.today = null;
-    this.now = null;
-    this.localTimezoneOffset = null;
-  },
-
-  /**
-   *  The cached value of today().
-   */
-  today: null,
-
-  /**
-   *  The cached value of now().
-   */
-  now: null
-};
-
-/***/ }),
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-// This file holds code to hande the FHIRPath Existence functions (5.1 in the
-// specification).
-var util = __webpack_require__(55);
-
-var filtering = __webpack_require__(59);
-
-var engine = {};
-engine.emptyFn = util.isEmpty;
-
-engine.notFn = function (x) {
-  return x.length === 1 && typeof x[0] === 'boolean' ? !x[0] : [];
-};
-
-engine.existsMacro = function (coll, expr) {
-  var vec = coll;
-
-  if (expr) {
-    return engine.existsMacro(filtering.whereMacro(coll, expr));
-  }
-
-  return !util.isEmpty(vec);
-};
-
-engine.allMacro = function (coll, expr) {
-  for (var i = 0, len = coll.length; i < len; ++i) {
-    if (!util.isTrue(expr(coll[i]))) {
-      return [false];
-    }
-  }
-
-  return [true];
-};
-
-engine.allTrueFn = function (x) {
-  var rtn = true;
-
-  for (var i = 0, len = x.length; i < len && rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "allTrue");
-    rtn = x[i] === true;
-  }
-
-  return [rtn];
-};
-
-engine.anyTrueFn = function (x) {
-  var rtn = false;
-
-  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "anyTrue");
-    rtn = x[i] === true;
-  }
-
-  return [rtn];
-};
-
-engine.allFalseFn = function (x) {
-  var rtn = true;
-
-  for (var i = 0, len = x.length; i < len && rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "allFalse");
-    rtn = x[i] === false;
-  }
-
-  return [rtn];
-};
-
-engine.anyFalseFn = function (x) {
-  var rtn = false;
-
-  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "anyFalse");
-    rtn = x[i] === false;
-  }
-
-  return [rtn];
-};
-/**
- *  Returns a JSON version of the given object, but with keys of the object in
- *  sorted order (or at least a stable order).
- *  From: https://stackoverflow.com/a/35810961/360782
- */
-
-
-function orderedJsonStringify(obj) {
-  return JSON.stringify(sortObjByKey(obj));
-}
-/**
- *  If given value is an object, returns a new object with the properties added
- *  in sorted order, and handles nested objects.  Otherwise, returns the given
- *  value.
- *  From: https://stackoverflow.com/a/35810961/360782
- */
-
-
-function sortObjByKey(value) {
-  return _typeof(value) === 'object' ? Array.isArray(value) ? value.map(sortObjByKey) : Object.keys(value).sort().reduce(function (o, key) {
-    var v = value[key];
-    o[key] = sortObjByKey(v);
-    return o;
-  }, {}) : value;
-}
-/**
- *  Returns true if coll1 is a subset of coll2.
- */
-
-
-function subsetOf(coll1, coll2) {
-  var rtn = coll1.length <= coll2.length;
-
-  if (rtn) {
-    // This requires a deep-equals comparision of every object in coll1,
-    // against each object in coll2.
-    // Optimize by building a hashmap of JSON versions of the objects.
-    var c2Hash = {};
-
-    for (var p = 0, pLen = coll1.length; p < pLen && rtn; ++p) {
-      var obj1 = coll1[p];
-      var obj1Str = orderedJsonStringify(obj1);
-      var found = false;
-
-      if (p === 0) {
-        // c2Hash is not yet built
-        for (var i = 0, len = coll2.length; i < len; ++i) {
-          // No early return from this loop, because we're building c2Hash.
-          var obj2 = coll2[i];
-          var obj2Str = orderedJsonStringify(obj2);
-          c2Hash[obj2Str] = obj2;
-          found = found || obj1Str === obj2Str;
-        }
-      } else found = !!c2Hash[obj1Str];
-
-      rtn = found;
-    }
-  }
-
-  return rtn;
-}
-
-engine.subsetOfFn = function (coll1, coll2) {
-  return [subsetOf(coll1, coll2)];
-};
-
-engine.supersetOfFn = function (coll1, coll2) {
-  return [subsetOf(coll2, coll1)];
-};
-
-engine.isDistinctFn = function (x) {
-  return [x.length === engine.distinctFn(x).length];
-};
-
-engine.distinctFn = function (x) {
-  var unique = []; // Since this requires a deep equals, use a hash table (on JSON strings) for
-  // efficiency.
-
-  if (x.length > 0) {
-    var uniqueHash = {};
-
-    for (var i = 0, len = x.length; i < len; ++i) {
-      var xObj = x[i];
-      var xStr = JSON.stringify(xObj);
-      var uObj = uniqueHash[xStr];
-
-      if (uObj === undefined) {
-        unique.push(xObj);
-        uniqueHash[xStr] = xObj;
-      }
-    }
-  }
-
-  return unique;
-};
-
-engine.countFn = function (x) {
-  if (x && x.length) {
-    return x.length;
-  } else {
-    return 0;
-  }
-};
-
-module.exports = engine;
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-// Contains the FHIRPath Filtering and Projection functions.  (Section 5.2 of
-// the FHIRPath 1.0.0 specification).
-
-/**
- *  Adds the filtering and projection functions to the given FHIRPath engine.
- */
-var util = __webpack_require__(55);
-
-var engine = {};
-
-engine.whereMacro = function (parentData, expr) {
-  if (parentData !== false && !parentData) {
-    return [];
-  }
-
-  return util.flatten(parentData.filter(function (x) {
-    return expr(x)[0];
-  }));
-};
-
-engine.selectMacro = function (data, expr) {
-  if (data !== false && !data) {
-    return [];
-  }
-
-  return util.flatten(data.map(function (x) {
-    return expr(x);
-  }));
-};
-
-engine.repeatMacro = function (parentData, expr) {
-  if (parentData !== false && !parentData) {
-    return [];
-  }
-
-  var res = [];
-  var items = parentData;
-  var next = null;
-  var lres = null;
-
-  while (items.length != 0) {
-    next = items.shift();
-    lres = expr(next);
-
-    if (lres) {
-      res = res.concat(lres);
-      items = items.concat(lres);
-    }
-  }
-
-  return res;
-}; //TODO: behavior on object?
-
-
-engine.singleFn = function (x) {
-  if (x.length == 1) {
-    return x;
-  } else if (x.length == 0) {
-    return [];
-  } else {
-    //TODO: should throw error?
-    return {
-      $status: "error",
-      $error: "Expected single"
-    };
-  }
-};
-
-engine.firstFn = function (x) {
-  return x[0];
-};
-
-engine.lastFn = function (x) {
-  return x[x.length - 1];
-};
-
-engine.tailFn = function (x) {
-  return x.slice(1, x.length);
-};
-
-engine.takeFn = function (x, n) {
-  return x.slice(0, n);
-};
-
-engine.skipFn = function (x, num) {
-  return x.slice(num, x.length);
-};
-
-function checkFHIRType(x, tp) {
-  if (_typeof(x) === tp) {
-    return true;
-  }
-
-  if (tp === "integer") {
-    return Number.isInteger(x);
-  }
-
-  if (tp === "decimal") {
-    return typeof x == "number";
-  }
-
-  return false;
-} // naive typeof implementation
-// understand only basic types like string, number etc
-
-
-engine.ofTypeFn = function (coll, type) {
-  return coll.filter(function (x) {
-    return checkFHIRType(x, type);
-  });
-};
-
-module.exports = engine;
-
-/***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// This file holds code to hande the FHIRPath Combining functions.
-var combineFns = {};
-
-var existence = __webpack_require__(58);
-
-combineFns.unionOp = function (coll1, coll2) {
-  return existence.distinctFn(coll1.concat(coll2));
-};
-
-combineFns.combineFn = function (coll1, coll2) {
-  return coll1.concat(coll2);
-};
-
-module.exports = combineFns;
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// This file holds code to hande the FHIRPath Existence functions (5.1 in the
-// specification).
-var util = __webpack_require__(55);
-
-var types = __webpack_require__(62);
-
-var engine = {};
-
-engine.iifMacro = function (data, cond, ok, fail) {
-  if (util.isTrue(cond(data))) {
-    return ok(data);
-  } else {
-    return fail(data);
-  }
-};
-
-engine.traceFn = function (x, label) {
-  console.log("TRACE:[" + (label || "") + "]", JSON.stringify(x, null, " "));
-  return x;
-};
-
-var intRegex = /^[+-]?\d+$/;
-
-engine.toInteger = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-
-  if (v === false) {
-    return 0;
-  }
-
-  if (v === true) {
-    return 1;
-  }
-
-  if (typeof v === "number") {
-    if (Number.isInteger(v)) {
-      return v;
-    } else {
-      return [];
-    }
-  }
-
-  if (typeof v === "string") {
-    if (intRegex.test(v)) {
-      return parseInt(v);
-    } else {
-      throw new Error("Could not convert to ineger: " + v);
-    }
-  }
-
-  return [];
-};
-
-var numRegex = /^[+-]?\d+(\.\d+)?$/;
-
-engine.toDecimal = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-
-  if (v === false) {
-    return 0;
-  }
-
-  if (v === true) {
-    return 1.0;
-  }
-
-  if (typeof v === "number") {
-    return v;
-  }
-
-  if (typeof v === "string") {
-    if (numRegex.test(v)) {
-      return Number.parseFloat(v);
-    } else {
-      throw new Error("Could not convert to decimal: " + v);
-    }
-  }
-
-  return [];
-};
-
-engine.toString = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-  return v.toString();
-};
-/**
- *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
- * @param timeType The string name of a class for a time type (e.g. "FP_DateTime").
- */
-
-
-function defineTimeConverter(timeType) {
-  var timeName = timeType.slice(3); // Remove 'FP_'
-
-  engine['to' + timeName] = function (coll) {
-    var rtn = [];
-    if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
-
-    if (coll.length === 1) {
-      var t = types[timeType].checkString(coll[0]);
-      if (t) rtn[0] = t;
-    }
-
-    return rtn;
-  };
-}
-
-defineTimeConverter('FP_DateTime');
-defineTimeConverter('FP_Time');
-module.exports = engine;
-
-/***/ }),
-/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17778,9 +17383,9 @@ function _superPropBase(object, property) { while (!Object.prototype.hasOwnPrope
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var addMinutes = __webpack_require__(63);
+var addMinutes = __webpack_require__(57);
 
-var ucumUtils = __webpack_require__(68).UcumLhcUtils.getInstance();
+var ucumUtils = __webpack_require__(62).UcumLhcUtils.getInstance();
 
 var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
 var timeRE = new RegExp('^T?' + timeFormat + '$');
@@ -17789,6 +17394,11 @@ var dateTimeRE = new RegExp('^[0-9][0-9][0-9][0-9](-[0-9][0-9](-[0-9][0-9](T' + 
 //let fhirTimeRE = /([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?/;
 //let fhirDateTimeRE =
 ///([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?/;
+
+/**
+ *   Class FP_Type is the superclass for FHIRPath types that required special
+ *   handling.
+ */
 
 var FP_Type =
 /*#__PURE__*/
@@ -18256,14 +17866,14 @@ function (_FP_Type2) {
 
 
 FP_TimeBase.timeUnitToAddFn = {
-  "'a'": __webpack_require__(69),
-  "'mo'": __webpack_require__(70),
-  "'wk'": __webpack_require__(72),
-  "'d'": __webpack_require__(73),
-  "'h'": __webpack_require__(74),
-  "'min'": __webpack_require__(63),
-  "'s'": __webpack_require__(75),
-  "'ms'": __webpack_require__(64)
+  "'a'": __webpack_require__(63),
+  "'mo'": __webpack_require__(64),
+  "'wk'": __webpack_require__(66),
+  "'d'": __webpack_require__(67),
+  "'h'": __webpack_require__(68),
+  "'min'": __webpack_require__(57),
+  "'s'": __webpack_require__(69),
+  "'ms'": __webpack_require__(58)
 };
 
 var FP_DateTime =
@@ -18656,6 +18266,54 @@ FP_DateTime.isoDate = function (date, precision) {
   if (precision === undefined || precision > 2) precision = 2;
   return FP_DateTime.isoDateTime(date, precision);
 };
+/**
+ *  A class that represents a node in a FHIR resource, with path and possibly type
+ *  information.
+ */
+
+
+var ResourceNode =
+/*#__PURE__*/
+function () {
+  /**
+   *  Constructs a instance for the given node ("data") of a resource.  If the
+   *  data is the top-level node of a resouce, the path and type parameters will
+   *  be ignored in favor of the resource's resourceType field.
+   * @param data the node's data or value (which might be an object with
+   *  sub-nodes, an array, or FHIR data type)
+   * @param path the node's path in the resource (e.g. Patient.name).  If the
+   *  data's type can be determined from data, that will take precedence over
+   *  this parameter.
+   */
+  function ResourceNode(data, path) {
+    _classCallCheck(this, ResourceNode);
+
+    // If data is a resource (maybe a contained resource) reset the path
+    // information to the resource type.
+    if (data.resourceType) path = data.resourceType;
+    this.path = path;
+    this.data = data;
+  }
+
+  _createClass(ResourceNode, [{
+    key: "toJSON",
+    value: function toJSON() {
+      return JSON.stringify(this.data);
+    }
+  }]);
+
+  return ResourceNode;
+}();
+/**
+ *  Returns a ResourceNode for the given data node, checking first to see if the
+ *  given node is already a ResourceNode.  Takes the same arguments as the
+ *  constructor for ResourceNode.
+ */
+
+
+ResourceNode.makeResNode = function (data, path) {
+  return data instanceof ResourceNode ? data : new ResourceNode(data, path);
+};
 
 module.exports = {
   FP_Type: FP_Type,
@@ -18664,14 +18322,15 @@ module.exports = {
   FP_Time: FP_Time,
   FP_Quantity: FP_Quantity,
   timeRE: timeRE,
-  dateTimeRE: dateTimeRE
+  dateTimeRE: dateTimeRE,
+  ResourceNode: ResourceNode
 };
 
 /***/ }),
-/* 63 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 
 var MILLISECONDS_IN_MINUTE = 60000;
 /**
@@ -18699,10 +18358,10 @@ function addMinutes(dirtyDate, dirtyAmount) {
 module.exports = addMinutes;
 
 /***/ }),
-/* 64 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Millisecond Helpers
  * @summary Add the specified number of milliseconds to the given date.
@@ -18730,12 +18389,12 @@ function addMilliseconds(dirtyDate, dirtyAmount) {
 module.exports = addMilliseconds;
 
 /***/ }),
-/* 65 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getTimezoneOffsetInMilliseconds = __webpack_require__(66);
+var getTimezoneOffsetInMilliseconds = __webpack_require__(60);
 
-var isDate = __webpack_require__(67);
+var isDate = __webpack_require__(61);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19062,7 +18721,7 @@ function dayOfISOYear(isoYear, week, day) {
 module.exports = parse;
 
 /***/ }),
-/* 66 */
+/* 60 */
 /***/ (function(module, exports) {
 
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19087,7 +18746,7 @@ module.exports = function getTimezoneOffsetInMilliseconds(dirtyDate) {
 };
 
 /***/ }),
-/* 67 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -19112,16 +18771,16 @@ function isDate(argument) {
 module.exports = isDate;
 
 /***/ }),
-/* 68 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = LForms.ucumPkg;
 
 /***/ }),
-/* 69 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMonths = __webpack_require__(70);
+var addMonths = __webpack_require__(64);
 /**
  * @category Year Helpers
  * @summary Add the specified number of years to the given date.
@@ -19148,12 +18807,12 @@ function addYears(dirtyDate, dirtyAmount) {
 module.exports = addYears;
 
 /***/ }),
-/* 70 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 
-var getDaysInMonth = __webpack_require__(71);
+var getDaysInMonth = __webpack_require__(65);
 /**
  * @category Month Helpers
  * @summary Add the specified number of months to the given date.
@@ -19189,10 +18848,10 @@ function addMonths(dirtyDate, dirtyAmount) {
 module.exports = addMonths;
 
 /***/ }),
-/* 71 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Month Helpers
  * @summary Get the number of days in a month of the given date.
@@ -19223,10 +18882,10 @@ function getDaysInMonth(dirtyDate) {
 module.exports = getDaysInMonth;
 
 /***/ }),
-/* 72 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addDays = __webpack_require__(73);
+var addDays = __webpack_require__(67);
 /**
  * @category Week Helpers
  * @summary Add the specified number of weeks to the given date.
@@ -19254,10 +18913,10 @@ function addWeeks(dirtyDate, dirtyAmount) {
 module.exports = addWeeks;
 
 /***/ }),
-/* 73 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Day Helpers
  * @summary Add the specified number of days to the given date.
@@ -19286,10 +18945,10 @@ function addDays(dirtyDate, dirtyAmount) {
 module.exports = addDays;
 
 /***/ }),
-/* 74 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 /**
@@ -19317,10 +18976,10 @@ function addHours(dirtyDate, dirtyAmount) {
 module.exports = addHours;
 
 /***/ }),
-/* 75 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 /**
  * @category Second Helpers
  * @summary Add the specified number of seconds to the given date.
@@ -19347,6 +19006,502 @@ function addSeconds(dirtyDate, dirtyAmount) {
 module.exports = addSeconds;
 
 /***/ }),
+/* 70 */
+/***/ (function(module, exports) {
+
+// isInteger (not in IE)
+// From Mozilla docs
+Number.isInteger = Number.isInteger || function (value) {
+  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
+};
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports) {
+
+// These are values that should not change during an evaluation of a FHIRPath
+// expression (e.g. the return value of today(), per the spec.)  They are
+// constant during at least one evaluation.
+module.exports = {
+  /**
+   *  Resets the constants.  Should be called when before the engine starts its
+   *  processing.
+   */
+  reset: function reset() {
+    this.nowDate = new Date(); // a Date object representint "now"
+
+    this.today = null;
+    this.now = null;
+    this.localTimezoneOffset = null;
+  },
+
+  /**
+   *  The cached value of today().
+   */
+  today: null,
+
+  /**
+   *  The cached value of now().
+   */
+  now: null
+};
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+// This file holds code to hande the FHIRPath Existence functions (5.1 in the
+// specification).
+var util = __webpack_require__(55);
+
+var filtering = __webpack_require__(73);
+
+var engine = {};
+engine.emptyFn = util.isEmpty;
+
+engine.notFn = function (x) {
+  var d;
+  return x.length === 1 && typeof (d = util.valData(x[0])) === 'boolean' ? !d : [];
+};
+
+engine.existsMacro = function (coll, expr) {
+  var vec = coll;
+
+  if (expr) {
+    return engine.existsMacro(filtering.whereMacro(coll, expr));
+  }
+
+  return !util.isEmpty(vec);
+};
+
+engine.allMacro = function (coll, expr) {
+  for (var i = 0, len = coll.length; i < len; ++i) {
+    if (!util.isTrue(expr(coll[i]))) {
+      return [false];
+    }
+  }
+
+  return [true];
+};
+
+engine.allTrueFn = function (x) {
+  var rtn = true;
+
+  for (var i = 0, len = x.length; i < len && rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "allTrue");
+    rtn = xi === true;
+  }
+
+  return [rtn];
+};
+
+engine.anyTrueFn = function (x) {
+  var rtn = false;
+
+  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "anyTrue");
+    rtn = xi === true;
+  }
+
+  return [rtn];
+};
+
+engine.allFalseFn = function (x) {
+  var rtn = true;
+
+  for (var i = 0, len = x.length; i < len && rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "allFalse");
+    rtn = xi === false;
+  }
+
+  return [rtn];
+};
+
+engine.anyFalseFn = function (x) {
+  var rtn = false;
+
+  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "anyFalse");
+    rtn = xi === false;
+  }
+
+  return [rtn];
+};
+/**
+ *  Returns a JSON version of the given object, but with keys of the object in
+ *  sorted order (or at least a stable order).
+ *  From: https://stackoverflow.com/a/35810961/360782
+ */
+
+
+function orderedJsonStringify(obj) {
+  return JSON.stringify(sortObjByKey(obj));
+}
+/**
+ *  If given value is an object, returns a new object with the properties added
+ *  in sorted order, and handles nested objects.  Otherwise, returns the given
+ *  value.
+ *  From: https://stackoverflow.com/a/35810961/360782
+ */
+
+
+function sortObjByKey(value) {
+  return _typeof(value) === 'object' ? Array.isArray(value) ? value.map(sortObjByKey) : Object.keys(value).sort().reduce(function (o, key) {
+    var v = value[key];
+    o[key] = sortObjByKey(v);
+    return o;
+  }, {}) : value;
+}
+/**
+ *  Returns true if coll1 is a subset of coll2.
+ */
+
+
+function subsetOf(coll1, coll2) {
+  var rtn = coll1.length <= coll2.length;
+
+  if (rtn) {
+    // This requires a deep-equals comparision of every object in coll1,
+    // against each object in coll2.
+    // Optimize by building a hashmap of JSON versions of the objects.
+    var c2Hash = {};
+
+    for (var p = 0, pLen = coll1.length; p < pLen && rtn; ++p) {
+      var obj1 = util.valData(coll1[p]);
+      var obj1Str = orderedJsonStringify(obj1);
+      var found = false;
+
+      if (p === 0) {
+        // c2Hash is not yet built
+        for (var i = 0, len = coll2.length; i < len; ++i) {
+          // No early return from this loop, because we're building c2Hash.
+          var obj2 = util.valData(coll2[i]);
+          var obj2Str = orderedJsonStringify(obj2);
+          c2Hash[obj2Str] = obj2;
+          found = found || obj1Str === obj2Str;
+        }
+      } else found = !!c2Hash[obj1Str];
+
+      rtn = found;
+    }
+  }
+
+  return rtn;
+}
+
+engine.subsetOfFn = function (coll1, coll2) {
+  return [subsetOf(coll1, coll2)];
+};
+
+engine.supersetOfFn = function (coll1, coll2) {
+  return [subsetOf(coll2, coll1)];
+};
+
+engine.isDistinctFn = function (x) {
+  return [x.length === engine.distinctFn(x).length];
+};
+
+engine.distinctFn = function (x) {
+  var unique = []; // Since this requires a deep equals, use a hash table (on JSON strings) for
+  // efficiency.
+
+  if (x.length > 0) {
+    var uniqueHash = {};
+
+    for (var i = 0, len = x.length; i < len; ++i) {
+      var xObj = x[i];
+      var xStr = JSON.stringify(xObj);
+      var uObj = uniqueHash[xStr];
+
+      if (uObj === undefined) {
+        unique.push(xObj);
+        uniqueHash[xStr] = xObj;
+      }
+    }
+  }
+
+  return unique;
+};
+
+engine.countFn = function (x) {
+  if (x && x.length) {
+    return x.length;
+  } else {
+    return 0;
+  }
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+// Contains the FHIRPath Filtering and Projection functions.  (Section 5.2 of
+// the FHIRPath 1.0.0 specification).
+
+/**
+ *  Adds the filtering and projection functions to the given FHIRPath engine.
+ */
+var util = __webpack_require__(55);
+
+var engine = {};
+
+engine.whereMacro = function (parentData, expr) {
+  if (parentData !== false && !parentData) {
+    return [];
+  }
+
+  return util.flatten(parentData.filter(function (x) {
+    return expr(x)[0];
+  }));
+};
+
+engine.selectMacro = function (data, expr) {
+  if (data !== false && !data) {
+    return [];
+  }
+
+  return util.flatten(data.map(function (x) {
+    return expr(x);
+  }));
+};
+
+engine.repeatMacro = function (parentData, expr) {
+  if (parentData !== false && !parentData) {
+    return [];
+  }
+
+  var res = [];
+  var items = parentData;
+  var next = null;
+  var lres = null;
+
+  while (items.length != 0) {
+    next = items.shift();
+    lres = expr(next);
+
+    if (lres) {
+      res = res.concat(lres);
+      items = items.concat(lres);
+    }
+  }
+
+  return res;
+}; //TODO: behavior on object?
+
+
+engine.singleFn = function (x) {
+  if (x.length == 1) {
+    return x;
+  } else if (x.length == 0) {
+    return [];
+  } else {
+    //TODO: should throw error?
+    return {
+      $status: "error",
+      $error: "Expected single"
+    };
+  }
+};
+
+engine.firstFn = function (x) {
+  return x[0];
+};
+
+engine.lastFn = function (x) {
+  return x[x.length - 1];
+};
+
+engine.tailFn = function (x) {
+  return x.slice(1, x.length);
+};
+
+engine.takeFn = function (x, n) {
+  return x.slice(0, n);
+};
+
+engine.skipFn = function (x, num) {
+  return x.slice(num, x.length);
+};
+
+function checkFHIRType(x, tp) {
+  if (_typeof(x) === tp) {
+    return true;
+  }
+
+  if (tp === "integer") {
+    return Number.isInteger(x);
+  }
+
+  if (tp === "decimal") {
+    return typeof x == "number";
+  }
+
+  return false;
+} // naive typeof implementation
+// understand only basic types like string, number etc
+
+
+engine.ofTypeFn = function (coll, type) {
+  return coll.filter(function (x) {
+    return checkFHIRType(util.valData(x), type);
+  });
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// This file holds code to hande the FHIRPath Combining functions.
+var combineFns = {};
+
+var existence = __webpack_require__(72);
+
+combineFns.unionOp = function (coll1, coll2) {
+  return existence.distinctFn(coll1.concat(coll2));
+};
+
+combineFns.combineFn = function (coll1, coll2) {
+  return coll1.concat(coll2);
+};
+
+module.exports = combineFns;
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// This file holds code to hande the FHIRPath Existence functions (5.1 in the
+// specification).
+var util = __webpack_require__(55);
+
+var types = __webpack_require__(56);
+
+var engine = {};
+
+engine.iifMacro = function (data, cond, ok, fail) {
+  if (util.isTrue(cond(data))) {
+    return ok(data);
+  } else {
+    return fail(data);
+  }
+};
+
+engine.traceFn = function (x, label) {
+  console.log("TRACE:[" + (label || "") + "]", JSON.stringify(x, null, " "));
+  return x;
+};
+
+var intRegex = /^[+-]?\d+$/;
+
+engine.toInteger = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+
+  if (v === false) {
+    return 0;
+  }
+
+  if (v === true) {
+    return 1;
+  }
+
+  if (typeof v === "number") {
+    if (Number.isInteger(v)) {
+      return v;
+    } else {
+      return [];
+    }
+  }
+
+  if (typeof v === "string") {
+    if (intRegex.test(v)) {
+      return parseInt(v);
+    } else {
+      throw new Error("Could not convert to ineger: " + v);
+    }
+  }
+
+  return [];
+};
+
+var numRegex = /^[+-]?\d+(\.\d+)?$/;
+
+engine.toDecimal = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+
+  if (v === false) {
+    return 0;
+  }
+
+  if (v === true) {
+    return 1.0;
+  }
+
+  if (typeof v === "number") {
+    return v;
+  }
+
+  if (typeof v === "string") {
+    if (numRegex.test(v)) {
+      return Number.parseFloat(v);
+    } else {
+      throw new Error("Could not convert to decimal: " + v);
+    }
+  }
+
+  return [];
+};
+
+engine.toString = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+  return v.toString();
+};
+/**
+ *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
+ * @param timeType The string name of a class for a time type (e.g. "FP_DateTime").
+ */
+
+
+function defineTimeConverter(timeType) {
+  var timeName = timeType.slice(3); // Remove 'FP_'
+
+  engine['to' + timeName] = function (coll) {
+    var rtn = [];
+    if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
+
+    if (coll.length === 1) {
+      var t = types[timeType].checkString(util.valData(coll[0]));
+      if (t) rtn[0] = t;
+    }
+
+    return rtn;
+  };
+}
+
+defineTimeConverter('FP_DateTime');
+defineTimeConverter('FP_Time');
+module.exports = engine;
+
+/***/ }),
 /* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19355,7 +19510,7 @@ var util = __webpack_require__(55);
 
 var deepEqual = __webpack_require__(77);
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
 var FP_Type = types.FP_Type;
 var FP_DateTime = types.FP_DateTime;
@@ -19417,8 +19572,8 @@ function typecheck(a, b) {
   var rtn = null;
   util.assertAtMostOne(a, "Singleton was expected");
   util.assertAtMostOne(b, "Singleton was expected");
-  a = a[0];
-  b = b[0];
+  a = util.valData(a[0]);
+  b = util.valData(b[0]);
   var lClass = a.constructor;
   var rClass = b.constructor;
 
@@ -19485,9 +19640,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
 var FP_Type = types.FP_Type;
+
+var util = __webpack_require__(55);
+
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
 
@@ -19558,6 +19716,8 @@ function roundToDecimalPlaces(x, n) {
 }
 
 var deepEqual = function deepEqual(actual, expected, opts) {
+  actual = util.valData(actual);
+  expected = util.valData(expected);
   if (!opts) opts = {}; // 7.1. All identical values are equivalent, as determined by ===.
 
   if (actual === expected) {
@@ -19782,26 +19942,29 @@ module.exports = engine;
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var FP_TimeBase = types.FP_TimeBase;
-var FP_Quantity = types.FP_Quantity;
+var FP_TimeBase = types.FP_TimeBase,
+    FP_Quantity = types.FP_Quantity;
+
+var util = __webpack_require__(55);
 /**
  *  Adds the math functions to the given FHIRPath engine.
  */
 
+
 var engine = {};
 
 function ensureNumberSingleton(x) {
-  if (typeof x != 'number') {
-    if (x.length == 1 && typeof x[0] == 'number') {
-      return x[0];
+  var d = util.valData(x);
+
+  if (typeof d !== 'number') {
+    if (d.length == 1 && typeof (d = util.valData(d[0])) === 'number') {
+      return d;
     } else {
-      throw new Error("Expected number, but got " + JSON.stringify(x));
+      throw new Error("Expected number, but got " + JSON.stringify(d || x));
     }
-  } else {
-    return x;
-  }
+  } else return d;
 }
 
 function isEmpty(x) {
@@ -19820,8 +19983,11 @@ engine.amp = function (x, y) {
 
 engine.plus = function (xs, ys) {
   if (xs.length == 1 && ys.length == 1) {
-    var x = xs[0];
-    var y = ys[0];
+    var x = util.valData(xs[0]);
+    var y = util.valData(ys[0]); // In the future, this and other functions might need to return ResourceNode
+    // to preserve the type information (integer vs decimal, and maybe decimal
+    // vs string if decimals are represented as strings), in order to support
+    // "as" and "is", but that support is deferred for now.
 
     if (typeof x == "string" && typeof y == "string") {
       return x + y;
@@ -19836,18 +20002,18 @@ engine.plus = function (xs, ys) {
     }
   }
 
-  throw new Error("Can not " + JSON.stringify(xs) + " + " + JSON.stringify(ys));
+  throw new Error("Cannot " + JSON.stringify(xs) + " + " + JSON.stringify(ys));
 };
 
 engine.minus = function (xs, ys) {
   if (xs.length == 1 && ys.length == 1) {
-    var x = xs[0];
-    var y = ys[0];
+    var x = util.valData(xs[0]);
+    var y = util.valData(ys[0]);
     if (typeof x == "number" && typeof y == "number") return x - y;
     if (x instanceof FP_TimeBase && y instanceof FP_Quantity) return x.plus(new FP_Quantity(-y.value, y.unit));
   }
 
-  throw new Error("Can not " + JSON.stringify(xs) + " - " + JSON.stringify(ys));
+  throw new Error("Cannot " + JSON.stringify(xs) + " - " + JSON.stringify(ys));
 };
 
 engine.mul = function (x, y) {
@@ -19956,10 +20122,11 @@ engine.sqrt = function (x) {
   if (isEmpty(x)) {
     return [];
   } else {
-    if (x < 0) {
+    var num = ensureNumberSingleton(x);
+
+    if (num < 0) {
       return [];
     } else {
-      var num = ensureNumberSingleton(x);
       return Math.sqrt(num);
     }
   }
@@ -19978,16 +20145,20 @@ module.exports = engine;
 
 /***/ }),
 /* 80 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var util = __webpack_require__(55);
 
 var engine = {};
 
 function ensureStringSingleton(x) {
-  if (x.length == 1 && typeof x[0] === "string") {
-    return x[0];
+  var d;
+
+  if (x.length == 1 && typeof (d = util.valData(x[0])) === "string") {
+    return d;
   }
 
-  throw new Error('Expected string, but got ' + JSON.stringify(x));
+  throw new Error('Expected string, but got ' + JSON.stringify(d || x));
 }
 
 engine.indexOf = function (coll, substr) {
@@ -20041,24 +20212,42 @@ module.exports = engine;
 
 /***/ }),
 /* 81 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var util = __webpack_require__(55);
+
+var _require = __webpack_require__(56),
+    ResourceNode = _require.ResourceNode;
+
+var makeResNode = ResourceNode.makeResNode;
 var engine = {};
 
 engine.children = function (coll) {
-  return coll.reduce(function (acc, x) {
-    if (_typeof(x) === 'object') {
-      for (var prop in x) {
-        if (x.hasOwnProperty(prop)) {
-          var v = x[prop];
+  var model = this.model; // "this" is the context object
 
-          if (Array.isArray(v)) {
-            acc.push.apply(acc, v);
-          } else {
-            acc.push(v);
-          }
+  return coll.reduce(function (acc, x) {
+    var d = util.valData(x);
+    x = makeResNode(x);
+
+    if (_typeof(d) === 'object') {
+      for (var _i = 0, _Object$keys = Object.keys(d); _i < _Object$keys.length; _i++) {
+        var prop = _Object$keys[_i];
+        var v = d[prop];
+        var childPath = x.path + '.' + prop;
+
+        if (model) {
+          var defPath = model.pathsDefinedElsewhere[childPath];
+          if (defPath) childPath = defPath;
+        }
+
+        if (Array.isArray(v)) {
+          acc.push.apply(acc, v.map(function (n) {
+            return makeResNode(n, childPath);
+          }));
+        } else {
+          acc.push(makeResNode(v, childPath));
         }
       }
 
@@ -20070,12 +20259,13 @@ engine.children = function (coll) {
 };
 
 engine.descendants = function (coll) {
-  var ch = engine.children(coll);
+  var ch = engine.children.call(this, coll); // "this" is the context object
+
   var res = [];
 
   while (ch.length > 0) {
     res.push.apply(res, ch);
-    ch = engine.children(ch);
+    ch = engine.children.call(this, ch);
   }
 
   return res;
@@ -20089,9 +20279,9 @@ module.exports = engine;
 
 var engine = {};
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var constants = __webpack_require__(57);
+var constants = __webpack_require__(71);
 
 var FP_DateTime = types.FP_DateTime;
 /**
@@ -20220,6 +20410,40 @@ module.exports = engine;
 
 /***/ }),
 /* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ *  Exports the FHIR model data for STU3.  This is an internal structure that
+ *  will likely evolve as more FHIR specific processing is added.
+ */
+module.exports = {
+  /**
+   *  A hash of resource element paths (e.g. Observation.value) that are known
+   *  to point to fiels that are choice types.
+   */
+  choiceTypePaths: __webpack_require__(85),
+
+  /**
+   *  A hash from paths to the path for which their content is defined, e.g.
+   *  Questionnaire.item.item -> Questionnaire.item.
+   */
+  pathsDefinedElsewhere: __webpack_require__(86)
+};
+
+/***/ }),
+/* 85 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Period\",\"Range\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"Reference\",\"Reference\",\"String\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.information.timing\":[\"Date\",\"Period\"],\"Claim.information.value\":[\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"ClinicalImpression.finding.item\":[\"CodeableConcept\",\"Reference\",\"Reference\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Reference\"],\"ConceptMap.target\":[\"Uri\",\"Reference\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Boolean\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Identifier\",\"Reference\",\"Reference\",\"Reference\",\"Reference\"],\"Contract.binding\":[\"Attachment\",\"Reference\",\"Reference\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\",\"Reference\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\",\"Reference\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"DataRequirement.codeFilter.valueSet\":[\"String\",\"Reference\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"DocumentManifest.content.p\":[\"Attachment\",\"Reference\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.dose\":[\"Range\",\"Quantity\"],\"Dosage.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.binding.valueSet\":[\"Uri\",\"Reference\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Reference\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"EligibilityRequest.serviced\":[\"Date\",\"Period\"],\"EligibilityResponse.insurance.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"EligibilityResponse.insurance.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.information.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.information.value\":[\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\"],\"GuidanceResponse.reason\":[\"CodeableConcept\",\"Reference\"],\"ImplementationGuide.package.resource.source\":[\"Uri\",\"Reference\"],\"Media.occurrence\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\",\"Reference\"],\"Medication.package.content.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.notDoneReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Range\",\"Ratio\",\"SampledData\",\"Attachment\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Range\",\"Ratio\",\"SampledData\",\"Attachment\",\"Time\",\"DateTime\",\"Period\"],\"OperationDefinition.parameter.binding.valueSet\":[\"Uri\",\"Reference\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\"],\"ProcedureRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ProcedureRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Provenance.agent.onBehalfOf\":[\"Uri\",\"Reference\",\"Reference\",\"Reference\",\"Reference\",\"Reference\"],\"Provenance.agent.who\":[\"Uri\",\"Reference\",\"Reference\",\"Reference\",\"Reference\",\"Reference\"],\"Provenance.entity.what\":[\"Uri\",\"Reference\",\"Identifier\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.option.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"ReferralRequest.occurrence\":[\"DateTime\",\"Period\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"RequestGroup.reason\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"RiskAssessment.reason\":[\"CodeableConcept\",\"Reference\"],\"Signature.onBehalfOf\":[\"Uri\",\"Reference\",\"Reference\",\"Reference\",\"Reference\",\"Reference\"],\"Signature.who\":[\"Uri\",\"Reference\",\"Reference\",\"Reference\",\"Reference\",\"Reference\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\",\"Reference\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.orderedItem.item\":[\"CodeableConcept\",\"Reference\",\"Reference\",\"Reference\"],\"SupplyRequest.reason\":[\"CodeableConcept\",\"Reference\"],\"Task.definition\":[\"Uri\",\"Reference\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.eventTiming\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\"],\"VisionPrescription.reason\":[\"CodeableConcept\",\"Reference\"]}");
+
+/***/ }),
+/* 86 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Contract.term.group\":\"Contract.term\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.page.page\":\"ImplementationGuide.page\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
+
+/***/ }),
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20939,12 +21163,12 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 85 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(86);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89);
 // STU3-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -20978,7 +21202,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 86 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20995,7 +21219,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
 
-var LForms = __webpack_require__(87);
+var LForms = __webpack_require__(90);
 
 var _versionTagStr = 'lformsVersion: ';
 /**
@@ -21205,13 +21429,13 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 87 */
+/* 90 */
 /***/ (function(module, exports) {
 
 module.exports = LForms;
 
 /***/ }),
-/* 88 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21702,7 +21926,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 89 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22709,7 +22933,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 90 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23309,6 +23533,13 @@ function addSDCImportFns(ns) {
         var qrValue = answer[0];
 
         switch (dataType) {
+          case "BL":
+            if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
+              item.value = qrValue.valueBoolean;
+            }
+
+            break;
+
           case "INT":
             if (qrValue.valueQuantity) {
               item.value = qrValue.valueQuantity.value;
@@ -23394,7 +23625,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 91 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23447,13 +23678,13 @@ function addCommonSDCFns(ns) {
     'minInclusive': '>=',
     'maxInclusive': '<=',
     'value': '=',
-    'not': '!=',
+    'notEqual': '!=',
     '>': 'minExclusive',
     '<': 'maxExclusive',
     '>=': 'minInclusive',
     '<=': 'maxInclusive',
     '=': 'value',
-    '!=': 'not',
+    '!=': 'notEqual',
     'exists': 'exists'
   };
   /**
@@ -23569,14 +23800,14 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 92 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(87);
+var LForms = __webpack_require__(90);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -23789,7 +24020,9 @@ function addCommonSDCImportFns(ns) {
    *   Assigns FHIR values to an LForms item.
    *  @param lfItem the LForms item to receive the values from fhirVals
    *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
+   *   Complex types like Quantity should have _type set to the type, if
+   *   possible, or an attempt will be made to guess the FHIR type from the
+   *   lfItem's data type.
    *  @param setDefault if true, the default value in lfItem will be set instead
    *   of the value.
    */
@@ -23809,7 +24042,7 @@ function addCommonSDCImportFns(ns) {
 
         if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
-        } else if (fhirVal._type === 'Coding') {
+        } else if (fhirVal._type === 'Coding' || _typeof(fhirVal) === 'object') {
           codings = [fhirVal];
         }
 
@@ -23830,7 +24063,7 @@ function addCommonSDCImportFns(ns) {
                 var listAnswer = itemAnswers[j];
                 var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
 
-                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) && coding.code === listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) && (coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') && coding.code === listAnswer.code || coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') && coding.display === listAnswer.text)) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -23841,11 +24074,13 @@ function addCommonSDCImportFns(ns) {
         if (fhirVal.value !== undefined) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
         }
-      } else {
-        answer = fhirVal;
-      }
+      } // For date types, convert them to date objects, but only for values.
+      // If we're setting defaultAnswer, leave them as strings.
+      else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string') answer = new Date(fhirVal);else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string') answer = LForms.Util.stringToDTDateISO(fhirVal);else {
+          answer = fhirVal;
+        }
 
-      if (answer) answers.push(answer);
+      if (answer !== undefined) answers.push(answer);
     }
 
     if (isMultiple) {
@@ -24738,13 +24973,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 93 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(94);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -24770,7 +25005,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 94 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

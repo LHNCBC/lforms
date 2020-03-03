@@ -164,6 +164,7 @@ var TestPage = function() {
       t2: element(by.id('/slTargetItem2/1')),
       t4: element(by.id('/slTargetHeader1/slTargetSubItem1/1/1')),
       t5: element(by.id('/slTargetHeader1/slTargetSubItem2/1/1')),
+      t6: element(by.id('/slTargetItem6/1')),
 
       allSrc1: element(by.id('/slALLSource1/1')),
       allSrc2: element(by.id('/slALLSource2/1')),
@@ -201,6 +202,7 @@ var TestPage = function() {
     },
 
     FormWithUserData: {
+      q0: element(by.id('/q0/1')),
       q1: element(by.id('/q1/1')),
       q2: element(by.id('/q2/1')),
       q3: element(by.id('/q3/1')),

@@ -841,8 +841,9 @@ var allInOne =
       "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
     {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
-      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL", "answers": null, "questionCodeSystem": "NON_LOINC",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL, #1", "answers": null, "questionCodeSystem": "NON_LOINC",
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type1b", "dataType": "BL", "question": "With data type BL, #2", "answers": null, "questionCodeSystem": "NON_LOINC"},
     {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
       "codingInstructionsFormat": "text",
       "copyrightNotice": "not copyrighted",
@@ -968,6 +969,13 @@ var allInOne =
           "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
       ]
     },
+    {
+      "questionCode": "slTargetItem6", "dataType": "INT", "question": "T6: Shown when 'Skip Logic Source #1' != 2",
+      "skipLogic": {
+        "conditions": [{"source": "slSource1", "trigger": {"notEqual": 2}}],
+        "action": "show"
+      }
+    },
 
     // skip logic, CNE trigger type; exists support
     {"questionCode": "54139-1-cnesrc-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?",
@@ -989,7 +997,13 @@ var allInOne =
           "answers": [ {"text": "Pre-Birth", "code": "LA10402-8"}, {"text": "Newborn", "code": "LA10403-6"}, {"text": "Infancy", "code": "LA10394-7"}],
           "dataType": "CNE", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": false}}], "action": "show"}
-        }
+        },
+        {"questionCode": "skiplogic_not", "question": "Cause of Death #2 (show if Living is _not_ YES)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE",
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"notEqual": {"code": "LA33-6", "system": "http://loinc.org"}}}], "action": "show"}
+        },
+
       ]
     },
 
@@ -1443,6 +1457,7 @@ var formWithUserData =
       "value": "no data type",
       "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q0", "dataType": "BL", "value": true, "question": "With data type BL"},
     {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,
       "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
       "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
@@ -6378,6 +6393,12 @@ var defaultAnswerForm = {
   "code": "defaultAnswerForm",
   "name": "Fields with default answers",
   "items": [
+    {
+      "question": "Boolean field with default",
+      "questionCode": "blField",
+      "dataType": "BL",
+      "defaultAnswer": true
+    },
     {
       "question": "Integer field with default",
       "questionCode": "intField",

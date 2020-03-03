@@ -9,6 +9,24 @@
   "authored": "2019-08-30T19:36:11.138Z",
   "item": [
     {
+      "linkId": "/type1",
+      "text": "With data type BL, #1",
+      "answer": [
+        {
+          "valueBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "/type1b",
+      "text": "With data type BL, #2",
+      "answer": [
+        {
+          "valueBoolean": false
+        }
+      ]
+    },
+    {
       "linkId": "/type10",
       "text": "With data type CWE",
       "answer": [
