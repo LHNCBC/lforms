@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [21.1.0] 2020-03-03
+### Added
+- LForms form definitions now contain an lformsVersion attribute indicating the
+  LForms version from which they were generated.
+- Generated/exported FHIR resources now contain a tag (meta.tag) that starts
+  with 'lformsVersion: ' followed by the LForms version used to export them.
+
 ## [21.0.1] 2020-02-26
 ### Fixed
 - Fixed a bug that valueBoolean in Questionnaire was not converted to LForms BL value.
@@ -10,15 +17,15 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Bumped up angularjs version to 1.7.x. This could potentially break applications still
   running prior angularjs versions, hence bumped up the major version.
-  
+
 ### Fixed
-- Fixed a bug in click event in CNE/CWE control. 
+- Fixed a bug in click event in CNE/CWE control.
   Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
 - Fix date time parsing test.
 
 ## [20.2.1] 2020-02-18
 ### Added
-- Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of 
+- Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of
   FHIR Questionnaire.
 
 ## [20.2.0] 2019-02-13
