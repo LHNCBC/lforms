@@ -193,6 +193,8 @@ function addCommonSDCExportFns(ns) {
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
     }
+    // data control
+    this._handleDataControl(targetItem, item);
 
     this._handleExtensions(targetItem, item);
 
@@ -272,6 +274,23 @@ function addCommonSDCExportFns(ns) {
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
         "valueUri": item.externallyDefined
       });
+    }
+  };
+
+
+  /**
+   * Process an item's data control
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+  self._handleDataControl = function(targetItem, item) {
+    if (item.dataControl) {
+      targetItem.extension.push({
+        "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
+        "valueString": JSON.stringify(item.dataControl)
+      })
     }
   };
 

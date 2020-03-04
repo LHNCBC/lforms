@@ -22119,7 +22119,10 @@ function addCommonSDCExportFns(ns) {
 
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
-    }
+    } // data control
+
+
+    this._handleDataControl(targetItem, item);
 
     this._handleExtensions(targetItem, item);
 
@@ -22194,6 +22197,23 @@ function addCommonSDCExportFns(ns) {
       targetItem.extension.push({
         "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined",
         "valueUri": item.externallyDefined
+      });
+    }
+  };
+  /**
+   * Process an item's data control
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+
+
+  self._handleDataControl = function (targetItem, item) {
+    if (item.dataControl) {
+      targetItem.extension.push({
+        "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
+        "valueString": JSON.stringify(item.dataControl)
       });
     }
   };
@@ -22997,6 +23017,8 @@ function addSDCImportFns(ns) {
     self._processAnswerCardinality(targetItem, qItem);
 
     self._processDisplayControl(targetItem, qItem);
+
+    self._processDataControl(targetItem, qItem);
 
     self._processRestrictions(targetItem, qItem);
 
@@ -23864,10 +23886,11 @@ function addCommonSDCImportFns(ns) {
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
-  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer]);
+  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl]);
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
@@ -24378,6 +24401,30 @@ function addCommonSDCImportFns(ns) {
 
       if (displayControl && !jQuery.isEmptyObject(displayControl)) {
         lfItem.displayControl = displayControl;
+      }
+    }
+  };
+  /**
+   * Parse questionnaire item for data control
+   *
+   * @param lfItem {object} - LForms item object to assign data control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processDataControl = function (lfItem, qItem) {
+    var dataControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlDataControl);
+
+    if (dataControlType && dataControlType.valueString) {
+      try {
+        var dataControl = JSON.parse(dataControlType.valueString);
+
+        if (dataControl) {
+          lfItem.dataControl = dataControl;
+        }
+      } catch (e) {
+        console.log("Invalid dataControl data!");
       }
     }
   }; // ---------------- QuestionnaireResponse Import ---------------

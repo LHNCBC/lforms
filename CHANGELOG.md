@@ -2,12 +2,17 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [21.1.0] 2020-03-03
+## [21.2.0] 2020-03-03
 ### Added
 - LForms form definitions now contain an lformsVersion attribute indicating the
   LForms version from which they were generated.
 - Generated/exported FHIR resources now contain a tag (meta.tag) that starts
   with 'lformsVersion: ' followed by the LForms version used to export them.
+
+## [21.1.0] 2020-02-27
+### Added
+- Added support for a custom extension in FHIR Questionnaire to contain the dataControl
+  data in LHC-Forms.
 
 ## [21.0.1] 2020-02-26
 ### Fixed
