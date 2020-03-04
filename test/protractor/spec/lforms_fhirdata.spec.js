@@ -671,7 +671,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             // sometimes ff.name is "not attached to the page document"
             var name = element(by.id('/54126-8/54125-0/1/1'));
             browser.wait(function() {
-              return name.isDisplayed();
+              return name.isPresent();
             }, tp.WAIT_TIMEOUT_1);
 
             expect(name.getAttribute('value')).toBe("12");
