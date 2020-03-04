@@ -25,6 +25,7 @@ function addCommonSDCImportFns(ns) {
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,
@@ -51,6 +52,7 @@ function addCommonSDCImportFns(ns) {
     self.argonautExtUrlExtensionScore,
     self.fhirExtUrlHidden,
     self.fhirExtTerminologyServer,
+    self.fhirExtUrlDataControl
   ]);
 
   self.formLevelFields = [
@@ -573,6 +575,30 @@ function addCommonSDCImportFns(ns) {
 
       if(displayControl && !jQuery.isEmptyObject(displayControl)) {
         lfItem.displayControl = displayControl;
+      }
+    }
+  };
+
+
+  /**
+   * Parse questionnaire item for data control
+   *
+   * @param lfItem {object} - LForms item object to assign data control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processDataControl = function (lfItem, qItem) {
+    var dataControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlDataControl);
+
+    if(dataControlType && dataControlType.valueString) {
+      try {
+        var dataControl = JSON.parse(dataControlType.valueString);
+        if (dataControl) {
+          lfItem.dataControl = dataControl;
+        }
+      }
+      catch(e){
+        console.log("Invalid dataControl data!");
       }
     }
   };

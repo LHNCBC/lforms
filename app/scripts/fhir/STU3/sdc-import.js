@@ -75,6 +75,7 @@ function addSDCImportFns(ns) {
     self._processFHIRQCardinality(targetItem, qItem);
     _processAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
+    self._processDataControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
     self._processUnitList(targetItem, qItem);
