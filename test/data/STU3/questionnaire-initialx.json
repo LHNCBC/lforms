@@ -4,7 +4,7 @@
   "status": "draft",
   "meta": {
     "profile": [
-      "http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire|2.0"
+      "http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire"
     ]
   },
   "item": [
