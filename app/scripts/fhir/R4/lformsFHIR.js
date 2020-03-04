@@ -92,7 +92,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(87);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(89);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(92);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(93);
@@ -20460,6 +20460,8 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
+var LForms = __webpack_require__(88);
+
 var dr = {
   // a prefix for references to Observation resources
   _OBX_REF_PREFIX: "Observation/",
@@ -20475,8 +20477,6 @@ var dr = {
    */
   _getFormattedDate: function _getFormattedDate(dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    // TBD -LForms is not defined in this file.  The following line will break
-    // if someone build the package and exports a different global variable.
     return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
@@ -21164,11 +21164,17 @@ var dr = {
 
 /***/ }),
 /* 88 */
+/***/ (function(module, exports) {
+
+module.exports = LForms;
+
+/***/ }),
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(90);
 // R4-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -21211,7 +21217,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21228,7 +21234,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
 
-var LForms = __webpack_require__(90);
+var LForms = __webpack_require__(88);
 
 var _versionTagStr = 'lformsVersion: ';
 /**
@@ -21436,12 +21442,6 @@ var self = {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
-
-/***/ }),
-/* 90 */
-/***/ (function(module, exports) {
-
-module.exports = LForms;
 
 /***/ }),
 /* 91 */
@@ -23835,7 +23835,7 @@ function addCommonSDCFns(ns) {
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(90);
+var LForms = __webpack_require__(88);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export

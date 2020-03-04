@@ -10,6 +10,9 @@
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
+
+var LForms = require('../lforms-index');
+
 var dr = {
 
   // a prefix for references to Observation resources
@@ -27,8 +30,6 @@ var dr = {
    */
   _getFormattedDate : function (dateObj) {
     //"2013-01-27T11:45:33+11:00",
-    // TBD -LForms is not defined in this file.  The following line will break
-    // if someone build the package and exports a different global variable.
     return dateObj ? LForms.Util.dateToDTMString(dateObj) : "";
   },
 
