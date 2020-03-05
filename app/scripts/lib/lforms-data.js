@@ -170,6 +170,8 @@
      * @param data the lforms form definition data
      */
     init: function(data) {
+      this.lformsVersion = LForms.lformsVersion;
+
       if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
         for(var i = 0; i < props.length; i++) {
@@ -1395,6 +1397,7 @@
       }
 
       var defData = {
+        lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         codeList: this.codeList,

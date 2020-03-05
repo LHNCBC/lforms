@@ -174,6 +174,45 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(qData.name, questionnaire.name);
           });
 
+          it('should add lformsVersion if not present', function (){
+            var questionnaire = {
+              name: 'FHP'
+            };
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var lfDataVersion = lfData.lformsVersion;
+            assert(typeof lfDataVersion === 'string');
+            assert(lfDataVersion.length > 0);
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            var qDataVersion = qData.meta.tag[0].display;
+            assert.equal(typeof qDataVersion, 'string');
+            assert.match(qDataVersion, /^lformsVersion: /);
+          });
+
+          it('should update lformsVersion if present', function (){
+            var oldVersionTag = 'lformsVersion: oldVersion';
+            var questionnaire = {
+              name: 'FHP',
+              meta: {tag: [{display: oldVersionTag}]}
+            };
+
+            var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
+            var lfDataVersion = lfData.lformsVersion;
+            assert.equal(typeof lfDataVersion, 'string');
+            assert(lfDataVersion.length > 0);
+            assert.notEqual(lfDataVersion, 'oldVersion');
+            var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
+            var qDataVersion = qData.meta.tag[0].display;
+            var versionTagCount = 0;
+            for (let tag of qData.meta.tag) {
+              tag = tag.display;
+              if (/^lformsVersion: /.test(tag)) {
+                ++versionTagCount;
+                assert.notEqual(tag, oldVersionTag);
+              }
+            }
+            assert.equal(versionTagCount, 1);
+          });
+
           it('should preserve extensions on item._prefix & _text', function (){
             var questionnaire = {
               item: [{
@@ -1071,12 +1110,21 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         }
 
         describe('LForms data to QuestionnaireResponse conversion', function() {
+          describe('with extensions', function() {
+            var fhirQR;
+            before(function() {
+              fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+            });
 
-          it('should convert to SDC Questionnaire with extensions', function() {
-            var fhirQR = LForms.Util.getFormFHIRData('QuestionnaireResponse', fhirVersion, angular.copy(FHTData));
+            it('should convert to SDC Questionnaire with extensions', function() {
+              assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
+            });
 
-            assert.equal(fhirQR.meta.profile[0], fhir.SDC.QRProfile);
-
+            it('should set the lformsVersion tag', function (){
+              var version = fhirQR.meta.tag[0].display;
+              assert.equal(typeof version, 'string');
+              assert.match(version, /^lformsVersion: /);
+            });
           });
 
           it('should convert to standard QuestionnaireResponse without any extensions', function() {

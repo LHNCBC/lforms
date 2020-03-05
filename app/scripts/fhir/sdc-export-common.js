@@ -38,6 +38,7 @@ function addCommonSDCExportFns(ns) {
     if (subject)
       target["subject"] = LForms.Util.createLocalFHIRReference(subject);
 
+    this._commonExport._setVersionTag(target);
     return target;
   };
 
@@ -66,12 +67,12 @@ function addCommonSDCExportFns(ns) {
           var newItem = this._processItem(source.items[i], source, noExtensions);
           target.item.push(newItem);
         }
-
       }
     }
 
     // FHIR doesn't allow null values, strip them out.
     LForms.Util.pruneNulls(target);
+    this._commonExport._setVersionTag(target);
     return target;
   };
 
@@ -324,7 +325,6 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._setFormLevelFields = function(target, source, noExtensions) {
-
     this.copyFields(source, target, this.formLevelFields);
     // Handle title and name.  In LForms, "name" is the "title", but FHIR
     // defines both.

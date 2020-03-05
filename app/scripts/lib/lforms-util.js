@@ -1072,4 +1072,12 @@ LForms.Util = {
     return ret;
   },
 
+
+  /**
+   *   Returns the part of an LForms form definition that all form definitions
+   *   should have.
+   */
+  baseFormDef: function() {
+    return {lformsVersion: LForms.lformsVersion};
+  }
 };

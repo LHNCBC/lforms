@@ -10,6 +10,9 @@
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
+
+var LForms = require('../lforms-index');
+
 var dr = {
 
   // a prefix for references to Observation resources
@@ -258,10 +261,10 @@ var dr = {
       var drContent = this._createDiagnosticReportContent(formAndUserData, contained);
 
       dr = {
-        "resourceType": "DiagnosticReport",
-        "id":  this._commonExport._getUniqueId(formAndUserData.code),
-        "status": "final",
-        "code": {
+        resourceType: "DiagnosticReport",
+        id: this._commonExport._getUniqueId(formAndUserData.code),
+        status: "final",
+        code: {
           "coding": [
             {
               "system": "http://loinc.org",
@@ -271,9 +274,10 @@ var dr = {
           ],
           "text": formAndUserData.name
         },
-        "result": drContent.result,
-        "contained": contained
+        result: drContent.result,
+        contained: contained
       };
+      this._commonExport._addVersionTag(dr);
 
       if (subject)
         dr.subject = LForms.Util.createLocalFHIRReference(subject);

@@ -661,8 +661,6 @@ module.exports = LForms;
 // index.js.
 var LForms = __webpack_require__(4);
 
-__webpack_require__(6);
-
 __webpack_require__(7);
 
 __webpack_require__(8);
@@ -675,21 +673,23 @@ __webpack_require__(11);
 
 __webpack_require__(12);
 
-__webpack_require__(14);
+__webpack_require__(13);
 
 __webpack_require__(15);
 
-__webpack_require__(17);
+__webpack_require__(16);
 
 __webpack_require__(18);
 
-__webpack_require__(20);
+__webpack_require__(19);
 
-LForms.Util.FHIRSupport = __webpack_require__(21);
+__webpack_require__(21);
 
-__webpack_require__(22);
+LForms.Util.FHIRSupport = __webpack_require__(22);
 
-LForms._elementResizeDetectorMaker = __webpack_require__(23);
+__webpack_require__(23);
+
+LForms._elementResizeDetectorMaker = __webpack_require__(24);
 module.exports = LForms;
 
 /***/ }),
@@ -741,7 +741,7 @@ module.exports = LForms;
 })(); // Define the top-level namespace object
 
 
-var LForms = {};
+var LForms = Object.assign({}, __webpack_require__(6));
 module.exports = LForms;
 
 /***/ }),
@@ -752,6 +752,12 @@ module.exports = Def;
 
 /***/ }),
 /* 6 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"lformsVersion\":\"21.2.0\"}");
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports) {
 
 /*
@@ -765,7 +771,7 @@ angular.module('lformsWidget').constant('LF_CONSTANTS', {
 });
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($animate) {
@@ -782,7 +788,7 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 }]);
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1983,7 +1989,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 }]);
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2267,7 +2273,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // Based on https://stackoverflow.com/a/26339919/360782
@@ -2298,7 +2304,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 }]);
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /**
@@ -2320,7 +2326,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 })();
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2328,7 +2334,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  * LForms Utility tools
  */
-var moment = __webpack_require__(13); // Acceptable date formats
+var moment = __webpack_require__(14); // Acceptable date formats
 // Strict parsing -
 
 
@@ -3338,17 +3344,27 @@ LForms.Util = {
     }
 
     return ret;
+  },
+
+  /**
+   *   Returns the part of an LForms form definition that all form definitions
+   *   should have.
+   */
+  baseFormDef: function baseFormDef() {
+    return {
+      lformsVersion: LForms.lformsVersion
+    };
   }
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = moment;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 // HTML5 polyfills
@@ -3450,12 +3466,12 @@ if (!String.prototype.repeat) {
 }
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
 /**
  * A package to generate HL7 messgages from LForms form data
  */
@@ -4263,7 +4279,7 @@ LForms.HL7 = function () {
 }();
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4273,7 +4289,7 @@ __webpack_require__.r(__webpack_exports__);
 var LOINC_URI = 'http://loinc.org';
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -4581,7 +4597,7 @@ LForms.Validations = {
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4594,7 +4610,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
   var LForms = __webpack_require__(4);
 
-  var Class = __webpack_require__(19);
+  var Class = __webpack_require__(20);
 
   LForms.LFormsData = Class.extend({
     // constants
@@ -4793,6 +4809,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param data the lforms form definition data
      */
     init: function init(data) {
+      this.lformsVersion = LForms.lformsVersion;
+
       if (data && data._initializeInternalData) {
         // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
@@ -6032,6 +6050,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       }
 
       var defData = {
+        lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         codeList: this.codeList,
@@ -8227,7 +8246,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /* Simple JavaScript Inheritance
@@ -8288,7 +8307,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Processes FHIR Expression Extensions
@@ -8619,7 +8638,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains information about the supported FHIR versions.
@@ -8630,7 +8649,7 @@ var FHIRSupport = {
 if (true) module.exports = FHIRSupport;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').run(['$templateCache', function ($templateCache) {
@@ -8657,34 +8676,34 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
 }]);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach = __webpack_require__(24).forEach;
+var forEach = __webpack_require__(25).forEach;
 
-var elementUtilsMaker = __webpack_require__(25);
+var elementUtilsMaker = __webpack_require__(26);
 
-var listenerHandlerMaker = __webpack_require__(26);
+var listenerHandlerMaker = __webpack_require__(27);
 
-var idGeneratorMaker = __webpack_require__(27);
+var idGeneratorMaker = __webpack_require__(28);
 
-var idHandlerMaker = __webpack_require__(28);
+var idHandlerMaker = __webpack_require__(29);
 
-var reporterMaker = __webpack_require__(29);
+var reporterMaker = __webpack_require__(30);
 
-var browserDetector = __webpack_require__(30);
+var browserDetector = __webpack_require__(31);
 
-var batchProcessorMaker = __webpack_require__(31);
+var batchProcessorMaker = __webpack_require__(32);
 
-var stateHandler = __webpack_require__(33); //Detection strategies.
+var stateHandler = __webpack_require__(34); //Detection strategies.
 
 
-var objectStrategyMaker = __webpack_require__(34);
+var objectStrategyMaker = __webpack_require__(35);
 
-var scrollStrategyMaker = __webpack_require__(35);
+var scrollStrategyMaker = __webpack_require__(36);
 
 function isCollection(obj) {
   return Array.isArray(obj) || obj.length !== undefined;
@@ -8993,7 +9012,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9019,7 +9038,7 @@ utils.forEach = function (collection, callback) {
 };
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9080,7 +9099,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9152,7 +9171,7 @@ module.exports = function (idHandler) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9176,7 +9195,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9228,7 +9247,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9278,7 +9297,7 @@ module.exports = function (quiet) {
 };
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9322,13 +9341,13 @@ detector.isLegacyOpera = function () {
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(32);
+var utils = __webpack_require__(33);
 
 module.exports = function batchProcessorMaker(options) {
   options = options || {};
@@ -9471,7 +9490,7 @@ function Batch() {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9491,7 +9510,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9519,7 +9538,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9529,7 +9548,7 @@ module.exports = {
  */
 
 
-var browserDetector = __webpack_require__(30);
+var browserDetector = __webpack_require__(31);
 
 module.exports = function (options) {
   options = options || {};
@@ -9735,7 +9754,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9745,7 +9764,7 @@ module.exports = function (options) {
  */
 
 
-var forEach = __webpack_require__(24).forEach;
+var forEach = __webpack_require__(25).forEach;
 
 module.exports = function (options) {
   options = options || {};

@@ -92,7 +92,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(87);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(89);
 /* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
 /* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(92);
 /* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(93);
@@ -20460,6 +20460,8 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
+var LForms = __webpack_require__(88);
+
 var dr = {
   // a prefix for references to Observation resources
   _OBX_REF_PREFIX: "Observation/",
@@ -20706,10 +20708,10 @@ var dr = {
       var drContent = this._createDiagnosticReportContent(formAndUserData, contained);
 
       dr = {
-        "resourceType": "DiagnosticReport",
-        "id": this._commonExport._getUniqueId(formAndUserData.code),
-        "status": "final",
-        "code": {
+        resourceType: "DiagnosticReport",
+        id: this._commonExport._getUniqueId(formAndUserData.code),
+        status: "final",
+        code: {
           "coding": [{
             "system": "http://loinc.org",
             "code": formAndUserData.code,
@@ -20717,9 +20719,12 @@ var dr = {
           }],
           "text": formAndUserData.name
         },
-        "result": drContent.result,
-        "contained": contained
+        result: drContent.result,
+        contained: contained
       };
+
+      this._commonExport._addVersionTag(dr);
+
       if (subject) dr.subject = LForms.Util.createLocalFHIRReference(subject); // obr data
 
       var extension = this._getExtensionData(formAndUserData);
@@ -21159,11 +21164,17 @@ var dr = {
 
 /***/ }),
 /* 88 */
+/***/ (function(module, exports) {
+
+module.exports = LForms;
+
+/***/ }),
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(90);
 // STU3-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -21197,7 +21208,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21214,12 +21225,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
 
-var LForms = __webpack_require__(90);
+var LForms = __webpack_require__(88);
+
+var _versionTagStr = 'lformsVersion: ';
 /**
  *  Defines export functions that are the same across the different FHIR
  *  versions and that are used by both the SDC and DiagnosticReport exports.
  */
-
 
 var self = {
   /**
@@ -21332,6 +21344,8 @@ var self = {
         }
       };
 
+      this._addVersionTag(obx);
+
       if (setId) {
         obx.id = this._getUniqueId(item.questionCode);
       }
@@ -21369,15 +21383,56 @@ var self = {
       if (unit.code) qty.code = unit.code;
       if (unit.system) qty.system = unit.system;
     }
+  },
+
+  /**
+   *  Returns and creates if necessary the tag array object on the resource.  If
+   *  created, the given resource will be modified.
+   * @param res the resource whose tag array is needed.
+   */
+  _resTags: function _resTags(res) {
+    var meta = res.meta;
+    if (!meta) meta = res.meta = {};
+    var tag = meta.tag;
+    if (!tag) tag = meta.tag = [];
+    return tag;
+  },
+
+  /**
+   *  Sets the LForms version tag on a FHIR resource to indicate the LForms version used to
+   *  export it.  This will replace any version tag already present.
+   * @param res the resource object to be tagged.
+   */
+  _setVersionTag: function _setVersionTag(res) {
+    var tags = this._resTags(res); // Delete any lformsVersion tag present.  There should be at most one
+
+
+    for (var i = 0, len = tags.length; i < len; ++i) {
+      var t = tags[i];
+
+      if (t.display && t.display.indexOf(_versionTagStr) === 0) {
+        tags.splice(i, 1);
+        break;
+      }
+    }
+
+    this._addVersionTag(res);
+  },
+
+  /**
+   *  Adds a tag to a FHIR resource to indicate the LForms version used to
+   *  export it.  Assumes the version tag does not already exist.
+   * @param res the resource object to be tagged.
+   */
+  _addVersionTag: function _addVersionTag(res) {
+    var tag = this._resTags(res);
+
+    tag.push({
+      display: _versionTagStr + LForms.lformsVersion
+    });
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
-
-/***/ }),
-/* 90 */
-/***/ (function(module, exports) {
-
-module.exports = LForms;
 
 /***/ }),
 /* 91 */
@@ -21920,6 +21975,9 @@ function addCommonSDCExportFns(ns) {
 
     LForms.Util.pruneNulls(target);
     if (subject) target["subject"] = LForms.Util.createLocalFHIRReference(subject);
+
+    this._commonExport._setVersionTag(target);
+
     return target;
   };
   /**
@@ -21958,6 +22016,9 @@ function addCommonSDCExportFns(ns) {
 
 
     LForms.Util.pruneNulls(target);
+
+    this._commonExport._setVersionTag(target);
+
     return target;
   };
   /**
@@ -23768,11 +23829,14 @@ function addCommonSDCFns(ns) {
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var LForms = __webpack_require__(88);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
+
+
 function addCommonSDCImportFns(ns) {
   "use strict";
 
@@ -23817,7 +23881,7 @@ function addCommonSDCImportFns(ns) {
     var target = null;
 
     if (fhirData) {
-      target = {};
+      target = LForms.Util.baseFormDef();
 
       self._processFormLevelFields(target, fhirData);
 

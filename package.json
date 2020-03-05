@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "21.1.0",
+  "version": "21.2.0",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -83,12 +83,13 @@
     "test": "npm run update-webdriver && grunt test",
     "build:clean": "rm -rf dist bower-dist app/generated .tmp",
     "build:mkdist": "mkdir dist; mkdir -p dist/$npm_package_name-$npm_package_version/styles; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
+    "build:version": "node -e 'require(\"fs\").writeFileSync(\"app/version.json\", JSON.stringify({lformsVersion: require(\"./package.json\").version}))'",
     "build:css:lforms": "cleancss --skip-rebase -o dist/latest/styles/lforms.min.css dist/latest/styles/lforms.css",
     "build:css:themes": "node-sass app/styles/themes.scss --output .tmp/styles && cleancss --skip-rebase -o dist/latest/styles/themes.min.css .tmp/styles/themes.css",
     "build:css": "npm run build:css:themes && npm run build:css:lforms",
     "build:zip": "cd dist; dirname=$npm_package_name-$npm_package_version; zip -r $dirname.zip $dirname",
     "build:ngtemplates": "grunt ngtemplates",
-    "build": "npm run build:clean && npm run build:mkdist && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
+    "build": "npm run build:clean && npm run build:mkdist && npm run build:version && npm run build:ngtemplates && webpack && npm run build:css && npm run wiredep && npm run build:zip",
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
     "start": "grunt serve"
   }

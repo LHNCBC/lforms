@@ -1,3 +1,5 @@
+var LForms = require('../lforms-index');
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -107,7 +109,7 @@ function addCommonSDCImportFns(ns) {
     var target = null;
 
     if(fhirData) {
-      target = {};
+      target = LForms.Util.baseFormDef();
       self._processFormLevelFields(target, fhirData);
       var containedVS = self._extractContainedVS(fhirData);
 
@@ -122,7 +124,6 @@ function addCommonSDCImportFns(ns) {
       }
       target.fhirVersion = self.fhirVersion;
     }
-
     return target;
   };
 
