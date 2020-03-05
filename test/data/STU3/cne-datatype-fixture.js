@@ -52,7 +52,7 @@ var STU3_alWithCodeSystemFixture = {
     "questionCode": "qc",
     "question": "dummy",
     "questionCardinality": {"min": "1","max": "1"},
-    "answers": [{"text": "X","code": "x", "codeSystem": "LOINC"},{"text": "Y","code": "y", "codeSystem": "LOINC"},{"text": "Z","code": "z","other": "Please Specify", "codeSystem": "LOINC"}],
+    "answers": [{"text": "X","code": "x", "system": "http://loinc.org"},{"text": "Y","code": "y", "system": "LOINC"},{"text": "Z","code": "z","other": "Please Specify", "system": "LOINC"}],
     "dataType": "CNE",
     "_codePath": "/a/a",
     "_idPath": "/1/1"

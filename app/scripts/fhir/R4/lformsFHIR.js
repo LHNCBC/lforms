@@ -21313,7 +21313,7 @@ var self = {
             var coding = {};
             if (val.code) coding.code = val.code;
             if (val.text) coding.display = val.text;
-            var codeSystem = val.codeSystem;
+            var codeSystem = val.system;
             if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
             values.push({
               key: "valueCodeableConcept",
@@ -21718,8 +21718,8 @@ var self = {
       if (answer.code) option.valueCoding.code = answer.code;
       if (answer.text) option.valueCoding.display = answer.text;
 
-      if (answer.codeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
+      if (answer.system) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
       }
 
       optionArray.push(option);
@@ -21766,7 +21766,7 @@ var self = {
           } // code system
 
 
-          var codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
+          var codeSystem = defaultAnswers[i].system || item.answerCodeSystem;
 
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
@@ -22738,7 +22738,7 @@ function addCommonSDCExportFns(ns) {
               "valueString": itemValue
             };
           } else if (!jQuery.isEmptyObject(itemValue)) {
-            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.codeSystem));
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
 
             answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
             answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
@@ -23242,7 +23242,7 @@ function addSDCImportFns(ns) {
             if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; // TBD- Lforms has answer code system at item level, expects all options to have one code system!
 
             if (option[optionKey[0]].system !== undefined) {
-              answer.codeSystem = option[optionKey[0]].system;
+              answer.system = option[optionKey[0]].system;
             }
           } else {
             answer.text = option[optionKey[0]].toString();
@@ -24112,7 +24112,7 @@ function addCommonSDCImportFns(ns) {
 
               for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
+                var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
 
                 if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) && (coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') && coding.code === listAnswer.code || coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') && coding.display === listAnswer.text)) {
                   answer = itemAnswers[j]; // include label in answer text
@@ -24704,7 +24704,7 @@ function addCommonSDCImportFns(ns) {
         var answer = {
           code: vsItem.code,
           text: vsItem.display,
-          codeSystem: self._toLfCodeSystem(vsItem.system)
+          system: vsItem.system
         };
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
 
@@ -24890,7 +24890,7 @@ function addCommonSDCImportFns(ns) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,
-        "codeSystem": qrItemValue.valueCoding.system
+        "system": qrItemValue.valueCoding.system
       };
     } // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {

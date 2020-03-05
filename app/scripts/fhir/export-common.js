@@ -74,7 +74,7 @@ var self = {
             var coding = {};
             if (val.code) coding.code = val.code;
             if (val.text) coding.display = val.text;
-            var codeSystem = val.codeSystem;
+            var codeSystem = val.system;
             if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
             values.push(
                 { key: "valueCodeableConcept",

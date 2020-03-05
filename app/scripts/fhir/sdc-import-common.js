@@ -303,7 +303,7 @@ function addCommonSDCImportFns(ns) {
               var coding = codings[k];
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
+                var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
                 if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
                     ((coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') &&
                       coding.code===listAnswer.code) ||
@@ -853,7 +853,7 @@ function addCommonSDCImportFns(ns) {
     var rtn = [];
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
-        var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
+        var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
         if(ordExt) {
@@ -1009,7 +1009,7 @@ function addCommonSDCImportFns(ns) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,
-        "codeSystem": qrItemValue.valueCoding.system
+        "system": qrItemValue.valueCoding.system
       };
     }
     // a valueString, which is a user supplied value that is not in the answers

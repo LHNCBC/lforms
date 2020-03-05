@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"21.2.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"21.3.0\"}");
 
 /***/ }),
 /* 7 */
@@ -4140,7 +4140,7 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
-        var answerCS = !itemVal.codeSystem ? "" : itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
+        var answerCS = !itemVal.system ? "" : itemVal.system === 'LOINC' || itemVal.system === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.system;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
@@ -5914,13 +5914,31 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
         item.answers = this.answerLists[item.answers];
-      } // answer code system
+      } // process the answer code system
 
 
-      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+      if (Array.isArray(item.answers)) {
+        var answerCodeSystem = item.answerCodeSystem ? LForms.Util.getCodeSystem(item.answerCodeSystem) : null;
+
         for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
-          if (item.answers[i] && !item.answers[i].codeSystem) {
-            item.answers[i].codeSystem = item.answerCodeSystem;
+          var answer = item.answers[i]; // if there is no 'system'
+
+          if (!answer.system) {
+            // convert 'codeSystem' to 'system'
+            if (answer.codeSystem) {
+              answer.system = LForms.Util.getCodeSystem(answer.codeSystem); // use item level answer code system
+            } else if (answerCodeSystem) {
+              answer.system = answerCodeSystem;
+            }
+          } // there is a 'system'
+          else {
+              // convert system to the standard one in case it is 'LOINC'
+              answer.system = LForms.Util.getCodeSystem(answer.system);
+            } // delete codeSystem
+
+
+          if (answer.codeSystem) {
+            delete answer.codeSystem;
           }
         }
       } // set up flags for question and answer cardinality
@@ -7343,17 +7361,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
       var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other']; // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
 
-      var completeAnswerCodeSystem = completeAnswer.codeSystem;
+      var completeAnswerCodeSystem = completeAnswer.system;
 
-      if (!completeAnswer.codeSystem) {
+      if (!completeAnswer.system) {
         var codeSystem = item.answerCodeSystem || this.codeSystem;
         completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
       } // check answers' attributes if they have the same code system
 
 
-      var same = false; // if no codeSystem or same codeSystem
+      var same = false; // if no code system or same code system
 
-      if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswerCodeSystem) {
+      if (!answer.system && !completeAnswer.system || answer.system === completeAnswerCodeSystem) {
         // check all fields in answer
         same = true;
         var fields = Object.keys(answer);

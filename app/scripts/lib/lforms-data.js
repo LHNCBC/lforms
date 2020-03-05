@@ -1255,11 +1255,29 @@
         item.answers = this.answerLists[item.answers];
       }
 
-      // answer code system
-      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+      // process the answer code system
+      if (Array.isArray(item.answers)) {
+        var answerCodeSystem = item.answerCodeSystem ? LForms.Util.getCodeSystem(item.answerCodeSystem) : null;
         for (var i=0, iLen = item.answers.length; i<iLen; i++) {
-          if (item.answers[i] && !item.answers[i].codeSystem) {
-            item.answers[i].codeSystem = item.answerCodeSystem;
+          var answer = item.answers[i];
+          // if there is no 'system'
+          if (!answer.system) {
+            // convert 'codeSystem' to 'system'
+            if (answer.codeSystem) {
+              answer.system = LForms.Util.getCodeSystem(answer.codeSystem);
+            // use item level answer code system
+            } else if (answerCodeSystem) {
+              answer.system = answerCodeSystem;
+            }
+          }
+          // there is a 'system'
+          else {
+            // convert system to the standard one in case it is 'LOINC'
+            answer.system = LForms.Util.getCodeSystem(answer.system);
+          }
+          // delete codeSystem
+          if (answer.codeSystem) {
+            delete answer.codeSystem;
           }
         }
       }
@@ -2676,16 +2694,16 @@
 
       var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other'];
       // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
-      var completeAnswerCodeSystem = completeAnswer.codeSystem;
-      if (!completeAnswer.codeSystem) {
+      var completeAnswerCodeSystem = completeAnswer.system;
+      if (!completeAnswer.system) {
         var codeSystem = item.answerCodeSystem || this.codeSystem;
         completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
       }
       // check answers' attributes if they have the same code system
       var same = false;
-      // if no codeSystem or same codeSystem
-      if (!answer.codeSystem && !completeAnswer.codeSystem ||
-          answer.codeSystem === completeAnswerCodeSystem) {
+      // if no code system or same code system
+      if (!answer.system && !completeAnswer.system ||
+          answer.system === completeAnswerCodeSystem) {
         // check all fields in answer
         same = true;
         var fields = Object.keys(answer);

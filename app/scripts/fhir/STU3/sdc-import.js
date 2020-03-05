@@ -215,7 +215,7 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
             if(option[optionKey[0]].system  !== undefined) {
-              answer.codeSystem = option[optionKey[0]].system;
+              answer.system = option[optionKey[0]].system;
             }
           }
           else {
