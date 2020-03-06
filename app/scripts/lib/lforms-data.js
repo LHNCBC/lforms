@@ -1269,14 +1269,11 @@
             // convert 'codeSystem' to 'system'. support 'codeSystem' for backward compatibility.
             if (answer.codeSystem) {
               answer.system = LForms.Util.getCodeSystem(answer.codeSystem);
+              delete answer.codeSystem;
             // use item level answer code system
             } else if (answerCodeSystem) {
               answer.system = answerCodeSystem;
             }
-          }
-          // delete codeSystem
-          if (answer.codeSystem) {
-            delete answer.codeSystem;
           }
         }
       }

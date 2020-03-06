@@ -64,6 +64,17 @@ describe('skip logic', function() {
 
     expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
     expect(ff.dobIfLivingYes2D.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNoB.isPresent()).toBeFalsy();
+
+    ff.cneTriggerSrc2.click();
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
+    expect(ff.dobIfLivingYes2D.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNoB.isDisplayed()).toBe(true);
+
   });
 
   it('should show a sibling and two items in a sibling section', function() {

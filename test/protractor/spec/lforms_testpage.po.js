@@ -199,6 +199,7 @@ var TestPage = function() {
       cneTriggerSrc2: element(by.id('/54139-1-cnesrc-2/1')),
       dobIfLivingYes2C: element(by.id('/54139-1-cnesrc-2/54124-3c/1/1')),
       dobIfLivingYes2D: element(by.id('/54139-1-cnesrc-2/54124-3d/1/1')),
+      deathCauseIfLivingNoB: element(by.id('/54139-1-cnesrc-2/54112-8b/1/1'))
 
     },
 
