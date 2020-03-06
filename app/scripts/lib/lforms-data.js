@@ -1260,8 +1260,12 @@
         var answerCodeSystem = item.answerCodeSystem ? LForms.Util.getCodeSystem(item.answerCodeSystem) : null;
         for (var i=0, iLen = item.answers.length; i<iLen; i++) {
           var answer = item.answers[i];
-          // if there is no 'system'
-          if (!answer.system) {
+          // if there is a 'system'
+          if (answer.system) {
+            // convert system to the standard one in case it is 'LOINC'
+            answer.system = LForms.Util.getCodeSystem(answer.system);
+          }
+          else {
             // convert 'codeSystem' to 'system'
             if (answer.codeSystem) {
               answer.system = LForms.Util.getCodeSystem(answer.codeSystem);
@@ -1269,11 +1273,6 @@
             } else if (answerCodeSystem) {
               answer.system = answerCodeSystem;
             }
-          }
-          // there is a 'system'
-          else {
-            // convert system to the standard one in case it is 'LOINC'
-            answer.system = LForms.Util.getCodeSystem(answer.system);
           }
           // delete codeSystem
           if (answer.codeSystem) {
@@ -2694,11 +2693,9 @@
 
       var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other'];
       // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
-      var completeAnswerCodeSystem = completeAnswer.system;
-      if (!completeAnswer.system) {
-        var codeSystem = item.answerCodeSystem || this.codeSystem;
-        completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
-      }
+      var completeAnswerCodeSystem = completeAnswer.system ? completeAnswer.system :
+          LForms.Util.getCodeSystem(item.answerCodeSystem || this.codeSystem);
+
       // check answers' attributes if they have the same code system
       var same = false;
       // if no code system or same code system

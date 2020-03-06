@@ -351,7 +351,6 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should convert an item with answerCodeSystem', function () {
             var alFixture = window[fhirVersion+'_'+'alWithCodeSystemFixture'];
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(alFixture.input), {});
-            console.log(out)
             assert.deepEqual(out, alFixture.output);
           });
 

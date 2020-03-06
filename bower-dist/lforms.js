@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"21.3.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"21.2.1\"}");
 
 /***/ }),
 /* 7 */
@@ -5921,20 +5921,19 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var answerCodeSystem = item.answerCodeSystem ? LForms.Util.getCodeSystem(item.answerCodeSystem) : null;
 
         for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
-          var answer = item.answers[i]; // if there is no 'system'
+          var answer = item.answers[i]; // if there is a 'system'
 
-          if (!answer.system) {
+          if (answer.system) {
+            // convert system to the standard one in case it is 'LOINC'
+            answer.system = LForms.Util.getCodeSystem(answer.system);
+          } else {
             // convert 'codeSystem' to 'system'
             if (answer.codeSystem) {
               answer.system = LForms.Util.getCodeSystem(answer.codeSystem); // use item level answer code system
             } else if (answerCodeSystem) {
               answer.system = answerCodeSystem;
             }
-          } // there is a 'system'
-          else {
-              // convert system to the standard one in case it is 'LOINC'
-              answer.system = LForms.Util.getCodeSystem(answer.system);
-            } // delete codeSystem
+          } // delete codeSystem
 
 
           if (answer.codeSystem) {
@@ -7361,13 +7360,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
       var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other']; // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
 
-      var completeAnswerCodeSystem = completeAnswer.system;
-
-      if (!completeAnswer.system) {
-        var codeSystem = item.answerCodeSystem || this.codeSystem;
-        completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
-      } // check answers' attributes if they have the same code system
-
+      var completeAnswerCodeSystem = completeAnswer.system ? completeAnswer.system : LForms.Util.getCodeSystem(item.answerCodeSystem || this.codeSystem); // check answers' attributes if they have the same code system
 
       var same = false; // if no code system or same code system
 

@@ -198,6 +198,8 @@ about the meaning of each key:
           be unique within the list.
         * code - (optional) an identifier for the list item.  This can be
           omitted if you do not need coded answers.
+        * _codeSystem_ - [**deprecated**, might be removed in future versions] 
+          (optional) a code system for the answer's code.
         * system - (optional) a code system for the answer's code. If not
           present, the item's answerCodeSystem is used as the default code system.
         * label - (optional) Some lists have a label for each list item, such as
