@@ -1266,7 +1266,7 @@
             answer.system = LForms.Util.getCodeSystem(answer.system);
           }
           else {
-            // convert 'codeSystem' to 'system'
+            // convert 'codeSystem' to 'system'. support 'codeSystem' for backward compatibility.
             if (answer.codeSystem) {
               answer.system = LForms.Util.getCodeSystem(answer.codeSystem);
             // use item level answer code system
