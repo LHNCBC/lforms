@@ -34,7 +34,7 @@ LForms.Validations = {
     "CNE",     // complex type
     "CWE",     // complex type
     "RTO",     // complex type, not supported yet
-    "QTY",     // complex type, not supported yet
+    "QTY",     // complex type
     "NR",      // complex type
     "YEAR",    // sub-type of "ST"
     "MONTH",   // sub-type of "ST"
@@ -58,7 +58,7 @@ LForms.Validations = {
     "CNE": "must be a value from the answer list.",  // not used, handled by the autocomplete-lhc directive
     "CWE": "must be a value from the answer list or a user supplied value.", // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",          // not supported
-    "QTY": "must be a quantity value.",       // not supported
+    "QTY": "must be a decimal number",
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
@@ -109,6 +109,7 @@ LForms.Validations = {
           valid = regex.test(value);
           break;
         case "REAL":
+        case "QTY":
           var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
@@ -150,7 +151,6 @@ LForms.Validations = {
         case "ST":  // not needed
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
         case "RTO": // TBD
-        case "QTY": // TBD
         case "CNE": // answers list with no exception, handled by autocomplete directive
         case "CWE": // answers list with exception, handled by autocomplete directive
         default :

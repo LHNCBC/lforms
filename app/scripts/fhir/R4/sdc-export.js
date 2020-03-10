@@ -85,21 +85,27 @@ var self = {
 
 
   /**
-   *  Processes FHIRPath and related item extensions (e.g. for pre-population
-   *  and extraction.)
-   *
+   *  Proceses the LForms questionCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
    */
-  _processFHIRPathExtensions: function(targetItem, item) {
-    if (item._initialExprExt)
-      targetItem.extension.push(item._initialExprExt);
-    if (item._calculatedExprExt)
-      targetItem.extension.push(item._calculatedExprExt);
-    if (item._obsLinkPeriodExt)
-      targetItem.extension.push(item._obsLinkPeriodExt);
-    if (item._variableExt)
-      Array.prototype.push.apply(targetItem.extension, item._variableExt);
+  _processQuestionCardinality: function(targetItem, item) {
+    if (item.questionCardinality) {
+      if (item.questionCardinality.max === "*") {
+        targetItem.repeats = true;
+      }
+      else if (parseInt(item.questionCardinality.max) > 1) {
+        targetItem.repeats = true;
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": parseInt(item.questionCardinality.max)
+        });
+      }
+    }
+    else {
+      // No default in R4
+      // targetItem.repeats = false;
+    }
   },
 
 
@@ -199,53 +205,6 @@ var self = {
 
 
   /**
-   * Process an item of the form
-   * @param item an item in LForms form object
-   * @param parentItem a parent item of the item
-   * @returns {{}}
-   * @private
-   */
-  _processResponseItem: function(item, parentItem) {
-    var targetItem = {};
-    var linkId = item.linkId ? item.linkId : item._codePath;
-
-    // if it is a section
-    if (item.dataType === "SECTION") {
-      // linkId
-      targetItem.linkId = linkId;
-      // text
-      targetItem.text = item.question;
-      if (item.items && Array.isArray(item.items)) {
-        // header
-        targetItem.item = [];
-        for (var i=0, iLen=item.items.length; i<iLen; i++) {
-          if (!item.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(item.items[i], item);
-            targetItem.item.push(newItem);
-          }
-        }
-      }
-    }
-    // if it is a question
-    else if (item.dataType !== "TITLE")
-    {
-      // linkId
-      targetItem.linkId = linkId;
-      // text
-      targetItem.text = item.question;
-
-      this._handleAnswerValues(targetItem, item, parentItem);
-      // remove the processed values
-      if (parentItem._questionValues) {
-        delete parentItem._questionValues[linkId];
-      }
-    }
-
-    return targetItem
-  },
-
-
-  /**
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
@@ -306,135 +265,13 @@ var self = {
       if (answer.code) option.valueCoding.code = answer.code;
       if (answer.text) option.valueCoding.display = answer.text;
 
-      if (answer.codeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
+      if (answer.system) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
       }
 
       optionArray.push(option);
     }
     return optionArray;
-  },
-
-
-  /**
-   * Group values of the questions that have the same linkId
-   * @param item an item in the LForms form object or a form item object
-   * @private
-   *
-   */
-  _processRepeatingItemValues: function(item) {
-    if (item.items) {
-      for (var i=0, iLen=item.items.length; i<iLen; i++) {
-        var subItem = item.items[i];
-        // if it is a section
-        if (subItem.dataType === 'SECTION') {
-          this._processRepeatingItemValues(subItem);
-        }
-        // if it is a question and the it repeats
-        else if (subItem.dataType !== 'TITLE' && this._questionRepeats(subItem)) {
-          var linkId = subItem._codePath;
-          if (!item._questionValues) {
-            item._questionValues = {};
-          }
-          if (!item._questionValues[linkId]) {
-            item._questionValues[linkId] = [subItem.value];
-          }
-          else {
-            item._questionValues[linkId].push(subItem.value);
-            subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
-          }
-        }
-      }
-    }
-
-  },
-
-
-  /**
-   * Process capture user data
-   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
-   * @param item an item in LForms form object
-   * @private
-   */
-  _handleAnswerValues: function(targetItem, item, parentItem) {
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
-
-    var answer = [];
-    var linkId = item._codePath;
-    var dataType = this._getAssumedDataTypeForExport(item);
-    // value not processed by previous repeating items
-    if (dataType !== "SECTION" && dataType !=="TITLE") {
-
-      var valueKey = this._getValueKeyByDataType("value", item);
-
-      if (this._questionRepeats(item)) {
-        var values = parentItem._questionValues[linkId];
-      }
-      else if (this._answerRepeats(item)) {
-        values = item.value;
-      }
-      else {
-        values = [item.value];
-      }
-
-      for (var i=0, iLen= values.length; i<iLen; i++) {
-        // for Coding
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof values[i] === 'string') {
-            if (values[i] !== '') {
-              answer.push({
-                "valueString" : values[i]
-              })
-            }
-          }
-          else if (!jQuery.isEmptyObject(values[i])) {
-            var oneAnswer = {};
-            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
-            if (codeSystem) oneAnswer.system = codeSystem;
-            if (values[i].code) oneAnswer.code = values[i].code;
-            if (values[i].text) oneAnswer.display = values[i].text;
-            answer.push({
-              "valueCoding": oneAnswer
-            })
-          }
-        }
-        // for Quantity,
-        // [{
-        //   // from Element: extension
-        //   "value" : <decimal>, // Numerical value (with implicit precision)
-        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-        //   "unit" : "<string>", // Unit representation
-        //   "system" : "<uri>", // Code System that defines coded unit form
-        //   "code" : "<code>" // Coded form of the unit
-        // }]
-        else if (dataType === "QTY") { // for now, handling only simple quantities without the comparators.
-          var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
-          if(fhirQuantity) {
-            answer.push({valueQuantity: fhirQuantity});
-          }
-        }
-        // make a Quantity type if numeric values has a unit value
-        else if (item.unit && typeof values[i] !== 'undefined' &&
-            (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
-          var q = {value: parseFloat(values[i])};
-          self._setUnitAttributesToFhirQuantity(q, item.unit);
-          answer.push({valueQuantity: q});
-        }
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" ||
-          dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-          dataType === "ST" || dataType === "TX" || dataType === "URL") {
-          var answerValue = {};
-          answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
-          answer.push(answerValue);
-        }
-        // no support for reference yet
-      }
-      targetItem.answer = answer;
-    }
   },
 
 
@@ -445,46 +282,47 @@ var self = {
    * @private
    */
   _handleInitialValues: function(targetItem, item) {
+    if(item.defaultAnswer === null || item.defaultAnswer === undefined || item.defaultAnswer === '') {
+      return;
+    }
+    // item.defaultAnswer could be an array of multiple default values or a single value
+    var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
+      item.defaultAnswer : [item.defaultAnswer];
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+    var valueKey = this._getValueKeyByDataType("value", item);
     var answer = null;
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
+    targetItem.initial = [];
 
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
+    // go through each default value and handle it based on the data type.
+    for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
+      // dataType:
+      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+      // Attachment, Coding, Quantity, Reference(Resource)
 
-      targetItem.initial = [];
-      var dataType = this._getAssumedDataTypeForExport(item);
-      var valueKey = this._getValueKeyByDataType("value", item);
       // for Coding
       if (dataType === 'CWE' || dataType === 'CNE' ) {
-        var codeSystem = null, coding = null;
-
-        // item.defaultAnswer could be an array of multiple default values or a single value
-        var defaultAnswers = (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) ?
-            item.defaultAnswer : [item.defaultAnswer];
-        // go through each default value, which could be a code object or a string
-        for(var i=0, iLen=defaultAnswers.length; i<iLen; i++ ) {
-          if (typeof defaultAnswers[i] === 'object') {
-            coding = {"code": defaultAnswers[i].code};
-            if(defaultAnswers[i].text !== undefined) {
-              coding.display = defaultAnswers[i].text;
-            }
-            // code system
-            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
-
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
+        // could be a code object or a string
+        if (typeof defaultAnswers[i] === 'object') {
+          var coding = {"code": defaultAnswers[i].code};
+          if(defaultAnswers[i].text !== undefined) {
+            coding.display = defaultAnswers[i].text;
           }
-          // user typed answer that is not on the answer list.
-          else if (typeof defaultAnswers[i] === 'string') {
-            targetItem.initial.push({
-              "valueString": defaultAnswers[i]
-            })
+          // code system
+          var codeSystem = defaultAnswers[i].system || item.answerCodeSystem;
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
+
+          answer = {};
+          answer[valueKey] = coding;
+          targetItem.initial.push(answer);
+        }
+        // user typed answer that is not on the answer list.
+        else if (typeof defaultAnswers[i] === 'string') {
+          targetItem.initial.push({
+            "valueString": defaultAnswers[i]
+          })
         }
       }
       // for Quantity,
@@ -497,34 +335,27 @@ var self = {
       //   "code" : "<code>" // Coded form of the unit
       // }]
       else if (dataType === 'QTY') {  // for now, handling only simple quantities without the comparators.
-        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          for(var j = 0; j < item.defaultAnswer.length; j++) {
-            answer = {};
-            answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
-            targetItem.initial.push(answer);
-          }
-        }
-        else {
-          answer = {};
-          answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
-          targetItem.initial.push(answer);
-        }
+        answer = {};
+        answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
+        targetItem.initial.push(answer);
       }
       // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
       else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" ||
-        dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-        dataType === "ST" || dataType === "TX" || dataType === "URL") {
-        if(this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-          for(var k = 0; k < item.defaultAnswer.length; k++) {
-            answer = {};
-            answer[valueKey] = item.defaultAnswer[k];
-            targetItem.initial.push(answer);
-          }
+        dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+        answer = {};
+        answer[valueKey] = defaultAnswers[i];
+        targetItem.initial.push(answer);
+      }
+      else if (dataType === "DT" || dataType === "DTM") { // transform to FHIR date/datetime format.
+        var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
+        if(dateValue) {
+          dateValue = dataType === "DTM"?
+            LForms.Util.dateToDTMString(dateValue): LForms.Util.dateToDTStringISO(dateValue);
+          targetItem.initial.push({[valueKey]: dateValue});
         }
-        else {
-          answer = {};
-          answer[valueKey] = item.defaultAnswer;
-          targetItem.initial.push(answer);
+        else { // LForms.Util.stringToDate returns null on invalid string
+          // TODO: should save the errors or emitting events.
+          console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
         }
       }
       // no support for reference
@@ -593,46 +424,11 @@ var self = {
       for (var i=0, iLen=item.skipLogic.conditions.length; i<iLen; i++) {
         var condition = item.skipLogic.conditions[i];
         var sourceItem = source._getSkipLogicSourceItem(item,condition.source);
+        let enableWhenRules = self._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
 
-        var enableWhenRules = [{
-          "question": sourceItem.linkId
-        }];
-        // dataTypes:
-        // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-        // Attachment, Coding, Quantity, Reference(Resource)
-        var valueKey = this._getValueKeyByDataType("answer", sourceItem);
-        var dataType = this._getAssumedDataTypeForExport(sourceItem);
-
-        // for Coding
-        // multiple selections, item.value is an array
-        // NO support of multiple selections in FHIR SDC, just pick one
-        if (dataType === 'CWE' || dataType === 'CNE' ) {
-          if (condition.trigger.code) {
-            enableWhenRules[0][valueKey] = {
-              "code": condition.trigger.code
-            }
-          }
-          else {
-            enableWhenRules[0][valueKey] = {
-              "code": "only 'code' attribute is supported"
-            }
-          }
+        if(enableWhenRules.length > 1) {
+          rangeFound = true;
         }
-        // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if(dataType === "BL") {
-          enableWhenRules[0].operator = 'exists';
-          // Spec says exists implies answer is boolean, then 'exists' is redundant, isn't it?
-          enableWhenRules[0][valueKey] = condition.trigger.value;
-        }
-        else if (dataType === "REAL" || dataType === "INT" || dataType === 'QTY' ||
-            dataType === "DT" || dataType === "DTM" || dataType === "TM" ||
-            dataType === "ST" || dataType === "TX" || dataType === "URL") {
-          enableWhenRules = this._createEnableWhenRulesForRangeAndValue(valueKey, condition, sourceItem);
-          if(enableWhenRules.length > 1) {
-            rangeFound = true;
-          }
-        }
-        // add rule(s) to enableWhen
         enableWhen = enableWhen.concat(enableWhenRules);
       }
 
@@ -640,8 +436,9 @@ var self = {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
         // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
-        return;
+        throw new Error('Multiple skip logic conditons included with range specification is not supported yet.');
       }
+
       targetItem.enableWhen = enableWhen;
       if(item.skipLogic.logic === 'ALL' || rangeFound) {
         targetItem.enableBehavior = 'all';

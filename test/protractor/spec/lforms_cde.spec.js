@@ -5,6 +5,7 @@ describe('CDE form template', function() {
 
     tp.openBaseTestPage();
     tp.openFormByIndex(8);
+    tp.openCDESampleForm();
 
     var headerRow = element(by.css(".lf-empty-question.lf-section-header"));
     var EC = protractor.ExpectedConditions;
@@ -19,7 +20,7 @@ describe('CDE form template', function() {
   it('question code has no links if it is set to be shown', function() {
 
     tp.openBaseTestPage();
-    tp.openFormByIndex(8);
+    tp.openCDESampleForm();
 
     var titleCode = element(by.css(".lf-form-title .lf-item-code span"));
     expect(titleCode.getText()).toBe("[5603071e1c7581941db4dd50]");

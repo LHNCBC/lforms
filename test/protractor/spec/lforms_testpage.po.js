@@ -50,18 +50,20 @@ var TestPage = function() {
     FormBuilder: 5,
     MDS3: 6,
     FormWithUserData: 7,
-    RxTerms: 9,
-    DisplayControlsDemo: 10,
-    MatrixLayout1: 11,
-    MatrixLayout2: 12,
-    ValidationTest: 13,
-    QuestionInQuestionForm: 14,
-    HL7GeneticPanel: 15,
-    DefaultAnswerForm: 17,
-    NewGeneticForm: 19,
-    TwoTotalScoreForm: 20,
-    VitalSign: 21,
-    QTYDemo: 22
+    FormWithUserDataWithHasSavedData: 8,
+    CDESampleForm: 9,
+    RxTerms: 10,
+    DisplayControlsDemo: 11,
+    MatrixLayout1: 12,
+    MatrixLayout2: 13,
+    ValidationTest: 14,
+    QuestionInQuestionForm: 15,
+    HL7GeneticPanel: 16,
+    DefaultAnswerForm: 18,
+    NewGeneticForm: 20,
+    TwoTotalScoreForm: 21,
+    VitalSign: 22,
+    QTYDemo: 23
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {
@@ -74,6 +76,7 @@ var TestPage = function() {
 
   var USSGFHTVertical = {
     comment: element(by.id('comment')), // comment, template data
+    whereDone: element(by.id('where_done')), // where done, template data
     nameID: '/54126-8/54125-0/1/1', // string
     gender: element(by.id('/54126-8/54131-8/1/1')), // answer
     race: element(by.id('/54126-8/54134-2/1/1')), // multiple answers
@@ -82,6 +85,7 @@ var TestPage = function() {
     height: element(by.id('/54126-8/8302-2/1/1')), // number
     weight: element(by.id('/54126-8/29463-7/1/1')), // number
     bmi: element(by.id('/54126-8/39156-5/1/1')), // formula
+    related : element(by.id('/54126-8/54135-9/1/1')), // parents related
 
     height1: element(by.id('/54126-8/8302-2/1/1')),
     weight1: element(by.id('/54126-8/29463-7/1/1')),
@@ -118,6 +122,7 @@ var TestPage = function() {
     fmDisease: element(by.id('/54114-4/54117-7/54116-9/1/1/1')),
     btnAnotherFamily: element(by.id('add-/54114-4/1')),
     btnAnotherDiseasesHist: element(by.id('add-/54114-4/54117-7/1/1')),
+    mockedHeight: element(by.id('/54114-4/54117-7/8302-2/1/1/1')),
 
     fmName2: element(by.id('/54114-4/54138-3/2/1')),
     fmDisease2: element(by.id('/54114-4/54117-7/54116-9/2/1/1')),
@@ -159,6 +164,7 @@ var TestPage = function() {
       t2: element(by.id('/slTargetItem2/1')),
       t4: element(by.id('/slTargetHeader1/slTargetSubItem1/1/1')),
       t5: element(by.id('/slTargetHeader1/slTargetSubItem2/1/1')),
+      t6: element(by.id('/slTargetItem6/1')),
 
       allSrc1: element(by.id('/slALLSource1/1')),
       allSrc2: element(by.id('/slALLSource2/1')),
@@ -181,7 +187,20 @@ var TestPage = function() {
       dcTarget1: element(by.id('/dataControlExamples/controlledItem_LIST/1/1')),
       dcTarget2: element(by.id('/dataControlExamples/controlledItem_TEXT/1/1')),
 
-      searchResults: element(by.id('searchResults'))
+      searchResults: element(by.id('searchResults')),
+
+      cneTriggerSrc1: element(by.id('/54139-1-cnesrc-1/1')),
+      dobIfLivingYes: element(by.id('/54139-1-cnesrc-1/54124-3/1/1')),
+      dobIfLivingYesB: element(by.id('/54139-1-cnesrc-1/54124-3b/1/1')),
+      ageIfLivingAnswered: element(by.id('/54139-1-cnesrc-1/54141-7/1/1')),
+      deathCauseIfLivingNo: element(by.id('/54139-1-cnesrc-1/54112-8/1/1')),
+      ageDeathIfLivingNotAnswered: element(by.id('/54139-1-cnesrc-1/54113-6/1/1')),
+
+      cneTriggerSrc2: element(by.id('/54139-1-cnesrc-2/1')),
+      dobIfLivingYes2C: element(by.id('/54139-1-cnesrc-2/54124-3c/1/1')),
+      dobIfLivingYes2D: element(by.id('/54139-1-cnesrc-2/54124-3d/1/1')),
+      deathCauseIfLivingNoB: element(by.id('/54139-1-cnesrc-2/54112-8b/1/1'))
+
     },
 
     HL7GeneticPanel: {
@@ -190,6 +209,7 @@ var TestPage = function() {
     },
 
     FormWithUserData: {
+      q0: element(by.id('/q0/1')),
       q1: element(by.id('/q1/1')),
       q2: element(by.id('/q2/1')),
       q3: element(by.id('/q3/1')),

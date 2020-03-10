@@ -1,6 +1,11 @@
+/* jshint -W097 */ // suppress jshint warning about strict
+/* jshint node: true */ // suppress warning about "require"
 "use strict";
 
 import {LOINC_URI} from './fhir-common';
+var LForms = require('../lforms-index');
+
+var _versionTagStr = 'lformsVersion: ';
 
 /**
  *  Defines export functions that are the same across the different FHIR
@@ -9,14 +14,13 @@ import {LOINC_URI} from './fhir-common';
 var self = {
 
   /**
-   * Create an Observation resource from an LForms item object
+   *  Creates Observation resources from an LForms item object
    * @param item an LForms item object
    * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
-   * @returns {{}} an observation resource
+   * @returns {{}} an array of observation resources representing the values
+   *  stored in the item.
    * @private
    */
-
-
   _createObservation: function(item, setId) {
 
     var values = [];
@@ -28,26 +32,18 @@ var self = {
     }
     switch (dataType) {
       case "INT":
+        values = [this._createObsIntValue(item)];
+        break;
       case "REAL":
-        if (item.unit) {
-          var valValue = {"value": item.value};
-          if (item.unit) {
-            if (item.unit.name) valValue.unit = item.unit.name;
-            if (item.unit.code) valValue.code = item.unit.code;
-            if (item.unit.system) valValue.system = item.unit.system;
-          }
-
-          values = [{
-            key: "valueQuantity",
-            val: valValue
-          }];
-        }
-        else {
-          values = [{
-            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
-            val: item.value
-          }];
-        }
+        // A "real" data type should be exported as valueQuantity, because
+        // there is no valueDecimal for Observation (as of R4).
+      case "QTY":
+        var valValue = {value: item.value};
+        this._setFHIRQuantityUnit(valValue, item.unit);
+        values = [{
+          key: "valueQuantity",
+          val: valValue
+        }];
         break;
       case "DT":
         values = [{
@@ -78,7 +74,7 @@ var self = {
             var coding = {};
             if (val.code) coding.code = val.code;
             if (val.text) coding.display = val.text;
-            var codeSystem = val.codeSystem;
+            var codeSystem = val.system;
             if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
             values.push(
                 { key: "valueCodeableConcept",
@@ -87,7 +83,7 @@ var self = {
                     "text": coding.display
                   }
                 }
-            )
+            );
           }
           else if (typeof val === "string") {
             if (val !== "") {
@@ -95,7 +91,7 @@ var self = {
                   { key: "valueString",
                     val: val
                   }
-              )
+              );
             }
           }
         }
@@ -117,6 +113,7 @@ var self = {
           "text": item.question
         }
       };
+      this._addVersionTag(obx);
       if (setId) {
         obx.id = this._getUniqueId(item.questionCode);
       }
@@ -139,9 +136,68 @@ var self = {
     this._idCtr || (this._idCtr = 0);
     return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' +
       Math.random().toString(16).substr(2);
+  },
+
+
+  /**
+   *  Sets the unit for a Quantity.
+   * @param qty the FHIR Quantity structure whose unit will be set.  This
+   *  function assumes there is no unit information already set.
+   * @param unit An LForms unit object.
+   */
+  _setFHIRQuantityUnit: function(qty, unit) {
+    if (unit) {
+      if (unit.name) qty.unit = unit.name;
+      if (unit.code) qty.code = unit.code;
+      if (unit.system) qty.system = unit.system;
+    }
+  },
+
+
+  /**
+   *  Returns and creates if necessary the tag array object on the resource.  If
+   *  created, the given resource will be modified.
+   * @param res the resource whose tag array is needed.
+   */
+  _resTags: function(res) {
+    var meta = res.meta;
+    if (!meta)
+      meta = (res.meta = {});
+    var tag = meta.tag;
+    if (!tag)
+      tag = (meta.tag = []);
+    return tag;
+  },
+
+
+  /**
+   *  Sets the LForms version tag on a FHIR resource to indicate the LForms version used to
+   *  export it.  This will replace any version tag already present.
+   * @param res the resource object to be tagged.
+   */
+  _setVersionTag: function(res) {
+    var tags = this._resTags(res);
+    // Delete any lformsVersion tag present.  There should be at most one
+    for (var i=0, len=tags.length; i<len; ++i) {
+      var t = tags[i];
+      if (t.display && t.display.indexOf(_versionTagStr)===0) {
+        tags.splice(i, 1);
+        break;
+      }
+    }
+    this._addVersionTag(res);
+  },
+
+
+  /**
+   *  Adds a tag to a FHIR resource to indicate the LForms version used to
+   *  export it.  Assumes the version tag does not already exist.
+   * @param res the resource object to be tagged.
+   */
+  _addVersionTag: function(res) {
+    var tag = this._resTags(res);
+    tag.push({display: _versionTagStr+LForms.lformsVersion});
   }
-
-
-}
+};
 
 export default self;

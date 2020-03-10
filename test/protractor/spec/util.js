@@ -74,7 +74,25 @@ var util = {
       'transition: none !important;'
       '}';
     document.getElementsByTagName('head')[0].appendChild(style);
+  },
+
+  /**
+   * Get the datetime string in DTM picker's default format for the current time with the given offset.
+   * @param offsetMS the offset from the current time, in milliseconds, optional.
+   *        Use a negative offset for past time, positive for future, zero or unspecified for "current"
+   * @return the datetime string in the DTM datetime picker's default format (MM/DD/YYYY HH:MM).
+   */
+  getCurrentDTMString: function(offsetMS) {
+    offsetMS = offsetMS || 0;
+    var date = new Date(new Date().getTime() + offsetMS);
+    return [
+      (101 + date.getMonth()).toString().substr(1),
+      (100 + date.getDate()).toString().substr(1),
+      (10000 + date.getFullYear()).toString().substr(1)].join('/')
+      + ' ' +
+      [(100 + date.getHours()).toString().substr(1),
+      (100 + date.getMinutes()).toString().substr(1)].join(':');
   }
-}
+};
 
 module.exports = util;

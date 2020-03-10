@@ -661,8 +661,6 @@ module.exports = LForms;
 // index.js.
 var LForms = __webpack_require__(4);
 
-__webpack_require__(6);
-
 __webpack_require__(7);
 
 __webpack_require__(8);
@@ -675,21 +673,23 @@ __webpack_require__(11);
 
 __webpack_require__(12);
 
-__webpack_require__(14);
+__webpack_require__(13);
 
 __webpack_require__(15);
 
-__webpack_require__(17);
+__webpack_require__(16);
 
 __webpack_require__(18);
 
-__webpack_require__(20);
+__webpack_require__(19);
 
-LForms.Util.FHIRSupport = __webpack_require__(21);
+__webpack_require__(21);
 
-__webpack_require__(22);
+LForms.Util.FHIRSupport = __webpack_require__(22);
 
-LForms._elementResizeDetectorMaker = __webpack_require__(23);
+__webpack_require__(23);
+
+LForms._elementResizeDetectorMaker = __webpack_require__(24);
 module.exports = LForms;
 
 /***/ }),
@@ -741,7 +741,7 @@ module.exports = LForms;
 })(); // Define the top-level namespace object
 
 
-var LForms = {};
+var LForms = Object.assign({}, __webpack_require__(6));
 module.exports = LForms;
 
 /***/ }),
@@ -752,6 +752,12 @@ module.exports = Def;
 
 /***/ }),
 /* 6 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"lformsVersion\":\"21.2.2\"}");
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports) {
 
 /*
@@ -765,7 +771,7 @@ angular.module('lformsWidget').constant('LF_CONSTANTS', {
 });
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($animate) {
@@ -782,7 +788,7 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 }]);
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1983,7 +1989,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 }]);
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2267,7 +2273,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // Based on https://stackoverflow.com/a/26339919/360782
@@ -2298,7 +2304,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 }]);
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /**
@@ -2320,7 +2326,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 })();
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2328,11 +2334,20 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 /**
  * LForms Utility tools
  */
-var moment = __webpack_require__(13); // Acceptable date formats
+var moment = __webpack_require__(14); // Acceptable date formats
 // Strict parsing -
 
 
-var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D', 'YYYY', 'YYYY-M-D', 'YYYY/M/D', moment.ISO_8601, 'M/D/YYYY HH:mm', 'M/D/YY HH:mm', 'M/D HH:mm', 'M-D-YYYY HH:mm', 'M-D-YY HH:mm', 'M-D HH:mm'];
+var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D', 'YYYY', 'YYYY-M-D', 'YYYY/M/D', moment.ISO_8601, 'M/D/YYYY HH:mm', 'M/D/YY HH:mm', 'M/D HH:mm', 'M-D-YYYY HH:mm', 'M-D-YY HH:mm', 'M-D HH:mm']; // A map of FHIR extensions involving Expressions to the property names on
+// which they will be stored in LFormsData, and a boolean indicating whether
+// more than one extension of the type is permitted.
+
+var _copiedExtensions = {
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
+  "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false],
+  "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
+};
 
 var LForms = __webpack_require__(4);
 
@@ -2557,12 +2572,12 @@ LForms.Util = {
       switch (resourceType) {
         case "DiagnosticReport":
           formData = fhir.DiagnosticReport.mergeDiagnosticReportToLForms(formData, fhirData);
-          formData._hasSavedData = true;
+          formData.hasSavedData = true;
           break;
 
         case "QuestionnaireResponse":
           formData = fhir.SDC.mergeQuestionnaireResponseToLForms(formData, fhirData);
-          formData._hasSavedData = true; // will be used to determine whether to update or save
+          formData.hasSavedData = true; // will be used to determine whether to update or save
 
           break;
       }
@@ -2579,7 +2594,7 @@ LForms.Util = {
     if (!fhirVersion) fhirVersion = this.detectFHIRVersion(fhirResource) || this.guessFHIRVersion(fhirResource);
 
     if (!fhirVersion) {
-      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire' + ' (for Questionnaire version 4.0).' + 'Example 2:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 ' + ' (for SDC Questionnaire version 2.7).');
+      throw new Error('Could not determine the FHIR version for this resource.  ' + 'Please make sure it is specified via meta.profile (see ' + 'http://build.fhir.org/versioning.html#mp-version and ' + 'https://www.hl7.org/fhir/references.html#canonical).  ' + 'Example 1:  http://hl7.org/fhir/4.0/StructureDefinition/Questionnaire' + ' (for Questionnaire version 4.0, a.k.a. R4).' + 'Example 2:  http://hl7.org/fhir/3.0/StructureDefinition/Questionnaire' + ' (for Questionnaire version 3.0, a.k.a. STU3).' + 'Example 3:  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7 ' + ' (for SDC Questionnaire version 2.7).');
     } else fhirVersion = this.validateFHIRVersion(fhirVersion);
 
     return fhirVersion;
@@ -3238,23 +3253,160 @@ LForms.Util = {
     }
 
     return codeSystem;
+  },
+
+  /**
+   *  Some extensions are simply copied over to the LForms data structure.
+   *  This copies those extensions from qItem.extension to lfItem if they exist, and
+   *  LForms can support them.
+   * @param extensionArray - Questionnaire.item.extension
+   * @param lfItem an item from the LFormsData structure
+   */
+  processCopiedItemExtensions: function processCopiedItemExtensions(lfItem, extensionArray) {
+    if (!extensionArray || extensionArray.length === 0) {
+      return;
+    } // Go through selected extensions.
+
+
+    var copiedExtURLs = Object.keys(_copiedExtensions);
+
+    for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
+      var url = copiedExtURLs[i];
+      var extInfo = _copiedExtensions[url];
+      var prop = extInfo[0],
+          multiple = extInfo[1];
+      var ext = LForms.Util.removeObjectsFromArray(extensionArray, 'url', url, 0, multiple);
+
+      if (multiple && ext.length > 0 || !multiple && ext) {
+        // If array, avoid assigning empty array
+        lfItem[prop] = ext;
+      }
+    }
+  },
+
+  /**
+   * Removes an object(s) from an array searching it using key/value pair with an optional start index.
+   * The matching value should be a primitive type. If start index is not specified,
+   * it is assumed to be 0.
+   *
+   * @param targetObjects - Array of objects to search using key and value
+   * @param key - key of the object to match the value
+   * @param matchingValue - Matching value of the specified key.
+   * @param starting_index - Optional start index to lookup. Negative number indicates index from end.
+   *   The absolute value should be less than the length of items in the array. If not
+   *   the starting index is assumed to be 0.
+   * @param all - if false, removes the first matched object otherwise removes all matched objects.
+   *   Default is false.
+   *
+   * @returns {Object|Array} - Returns removed object or array of objects.
+   */
+  removeObjectsFromArray: function removeObjectsFromArray(targetObjects, key, matchingValue, starting_index, all) {
+    var ind = all ? [] : null;
+    var ret = all ? [] : null;
+
+    if (Array.isArray(targetObjects)) {
+      var start = 0; // Figure out start index.
+
+      if (starting_index && Math.abs(starting_index) < targetObjects.length) {
+        if (starting_index < 0) {
+          start = targetObjects.length + starting_index;
+        } else {
+          start = starting_index;
+        }
+      }
+
+      var len = targetObjects.length;
+
+      for (var i = start; i < len; i++) {
+        if (targetObjects[i][key] === matchingValue) {
+          var match = targetObjects[i];
+
+          if (all) {
+            ind.push(i);
+            ret.push(match);
+          } else {
+            ind = i;
+            ret = match;
+            break;
+          }
+        }
+      }
+
+      if (Array.isArray(ind)) {
+        for (var i = ind.length - 1; i >= 0; i--) {
+          targetObjects.splice(ind[i], 1);
+        }
+      } else {
+        if (ind !== null) {
+          targetObjects.splice(ind, 1);
+        }
+      }
+    }
+
+    return ret;
+  },
+
+  /**
+   *   Returns the part of an LForms form definition that all form definitions
+   *   should have.
+   */
+  baseFormDef: function baseFormDef() {
+    return {
+      lformsVersion: LForms.lformsVersion
+    };
   }
 };
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-module.exports = moment;
 
 /***/ }),
 /* 14 */
 /***/ (function(module, exports) {
 
+module.exports = moment;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
 // HTML5 polyfills
-// Polyfill for String.repeat
+// Polyill for Object.assign
+//import 'core-js/features/object/assign'; // adds about 8k; use Mozilla's
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (typeof Object.assign !== 'function') {
+  // Must be writable: true, enumerable: false, configurable: true
+  Object.defineProperty(Object, "assign", {
+    value: function assign(target, varArgs) {
+      // .length of function is 2
+      'use strict';
+
+      if (target === null || target === undefined) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+
+      var to = Object(target);
+
+      for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+
+        if (nextSource !== null && nextSource !== undefined) {
+          for (var nextKey in nextSource) {
+            // Avoid bugs when hasOwnProperty is shadowed
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+
+      return to;
+    },
+    writable: true,
+    configurable: true
+  });
+} // Polyfill for String.repeat
 // Taken from
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+
+
 if (!String.prototype.repeat) {
   String.prototype.repeat = function (count) {
     'use strict';
@@ -3314,12 +3466,12 @@ if (!String.prototype.repeat) {
 }
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
 /**
  * A package to generate HL7 messgages from LForms form data
  */
@@ -3779,6 +3931,7 @@ LForms.HL7 = function () {
       switch (lformsDataType) {
         case "INT":
         case "REAL":
+        case "QTY":
           ret = "NM";
           break;
 
@@ -3797,7 +3950,6 @@ LForms.HL7 = function () {
         /*
         case "BIN":
         case "RTO":
-        case "QTY":
         case "YEAR":
         case "MONTH":
         case "DAY":
@@ -3988,7 +4140,7 @@ LForms.HL7 = function () {
         // For non-coded values, the text goes in OBX 5.9
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       } else {
-        var answerCS = !itemVal.codeSystem ? "" : itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.codeSystem;
+        var answerCS = !itemVal.system ? "" : itemVal.system === 'LOINC' || itemVal.system === _fhir_fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"] ? this.LOINC_CS : itemVal.system;
         rtn = code + this.delimiters.component + itemVal.text + this.delimiters.component + answerCS;
       }
 
@@ -4122,13 +4274,12 @@ LForms.HL7 = function () {
 
       sectionItem._emptySection = empty;
       return empty;
-    } // return
-
-  };
+    }
+  }; // return
 }();
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4138,7 +4289,7 @@ __webpack_require__.r(__webpack_exports__);
 var LOINC_URI = 'http://loinc.org';
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -4163,7 +4314,7 @@ LForms.Validations = {
   "CNE", // complex type
   "CWE", // complex type
   "RTO", // complex type, not supported yet
-  "QTY", // complex type, not supported yet
+  "QTY", // complex type
   "NR", // complex type
   "YEAR", // sub-type of "ST"
   "MONTH", // sub-type of "ST"
@@ -4195,8 +4346,7 @@ LForms.Validations = {
     // not used, handled by the autocomplete-lhc directive
     "RTO": "must be a ratio value.",
     // not supported
-    "QTY": "must be a quantity value.",
-    // not supported
+    "QTY": "must be a decimal number",
     "NR": "must be two numeric values separated by a ^. One value can be omitted, but not the ^.",
     "YEAR": "must be a numeric value of year.",
     "MONTH": "must be a numeric value of month.",
@@ -4249,6 +4399,7 @@ LForms.Validations = {
           break;
 
         case "REAL":
+        case "QTY":
           var regex = /^(\+|-)?\d+(\.\d+)?$/;
           valid = regex.test(value);
           break;
@@ -4304,8 +4455,6 @@ LForms.Validations = {
         case "DTM": // dataTime, handled by the datetime directive (datetime picker)
 
         case "RTO": // TBD
-
-        case "QTY": // TBD
 
         case "CNE": // answers list with no exception, handled by autocomplete directive
 
@@ -4448,7 +4597,7 @@ LForms.Validations = {
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4461,7 +4610,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
   var LForms = __webpack_require__(4);
 
-  var Class = __webpack_require__(19);
+  var Class = __webpack_require__(20);
 
   LForms.LFormsData = Class.extend({
     // constants
@@ -4530,6 +4679,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     items: [],
     // a delimiter used in code path and id path
     PATH_DELIMITER: "/",
+    // whether the form data contains saved user data
+    hasSavedData: false,
     // repeatable question items derived from items
     _repeatableItems: {},
     // All accessory attributes of an item
@@ -4658,6 +4809,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      * @param data the lforms form definition data
      */
     init: function init(data) {
+      this.lformsVersion = LForms.lformsVersion;
+
       if (data && data._initializeInternalData) {
         // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
@@ -4666,6 +4819,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           if (props[i] && !props[i].startsWith('_') && typeof data[props[i]] !== 'function') {
             this[props[i]] = data[props[i]];
           }
+        } // Preserve _variableExt as FHIR variable extensions have been moved to _variableExt during the LFormsData construction.
+
+
+        if (data._variableExt) {
+          this._variableExt = data._variableExt;
         }
       } else {
         jQuery.extend(this, data);
@@ -4676,7 +4834,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this._formDone = false;
 
-      if (LForms.FHIR && data.fhirVersion) {
+      if (LForms.FHIR) {
         this._initializeFormFHIRData(data);
       } // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
@@ -4717,12 +4875,16 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _initializeFormFHIRData: function _initializeFormFHIRData(data) {
       var lfData = this;
-      this.fhirVersion = data.fhirVersion;
+      this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
+
       this._fhir = LForms.FHIR[lfData.fhirVersion];
       this._expressionProcessor = new LForms.ExpressionProcessor(this);
       this._fhirVariables = {};
-      this.extension = data.extension;
-      this._variableExt = data._variableExt; // FHIR "variable" extensions
+      this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
+      // form-level variables (really only R4+)
+
+      var ext = LForms.Util.removeObjectsFromArray(this.extension, 'url', this._fhir.SDC.fhirExtVariable, 0, true);
+      if (ext.length > 0) lfData._variableExt = ext;
 
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
@@ -4839,10 +5001,10 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     /**
      * Calculate internal data from the raw form definition data,
      * including:
-     * structural data, (TBD: unless they are already included (when hasUserData == true) ):
+     * structural data:
      *    _id, _idPath, _codePath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_,
+     *    _displayLevel_
      * @private
      */
     _initializeInternalData: function _initializeInternalData() {
@@ -4874,7 +5036,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options and assign field default values
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5040,7 +5202,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       this.Navigation.setupNavigationMap(this); // create auto-completer options
 
-      this._setUpDefaultsAndAutocomp(); // set up a mapping from controlling items to controlled items
+      this._setUpAnswerAndUnitAutoComp(this.itemList); // set up a mapping from controlling items to controlled items
       // for skip logic, data controls and formulas
 
 
@@ -5379,17 +5541,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       this._codePath = "";
       this._idPath = "";
       this._displayLevel = 0;
-      this._activeItem = null; // type
-
-      if (!this.type || this.type.length == 0) {
-        this.type = "LOINC";
-      } // question coding system
-
-
-      if (this.type === "LOINC" && !this.codeSystem) {
-        this.codeSystem = "LOINC";
-      } // add a link to external site for item's definition
-
+      this._activeItem = null; // add a link to external site for item's definition
 
       if (this.codeSystem === "LOINC") {
         this._linkToDef = "http://s.details.loinc.org/LOINC/" + this.code + ".html";
@@ -5460,11 +5612,55 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
         if (columnHeaders) {
           this._mergeTwoArrays(this.templateOptions.columnHeaders, columnHeaders);
-        } // if there is a new formHeaderItems array, set up autocomplete options
+        } // if there is a formHeaderItems array, set up autocomplete options
 
 
-        if (newOptions.formHeaderItems) this._setUpDefaultsAndAutocomp(true);
+        if (this.templateOptions.formHeaderItems) {
+          for (var i = 0, iLen = this.templateOptions.formHeaderItems.length; i < iLen; i++) {
+            var item = this.templateOptions.formHeaderItems[i];
+
+            if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+              this._updateAutocompOptions(item);
+
+              this._resetItemValueWithModifiedAnswers(item);
+            } // if this is not a saved form with user data, and
+            // there is a default value, and
+            // there is no embedded data
+            else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+                this._lfItemValueFromDefaultAnswer(item);
+              }
+
+            this._updateUnitAutocompOptions(item);
+          }
+        }
       }
+    },
+
+    /**
+     * Assign the given item's defaultAnswer as its value, potentially with data type conversion/transformation.
+     * For now, only converting DT/DTM string to a date object. The assignment happens only if item.defaultAnswer
+     * is not undefined, null, or empty string.
+     * @param item the lforms item to assign value to (from its defaultAnswer)
+     * @private
+     */
+    _lfItemValueFromDefaultAnswer: function _lfItemValueFromDefaultAnswer(item) {
+      var value = item.defaultAnswer;
+
+      if (value === undefined || value === null || value === '') {
+        return false;
+      }
+
+      if ((item.dataType === this._CONSTANTS.DATA_TYPE.DTM || item.dataType === this._CONSTANTS.DATA_TYPE.DT) && typeof value === 'string') {
+        value = LForms.Util.stringToDate(value);
+
+        if (!value) {
+          // LForms.Util.stringToDate returns null on invalid string
+          //TODO: should save the errors or emitting events.
+          console.error(item.defaultAnswer + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
+        }
+      }
+
+      item.value = value;
     },
 
     /**
@@ -5500,10 +5696,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // set data type for items with units (for unified display styles)
           if (item.units && !item.dataType) {
             item.dataType = this._CONSTANTS.DATA_TYPE.REAL;
-          } // Make it a "ST" if it has a formula to avoid any mismatches of the data type in the model.
-          // A type=number INPUT would require a number typed variable in the model. A string containing a number is not enough.
-          // An error will be thrown in this case and an empty value will be set instead.
-          else if (!item.dataType || item.calculationMethod !== undefined && !jQuery.isEmptyObject(item.calculationMethod)) item.dataType = this._CONSTANTS.DATA_TYPE.ST;
+          } else if (!item.dataType) item.dataType = this._CONSTANTS.DATA_TYPE.ST; // default data type
+
         } // displayControl default values
 
 
@@ -5529,6 +5723,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
 
+        if (item.extension) {
+          item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
+
+          LForms.Util.processCopiedItemExtensions(item, item.extension);
+        }
+
         this._updateItemAttrs(item); // reset answers if it is an answer list id
 
 
@@ -5544,7 +5744,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         // reset item.value with modified answers if the item has a value (or an array of values)
 
 
-        this._resetItemValueWithModifiedAnswers(item); // normalize unit value if there is one, needed by calculationMethod
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._resetItemValueWithModifiedAnswers(item);
+        } // if this is not a saved form with user data, and
+        // there is a default value, and
+        // there is no embedded data
+        else if (!this.hasSavedData && item.defaultAnswer && !item.value) {
+            this._lfItemValueFromDefaultAnswer(item);
+          } // normalize unit value if there is one, needed by calculationMethod
 
 
         if (item.unit && !item.unit.text) {
@@ -5707,13 +5914,26 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       if (!Array.isArray(item.answers) && item.answers !== "" && this.answerLists) {
         item.answers = this.answerLists[item.answers];
-      } // answer code system
+      } // process the answer code system
 
 
-      if (item.answerCodeSystem && Array.isArray(item.answers)) {
+      if (Array.isArray(item.answers)) {
+        var answerCodeSystem = item.answerCodeSystem ? LForms.Util.getCodeSystem(item.answerCodeSystem) : null;
+
         for (var i = 0, iLen = item.answers.length; i < iLen; i++) {
-          if (item.answers[i] && !item.answers[i].codeSystem) {
-            item.answers[i].codeSystem = item.answerCodeSystem;
+          var answer = item.answers[i]; // if there is a 'system'
+
+          if (answer.system) {
+            // convert system to the standard one in case it is 'LOINC'
+            answer.system = LForms.Util.getCodeSystem(answer.system);
+          } else {
+            // convert 'codeSystem' to 'system'. support 'codeSystem' for backward compatibility.
+            if (answer.codeSystem) {
+              answer.system = LForms.Util.getCodeSystem(answer.codeSystem);
+              delete answer.codeSystem; // use item level answer code system
+            } else if (answerCodeSystem) {
+              answer.system = answerCodeSystem;
+            }
           }
         }
       } // set up flags for question and answer cardinality
@@ -5727,8 +5947,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var lfData = this;
 
       if (LForms.FHIR && lfData.fhirVersion) {
-        lfData.hasFHIRPath = lfData.hasFHIRPath || item._calculatedExprExt && item._calculatedExprExt.valueExpression.language == "text/fhirpath";
-        lfData._hasInitialExpr = lfData._hasInitialExpr || item._initialExprExt && item._initialExprExt.valueExpression.language == "text/fhirpath";
+        lfData.hasFHIRPath = lfData.hasFHIRPath || item._calculatedExprExt && item._calculatedExprExt.valueExpression.language === "text/fhirpath";
+        lfData._hasInitialExpr = lfData._hasInitialExpr || item._initialExprExt && item._initialExprExt.valueExpression.language === "text/fhirpath";
       }
 
       if (this._fhir) {
@@ -5829,8 +6049,21 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // check if there is user data
+
+      var hasSavedData = false;
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (!LForms.Util.isItemValueEmpty(item)) {
+          hasSavedData = true;
+          break;
+        }
+      }
+
       var defData = {
+        lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
         codeList: this.codeList,
@@ -5842,9 +6075,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         copyrightNotice: this.copyrightNotice,
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
-      }; // reset obr fields
+      };
 
-      defData.templateOptions.formHeaderItems = formData.templateData;
+      if (hasSavedData) {
+        defData.hasSavedData = true;
+      } // reset obr fields
+
+
+      defData.templateOptions.formHeaderItems = angular.copy(formData.templateData);
       return defData;
     },
 
@@ -6894,26 +7132,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
-     * Set up autocomplete options for each items
-     * @param templateOptionsOnly (default false) set to true if only the
-     *  templateOptions items need processing.
+     * Set up autocomplete options for each item
+     * @param items a list items of the form or in the templateOptions.
      */
-    _setUpDefaultsAndAutocomp: function _setUpDefaultsAndAutocomp(templateOptionsOnly) {
-      var itemList;
-      var itemLists = [this.templateOptions.formHeaderItems];
-      if (!templateOptionsOnly) itemLists.push(this.itemList);
+    _setUpAnswerAndUnitAutoComp: function _setUpAnswerAndUnitAutoComp(items) {
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        var item = items[i];
 
-      for (var j = 0, jLen = itemLists.length; j < jLen && (itemList = itemLists[j]); ++j) {
-        for (var i = 0, iLen = itemList.length; i < iLen; i++) {
-          var item = itemList[i];
-
-          if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
-            this._updateAutocompOptions(item);
-          } else if (item.defaultAnswer && !item.value) // && not a list
-            item.value = item.defaultAnswer;
-
-          this._updateUnitAutocompOptions(item);
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.CWE || item.dataType === this._CONSTANTS.DATA_TYPE.CNE) {
+          this._updateAutocompOptions(item);
         }
+
+        this._updateUnitAutocompOptions(item);
       }
     },
 
@@ -6942,7 +7172,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         var listItems = [],
             answers = item.units; // Modify the label for each unit.
 
-        var defaultValue;
+        var defaultValue, defaultUnit;
 
         for (var i = 0, iLen = answers.length; i < iLen; i++) {
           var listItem = angular.copy(answers[i]);
@@ -6950,6 +7180,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           this._setUnitDisplay(listItem);
 
           if (answers[i].default) {
+            defaultUnit = listItem;
             defaultValue = listItem._displayUnit;
           } // Include only if name or code is specified.
 
@@ -6959,20 +7190,37 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
 
-        var options = {
-          listItems: listItems,
-          matchListValue: true,
-          autoFill: true,
-          display: "_displayUnit"
-        };
-
-        if (defaultValue !== undefined) {
-          options.defaultValue = defaultValue;
-        } else if (listItems.length === 1) {
-          options.defaultValue = listItems[0]._displayUnit;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.INT || item.dataType === this._CONSTANTS.DATA_TYPE.REAL) {
+          // Per FHIR, if the item is of type integer or decimal, it can only have
+          // one unit, and that unit is not editable.
+          // However, this breaks our existing LOINC form definitions, so just
+          // output a warning and convert the type..
+          if (item.units && item.units.length > 1) {
+            console.log('Form definition warning: Data types of INT or REAL may ' + 'only have one unit.  Question "' + item.question + '" has ' + item.units.length + ' units.  For multiple ' + 'units, use type QTY instead.');
+            item.dataType = this._CONSTANTS.DATA_TYPE.QTY;
+          } else {
+            // we didn't change dateType to QTY
+            item._unitReadonly = true;
+            if (!item.unit) item.unit = listItems[0];
+          }
         }
 
-        item._unitAutocompOptions = options;
+        if (item.dataType === this._CONSTANTS.DATA_TYPE.QTY) {
+          var options = {
+            listItems: listItems,
+            matchListValue: true,
+            autoFill: true,
+            display: "_displayUnit"
+          };
+
+          if (defaultValue !== undefined) {
+            options.defaultValue = defaultValue;
+          } else if (listItems.length === 1) {
+            options.defaultValue = listItems[0]._displayUnit;
+          }
+
+          item._unitAutocompOptions = options;
+        }
       }
     },
 
@@ -7035,8 +7283,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       if (item._modifiedAnswers) {
         // default answer and item.value could be a string value, if it is a not-on-list value for CWE types
         var modifiedValue = null; // item.value has the priority over item.defaultAnswer
+        // if this is a saved form with user data, default answers are not to be used.
 
-        var answerValue = item.value || item.defaultAnswer;
+        var answerValue = this.hasSavedData ? item.value : item.value || item.defaultAnswer;
 
         if (answerValue) {
           modifiedValue = []; // could be an array of multiple default values or a single value
@@ -7107,17 +7356,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     _areTwoAnswersSame: function _areTwoAnswersSame(answer, completeAnswer, item) {
       var standardAnswerAttr = ['label', 'code', 'text', 'score', 'other']; // answer in LForms might not have a codeSystem, check item.answerCodeSystem and form's codeSystem
 
-      var completeAnswerCodeSystem = completeAnswer.codeSystem;
+      var completeAnswerCodeSystem = completeAnswer.system ? completeAnswer.system : LForms.Util.getCodeSystem(item.answerCodeSystem || this.codeSystem); // check answers' attributes if they have the same code system
 
-      if (!completeAnswer.codeSystem) {
-        var codeSystem = item.answerCodeSystem || this.codeSystem;
-        completeAnswerCodeSystem = LForms.Util.getCodeSystem(codeSystem);
-      } // check answers' attributes if they have the same code system
+      var same = false; // if no code system or same code system
 
-
-      var same = false; // if no codeSystem or same codeSystem
-
-      if (!answer.codeSystem && !completeAnswer.codeSystem || answer.codeSystem === completeAnswerCodeSystem) {
+      if (!answer.system && !completeAnswer.system || answer.system === completeAnswerCodeSystem) {
         // check all fields in answer
         same = true;
         var fields = Object.keys(answer);
@@ -7317,11 +7560,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
             options.codes = codes;
             options.itemToHeading = itemToHeading;
-          } // If there isn't already a default value set (handled elsewhere), and
+          } // If this is not a saved form with user data, and
+          // there isn't already a default value set (handled elsewhere), and
           // there is just one item in the list, use that as the default value.
 
 
-          if (!options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
+          if (!this.hasSavedData && !options.defaultValue && options.listItems.length === 1) options.defaultValue = options.listItems[0];
         }
 
         item._autocompOptions = options;
@@ -7573,6 +7817,35 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     },
 
     /**
+     * Compare if the two given codings are equal. A "coding" is a hash that may have any or all of the
+     * following three fields: code, system, and text. Two codings are considered equal if and only if:
+     * 1) The code systems are equal or unspecified, and
+     * 2) Either the codes are specified and equal, or, the codes are not specified and the texts are
+     *    specified and equal.
+     * @param coding1 the first coding object
+     * @param coding2 the second coding object
+     * @return {boolean} true if the two codings are considered equal, false otherwise.
+     * @private
+     */
+    _codingsEqual: function _codingsEqual(coding1, coding2) {
+      var equals = false;
+
+      var hasValue = function hasValue(v) {
+        return v !== null && v !== undefined && v !== '';
+      };
+
+      if (coding1.system === coding2.system || !coding1.system && !coding2.system) {
+        if (hasValue(coding1.code) || hasValue(coding2.code)) {
+          equals = coding1.code === coding2.code;
+        } else {
+          equals = coding1.text && coding2.text && coding1.text === coding2.text;
+        }
+      }
+
+      return !!equals;
+    },
+
+    /**
      * Check if a source item's value meet a skip logic condition/trigger
      * @param item a source item of a skip logic
      * @param trigger a trigger of a skip logic
@@ -7581,8 +7854,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
      */
     _checkSkipLogicCondition: function _checkSkipLogicCondition(item, trigger) {
       var action = false;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""; // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
+      // maxExclusive or maxInclusive.
+      // 'not' means '!=', 'value' means '='.
 
-      if (item && item.value !== undefined && item.value !== null && item.value !== "") {
+      if (trigger.hasOwnProperty('exists')) {
+        action = trigger.exists && hasAnswer || !trigger.exists && !hasAnswer;
+      } else if (hasAnswer) {
         var currentValue = item.value;
 
         switch (item.dataType) {
@@ -7590,27 +7868,38 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var field = Object.keys(trigger).filter(function (key) {
-              return key !== 'not';
-            })[0]; // trigger should have only one key, other than 'not'
-            // if the field accepts multiple values from the answer list
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.not : null;
+            var answerValues = Array.isArray(currentValue) ? currentValue : [currentValue];
+            var isEqual = false;
 
-            if (Array.isArray(currentValue)) {
-              for (var m = 0, mLen = currentValue.length; m < mLen; m++) {
-                if (trigger.hasOwnProperty(field) && currentValue[m].hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[m][field])) {
-                  action = true;
-                  break;
-                }
+            for (var m = 0, mLen = answerValues.length; m < mLen; m++) {
+              var answerValue = answerValues[m];
+
+              if (item.answerCodeSystem) {
+                answerValue = Object.assign({
+                  system: item.answerCodeSystem
+                }, answerValue);
               }
-            } else {
-              if (trigger.hasOwnProperty(field) && currentValue.hasOwnProperty(field) && this._objectEqual(trigger[field], currentValue[field])) {
+
+              if (this._codingsEqual(triggerValue, answerValue)) {
+                isEqual = true;
+                break;
+              }
+            }
+
+            if (trigger.hasOwnProperty('value')) {
+              if (isEqual) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('notEqual')) {
+              if (!isEqual) {
                 action = true;
               }
             }
 
             break;
           // numbers: {"value: 3}, {"minInclusive": 3, "maxInclusive":10} and etc.
-          // available keys: (1) "value", or (2) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
+          // available keys: (1) "value", (2) "not" or (3) "minInclusive"/"minExclusive" and/or "maxInclusive"/"maxExclusive"
 
           case this._CONSTANTS.DATA_TYPE.INT:
           case this._CONSTANTS.DATA_TYPE.REAL:
@@ -7618,7 +7907,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             var numCurrentValue = parseFloat(currentValue); // the skip logic rule has a "value" key
 
             if (trigger.hasOwnProperty("value")) {
-              if (trigger["value"] == numCurrentValue) {
+              if (trigger["value"] === numCurrentValue) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != numCurrentValue) {
                 action = true;
               }
             } // the skip logic rule has a range
@@ -7637,18 +7930,23 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           // the only key is "value"
 
           case this._CONSTANTS.DATA_TYPE.BL:
-            if (trigger.hasOwnProperty("value") && trigger["value"] === currentValue) {
-              action = true;
+            if (trigger.hasOwnProperty("value")) {
+              if (trigger["value"] === currentValue) {
+                action = true;
+              }
+            } else if (trigger.hasOwnProperty('notEqual')) {
+              if (trigger["notEqual"] != currentValue) {
+                action = true;
+              }
             }
 
             break;
         } // end case
 
-
-        if (trigger.not) {
-          action = !action;
+      } // no answer and 'notEqual' has a value
+      else if (trigger.hasOwnProperty('notEqual') && trigger.notEqual !== undefined && trigger.notEqual !== null && trigger.notEqual !== "") {
+          action = true;
         }
-      }
 
       return action;
     },
@@ -7955,7 +8253,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /* Simple JavaScript Inheritance
@@ -8016,7 +8314,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 })();
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Processes FHIR Expression Extensions
@@ -8033,6 +8331,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   LForms.ExpressionProcessor = function (lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
+    this._compiledExpressions = {};
   };
 
   LForms.ExpressionProcessor.prototype = {
@@ -8053,6 +8352,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       var firstRun = true;
       var changed = true;
+      var start = new Date();
 
       while (changed) {
         if (changed || firstRun) {
@@ -8064,6 +8364,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (changed || firstRun) changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
+
+      console.log("Ran FHIRPath expressions in " + (new Date() - start) + " ms");
     },
 
     /**
@@ -8215,7 +8517,13 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         }
 
         var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
-        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext, expression, fVars);
+        var compiledExpr = this._compiledExpressions[expression];
+
+        if (!compiledExpr) {
+          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
+        }
+
+        fhirPathVal = compiledExpr(fhirContext, fVars);
       } catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
         // yet.
@@ -8330,21 +8638,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       var oldVal = item.value;
       var fhirPathVal;
       if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
-      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else {
-        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
-          item.value = new Date(fhirPathVal);
-        } else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          item.value = LForms.Util.stringToDTDateISO(fhirPathVal);
-        } else item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
-
-      }
+      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else this._fhir.SDC._processFHIRValues(item, fhirPathRes);
       return oldVal != item.value;
     }
   };
 })();
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Contains information about the supported FHIR versions.
@@ -8355,14 +8656,14 @@ var FHIRSupport = {
 if (true) module.exports = FHIRSupport;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 angular.module('lformsWidget').run(['$templateCache', function ($templateCache) {
   'use strict';
 
-  $templateCache.put('field-answers.html', "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" + "   role=\"radiogroup\" aria-labeledby=\"label-{{ item._elementId }}\"\n" + "   aria-describedby=\"help-{{ item._elementId }}\">\n" + "    <span ng-repeat=\"answer in item._modifiedAnswers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(item, answer)\" ng-disabled=\"item._readOnly\"\n" + "               ng-checked=\"checkAnswer(item,answer)\">\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" + "               ng-click=\"updateRadioList(item)\" ng-disabled=\"item._readOnly\" >\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "    </span>\n" + "    <!--extra OTHER field-->\n" + "    <!--<div class=\"lf-answer-type-list-other\">-->\n" + "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" + "                 id=\"{{item._elementId + '_other'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-click=\"updateCheckboxListForOther(item, item._answerOther)\"\n" + "                 ng-checked=\"checkAnswer(item,{'text':item._answerOther})\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item._answerOther\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-change=\"updateCheckboxListForOther(item, item._answerOther)\">\n" + "      </div>\n" + "\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\"\n" + "                 ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" + "                 name=\"{{item._elementId}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-click=\"updateRadioListForOther(item, item._answerOther)\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item._answerOther\"\n" + "                 ng-change=\"updateRadioListForOther(item, item._answerOther)\"\n" + "                 ng-disabled=\"item._readOnly\">\n" + "      </div>\n" + "    </span>\n" + "    <!--</div>-->\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" + "    <input name=\"{{item._text +'_'+ $id}}\" type=\"text\"\n" + "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" + "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" + "           id=\"{{item._elementId}}\"\n" + "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" + "  </div>\n" + "</div>\n");
-  $templateCache.put('field-units.html', "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" + "    <span ng-repeat=\"unit in item.units\">\n" + "      <label>\n" + "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\" >{{unit._displayUnit}}\n" + "      </label>\n" + "    </span>\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default>\n" + "    <input class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" + "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\" aria-labelledby=\"th_Units\">\n" + "  </div>\n" + "\n" + "</div>\n" + "\n");
+  $templateCache.put('field-answers.html', "<div class=\"lf-field-answers\" ng-switch on=\"item.displayControl.answerLayout.type\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\" class=\"lf-answer-type-list\"\n" + "   role=\"radiogroup\" aria-labeledby=\"label-{{ item._elementId }}\"\n" + "   aria-describedby=\"help-{{ item._elementId }}\">\n" + "    <span ng-repeat=\"answer in item._modifiedAnswers track by $index\" class=\"lf-answer {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"checkbox\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(item, answer)\" ng-disabled=\"item._readOnly\"\n" + "               ng-checked=\"checkAnswer(item,answer)\">\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\">\n" + "        <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + answer.code}}\"\n" + "               ng-model=\"item.value\" ng-value=\"answer\" name=\"{{item._elementId}}\"\n" + "               ng-click=\"updateRadioList(item)\" ng-disabled=\"item._readOnly\" >\n" + "        <label class=\"lf-answer-label\" for=\"{{item._elementId + answer.code}}\">{{answer._displayText}}</label>\n" + "      </div>\n" + "    </span>\n" + "    <!--extra OTHER field-->\n" + "    <!--<div class=\"lf-answer-type-list-other\">-->\n" + "    <span ng-if=\"item.dataType==='CWE'\" class=\"lf-answer lf-answer-cwe-other {{getAnswerLayoutColumnClass(item)}}\">\n" + "      <!--checkboxes for multiple selections-->\n" + "      <div ng-if=\"item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"checkbox\" ng-model=\"item._otherValueChecked\"\n" + "                 id=\"{{item._elementId + '_other'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-change=\"updateCheckboxListForOther(item, item._answerOther)\"\n" + "                 ng-checked=\"checkAnswer(item,{'text':item._answerOther})\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\" ng-model=\"item._answerOther\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-change=\"updateCheckboxListForOther(item, item._answerOther)\">\n" + "      </div>\n" + "\n" + "      <!--radio buttons for single selection-->\n" + "      <div ng-if=\"!item._multipleAnswers\" class=\"\">\n" + "          <input class=\"lf-answer-button\" type=\"radio\" id=\"{{item._elementId + '_other'}}\"\n" + "                 ng-model=\"item._otherValueChecked\" ng-value=\"true\"\n" + "                 name=\"{{item._elementId}}\" ng-disabled=\"item._readOnly\"\n" + "                 ng-change=\"updateRadioListForOther(item, item._answerOther)\">\n" + "          <label class=\"lf-answer-label\" for=\"{{item._elementId + '_other'}}\">OTHER:</label>\n" + "          <input ng-if=\"item._otherValueChecked\" class=\"lf-answer-other\" type=\"text\"\n" + "                 id=\"{{item._elementId + '_otherValue'}}\" ng-model=\"item._answerOther\"\n" + "                 ng-change=\"updateRadioListForOther(item, item._answerOther)\"\n" + "                 ng-disabled=\"item._readOnly\">\n" + "      </div>\n" + "    </span>\n" + "    <!--</div>-->\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default class=\"lf-answer-type-combo\">\n" + "    <input name=\"{{item._text +'_'+ $id}}\" type=\"text\"\n" + "           ng-model=\"item.value\" autocomplete-lhc=\"item._autocompOptions\"\n" + "           ng-disabled=\"item._readOnly\" placeholder=\"{{item._toolTip}}\"\n" + "           id=\"{{item._elementId}}\"\n" + "           ng-focus=\"setActiveRow(item)\" ng-blur=\"activeRowOnBlur(item)\">\n" + "  </div>\n" + "</div>\n");
+  $templateCache.put('field-units.html', "<div class=\"lf-field-units\" ng-switch on=\"item.displayControl.unitLayout\">\n" + "  <!--list style-->\n" + "  <div ng-switch-when=\"RADIO_CHECKBOX\">\n" + "    <span ng-repeat=\"unit in item.units\">\n" + "      <label>\n" + "        <input type=\"radio\" ng-model=\"item.unit\" ng-value=\"unit\"\n" + "         ng-readonly=\"item._unitReadonly\">{{unit._displayUnit}}\n" + "      </label>\n" + "    </span>\n" + "  </div>\n" + "\n" + "  <!--COMBO_BOX style (default is 'COMBO_BOX')-->\n" + "  <div ng-switch-default>\n" + "    <input ng-if=\"!item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           ng-model=\"item.unit\" autocomplete-lhc=\"item._unitAutocompOptions\"\n" + "           placeholder=\"Select one\" id=\"unit_{{item._elementId}}\"\n" + "           aria-labelledby=\"th_Units\">\n" + "    <input ng-if=\"item._unitReadonly\" class=\"units\" type=\"text\" ng-disabled=\"item._readOnly\"\n" + "           id=\"unit_{{item._elementId}}\" value=\"{{item.unit._displayUnit}}\"\n" + "           aria-labelledby=\"th_Units\" readonly>\n" + "  </div>\n" + "\n" + "</div>\n" + "\n");
   $templateCache.put('form-controls.html', "<div class=\"stopped\" ng-show=\"isFormDone()\">\n" + "  <img ng-src=\"{{::blankGifDataUrl}}\" class=\"stop-sign\">\n" + "  <span>This form is complete.</span>\n" + "</div>\n" + "<div class=\"lf-form-controls\" ng-if=\"!lfData.templateOptions.hideFormControls\">\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\"> Display Question Code</label>\n" + "  </div>\n" + "\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\"> Show Help/Description</label>\n" + "  </div>\n" + "  <div class=\"lf-form-control\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.tabOnInputFieldsOnly\"> Keyboard Navigation On Input Fields</label>\n" + "  </div>\n" + "  <div class=\"lf-form-control\">\n" + "    <div class=\"text-info\" >Total # of Questions: {{getNumberOfQuestions()}}</div>\n" + "  </div>\n" + "</div>\n");
   $templateCache.put('form-header.html', "  <div class=\"lf-form-header\" ng-if=\"lfData.templateOptions.showFormHeader\">\n" + "    <div class=\"lf-header-de\" ng-style=\"getHeaderItemStyle(item)\"\n" + "         ng-repeat=\"item in lfData.templateOptions.formHeaderItems\">\n" + "      <div class=\"lf-header-de-label\">\n" + "        <span class=\"lf-question\"><label for=\"{{item.questionCode}}\">{{item.question}}</label></span>\n" + "      </div>\n" + "      <div class=\"lf-header-de-input\" ng-switch on=\"item.dataType\">\n" + "        <ng-form name=\"innerForm\">\n" + "          <div class=\"lf-form-item-data tooltipContainer\">\n" + "            <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\"></div>\n" + "            <input ng-switch-when=\"CWE\" name=\"{{item.question}}\" type=\"text\"\n" + "                   placeholder=\"Select or type a value\"\n" + "                   ng-model=\"item.value\"\n" + "                   autocomplete-lhc=\"item._autocompOptions\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <input ng-switch-when=\"DT\" name=\"{{item.question}}\" type=\"text\"\n" + "                   ng-model=\"item.value\" lf-date=\"dateOptions\"\n" + "                   placeholder=\"MM/DD/YYYY\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <input ng-switch-default name=\"{{item.question}}\" type=\"text\"\n" + "                   ng-model=\"item.value\" placeholder=\"Type a value\"\n" + "                   id=\"{{item.questionCode}}\"\n" + "                   ng-blur=\"activeRowOnBlur(item)\">\n" + "            <textarea ng-switch-when=\"TX\" name=\"{{item.question}}\"\n" + "                      ng-model=\"item.value\" placeholder=\"Type a value\"\n" + "                      id=\"{{item.questionCode}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"autoExpand($event)\" rows=\"1\"\n" + "                      ng-blur=\"activeRowOnBlur(item)\">\n" + "                      </textarea>\n" + "          </div>\n" + "        </ng-form>\n" + "      </div>\n" + "    </div>\n" + "  </div>\n");
   $templateCache.put('form-options.html', "<div class=\"lf-form-options\" ng-if=\"lfData.templateOptions.showFormOptionPanel\">\n" + "\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showQuestionCode\">Display question code</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showCodingInstruction\">Show help/description</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.hideFormControls\">Hide form controls</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormOptionPanelButton\">Display form's option button</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormOptionPanel\">Display form's option panel</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showItemOptionPanelButton\">Display item's option button</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.hideUnits\">Hide units</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.allowMultipleEmptyRepeatingItems\">Allow multiple empty repeating questions/sections</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.allowHTMLInInstructions\">Allow HTML content in instructions</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showFormHeader\">Display form header questions</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.showColumnHeaders\">Display column headers</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label><input type=\"checkbox\" value=\"\" ng-model=\"lfData.templateOptions.useTreeLineStyle\">Tree line style</label>\n" + "  </div>\n" + "  <div class=\"lf-form-option\">\n" + "    <label for=\"viewMode\">View mode</label>\n" + "    <select name=\"viewMode\" ng-model=\"lfData.templateOptions.viewMode\">\n" + "      <option value=\"auto\">Responsive [auto]</option>\n" + "      <option value=\"lg\">For large screen [lg]</option>\n" + "      <option value=\"md\">For medium screen [md]</option>\n" + "      <option value=\"sm\">For small screen [sm]</option>\n" + "    </select>\n" + "\n" + "  </div>\n" + "\n" + "</div>\n");
@@ -8372,7 +8673,7 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
   $templateCache.put('item.html', "<div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + " ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + " class=\"lf-form-table-row lf-de {{getSiblingStatus(item)}} {{getRowClass(item)}}\n" + "    {{getSkipLogicClass(item)}} {{getActiveRowClass(item)}}\" ng-click=\"setActiveRow(item)\">\n" + "  <div class=\"lf-de-label-button\">\n" + "    <!-- label -->\n" + "    <div class=\"lf-de-label\">\n" + "      <span ng-show=\"item._questionRepeatable\" class=\"lf-sn\">{{getRepeatingSN(item) }}</span>\n" + "      <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"\n" + "      for=\"{{item._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "      <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "      <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" id=\"help-{{ item._elementId }}\"\n" + "         class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover-content.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" id=\"helpButton-{{ item._elementId }}\"\n" + "                class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "      <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "              class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "              aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "              ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <!-- TBD -->\n" + "      <lf-item-options></lf-item-options>\n" + "    </div>\n" + "\n" + "    <!-- button -->\n" + "    <div class=\"lf-de-button\">\n" + "      <button ng-if=\"!hasOneRepeatingItem(item)\" class=\"lf-float-button\" type=\"button\"\n" + "              ng-click=\"removeOneRepeatingItem(item)\" id=\"del-{{item._elementId}}\"\n" + "              title='Remove this \"{{ item._text }}\"'>-</button>\n" + "    </div>\n" + "  </div>\n" + "\n" + "  <div ng-if=\"item.dataType !=='TITLE' && !item.header\" class=\"lf-de-input-unit\" ng-style=\"getFieldWidth(item)\">\n" + "    <!-- input field -->\n" + "    <div ng-switch on=\"item.dataType\" class=\"lf-de-input values hasTooltip\">\n" + "      <ng-form name=\"innerForm2\">\n" + "        <div class=\"lf-form-item-data tooltipContainer\">\n" + "          <div class=\"tooltipContent\" lf-validate=\"item\" ng-model=\"item.value\" ng-if=\"item._hasValidation\"></div>\n" + "          <div ng-switch-when=\"CNE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "          <div ng-switch-when=\"CWE\">\n" + "            <lf-answers item=\"item\"></lf-answers>\n" + "          </div>\n" + "\n" + "          <input ng-switch-when=\"DT\" name=\"{{item._text}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" + "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "\n" + "          <!-- Gillardo boostrap datetime picker -->\n" + "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" + "            <input name=\"{{item._text}}\" type=\"text\" class=\"form-control\"\n" + "                   ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\"\n" + "                   datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" + "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" + "                   datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" + "                   ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                   ng-blur=\"activeRowOnBlur(item); uibDtmPickerOnBlur('input')\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "            <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" + "          </div>\n" + "\n" + "          <textarea ng-switch-when=\"TX\" name=\"{{item._text}}\"\n" + "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" + "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          </textarea>\n" + "          <input ng-switch-when=\"BL\" name=\"{{item._text}}\" type=\"checkbox\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-true-value=\"true\" ng-false-value=\"false\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" + "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" + "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" + "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" + "        </div>\n" + "      </ng-form>\n" + "    </div>\n" + "\n" + "    <!--unit-->\n" + "    <div ng-if=\"!lfData.templateOptions.hideUnits && checkUnits(item)\" class=\"lf-de-unit\">\n" + "      <lf-units item=\"item\"></lf-units>\n" + "    </div>\n" + "\n" + "    <!-- extra question -->\n" + "    <div ng-if=\"needExtra(item)\" class=\"lf-de-unit\">\n" + "      <input class=\"lf-extra-field\" ng-model=\"item.valueOther\" placeholder=\"Please specify\"\n" + "             ng-disabled=\"item._readOnly\" type=\"text\" ng-focus=\"setActiveRow(item)\">\n" + "    </div>\n" + "  </div>\n" + "\n" + "\n" + "</div>\n" + "\n");
   $templateCache.put('itemPrefixAndText.html', "<span ng-if=\"item.prefix\" class=\"prefix\"\n" + "      style=\"{{item._obj_prefixCSS}}\">{{item.prefix}}</span><span\n" + "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}</span>\n");
   $templateCache.put('layout-horizontal.html', "<div class=\"lf-layout-horizontal lf-table-item {{getSiblingStatus(item)}} \" ng-if=\"item._horizontalTableHeader && lfData._horizontalTableInfo[item._horizontalTableId]\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-horizontal-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "        <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "        <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "      </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "        <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></span>\n" + "        <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"></span>\n" + "        <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "        <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "                popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                type=\"button\" id=\"help-{{item._elementId}}\" aria-label=\"Help\"\n" + "                aria-describedby=\"label-{{ item._elementId }}\">\n" + "          <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "        </button>\n" + "      </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "\n" + "  <table class=\"lf-form-horizontal-table\">\n" + "    <colgroup>\n" + "      <col class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "      <col ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "           ng-style=\"getTableColumnStyle(col)\">\n" + "    </colgroup>\n" + "    <thead>\n" + "    <tr>\n" + "      <th class=\"lf-form-horizontal-table-header\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\"></th>\n" + "      <th ng-repeat=\"col in lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders\"\n" + "          ng-init=\"item = col.item\" class=\"lf-form-horizontal-table-header\"\n" + "          id=\"{{col.id}}\"><ng-include src=\"'itemPrefixAndText.html'\"></th>\n" + "    </tr>\n" + "    </thead>\n" + "    <tbody id=\"\" class=\"\">\n" + "    <tr ng-repeat=\"row in lfData._horizontalTableInfo[item._horizontalTableId].tableRows track by $index\"\n" + "        class=\"data-row has-ng-animate\">\n" + "      <td class=\"lf-de-button\" ng-if=\"item._questionRepeatable && lfData._horizontalTableInfo[item._horizontalTableId].tableRows.length>1\">\n" + "        <button ng-if=\"!hasOneRepeatingItem(item)\" type=\"button\"\n" + "                id=\"del-{{row.header._elementId}}\"\n" + "                class=\"lf-float-button\" ng-click=\"removeOneRepeatingItem(row.header)\"\n" + "                title='Remove this row of \"{{ row.header.question }}\"'>-</button>\n" + "      </td>\n" + "\n" + "      <td ng-repeat=\"cell in row.cells\"\n" + "          class=\"hasTooltip {{getRowClass(cell)}} {{getSkipLogicClass(cell)}} {{getActiveRowClass(cell)}}\"\n" + "          ng-switch on=\"cell.dataType\">\n" + "        <ng-form name=\"innerForm2\">\n" + "          <div class=\"lf-form-item-data tooltipContainer\">\n" + "            <div class=\"tooltipContent\" lf-validate=\"cell\" ng-model=\"cell.value\" ng-if=\"cell._hasValidation\"></div>\n" + "            <span ng-switch-when=\"\" > </span>\n" + "            <input ng-switch-when=\"CNE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"CWE\" name=\"{{cell.question + '_' + $id}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   autocomplete-lhc=\"cell._autocompOptions\"\n" + "                   ng-disabled=\"cell._readOnly\" placeholder=\"{{cell._toolTip}}\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"REAL\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"INT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <input ng-switch-when=\"DT\" name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\"\n" + "                   lf-date=\"dateOptions\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "            <!-- Gillardo boostrap datetime picker -->\n" + "            <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" + "              <input name=\"{{cell.question}}\" type=\"text\" class=\"form-control\"\n" + "                     ng-model=\"cell.value\"\n" + "                     datetime-picker=\"{{uibDateTimePickerFormat}}\" alt-input-formats=\"uibDatePickerAltFormats\"\n" + "                     is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" + "                     datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" + "                     placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                     id=\"{{cell._elementId}}\"\n" + "                     aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                     ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell); uibDtmPickerOnBlur('input')\">\n" + "              <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" + "            </div>\n" + "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" + "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                      id=\"{{cell._elementId}}\"\n" + "                      aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                      ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" + "                      ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\"></textarea>\n" + "            <input ng-switch-default name=\"{{cell.question}}\" type=\"text\"\n" + "                   ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" + "                   id=\"{{cell._elementId}}\"\n" + "                   aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" + "                   ng-focus=\"setActiveRow(cell)\" ng-blur=\"activeRowOnBlur(cell)\">\n" + "          </div>\n" + "        </ng-form>\n" + "      </td>\n" + "    </tr>\n" + "    </tbody>\n" + "  </table>\n" + "\n" + "  <div ng-if=\"item._questionRepeatable && targetShown(item) \"\n" + "       class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "    <div class=\"has-popover-warning\">\n" + "      <button type=\"button\"\n" + "              class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "              ng-click=\"addOneRepeatingItem(item, true)\"\n" + "              ng-blur=\"hideUnusedItemWarning(item)\"\n" + "              uib-popover='Please enter info in the blank \"{{ item._text }}\".'\n" + "              popover-placement=\"top-left\"\n" + "              popover-trigger=\"none\"\n" + "              popover-is-open=\"item._showUnusedItemWarning\">\n" + "        + Add another \"{{item._text}}\"\n" + "      </button>\n" + "    </div>\n" + "  </div>\n" + "</div>\n" + "\n");
-  $templateCache.put('layout-matrix.html', "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-matrix-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "    </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "    </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{item._elementId}}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "  <table class=\"lf-form-matrix-table lf-form-table\">\n" + "      <colgroup>\n" + "        <col class=\"lf-question\">\n" + "        <col ng-repeat=\"answer in item.items[0].answers\">\n" + "        <col class=\"other-answer\" ng-if=\"item.items[0].dataType ==='CWE'\">\n" + "      </colgroup>\n" + "      <thead>\n" + "      <tr class=\"lf-\">\n" + "        <th class=\"lf-question lf-form-table-header\"></th>\n" + "        <th ng-repeat=\"answer in item.items[0].answers\"\n" + "            class=\"lf-form-matrix-cell lf-form-table-header\"\n" + "            id=\"answer-{{$index}}\">{{answer.text}}</th>\n" + "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\"\n" + "         id=\"otherAnswer\">Other</th>\n" + "      </tr>\n" + "      </thead>\n" + "      <tbody>\n" + "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" + "         ng-init=\"firstItem = item.items[0] ; item = subItem\"\n" + "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" + "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" + "        <td class=\"lf-question\">\n" + "          <div class=\"lf-de-label\">\n" + "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" + "             for=\"{{subItem._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" + "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" + "            </span>\n" + "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" + "              <span ng-switch-when=\"inline-html\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" + "              <span ng-switch-when=\"inline-escaped\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" + "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\"\n" + "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\" aria-label=\"Help\"\n" + "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "            </span>\n" + "            <button ng-if=\"subItem.copyrightNotice\" id=\"copyright-{{subItem._elementId}}\" type=\"button\"\n" + "                    class=\"lf-copyright-button btn-sm\" uib-popover=\"{{subItem.copyrightNotice}}\"\n" + "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "                    aria-label=\"Copyright notice\"\n" + "                    aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "              <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "            </button>\n" + "          </div>\n" + "        </td>\n" + "        <td ng-repeat=\"answer in firstItem.answers\"\n" + "         class=\"lf-form-matrix-cell\">\n" + "          <span class=\"lf-form-matrix-answer\">\n" + "            <label ng-if=\"subItem._multipleAnswers\">\n" + "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(subItem, answer)\" aria-labeledby=\"answer-{{$index}}\">\n" + "            </label>\n" + "            <label ng-if=\"!subItem._multipleAnswers\">\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               aria-labeledby=\"answer-{{$index}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" + "                     name=\"{{subItem._elementId}}\" ng-click=\"updateRadioList(subItem)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\"\n" + "         aria-labeledby=otherAnswer>\n" + "          <!--for multiple answers-->\n" + "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" + "                     id=\"{{subItem._elementId + '_other'}}\"\n" + "                     ng-click=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" ng-model=\"subitem._answerOther\"\n" + "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "          <!--for single answer-->\n" + "          <span ng-if=\"!subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" + "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" + "                     ng-click=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subitem._answerOther\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "      </tr>\n" + "      </tbody>\n" + "    </table>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>\n" + "\n");
+  $templateCache.put('layout-matrix.html', "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-matrix-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "    </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "    </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{item._elementId}}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "  <table class=\"lf-form-matrix-table lf-form-table\">\n" + "      <colgroup>\n" + "        <col class=\"lf-question\">\n" + "        <col ng-repeat=\"answer in item.items[0].answers\">\n" + "        <col class=\"other-answer\" ng-if=\"item.items[0].dataType ==='CWE'\">\n" + "      </colgroup>\n" + "      <thead>\n" + "      <tr class=\"lf-\">\n" + "        <th class=\"lf-question lf-form-table-header\"></th>\n" + "        <th ng-repeat=\"answer in item.items[0].answers\"\n" + "            class=\"lf-form-matrix-cell lf-form-table-header\"\n" + "            id=\"answer-{{$index}}\">{{answer.text}}</th>\n" + "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\"\n" + "         id=\"otherAnswer\">Other</th>\n" + "      </tr>\n" + "      </thead>\n" + "      <tbody>\n" + "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" + "         ng-init=\"firstItem = item.items[0] ; item = subItem\"\n" + "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" + "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" + "        <td class=\"lf-question\">\n" + "          <div class=\"lf-de-label\">\n" + "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" + "             for=\"{{subItem._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" + "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" + "            </span>\n" + "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" + "              <span ng-switch-when=\"inline-html\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" + "              <span ng-switch-when=\"inline-escaped\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" + "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\"\n" + "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\" aria-label=\"Help\"\n" + "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "            </span>\n" + "            <button ng-if=\"subItem.copyrightNotice\" id=\"copyright-{{subItem._elementId}}\" type=\"button\"\n" + "                    class=\"lf-copyright-button btn-sm\" uib-popover=\"{{subItem.copyrightNotice}}\"\n" + "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "                    aria-label=\"Copyright notice\"\n" + "                    aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "              <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "            </button>\n" + "          </div>\n" + "        </td>\n" + "        <td ng-repeat=\"answer in firstItem.answers\"\n" + "         class=\"lf-form-matrix-cell\">\n" + "          <span class=\"lf-form-matrix-answer\">\n" + "            <label ng-if=\"subItem._multipleAnswers\">\n" + "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(subItem, answer)\" aria-labeledby=\"answer-{{$index}}\">\n" + "            </label>\n" + "            <label ng-if=\"!subItem._multipleAnswers\">\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               aria-labeledby=\"answer-{{$index}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" + "                     name=\"{{subItem._elementId}}\" ng-change=\"updateRadioList(subItem)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\"\n" + "         aria-labeledby=otherAnswer>\n" + "          <!--for multiple answers-->\n" + "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" + "                     id=\"{{subItem._elementId + '_other'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" ng-model=\"subitem._answerOther\"\n" + "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "          <!--for single answer-->\n" + "          <span ng-if=\"!subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" + "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subitem._answerOther\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "      </tr>\n" + "      </tbody>\n" + "    </table>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>\n" + "\n");
   $templateCache.put('popover-content.html', "<div class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n");
   $templateCache.put('repeating-button.html', "<!--a button at the end of each repeating section-->\n" + "<div ng-if=\"item._lastRepeatingItem && targetShown(item) \"\n" + "     class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "  <div class=\"has-popover-warning\">\n" + "    <button type=\"button\"\n" + "            class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "            ng-click=\"addOneRepeatingItem(item)\"\n" + "            ng-blur=\"hideUnusedItemWarning(item)\"\n" + "            uib-popover='{{item._unusedItemWarning}}'\n" + "            popover-placement=\"top-left\"\n" + "            popover-trigger=\"none\"\n" + "            popover-is-open=\"item._showUnusedItemWarning\">\n" + "      + Add another \"{{item._text}}\"\n" + "    </button>\n" + "  </div>\n" + "</div>\n");
   $templateCache.put('table-item.html', "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <!-- question -->\n" + "  <lf-item ng-style=\"getItemStyle(item)\"></lf-item>\n" + "\n" + "  <!--sub sections, check each item's layout -->\n" + "  <div ng-if=\"item.items\" class=\"section\">\n" + "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" + "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" + "         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" + "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" + "        <div ng-switch-when=\"horizontal\">\n" + "          <lf-section-horizontal></lf-section-horizontal>\n" + "        </div>\n" + "        <div ng-switch-when=\"matrix\">\n" + "          <lf-section-matrix></lf-section-matrix>\n" + "        </div>\n" + "        <div ng-switch-when=\"vertical\">\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "        <div ng-switch-default>\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "      </div>\n" + "      <div ng-if=\"!item.header\">\n" + "        <lf-table-item></lf-table-item>\n" + "      </div>\n" + "    </div>\n" + "  </div>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>");
@@ -8382,34 +8683,34 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
 }]);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var forEach = __webpack_require__(24).forEach;
+var forEach = __webpack_require__(25).forEach;
 
-var elementUtilsMaker = __webpack_require__(25);
+var elementUtilsMaker = __webpack_require__(26);
 
-var listenerHandlerMaker = __webpack_require__(26);
+var listenerHandlerMaker = __webpack_require__(27);
 
-var idGeneratorMaker = __webpack_require__(27);
+var idGeneratorMaker = __webpack_require__(28);
 
-var idHandlerMaker = __webpack_require__(28);
+var idHandlerMaker = __webpack_require__(29);
 
-var reporterMaker = __webpack_require__(29);
+var reporterMaker = __webpack_require__(30);
 
-var browserDetector = __webpack_require__(30);
+var browserDetector = __webpack_require__(31);
 
-var batchProcessorMaker = __webpack_require__(31);
+var batchProcessorMaker = __webpack_require__(32);
 
-var stateHandler = __webpack_require__(33); //Detection strategies.
+var stateHandler = __webpack_require__(34); //Detection strategies.
 
 
-var objectStrategyMaker = __webpack_require__(34);
+var objectStrategyMaker = __webpack_require__(35);
 
-var scrollStrategyMaker = __webpack_require__(35);
+var scrollStrategyMaker = __webpack_require__(36);
 
 function isCollection(obj) {
   return Array.isArray(obj) || obj.length !== undefined;
@@ -8718,7 +9019,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8744,7 +9045,7 @@ utils.forEach = function (collection, callback) {
 };
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8805,7 +9106,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8877,7 +9178,7 @@ module.exports = function (idHandler) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8901,7 +9202,7 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8953,7 +9254,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9003,7 +9304,7 @@ module.exports = function (quiet) {
 };
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9047,13 +9348,13 @@ detector.isLegacyOpera = function () {
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(32);
+var utils = __webpack_require__(33);
 
 module.exports = function batchProcessorMaker(options) {
   options = options || {};
@@ -9196,7 +9497,7 @@ function Batch() {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9216,7 +9517,7 @@ function getOption(options, name, defaultValue) {
 }
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9244,7 +9545,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9254,7 +9555,7 @@ module.exports = {
  */
 
 
-var browserDetector = __webpack_require__(30);
+var browserDetector = __webpack_require__(31);
 
 module.exports = function (options) {
   options = options || {};
@@ -9460,7 +9761,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9470,7 +9771,7 @@ module.exports = function (options) {
  */
 
 
-var forEach = __webpack_require__(24).forEach;
+var forEach = __webpack_require__(25).forEach;
 
 module.exports = function (options) {
   options = options || {};

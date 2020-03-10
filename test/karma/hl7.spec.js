@@ -14,11 +14,11 @@ describe('HL7 library', function() {
     });
 
 
-    it('should use answer.codeSystem when provided', function() {
+    it('should use answer.system when provided', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}, 'dataType': 'CWE',
+        'value': {'text': 'United States', 'code': 'USA', 'system': 'AA'}, 'dataType': 'CWE',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -31,7 +31,7 @@ describe('HL7 library', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': {'text': 'United States', "codeSystem": "AA"}, 'dataType': 'CWE',
+        'value': {'text': 'United States', "system": "AA"}, 'dataType': 'CWE',
         '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -41,7 +41,7 @@ describe('HL7 library', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}],
+        'value': [{'text': 'Canada'}, {'text': 'United States', 'code': 'USA', 'system': 'AA'}],
         'dataType': 'CWE', '_obx4': ''};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),
@@ -58,7 +58,7 @@ describe('HL7 library', function() {
       var formInfo = {obxIndex: 1};
       var itemData = {'question': 'Country', 'questionCode': 'X1234-5',
         'answerCodeSystem': 'BB',
-        'value': [{'text': 'Canada', 'code': 'CA', 'codeSystem': 'AA'}, {'text': 'United States', 'code': 'USA', 'codeSystem': 'AA'}],
+        'value': [{'text': 'Canada', 'code': 'CA', 'system': 'AA'}, {'text': 'United States', 'code': 'USA', 'system': 'AA'}],
         'dataType': 'CWE', '_obx4': '2'};
       var out = LForms.HL7._itemToHL7v2(itemData, formInfo);
       assert.equal(out.trim(),

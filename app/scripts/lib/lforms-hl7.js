@@ -162,6 +162,7 @@ LForms.HL7 = (function() {
       switch (lformsDataType) {
         case "INT":
         case "REAL":
+        case "QTY":
           ret = "NM";
           break;
         case "NR":
@@ -178,7 +179,6 @@ LForms.HL7 = (function() {
         /*
         case "BIN":
         case "RTO":
-        case "QTY":
         case "YEAR":
         case "MONTH":
         case "DAY":
@@ -378,8 +378,8 @@ LForms.HL7 = (function() {
         rtn = this.delimiters.component.repeat(8) + itemVal.text;
       }
       else {
-        var answerCS = !itemVal.codeSystem ? "" : (itemVal.codeSystem === 'LOINC' || itemVal.codeSystem === LOINC_URI) ?
-            this.LOINC_CS : itemVal.codeSystem;
+        var answerCS = !itemVal.system ? "" : (itemVal.system === 'LOINC' || itemVal.system === LOINC_URI) ?
+            this.LOINC_CS : itemVal.system;
         rtn = code + this.delimiters.component +
           itemVal.text + this.delimiters.component + answerCS;
       }

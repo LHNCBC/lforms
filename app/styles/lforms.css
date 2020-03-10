@@ -92,6 +92,10 @@
   background-color: #FFF8C6
 }
 
+.lf-form input[readonly], .lf-form textarea[readonly] {
+  background-color: #E8E8E8;
+}
+
 /* buttons in tables */
 .lf-de-button {
   width: 22px;
@@ -218,7 +222,9 @@
 }
 
 /* restore autocomplete default styles */
-.lf-form input.ansList,  .lf-form input.search_field {
+/* Also, unit fields sometimes have answer lists and sometimes not, so set the
+ * padding there two for consistent field widths. */
+.lf-form input.ansList,  .lf-form input.search_field, .lf-form input.units {
   padding-right: 14px;
 }
 
@@ -571,6 +577,11 @@ Override color of select boxes in calendar widget title bar.
 .lf-form .popover {
   max-width: 600px;
   width: auto;
+}
+.lf-form .popover-content {
+  max-height: 600px;
+  height: auto;
+  overflow-y: auto;
 }
 
 /*** matrix layout ***/

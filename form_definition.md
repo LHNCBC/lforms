@@ -55,7 +55,7 @@ about the meaning of each key:
           "conditions": [{
             "source": string
             "trigger": {
-              "value": string/number/boolean, or
+              "value": string/number/boolean/code-object, or
               "minExclusive": number,
               "minInclusive": number,
               "maxExclusive": number,
@@ -81,10 +81,8 @@ about the meaning of each key:
 * **code** - a code (identifier) for a panel, or in the context of answer
   lists, for an individual answer in the list.  For answer lists, codes are
   optional.
-* **codeSystem** - (optional) the code system for the code of the form. The default value
-  is "LOINC" when the form's **type** is "LOINC".
+* **codeSystem** - (optional) the code system for the code of the form.
 * **name** - (required) the name of the form (to be shown to the user).
-* **type** - (optional) the form type, "LOINC" (default) is the only type supported. More will be added.
 * **copyrightNotice** - the copyright information of the form.
 * **template** - (optional) a template name that is used for rendering the form.
   'table' (default) is the only template supported. More supported templates would be added.
@@ -117,11 +115,12 @@ about the meaning of each key:
     * useAnimation - a boolean that controls whether to use animation on the form.
       The default is true.
     * <a name="defaultAnswer"></a>defaultAnswer - The default answer for a
-      question.  For an answer list, it can be an answer label, text, code or 
-      their combination, using the syntax:  {"code": "B12"}, or {"label: "A"}.
+      question. For an answer list, it can be an answer label, text, code or
+      their combination, using the syntax such as:  {"code": "B12"}, {"label: "A"}, 
+      {"text": "Male"}, {"text": "Male", "code": "LA2-8"} and etc.
       For "CWE" answer lists, off-list answers need to be specified as a string.
-      For a date field, it can be a date shortcut (like "t" for today). 
-      For other field types, it can be a text string or a number. 
+      For a date field, it can be a date shortcut (like "t" for today).
+      For other field types, it can be a text string or a number.
     * displayControl - an object that controls the display of the selected template.
       Currently it only supports a 'questionLayout' attribute, which has supported
       values as 'vertical' (default), 'horizontal' and 'matrix'. Here is an example:
@@ -199,7 +198,7 @@ about the meaning of each key:
           be unique within the list.
         * code - (optional) an identifier for the list item.  This can be
           omitted if you do not need coded answers.
-        * codeSystem - (optional) a code system for the answer's code. If not
+        * system - (optional) a code system for the answer's code. If not
           present, the item's answerCodeSystem is used as the default code system.
         * label - (optional) Some lists have a label for each list item, such as
           'a', 'b', etc.  This is an array of such labels, corresponding to the
@@ -235,6 +234,8 @@ about the meaning of each key:
         * CNE - an answer list where the user is **not** permitted to enter something
           not on the list.
         * REAL - a number which might not be an integer
+        * QTY - a type which has both a REAL value and unit object (see "units" below for
+          the structure).
         * INT - an integer
         * DT - a date (displayed with a calendar widget)
         * TM - a string in the time format
@@ -252,8 +253,9 @@ about the meaning of each key:
         * TITLE - a special type for separators that display some text.
 
     * units - For numeric answer fields, this is an optional list for the units
-      for the quantity being entered.  Each hash in this array can contain the
-      following keys:
+      for the quantity being entered.  If the data type is INT or REAL, units
+      should only have one unit; otherwise the data type will be converted to
+      QTY.  Each hash in this array can contain the following keys:
         * name - The display string for the unit
         * code - Code associated with the unit
         * system - Code system associated with the unit
@@ -276,9 +278,20 @@ about the meaning of each key:
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
               or maxInclusive.  The meaning of the keys is as follows:
-                * value - a value which the value for question "source" must
-                  exactly match.  For questions with lists, the can either be
-                  the text of the answer, its code, or its label.
+                * value - A value that the answer for the “source” question must match to fire the trigger.
+                    * For value types string, number, or boolean, the answer and trigger value 
+                      must exactly match.
+                    * For (source) questions with lists (CNE/CWE), the trigger value should 
+                      be a "code object" with any or all of these three fields: code, system, and text,
+                      for example: {"code": "LA2-8", "system": "http://loinc.org"}. 
+                      The trigger value will be considered to match the answer if 1) code systems 
+                      either match or are unspecified, and 2) either a) codes are specified and match 
+                      or b) codes are unspecified and the texts are specified and match. 
+                      Other trigger value fields, if any, are not used for matching.
+                * notEqual - a value which the source question's value is not equal to. it's value could be
+                  a string, number, or boolean, or a 'code object'. See "value" above.
+                * exists - if it is true, the condition is met if the source question has a answer.
+                  if it is false, the condition is met if the source question has no answers.    
                 * minExclusive - a value which the source question's value must exceed
                 * minInclusive - a value which the source question's value must equal
                   or exceed

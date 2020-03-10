@@ -2,9 +2,125 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [18.2.2] 2019-10-21
+## [21.2.2] 2020-03-10
 ### Fixed
 - Removed a FHIR extension for the answers that repeat.
+
+## [21.2.1] 2020-03-05
+### Changed
+- Changed answer's 'codeSystem' to be 'system'. Legacy form data with 'codeSystem'
+  are converted into 'system' when a form a loaded.
+
+## [21.2.0] 2020-03-03
+### Added
+- LForms form definitions now contain an lformsVersion attribute indicating the
+  LForms version from which they were generated.
+- Generated/exported FHIR resources now contain a tag (meta.tag) that starts
+  with 'lformsVersion: ' followed by the LForms version used to export them.
+
+## [21.1.0] 2020-02-27
+### Added
+- Added support for a custom extension in FHIR Questionnaire to contain the dataControl
+  data in LHC-Forms.
+
+## [21.0.1] 2020-02-26
+### Fixed
+- Fixed a bug that valueBoolean in Questionnaire was not converted to LForms BL value.
+
+## [21.0.0] 2020-02-26
+### Changed
+- Bumped up angularjs version to 1.7.x. This could potentially break applications still
+  running prior angularjs versions, hence bumped up the major version.
+
+### Fixed
+- Fixed a bug in click event in CNE/CWE control.
+  Changed ng-click event to ng-change event on radio/checkbox inputs when ngModel is used.
+- Fix date time parsing test.
+
+## [20.2.1] 2020-02-18
+### Added
+- Added support for 'notEqual' in skip logic, to support '!=' in the 'enableWhen' of
+  FHIR Questionnaire.
+
+## [20.2.0] 2019-02-13
+### Changed
+- Updated the fhirpath dependency to 1.0.1 (which was a breaking fhirpath
+  change, but should not affect LForms).  This adds some FHIR model information to
+  the evalution of FHIRPath expressions, paritcularly knowledge of choice-types,
+  so that expressions like "item.answer.value" can work.
+### Added
+- Implemented calculated value support for additional FHIR types, particularly
+  Coding, so that list fields can be set via a FHIRPath expression.
+
+## [20.1.3] 2019-12-31
+### Fixed
+- Export calculatedExpression, variable and other FHIR extensions in lforms format.
+
+## [20.1.2] 2019-12-26
+### Fixed
+- Exporting to FHIR no longer include the minOccurs extension if the value is 1
+  and "required" is true.
+
+## [20.1.1] 2019-12-18
+### Fixed
+- defaultAnswer was not handled correctly for DT and DTM.
+
+## [20.1.0] 2019-12-17
+### Added
+- Added support for item.answer.item when importing from/exporting to FHIR.
+
+## [20.0.1] 2019-11-07
+### Changed
+- Added a vertical scrollbar for long text of coding instructions and copyright notice
+  in popover windows.
+
+## [20.0.0] 2019-11-06
+### Added
+- Added "exists" support to skip logic
+### Changes
+- The trigger.code and triger.value.code were "hidden" features, but the issue of code system
+  wasn't taken into consideration and therefore was broken.
+  This has been reimplemented so that when the source question is of type CNE or CWE,
+  the trigger.value will be a hash with any or all of these three fields:
+  code, system, and text, and the trigger matching will be based on these fields. Please
+  see the updated lforms definition for more details.
+
+## [19.0.2] 2019-11-04
+### Fixed
+- Fixed a bug that autocompleter options are not set for items in templateOptions.
+
+## [19.0.1] 2019-10-31
+### Changed
+- Default values are no longer set when loading QuestionnaireResponse, DiagnosticReport
+  and saved form data.
+
+## [19.0.0] 2019-10-28
+### Added
+- Data type QTY is now documented as a supported data type, and is now validated like a REAL.
+  (Previously, there was no validation for type QTY).
+### Changed
+- Removed the "type" field from the form definition (though it should not hurt to
+  include it).
+- The codeSystem field is no longer defaulted to LOINC.  The LOINC
+  default was causing problems for FHIR Questionnaires which did not have a code
+  system specified.
+- Data types INT and REAL are now only allowed to have one unit defined in
+  field "units", for alignment with FHIR.  For more than one unit, use type QTY
+  (quantity).  For backward compatibility with existing form definitions, INT or
+  REAL fields with more than one unit will be changed to QTY, and a warning will
+  be output.
+- The data type is no longer changed to "ST" if a question has a calculationMethod.
+
+## [18.3.0] 2019-10-22
+### Added
+- The FHIRPath expressions are now cached after being parsed, which greatly
+  speeds up the processing.
+
+## [18.2.2] 2019-10-17
+### Fixed
+- Corrected FHIR export and import of integer, decimal, and quantity types, and
+  the unit extensions used.
+>>>>>>> master
 
 ## [18.2.1] 2019-10-15
 ### Fixed

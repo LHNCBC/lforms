@@ -26,7 +26,7 @@
       <div ng-if="item._multipleAnswers" class="">
           <input class="lf-answer-button" type="checkbox" ng-model="item._otherValueChecked"
                  id="{{item._elementId + '_other'}}" ng-disabled="item._readOnly"
-                 ng-click="updateCheckboxListForOther(item, item._answerOther)"
+                 ng-change="updateCheckboxListForOther(item, item._answerOther)"
                  ng-checked="checkAnswer(item,{'text':item._answerOther})">
           <label class="lf-answer-label" for="{{item._elementId + '_other'}}">OTHER:</label>
           <input ng-if="item._otherValueChecked" class="lf-answer-other" type="text" ng-model="item._answerOther"
@@ -39,7 +39,7 @@
           <input class="lf-answer-button" type="radio" id="{{item._elementId + '_other'}}"
                  ng-model="item._otherValueChecked" ng-value="true"
                  name="{{item._elementId}}" ng-disabled="item._readOnly"
-                 ng-click="updateRadioListForOther(item, item._answerOther)">
+                 ng-change="updateRadioListForOther(item, item._answerOther)">
           <label class="lf-answer-label" for="{{item._elementId + '_other'}}">OTHER:</label>
           <input ng-if="item._otherValueChecked" class="lf-answer-other" type="text"
                  id="{{item._elementId + '_otherValue'}}" ng-model="item._answerOther"

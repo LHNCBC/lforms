@@ -183,14 +183,6 @@
         {
           "extension": [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
-              "valueCoding": {
-                "system": "http://unitsofmeasure.org",
-                "code": "{mm/dd/yyyy}",
-                "display": "{mm/dd/yyyy}"
-              }
-            },
-            {
               "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
               "valueExpression": {
                 "description": "Birth date from patient resource",
@@ -1313,16 +1305,6 @@
           ],
           "item": [
             {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
-                  "valueCoding": {
-                    "system": "http://unitsofmeasure.org",
-                    "code": "{mm/dd/yyyy}",
-                    "display": "{mm/dd/yyyy}"
-                  }
-                }
-              ],
               "required": false,
               "linkId": "/54114-4/54139-1/54124-3",
               "code": [
@@ -1337,6 +1319,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA33-6"
                   }
@@ -1346,7 +1329,7 @@
             {
               "extension": [
                 {
-                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption",
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
                   "valueCoding": {
                     "system": "http://unitsofmeasure.org",
                     "code": "a",
@@ -1368,6 +1351,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA33-6"
                   }
@@ -1404,6 +1388,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA32-8"
                   }
@@ -1932,6 +1917,7 @@
               "enableWhen": [
                 {
                   "question": "/54114-4/54139-1",
+                  "operator": "=",
                   "answerCoding": {
                     "code": "LA32-8"
                   }

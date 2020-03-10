@@ -91,14 +91,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(85);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(86);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(87);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(88);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(89);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(90);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(91);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(87);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(89);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(92);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(93);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(94);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(95);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(96);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -107,13 +107,14 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
 fhir.fhirpath = __webpack_require__(2);
+fhir.fhirpathModel = __webpack_require__(84);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
-fhir.DiagnosticReport._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+fhir.DiagnosticReport._commonExport = _export_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 fhir.SDC = _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__["default"];
-fhir.SDC._commonExport = _export_common_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+fhir.SDC._commonExport = _export_js__WEBPACK_IMPORTED_MODULE_2__["default"];
 
 Object(_sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__["default"])(fhir.SDC);
 
@@ -144,6 +145,8 @@ var LOINC_URI = 'http://loinc.org';
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This is fhirpath interpreter
 // everything starts at evaluate function,
@@ -178,19 +181,19 @@ var parser = __webpack_require__(3);
 
 var util = __webpack_require__(55);
 
-__webpack_require__(56);
+__webpack_require__(70);
 
-var constants = __webpack_require__(57);
+var constants = __webpack_require__(71);
 
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(58);
+var existence = __webpack_require__(72);
 
-var filtering = __webpack_require__(59);
+var filtering = __webpack_require__(73);
 
-var combining = __webpack_require__(60);
+var combining = __webpack_require__(74);
 
-var misc = __webpack_require__(61);
+var misc = __webpack_require__(75);
 
 var equality = __webpack_require__(76);
 
@@ -206,11 +209,14 @@ var datetime = __webpack_require__(82);
 
 var logic = __webpack_require__(83);
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time;
-var FP_Quantity = types.FP_Quantity; // * fn: handler
+var FP_DateTime = types.FP_DateTime,
+    FP_Time = types.FP_Time,
+    FP_Quantity = types.FP_Quantity,
+    FP_Type = types.FP_Type,
+    ResourceNode = types.ResourceNode;
+var makeResNode = ResourceNode.makeResNode; // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
 //   function accepts value of this type or empty value {}
@@ -545,7 +551,7 @@ engine.invocationTable = {
   "-": {
     fn: math.minus,
     arity: {
-      2: ["Number", "Number"]
+      2: ["Any", "Any"]
     },
     nullable: true
   },
@@ -725,22 +731,68 @@ engine.InvocationTerm = function (ctx, parentData, node) {
 
 engine.MemberInvocation = function (ctx, parentData, node) {
   var key = engine.doEval(ctx, parentData, node.children[0])[0];
+  var model = ctx.model;
 
   if (parentData) {
     if (util.isCapitalized(key)) {
       return parentData.filter(function (x) {
         return x.resourceType === key;
+      }).map(function (x) {
+        return makeResNode(x, key);
       });
     } else {
       return parentData.reduce(function (acc, res) {
-        var toAdd = res[key];
+        res = makeResNode(res);
+        var childPath = res.path + '.' + key;
+
+        if (model) {
+          var defPath = model.pathsDefinedElsewhere[childPath];
+          if (defPath) childPath = defPath;
+        }
+
+        var toAdd;
+        var actualTypes = model && model.choiceTypePaths[childPath];
+
+        if (actualTypes) {
+          // Use actualTypes to find the field's value
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = actualTypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var t = _step.value;
+              var field = key + t;
+              toAdd = res.data[field];
+
+              if (toAdd) {
+                childPath = t;
+                break;
+              }
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+        } else toAdd = res.data[key];
 
         if (util.isSome(toAdd)) {
           if (Array.isArray(toAdd)) {
-            // replace with array modification
-            acc = acc.concat(toAdd);
+            acc = acc.concat(toAdd.map(function (x) {
+              return makeResNode(x, childPath);
+            }));
           } else {
-            acc.push(toAdd);
+            acc.push(makeResNode(toAdd, childPath));
           }
 
           return acc;
@@ -791,32 +843,40 @@ engine.realizeParams = function (ctx, parentData, args) {
 
 var paramTable = {
   "Integer": function Integer(val) {
-    if (typeof val !== "number" || !Number.isInteger(val)) {
-      throw new Error("Expected integer, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "number" || !Number.isInteger(d)) {
+      throw new Error("Expected integer, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   },
   "Boolean": function Boolean(val) {
-    if (val === true || val === false) {
-      return val;
+    var d = util.valData(val);
+
+    if (d === true || d === false) {
+      return d;
     }
 
-    throw new Error("Expected boolean, got: " + JSON.stringify(val));
+    throw new Error("Expected boolean, got: " + JSON.stringify(d));
   },
   "Number": function Number(val) {
-    if (typeof val !== "number") {
-      throw new Error("Expected number, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "number") {
+      throw new Error("Expected number, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   },
   "String": function String(val) {
-    if (typeof val !== "string") {
-      throw new Error("Expected string, got: " + JSON.stringify(val));
+    var d = util.valData(val);
+
+    if (typeof d !== "string") {
+      throw new Error("Expected string, got: " + JSON.stringify(d));
     }
 
-    return val;
+    return d;
   }
 };
 
@@ -1061,10 +1121,12 @@ var parse = function parse(path) {
  *  This resource will be modified by this function to add type information.
  * @param {string} parsedPath - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-function applyParsedPath(resource, parsedPath, context) {
+function applyParsedPath(resource, parsedPath, context, model) {
   constants.reset();
   var dataRoot = util.arraify(resource); // doEval takes a "ctx" object, and we store things in that as we parse, so we
   // need to put user-provided variable data in a sub-object, ctx.vars.
@@ -1077,9 +1139,30 @@ function applyParsedPath(resource, parsedPath, context) {
   };
   var ctx = {
     dataRoot: dataRoot,
-    vars: Object.assign(vars, context)
+    vars: Object.assign(vars, context),
+    model: model
   };
-  return engine.doEval(ctx, dataRoot, parsedPath.children[0]);
+  var rtn = engine.doEval(ctx, dataRoot, parsedPath.children[0]); // Resolve any internal "ResourceNode" instances.  Continue to let FP_Type
+  // subclasses through.
+
+  rtn = function visit(n) {
+    n = util.valData(n);
+
+    if (Array.isArray(n)) {
+      for (var i = 0, len = n.length; i < len; ++i) {
+        n[i] = visit(n[i]);
+      }
+    } else if (_typeof(n) === 'object' && !(n instanceof FP_Type)) {
+      for (var _i = 0, _Object$keys = Object.keys(n); _i < _Object$keys.length; _i++) {
+        var k = _Object$keys[_i];
+        n[k] = visit(n[k]);
+      }
+    }
+
+    return n;
+  }(rtn);
+
+  return rtn;
 }
 /**
  *  Evaluates the "path" FHIRPath expression on the given resource, using data
@@ -1088,27 +1171,31 @@ function applyParsedPath(resource, parsedPath, context) {
  *  This resource will be modified by this function to add type information.
  * @param {string} path - fhirpath expression, sample 'Patient.name.given'
  * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-var evaluate = function evaluate(resource, path, context) {
+var evaluate = function evaluate(resource, path, context, model) {
   var node = parser.parse(path);
-  return applyParsedPath(resource, node, context);
+  return applyParsedPath(resource, node, context, model);
 };
 /**
- *  Returns a function that takes a resource and returns the result of
- *  evaluating the given FHIRPath expression on that resource.  The advantage
- *  of this function over "evaluate" is that if you have multiple resources,
- *  the given FHIRPath expression will only be parsed once.
+ *  Returns a function that takes a resource and an optional context hash (see
+ *  "evaluate"), and returns the result of evaluating the given FHIRPath
+ *  expression on that resource.  The advantage of this function over "evaluate"
+ *  is that if you have multiple resources, the given FHIRPath expression will
+ *  only be parsed once.
  * @param path the FHIRPath expression to be parsed.
- * @param {object} context - a hash of variable name/value pairs.
+ * @param {object} model - The "model" data object specific to a domain, e.g. R4.
+ *  For example, you could pass in the result of require("fhirpath/fhir-context/r4");
  */
 
 
-var compile = function compile(path, context) {
+var compile = function compile(path, model) {
   var node = parse(path);
-  return function (resource) {
-    return applyParsedPath(resource, node, context);
+  return function (resource, context) {
+    return applyParsedPath(resource, node, context, model);
   };
 };
 
@@ -1117,7 +1204,7 @@ module.exports = {
   compile: compile,
   evaluate: evaluate,
   // Might as well export the UCUM library, since we are using it.
-  ucumUtils: __webpack_require__(68).UcumLhcUtils.getInstance()
+  ucumUtils: __webpack_require__(62).UcumLhcUtils.getInstance()
 };
 
 /***/ }),
@@ -2045,7 +2132,9 @@ AltDict.prototype.values = function () {
   });
 };
 
-function DoubleDict() {
+function DoubleDict(defaultMapCtor) {
+  this.defaultMapCtor = defaultMapCtor || Map;
+  this.cacheMap = new this.defaultMapCtor();
   return this;
 }
 
@@ -2059,7 +2148,7 @@ Hash.prototype.update = function () {
   for (var i = 0; i < arguments.length; i++) {
     var value = arguments[i];
     if (value == null) continue;
-    if (Array.isArray(value)) this.update.apply(value);else {
+    if (Array.isArray(value)) this.update.apply(this, value);else {
       var k = 0;
 
       switch (_typeof(value)) {
@@ -2077,7 +2166,7 @@ Hash.prototype.update = function () {
           break;
 
         default:
-          value.updateHashCode(this);
+          if (value.updateHashCode) value.updateHashCode(this);else console.log("No updateHashCode for " + value.toString());
           continue;
       }
 
@@ -2105,24 +2194,24 @@ Hash.prototype.finish = function () {
 
 function hashStuff() {
   var hash = new Hash();
-  hash.update.apply(arguments);
+  hash.update.apply(hash, arguments);
   return hash.finish();
 }
 
 DoubleDict.prototype.get = function (a, b) {
-  var d = this[a] || null;
-  return d === null ? null : d[b] || null;
+  var d = this.cacheMap.get(a) || null;
+  return d === null ? null : d.get(b) || null;
 };
 
 DoubleDict.prototype.set = function (a, b, o) {
-  var d = this[a] || null;
+  var d = this.cacheMap.get(a) || null;
 
   if (d === null) {
-    d = {};
-    this[a] = d;
+    d = new this.defaultMapCtor();
+    this.cacheMap.put(a, d);
   }
 
-  d[b] = o;
+  d.put(b, o);
 };
 
 function escapeWhitespace(s, escapeSpaces) {
@@ -3849,6 +3938,8 @@ var RuleContext = __webpack_require__(16).RuleContext;
 
 var Hash = __webpack_require__(8).Hash;
 
+var Map = __webpack_require__(8).Map;
+
 function PredictionContext(cachedHashCode) {
   this.cachedHashCode = cachedHashCode;
 } // Represents {@code $} in local context prediction, which means wildcard.
@@ -3915,7 +4006,7 @@ function calculateHashString(parent, returnState) {
 
 
 function PredictionContextCache() {
-  this.cache = {};
+  this.cache = new Map();
   return this;
 } // Add a context to the cache and return it. If the context already exists,
 // return that one instead and do not add a new context to the cache.
@@ -3928,18 +4019,18 @@ PredictionContextCache.prototype.add = function (ctx) {
     return PredictionContext.EMPTY;
   }
 
-  var existing = this.cache[ctx] || null;
+  var existing = this.cache.get(ctx) || null;
 
   if (existing !== null) {
     return existing;
   }
 
-  this.cache[ctx] = ctx;
+  this.cache.put(ctx, ctx);
   return ctx;
 };
 
 PredictionContextCache.prototype.get = function (ctx) {
-  return this.cache[ctx] || null;
+  return this.cache.get(ctx) || null;
 };
 
 Object.defineProperty(PredictionContextCache.prototype, "length", {
@@ -3950,13 +4041,15 @@ Object.defineProperty(PredictionContextCache.prototype, "length", {
 
 function SingletonPredictionContext(parent, returnState) {
   var hashCode = 0;
+  var hash = new Hash();
 
   if (parent !== null) {
-    var hash = new Hash();
     hash.update(parent, returnState);
-    hashCode = hash.finish();
+  } else {
+    hash.update(1);
   }
 
+  hashCode = hash.finish();
   PredictionContext.call(this, hashCode);
   this.parentCtx = parent;
   this.returnState = returnState;
@@ -4543,18 +4636,18 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
 
 
 function combineCommonParents(parents) {
-  var uniqueParents = {};
+  var uniqueParents = new Map();
 
   for (var p = 0; p < parents.length; p++) {
     var parent = parents[p];
 
-    if (!(parent in uniqueParents)) {
-      uniqueParents[parent] = parent;
+    if (!uniqueParents.containsKey(parent)) {
+      uniqueParents.put(parent, parent);
     }
   }
 
   for (var q = 0; q < parents.length; q++) {
-    parents[q] = uniqueParents[parents[q]];
+    parents[q] = uniqueParents.get(parents[q]);
   }
 }
 
@@ -4563,7 +4656,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
     return context;
   }
 
-  var existing = visited[context] || null;
+  var existing = visited.get(context) || null;
 
   if (existing !== null) {
     return existing;
@@ -4572,7 +4665,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
   existing = contextCache.get(context);
 
   if (existing !== null) {
-    visited[context] = existing;
+    visited.put(context, existing);
     return existing;
   }
 
@@ -4599,7 +4692,7 @@ function getCachedPredictionContext(context, contextCache, visited) {
 
   if (!changed) {
     contextCache.add(context);
-    visited[context] = context;
+    visited.put(context, context);
     return context;
   }
 
@@ -4614,8 +4707,8 @@ function getCachedPredictionContext(context, contextCache, visited) {
   }
 
   contextCache.add(updated);
-  visited[updated] = updated;
-  visited[context] = updated;
+  visited.put(updated, updated);
+  visited.put(context, updated);
   return updated;
 } // ter's recursive version of Sam's getAllNodes()
 
@@ -4625,14 +4718,14 @@ function getAllContextNodes(context, nodes, visited) {
     nodes = [];
     return getAllContextNodes(context, nodes, visited);
   } else if (visited === null) {
-    visited = {};
+    visited = new Map();
     return getAllContextNodes(context, nodes, visited);
   } else {
-    if (context === null || visited[context] !== null) {
+    if (context === null || visited.containsKey(context)) {
       return nodes;
     }
 
-    visited[context] = context;
+    visited.put(context, context);
     nodes.push(context);
 
     for (var i = 0; i < context.length; i++) {
@@ -5612,7 +5705,7 @@ ATNDeserializer.prototype.deserialize = function (data) {
 ATNDeserializer.prototype.reset = function (data) {
   var adjust = function adjust(c) {
     var v = c.charCodeAt(0);
-    return v > 1 ? v - 2 : v + 65533;
+    return v > 1 ? v - 2 : v + 65534;
   };
 
   var temp = data.split("").map(adjust); // don't adjust the first value since that's the version number
@@ -7816,7 +7909,7 @@ Recognizer.tokenTypeMapCache = {};
 Recognizer.ruleIndexMapCache = {};
 
 Recognizer.prototype.checkVersion = function (toolVersion) {
-  var runtimeVersion = "4.7.2";
+  var runtimeVersion = "4.8";
 
   if (runtimeVersion !== toolVersion) {
     console.log("ANTLR runtime and generated code versions disagree: " + runtimeVersion + "!=" + toolVersion);
@@ -8331,6 +8424,8 @@ var ATNConfigSet = __webpack_require__(32).ATNConfigSet;
 
 var getCachedPredictionContext = __webpack_require__(15).getCachedPredictionContext;
 
+var Map = __webpack_require__(8).Map;
+
 function ATNSimulator(atn, sharedContextCache) {
   // The context cache maps all PredictionContext objects that are ==
   //  to a single cached copy. This cache is shared across all contexts
@@ -8365,7 +8460,7 @@ ATNSimulator.prototype.getCachedContext = function (context) {
     return context;
   }
 
-  var visited = {};
+  var visited = new Map();
   return getCachedPredictionContext(context, this.sharedContextCache, visited);
 };
 
@@ -8516,11 +8611,6 @@ DFAState.prototype.toString = function () {
 DFAState.prototype.hashCode = function () {
   var hash = new Hash();
   hash.update(this.configs);
-
-  if (this.isAcceptState) {
-    if (this.predicates !== null) hash.update(this.predicates);else hash.update(this.prediction);
-  }
-
   return hash.finish();
 };
 
@@ -8715,21 +8805,19 @@ ATNConfigSet.prototype.equals = function (other) {
 
 ATNConfigSet.prototype.hashCode = function () {
   var hash = new Hash();
-  this.updateHashCode(hash);
+  hash.update(this.configs);
   return hash.finish();
 };
 
 ATNConfigSet.prototype.updateHashCode = function (hash) {
   if (this.readOnly) {
     if (this.cachedHashCode === -1) {
-      var hash = new Hash();
-      hash.update(this.configs);
-      this.cachedHashCode = hash.finish();
+      this.cachedHashCode = this.hashCode();
     }
 
     hash.update(this.cachedHashCode);
   } else {
-    hash.update(this.configs);
+    hash.update(this.hashCode());
   }
 };
 
@@ -17158,12 +17246,16 @@ exports.FHIRPathListener = FHIRPathListener;
 
 /***/ }),
 /* 55 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds utility functions used in implementing the public functions.
 var util = {};
+
+var types = __webpack_require__(56);
+
+var ResourceNode = types.ResourceNode;
 /**
  *  Reports and error to the calling environment and stops processing.
  * @param message the error message
@@ -17189,18 +17281,24 @@ util.assertAtMostOne = function (collection, errorMsgPrefix) {
 };
 /**
  *  Throws an exception if the data is not one of the expected types.
- * @param data the value to be checked
+ * @param data the value to be checked.  This may be a ResourceNode.
  * @param types an array of the permitted types
  * @param errorMsgPrefix An optional prefix for the error message to assist in
  *  debugging.
+ * @return the value that was checked.  If "data" was a ResourceNode, this will
+ *  be the ReourceNode's data.
  */
 
 
 util.assertType = function (data, types, errorMsgPrefix) {
-  if (types.indexOf(_typeof(data)) < 0) {
+  var val = this.valData(data);
+
+  if (types.indexOf(_typeof(val)) < 0) {
     var typeList = types.length > 1 ? "one of " + types.join(", ") : types[0];
     util.raiseError("Found type '" + _typeof(data) + "' but was expecting " + typeList, errorMsgPrefix);
   }
+
+  return val;
 };
 
 util.isEmpty = function (x) {
@@ -17247,508 +17345,20 @@ util.arraify = function (x) {
 
   return [];
 };
+/**
+ *  Returns the data value of the given parameter, which might be a ResourceNode.
+ *  Otherwise, it returns the value that was passed in.
+ */
+
+
+util.valData = function (val) {
+  return val instanceof ResourceNode ? val.data : val;
+};
 
 module.exports = util;
 
 /***/ }),
 /* 56 */
-/***/ (function(module, exports) {
-
-// isInteger (not in IE)
-// From Mozilla docs
-Number.isInteger = Number.isInteger || function (value) {
-  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
-};
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports) {
-
-// These are values that should not change during an evaluation of a FHIRPath
-// expression (e.g. the return value of today(), per the spec.)  They are
-// constant during at least one evaluation.
-module.exports = {
-  /**
-   *  Resets the constants.  Should be called when before the engine starts its
-   *  processing.
-   */
-  reset: function reset() {
-    this.nowDate = new Date(); // a Date object representint "now"
-
-    this.today = null;
-    this.now = null;
-    this.localTimezoneOffset = null;
-  },
-
-  /**
-   *  The cached value of today().
-   */
-  today: null,
-
-  /**
-   *  The cached value of now().
-   */
-  now: null
-};
-
-/***/ }),
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-// This file holds code to hande the FHIRPath Existence functions (5.1 in the
-// specification).
-var util = __webpack_require__(55);
-
-var filtering = __webpack_require__(59);
-
-var engine = {};
-engine.emptyFn = util.isEmpty;
-
-engine.notFn = function (x) {
-  return x.length === 1 && typeof x[0] === 'boolean' ? !x[0] : [];
-};
-
-engine.existsMacro = function (coll, expr) {
-  var vec = coll;
-
-  if (expr) {
-    return engine.existsMacro(filtering.whereMacro(coll, expr));
-  }
-
-  return !util.isEmpty(vec);
-};
-
-engine.allMacro = function (coll, expr) {
-  for (var i = 0, len = coll.length; i < len; ++i) {
-    if (!util.isTrue(expr(coll[i]))) {
-      return [false];
-    }
-  }
-
-  return [true];
-};
-
-engine.allTrueFn = function (x) {
-  var rtn = true;
-
-  for (var i = 0, len = x.length; i < len && rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "allTrue");
-    rtn = x[i] === true;
-  }
-
-  return [rtn];
-};
-
-engine.anyTrueFn = function (x) {
-  var rtn = false;
-
-  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "anyTrue");
-    rtn = x[i] === true;
-  }
-
-  return [rtn];
-};
-
-engine.allFalseFn = function (x) {
-  var rtn = true;
-
-  for (var i = 0, len = x.length; i < len && rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "allFalse");
-    rtn = x[i] === false;
-  }
-
-  return [rtn];
-};
-
-engine.anyFalseFn = function (x) {
-  var rtn = false;
-
-  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
-    util.assertType(x[i], ["boolean"], "anyFalse");
-    rtn = x[i] === false;
-  }
-
-  return [rtn];
-};
-/**
- *  Returns a JSON version of the given object, but with keys of the object in
- *  sorted order (or at least a stable order).
- *  From: https://stackoverflow.com/a/35810961/360782
- */
-
-
-function orderedJsonStringify(obj) {
-  return JSON.stringify(sortObjByKey(obj));
-}
-/**
- *  If given value is an object, returns a new object with the properties added
- *  in sorted order, and handles nested objects.  Otherwise, returns the given
- *  value.
- *  From: https://stackoverflow.com/a/35810961/360782
- */
-
-
-function sortObjByKey(value) {
-  return _typeof(value) === 'object' ? Array.isArray(value) ? value.map(sortObjByKey) : Object.keys(value).sort().reduce(function (o, key) {
-    var v = value[key];
-    o[key] = sortObjByKey(v);
-    return o;
-  }, {}) : value;
-}
-/**
- *  Returns true if coll1 is a subset of coll2.
- */
-
-
-function subsetOf(coll1, coll2) {
-  var rtn = coll1.length <= coll2.length;
-
-  if (rtn) {
-    // This requires a deep-equals comparision of every object in coll1,
-    // against each object in coll2.
-    // Optimize by building a hashmap of JSON versions of the objects.
-    var c2Hash = {};
-
-    for (var p = 0, pLen = coll1.length; p < pLen && rtn; ++p) {
-      var obj1 = coll1[p];
-      var obj1Str = orderedJsonStringify(obj1);
-      var found = false;
-
-      if (p === 0) {
-        // c2Hash is not yet built
-        for (var i = 0, len = coll2.length; i < len; ++i) {
-          // No early return from this loop, because we're building c2Hash.
-          var obj2 = coll2[i];
-          var obj2Str = orderedJsonStringify(obj2);
-          c2Hash[obj2Str] = obj2;
-          found = found || obj1Str === obj2Str;
-        }
-      } else found = !!c2Hash[obj1Str];
-
-      rtn = found;
-    }
-  }
-
-  return rtn;
-}
-
-engine.subsetOfFn = function (coll1, coll2) {
-  return [subsetOf(coll1, coll2)];
-};
-
-engine.supersetOfFn = function (coll1, coll2) {
-  return [subsetOf(coll2, coll1)];
-};
-
-engine.isDistinctFn = function (x) {
-  return [x.length === engine.distinctFn(x).length];
-};
-
-engine.distinctFn = function (x) {
-  var unique = []; // Since this requires a deep equals, use a hash table (on JSON strings) for
-  // efficiency.
-
-  if (x.length > 0) {
-    var uniqueHash = {};
-
-    for (var i = 0, len = x.length; i < len; ++i) {
-      var xObj = x[i];
-      var xStr = JSON.stringify(xObj);
-      var uObj = uniqueHash[xStr];
-
-      if (uObj === undefined) {
-        unique.push(xObj);
-        uniqueHash[xStr] = xObj;
-      }
-    }
-  }
-
-  return unique;
-};
-
-engine.countFn = function (x) {
-  if (x && x.length) {
-    return x.length;
-  } else {
-    return 0;
-  }
-};
-
-module.exports = engine;
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-// Contains the FHIRPath Filtering and Projection functions.  (Section 5.2 of
-// the FHIRPath 1.0.0 specification).
-
-/**
- *  Adds the filtering and projection functions to the given FHIRPath engine.
- */
-var util = __webpack_require__(55);
-
-var engine = {};
-
-engine.whereMacro = function (parentData, expr) {
-  if (parentData !== false && !parentData) {
-    return [];
-  }
-
-  return util.flatten(parentData.filter(function (x) {
-    return expr(x)[0];
-  }));
-};
-
-engine.selectMacro = function (data, expr) {
-  if (data !== false && !data) {
-    return [];
-  }
-
-  return util.flatten(data.map(function (x) {
-    return expr(x);
-  }));
-};
-
-engine.repeatMacro = function (parentData, expr) {
-  if (parentData !== false && !parentData) {
-    return [];
-  }
-
-  var res = [];
-  var items = parentData;
-  var next = null;
-  var lres = null;
-
-  while (items.length != 0) {
-    next = items.shift();
-    lres = expr(next);
-
-    if (lres) {
-      res = res.concat(lres);
-      items = items.concat(lres);
-    }
-  }
-
-  return res;
-}; //TODO: behavior on object?
-
-
-engine.singleFn = function (x) {
-  if (x.length == 1) {
-    return x;
-  } else if (x.length == 0) {
-    return [];
-  } else {
-    //TODO: should throw error?
-    return {
-      $status: "error",
-      $error: "Expected single"
-    };
-  }
-};
-
-engine.firstFn = function (x) {
-  return x[0];
-};
-
-engine.lastFn = function (x) {
-  return x[x.length - 1];
-};
-
-engine.tailFn = function (x) {
-  return x.slice(1, x.length);
-};
-
-engine.takeFn = function (x, n) {
-  return x.slice(0, n);
-};
-
-engine.skipFn = function (x, num) {
-  return x.slice(num, x.length);
-};
-
-function checkFHIRType(x, tp) {
-  if (_typeof(x) === tp) {
-    return true;
-  }
-
-  if (tp === "integer") {
-    return Number.isInteger(x);
-  }
-
-  if (tp === "decimal") {
-    return typeof x == "number";
-  }
-
-  return false;
-} // naive typeof implementation
-// understand only basic types like string, number etc
-
-
-engine.ofTypeFn = function (coll, type) {
-  return coll.filter(function (x) {
-    return checkFHIRType(x, type);
-  });
-};
-
-module.exports = engine;
-
-/***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// This file holds code to hande the FHIRPath Combining functions.
-var combineFns = {};
-
-var existence = __webpack_require__(58);
-
-combineFns.unionOp = function (coll1, coll2) {
-  return existence.distinctFn(coll1.concat(coll2));
-};
-
-combineFns.combineFn = function (coll1, coll2) {
-  return coll1.concat(coll2);
-};
-
-module.exports = combineFns;
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// This file holds code to hande the FHIRPath Existence functions (5.1 in the
-// specification).
-var util = __webpack_require__(55);
-
-var types = __webpack_require__(62);
-
-var FP_DateTime = types.FP_DateTime;
-var FP_Time = types.FP_Time;
-var engine = {};
-
-engine.iifMacro = function (data, cond, ok, fail) {
-  if (util.isTrue(cond(data))) {
-    return ok(data);
-  } else {
-    return fail(data);
-  }
-};
-
-engine.traceFn = function (x, label) {
-  console.log("TRACE:[" + (label || "") + "]", JSON.stringify(x, null, " "));
-  return x;
-};
-
-var intRegex = /^[+-]?\d+$/;
-
-engine.toInteger = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-
-  if (v === false) {
-    return 0;
-  }
-
-  if (v === true) {
-    return 1;
-  }
-
-  if (typeof v === "number") {
-    if (Number.isInteger(v)) {
-      return v;
-    } else {
-      return [];
-    }
-  }
-
-  if (typeof v === "string") {
-    if (intRegex.test(v)) {
-      return parseInt(v);
-    } else {
-      throw new Error("Could not convert to ineger: " + v);
-    }
-  }
-
-  return [];
-};
-
-var numRegex = /^[+-]?\d+(\.\d+)?$/;
-
-engine.toDecimal = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-
-  if (v === false) {
-    return 0;
-  }
-
-  if (v === true) {
-    return 1.0;
-  }
-
-  if (typeof v === "number") {
-    return v;
-  }
-
-  if (typeof v === "string") {
-    if (numRegex.test(v)) {
-      return Number.parseFloat(v);
-    } else {
-      throw new Error("Could not convert to decimal: " + v);
-    }
-  }
-
-  return [];
-};
-
-engine.toString = function (coll) {
-  if (coll.length != 1) {
-    return [];
-  }
-
-  var v = coll[0];
-  return v.toString();
-};
-/**
- *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
- * @param timeType a class (contsructor) for a time type (e.g. FP_DateTime).
- */
-
-
-function defineTimeConverter(timeType) {
-  var timeName = timeType.name.slice(3);
-
-  engine['to' + timeName] = function (coll) {
-    var rtn = [];
-    if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
-
-    if (coll.length === 1) {
-      var t = timeType.checkString(coll[0]);
-      if (t) rtn[0] = t;
-    }
-
-    return rtn;
-  };
-}
-
-defineTimeConverter(FP_DateTime);
-defineTimeConverter(FP_Time);
-module.exports = engine;
-
-/***/ }),
-/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17773,9 +17383,9 @@ function _superPropBase(object, property) { while (!Object.prototype.hasOwnPrope
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var addMinutes = __webpack_require__(63);
+var addMinutes = __webpack_require__(57);
 
-var ucumUtils = __webpack_require__(68).UcumLhcUtils.getInstance();
+var ucumUtils = __webpack_require__(62).UcumLhcUtils.getInstance();
 
 var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
 var timeRE = new RegExp('^T?' + timeFormat + '$');
@@ -17784,6 +17394,11 @@ var dateTimeRE = new RegExp('^[0-9][0-9][0-9][0-9](-[0-9][0-9](-[0-9][0-9](T' + 
 //let fhirTimeRE = /([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?/;
 //let fhirDateTimeRE =
 ///([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?/;
+
+/**
+ *   Class FP_Type is the superclass for FHIRPath types that required special
+ *   handling.
+ */
 
 var FP_Type =
 /*#__PURE__*/
@@ -18251,14 +17866,14 @@ function (_FP_Type2) {
 
 
 FP_TimeBase.timeUnitToAddFn = {
-  "'a'": __webpack_require__(69),
-  "'mo'": __webpack_require__(70),
-  "'wk'": __webpack_require__(72),
-  "'d'": __webpack_require__(73),
-  "'h'": __webpack_require__(74),
-  "'min'": __webpack_require__(63),
-  "'s'": __webpack_require__(75),
-  "'ms'": __webpack_require__(64)
+  "'a'": __webpack_require__(63),
+  "'mo'": __webpack_require__(64),
+  "'wk'": __webpack_require__(66),
+  "'d'": __webpack_require__(67),
+  "'h'": __webpack_require__(68),
+  "'min'": __webpack_require__(57),
+  "'s'": __webpack_require__(69),
+  "'ms'": __webpack_require__(58)
 };
 
 var FP_DateTime =
@@ -18651,6 +18266,54 @@ FP_DateTime.isoDate = function (date, precision) {
   if (precision === undefined || precision > 2) precision = 2;
   return FP_DateTime.isoDateTime(date, precision);
 };
+/**
+ *  A class that represents a node in a FHIR resource, with path and possibly type
+ *  information.
+ */
+
+
+var ResourceNode =
+/*#__PURE__*/
+function () {
+  /**
+   *  Constructs a instance for the given node ("data") of a resource.  If the
+   *  data is the top-level node of a resouce, the path and type parameters will
+   *  be ignored in favor of the resource's resourceType field.
+   * @param data the node's data or value (which might be an object with
+   *  sub-nodes, an array, or FHIR data type)
+   * @param path the node's path in the resource (e.g. Patient.name).  If the
+   *  data's type can be determined from data, that will take precedence over
+   *  this parameter.
+   */
+  function ResourceNode(data, path) {
+    _classCallCheck(this, ResourceNode);
+
+    // If data is a resource (maybe a contained resource) reset the path
+    // information to the resource type.
+    if (data.resourceType) path = data.resourceType;
+    this.path = path;
+    this.data = data;
+  }
+
+  _createClass(ResourceNode, [{
+    key: "toJSON",
+    value: function toJSON() {
+      return JSON.stringify(this.data);
+    }
+  }]);
+
+  return ResourceNode;
+}();
+/**
+ *  Returns a ResourceNode for the given data node, checking first to see if the
+ *  given node is already a ResourceNode.  Takes the same arguments as the
+ *  constructor for ResourceNode.
+ */
+
+
+ResourceNode.makeResNode = function (data, path) {
+  return data instanceof ResourceNode ? data : new ResourceNode(data, path);
+};
 
 module.exports = {
   FP_Type: FP_Type,
@@ -18659,14 +18322,15 @@ module.exports = {
   FP_Time: FP_Time,
   FP_Quantity: FP_Quantity,
   timeRE: timeRE,
-  dateTimeRE: dateTimeRE
+  dateTimeRE: dateTimeRE,
+  ResourceNode: ResourceNode
 };
 
 /***/ }),
-/* 63 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 
 var MILLISECONDS_IN_MINUTE = 60000;
 /**
@@ -18694,10 +18358,10 @@ function addMinutes(dirtyDate, dirtyAmount) {
 module.exports = addMinutes;
 
 /***/ }),
-/* 64 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Millisecond Helpers
  * @summary Add the specified number of milliseconds to the given date.
@@ -18725,12 +18389,12 @@ function addMilliseconds(dirtyDate, dirtyAmount) {
 module.exports = addMilliseconds;
 
 /***/ }),
-/* 65 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getTimezoneOffsetInMilliseconds = __webpack_require__(66);
+var getTimezoneOffsetInMilliseconds = __webpack_require__(60);
 
-var isDate = __webpack_require__(67);
+var isDate = __webpack_require__(61);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19057,7 +18721,7 @@ function dayOfISOYear(isoYear, week, day) {
 module.exports = parse;
 
 /***/ }),
-/* 66 */
+/* 60 */
 /***/ (function(module, exports) {
 
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19082,7 +18746,7 @@ module.exports = function getTimezoneOffsetInMilliseconds(dirtyDate) {
 };
 
 /***/ }),
-/* 67 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -19107,16 +18771,16 @@ function isDate(argument) {
 module.exports = isDate;
 
 /***/ }),
-/* 68 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = LForms.ucumPkg;
 
 /***/ }),
-/* 69 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMonths = __webpack_require__(70);
+var addMonths = __webpack_require__(64);
 /**
  * @category Year Helpers
  * @summary Add the specified number of years to the given date.
@@ -19143,12 +18807,12 @@ function addYears(dirtyDate, dirtyAmount) {
 module.exports = addYears;
 
 /***/ }),
-/* 70 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 
-var getDaysInMonth = __webpack_require__(71);
+var getDaysInMonth = __webpack_require__(65);
 /**
  * @category Month Helpers
  * @summary Add the specified number of months to the given date.
@@ -19184,10 +18848,10 @@ function addMonths(dirtyDate, dirtyAmount) {
 module.exports = addMonths;
 
 /***/ }),
-/* 71 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Month Helpers
  * @summary Get the number of days in a month of the given date.
@@ -19218,10 +18882,10 @@ function getDaysInMonth(dirtyDate) {
 module.exports = getDaysInMonth;
 
 /***/ }),
-/* 72 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addDays = __webpack_require__(73);
+var addDays = __webpack_require__(67);
 /**
  * @category Week Helpers
  * @summary Add the specified number of weeks to the given date.
@@ -19249,10 +18913,10 @@ function addWeeks(dirtyDate, dirtyAmount) {
 module.exports = addWeeks;
 
 /***/ }),
-/* 73 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(65);
+var parse = __webpack_require__(59);
 /**
  * @category Day Helpers
  * @summary Add the specified number of days to the given date.
@@ -19281,10 +18945,10 @@ function addDays(dirtyDate, dirtyAmount) {
 module.exports = addDays;
 
 /***/ }),
-/* 74 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 /**
@@ -19312,10 +18976,10 @@ function addHours(dirtyDate, dirtyAmount) {
 module.exports = addHours;
 
 /***/ }),
-/* 75 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(64);
+var addMilliseconds = __webpack_require__(58);
 /**
  * @category Second Helpers
  * @summary Add the specified number of seconds to the given date.
@@ -19342,6 +19006,502 @@ function addSeconds(dirtyDate, dirtyAmount) {
 module.exports = addSeconds;
 
 /***/ }),
+/* 70 */
+/***/ (function(module, exports) {
+
+// isInteger (not in IE)
+// From Mozilla docs
+Number.isInteger = Number.isInteger || function (value) {
+  return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
+};
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports) {
+
+// These are values that should not change during an evaluation of a FHIRPath
+// expression (e.g. the return value of today(), per the spec.)  They are
+// constant during at least one evaluation.
+module.exports = {
+  /**
+   *  Resets the constants.  Should be called when before the engine starts its
+   *  processing.
+   */
+  reset: function reset() {
+    this.nowDate = new Date(); // a Date object representint "now"
+
+    this.today = null;
+    this.now = null;
+    this.localTimezoneOffset = null;
+  },
+
+  /**
+   *  The cached value of today().
+   */
+  today: null,
+
+  /**
+   *  The cached value of now().
+   */
+  now: null
+};
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+// This file holds code to hande the FHIRPath Existence functions (5.1 in the
+// specification).
+var util = __webpack_require__(55);
+
+var filtering = __webpack_require__(73);
+
+var engine = {};
+engine.emptyFn = util.isEmpty;
+
+engine.notFn = function (x) {
+  var d;
+  return x.length === 1 && typeof (d = util.valData(x[0])) === 'boolean' ? !d : [];
+};
+
+engine.existsMacro = function (coll, expr) {
+  var vec = coll;
+
+  if (expr) {
+    return engine.existsMacro(filtering.whereMacro(coll, expr));
+  }
+
+  return !util.isEmpty(vec);
+};
+
+engine.allMacro = function (coll, expr) {
+  for (var i = 0, len = coll.length; i < len; ++i) {
+    if (!util.isTrue(expr(coll[i]))) {
+      return [false];
+    }
+  }
+
+  return [true];
+};
+
+engine.allTrueFn = function (x) {
+  var rtn = true;
+
+  for (var i = 0, len = x.length; i < len && rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "allTrue");
+    rtn = xi === true;
+  }
+
+  return [rtn];
+};
+
+engine.anyTrueFn = function (x) {
+  var rtn = false;
+
+  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "anyTrue");
+    rtn = xi === true;
+  }
+
+  return [rtn];
+};
+
+engine.allFalseFn = function (x) {
+  var rtn = true;
+
+  for (var i = 0, len = x.length; i < len && rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "allFalse");
+    rtn = xi === false;
+  }
+
+  return [rtn];
+};
+
+engine.anyFalseFn = function (x) {
+  var rtn = false;
+
+  for (var i = 0, len = x.length; i < len && !rtn; ++i) {
+    var xi = util.assertType(x[i], ["boolean"], "anyFalse");
+    rtn = xi === false;
+  }
+
+  return [rtn];
+};
+/**
+ *  Returns a JSON version of the given object, but with keys of the object in
+ *  sorted order (or at least a stable order).
+ *  From: https://stackoverflow.com/a/35810961/360782
+ */
+
+
+function orderedJsonStringify(obj) {
+  return JSON.stringify(sortObjByKey(obj));
+}
+/**
+ *  If given value is an object, returns a new object with the properties added
+ *  in sorted order, and handles nested objects.  Otherwise, returns the given
+ *  value.
+ *  From: https://stackoverflow.com/a/35810961/360782
+ */
+
+
+function sortObjByKey(value) {
+  return _typeof(value) === 'object' ? Array.isArray(value) ? value.map(sortObjByKey) : Object.keys(value).sort().reduce(function (o, key) {
+    var v = value[key];
+    o[key] = sortObjByKey(v);
+    return o;
+  }, {}) : value;
+}
+/**
+ *  Returns true if coll1 is a subset of coll2.
+ */
+
+
+function subsetOf(coll1, coll2) {
+  var rtn = coll1.length <= coll2.length;
+
+  if (rtn) {
+    // This requires a deep-equals comparision of every object in coll1,
+    // against each object in coll2.
+    // Optimize by building a hashmap of JSON versions of the objects.
+    var c2Hash = {};
+
+    for (var p = 0, pLen = coll1.length; p < pLen && rtn; ++p) {
+      var obj1 = util.valData(coll1[p]);
+      var obj1Str = orderedJsonStringify(obj1);
+      var found = false;
+
+      if (p === 0) {
+        // c2Hash is not yet built
+        for (var i = 0, len = coll2.length; i < len; ++i) {
+          // No early return from this loop, because we're building c2Hash.
+          var obj2 = util.valData(coll2[i]);
+          var obj2Str = orderedJsonStringify(obj2);
+          c2Hash[obj2Str] = obj2;
+          found = found || obj1Str === obj2Str;
+        }
+      } else found = !!c2Hash[obj1Str];
+
+      rtn = found;
+    }
+  }
+
+  return rtn;
+}
+
+engine.subsetOfFn = function (coll1, coll2) {
+  return [subsetOf(coll1, coll2)];
+};
+
+engine.supersetOfFn = function (coll1, coll2) {
+  return [subsetOf(coll2, coll1)];
+};
+
+engine.isDistinctFn = function (x) {
+  return [x.length === engine.distinctFn(x).length];
+};
+
+engine.distinctFn = function (x) {
+  var unique = []; // Since this requires a deep equals, use a hash table (on JSON strings) for
+  // efficiency.
+
+  if (x.length > 0) {
+    var uniqueHash = {};
+
+    for (var i = 0, len = x.length; i < len; ++i) {
+      var xObj = x[i];
+      var xStr = JSON.stringify(xObj);
+      var uObj = uniqueHash[xStr];
+
+      if (uObj === undefined) {
+        unique.push(xObj);
+        uniqueHash[xStr] = xObj;
+      }
+    }
+  }
+
+  return unique;
+};
+
+engine.countFn = function (x) {
+  if (x && x.length) {
+    return x.length;
+  } else {
+    return 0;
+  }
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+// Contains the FHIRPath Filtering and Projection functions.  (Section 5.2 of
+// the FHIRPath 1.0.0 specification).
+
+/**
+ *  Adds the filtering and projection functions to the given FHIRPath engine.
+ */
+var util = __webpack_require__(55);
+
+var engine = {};
+
+engine.whereMacro = function (parentData, expr) {
+  if (parentData !== false && !parentData) {
+    return [];
+  }
+
+  return util.flatten(parentData.filter(function (x) {
+    return expr(x)[0];
+  }));
+};
+
+engine.selectMacro = function (data, expr) {
+  if (data !== false && !data) {
+    return [];
+  }
+
+  return util.flatten(data.map(function (x) {
+    return expr(x);
+  }));
+};
+
+engine.repeatMacro = function (parentData, expr) {
+  if (parentData !== false && !parentData) {
+    return [];
+  }
+
+  var res = [];
+  var items = parentData;
+  var next = null;
+  var lres = null;
+
+  while (items.length != 0) {
+    next = items.shift();
+    lres = expr(next);
+
+    if (lres) {
+      res = res.concat(lres);
+      items = items.concat(lres);
+    }
+  }
+
+  return res;
+}; //TODO: behavior on object?
+
+
+engine.singleFn = function (x) {
+  if (x.length == 1) {
+    return x;
+  } else if (x.length == 0) {
+    return [];
+  } else {
+    //TODO: should throw error?
+    return {
+      $status: "error",
+      $error: "Expected single"
+    };
+  }
+};
+
+engine.firstFn = function (x) {
+  return x[0];
+};
+
+engine.lastFn = function (x) {
+  return x[x.length - 1];
+};
+
+engine.tailFn = function (x) {
+  return x.slice(1, x.length);
+};
+
+engine.takeFn = function (x, n) {
+  return x.slice(0, n);
+};
+
+engine.skipFn = function (x, num) {
+  return x.slice(num, x.length);
+};
+
+function checkFHIRType(x, tp) {
+  if (_typeof(x) === tp) {
+    return true;
+  }
+
+  if (tp === "integer") {
+    return Number.isInteger(x);
+  }
+
+  if (tp === "decimal") {
+    return typeof x == "number";
+  }
+
+  return false;
+} // naive typeof implementation
+// understand only basic types like string, number etc
+
+
+engine.ofTypeFn = function (coll, type) {
+  return coll.filter(function (x) {
+    return checkFHIRType(util.valData(x), type);
+  });
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// This file holds code to hande the FHIRPath Combining functions.
+var combineFns = {};
+
+var existence = __webpack_require__(72);
+
+combineFns.unionOp = function (coll1, coll2) {
+  return existence.distinctFn(coll1.concat(coll2));
+};
+
+combineFns.combineFn = function (coll1, coll2) {
+  return coll1.concat(coll2);
+};
+
+module.exports = combineFns;
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// This file holds code to hande the FHIRPath Existence functions (5.1 in the
+// specification).
+var util = __webpack_require__(55);
+
+var types = __webpack_require__(56);
+
+var engine = {};
+
+engine.iifMacro = function (data, cond, ok, fail) {
+  if (util.isTrue(cond(data))) {
+    return ok(data);
+  } else {
+    return fail(data);
+  }
+};
+
+engine.traceFn = function (x, label) {
+  console.log("TRACE:[" + (label || "") + "]", JSON.stringify(x, null, " "));
+  return x;
+};
+
+var intRegex = /^[+-]?\d+$/;
+
+engine.toInteger = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+
+  if (v === false) {
+    return 0;
+  }
+
+  if (v === true) {
+    return 1;
+  }
+
+  if (typeof v === "number") {
+    if (Number.isInteger(v)) {
+      return v;
+    } else {
+      return [];
+    }
+  }
+
+  if (typeof v === "string") {
+    if (intRegex.test(v)) {
+      return parseInt(v);
+    } else {
+      throw new Error("Could not convert to ineger: " + v);
+    }
+  }
+
+  return [];
+};
+
+var numRegex = /^[+-]?\d+(\.\d+)?$/;
+
+engine.toDecimal = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+
+  if (v === false) {
+    return 0;
+  }
+
+  if (v === true) {
+    return 1.0;
+  }
+
+  if (typeof v === "number") {
+    return v;
+  }
+
+  if (typeof v === "string") {
+    if (numRegex.test(v)) {
+      return Number.parseFloat(v);
+    } else {
+      throw new Error("Could not convert to decimal: " + v);
+    }
+  }
+
+  return [];
+};
+
+engine.toString = function (coll) {
+  if (coll.length != 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+  return v.toString();
+};
+/**
+ *  Defines a function on engine called to+timeType (e.g., toDateTime, etc.).
+ * @param timeType The string name of a class for a time type (e.g. "FP_DateTime").
+ */
+
+
+function defineTimeConverter(timeType) {
+  var timeName = timeType.slice(3); // Remove 'FP_'
+
+  engine['to' + timeName] = function (coll) {
+    var rtn = [];
+    if (coll.length > 1) throw Error('to ' + timeName + ' called for a collection of length ' + coll.length);
+
+    if (coll.length === 1) {
+      var t = types[timeType].checkString(util.valData(coll[0]));
+      if (t) rtn[0] = t;
+    }
+
+    return rtn;
+  };
+}
+
+defineTimeConverter('FP_DateTime');
+defineTimeConverter('FP_Time');
+module.exports = engine;
+
+/***/ }),
 /* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19350,7 +19510,7 @@ var util = __webpack_require__(55);
 
 var deepEqual = __webpack_require__(77);
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
 var FP_Type = types.FP_Type;
 var FP_DateTime = types.FP_DateTime;
@@ -19412,8 +19572,8 @@ function typecheck(a, b) {
   var rtn = null;
   util.assertAtMostOne(a, "Singleton was expected");
   util.assertAtMostOne(b, "Singleton was expected");
-  a = a[0];
-  b = b[0];
+  a = util.valData(a[0]);
+  b = util.valData(b[0]);
   var lClass = a.constructor;
   var rClass = b.constructor;
 
@@ -19480,9 +19640,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
 var FP_Type = types.FP_Type;
+
+var util = __webpack_require__(55);
+
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
 
@@ -19553,6 +19716,8 @@ function roundToDecimalPlaces(x, n) {
 }
 
 var deepEqual = function deepEqual(actual, expected, opts) {
+  actual = util.valData(actual);
+  expected = util.valData(expected);
   if (!opts) opts = {}; // 7.1. All identical values are equivalent, as determined by ===.
 
   if (actual === expected) {
@@ -19777,26 +19942,29 @@ module.exports = engine;
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var FP_TimeBase = types.FP_TimeBase;
-var FP_Quantity = types.FP_Quantity;
+var FP_TimeBase = types.FP_TimeBase,
+    FP_Quantity = types.FP_Quantity;
+
+var util = __webpack_require__(55);
 /**
  *  Adds the math functions to the given FHIRPath engine.
  */
 
+
 var engine = {};
 
 function ensureNumberSingleton(x) {
-  if (typeof x != 'number') {
-    if (x.length == 1 && typeof x[0] == 'number') {
-      return x[0];
+  var d = util.valData(x);
+
+  if (typeof d !== 'number') {
+    if (d.length == 1 && typeof (d = util.valData(d[0])) === 'number') {
+      return d;
     } else {
-      throw new Error("Expected number, but got " + JSON.stringify(x));
+      throw new Error("Expected number, but got " + JSON.stringify(d || x));
     }
-  } else {
-    return x;
-  }
+  } else return d;
 }
 
 function isEmpty(x) {
@@ -19810,12 +19978,16 @@ function isEmpty(x) {
 engine.amp = function (x, y) {
   return (x || "") + (y || "");
 }; //HACK: for only polymorphic function
+//  Actually, "minus" is now also polymorphic
 
 
 engine.plus = function (xs, ys) {
   if (xs.length == 1 && ys.length == 1) {
-    var x = xs[0];
-    var y = ys[0];
+    var x = util.valData(xs[0]);
+    var y = util.valData(ys[0]); // In the future, this and other functions might need to return ResourceNode
+    // to preserve the type information (integer vs decimal, and maybe decimal
+    // vs string if decimals are represented as strings), in order to support
+    // "as" and "is", but that support is deferred for now.
 
     if (typeof x == "string" && typeof y == "string") {
       return x + y;
@@ -19830,11 +20002,18 @@ engine.plus = function (xs, ys) {
     }
   }
 
-  throw new Error("Can not " + JSON.stringify(xs) + " + " + JSON.stringify(ys));
+  throw new Error("Cannot " + JSON.stringify(xs) + " + " + JSON.stringify(ys));
 };
 
-engine.minus = function (x, y) {
-  return x - y;
+engine.minus = function (xs, ys) {
+  if (xs.length == 1 && ys.length == 1) {
+    var x = util.valData(xs[0]);
+    var y = util.valData(ys[0]);
+    if (typeof x == "number" && typeof y == "number") return x - y;
+    if (x instanceof FP_TimeBase && y instanceof FP_Quantity) return x.plus(new FP_Quantity(-y.value, y.unit));
+  }
+
+  throw new Error("Cannot " + JSON.stringify(xs) + " - " + JSON.stringify(ys));
 };
 
 engine.mul = function (x, y) {
@@ -19943,10 +20122,11 @@ engine.sqrt = function (x) {
   if (isEmpty(x)) {
     return [];
   } else {
-    if (x < 0) {
+    var num = ensureNumberSingleton(x);
+
+    if (num < 0) {
       return [];
     } else {
-      var num = ensureNumberSingleton(x);
       return Math.sqrt(num);
     }
   }
@@ -19965,16 +20145,20 @@ module.exports = engine;
 
 /***/ }),
 /* 80 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var util = __webpack_require__(55);
 
 var engine = {};
 
 function ensureStringSingleton(x) {
-  if (x.length == 1 && typeof x[0] === "string") {
-    return x[0];
+  var d;
+
+  if (x.length == 1 && typeof (d = util.valData(x[0])) === "string") {
+    return d;
   }
 
-  throw new Error('Expected string, but got ' + JSON.stringify(x));
+  throw new Error('Expected string, but got ' + JSON.stringify(d || x));
 }
 
 engine.indexOf = function (coll, substr) {
@@ -20028,24 +20212,42 @@ module.exports = engine;
 
 /***/ }),
 /* 81 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var util = __webpack_require__(55);
+
+var _require = __webpack_require__(56),
+    ResourceNode = _require.ResourceNode;
+
+var makeResNode = ResourceNode.makeResNode;
 var engine = {};
 
 engine.children = function (coll) {
-  return coll.reduce(function (acc, x) {
-    if (_typeof(x) === 'object') {
-      for (var prop in x) {
-        if (x.hasOwnProperty(prop)) {
-          var v = x[prop];
+  var model = this.model; // "this" is the context object
 
-          if (Array.isArray(v)) {
-            acc.push.apply(acc, v);
-          } else {
-            acc.push(v);
-          }
+  return coll.reduce(function (acc, x) {
+    var d = util.valData(x);
+    x = makeResNode(x);
+
+    if (_typeof(d) === 'object') {
+      for (var _i = 0, _Object$keys = Object.keys(d); _i < _Object$keys.length; _i++) {
+        var prop = _Object$keys[_i];
+        var v = d[prop];
+        var childPath = x.path + '.' + prop;
+
+        if (model) {
+          var defPath = model.pathsDefinedElsewhere[childPath];
+          if (defPath) childPath = defPath;
+        }
+
+        if (Array.isArray(v)) {
+          acc.push.apply(acc, v.map(function (n) {
+            return makeResNode(n, childPath);
+          }));
+        } else {
+          acc.push(makeResNode(v, childPath));
         }
       }
 
@@ -20057,12 +20259,13 @@ engine.children = function (coll) {
 };
 
 engine.descendants = function (coll) {
-  var ch = engine.children(coll);
+  var ch = engine.children.call(this, coll); // "this" is the context object
+
   var res = [];
 
   while (ch.length > 0) {
     res.push.apply(res, ch);
-    ch = engine.children(ch);
+    ch = engine.children.call(this, ch);
   }
 
   return res;
@@ -20076,9 +20279,9 @@ module.exports = engine;
 
 var engine = {};
 
-var types = __webpack_require__(62);
+var types = __webpack_require__(56);
 
-var constants = __webpack_require__(57);
+var constants = __webpack_require__(71);
 
 var FP_DateTime = types.FP_DateTime;
 /**
@@ -20207,6 +20410,40 @@ module.exports = engine;
 
 /***/ }),
 /* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ *  Exports the FHIR model data for R4.  This is an internal structure that
+ *  will likely evolve as more FHIR specific processing is added.
+ */
+module.exports = {
+  /**
+   *  A hash of resource element paths (e.g. Observation.value) that are known
+   *  to point to fiels that are choice types.
+   */
+  choiceTypePaths: __webpack_require__(85),
+
+  /**
+   *  A hash from paths to the path for which their content is defined, e.g.
+   *  Questionnaire.item.item -> Questionnaire.item.
+   */
+  pathsDefinedElsewhere: __webpack_require__(86)
+};
+
+/***/ }),
+/* 85 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Age\",\"Period\",\"Range\",\"Duration\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"String\"],\"AuditEvent.entity.detail.value\":[\"String\",\"Base64Binary\"],\"BiologicallyDerivedProduct.collection.collected\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.manipulation.time\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.processing.time\":[\"DateTime\",\"Period\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ChargeItem.product\":[\"Reference\",\"CodeableConcept\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Claim.supportingInfo.timing\":[\"Date\",\"Period\"],\"Claim.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ClaimResponse.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ClaimResponse.addItem.serviced\":[\"Date\",\"Period\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\",\"Decimal\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Canonical\"],\"ConceptMap.target\":[\"Uri\",\"Canonical\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\"],\"Contract.legallyBinding\":[\"Attachment\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.action.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Contract.term.asset.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.term.offer.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Contract.term.topic\":[\"CodeableConcept\",\"Reference\"],\"Contract.topic\":[\"CodeableConcept\",\"Reference\"],\"Coverage.costToBeneficiary.value\":[\"Quantity\",\"Money\"],\"CoverageEligibilityRequest.item.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"CoverageEligibilityRequest.serviced\":[\"Date\",\"Period\"],\"CoverageEligibilityResponse.insurance.item.benefit.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.insurance.item.benefit.used\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.serviced\":[\"Date\",\"Period\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DataRequirement.subject\":[\"CodeableConcept\",\"Reference\"],\"DetectedIssue.identified\":[\"DateTime\",\"Period\"],\"DeviceDefinition.manufacturer\":[\"String\",\"Reference\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.doseAndRate.dose\":[\"Range\",\"Quantity\"],\"Dosage.doseAndRate.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Canonical\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"EventDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"EvidenceVariable.characteristic.definition\":[\"Reference\",\"Canonical\",\"CodeableConcept\",\"Expression\",\"DataRequirement\",\"TriggerDefinition\"],\"EvidenceVariable.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.supportingInfo.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Ratio\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\",\"Reference\"],\"GuidanceResponse.module\":[\"Uri\",\"Canonical\",\"CodeableConcept\"],\"Immunization.occurrence\":[\"DateTime\",\"String\"],\"Immunization.protocolApplied.doseNumber\":[\"PositiveInt\",\"String\"],\"Immunization.protocolApplied.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImplementationGuide.definition.page.name\":[\"Url\",\"Reference\"],\"ImplementationGuide.definition.resource.example\":[\"Boolean\",\"Canonical\"],\"ImplementationGuide.manifest.resource.example\":[\"Boolean\",\"Canonical\"],\"Invoice.lineItem.chargeItem\":[\"Reference\",\"CodeableConcept\"],\"Library.subject\":[\"CodeableConcept\",\"Reference\"],\"Measure.subject\":[\"CodeableConcept\",\"Reference\"],\"Media.created\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.statusReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic\":[\"CodeableConcept\",\"Quantity\"],\"MedicationKnowledge.drugCharacteristic.value\":[\"CodeableConcept\",\"String\",\"Quantity\",\"Base64Binary\"],\"MedicationKnowledge.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.reported\":[\"Boolean\",\"Reference\"],\"MedicationRequest.substitution.allowed\":[\"Boolean\",\"CodeableConcept\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProduct.specialDesignation.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductAuthorization.procedure.date\":[\"Period\",\"DateTime\"],\"MedicinalProductContraindication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductIndication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductInteraction.interactant.item\":[\"Reference\",\"CodeableConcept\"],\"MessageDefinition.event\":[\"Coding\",\"Uri\"],\"MessageHeader.event\":[\"Coding\",\"Uri\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\",\"Timing\",\"Instant\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.definition\":[\"Canonical\",\"Uri\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.subject\":[\"CodeableConcept\",\"Reference\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"PlanDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"Population.age\":[\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\",\"String\",\"Age\",\"Range\"],\"Provenance.occurred\":[\"Period\",\"DateTime\"],\"Questionnaire.item.answerOption.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\",\"Reference\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"ResearchDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ResearchElementDefinition.characteristic.definition\":[\"CodeableConcept\",\"Canonical\",\"Expression\",\"DataRequirement\"],\"ResearchElementDefinition.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.characteristic.studyEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"ServiceRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ServiceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ServiceRequest.quantity\":[\"Quantity\",\"Ratio\",\"Range\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.collection.fastingStatus\":[\"CodeableConcept\",\"Duration\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"SpecimenDefinition.typeTested.container.additive.additive\":[\"CodeableConcept\",\"Reference\"],\"SpecimenDefinition.typeTested.container.minimumVolume\":[\"Quantity\",\"String\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SubstanceAmount.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceReferenceInformation.target.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceSpecification.moiety.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.definingSubstance\":[\"Reference\",\"CodeableConcept\"],\"SubstanceSpecification.relationship.amount\":[\"Quantity\",\"Range\",\"Ratio\",\"String\"],\"SubstanceSpecification.relationship.substance\":[\"Reference\",\"CodeableConcept\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.timing\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Reference\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\",\"DateTime\"]}");
+
+/***/ }),
+/* 86 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.operation\":\"CapabilityStatement.rest.resource.operation\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ChargeItemDefinition.propertyGroup.applicability\":\"ChargeItemDefinition.applicability\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Consent.provision.provision\":\"Consent.provision\",\"Contract.term.asset.answer\":\"Contract.term.offer.answer\",\"Contract.term.group\":\"Contract.term\",\"ExampleScenario.process.step.alternative.step\":\"ExampleScenario.process.step\",\"ExampleScenario.process.step.operation.request\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.operation.response\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.process\":\"ExampleScenario.process\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.definition.page.page\":\"ImplementationGuide.definition.page\",\"Invoice.totalPriceComponent\":\"Invoice.lineItem.priceComponent\",\"MedicinalProductAuthorization.procedure.application\":\"MedicinalProductAuthorization.procedure\",\"MedicinalProductIngredient.substance.strength\":\"MedicinalProductIngredient.specifiedSubstance.strength\",\"MedicinalProductPackaged.packageItem.packageItem\":\"MedicinalProductPackaged.packageItem\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"SubstanceSpecification.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"SubstanceSpecification.name.synonym\":\"SubstanceSpecification.name\",\"SubstanceSpecification.name.translation\":\"SubstanceSpecification.name\",\"SubstanceSpecification.structure.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
+
+/***/ }),
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20223,6 +20460,8 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
+var LForms = __webpack_require__(88);
+
 var dr = {
   // a prefix for references to Observation resources
   _OBX_REF_PREFIX: "Observation/",
@@ -20469,10 +20708,10 @@ var dr = {
       var drContent = this._createDiagnosticReportContent(formAndUserData, contained);
 
       dr = {
-        "resourceType": "DiagnosticReport",
-        "id": this._commonExport._getUniqueId(formAndUserData.code),
-        "status": "final",
-        "code": {
+        resourceType: "DiagnosticReport",
+        id: this._commonExport._getUniqueId(formAndUserData.code),
+        status: "final",
+        code: {
           "coding": [{
             "system": "http://loinc.org",
             "code": formAndUserData.code,
@@ -20480,9 +20719,12 @@ var dr = {
           }],
           "text": formAndUserData.name
         },
-        "result": drContent.result,
-        "contained": contained
+        result: drContent.result,
+        contained: contained
       };
+
+      this._commonExport._addVersionTag(dr);
+
       if (subject) dr.subject = LForms.Util.createLocalFHIRReference(subject); // obr data
 
       var extension = this._getExtensionData(formAndUserData);
@@ -20545,11 +20787,27 @@ var dr = {
 
       switch (dataType) {
         case "INT":
-        case "REAL":
-          item.value = obx.valueQuantity.value;
-          item.unit = {
-            name: obx.valueQuantity.code
-          };
+          if (obx.valueInteger) {
+            item.value = obx.valueInteger;
+            break;
+          }
+
+        // else handle as Quantity
+
+        case "REAL": // handle as Quantity
+
+        case "QTY":
+          var qty = obx.valueQuantity;
+          item.value = qty.value;
+          var unitName = qty.unit || qty.code;
+
+          if (unitName || qty.code || qty.system) {
+            item.unit = {};
+            if (unitName) item.unit.name = unitName;
+            if (qty.code) item.unit.code = qty.code;
+            if (qty.system) item.unit.system = qty.system;
+          }
+
           break;
 
         case "DT":
@@ -20874,8 +21132,13 @@ var dr = {
    * @returns {{}} an updated LForms form definition, with answer data
    */
   mergeDiagnosticReportToLForms: function mergeDiagnosticReportToLForms(formData, diagnosticReport) {
-    // get the default settings in case they are missing in the form data
-    var newFormData = new LForms.LFormsData(formData).getFormData();
+    if (!(formData instanceof LForms.LFormsData)) {
+      // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
+      formData = new LForms.LFormsData(formData).getFormData();
+    }
+
     var inBundle = diagnosticReport && diagnosticReport.resourceType === "Bundle"; // move Observation resources in Bundle to be in "contained" in DiagnosticReport resource
     // as a base data structure for converting
 
@@ -20883,34 +21146,97 @@ var dr = {
 
     var reportStructure = this._getReportStructure(dr);
 
-    this._processObxAndItem(reportStructure, newFormData, dr); // date
+    this._processObxAndItem(reportStructure, formData, dr); // date
 
 
-    if (dr.effectiveDateTime && newFormData.templateOptions.formHeaderItems) {
+    if (dr.effectiveDateTime && formData.templateOptions.formHeaderItems) {
       var whenDone = new LForms.Util.dateToString(dr.effectiveDateTime);
 
       if (whenDone) {
-        newFormData.templateOptions.formHeaderItems[0].value = whenDone;
+        formData.templateOptions.formHeaderItems[0].value = whenDone;
       }
     }
 
-    return newFormData;
+    return formData;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 85 */
+/* 88 */
+/***/ (function(module, exports) {
+
+module.exports = LForms;
+
+/***/ }),
+/* 89 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(90);
+// R4-specific export code common to DiagnosticReport and SDC.
+
+var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
+
+Object.assign(self, {
+  /**
+   *  Creates a structure for use by _createObservation() in constructing an
+   *  Observation value for the given integer value.
+   * @param item an LForms item with the integer value to be represented in an Observation.
+   *  It is assumed that the caller has already checked the data type.
+   * @return an object with a "key" property that will be the property name for
+   *  the value in the Observation object, and a "val" property that holds the
+   *  value (formatted for the Observation).
+   */
+  _createObsIntValue: function _createObsIntValue(item) {
+    // R4 added valueInteger to Observation, so we use that unless the item has
+    // a unit, in which case we use valueQuantity.
+    // valueQuantity.
+    var rtn;
+
+    if (item.unit) {
+      var quantity = {
+        value: item.value
+      };
+
+      this._setFHIRQuantityUnit(quantity, item.unit);
+
+      rtn = {
+        key: 'valueQuantity',
+        val: quantity
+      };
+    } else rtn = {
+      key: 'valueInteger',
+      val: item.value
+    };
+
+    return rtn;
+  }
+});
+/* harmony default export */ __webpack_exports__["default"] = (self);
+
+/***/ }),
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* jshint -W097 */
+// suppress jshint warning about strict
+
+/* jshint node: true */
+// suppress warning about "require"
 
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
+
+var LForms = __webpack_require__(88);
+
+var _versionTagStr = 'lformsVersion: ';
 /**
  *  Defines export functions that are the same across the different FHIR
  *  versions and that are used by both the SDC and DiagnosticReport exports.
@@ -20918,10 +21244,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 var self = {
   /**
-   * Create an Observation resource from an LForms item object
+   *  Creates Observation resources from an LForms item object
    * @param item an LForms item object
    * @param setId (optional) a flag indicating if a unique ID should be set on the Observation resource
-   * @returns {{}} an observation resource
+   * @returns {{}} an array of observation resources representing the values
+   *  stored in the item.
    * @private
    */
   _createObservation: function _createObservation(item, setId) {
@@ -20934,29 +21261,23 @@ var self = {
 
     switch (dataType) {
       case "INT":
-      case "REAL":
-        if (item.unit) {
-          var valValue = {
-            "value": item.value
-          };
+        values = [this._createObsIntValue(item)];
+        break;
 
-          if (item.unit) {
-            if (item.unit.name) valValue.unit = item.unit.name;
-            if (item.unit.code) valValue.code = item.unit.code;
-            if (item.unit.system) valValue.system = item.unit.system;
-          }
+      case "REAL": // A "real" data type should be exported as valueQuantity, because
+      // there is no valueDecimal for Observation (as of R4).
 
-          values = [{
-            key: "valueQuantity",
-            val: valValue
-          }];
-        } else {
-          values = [{
-            key: dataType == 'INT' ? "valueInteger" : "valueDecimal",
-            val: item.value
-          }];
-        }
+      case "QTY":
+        var valValue = {
+          value: item.value
+        };
 
+        this._setFHIRQuantityUnit(valValue, item.unit);
+
+        values = [{
+          key: "valueQuantity",
+          val: valValue
+        }];
         break;
 
       case "DT":
@@ -20992,7 +21313,7 @@ var self = {
             var coding = {};
             if (val.code) coding.code = val.code;
             if (val.text) coding.display = val.text;
-            var codeSystem = val.codeSystem;
+            var codeSystem = val.system;
             if (codeSystem) coding.system = LForms.Util.getCodeSystem(codeSystem);
             values.push({
               key: "valueCodeableConcept",
@@ -21032,6 +21353,8 @@ var self = {
         }
       };
 
+      this._addVersionTag(obx);
+
       if (setId) {
         obx.id = this._getUniqueId(item.questionCode);
       }
@@ -21055,16 +21378,79 @@ var self = {
   _getUniqueId: function _getUniqueId(prefix) {
     this._idCtr || (this._idCtr = 0);
     return prefix + "-" + Date.now() + '-' + ++this._idCtr + '-' + Math.random().toString(16).substr(2);
+  },
+
+  /**
+   *  Sets the unit for a Quantity.
+   * @param qty the FHIR Quantity structure whose unit will be set.  This
+   *  function assumes there is no unit information already set.
+   * @param unit An LForms unit object.
+   */
+  _setFHIRQuantityUnit: function _setFHIRQuantityUnit(qty, unit) {
+    if (unit) {
+      if (unit.name) qty.unit = unit.name;
+      if (unit.code) qty.code = unit.code;
+      if (unit.system) qty.system = unit.system;
+    }
+  },
+
+  /**
+   *  Returns and creates if necessary the tag array object on the resource.  If
+   *  created, the given resource will be modified.
+   * @param res the resource whose tag array is needed.
+   */
+  _resTags: function _resTags(res) {
+    var meta = res.meta;
+    if (!meta) meta = res.meta = {};
+    var tag = meta.tag;
+    if (!tag) tag = meta.tag = [];
+    return tag;
+  },
+
+  /**
+   *  Sets the LForms version tag on a FHIR resource to indicate the LForms version used to
+   *  export it.  This will replace any version tag already present.
+   * @param res the resource object to be tagged.
+   */
+  _setVersionTag: function _setVersionTag(res) {
+    var tags = this._resTags(res); // Delete any lformsVersion tag present.  There should be at most one
+
+
+    for (var i = 0, len = tags.length; i < len; ++i) {
+      var t = tags[i];
+
+      if (t.display && t.display.indexOf(_versionTagStr) === 0) {
+        tags.splice(i, 1);
+        break;
+      }
+    }
+
+    this._addVersionTag(res);
+  },
+
+  /**
+   *  Adds a tag to a FHIR resource to indicate the LForms version used to
+   *  export it.  Assumes the version tag does not already exist.
+   * @param res the resource object to be tagged.
+   */
+  _addVersionTag: function _addVersionTag(res) {
+    var tag = this._resTags(res);
+
+    tag.push({
+      display: _versionTagStr + LForms.lformsVersion
+    });
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 86 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -21152,17 +21538,24 @@ var self = {
   },
 
   /**
-   *  Processes FHIRPath and related item extensions (e.g. for pre-population
-   *  and extraction.)
-   *
+   *  Proceses the LForms questionCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
    */
-  _processFHIRPathExtensions: function _processFHIRPathExtensions(targetItem, item) {
-    if (item._initialExprExt) targetItem.extension.push(item._initialExprExt);
-    if (item._calculatedExprExt) targetItem.extension.push(item._calculatedExprExt);
-    if (item._obsLinkPeriodExt) targetItem.extension.push(item._obsLinkPeriodExt);
-    if (item._variableExt) Array.prototype.push.apply(targetItem.extension, item._variableExt);
+  _processQuestionCardinality: function _processQuestionCardinality(targetItem, item) {
+    if (item.questionCardinality) {
+      if (item.questionCardinality.max === "*") {
+        targetItem.repeats = true;
+      } else if (parseInt(item.questionCardinality.max) > 1) {
+        targetItem.repeats = true;
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "valueInteger": parseInt(item.questionCardinality.max)
+        });
+      }
+    } else {// No default in R4
+      // targetItem.repeats = false;
+    }
   },
 
   /**
@@ -21266,53 +21659,6 @@ var self = {
   },
 
   /**
-   * Process an item of the form
-   * @param item an item in LForms form object
-   * @param parentItem a parent item of the item
-   * @returns {{}}
-   * @private
-   */
-  _processResponseItem: function _processResponseItem(item, parentItem) {
-    var targetItem = {};
-    var linkId = item.linkId ? item.linkId : item._codePath; // if it is a section
-
-    if (item.dataType === "SECTION") {
-      // linkId
-      targetItem.linkId = linkId; // text
-
-      targetItem.text = item.question;
-
-      if (item.items && Array.isArray(item.items)) {
-        // header
-        targetItem.item = [];
-
-        for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-          if (!item.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(item.items[i], item);
-
-            targetItem.item.push(newItem);
-          }
-        }
-      }
-    } // if it is a question
-    else if (item.dataType !== "TITLE") {
-        // linkId
-        targetItem.linkId = linkId; // text
-
-        targetItem.text = item.question;
-
-        this._handleAnswerValues(targetItem, item, parentItem); // remove the processed values
-
-
-        if (parentItem._questionValues) {
-          delete parentItem._questionValues[linkId];
-        }
-      }
-
-    return targetItem;
-  },
-
-  /**
    *  Processes settings for a list field with choices.
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in the LForms form object
@@ -21372,8 +21718,8 @@ var self = {
       if (answer.code) option.valueCoding.code = answer.code;
       if (answer.text) option.valueCoding.display = answer.text;
 
-      if (answer.codeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
+      if (answer.system) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
       }
 
       optionArray.push(option);
@@ -21383,179 +21729,58 @@ var self = {
   },
 
   /**
-   * Group values of the questions that have the same linkId
-   * @param item an item in the LForms form object or a form item object
-   * @private
-   *
-   */
-  _processRepeatingItemValues: function _processRepeatingItemValues(item) {
-    if (item.items) {
-      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-        var subItem = item.items[i]; // if it is a section
-
-        if (subItem.dataType === 'SECTION') {
-          this._processRepeatingItemValues(subItem);
-        } // if it is a question and the it repeats
-        else if (subItem.dataType !== 'TITLE' && this._questionRepeats(subItem)) {
-            var linkId = subItem._codePath;
-
-            if (!item._questionValues) {
-              item._questionValues = {};
-            }
-
-            if (!item._questionValues[linkId]) {
-              item._questionValues[linkId] = [subItem.value];
-            } else {
-              item._questionValues[linkId].push(subItem.value);
-
-              subItem._repeatingItem = true; // the repeating items are to be ignored in later processes
-            }
-          }
-      }
-    }
-  },
-
-  /**
-   * Process capture user data
-   * @param targetItem an item in FHIR SDC QuestionnaireResponse object
-   * @param item an item in LForms form object
-   * @private
-   */
-  _handleAnswerValues: function _handleAnswerValues(targetItem, item, parentItem) {
-    // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
-    var answer = [];
-    var linkId = item._codePath;
-
-    var dataType = this._getAssumedDataTypeForExport(item); // value not processed by previous repeating items
-
-
-    if (dataType !== "SECTION" && dataType !== "TITLE") {
-      var valueKey = this._getValueKeyByDataType("value", item);
-
-      if (this._questionRepeats(item)) {
-        var values = parentItem._questionValues[linkId];
-      } else if (this._answerRepeats(item)) {
-        values = item.value;
-      } else {
-        values = [item.value];
-      }
-
-      for (var i = 0, iLen = values.length; i < iLen; i++) {
-        // for Coding
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          // for CWE, the value could be string if it is a user typed, not-on-list value
-          if (dataType === 'CWE' && typeof values[i] === 'string') {
-            if (values[i] !== '') {
-              answer.push({
-                "valueString": values[i]
-              });
-            }
-          } else if (!jQuery.isEmptyObject(values[i])) {
-            var oneAnswer = {};
-            var codeSystem = LForms.Util.getCodeSystem(values[i].codeSystem);
-            if (codeSystem) oneAnswer.system = codeSystem;
-            if (values[i].code) oneAnswer.code = values[i].code;
-            if (values[i].text) oneAnswer.display = values[i].text;
-            answer.push({
-              "valueCoding": oneAnswer
-            });
-          }
-        } // for Quantity,
-        // [{
-        //   // from Element: extension
-        //   "value" : <decimal>, // Numerical value (with implicit precision)
-        //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
-        //   "unit" : "<string>", // Unit representation
-        //   "system" : "<uri>", // Code System that defines coded unit form
-        //   "code" : "<code>" // Coded form of the unit
-        // }]
-        else if (dataType === "QTY") {
-            // for now, handling only simple quantities without the comparators.
-            var fhirQuantity = this._makeValueQuantity(values[i], item.unit);
-
-            if (fhirQuantity) {
-              answer.push({
-                valueQuantity: fhirQuantity
-              });
-            }
-          } // make a Quantity type if numeric values has a unit value
-          else if (item.unit && typeof values[i] !== 'undefined' && (dataType === "INT" || dataType === "REAL" || dataType === "ST")) {
-              var q = {
-                value: parseFloat(values[i])
-              };
-
-              self._setUnitAttributesToFhirQuantity(q, item.unit);
-
-              answer.push({
-                valueQuantity: q
-              });
-            } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-            else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-                var answerValue = {};
-                answerValue[valueKey] = typeof values[i] === 'undefined' ? null : values[i];
-                answer.push(answerValue);
-              } // no support for reference yet
-
-      }
-
-      targetItem.answer = answer;
-    }
-  },
-
-  /**
    * Process default values
    * @param targetItem an item in FHIR SDC Questionnaire object
    * @param item an item in LForms form object
    * @private
    */
   _handleInitialValues: function _handleInitialValues(targetItem, item) {
-    var answer = null; // dataType:
-    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-    // Attachment, Coding, Quantity, Reference(Resource)
-
-    if (item.defaultAnswer !== null && item.defaultAnswer !== undefined) {
-      targetItem.initial = [];
-
-      var dataType = this._getAssumedDataTypeForExport(item);
-
-      var valueKey = this._getValueKeyByDataType("value", item); // for Coding
+    if (item.defaultAnswer === null || item.defaultAnswer === undefined || item.defaultAnswer === '') {
+      return;
+    } // item.defaultAnswer could be an array of multiple default values or a single value
 
 
+    var defaultAnswers = this._answerRepeats(item) && Array.isArray(item.defaultAnswer) ? item.defaultAnswer : [item.defaultAnswer];
+
+    var dataType = this._getAssumedDataTypeForExport(item);
+
+    var valueKey = this._getValueKeyByDataType("value", item);
+
+    var answer = null;
+    targetItem.initial = []; // go through each default value and handle it based on the data type.
+
+    for (var i = 0, iLen = defaultAnswers.length; i < iLen; i++) {
+      // dataType:
+      // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+      // Attachment, Coding, Quantity, Reference(Resource)
+      // for Coding
       if (dataType === 'CWE' || dataType === 'CNE') {
-        var codeSystem = null,
-            coding = null; // item.defaultAnswer could be an array of multiple default values or a single value
+        // could be a code object or a string
+        if (_typeof(defaultAnswers[i]) === 'object') {
+          var coding = {
+            "code": defaultAnswers[i].code
+          };
 
-        var defaultAnswers = this._answerRepeats(item) && Array.isArray(item.defaultAnswer) ? item.defaultAnswer : [item.defaultAnswer]; // go through each default value, which could be a code object or a string
-
-        for (var i = 0, iLen = defaultAnswers.length; i < iLen; i++) {
-          if (_typeof(defaultAnswers[i]) === 'object') {
-            coding = {
-              "code": defaultAnswers[i].code
-            };
-
-            if (defaultAnswers[i].text !== undefined) {
-              coding.display = defaultAnswers[i].text;
-            } // code system
+          if (defaultAnswers[i].text !== undefined) {
+            coding.display = defaultAnswers[i].text;
+          } // code system
 
 
-            codeSystem = defaultAnswers[i].codeSystem || item.answerCodeSystem;
+          var codeSystem = defaultAnswers[i].system || item.answerCodeSystem;
 
-            if (codeSystem) {
-              coding.system = LForms.Util.getCodeSystem(codeSystem);
-            }
+          if (codeSystem) {
+            coding.system = LForms.Util.getCodeSystem(codeSystem);
+          }
 
-            answer = {};
-            answer[valueKey] = coding;
-            targetItem.initial.push(answer);
-          } // user typed answer that is not on the answer list.
-          else if (typeof defaultAnswers[i] === 'string') {
-              targetItem.initial.push({
-                "valueString": defaultAnswers[i]
-              });
-            }
-        }
+          answer = {};
+          answer[valueKey] = coding;
+          targetItem.initial.push(answer);
+        } // user typed answer that is not on the answer list.
+        else if (typeof defaultAnswers[i] === 'string') {
+            targetItem.initial.push({
+              "valueString": defaultAnswers[i]
+            });
+          }
       } // for Quantity,
       // [{
       //   // from Element: extension
@@ -21567,29 +21792,25 @@ var self = {
       // }]
       else if (dataType === 'QTY') {
           // for now, handling only simple quantities without the comparators.
-          if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-            for (var j = 0; j < item.defaultAnswer.length; j++) {
-              answer = {};
-              answer[valueKey] = this._makeQuantity(item.defaultAnswer[j], item.units);
-              targetItem.initial.push(answer);
-            }
-          } else {
-            answer = {};
-            answer[valueKey] = this._makeQuantity(item.defaultAnswer, item.units);
-            targetItem.initial.push(answer);
-          }
+          answer = {};
+          answer[valueKey] = this._makeQuantity(defaultAnswers[i], item.units);
+          targetItem.initial.push(answer);
         } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-            if (this._answerRepeats(item) && Array.isArray(item.defaultAnswer)) {
-              for (var k = 0; k < item.defaultAnswer.length; k++) {
-                answer = {};
-                answer[valueKey] = item.defaultAnswer[k];
-                targetItem.initial.push(answer);
-              }
+        else if (dataType === "INT" || dataType === "REAL" || dataType === "BL" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+            answer = {};
+            answer[valueKey] = defaultAnswers[i];
+            targetItem.initial.push(answer);
+          } else if (dataType === "DT" || dataType === "DTM") {
+            // transform to FHIR date/datetime format.
+            var dateValue = LForms.Util.stringToDate(defaultAnswers[i]);
+
+            if (dateValue) {
+              dateValue = dataType === "DTM" ? LForms.Util.dateToDTMString(dateValue) : LForms.Util.dateToDTStringISO(dateValue);
+              targetItem.initial.push(_defineProperty({}, valueKey, dateValue));
             } else {
-              answer = {};
-              answer[valueKey] = item.defaultAnswer;
-              targetItem.initial.push(answer);
+              // LForms.Util.stringToDate returns null on invalid string
+              // TODO: should save the errors or emitting events.
+              console.error(defaultAnswers[i] + ': Invalid date/datetime string as defaultAnswer for ' + item.questionCode);
             }
           } // no support for reference
 
@@ -21661,42 +21882,11 @@ var self = {
 
         var sourceItem = source._getSkipLogicSourceItem(item, condition.source);
 
-        var enableWhenRules = [{
-          "question": sourceItem.linkId
-        }]; // dataTypes:
-        // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
-        // Attachment, Coding, Quantity, Reference(Resource)
+        var enableWhenRules = self._createEnableWhenRulesForSkipLogicCondition(condition, sourceItem);
 
-        var valueKey = this._getValueKeyByDataType("answer", sourceItem);
-
-        var dataType = this._getAssumedDataTypeForExport(sourceItem); // for Coding
-        // multiple selections, item.value is an array
-        // NO support of multiple selections in FHIR SDC, just pick one
-
-
-        if (dataType === 'CWE' || dataType === 'CNE') {
-          if (condition.trigger.code) {
-            enableWhenRules[0][valueKey] = {
-              "code": condition.trigger.code
-            };
-          } else {
-            enableWhenRules[0][valueKey] = {
-              "code": "only 'code' attribute is supported"
-            };
-          }
-        } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
-        else if (dataType === "BL") {
-            enableWhenRules[0].operator = 'exists'; // Spec says exists implies answer is boolean, then 'exists' is redundant, isn't it?
-
-            enableWhenRules[0][valueKey] = condition.trigger.value;
-          } else if (dataType === "REAL" || dataType === "INT" || dataType === 'QTY' || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
-            enableWhenRules = this._createEnableWhenRulesForRangeAndValue(valueKey, condition, sourceItem);
-
-            if (enableWhenRules.length > 1) {
-              rangeFound = true;
-            }
-          } // add rule(s) to enableWhen
-
+        if (enableWhenRules.length > 1) {
+          rangeFound = true;
+        }
 
         enableWhen = enableWhen.concat(enableWhenRules);
       }
@@ -21705,7 +21895,7 @@ var self = {
         // TODO: Multiple skip logic conditons included with range specification is not supported with core FHIR.
         // Use SDC extensions with fhirpath expressions, but not all fhirpath functionality is
         // available yet. Revisit after implementation of variables, %resource etc. in fhirpath.
-        return;
+        throw new Error('Multiple skip logic conditons included with range specification is not supported yet.');
       }
 
       targetItem.enableWhen = enableWhen;
@@ -21721,7 +21911,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 87 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21759,14 +21949,10 @@ function addCommonSDCExportFns(ns) {
       this._setResponseFormLevelFields(target, source, noExtensions);
 
       if (source.items && Array.isArray(source.items)) {
-        target.item = [];
+        var tmp = this._processResponseItem(source, true);
 
-        for (var i = 0, iLen = source.items.length; i < iLen; i++) {
-          if (!source.items[i]._repeatingItem) {
-            var newItem = this._processResponseItem(source.items[i], source);
-
-            target.item.push(newItem);
-          }
+        if (tmp && tmp.item && tmp.item.length) {
+          target.item = tmp.item;
         }
       }
     } // FHIR doesn't allow null values, strip them out.
@@ -21774,6 +21960,9 @@ function addCommonSDCExportFns(ns) {
 
     LForms.Util.pruneNulls(target);
     if (subject) target["subject"] = LForms.Util.createLocalFHIRReference(subject);
+
+    this._commonExport._setVersionTag(target);
+
     return target;
   };
   /**
@@ -21812,7 +22001,22 @@ function addCommonSDCExportFns(ns) {
 
 
     LForms.Util.pruneNulls(target);
+
+    this._commonExport._setVersionTag(target);
+
     return target;
+  };
+  /**
+   * Get the linkId for the given item - this is to ensure that getting linkId for an item
+   * is done consistently.
+   * @param item the lforms item whose linkId is to be retrieved.
+   * @return the linkId for the item
+   * @private
+   */
+
+
+  self._getItemLinkId = function (item) {
+    return item.linkId || item._codePath;
   };
   /**
    * Process an item of the form
@@ -21838,18 +22042,19 @@ function addCommonSDCExportFns(ns) {
     targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
 
     if (targetItem.required) {
-      targetItem.extension.push({
-        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
-        "valueInteger": parseInt(item.questionCardinality.min)
-      });
+      var minOccurInt = parseInt(item.questionCardinality.min);
+
+      if (minOccurInt > 1) {
+        targetItem.extension.push({
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
+          "valueInteger": minOccurInt
+        });
+      }
     } // question/answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
 
 
-    this._processQuestionAndAnswerCardinality(targetItem, item); // Copied FHIRPath-related (pre-pop & extraction) extensions
-
-
-    this._processFHIRPathExtensions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    this._processQuestionAndAnswerCardinality(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
 
     this._handleItemControl(targetItem, item); // check restrictions
@@ -21867,7 +22072,7 @@ function addCommonSDCExportFns(ns) {
     } // linkId
 
 
-    targetItem.linkId = item.linkId ? item.linkId : item._codePath; // Text & prefix
+    targetItem.linkId = this._getItemLinkId(item); // Text & prefix
 
     targetItem.text = item.question;
 
@@ -21903,7 +22108,12 @@ function addCommonSDCExportFns(ns) {
 
     if (item.units) {
       this._handleLFormsUnits(targetItem, item);
-    }
+    } // data control
+
+
+    this._handleDataControl(targetItem, item);
+
+    this._handleExtensions(targetItem, item);
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -21963,7 +22173,7 @@ function addCommonSDCExportFns(ns) {
     return targetItem;
   };
   /**
-   *  Process the LForms questionCardinality and AnswerCardinality into FHIR.
+   * Process the LForms questionCardinality and AnswerCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
    */
@@ -22014,6 +22224,23 @@ function addCommonSDCExportFns(ns) {
     }
   };
   /**
+   * Process an item's data control
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in the LForms form object
+   * @returns {*}
+   * @private
+   */
+
+
+  self._handleDataControl = function (targetItem, item) {
+    if (item.dataControl) {
+      targetItem.extension.push({
+        "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
+        "valueString": JSON.stringify(item.dataControl)
+      });
+    }
+  };
+  /**
    * Remove repeating items in a form data object
    * @param source a LForms form data object
    * @private
@@ -22048,7 +22275,16 @@ function addCommonSDCExportFns(ns) {
 
     target.name = source.shortName; // computer friendly
 
-    target.title = source.name; // Handle extensions on title
+    target.title = source.name; // Handle variable extensions.
+
+    if (source._variableExt) {
+      if (!target.extension) {
+        target.extension = [];
+      }
+
+      target.extension = target.extension.concat(source._variableExt);
+    } // Handle extensions on title
+
 
     if (source.obj_title) target._title = source.obj_title;
     target.code = source.codeList; // resourceType
@@ -22148,13 +22384,15 @@ function addCommonSDCExportFns(ns) {
         "valueUrl": item.terminologyServer
       });
     }
-  },
+  };
   /**
    * Convert LForms data type to FHIR SDC data type
    * @param item an item in the LForms form object
    * @returns {string}
    * @private
    */
+
+
   self._getFhirDataType = function (item) {
     var dataType = this._getAssumedDataTypeForExport(item);
 
@@ -22176,6 +22414,7 @@ function addCommonSDCExportFns(ns) {
    * @returns {string} dataType - Data type in lforms
    * @private
    */
+
 
   self._getAssumedDataTypeForExport = function (item) {
     var dataType = item.dataType;
@@ -22314,39 +22553,80 @@ function addCommonSDCExportFns(ns) {
     return _defineProperty({
       url: fhirExtUrl
     }, valueKey, fhirValue);
-  };
+  }; // known source data types (besides CNE/CWE) in skip logic export handling,
+  // see _createEnableWhenRulesForSkipLogicCondition below
+
+
+  self._skipLogicValueDataTypes = ["BL", "REAL", "INT", 'QTY', "DT", "DTM", "TM", "ST", "TX", "URL"].reduce(function (map, type) {
+    map[type] = type;
+    return map;
+  }, {});
   /**
-   * A single condition in lforms translates to two enableWhen rules in core FHIR.
-   *
-   * @param answerKey - The answer[x] string
    * @param skipLogicCondition - Lforms skip logic condition object
    * @param sourceItem - Skip logic source item in lforms.
-   * @returns {Array} - Array of enableWhen rules (two of them)
+   * @return {Array} FHIR enableWhen array
    * @private
    */
 
+  self._createEnableWhenRulesForSkipLogicCondition = function (skipLogicCondition, sourceItem) {
+    // dataTypes:
+    // boolean, decimal, integer, date, dateTime, instant, time, string, uri,
+    // Attachment, Coding, Quantity, Reference(Resource)
+    var sourceDataType = this._getAssumedDataTypeForExport(sourceItem);
 
-  self._createEnableWhenRulesForRangeAndValue = function (answerKey, skipLogicCondition, sourceItem) {
-    var ret = [];
+    var sourceValueKey = this._getValueKeyByDataType("answer", sourceItem);
+
+    var enableWhenRules = []; // Per lforms spec, the trigger keys can be:
+    // exists, value, minExclusive, minInclusive, maxExclusive, maxInclusive
+
     Object.keys(skipLogicCondition.trigger).forEach(function (key) {
-      var rule = {
-        question: sourceItem.linkId,
-        operator: self._operatorMapping[key]
-      };
-      var answer = null;
+      var operator = self._operatorMapping[key];
+      var triggerValue = skipLogicCondition.trigger[key];
 
-      if (answerKey === 'answerQuantity') {
-        answer = self._makeQuantity(skipLogicCondition.trigger[key], sourceItem.units);
-      } else {
-        answer = skipLogicCondition.trigger[key];
+      if (!operator || triggerValue !== 0 && triggerValue !== false && !triggerValue) {
+        throw new Error('Invalid lforms skip logic trigger: ' + JSON.stringify(skipLogicCondition.trigger, null, 4));
       }
 
-      if (answer) {
-        rule[answerKey] = answer;
-        ret.push(rule);
-      }
+      var rule = null;
+
+      if (operator === 'exists') {
+        rule = {
+          answerBoolean: triggerValue
+        };
+      } // for Coding
+      // multiple selections, item.value is an array
+      // NO support of multiple selections in FHIR SDC, just pick one
+      else if (sourceDataType === 'CWE' || sourceDataType === 'CNE') {
+          var answerCoding = self._copyTriggerCoding(triggerValue, null, true);
+
+          if (!answerCoding) {
+            throw new Error('Invalid CNE/CWE trigger, key=' + key + '; value=' + triggerValue);
+          }
+
+          rule = {
+            answerCoding: answerCoding
+          };
+        } else if (sourceDataType && self._skipLogicValueDataTypes[sourceDataType]) {
+          var answer = triggerValue;
+
+          if (sourceValueKey === 'answerQuantity') {
+            answer = self._makeQuantity(answer, sourceItem.units);
+          }
+
+          if (answer === 0 || answer === false || answer) {
+            rule = _defineProperty({}, sourceValueKey, answer);
+          } else {
+            throw new Error('Invalid value for trigger ' + key + ': ' + triggerValue);
+          }
+        } else {
+          throw new Error('Unsupported data type for skip logic export: ' + sourceDataType);
+        }
+
+      rule.question = sourceItem.linkId;
+      rule.operator = operator;
+      enableWhenRules.push(rule);
     });
-    return ret;
+    return enableWhenRules;
   };
   /**
    * Set form level attribute
@@ -22443,27 +22723,237 @@ function addCommonSDCExportFns(ns) {
     return ret;
   };
   /**
-   * Set questionnaire-unitOption extensions using lforms units.
-   *
-   * @param targetFhirItem - FHIR Questionnaire item
-   * @param units - lforms units array
+   * Converting the given item's value to FHIR QuestionaireResponse.answer (an array).
+   * This is almost straightly refactored out of the original function self._handleAnswerValues.
+   * This function only looks at the item value itself and not its sub-items, if any.
+   * Here are the details for a single value's conversion (to an element in the returned answer array)
+   * - For item data type quantity (QTY), a valueQuantity answer element will be created IF
+   *   either (or both) item value or item unit is available.
+   * - For item data types boolean, decimal, integer, date, dateTime, instant, time, string, and url,
+   *   it will be converted to a FHIR value{TYPE} entry if the value is not null, not undefined, and not
+   *   an empty string.
+   * - For CNE and CWE, a valueCoding entry is created IF at least one of the item value's code, text, or system
+   *   is available
+   * - No answer entry will be created in all other cases, e.g., for types reference, title, section, attachment, etc.
+   * @param item the item whose value is to be converted
+   * @return the converted FHIR QuestionnaireResponse answer (an array), or null if the value is not converted -
+   *         see the function description above for more details.
    * @private
    */
 
 
-  self._setUnitOptions = function (targetFhirItem, units) {
-    for (var i = 0, iLen = units.length; i < iLen; i++) {
-      var unit = units[i];
-      var fhirUnitExt = {
-        "url": this.fhirExtUrlUnitOption,
-        "valueCoding": self._createFhirUnitCoding(unit)
-      };
+  self._lfItemValueToFhirAnswer = function (item) {
+    var dataType = this._getAssumedDataTypeForExport(item);
 
-      if (!targetFhirItem.extension) {
-        targetFhirItem.extension = [];
+    var values = this._answerRepeats(item) ? item.value : [item.value];
+    var answers = [];
+
+    for (var i = 0; i < values.length; ++i) {
+      var itemValue = values[i];
+
+      if (itemValue !== undefined && itemValue !== null && itemValue !== '') {
+        var answer = null; // for Coding
+
+        if (dataType === 'CWE' || dataType === 'CNE') {
+          // for CWE, the value could be string if it is a user typed, not-on-list value
+          if (dataType === 'CWE' && typeof itemValue === 'string') {
+            answer = {
+              "valueString": itemValue
+            };
+          } else if (!jQuery.isEmptyObject(itemValue)) {
+            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+
+            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+          }
+        } // for Quantity
+        else if (dataType === "QTY") {
+            // For now, handling only simple quantities without the comparators.
+            // [{
+            //   // from Element: extension
+            //   "value" : <decimal>, // Numerical value (with implicit precision)
+            //   "comparator" : "<code>", // < | <= | >= | > - how to understand the value
+            //   "unit" : "<string>", // Unit representation
+            //   "system" : "<uri>", // Code System that defines coded unit form
+            //   "code" : "<code>" // Coded form of the unit
+            // }]
+            answer = this._setIfHasValue(null, 'valueQuantity', this._makeValueQuantity(itemValue, item.unit));
+          } // for boolean, decimal, integer, date, dateTime, instant, time, string, uri
+          else if (dataType === "BL" || dataType === "REAL" || dataType === "INT" || dataType === "DT" || dataType === "DTM" || dataType === "TM" || dataType === "ST" || dataType === "TX" || dataType === "URL") {
+              var valueKey = this._getValueKeyByDataType("value", item);
+
+              answer = _defineProperty({}, valueKey, itemValue);
+            }
+
+        if (answer !== null) {
+          answers.push(answer);
+        }
+      }
+    }
+
+    return answers.length === 0 ? null : answers;
+  };
+  /**
+   * Check if an lform item has sub-items, that is, having an "items" field whose value is an array with non-zero length.
+   * @param item the item to be checked for the presense of sub-items.
+   * @return {*|boolean} true if the item has sub-items, false otherwise.
+   * @private
+   */
+
+
+  self._lfHasSubItems = function (item) {
+    return item && item.items && Array.isArray(item.items) && item.items.length > 0;
+  };
+  /**
+   * Process FHIR questionnaire extensions related conversions.
+   *
+   * @param targetItem an item in FHIR SDC Questionnaire object
+   * @param item an item in LForms form object
+   * @private
+   */
+
+
+  self._handleExtensions = function (targetItem, item) {
+    var extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      var _ext = item[extName];
+
+      if (_ext) {
+        if (Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        } else {
+          extension.push(_ext);
+        }
+      }
+    });
+
+    if (extension.length > 0) {
+      if (!targetItem.extension) {
+        targetItem.extension = [];
       }
 
-      targetFhirItem.extension.push(fhirUnitExt);
+      targetItem.extension.push.apply(targetItem.extension, extension);
+    }
+
+    targetItem.extension.push.apply(targetItem.extension, item.extension);
+  };
+  /**
+   * Process an item of the form or the form itself - if it's the form itself, the form-level
+   * properties will not be set here and will need to be managed outside of this function.
+   * If the lforms item is repeatable, this function handles one particular occurrence of the item.
+   * @param lfItem an item in LForms form object, or the form object itself
+   * @param isForm optional, default false. If true, the given item is the form object itself.
+   * @returns {{}} the converted FHIR item
+   * @private
+   */
+
+
+  self._processResponseItem = function (lfItem, isForm) {
+    if (isForm && typeof isForm !== 'boolean') {
+      // just in case some are invoking it the old way.
+      throw new Error('_processResponseItem function signature has been changed, please check/fix.');
+    }
+
+    var targetItem = isForm || lfItem.dataType === 'TITLE' ? {} : {
+      linkId: this._getItemLinkId(lfItem),
+      text: lfItem.question
+    }; // just handle/convert the current item's value, no-recursion to sub-items at this step.
+
+    if (!isForm && lfItem.dataType !== 'TITLE' && lfItem.dataType !== 'SECTION') {
+      this._setIfHasValue(targetItem, 'answer', this._lfItemValueToFhirAnswer(lfItem));
+    }
+
+    if (this._lfHasSubItems(lfItem)) {
+      var fhirItems = [];
+
+      for (var i = 0; i < lfItem.items.length; ++i) {
+        var lfSubItem = lfItem.items[i];
+
+        if (!lfSubItem._isProcessed) {
+          var linkId = this._getItemLinkId(lfSubItem);
+
+          var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
+
+          if (repeats) {
+            // Can only be questions here per _processRepeatingItemValues
+            var fhirItem = {
+              // one FHIR item for all repeats with the same linkId
+              linkId: linkId,
+              text: lfSubItem.question,
+              answer: []
+            };
+
+            for (var rpt = 0; rpt < repeats.length; ++rpt) {
+              var rptItem = repeats[rpt];
+
+              var tmpFhirItem = this._processResponseItem(rptItem);
+
+              if (tmpFhirItem.answer) {
+                // TODO: not sure how to handle cases when both (lforms) question and answer repeat.
+                // For now, just put all the answers from question and answer repeats into the answer (array).
+                Array.prototype.push.apply(fhirItem.answer, tmpFhirItem.answer);
+              }
+
+              rptItem._isProcessed = true;
+            }
+
+            fhirItems.push(fhirItem);
+            delete lfItem._repeatingItems[linkId]; // cleanup, no longer needed
+          } else {
+            var _fhirItem = this._processResponseItem(lfSubItem);
+
+            fhirItems.push(_fhirItem);
+          }
+        }
+
+        if (lfSubItem._isProcessed) {
+          delete lfSubItem._isProcessed; // cleanup, no longer needed
+        }
+      }
+
+      if (fhirItems.length > 0) {
+        if (!isForm && lfItem.dataType !== 'SECTION') {
+          // Question repeat is handled at the "parent level"; TODO: not sure how to handle answer repeat here,
+          // assuming it isn't possible for an item to have answer repeat and sub-items at the same time.
+          targetItem.answer = targetItem.answer || [];
+          targetItem.answer[0] = targetItem.answer[0] || {};
+          targetItem.answer[0].item = fhirItems;
+        } else {
+          targetItem.item = fhirItems;
+        }
+      }
+    }
+
+    return targetItem;
+  };
+  /**
+   * Group values of the questions that have the same linkId
+   * @param item an item in the LForms form object or a form item object
+   * @private
+   *
+   */
+
+
+  self._processRepeatingItemValues = function (item) {
+    if (item.items) {
+      for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+        var subItem = item.items[i]; // if it is a question and it repeats
+
+        if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
+          var linkId = this._getItemLinkId(subItem);
+
+          item._repeatingItems = item._repeatingItems || {};
+          item._repeatingItems[linkId] = item._repeatingItems[linkId] || [];
+
+          item._repeatingItems[linkId].push(subItem);
+        } // if it's a section or a question that has children items
+
+
+        if (this._lfHasSubItems(subItem)) {
+          this._processRepeatingItemValues(subItem);
+        }
+      }
     }
   };
 }
@@ -22471,7 +22961,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 88 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22490,7 +22980,6 @@ function addSDCImportFns(ns) {
 
   var self = ns; // FHIR extension urls
 
-  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
@@ -22550,6 +23039,8 @@ function addSDCImportFns(ns) {
 
     self._processDisplayControl(targetItem, qItem);
 
+    self._processDataControl(targetItem, qItem);
+
     self._processRestrictions(targetItem, qItem);
 
     self._processHiddenItem(targetItem, qItem);
@@ -22566,42 +23057,13 @@ function addSDCImportFns(ns) {
 
     self._processSkipLogic(targetItem, qItem, linkIdItemMap);
 
-    self._processCopiedItemExtensions(targetItem, qItem);
+    self._processExtensions(targetItem, qItem);
 
     self.copyFields(qItem, targetItem, self.itemLevelIgnoredFields);
 
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
-  }; // A map of FHIR extensions involving Expressions to the property names on
-  // which they will be stored in LFormsData, and a boolean indicating whether
-  // more than one extension of the type is permitted.
-
-
-  var copiedExtensions = {
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
-    "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false]
-  };
-  copiedExtensions[self.fhirExtVariable] = ["_variableExt", true];
-  var copiedExtURLs = Object.keys(copiedExtensions);
-  /**
-   *  Some extensions are simply copied over to the LForms data structure.
-   *  This copies those extensions from qItem to lfItem if they exist, and
-   *  LForms can support them.
-   * @param qItem an item from the Questionnaire resource
-   * @param lfItem an item from the LFormsData structure
-   */
-
-  self._processCopiedItemExtensions = function (lfItem, qItem) {
-    for (var i = 0, len = copiedExtURLs.length; i < len; ++i) {
-      var url = copiedExtURLs[i];
-      var extInfo = copiedExtensions[url];
-      var prop = extInfo[0],
-          multiple = extInfo[1];
-      var ext = LForms.Util.findObjectInArray(qItem.extension, 'url', url, 0, multiple);
-      if (ext && (!multiple || ext.length > 0)) lfItem[prop] = ext;
-    }
   };
   /**
    * Parse questionnaire object for skip logic information
@@ -22629,31 +23091,26 @@ function addSDCImportFns(ns) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
 
           var condition = {
-            source: source.questionCode
+            source: source.questionCode,
+            trigger: {}
           };
 
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
 
-          var opMapping = null;
+          var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
 
-          if (source.dataType === 'CWE' || source.dataType === 'CNE') {
-            condition.trigger = {
-              code: answer.code
-            };
+          if (!opMapping) {
+            throw new Error('Unable to map FHIR enableWhen operator: ' + qItem.enableWhen[i].operator);
+          }
+
+          if (opMapping === 'exists') {
+            condition.trigger.exists = answer; // boolean value here regardless of data type
+          } else if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger.value = self._copyTriggerCoding(answer, null, false);
           } else if (source.dataType === 'QTY') {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-
-            if (opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer.value;
-            }
+            condition.trigger[opMapping] = answer.value;
           } else {
-            opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
-
-            if (opMapping) {
-              condition.trigger = {};
-              condition.trigger[opMapping] = answer;
-            }
+            condition.trigger[opMapping] = answer;
           }
 
           lfItem.skipLogic.conditions.push(condition);
@@ -22780,7 +23237,7 @@ function addSDCImportFns(ns) {
             if (option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display; // TBD- Lforms has answer code system at item level, expects all options to have one code system!
 
             if (option[optionKey[0]].system !== undefined) {
-              answer.codeSystem = option[optionKey[0]].system;
+              answer.system = option[optionKey[0]].system;
             }
           } else {
             answer.text = option[optionKey[0]].toString();
@@ -22839,70 +23296,13 @@ function addSDCImportFns(ns) {
     if (vals.length > 0) this._processFHIRValues(lfItem, vals, true);
   };
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
 
 
-  self._processUnitList = function (lfItem, qItem) {
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-
-    if (unitOption && unitOption.length > 0) {
-      for (var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-
-    if (unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code); // If this unit is already in the list, set its default flag, otherwise create new
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    } else if (qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity && qItem.initial[0].valueQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initial[0].valueQuantity.unit);
-
-      if (lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      } else {
-        lformsDefaultUnit = {
-          name: qItem.initial[0].valueQuantity.unit,
-          code: qItem.initial[0].valueQuantity.code,
-          system: qItem.initial[0].valueQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if (lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-
-      lfItem.units = lformsUnits;
-    }
+  self.getFirstInitialQuantity = function (qItem) {
+    return qItem.initial && qItem.initial.length > 0 && qItem.initial[0].valueQuantity || null;
   };
   /**
    * Parse 'linkId' for the LForms questionCode of a 'display' item, which does not have a 'code'
@@ -22975,7 +23375,7 @@ function addSDCImportFns(ns) {
   self._processDataType = function (lfItem, qItem) {
     var type = self._getDataType(qItem);
 
-    if (type === 'SECTION' || type === 'TITLE') {
+    if (type === 'SECTION') {
       lfItem.header = true;
     }
 
@@ -23033,6 +23433,8 @@ function addSDCImportFns(ns) {
               }; // check observation instances in the sub level
 
               this._checkQRItems(qrItemInfo, repeatingItems[j]);
+
+              self._checkQRItemAnswerItems(qrItemInfo, repeatingItems[j]);
 
               qrItemsInfo.push(qrItemInfo);
             }
@@ -23176,6 +23578,13 @@ function addSDCImportFns(ns) {
         var qrValue = answer[0];
 
         switch (dataType) {
+          case "BL":
+            if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
+              item.value = qrValue.valueBoolean;
+            }
+
+            break;
+
           case "INT":
             if (qrValue.valueQuantity) {
               item.value = qrValue.valueQuantity.value;
@@ -23261,7 +23670,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 89 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23314,13 +23723,14 @@ function addCommonSDCFns(ns) {
     'minInclusive': '>=',
     'maxInclusive': '<=',
     'value': '=',
-    'not': '!=',
+    'notEqual': '!=',
     '>': 'minExclusive',
     '<': 'maxExclusive',
     '>=': 'minInclusive',
     '<=': 'maxInclusive',
     '=': 'value',
-    '!=': 'not'
+    '!=': 'notEqual',
+    'exists': 'exists'
   };
   /**
    * Check if a LForms item has repeating questions
@@ -23365,23 +23775,71 @@ function addCommonSDCFns(ns) {
 
 
   self.UCUM_URI = 'http://unitsofmeasure.org';
+  /**
+   * Set the given key/value to the object if the value is not undefined, not null, and not an empty string.
+   * @param obj the object to set the key/value on. It can be null/undefined, and if so, a new object will
+   *        be created and returned (only if the value is valid).
+   * @param key the key for the given value to be set to the given object, required.
+   * @param value the value to be set to the given object using the given key.
+   * @return if the input object is not null/undefined, it will be returned;
+   *         if the input object is null/undefined:
+   *         - return the given object as is if the value is invalid, or
+   *         - a newly created object with the given key/value set.
+   * @private
+   */
+
+  self._setIfHasValue = function (obj, key, value) {
+    if (value !== undefined && value !== null && value !== '') {
+      if (!obj) {
+        obj = {};
+      }
+
+      obj[key] = value;
+    }
+
+    return obj;
+  };
+  /**
+   * Copy between lforms trigger value coding and FHIR enableWhen valueCoding. It only copies 3 fields:
+   * code, system, and display/text (called "text" in lforms, "display" in FHIR)
+   * @param srcCoding the coding object to copy from
+   * @param dstCoding the coding object to copy to, may be null/undefined, and if null/undefined, a new object
+   *        will be created but only if the srcCoding has at least one of code, system, display/text
+   * @param lforms2Fhir The direction of copying, can be true or false. The direction matters because in lforms,
+   *        the text/display field is called "text", while in FHIR, it's called "display"
+   * @return the resulting dstCoding object.
+   * @private
+   */
+
+
+  self._copyTriggerCoding = function (srcCoding, dstCoding, lforms2Fhir) {
+    var srcTextField = lforms2Fhir ? 'text' : 'display';
+    var dstTextField = lforms2Fhir ? 'display' : 'text';
+    dstCoding = self._setIfHasValue(dstCoding, 'code', srcCoding.code);
+    dstCoding = self._setIfHasValue(dstCoding, 'system', srcCoding.system);
+    dstCoding = self._setIfHasValue(dstCoding, dstTextField, srcCoding[srcTextField]);
+    return dstCoding;
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 90 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+var LForms = __webpack_require__(88);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
  *  code, and adds additional functions to it.
  */
+
+
 function addCommonSDCImportFns(ns) {
   "use strict";
 
@@ -23394,18 +23852,27 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
-  self.fhirExtUrlRestrictionArray = ["http://hl7.org/fhir/StructureDefinition/minValue", "http://hl7.org/fhir/StructureDefinition/maxValue", "http://hl7.org/fhir/StructureDefinition/minLength", "http://hl7.org/fhir/StructureDefinition/regex"];
+  self.fhirExtUrlMinValue = "http://hl7.org/fhir/StructureDefinition/minValue";
+  self.fhirExtUrlMaxValue = "http://hl7.org/fhir/StructureDefinition/maxValue";
+  self.fhirExtUrlMinLength = "http://hl7.org/fhir/StructureDefinition/minLength";
+  self.fhirExtUrlRegex = "http://hl7.org/fhir/StructureDefinition/regex";
+  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
+  self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
+  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+
+  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl]);
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
   'date', 'version', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
   'subjectType', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];
-  self.itemLevelIgnoredFields = ['definition', 'prefix'];
+  self.itemLevelIgnoredFields = ['definition'];
   /**
    * Convert FHIR SQC Questionnaire to LForms definition
    *
@@ -23417,7 +23884,7 @@ function addCommonSDCImportFns(ns) {
     var target = null;
 
     if (fhirData) {
-      target = {};
+      target = LForms.Util.baseFormDef();
 
       self._processFormLevelFields(target, fhirData);
 
@@ -23473,11 +23940,7 @@ function addCommonSDCImportFns(ns) {
     if (codeAndSystemObj) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
-    } // form-level variables (really only R4+)
-
-
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url', self.fhirExtVariable, 0, true);
-    if (ext.length > 0) lfData._variableExt = ext;
+    }
   };
   /**
    *  Returns the number of sinificant digits in the number after, ignoring
@@ -23520,7 +23983,7 @@ function addCommonSDCImportFns(ns) {
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType]; // fhirValType is now the FHIR data type for a Questionnaire.  However,
     // where Questionnaire uses Coding, Observation uses CodeableConcept.
 
-    if (fhirValType == 'Coding') fhirValType = 'CodeableConcept';
+    if (fhirValType === 'Coding') fhirValType = 'CodeableConcept';
     if (fhirValType) val = obs['value' + fhirValType];
 
     if (!val && (lfDataType === 'REAL' || lfDataType === 'INT')) {
@@ -23583,7 +24046,9 @@ function addCommonSDCImportFns(ns) {
    *   Assigns FHIR values to an LForms item.
    *  @param lfItem the LForms item to receive the values from fhirVals
    *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
+   *   Complex types like Quantity should have _type set to the type, if
+   *   possible, or an attempt will be made to guess the FHIR type from the
+   *   lfItem's data type.
    *  @param setDefault if true, the default value in lfItem will be set instead
    *   of the value.
    */
@@ -23601,9 +24066,9 @@ function addCommonSDCImportFns(ns) {
       if (lfDataType === 'CWE' || lfDataType === 'CNE') {
         var codings = null;
 
-        if (fhirVal._type == 'CodeableConcept') {
+        if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
-        } else if (fhirVal._type == 'Coding') {
+        } else if (fhirVal._type === 'Coding' || _typeof(fhirVal) === 'object') {
           codings = [fhirVal];
         }
 
@@ -23622,9 +24087,9 @@ function addCommonSDCImportFns(ns) {
 
               for (var j = 0, jLen = itemAnswers.length; j < jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
+                var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
 
-                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) && coding.code == listAnswer.code) {
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) && (coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') && coding.code === listAnswer.code || coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') && coding.display === listAnswer.text)) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -23635,11 +24100,13 @@ function addCommonSDCImportFns(ns) {
         if (fhirVal.value !== undefined) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
         }
-      } else {
-        answer = fhirVal;
-      }
+      } // For date types, convert them to date objects, but only for values.
+      // If we're setting defaultAnswer, leave them as strings.
+      else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string') answer = new Date(fhirVal);else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string') answer = LForms.Util.stringToDTDateISO(fhirVal);else {
+          answer = fhirVal;
+        }
 
-      if (answer) answers.push(answer);
+      if (answer !== undefined) answers.push(answer);
     }
 
     if (isMultiple) {
@@ -23796,6 +24263,82 @@ function addCommonSDCImportFns(ns) {
     if (answerCardinality) lfItem.answerCardinality = answerCardinality;
   };
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processUnitList = function (lfItem, qItem) {
+    var lformsUnits = [];
+    var lformsDefaultUnit = null; // The questionnaire-unit extension is only for item.type = quantity
+
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+
+    if (unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Error('The extension ' + self.fhirExtUrlUnitOption + ' can only be used with type quantity.  Question "' + qItem.text + '" is of type ' + qItem.type);
+      }
+
+      for (var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    } // The questionnaire-unit extension is only for item.type = integer or decimal
+
+
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+
+    if (unit) {
+      if (qItem.type !== 'integer' && qItem.type !== 'decimal') {
+        throw new Error('The extension ' + self.fhirExtUrlUnit + ' can only be used with types integer or decimal.  Question "' + qItem.text + '" is of type ' + qItem.type);
+      }
+
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      var initialQ = this.getFirstInitialQuantity(qItem);
+
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+
+        if (lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        } else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if (lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+
+      lfItem.units = lformsUnits;
+    }
+  };
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -23817,6 +24360,7 @@ function addCommonSDCImportFns(ns) {
 
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+        // continue to drop-down case
 
         case 'drop-down':
           displayControl.answerLayout = {
@@ -23862,6 +24406,30 @@ function addCommonSDCImportFns(ns) {
         lfItem.displayControl = displayControl;
       }
     }
+  };
+  /**
+   * Parse questionnaire item for data control
+   *
+   * @param lfItem {object} - LForms item object to assign data control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+
+
+  self._processDataControl = function (lfItem, qItem) {
+    var dataControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlDataControl);
+
+    if (dataControlType && dataControlType.valueString) {
+      try {
+        var dataControl = JSON.parse(dataControlType.valueString);
+
+        if (dataControl) {
+          lfItem.dataControl = dataControl;
+        }
+      } catch (e) {
+        console.log("Invalid dataControl data!");
+      }
+    }
   }; // ---------------- QuestionnaireResponse Import ---------------
 
 
@@ -23876,6 +24444,8 @@ function addCommonSDCImportFns(ns) {
   qrImport.mergeQuestionnaireResponseToLForms = function (formData, qr) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
       formData = new LForms.LFormsData(formData).getFormData();
     } // The reference to _mergeQR below is here because this function gets copied to
     // the containing object to be a part of the public API.
@@ -23917,11 +24487,22 @@ function addCommonSDCImportFns(ns) {
                 var newQRItemInfo = angular.copy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+
+                if (qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[j]) {
+                  newQRItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[j]];
+                }
+
                 parentQRItemInfo.qrItemsInfo.splice(i + j, 0, newQRItemInfo);
               } // change the first qr item's answer too
 
 
               qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
+
+              if (qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[0]) {
+                qrItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[0]];
+              } else {
+                delete qrItemInfo.qrAnswersItemsInfo;
+              }
             }
           } // reset the total number of questions when it is the answers that repeats
           else if (ns._answerRepeats(defItem)) {
@@ -23937,7 +24518,18 @@ function addCommonSDCImportFns(ns) {
           var qrAnswer = qrItem.answer;
 
           if (qrAnswer && qrAnswer.length > 0) {
-            this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
+            this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item); // process item.answer.item, if applicable
+
+
+            if (qrItemInfo.qrAnswersItemsInfo) {
+              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CNE/CWE
+              // moreover, each answer has already got its own item above if question repeats
+              if (qrItemInfo.qrAnswersItemsInfo.length > 1) {
+                throw new Error('item.answer.item with item.answer.length > 1 is not yet supported');
+              }
+
+              this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
+            }
           }
         } // process items on the sub-level
 
@@ -24115,7 +24707,7 @@ function addCommonSDCImportFns(ns) {
         var answer = {
           code: vsItem.code,
           text: vsItem.display,
-          codeSystem: self._toLfCodeSystem(vsItem.system)
+          system: vsItem.system
         };
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
 
@@ -24185,13 +24777,15 @@ function addCommonSDCImportFns(ns) {
     }
 
     return terminologyServer;
-  },
+  };
   /**
    *  Returns the URL for performing a ValueSet expansion for the given item,
    *  if the given item has a terminology server and answerValueSet
    *  configured; otherwise it returns undefined.
    * @param item a question, title, or group in the form
    */
+
+
   self._getExpansionURL = function (item) {
     var rtn;
 
@@ -24209,6 +24803,7 @@ function addCommonSDCImportFns(ns) {
    * @return an array of promise objects which resolve when the answer valuesets
    * have been loaded and imported.
    */
+
 
   self.loadAnswerValueSets = function (lfData) {
     var _this = this;
@@ -24298,7 +24893,7 @@ function addCommonSDCImportFns(ns) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,
-        "codeSystem": qrItemValue.valueCoding.system
+        "system": qrItemValue.valueCoding.system
       };
     } // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
@@ -24379,18 +24974,90 @@ function addCommonSDCImportFns(ns) {
       }
     }
   };
+  /**
+   *  Copy extensions that haven't been handled before.
+   *
+   * @param lfItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   */
+
+
+  self._processExtensions = function (lfItem, qItem) {
+    var extensions = [];
+
+    if (Array.isArray(qItem.extension)) {
+      for (var i = 0; i < qItem.extension.length; i++) {
+        if (!self.handledExtensionSet.has(qItem.extension[i].url)) {
+          extensions.push(qItem.extension[i]);
+        }
+      }
+    }
+
+    if (extensions.length > 0) {
+      lfItem.extension = extensions;
+    }
+  };
+  /**
+   * If the given entity is an array, it will return the array length, return -1 otherwise.
+   * @param entity the given entity (can be anything) that needs to be tested to see if it's an array
+   * @return {number} the array length or -1 if the given entity is not an array.
+   * @private
+   */
+
+
+  self._arrayLen = function (entity) {
+    return entity && Array.isArray(entity) ? entity.length : -1;
+  };
+  /**
+   * Get structural info of a QuestionnaireResponse item.answer.item in a way similar to that of item.item.
+   * If any answer entry in item.answer has items, the qrItemInfo.qrAnswersItemsInfo will be assigned, which
+   * will be an array where each element corresponds to one answer element in item.answer. When an answer entry
+   * does not have any items, null will be used to fill the position.
+   * @param qrItemInfo the structural info of the given item
+   * @param item the item in a QuestionnaireResponse object whose answer.item structure is to be created.
+   * @private
+   */
+
+
+  self._checkQRItemAnswerItems = function (qrItemInfo, item) {
+    var answerLen = self._arrayLen(item.answer);
+
+    if (answerLen < 1) {
+      return;
+    }
+
+    var numAnswersWithItems = 0;
+    var answersItemsInfo = []; // one entry for each answer; each entry is an qrItemsInfo array for the answer.item
+
+    for (var i = 0; i < answerLen; i++) {
+      if (this._arrayLen(item.answer[i].item) > 0) {
+        answersItemsInfo.push({});
+
+        self._mergeQR._checkQRItems(answersItemsInfo[i], item.answer[i]);
+
+        ++numAnswersWithItems;
+      } else {
+        answersItemsInfo.push(null);
+      }
+    }
+
+    if (numAnswersWithItems > 0) {
+      qrItemInfo.numAnswersWithItems = numAnswersWithItems;
+      qrItemInfo.qrAnswersItemsInfo = answersItemsInfo;
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 91 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(92);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -24416,7 +25083,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 92 */
+/* 97 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -13,9 +13,11 @@
   LForms.ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
     this._fhir = LForms.FHIR[lfData.fhirVersion];
+    this._compiledExpressions = {};
   };
 
   LForms.ExpressionProcessor.prototype = {
+
 
 
     /**
@@ -34,6 +36,7 @@
       }
       var firstRun = true;
       var changed = true;
+      var start = new Date();
       while (changed) {
         if (changed || firstRun) {
           this._regenerateQuestionnaireResp();
@@ -43,6 +46,7 @@
           changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
         firstRun = false;
       }
+      console.log("Ran FHIRPath expressions in "+(new Date()-start)+" ms");
     },
 
 
@@ -183,8 +187,12 @@
           fVars[k] = itemVars[k];
         let fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] :
           this._lfData._fhirVariables.resource;
-        fhirPathVal = this._fhir.fhirpath.evaluate(fhirContext,
-          expression, fVars);
+        var compiledExpr = this._compiledExpressions[expression];
+        if (!compiledExpr) {
+          compiledExpr = this._compiledExpressions[expression] =
+            this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
+        }
+        fhirPathVal = compiledExpr(fhirContext, fVars);
       }
       catch (e) {
         // Sometimes an expression will rely on data that hasn't been filled in
@@ -295,16 +303,8 @@
         fhirPathVal = fhirPathRes[0];
       if (fhirPathVal === null || fhirPathVal === undefined)
         item.value = undefined;
-      else {
-        if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DTM) {
-          item.value = new Date(fhirPathVal);
-        }
-        else if (item.dataType === this._lfData._CONSTANTS.DATA_TYPE.DT) {
-          item.value = LForms.Util.stringToDTDateISO(fhirPathVal);
-        }
-        else
-          item.value = fhirPathVal; // TBD: handle other types - Coding, etc.
-      }
+      else
+        this._fhir.SDC._processFHIRValues(item, fhirPathRes);
       return oldVal != item.value;
     }
   };

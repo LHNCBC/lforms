@@ -7,9 +7,10 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: LOINC_URI
 }
 fhir.fhirpath = require('fhirpath');
+fhir.fhirpathModel = require('fhirpath/fhir-context/stu3');
 import dr from '../diagnostic-report.js';
 fhir.DiagnosticReport = dr;
-import commonExport from '../export-common.js';
+import commonExport from './export.js';
 fhir.DiagnosticReport._commonExport = commonExport;
 import fhir_sdc from './sdc-export.js';
 fhir.SDC = fhir_sdc;

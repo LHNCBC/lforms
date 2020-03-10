@@ -11,6 +11,72 @@ describe('skip logic', function() {
     expect(ff.t5.isPresent()).toBeFalsy();
   });
 
+  it('should have correct initial state for CNE/exists trigger targets', function() {
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeTruthy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answered Yes', function() {
+    // select "Yes" for is Living
+    ff.cneTriggerSrc1.click();
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes.isDisplayed()).toBe(true);
+    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy(); // trigger value has no 'system' while answers have 'system'
+    expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answered No', function() {
+    // select "No" for is Living
+    ff.cneTriggerSrc1.click();
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc1.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy(); // trigger value has no 'system' while answers have 'system'
+    expect(ff.ageIfLivingAnswered.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNo.isDisplayed()).toBe(true);
+    expect(ff.ageDeathIfLivingNotAnswered.isPresent()).toBeFalsy();
+  });
+
+  it('should show/hide elements per CNE/exists trigger settings if answer cleared', function() {
+    // clear the answer to Living
+    ff.cneTriggerSrc1.clear();
+
+    expect(ff.dobIfLivingYes.isPresent()).toBeFalsy();
+    expect(ff.dobIfLivingYesB.isPresent()).toBeFalsy();
+    expect(ff.ageIfLivingAnswered.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNo.isPresent()).toBeFalsy();
+    expect(ff.ageDeathIfLivingNotAnswered.isDisplayed()).toBe(true);
+  });
+
+  it('should show/hide elements when "system" value is set correctly in trigger if answered Yes', function() {
+    // clear the answer to Living
+    ff.cneTriggerSrc2.click();
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
+    expect(ff.dobIfLivingYes2D.isDisplayed()).toBe(true);
+    expect(ff.deathCauseIfLivingNoB.isPresent()).toBeFalsy();
+
+    ff.cneTriggerSrc2.click();
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.ARROW_DOWN);
+    ff.cneTriggerSrc2.sendKeys(protractor.Key.TAB);
+
+    expect(ff.dobIfLivingYes2C.isPresent()).toBeFalsy(); // trigger value has 'system' while answers have no 'system'
+    expect(ff.dobIfLivingYes2D.isPresent()).toBeFalsy();
+    expect(ff.deathCauseIfLivingNoB.isDisplayed()).toBe(true);
+
+  });
+
   it('should show a sibling and two items in a sibling section', function() {
     ff.src.sendKeys('1');
     expect(ff.t1.isDisplayed()).toBe(true);
@@ -29,6 +95,16 @@ describe('skip logic', function() {
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
+  });
+
+  it('should show/hide a sibling controlled by "notEqual"', function() {
+    ff.src.clear();
+    expect(ff.t6.isDisplayed()).toBe(true);
+    ff.src.sendKeys('2');
+    expect(ff.t6.isPresent()).toBeFalsy();
+    ff.src.clear();
+    ff.src.sendKeys('6');
+    expect(ff.t6.isDisplayed()).toBe(true);
   });
 
   it('should show another sibling and hide two items in a sibling section', function() {

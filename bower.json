@@ -1,15 +1,15 @@
 {
   "name": "lforms",
-  "version": "18.2.2",
+  "version": "21.2.2",
   "dependencies": {
     "jquery-ui": "^1.12.1",
-    "angular": "^1.4.7",
-    "angular-animate": "^1.4.7",
+    "angular": "^1.7.9",
+    "angular-animate": "^1.7.9",
     "angular-bootstrap": "^1.1.0",
-    "bootstrap": "^3.3.5",
+    "bootstrap": "^3.4.1",
     "ngSmoothScroll": "^2.0.0",
-    "element-resize-detector": "^1.1.11",
-    "bootstrap-ui-datetime-picker": "^2.6.3",
+    "element-resize-detector": "^1.1.15",
+    "bootstrap-ui-datetime-picker": "^2.6.4",
     "autocomplete-lhc": "^18.1.1",
     "ucum-lhc": "^3.0.0",
     "moment": "^2.24.0"

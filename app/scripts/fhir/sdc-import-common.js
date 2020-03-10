@@ -1,3 +1,5 @@
+var LForms = require('../lforms-index');
+
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -16,16 +18,44 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlUnitOption = "http://hl7.org/fhir/StructureDefinition/questionnaire-unitOption";
   self.fhirExtUrlOptionPrefix = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionPrefix";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
-  self.fhirExtUrlRestrictionArray = [
-    "http://hl7.org/fhir/StructureDefinition/minValue",
-    "http://hl7.org/fhir/StructureDefinition/maxValue",
-    "http://hl7.org/fhir/StructureDefinition/minLength",
-    "http://hl7.org/fhir/StructureDefinition/regex"
-  ];
+  self.fhirExtUrlMinValue = "http://hl7.org/fhir/StructureDefinition/minValue";
+  self.fhirExtUrlMaxValue = "http://hl7.org/fhir/StructureDefinition/maxValue";
+  self.fhirExtUrlMinLength = "http://hl7.org/fhir/StructureDefinition/minLength";
+  self.fhirExtUrlRegex = "http://hl7.org/fhir/StructureDefinition/regex";
+  self.fhirExtUrlAnswerRepeats = "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats";
   self.fhirExtUrlExternallyDefined = "http://hl7.org/fhir/StructureDefinition/questionnaire-externallydefined";
   self.argonautExtUrlExtensionScore = "http://fhir.org/guides/argonaut-questionnaire/StructureDefinition/extension-score";
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
+  self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
+
+  self.fhirExtUrlRestrictionArray = [
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex
+  ];
+
+  // One way or the other, the following extensions are converted to lforms internal fields.
+  // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
+  self.handledExtensionSet = new Set([
+    self.fhirExtUrlCardinalityMin,
+    self.fhirExtUrlCardinalityMax,
+    self.fhirExtUrlItemControl,
+    self.fhirExtUrlUnit,
+    self.fhirExtUrlUnitOption,
+    self.fhirExtUrlOptionPrefix,
+    self.fhirExtUrlMinValue,
+    self.fhirExtUrlMaxValue,
+    self.fhirExtUrlMinLength,
+    self.fhirExtUrlRegex,
+    self.fhirExtUrlAnswerRepeats,
+    self.fhirExtUrlExternallyDefined,
+    self.argonautExtUrlExtensionScore,
+    self.fhirExtUrlHidden,
+    self.fhirExtTerminologyServer,
+    self.fhirExtUrlDataControl
+  ]);
 
   self.formLevelFields = [
     // Resource
@@ -66,8 +96,7 @@ function addCommonSDCImportFns(ns) {
   ];
 
   self.itemLevelIgnoredFields = [
-    'definition',
-    'prefix'
+    'definition'
   ];
 
   /**
@@ -80,7 +109,7 @@ function addCommonSDCImportFns(ns) {
     var target = null;
 
     if(fhirData) {
-      target = {};
+      target = LForms.Util.baseFormDef();
       self._processFormLevelFields(target, fhirData);
       var containedVS = self._extractContainedVS(fhirData);
 
@@ -95,7 +124,6 @@ function addCommonSDCImportFns(ns) {
       }
       target.fhirVersion = self.fhirVersion;
     }
-
     return target;
   };
 
@@ -132,12 +160,6 @@ function addCommonSDCImportFns(ns) {
       lfData.code = codeAndSystemObj.code;
       lfData.codeSystem = codeAndSystemObj.system;
     }
-
-    // form-level variables (really only R4+)
-    var ext = LForms.Util.findObjectInArray(questionnaire.extension, 'url',
-      self.fhirExtVariable, 0, true);
-    if (ext.length > 0)
-      lfData._variableExt = ext;
   };
 
 
@@ -159,7 +181,7 @@ function addCommonSDCImportFns(ns) {
     var fraction = match[2];
     //var exponent = match[3];
     return wholeNum === '0' ? 0 : wholeNum.length + (fraction ? fraction.length : 0);
-  }
+  };
 
 
   /**
@@ -177,7 +199,7 @@ function addCommonSDCImportFns(ns) {
     var fhirValType = this._lformsTypesToFHIRFields[lfDataType];
     // fhirValType is now the FHIR data type for a Questionnaire.  However,
     // where Questionnaire uses Coding, Observation uses CodeableConcept.
-    if (fhirValType == 'Coding')
+    if (fhirValType === 'Coding')
       fhirValType = 'CodeableConcept';
     if (fhirValType)
       val = obs['value'+fhirValType];
@@ -185,7 +207,7 @@ function addCommonSDCImportFns(ns) {
       // Accept initial value of type Quantity for these types.
       val = obs.valueQuantity;
       if (val)
-        val._type = 'Quantity'
+        val._type = 'Quantity';
     }
 
     if (val) {
@@ -246,7 +268,9 @@ function addCommonSDCImportFns(ns) {
    *   Assigns FHIR values to an LForms item.
    *  @param lfItem the LForms item to receive the values from fhirVals
    *  @param fhirVals an array of FHIR values (e.g.  Quantity, Coding, string, etc.).
-   *   Complex types like Quantity should have _type set to the type.
+   *   Complex types like Quantity should have _type set to the type, if
+   *   possible, or an attempt will be made to guess the FHIR type from the
+   *   lfItem's data type.
    *  @param setDefault if true, the default value in lfItem will be set instead
    *   of the value.
    */
@@ -259,10 +283,10 @@ function addCommonSDCImportFns(ns) {
       var answer = null;
       if (lfDataType === 'CWE' || lfDataType === 'CNE' ) {
         var codings = null;
-        if (fhirVal._type == 'CodeableConcept') {
+        if (fhirVal._type === 'CodeableConcept') {
           codings = fhirVal.coding;
         }
-        else if (fhirVal._type == 'Coding') {
+        else if (fhirVal._type === 'Coding' || typeof fhirVal === 'object') {
           codings = [fhirVal];
         }
         if (!codings) {
@@ -279,9 +303,12 @@ function addCommonSDCImportFns(ns) {
               var coding = codings[k];
               for (var j=0, jLen=itemAnswers.length; j<jLen && !answer; ++j) {
                 var listAnswer = itemAnswers[j];
-                var listAnswerSystem = listAnswer.codeSystem ? LForms.Util.getCodeSystem(listAnswer.codeSystem) : null;
-                if ((!coding.system && !listAnswerSystem || coding.system == listAnswerSystem) &&
-                    coding.code == listAnswer.code) {
+                var listAnswerSystem = listAnswer.system ? LForms.Util.getCodeSystem(listAnswer.system) : null;
+                if ((!coding.system && !listAnswerSystem || coding.system === listAnswerSystem) &&
+                    ((coding.hasOwnProperty('code') && listAnswer.hasOwnProperty('code') &&
+                      coding.code===listAnswer.code) ||
+                     (coding.hasOwnProperty('display') && listAnswer.hasOwnProperty('text') &&
+                      coding.display === listAnswer.text))) {
                   answer = itemAnswers[j]; // include label in answer text
                 }
               }
@@ -295,10 +322,16 @@ function addCommonSDCImportFns(ns) {
           answer = fhirVal.value; // Associated unit is parsed in _processUnitLists
         }
       }
+      // For date types, convert them to date objects, but only for values.
+      // If we're setting defaultAnswer, leave them as strings.
+      else if (!setDefault && lfItem.dataType === 'DTM' && typeof fhirVal === 'string')
+        answer = new Date(fhirVal);
+      else if (!setDefault && lfItem.dataType === 'DT' && typeof fhirVal === 'string')
+        answer = LForms.Util.stringToDTDateISO(fhirVal);
       else {
         answer = fhirVal;
       }
-      if (answer)
+      if (answer !== undefined)
         answers.push(answer);
     }
     if (isMultiple) {
@@ -388,7 +421,7 @@ function addCommonSDCImportFns(ns) {
     // use linkId as questionCode, which should not be exported as code
     else {
       lfItem.questionCode = qItem.linkId;
-      lfItem.questionCodeSystem = "LinkId"
+      lfItem.questionCodeSystem = "LinkId";
     }
 
     lfItem.linkId = qItem.linkId;
@@ -450,6 +483,81 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
+   * Parse questionnaire item for units list
+   *
+   * @param lfItem {object} - LForms item object to assign units
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processUnitList = function (lfItem, qItem) {
+
+    var lformsUnits = [];
+    var lformsDefaultUnit = null;
+    // The questionnaire-unit extension is only for item.type = quantity
+    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
+    if(unitOption && unitOption.length > 0) {
+      if (qItem.type !== 'quantity') {
+        throw new Error('The extension '+self.fhirExtUrlUnitOption+
+          ' can only be used with type quantity.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
+      }
+      for(var i = 0; i < unitOption.length; i++) {
+        var coding = unitOption[i].valueCoding;
+        var lUnit = {
+          name: coding.display,
+          code: coding.code,
+          system: coding.system
+        };
+        lformsUnits.push(lUnit);
+      }
+    }
+
+    // The questionnaire-unit extension is only for item.type = integer or decimal
+    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
+    if (unit) {
+      if (qItem.type !== 'integer' && qItem.type !== 'decimal') {
+        throw new Error('The extension '+self.fhirExtUrlUnit+
+          ' can only be used with types integer or decimal.  Question "'+
+          qItem.text+'" is of type '+qItem.type);
+      }
+      lformsDefaultUnit = {
+        name: unit.valueCoding.display,
+        code: unit.valueCoding.code,
+        system: unit.valueCoding.system,
+        default: true
+      };
+      lformsUnits.push(lformsDefaultUnit);
+    }
+
+    if (qItem.type === 'quantity') {
+      let initialQ = this.getFirstInitialQuantity(qItem);
+      if (initialQ && initialQ.unit) {
+        lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', initialQ.unit);
+        if(lformsDefaultUnit) {
+          lformsDefaultUnit.default = true;
+        }
+        else {
+          lformsDefaultUnit = {
+            name: initialQ.unit,
+            code: initialQ.code,
+            system: initialQ.system,
+            default: true
+          };
+          lformsUnits.push(lformsDefaultUnit);
+        }
+      }
+    }
+
+    if(lformsUnits.length > 0) {
+      if (!lformsDefaultUnit) {
+        lformsUnits[0].default = true;
+      }
+      lfItem.units = lformsUnits;
+    }
+  };
+
+
+  /**
    * Parse questionnaire item for display control
    *
    * @param lfItem {object} - LForms item object to assign display control
@@ -466,6 +574,7 @@ function addCommonSDCImportFns(ns) {
         case 'Combo-box': // backward-compatibility with old export
         case 'autocomplete':
           lfItem.isSearchAutocomplete = true;
+          // continue to drop-down case
         case 'drop-down':
           displayControl.answerLayout = {type: 'COMBO_BOX'};
           break;
@@ -498,6 +607,30 @@ function addCommonSDCImportFns(ns) {
   };
 
 
+  /**
+   * Parse questionnaire item for data control
+   *
+   * @param lfItem {object} - LForms item object to assign data control
+   * @param qItem {object} - Questionnaire item object
+   * @private
+   */
+  self._processDataControl = function (lfItem, qItem) {
+    var dataControlType = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlDataControl);
+
+    if(dataControlType && dataControlType.valueString) {
+      try {
+        var dataControl = JSON.parse(dataControlType.valueString);
+        if (dataControl) {
+          lfItem.dataControl = dataControl;
+        }
+      }
+      catch(e){
+        console.log("Invalid dataControl data!");
+      }
+    }
+  };
+
+
   // ---------------- QuestionnaireResponse Import ---------------
 
   var qrImport = self._mergeQR;
@@ -511,6 +644,8 @@ function addCommonSDCImportFns(ns) {
   qrImport.mergeQuestionnaireResponseToLForms = function(formData, qr) {
     if (!(formData instanceof LForms.LFormsData)) {
       // get the default settings in case they are missing in the form data
+      // not to set item values by default values for saved forms with user data
+      formData.hasSavedData = true;
       formData = (new LForms.LFormsData(formData)).getFormData();
     }
     // The reference to _mergeQR below is here because this function gets copied to
@@ -548,10 +683,19 @@ function addCommonSDCImportFns(ns) {
                 var newQRItemInfo = angular.copy(qrItemInfo);
                 newQRItemInfo.index = j;
                 newQRItemInfo.item.answer = [newQRItemInfo.item.answer[j]];
+                if(qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[j]) {
+                  newQRItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[j]];
+                }
                 parentQRItemInfo.qrItemsInfo.splice(i+j, 0, newQRItemInfo);
               }
               // change the first qr item's answer too
-              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]]
+              qrItemInfo.item.answer = [qrItemInfo.item.answer[0]];
+              if(qrItemInfo.qrAnswersItemsInfo && qrItemInfo.qrAnswersItemsInfo[0]) {
+                qrItemInfo.qrAnswersItemsInfo = [qrItemInfo.qrAnswersItemsInfo[0]];
+              }
+              else {
+                delete qrItemInfo.qrAnswersItemsInfo;
+              }
             }
           }
           // reset the total number of questions when it is the answers that repeats
@@ -567,6 +711,15 @@ function addCommonSDCImportFns(ns) {
           var qrAnswer = qrItem.answer;
           if (qrAnswer && qrAnswer.length > 0) {
             this._setupItemValueAndUnit(qrItem.linkId, qrAnswer, item);
+            // process item.answer.item, if applicable
+            if(qrItemInfo.qrAnswersItemsInfo) {
+              // _setupItemValueAndUnit seems to assume single-answer except for multiple choices on CNE/CWE
+              // moreover, each answer has already got its own item above if question repeats
+              if(qrItemInfo.qrAnswersItemsInfo.length > 1) {
+                throw new Error('item.answer.item with item.answer.length > 1 is not yet supported');
+              }
+              this._processQRItemAndLFormsItem(qrItemInfo.qrAnswersItemsInfo[0], item);
+            }
           }
         }
 
@@ -726,7 +879,7 @@ function addCommonSDCImportFns(ns) {
     var rtn = [];
     if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
       vs.expansion.contains.forEach(function (vsItem) {
-        var answer = {code: vsItem.code, text: vsItem.display, codeSystem: self._toLfCodeSystem(vsItem.system)};
+        var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
           "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
         if(ordExt) {
@@ -790,7 +943,7 @@ function addCommonSDCImportFns(ns) {
       parent = parent._parentItem;
     }
     return terminologyServer;
-  },
+  };
 
 
   /**
@@ -807,7 +960,7 @@ function addCommonSDCImportFns(ns) {
         rtn = terminologyServer + '/ValueSet/$expand?url='+ item.answerValueSet;
     }
     return rtn;
-  }
+  };
 
 
   /**
@@ -866,7 +1019,7 @@ function addCommonSDCImportFns(ns) {
       }
     }
     return pendingPromises;
-  }
+  };
 
 
   /**
@@ -882,15 +1035,15 @@ function addCommonSDCImportFns(ns) {
       retValue = {
         "code": qrItemValue.valueCoding.code,
         "text": qrItemValue.valueCoding.display,
-        "codeSystem": qrItemValue.valueCoding.system
+        "system": qrItemValue.valueCoding.system
       };
     }
     // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
       retValue = qrItemValue.valueString;
     }
-    return retValue
-  }
+    return retValue;
+  };
 
 
   /**
@@ -931,7 +1084,8 @@ function addCommonSDCImportFns(ns) {
     }
 
     return ret;
-  }
+  };
+
 
   /**
    *  Processes the child items of the item.
@@ -957,7 +1111,74 @@ function addCommonSDCImportFns(ns) {
         }
       }
     }
-  }
+  };
+
+
+  /**
+   *  Copy extensions that haven't been handled before.
+   *
+   * @param lfItem the LForms node being populated with data
+   * @param qItem the Questionnaire (item) node being imported
+   */
+  self._processExtensions = function(lfItem, qItem) {
+    var extensions = [];
+    if (Array.isArray(qItem.extension)) {
+      for (var i=0; i < qItem.extension.length; i++) {
+        if(!self.handledExtensionSet.has(qItem.extension[i].url)) {
+          extensions.push(qItem.extension[i]);
+        }
+      }
+    }
+    if(extensions.length > 0) {
+      lfItem.extension = extensions;
+    }
+  };
+
+
+  /**
+   * If the given entity is an array, it will return the array length, return -1 otherwise.
+   * @param entity the given entity (can be anything) that needs to be tested to see if it's an array
+   * @return {number} the array length or -1 if the given entity is not an array.
+   * @private
+   */
+  self._arrayLen = function(entity) {
+    return entity && Array.isArray(entity)? entity.length: -1;
+  };
+
+
+  /**
+   * Get structural info of a QuestionnaireResponse item.answer.item in a way similar to that of item.item.
+   * If any answer entry in item.answer has items, the qrItemInfo.qrAnswersItemsInfo will be assigned, which
+   * will be an array where each element corresponds to one answer element in item.answer. When an answer entry
+   * does not have any items, null will be used to fill the position.
+   * @param qrItemInfo the structural info of the given item
+   * @param item the item in a QuestionnaireResponse object whose answer.item structure is to be created.
+   * @private
+   */
+  self._checkQRItemAnswerItems = function(qrItemInfo, item) {
+    var answerLen = self._arrayLen(item.answer);
+    if(answerLen < 1) {
+      return;
+    }
+
+    var numAnswersWithItems = 0;
+    var answersItemsInfo = []; // one entry for each answer; each entry is an qrItemsInfo array for the answer.item
+    for (var i = 0; i < answerLen; i++) {
+      if(this._arrayLen(item.answer[i].item) > 0) {
+        answersItemsInfo.push({});
+        self._mergeQR._checkQRItems(answersItemsInfo[i], item.answer[i]);
+        ++ numAnswersWithItems;
+      }
+      else {
+        answersItemsInfo.push(null);
+      }
+    }
+
+    if(numAnswersWithItems > 0) {
+      qrItemInfo.numAnswersWithItems = numAnswersWithItems;
+      qrItemInfo.qrAnswersItemsInfo = answersItemsInfo;
+    }
+  };
 
 
 }

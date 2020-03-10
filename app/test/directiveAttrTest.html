@@ -72,7 +72,8 @@
     <!-- lforms test controller -->
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget', 'ngRoute'])
-        .config(function ($routeProvider) {
+        .config(function ($routeProvider, $locationProvider) {
+          $locationProvider.hashPrefix('');
           $routeProvider.
             when("/vertical-form-default", {
               controller: "lformsTestControllerV",

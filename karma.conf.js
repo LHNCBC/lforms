@@ -52,7 +52,11 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['mocha'],
+
+    mochaReporter: {
+      output: 'minimal'
+    },
 
     client: {
       captureConsole: true
@@ -78,7 +82,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
 
 
     // Continuous Integration mode

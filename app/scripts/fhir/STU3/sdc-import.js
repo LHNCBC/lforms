@@ -74,15 +74,16 @@ function addSDCImportFns(ns) {
     _processEditable(targetItem, qItem);
     self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
+    self._processDataControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);
     self._processHiddenItem(targetItem, qItem);
-    _processUnitList(targetItem, qItem);
+    self._processUnitList(targetItem, qItem);
     _processAnswers(targetItem, qItem, containedVS);
     self._processDefaultAnswer(targetItem, qItem);
     _processExternallyDefined(targetItem, qItem);
     self._processTerminologyServer(targetItem, qItem);
     _processSkipLogic(targetItem, qItem, linkIdItemMap);
-    _processCalculatedValue(targetItem, qItem);
+    self._processExtensions(targetItem, qItem);
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
@@ -90,14 +91,26 @@ function addSDCImportFns(ns) {
 
 
   /**
-   *  Copies the calculated value expression from qItem to lfItem if it exists,
-   *  and if it is a FHIRPath expression, which is the only type we support.
+   * Parse questionnaire object for answer cardinality
+   *
+   * @param lfItem {object} - LForms item object to assign answer cardinality
+   * @param qItem {object} - Questionnaire item object
+   * @private
    */
-  function _processCalculatedValue(lfItem, qItem) {
-    var calcExt = LForms.Util.findObjectInArray(qItem.extension, 'url',
-      "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression");
-    if (calcExt && calcExt.valueExpression.language == "text/fhirpath") {
-      lfItem._calculatedExprExt = calcExt;
+  function _processAnswerCardinality(lfItem, qItem) {
+    if(qItem.required) {
+      lfItem.answerCardinality = {min: '1'};
+    }
+    else {
+      lfItem.answerCardinality = {min: '0'};
+    }
+
+    var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
+    if(answerRepeats && answerRepeats.valueBoolean) {
+      lfItem.answerCardinality.max = '*';
+    }
+    else {
+      lfItem.answerCardinality.max = '1';
     }
   }
 
@@ -117,15 +130,20 @@ function addSDCImportFns(ns) {
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
         var condition = {source: source.questionCode};
-        var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
-        if(source.dataType === 'CWE' || source.dataType === 'CNE') {
-          condition.trigger = {code: answer.code};
-        }
-        else if(source.dataType === 'QTY') {
-            condition.trigger = {value: answer.value};
+        if(qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
+          condition.trigger = {exists: qItem.enableWhen[i].hasAnswer};
         }
         else {
-          condition.trigger = {value: answer};
+          var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
+          if(source.dataType === 'CWE' || source.dataType === 'CNE') {
+            condition.trigger = {value: self._copyTriggerCoding(answer, null, false)};
+          }
+          else if(source.dataType === 'QTY') {
+            condition.trigger = {value: answer.value};
+          }
+          else {
+            condition.trigger = {value: answer};
+          }
         }
         lfItem.skipLogic.conditions.push(condition);
       }
@@ -196,7 +214,7 @@ function addSDCImportFns(ns) {
             if(option[optionKey[0]].display !== undefined) answer.text = option[optionKey[0]].display;
             // TBD- Lforms has answer code system at item level, expects all options to have one code system!
             if(option[optionKey[0]].system  !== undefined) {
-              answer.codeSystem = option[optionKey[0]].system;
+              answer.system = option[optionKey[0]].system;
             }
           }
           else {
@@ -255,69 +273,12 @@ function addSDCImportFns(ns) {
 
 
   /**
-   * Parse questionnaire item for units list
-   *
-   * @param lfItem {object} - LForms item object to assign units
-   * @param qItem {object} - Questionnaire item object
-   * @private
+   *  Returns the first initial quanitity for the given Questionnaire item, or
+   *  null if there isn't one.
    */
-  function _processUnitList(lfItem, qItem) {
-
-    var lformsUnits = [];
-    var lformsDefaultUnit = null;
-    var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
-    if(unitOption && unitOption.length > 0) {
-      for(var i = 0; i < unitOption.length; i++) {
-        var coding = unitOption[i].valueCoding;
-        var lUnit = {
-          name: coding.display,
-          code: coding.code,
-          system: coding.system
-        };
-        lformsUnits.push(lUnit);
-      }
-    }
-
-    var unit = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnit);
-    if(unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', unit.valueCoding.code);
-      // If this unit is already in the list, set its default flag, otherwise create new
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: unit.valueCoding.display,
-          code: unit.valueCoding.code,
-          system: unit.valueCoding.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-    else if(qItem.initialQuantity && qItem.initialQuantity.unit) {
-      lformsDefaultUnit = LForms.Util.findItem(lformsUnits, 'name', qItem.initialQuantity.unit);
-      if(lformsDefaultUnit) {
-        lformsDefaultUnit.default = true;
-      }
-      else {
-        lformsDefaultUnit = {
-          name: qItem.initialQuantity.unit,
-          code: qItem.initialQuantity.code,
-          system: qItem.initialQuantity.system,
-          default: true
-        };
-        lformsUnits.push(lformsDefaultUnit);
-      }
-    }
-
-    if(lformsUnits.length > 0) {
-      if (!lformsDefaultUnit) {
-        lformsUnits[0].default = true;
-      }
-      lfItem.units = lformsUnits;
-    }
-  }
+  self.getFirstInitialQuantity = function(qItem) {
+    return qItem.initialQuantity || null;
+  };
 
 
   /**
@@ -446,6 +407,7 @@ function addSDCImportFns(ns) {
               };
               // check observation instances in the sub level
               this._checkQRItems(qrItemInfo, repeatingItems[j]);
+              self._checkQRItemAnswerItems(qrItemInfo, repeatingItems[j]);
               qrItemsInfo.push(qrItemInfo);
             }
             repeatingItemProcessed[linkId] = true;
@@ -587,6 +549,11 @@ function addSDCImportFns(ns) {
         var qrValue = answer[0];
 
         switch (dataType) {
+          case "BL":
+            if (qrValue.valueBoolean === true || qrValue.valueBoolean === false) {
+              item.value = qrValue.valueBoolean;
+            }
+            break;
           case "INT":
             if (qrValue.valueQuantity) {
               item.value = qrValue.valueQuantity.value;
