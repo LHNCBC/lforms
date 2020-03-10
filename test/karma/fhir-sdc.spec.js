@@ -33,9 +33,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
         let i=0;
           describe('list fields with coding values', function () {
             let answerValCases = [{
-              answers: [{codeSystem: 'cs1', code: '1', text: 'one'},
-                {codeSystem: 'cs1', code: '2', text: 'two'},
-                {codeSystem: 'cs1', code: '3', text: 'three'}],
+              answers: [{system: 'cs1', code: '1', text: 'one'},
+                {system: 'cs1', code: '2', text: 'two'},
+                {system: 'cs1', code: '3', text: 'three'}],
               fhirVal: {display: 'two', code: '2', system: 'cs1'},
               fhirVal2: {display: 'three', code: '3', system: 'cs1'}
             }, {
@@ -47,9 +47,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               answers: [{text: 'one'}, {text: 'two'}, {text: 'three'}],
               fhirVal: {display: 'two'}, fhirVal2: {display: 'three'}
             }, {
-              answers: [{codeSystem: 'cs1', code: '1'},
-                {codeSystem: 'cs1', code: '2'},
-                {codeSystem: 'cs1', code: '3'}],
+              answers: [{system: 'cs1', code: '1'},
+                {system: 'cs1', code: '2'},
+                {system: 'cs1', code: '3'}],
               fhirVal: {code: '2', system: 'cs1'}, fhirVal2: {code: '3', system: 'cs1'}
             }, {
               answers: [{code: '1'}, {code: '2'}, {code: '3'}],
@@ -87,9 +87,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           describe('list fields and off-list string values', function() {
-            let answers = [{codeSystem: 'cs1', code: '1', text: 'one'},
-                {codeSystem: 'cs1', code: '2', text: 'two'},
-                {codeSystem: 'cs1', code: '3', text: 'three'}];
+            let answers = [{system: 'cs1', code: '1', text: 'one'},
+                {system: 'cs1', code: '2', text: 'two'},
+                {system: 'cs1', code: '3', text: 'three'}];
             for (let multiselect of [false, true]) {
               it('should handle off-list answers for '+
                  (multiselect ? 'multiselect' : 'single-select')+' lists', function() {
@@ -1038,10 +1038,10 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                   assert.equal(lfData.items[0].answers.length, json.item[0].answerOption.length);
                   assert.equal(lfData.items[0].answers[0].score, 0);
                   assert.equal(lfData.items[0].answers[0].text, "Not at all");
-                  assert.equal(lfData.items[0].answers[0].codeSystem, "http://loinc.org");
+                  assert.equal(lfData.items[0].answers[0].system, "http://loinc.org");
                   assert.equal(lfData.items[0].answers[1].score, "1");
                   assert.equal(lfData.items[0].answers[1].text, "Several days");
-                  assert.equal(lfData.items[0].answers[1].codeSystem, "http://loinc.org");
+                  assert.equal(lfData.items[0].answers[1].system, "http://loinc.org");
 
                   // convert it back to SDC Questionnaire
                   var newQ = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion, lfData);

@@ -805,19 +805,19 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(val[0].code).toEqual('c1');
               expect(val[0].text).toEqual('Answer 1');
               expect(val[0]._displayText).toEqual('Answer 1');
-              expect(val[0].codeSystem).toEqual(undefined);
+              expect(val[0].system).toEqual(undefined);
               expect(val[1].code).toEqual('c2');
               expect(val[1].text).toEqual('Answer 2');
               expect(val[1]._displayText).toEqual('Answer 2');
-              expect(val[1].codeSystem).toEqual(undefined);
+              expect(val[1].system).toEqual(undefined);
               expect(val[2].code).toEqual(undefined);
               expect(val[2].text).toEqual('user value1');
               expect(val[2]._displayText).toEqual('user value1');
-              expect(val[2].codeSystem).toEqual(undefined);
+              expect(val[2].system).toEqual(undefined);
               expect(val[3].code).toEqual(undefined);
               expect(val[3].text).toEqual('user value2');
               expect(val[3]._displayText).toEqual('user value2');
-              expect(val[3].codeSystem).toEqual(undefined);
+              expect(val[3].system).toEqual(undefined);
             });
 
           });

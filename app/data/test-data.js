@@ -985,6 +985,9 @@ var allInOne =
         {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES)", "answers": "", "dataType": "DT", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
         },
+        {"questionCode": "54124-3b", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) -- not working without 'system' in trigger value", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6"}}}], "action": "show"}
+        },
         {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age (show if Living answered)", "answers": "", "dataType": "REAL", "units": "", "header": false,
           "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": true}}], "action": "show"}
         },
@@ -1005,6 +1008,23 @@ var allInOne =
         },
 
       ]
+    },
+
+    // skip logic when the answers has no 'system', and/or a 'codeSystem'
+    {"questionCode": "54139-1-cnesrc-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living too?",
+      "answers": [{"text": "Yes", "code": "LA33-6"}, {"text": "No", "code": "LA32-8", 'codeSystem': "http://loinc.org"}, {"text": "Unknown", "code": "LA4489-6"}],
+      "dataType": "CNE", "units": "", "header": false,
+      "items": [
+        {"questionCode": "54124-3c", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) -- not working with 'system' in trigger value", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54124-3d", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) ", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA33-6"}}}], "action": "show"}
+        },
+        {"questionCode": "54112-8b", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death (show if Living is NO) ", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA32-8", "system":"http://loinc.org"}}}], "action": "show"}
+        }
+        ]
     },
 
     // skip logic, with logic ALL

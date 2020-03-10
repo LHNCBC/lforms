@@ -285,8 +285,8 @@ var self = {
       if (answer.code) option.valueCoding.code = answer.code;
       if (answer.text) option.valueCoding.display = answer.text;
 
-      if (answer.codeSystem) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.codeSystem);
+      if (answer.system) {
+        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
       }
 
       optionArray.push(option);
@@ -328,7 +328,7 @@ var self = {
             coding.display = defaultAnswer.text;
           }
           // code system
-          codeSystem = defaultAnswer.codeSystem || item.answerCodeSystem;
+          codeSystem = defaultAnswer.system || item.answerCodeSystem;
           if (codeSystem) {
             coding.system = LForms.Util.getCodeSystem(codeSystem);
           }
