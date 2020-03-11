@@ -17,8 +17,6 @@ var STU3_cneDataTypeFixture = {
   },
 
   output: {
-    required: undefined,
-    repeats: false,
     linkId: "/54126-8/54131-8",
     text: "Gender",
     type: "choice",
@@ -68,8 +66,6 @@ var STU3_alWithCodeSystemFixture = {
       {valueCoding: {code: "x", display: "X", system: "http://loinc.org"}},
       {valueCoding: {code: "y", display: "Y", system: "http://loinc.org"}},
       {valueCoding: {code: "z", display: "Z", system: "http://loinc.org"}}
-    ],
-    repeats: false,
-    required: undefined
+    ]
   }
 };

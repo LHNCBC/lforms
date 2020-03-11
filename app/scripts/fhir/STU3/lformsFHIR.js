@@ -22054,7 +22054,10 @@ function addCommonSDCExportFns(ns) {
 
     targetItem.extension = []; // required
 
-    targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
+    if (item._answerRequired === true || item._answerRequired === false) {
+      targetItem.required = item._answerRequired;
+    } // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
+
 
     if (targetItem.required) {
       var minOccurInt = parseInt(item.questionCardinality.min);
@@ -22188,7 +22191,7 @@ function addCommonSDCExportFns(ns) {
     return targetItem;
   };
   /**
-   * Process the LForms questionCardinality and AnswerCardinality into FHIR.
+   * Process the LForms questionCardinality and answerCardinality into FHIR.
    * @param targetItem an item in Questionnaire
    * @param item a LForms item
    */
@@ -22196,17 +22199,27 @@ function addCommonSDCExportFns(ns) {
 
   self._processQuestionAndAnswerCardinality = function (targetItem, item) {
     var repeats = false,
-        maxOccurs = 0;
-    [item.answerCardinality, item.questionCardinality].forEach(function (cardinality) {
-      if (cardinality) {
-        if (cardinality.max === "*") {
-          repeats = true;
-        } else if (parseInt(cardinality.max) > 1) {
-          repeats = true;
-          maxOccurs = parseInt(item.questionCardinality.max);
-        }
-      }
-    });
+        maxOccurs = 0; // [item.answerCardinality, item.questionCardinality].forEach(function(cardinality) {
+    //   if (cardinality) {
+    //     if (cardinality.max === "*") {
+    //       repeats = true;
+    //     }
+    //     else if (parseInt(cardinality.max) > 1) {
+    //       repeats = true;
+    //       maxOccurs = parseInt(item.questionCardinality.max);
+    //     }
+    //   }
+    // });
+
+    var qCard = item.questionCardinality,
+        aCard = item.answerCardinality;
+    var cardMax = qCard && qCard.max ? qCard.max : aCard && aCard.max;
+
+    if (cardMax) {
+      var intCardMax = parseInt(cardMax);
+      repeats = cardMax === "*" || intCardMax > 1;
+      if (intCardMax > 1) maxOccurs = intCardMax;
+    }
 
     if (repeats && item.dataType !== "TITLE") {
       targetItem.repeats = true;
@@ -22217,8 +22230,6 @@ function addCommonSDCExportFns(ns) {
           "valueInteger": maxOccurs
         });
       }
-    } else {
-      targetItem.repeats = false;
     }
   };
   /**

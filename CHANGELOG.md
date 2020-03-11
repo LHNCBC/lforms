@@ -2,9 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [21.2.2] 2020-03-10
-### Fixed
-- Removed a FHIR extension for the answers that repeat.
+## [22.0.0] 2020-03-10
+### Changed
+- Removed a FHIR extension for indicating that question can have more than one answer.  
+  We now rely on FHIR Questionnaire.item.repeats, plus the item type, to determine
+  whether an item repeats or the item's answer repeats in our rendering of the form.
 
 ## [21.2.1] 2020-03-05
 ### Changed
@@ -120,7 +122,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Corrected FHIR export and import of integer, decimal, and quantity types, and
   the unit extensions used.
->>>>>>> master
 
 ## [18.2.1] 2019-10-15
 ### Fixed
