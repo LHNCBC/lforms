@@ -260,18 +260,6 @@ function addCommonSDCExportFns(ns) {
   self._processQuestionAndAnswerCardinality = function(targetItem, item) {
     var repeats = false, maxOccurs = 0;
 
-    // [item.answerCardinality, item.questionCardinality].forEach(function(cardinality) {
-    //   if (cardinality) {
-    //     if (cardinality.max === "*") {
-    //       repeats = true;
-    //     }
-    //     else if (parseInt(cardinality.max) > 1) {
-    //       repeats = true;
-    //       maxOccurs = parseInt(item.questionCardinality.max);
-    //     }
-    //   }
-    // });
-
     var qCard = item.questionCardinality, aCard = item.answerCardinality;
     var cardMax = qCard && qCard.max ? qCard.max : aCard && aCard.max;
 
@@ -286,7 +274,7 @@ function addCommonSDCExportFns(ns) {
       targetItem.repeats = true;
       if (maxOccurs > 1) {
         targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs",
+          "url": self.fhirExtUrlCardinalityMax,
           "valueInteger": maxOccurs
         });
       }

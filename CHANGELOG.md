@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [22.0.0] 2020-03-10
 ### Changed
-- Removed a FHIR extension for indicating that question can have more than one answer.  
+- Removed a FHIR extension for indicating that a question can have more than one answer.  
   We now rely on FHIR Questionnaire.item.repeats, plus the item type, to determine
   whether an item repeats or the item's answer repeats in our rendering of the form.
 
