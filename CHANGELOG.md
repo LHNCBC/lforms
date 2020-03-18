@@ -2,6 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [22.0.0] 2020-03-12
+### Changed
+- The URI for the FHIR "observationLinkPeriod" extension has been updated to the
+  current URI,
+  http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod.
+  FHIR Questionnaires coded with the old URI will need to be updated to continue to
+  support Observation-based prepoluation or extraction.  We are releasing a
+  separate package, lforms-updater which can be used to automate updating LForms
+  form definitions and FHIR Questionnaires to the current version.
+
 ## [21.2.1] 2020-03-05
 ### Changed
 - Changed answer's 'codeSystem' to be 'system'. Legacy form data with 'codeSystem'
