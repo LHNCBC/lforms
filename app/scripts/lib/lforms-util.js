@@ -33,7 +33,7 @@ var _copiedExtensions = {
     ["_calculatedExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
     ["_initialExprExt", false],
-  "http://hl7.org/fhir/StructureDefinition/questionnaire-observationLinkPeriod":
+  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod":
     ["_obsLinkPeriodExt", false],
   "http://hl7.org/fhir/StructureDefinition/variable":
     ["_variableExt", true],
