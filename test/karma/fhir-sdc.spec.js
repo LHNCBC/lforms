@@ -183,28 +183,30 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert(typeof lfDataVersion === 'string');
             assert(lfDataVersion.length > 0);
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
-            var qDataVersion = qData.meta.tag[0].display;
+            var qDataVersion = qData.meta.tag[0].code;
             assert.equal(typeof qDataVersion, 'string');
             assert.match(qDataVersion, /^lformsVersion: /);
           });
 
-          it('should update lformsVersion if present', function (){
+          it.only('should update lformsVersion if present', function (){
             var oldVersionTag = 'lformsVersion: oldVersion';
             var questionnaire = {
               name: 'FHP',
-              meta: {tag: [{display: oldVersionTag}]}
+              meta: {tag: [{code: oldVersionTag}]}
             };
 
             var lfData = fhir.SDC.convertQuestionnaireToLForms(questionnaire);
             var lfDataVersion = lfData.lformsVersion;
             assert.equal(typeof lfDataVersion, 'string');
             assert(lfDataVersion.length > 0);
+console.log(lfDataVersion);
             assert.notEqual(lfDataVersion, 'oldVersion');
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
-            var qDataVersion = qData.meta.tag[0].display;
+console.log(JSON.stringify(lfData,null,2));
+            var qDataVersion = qData.meta.tag[0].code;
             var versionTagCount = 0;
             for (let tag of qData.meta.tag) {
-              tag = tag.display;
+              tag = tag.code;
               if (/^lformsVersion: /.test(tag)) {
                 ++versionTagCount;
                 assert.notEqual(tag, oldVersionTag);
@@ -1121,7 +1123,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
 
             it('should set the lformsVersion tag', function (){
-              var version = fhirQR.meta.tag[0].display;
+              var version = fhirQR.meta.tag[0].code;
               assert.equal(typeof version, 'string');
               assert.match(version, /^lformsVersion: /);
             });
