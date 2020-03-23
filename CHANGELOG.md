@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [23.0.0] 2020-03-20
+### Changed
+- The version tag on generated FHIR resources is now set on the "code" property
+  instead of the "display" property, as some FHIR servers drop tags that do not
+  contain a code.
+
 ## [22.0.0] 2020-03-12
 ### Changed
 - The URI for the FHIR "observationLinkPeriod" extension has been updated to the
