@@ -8,11 +8,11 @@ describe('DiagnoticReport', ()=>{
       var lfDataVersion = lfData.lformsVersion;
       var fhirVersion = 'STU3';
       var dr = LForms.Util.getFormFHIRData('DiagnosticReport', fhirVersion, lfData)
-      var drVersion = dr.meta.tag[0].display;
+      var drVersion = dr.meta.tag[0].code;
       assert.equal(typeof drVersion, 'string');
       assert.equal(drVersion, 'lformsVersion: '+lfDataVersion);
       // Also check the observation
-      var obsVersion = dr.contained[0].meta.tag[0].display;
+      var obsVersion = dr.contained[0].meta.tag[0].code;
       assert.equal(typeof obsVersion, 'string');
       assert.equal(obsVersion, 'lformsVersion: '+lfDataVersion);
     });

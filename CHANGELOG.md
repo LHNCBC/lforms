@@ -2,7 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [23.0.0] 2020-03-12
+## [23.0.0] 2020-03-20
+### Changed
+- The version tag on generated FHIR resources is now set on the "code" property
+  instead of the "display" property, as some FHIR servers drop tags that do not
+  contain a code.
+- Removed a FHIR extension for indicating that a question can have more than one answer.  
+  We now rely on FHIR Questionnaire.item.repeats, plus the item type, to determine
+  whether an item repeats or the item's answer repeats in our rendering of the form.
+
+## [22.0.0] 2020-03-12
 ### Changed
 - The URI for the FHIR "observationLinkPeriod" extension has been updated to the
   current URI,
@@ -11,12 +20,6 @@ This project follows [Semantic Versioning](http://semver.org/).
   support Observation-based prepoluation or extraction.  We are releasing a
   separate package, lforms-updater which can be used to automate updating LForms
   form definitions and FHIR Questionnaires to the current version.
-
-## [22.0.0] 2020-03-10
-### Changed
-- Removed a FHIR extension for indicating that a question can have more than one answer.  
-  We now rely on FHIR Questionnaire.item.repeats, plus the item type, to determine
-  whether an item repeats or the item's answer repeats in our rendering of the form.
 
 ## [21.2.1] 2020-03-05
 ### Changed
