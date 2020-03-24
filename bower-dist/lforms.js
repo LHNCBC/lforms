@@ -791,7 +791,7 @@ angular.module('lformsWidget').service('lformsConfig', ['$animate', function ($a
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var LForms = __webpack_require__(4);
 
@@ -1992,7 +1992,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 (function () {
   'use strict';
@@ -2329,7 +2329,7 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
  * LForms Utility tools
@@ -3344,6 +3344,37 @@ LForms.Util = {
     }
 
     return ret;
+  },
+
+  /**
+   * Some extensions are translated to other lforms fields, some are renamed internally and some are 
+   * preserved as they are. This function creates extension array with the renamed and preserved extensions
+   * to use in output for lforms format.
+   * 
+   * Recreate 
+   * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
+   * @return {array|null} Array of extensions 
+   */
+  createExtensionFromLForms: function createExtensionFromLForms(formOrItem) {
+    var extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      var _ext = formOrItem[extName];
+
+      if (_ext) {
+        if (Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        } else {
+          extension.push(_ext);
+        }
+      }
+    });
+
+    if (formOrItem.extension && formOrItem.extension.length > 0) {
+      extension.push.apply(extension, formOrItem.extension);
+    } // Return null if none
+
+
+    return extension.length > 0 ? extension : null;
   },
 
   /**
@@ -4600,7 +4631,7 @@ LForms.Validations = {
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
  * LForms class for form definition data
@@ -6076,6 +6107,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
       };
+      var flExtensions = LForms.Util.createExtensionFromLForms(this);
+
+      if (flExtensions) {
+        defData.extension = flExtensions;
+      }
 
       if (hasSavedData) {
         defData.hasSavedData = true;
@@ -6151,6 +6187,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // otherwise include form definition data
         else {
             // process fields
+            // process extensions 
+            var extension = LForms.Util.createExtensionFromLForms(item);
+
+            if (extension) {
+              itemData.extension = extension;
+            } // Process other fields
+
+
             for (var field in item) {
               // special handling for user input values
               if (field === "value") {
@@ -6158,7 +6202,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               } else if (field === "unit") {
                 itemData[field] = this._getOriginalValue(item[field]);
               } // ignore the internal lforms data and angular data
-              else if (!field.match(/^[_\$]/)) {
+              else if (!field.match(/^[_\$]/) && field !== 'extension') {
                   itemData[field] = item[field];
                 }
 
@@ -8806,13 +8850,11 @@ module.exports = function (options) {
 
   var detectionStrategy;
   var desiredStrategy = getOption(options, "strategy", "object");
-  var importantCssRules = getOption(options, "important", false);
   var strategyOptions = {
     reporter: reporter,
     batchProcessor: batchProcessor,
     stateHandler: stateHandler,
-    idHandler: idHandler,
-    important: importantCssRules
+    idHandler: idHandler
   };
 
   if (desiredStrategy === "scroll") {
@@ -8925,8 +8967,7 @@ module.exports = function (options) {
 
         elementUtils.markBusy(element, true);
         return detectionStrategy.makeDetectable({
-          debug: debug,
-          important: importantCssRules
+          debug: debug
         }, element, function onElementDetectable(element) {
           debug && reporter.log(id, "onElementDetectable");
 
@@ -9003,16 +9044,11 @@ module.exports = function (options) {
     });
   }
 
-  function initDocument(targetDocument) {
-    detectionStrategy.initDocument && detectionStrategy.initDocument(targetDocument);
-  }
-
   return {
     listenTo: listenTo,
     removeListener: eventListenerHandler.removeListener,
     removeAllListeners: eventListenerHandler.removeAllListeners,
-    uninstall: uninstall,
-    initDocument: initDocument
+    uninstall: uninstall
   };
 };
 
@@ -9583,6 +9619,10 @@ module.exports = function (options) {
 
 
   function addListener(element, listener) {
+    if (!getObject(element)) {
+      throw new Error("Element is not detectable by this strategy.");
+    }
+
     function listenerProxy() {
       listener(element);
     }
@@ -9595,18 +9635,8 @@ module.exports = function (options) {
       element.attachEvent("onresize", listenerProxy);
     } else {
       var object = getObject(element);
-
-      if (!object) {
-        throw new Error("Element is not detectable by this strategy.");
-      }
-
       object.contentDocument.defaultView.addEventListener("resize", listenerProxy);
     }
-  }
-
-  function buildCssTextString(rules) {
-    var seperator = options.important ? " !important; " : "; ";
-    return (rules.join(seperator) + seperator).trim();
   }
   /**
    * Makes an element detectable and ready to be listened for resize events. Will call the callback when the element is ready to be listened for resize changes.
@@ -9628,7 +9658,7 @@ module.exports = function (options) {
     var debug = options.debug;
 
     function injectObject(element, callback) {
-      var OBJECT_STYLE = buildCssTextString(["display: block", "position: absolute", "top: 0", "left: 0", "width: 100%", "height: 100%", "border: none", "padding: 0", "margin: 0", "opacity: 0", "z-index: -1000", "pointer-events: none"]); //The target element needs to be positioned (everything except static) so the absolute positioned object will be positioned relative to the target element.
+      var OBJECT_STYLE = "display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; padding: 0; margin: 0; opacity: 0; z-index: -1000; pointer-events: none;"; //The target element needs to be positioned (everything except static) so the absolute positioned object will be positioned relative to the target element.
       // Position altering may be performed directly or on object load, depending on if style resolution is possible directly or not.
 
       var positionCheckPerformed = false; // The element may not yet be attached to the DOM, and therefore the style object may be empty in some browsers.
@@ -9645,7 +9675,7 @@ module.exports = function (options) {
       function mutateDom() {
         function alterPositionStyles() {
           if (style.position === "static") {
-            element.style.setProperty("position", "relative", options.important ? "important" : "");
+            element.style.position = "relative";
 
             var removeRelativeStyles = function removeRelativeStyles(reporter, element, style, property) {
               function getNumericalValue(value) {
@@ -9656,7 +9686,7 @@ module.exports = function (options) {
 
               if (value !== "auto" && getNumericalValue(value) !== "0") {
                 reporter.warn("An element that is positioned static has style." + property + "=" + value + " which is ignored due to the static positioning. The element will need to be positioned relative, so the style." + property + " will be set to 0. Element: ", element);
-                element.style.setProperty(property, "0", options.important ? "important" : "");
+                element.style[property] = 0;
               }
             }; //Check so that there are no accidental styles that will make the element styled differently now that is is relative.
             //If there are any, set them to 0 (this should be okay with the user since the style properties did nothing before [since the element was positioned static] anyway).
@@ -9682,14 +9712,7 @@ module.exports = function (options) {
             //So if it is not present, poll it with an timeout until it is present.
             //TODO: Could maybe be handled better with object.onreadystatechange or similar.
             if (!element.contentDocument) {
-              var state = getState(element);
-
-              if (state.checkForObjectDocumentTimeoutId) {
-                window.clearTimeout(state.checkForObjectDocumentTimeoutId);
-              }
-
-              state.checkForObjectDocumentTimeoutId = setTimeout(function checkForObjectDocument() {
-                state.checkForObjectDocumentTimeoutId = 0;
+              setTimeout(function checkForObjectDocument() {
                 getDocument(element, callback);
               }, 100);
               return;
@@ -9726,11 +9749,6 @@ module.exports = function (options) {
 
         if (!browserDetector.isIE()) {
           object.data = "about:blank";
-        }
-
-        if (!getState(element)) {
-          // The element has been uninstalled before the actual loading happened.
-          return;
         }
 
         element.appendChild(object);
@@ -9770,24 +9788,10 @@ module.exports = function (options) {
   }
 
   function uninstall(element) {
-    if (!getState(element)) {
-      return;
-    }
-
-    var object = getObject(element);
-
-    if (!object) {
-      return;
-    }
-
     if (browserDetector.isIE(8)) {
-      element.detachEvent("onresize", object.proxy);
+      element.detachEvent("onresize", getState(element).object.proxy);
     } else {
-      element.removeChild(object);
-    }
-
-    if (getState(element).checkForObjectDocumentTimeoutId) {
-      window.clearTimeout(getState(element).checkForObjectDocumentTimeoutId);
+      element.removeChild(getObject(element));
     }
 
     delete getState(element).object;
@@ -9830,30 +9834,20 @@ module.exports = function (options) {
   } //TODO: Could this perhaps be done at installation time?
 
 
-  var scrollbarSizes = getScrollbarSizes();
+  var scrollbarSizes = getScrollbarSizes(); // Inject the scrollbar styling that prevents them from appearing sometimes in Chrome.
+  // The injected container needs to have a class, so that it may be styled with CSS (pseudo elements).
+
   var styleId = "erd_scroll_detection_scrollbar_style";
   var detectionContainerClass = "erd_scroll_detection_container";
-
-  function initDocument(targetDocument) {
-    // Inject the scrollbar styling that prevents them from appearing sometimes in Chrome.
-    // The injected container needs to have a class, so that it may be styled with CSS (pseudo elements).
-    injectScrollStyle(targetDocument, styleId, detectionContainerClass);
-  }
-
-  initDocument(window.document);
-
-  function buildCssTextString(rules) {
-    var seperator = options.important ? " !important; " : "; ";
-    return (rules.join(seperator) + seperator).trim();
-  }
+  injectScrollStyle(styleId, detectionContainerClass);
 
   function getScrollbarSizes() {
     var width = 500;
     var height = 500;
     var child = document.createElement("div");
-    child.style.cssText = buildCssTextString(["position: absolute", "width: " + width * 2 + "px", "height: " + height * 2 + "px", "visibility: hidden", "margin: 0", "padding: 0"]);
+    child.style.cssText = "position: absolute; width: " + width * 2 + "px; height: " + height * 2 + "px; visibility: hidden; margin: 0; padding: 0;";
     var container = document.createElement("div");
-    container.style.cssText = buildCssTextString(["position: absolute", "width: " + width + "px", "height: " + height + "px", "overflow: scroll", "visibility: none", "top: " + -width * 3 + "px", "left: " + -height * 3 + "px", "visibility: hidden", "margin: 0", "padding: 0"]);
+    container.style.cssText = "position: absolute; width: " + width + "px; height: " + height + "px; overflow: scroll; visibility: none; top: " + -width * 3 + "px; left: " + -height * 3 + "px; visibility: hidden; margin: 0; padding: 0;";
     container.appendChild(child);
     document.body.insertBefore(container, document.body.firstChild);
     var widthSize = width - container.clientWidth;
@@ -9865,25 +9859,25 @@ module.exports = function (options) {
     };
   }
 
-  function injectScrollStyle(targetDocument, styleId, containerClass) {
+  function injectScrollStyle(styleId, containerClass) {
     function injectStyle(style, method) {
       method = method || function (element) {
-        targetDocument.head.appendChild(element);
+        document.head.appendChild(element);
       };
 
-      var styleElement = targetDocument.createElement("style");
+      var styleElement = document.createElement("style");
       styleElement.innerHTML = style;
       styleElement.id = styleId;
       method(styleElement);
       return styleElement;
     }
 
-    if (!targetDocument.getElementById(styleId)) {
+    if (!document.getElementById(styleId)) {
       var containerAnimationClass = containerClass + "_animation";
       var containerAnimationActiveClass = containerClass + "_animation_active";
       var style = "/* Created by the element-resize-detector library. */\n";
-      style += "." + containerClass + " > div::-webkit-scrollbar { " + buildCssTextString(["display: none"]) + " }\n\n";
-      style += "." + containerAnimationActiveClass + " { " + buildCssTextString(["-webkit-animation-duration: 0.1s", "animation-duration: 0.1s", "-webkit-animation-name: " + containerAnimationClass, "animation-name: " + containerAnimationClass]) + " }\n";
+      style += "." + containerClass + " > div::-webkit-scrollbar { display: none; }\n\n";
+      style += "." + containerAnimationActiveClass + " { -webkit-animation-duration: 0.1s; animation-duration: 0.1s; -webkit-animation-name: " + containerAnimationClass + "; animation-name: " + containerAnimationClass + "; }\n";
       style += "@-webkit-keyframes " + containerAnimationClass + " { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }\n";
       style += "@keyframes " + containerAnimationClass + " { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }";
       injectStyle(style);
@@ -10089,7 +10083,7 @@ module.exports = function (options) {
       if (!container) {
         container = document.createElement("div");
         container.className = detectionContainerClass;
-        container.style.cssText = buildCssTextString(["visibility: hidden", "display: inline", "width: 0px", "height: 0px", "z-index: -1", "overflow: hidden", "margin: 0", "padding: 0"]);
+        container.style.cssText = "visibility: hidden; display: inline; width: 0px; height: 0px; z-index: -1; overflow: hidden; margin: 0; padding: 0;";
         getState(element).container = container;
         addAnimationClass(container);
         element.appendChild(container);
@@ -10112,7 +10106,7 @@ module.exports = function (options) {
         var style = getState(element).style;
 
         if (style.position === "static") {
-          element.style.setProperty("position", "relative", options.important ? "important" : "");
+          element.style.position = "relative";
 
           var removeRelativeStyles = function removeRelativeStyles(reporter, element, style, property) {
             function getNumericalValue(value) {
@@ -10141,7 +10135,7 @@ module.exports = function (options) {
         top = !top ? "0" : top + "px";
         bottom = !bottom ? "0" : bottom + "px";
         right = !right ? "0" : right + "px";
-        return ["left: " + left, "top: " + top, "right: " + right, "bottom: " + bottom];
+        return "left: " + left + "; top: " + top + "; right: " + right + "; bottom: " + bottom + ";";
       }
 
       debug("Injecting elements");
@@ -10166,12 +10160,12 @@ module.exports = function (options) {
 
       var scrollbarWidth = scrollbarSizes.width;
       var scrollbarHeight = scrollbarSizes.height;
-      var containerContainerStyle = buildCssTextString(["position: absolute", "flex: none", "overflow: hidden", "z-index: -1", "visibility: hidden", "width: 100%", "height: 100%", "left: 0px", "top: 0px"]);
-      var containerStyle = buildCssTextString(["position: absolute", "flex: none", "overflow: hidden", "z-index: -1", "visibility: hidden"].concat(getLeftTopBottomRightCssText(-(1 + scrollbarWidth), -(1 + scrollbarHeight), -scrollbarHeight, -scrollbarWidth)));
-      var expandStyle = buildCssTextString(["position: absolute", "flex: none", "overflow: scroll", "z-index: -1", "visibility: hidden", "width: 100%", "height: 100%"]);
-      var shrinkStyle = buildCssTextString(["position: absolute", "flex: none", "overflow: scroll", "z-index: -1", "visibility: hidden", "width: 100%", "height: 100%"]);
-      var expandChildStyle = buildCssTextString(["position: absolute", "left: 0", "top: 0"]);
-      var shrinkChildStyle = buildCssTextString(["position: absolute", "width: 200%", "height: 200%"]);
+      var containerContainerStyle = "position: absolute; flex: none; overflow: hidden; z-index: -1; visibility: hidden; width: 100%; height: 100%; left: 0px; top: 0px;";
+      var containerStyle = "position: absolute; flex: none; overflow: hidden; z-index: -1; visibility: hidden; " + getLeftTopBottomRightCssText(-(1 + scrollbarWidth), -(1 + scrollbarHeight), -scrollbarHeight, -scrollbarWidth);
+      var expandStyle = "position: absolute; flex: none; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;";
+      var shrinkStyle = "position: absolute; flex: none; overflow: scroll; z-index: -1; visibility: hidden; width: 100%; height: 100%;";
+      var expandChildStyle = "position: absolute; left: 0; top: 0;";
+      var shrinkChildStyle = "position: absolute; width: 200%; height: 200%;";
       var containerContainer = document.createElement("div");
       var container = document.createElement("div");
       var expand = document.createElement("div");
@@ -10217,15 +10211,13 @@ module.exports = function (options) {
         var expandChild = getExpandChildElement(element);
         var expandWidth = getExpandWidth(width);
         var expandHeight = getExpandHeight(height);
-        expandChild.style.setProperty("width", expandWidth + "px", options.important ? "important" : "");
-        expandChild.style.setProperty("height", expandHeight + "px", options.important ? "important" : "");
+        expandChild.style.width = expandWidth + "px";
+        expandChild.style.height = expandHeight + "px";
       }
 
       function updateDetectorElements(done) {
         var width = element.offsetWidth;
-        var height = element.offsetHeight; // Check whether the size has actually changed since last time the algorithm ran. If not, some steps may be skipped.
-
-        var sizeChanged = width !== getState(element).lastWidth || height !== getState(element).lastHeight;
+        var height = element.offsetHeight;
         debug("Storing current size", width, height); // Store the size of the element sync here, so that multiple scroll events may be ignored in the event listeners.
         // Otherwise the if-check in handleScroll is useless.
 
@@ -10233,10 +10225,6 @@ module.exports = function (options) {
         // Since there is no way to cancel the fn executions, we need to add an uninstall guard to all fns of the batch.
 
         batchProcessor.add(0, function performUpdateChildSizes() {
-          if (!sizeChanged) {
-            return;
-          }
-
           if (!getState(element)) {
             debug("Aborting because element has been uninstalled");
             return;
@@ -10259,8 +10247,6 @@ module.exports = function (options) {
           updateChildSizes(element, width, height);
         });
         batchProcessor.add(1, function updateScrollbars() {
-          // This function needs to be invoked event though the size is unchanged. The element could have been resized very quickly and then
-          // been restored to the original size, which will have changed the scrollbar positions.
           if (!getState(element)) {
             debug("Aborting because element has been uninstalled");
             return;
@@ -10274,7 +10260,7 @@ module.exports = function (options) {
           positionScrollbars(element, width, height);
         });
 
-        if (sizeChanged && done) {
+        if (done) {
           batchProcessor.add(2, function () {
             if (!getState(element)) {
               debug("Aborting because element has been uninstalled");
@@ -10301,7 +10287,7 @@ module.exports = function (options) {
         }
 
         debug("notifyListenersIfNeeded invoked");
-        var state = getState(element); // Don't notify if the current size is the start size, and this is the first notification.
+        var state = getState(element); // Don't notify the if the current size is the start size, and this is the first notification.
 
         if (isFirstNotify() && state.lastWidth === state.startSize.width && state.lastHeight === state.startSize.height) {
           return debug("Not notifying: Size is the same as the start size, and there has been no notification yet.");
@@ -10347,7 +10333,15 @@ module.exports = function (options) {
           return;
         }
 
-        updateDetectorElements(notifyListenersIfNeeded);
+        var width = element.offsetWidth;
+        var height = element.offsetHeight;
+
+        if (width !== getState(element).lastWidth || height !== getState(element).lastHeight) {
+          debug("Element size changed.");
+          updateDetectorElements(notifyListenersIfNeeded);
+        } else {
+          debug("Element size has not changed (" + width + "x" + height + ").");
+        }
       }
 
       debug("registerListenersAndPositionElements invoked.");
@@ -10431,8 +10425,7 @@ module.exports = function (options) {
   return {
     makeDetectable: makeDetectable,
     addListener: addListener,
-    uninstall: uninstall,
-    initDocument: initDocument
+    uninstall: uninstall
   };
 };
 

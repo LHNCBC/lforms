@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [22.0.1] 2020-03-24
+### Fixed.
+- Fixed missing extensions when outputting lforms format.
+
 ## [22.0.0] 2020-03-12
 ### Changed
 - The URI for the FHIR "observationLinkPeriod" extension has been updated to the

@@ -1074,6 +1074,36 @@ LForms.Util = {
 
 
   /**
+   * Some extensions are translated to other lforms fields, some are renamed internally and some are 
+   * preserved as they are. This function creates extension array with the renamed and preserved extensions
+   * to use in output for lforms format.
+   * 
+   * Recreate 
+   * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
+   * @return {array|null} Array of extensions 
+   */
+  createExtensionFromLForms: function(formOrItem) {
+    let extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      let _ext = formOrItem[extName];
+      if(_ext) {
+        if(Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        }else {
+          extension.push(_ext);
+        }
+      }
+    });
+
+    if(formOrItem.extension && formOrItem.extension.length > 0) {
+      extension.push.apply(extension, formOrItem.extension);
+    }
+
+    // Return null if none
+    return extension.length > 0 ? extension : null;
+  },
+
+  /**
    *   Returns the part of an LForms form definition that all form definitions
    *   should have.
    */
