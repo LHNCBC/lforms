@@ -180,7 +180,7 @@ var self = {
     // Delete any lformsVersion tag present.  There should be at most one
     for (var i=0, len=tags.length; i<len; ++i) {
       var t = tags[i];
-      if (t.display && t.display.indexOf(_versionTagStr)===0) {
+      if (t.code && t.code.indexOf(_versionTagStr)===0) {
         tags.splice(i, 1);
         break;
       }
@@ -196,7 +196,7 @@ var self = {
    */
   _addVersionTag: function(res) {
     var tag = this._resTags(res);
-    tag.push({display: _versionTagStr+LForms.lformsVersion});
+    tag.push({code: _versionTagStr+LForms.lformsVersion});
   }
 };
 
