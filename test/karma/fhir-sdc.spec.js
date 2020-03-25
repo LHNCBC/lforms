@@ -188,7 +188,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.match(qDataVersion, /^lformsVersion: /);
           });
 
-          it.only('should update lformsVersion if present', function (){
+          it('should update lformsVersion if present', function (){
             var oldVersionTag = 'lformsVersion: oldVersion';
             var questionnaire = {
               name: 'FHP',
@@ -199,10 +199,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             var lfDataVersion = lfData.lformsVersion;
             assert.equal(typeof lfDataVersion, 'string');
             assert(lfDataVersion.length > 0);
-console.log(lfDataVersion);
             assert.notEqual(lfDataVersion, 'oldVersion');
             var qData = fhir.SDC.convertLFormsToQuestionnaire(lfData);
-console.log(JSON.stringify(lfData,null,2));
             var qDataVersion = qData.meta.tag[0].code;
             var versionTagCount = 0;
             for (let tag of qData.meta.tag) {
