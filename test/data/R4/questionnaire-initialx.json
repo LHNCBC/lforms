@@ -274,10 +274,6 @@
       ],
       "extension": [
         {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        },
-        {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
             "coding": [
@@ -291,6 +287,7 @@
           }
         }
       ],
+      "repeats": true,
       "linkId": "/type-choice-m",
       "text": "choice, multiple selection",
       "answerOption": [
@@ -344,10 +341,6 @@
       ],
       "extension": [
         {
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        },
-        {
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
           "valueCodeableConcept": {
             "coding": [
@@ -361,6 +354,7 @@
           }
         }
       ],
+      "repeats": true,
       "linkId": "/type-open-choice-m",
       "text": "open-choice, multiple selection",
       "answerOption": [

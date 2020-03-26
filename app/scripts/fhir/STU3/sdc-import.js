@@ -72,8 +72,7 @@ function addSDCImportFns(ns) {
     self._processCodeAndLinkId(targetItem, qItem);
     _processDisplayItemCode(targetItem, qItem);
     _processEditable(targetItem, qItem);
-    self._processFHIRQCardinality(targetItem, qItem);
-    _processAnswerCardinality(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     self._processDataControl(targetItem, qItem);
     _processRestrictions(targetItem, qItem);

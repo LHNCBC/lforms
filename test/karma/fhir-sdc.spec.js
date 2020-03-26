@@ -509,6 +509,7 @@ console.log(JSON.stringify(lfData,null,2));
               code: formCodes,
               item: [{
                 required: true,
+                repeats: false,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
                   "valueInteger": 2
