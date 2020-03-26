@@ -507,6 +507,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               code: formCodes,
               item: [{
                 required: true,
+                repeats: false,
                 extension: [{
                   "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs",
                   "valueInteger": 2

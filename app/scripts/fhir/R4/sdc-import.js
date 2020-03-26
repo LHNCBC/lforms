@@ -63,8 +63,7 @@ function addSDCImportFns(ns) {
     self._processCodeAndLinkId(targetItem, qItem);
     self._processDisplayItemCode(targetItem, qItem);
     self._processEditable(targetItem, qItem);
-    self._processFHIRQCardinality(targetItem, qItem);
-    self._processAnswerCardinality(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
     self._processDisplayControl(targetItem, qItem);
     self._processDataControl(targetItem, qItem);
     self._processRestrictions(targetItem, qItem);
@@ -80,30 +79,6 @@ function addSDCImportFns(ns) {
     self._processChildItems(targetItem, qItem, containedVS, linkIdItemMap);
 
     return targetItem;
-  };
-
-
-  /**
-   * Parse questionnaire object for answer cardinality
-   *
-   * @param lfItem {object} - LForms item object to assign answer cardinality
-   * @param qItem {object} - Questionnaire item object
-   * @private
-   */
-  self._processAnswerCardinality = function (lfItem, qItem) {
-    if(qItem.required) {
-      lfItem.answerCardinality = {min: '1'};
-    }
-    else {
-      lfItem.answerCardinality = {min: '0'};
-    }
-
-    if(self._hasMultipleAnswers(qItem)) {
-      lfItem.answerCardinality.max = '*';
-    }
-    else {
-      lfItem.answerCardinality.max = '1';
-    }
   };
 
 

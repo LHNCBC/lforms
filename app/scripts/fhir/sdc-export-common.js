@@ -113,7 +113,9 @@ function addCommonSDCExportFns(ns) {
     targetItem.extension = [];
 
     // required
-    targetItem.required = item._answerRequired;
+    if (item._answerRequired === true || item._answerRequired === false) {
+      targetItem.required = item._answerRequired;
+    }
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
     if (targetItem.required) {
@@ -126,20 +128,9 @@ function addCommonSDCExportFns(ns) {
       }
     }
 
-    // question repeats
+    // question/answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    this._processQuestionCardinality(targetItem, item);
-
-    // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    }
+    this._processQuestionAndAnswerCardinality(targetItem, item);
 
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     this._handleItemControl(targetItem, item);
@@ -258,6 +249,36 @@ function addCommonSDCExportFns(ns) {
 
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem
+  };
+
+
+  /**
+   * Process the LForms questionCardinality and answerCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+  self._processQuestionAndAnswerCardinality = function(targetItem, item) {
+    var repeats = false, maxOccurs = 0;
+
+    var qCard = item.questionCardinality, aCard = item.answerCardinality;
+    var cardMax = qCard && qCard.max ? qCard.max : aCard && aCard.max;
+
+    if (cardMax) {
+      var intCardMax = parseInt(cardMax);
+      repeats = cardMax === "*" || intCardMax > 1;
+      if (intCardMax > 1 )
+        maxOccurs = intCardMax;
+    }
+
+    if (repeats && item.dataType !== "TITLE") {
+      targetItem.repeats = true;
+      if (maxOccurs > 1) {
+        targetItem.extension.push({
+          "url": self.fhirExtUrlCardinalityMax,
+          "valueInteger": maxOccurs
+        });
+      }
+    }
   };
 
 

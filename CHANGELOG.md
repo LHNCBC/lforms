@@ -11,6 +11,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 - The version tag on generated FHIR resources is now set on the "code" property
   instead of the "display" property, as some FHIR servers drop tags that do not
   contain a code.
+- Removed a FHIR extension for indicating that a question can have more than one answer.  
+  We now rely on FHIR Questionnaire.item.repeats, plus the item type, to determine
+  whether an item repeats or the item's answer repeats in our rendering of the form.
 
 ## [22.0.0] 2020-03-12
 ### Changed

@@ -104,7 +104,6 @@ var self = {
   },
 
 
-
   /**
    * Handle special requirements for 'display' items
    * @param targetItem an item in Questionnaire

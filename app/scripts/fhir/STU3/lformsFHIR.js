@@ -22042,7 +22042,10 @@ function addCommonSDCExportFns(ns) {
 
     targetItem.extension = []; // required
 
-    targetItem.required = item._answerRequired; // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
+    if (item._answerRequired === true || item._answerRequired === false) {
+      targetItem.required = item._answerRequired;
+    } // http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs
+
 
     if (targetItem.required) {
       var minOccurInt = parseInt(item.questionCardinality.min);
@@ -22053,22 +22056,11 @@ function addCommonSDCExportFns(ns) {
           "valueInteger": minOccurInt
         });
       }
-    } // question repeats
+    } // question/answer repeats
     // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
 
 
-    this._processQuestionCardinality(targetItem, item); // answer repeats
-    // http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs
-
-
-    if (item.answerCardinality) {
-      if (item.answerCardinality.max === "*") {
-        targetItem.extension.push({
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-answerRepeats",
-          "valueBoolean": true
-        });
-      }
-    } // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
+    this._processQuestionAndAnswerCardinality(targetItem, item); // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
 
 
     this._handleItemControl(targetItem, item); // check restrictions
@@ -22185,6 +22177,37 @@ function addCommonSDCExportFns(ns) {
     if (noExtensions || targetItem.extension.length === 0) delete targetItem.extension;
     this.copyFields(item, targetItem, this.itemLevelIgnoredFields);
     return targetItem;
+  };
+  /**
+   * Process the LForms questionCardinality and answerCardinality into FHIR.
+   * @param targetItem an item in Questionnaire
+   * @param item a LForms item
+   */
+
+
+  self._processQuestionAndAnswerCardinality = function (targetItem, item) {
+    var repeats = false,
+        maxOccurs = 0;
+    var qCard = item.questionCardinality,
+        aCard = item.answerCardinality;
+    var cardMax = qCard && qCard.max ? qCard.max : aCard && aCard.max;
+
+    if (cardMax) {
+      var intCardMax = parseInt(cardMax);
+      repeats = cardMax === "*" || intCardMax > 1;
+      if (intCardMax > 1) maxOccurs = intCardMax;
+    }
+
+    if (repeats && item.dataType !== "TITLE") {
+      targetItem.repeats = true;
+
+      if (maxOccurs > 1) {
+        targetItem.extension.push({
+          "url": self.fhirExtUrlCardinalityMax,
+          "valueInteger": maxOccurs
+        });
+      }
+    }
   };
   /**
    * Process an item's externally defined answer list
@@ -23013,9 +23036,7 @@ function addSDCImportFns(ns) {
 
     _processEditable(targetItem, qItem);
 
-    self._processFHIRQCardinality(targetItem, qItem);
-
-    _processAnswerCardinality(targetItem, qItem);
+    self._processFHIRQuestionAndAnswerCardinality(targetItem, qItem);
 
     self._processDisplayControl(targetItem, qItem);
 
@@ -23706,26 +23727,6 @@ function addCommonSDCFns(ns) {
     return item && item.answerCardinality && item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1);
   };
   /**
-   * Find out if multiple answers extension is true.
-   * @param qItem - FHIR Questionnaire item.
-   * @returns {boolean}
-   */
-
-
-  self._hasMultipleAnswers = function (qItem) {
-    var ret = false;
-
-    if (qItem) {
-      var answerRepeats = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlAnswerRepeats);
-
-      if (answerRepeats && answerRepeats.valueBoolean) {
-        ret = true;
-      }
-    }
-
-    return ret;
-  };
-  /**
    * Do a shallow copy of specified fields from source to target.
    *
    * @param source - Source object
@@ -24172,7 +24173,7 @@ function addCommonSDCImportFns(ns) {
     lfItem.linkId = qItem.linkId;
   };
   /**
-   * Parse questionnaire item for question cardinality
+   * Parse questionnaire item for question cardinality and answer cardinality
    *
    * @param lfItem {object} - LForms item object to assign question cardinality
    * @param qItem {object} - Questionnaire item object
@@ -24180,31 +24181,59 @@ function addCommonSDCImportFns(ns) {
    */
 
 
-  self._processFHIRQCardinality = function (lfItem, qItem) {
+  self._processFHIRQuestionAndAnswerCardinality = function (lfItem, qItem) {
     var min = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMin);
+    var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
+    var repeats = qItem.repeats;
+    var required = qItem.required;
+    var answerCardinality, questionCardinality; // CNE/CWE, repeats handled by autocompleter with multiple answers in one question
 
-    if (min) {
-      lfItem.questionCardinality = {
-        min: min.valueInteger.toString()
-      };
-      var max = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlCardinalityMax);
-
-      if (max) {
-        lfItem.questionCardinality.max = min.valueInteger.toString();
-      } else if (qItem.repeats) {
-        lfItem.questionCardinality.max = '*';
+    if (lfItem.dataType === 'CNE' || lfItem.dataType === 'CWE') {
+      if (repeats) {
+        answerCardinality = max ? {
+          max: max.valueInteger.toString()
+        } : {
+          max: "*"
+        };
+      } else {
+        answerCardinality = {
+          max: "1"
+        };
       }
-    } else if (qItem.repeats) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "*"
-      };
-    } else if (qItem.required) {
-      lfItem.questionCardinality = {
-        min: "1",
-        max: "1"
-      };
-    }
+
+      if (required) {
+        answerCardinality.min = min ? min.valueInteger.toString() : "1";
+      } else {
+        answerCardinality.min = "0";
+      }
+    } // not CNE/CWE, question repeats
+    else {
+        // repeats
+        if (repeats) {
+          questionCardinality = max ? {
+            max: max.valueInteger.toString()
+          } : {
+            max: "*"
+          };
+        } else {
+          questionCardinality = {
+            max: "1"
+          };
+        } // required
+
+
+        if (required) {
+          questionCardinality.min = min ? min.valueInteger.toString() : "1";
+          answerCardinality = {
+            min: "1"
+          };
+        } else {
+          questionCardinality.min = "1";
+        }
+      }
+
+    if (questionCardinality) lfItem.questionCardinality = questionCardinality;
+    if (answerCardinality) lfItem.answerCardinality = answerCardinality;
   };
   /**
    * Parse questionnaire item for units list
