@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [23.0.1] 2020-03-24
+### Fixed.
+- Fixed missing extensions when outputting lforms format.
+
 ## [23.0.0] 2020-03-20
 ### Changed
 - The version tag on generated FHIR resources is now set on the "code" property

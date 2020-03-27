@@ -900,27 +900,14 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._handleExtensions = function (targetItem, item) {
-    var extension = [];
-    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
-      var _ext = item[extName];
-      if(_ext) {
-        if(Array.isArray(_ext)) {
-          extension.push.apply(extension, _ext);
-        }else {
-          extension.push(_ext);
-        }
-      }
-    });
 
-    if(extension.length > 0) {
+    let extension = LForms.Util.createExtensionFromLForms(item);
+    if(extension) {
       if(!targetItem.extension) {
         targetItem.extension = [];
       }
       targetItem.extension.push.apply(targetItem.extension, extension);
     }
-
-    targetItem.extension.push.apply(targetItem.extension, item.extension);
-
   };
 
 

@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"23.0.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"23.0.1\"}");
 
 /***/ }),
 /* 7 */
@@ -3344,6 +3344,37 @@ LForms.Util = {
     }
 
     return ret;
+  },
+
+  /**
+   * Some extensions are translated to other lforms fields, some are renamed internally and some are 
+   * preserved as they are. This function creates extension array with the renamed and preserved extensions
+   * to use in output for lforms format.
+   * 
+   * Recreate 
+   * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
+   * @return {array|null} Array of extensions 
+   */
+  createExtensionFromLForms: function createExtensionFromLForms(formOrItem) {
+    var extension = [];
+    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+      var _ext = formOrItem[extName];
+
+      if (_ext) {
+        if (Array.isArray(_ext)) {
+          extension.push.apply(extension, _ext);
+        } else {
+          extension.push(_ext);
+        }
+      }
+    });
+
+    if (formOrItem.extension && formOrItem.extension.length > 0) {
+      extension.push.apply(extension, formOrItem.extension);
+    } // Return null if none
+
+
+    return extension.length > 0 ? extension : null;
   },
 
   /**
@@ -6076,6 +6107,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         items: formData.itemsData,
         templateOptions: angular.copy(this.templateOptions)
       };
+      var flExtensions = LForms.Util.createExtensionFromLForms(this);
+
+      if (flExtensions) {
+        defData.extension = flExtensions;
+      }
 
       if (hasSavedData) {
         defData.hasSavedData = true;
@@ -6151,6 +6187,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // otherwise include form definition data
         else {
             // process fields
+            // process extensions 
+            var extension = LForms.Util.createExtensionFromLForms(item);
+
+            if (extension) {
+              itemData.extension = extension;
+            } // Process other fields
+
+
             for (var field in item) {
               // special handling for user input values
               if (field === "value") {
@@ -6158,7 +6202,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               } else if (field === "unit") {
                 itemData[field] = this._getOriginalValue(item[field]);
               } // ignore the internal lforms data and angular data
-              else if (!field.match(/^[_\$]/)) {
+              else if (!field.match(/^[_\$]/) && field !== 'extension') {
                   itemData[field] = item[field];
                 }
 

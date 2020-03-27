@@ -1425,6 +1425,10 @@
         templateOptions: angular.copy(this.templateOptions)
       };
 
+      var flExtensions = LForms.Util.createExtensionFromLForms(this);
+      if (flExtensions) {
+        defData.extension = flExtensions;
+      }
       if (hasSavedData) {
         defData.hasSavedData = true;
       }
@@ -1505,6 +1509,12 @@
         // otherwise include form definition data
         else {
           // process fields
+          // process extensions 
+          let extension = LForms.Util.createExtensionFromLForms(item);
+          if(extension) {
+            itemData.extension = extension;
+          }
+          // Process other fields
           for (var field in item) {
             // special handling for user input values
             if (field === "value") {
@@ -1514,7 +1524,7 @@
               itemData[field] = this._getOriginalValue(item[field]);
             }
             // ignore the internal lforms data and angular data
-            else if (!field.match(/^[_\$]/)) {
+            else if (!field.match(/^[_\$]/) && field !== 'extension') {
               itemData[field] = item[field];
             }
             if (keepIdPath) {

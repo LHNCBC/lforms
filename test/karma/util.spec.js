@@ -213,13 +213,173 @@ describe('Util library', function() {
     });
   })
 
-
   describe('getFormData', ()=>{
+    let fhirQ = {
+      "resourceType": "Questionnaire",
+      "status": "draft",
+      "version": "2.56",
+      "meta": {
+        "profile": [
+          "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+        ]
+      },
+      "extension": [
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "flv1",
+            "language": "text/fhirpath",
+            "expression": "1"
+          }
+        },
+        {
+          "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+          "valueExpression" : {
+            "name": "flv2",
+            "language": "text/fhirpath",
+            "expression": "2"
+          }
+        },
+        {
+          "url" : "http://example.com/formlevel-extension1",
+          "valueExpression" : {
+            "name": "flext1",
+            "language": "text/fhirpath",
+            "expression": "1"
+          }
+        },
+        {
+          "url" : "http://example.com/formlevel-extension2",
+          "valueExpression" : {
+            "name": "flext2",
+            "language": "text/fhirpath",
+            "expression": "1"
+          }
+        }
+      ],
+      item: [
+        {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-unit",
+              "valueCoding": {
+                "system": "http://unitsofmeasure.org",
+                "code": "kg/m2"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "valueExpression": {
+                "description": "BMI calculation",
+                "language" : "text/fhirpath",
+                "expression": "((%weight/%height/%height*10) div 1)/10"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression",
+              "valueExpression": {
+                "description": "BMI calculation",
+                "language" : "text/fhirpath",
+                "expression": "((%weight/%height/%height*10) div 1)/10"
+              }
+            },
+            {
+              "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+              "valueExpression" : {
+                "name": "height",
+                "language": "text/fhirpath",
+                "expression": "5.5"
+              }
+            },
+            {
+              "url" : "http://hl7.org/fhir/StructureDefinition/variable",
+              "valueExpression" : {
+                "name": "weight",
+                "language": "text/fhirpath",
+                "expression": "150"
+              }
+            },
+            {
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod",
+              "valueDuration": {
+                "value": "1",
+                "unit": "year",
+                "system": "http://unitsofmeasure.org",
+                "code": "a"
+              }
+            },
+            {
+              url: 'http://example1.com',
+              valueDecimal: 0
+            },
+            {
+              url: 'http://example2.com',
+              valueDecimal: 200
+            }
+          ],
+          "required": false,
+          "linkId": "testId",
+          "text": "Test item",
+          "type": "decimal"
+        }
+      ]
+    };
+
+    /**
+     * Collects array of extensions based on extension url.
+     * 
+     * @param {object} acc - Object with extension url as key and array of  
+     *  corresponding extensions as value.
+     * @param {object} e - Extension
+     */
+    const extReducer = (acc, e) => {
+      let eList = acc[e.url];
+      if (!eList) {
+        eList = [];
+        acc[e.url] = eList;
+      }
+      eList.push(e);
+      return acc;
+    };
+
     it('should include lformsVersion', ()=>{
       var lfData = new LForms.LFormsData({name: 'test form', items: []});
       var formData = lfData.getFormData();
       assert(typeof formData.lformsVersion === 'string');
       assert(formData.lformsVersion.length > 0);
+    });
+
+    it('should convert and retain extension array in lforms format at form level', function() {
+      let lfData = LForms.FHIR.R4.SDC.convertQuestionnaireToLForms(fhirQ);
+      lfData = new LForms.LFormsData(lfData);
+      const formData = lfData.getFormData();
+      const fhirExts = fhirQ.extension.reduce(extReducer, {});
+      const lformsExts = formData.extension.reduce(extReducer, {});
+
+      assert(formData.extension.length === 4);
+      Object.keys(fhirExts).forEach((url) => {
+        assert.deepEqual(lformsExts[url], fhirExts[url]);
+      });
+    });
+
+    it('should convert and retain extension array in lforms format at item level', function() {
+      let lfData = LForms.FHIR.R4.SDC.convertQuestionnaireToLForms(fhirQ);
+      lfData = new LForms.LFormsData(lfData);
+      let formData = lfData.getFormData();
+      const fhirExts = fhirQ.item[0].extension.reduce(extReducer, {});
+      const lformsExts = formData.items[0].extension.reduce(extReducer, {});
+
+      assert(formData.items[0].extension.length === 7);
+      Object.keys(fhirExts).forEach((url) => {
+        const lfExt = lformsExts[url];
+        if(url === 'http://hl7.org/fhir/StructureDefinition/questionnaire-unit') {
+          assert(!lfExt); 
+          assert(formData.items[0].unit);
+          assert.deepEqual(formData.items[0].units.length, fhirExts[url].length);
+        } else {
+          assert.deepEqual(lfExt, fhirExts[url]);
+        }
+      });
     });
   });
 });
