@@ -1,0 +1,403 @@
+{ "type": "LOINC",
+  "code": "form-with-user-data",
+  "name": "Form with User Data",
+  "dataType": null,
+  "header": null,
+  "units": null,
+  "codingInstructions": "NIH/NLM/LHNCBC",
+  "copyrightNotice": null,
+  "items": [
+
+    {"questionCode": "q1", "header": false, "units": null,
+      "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo.nlm.nih.gov'>LForms Demo</a>",
+      "codingInstructionsFormat": "html",
+      "value": "no data type",
+      "questionCardinality": null, "answerCardinality": null, "question": "With no data type", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q0", "dataType": "BL", "value": true, "question": "With data type BL"},
+    {"questionCode": "q2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 100,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q3", "dataType": "ST", "header": false, "units": null, "codingInstructions": null, "value": "user input value",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q4", "dataType": "DT", "header": false, "units": null, "codingInstructions": null, "value": "11/17/2015",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "q99", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null, "value": "11/20/2015 10:10",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "q5", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, default value", "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null},
+      {"code": "c2", "text": "Answer 2", "other": null},
+      {"code": "c3", "text": "Answer 3", "other": null},
+      {"code": "c4", "text": "Other:", "other": true}],
+      "skipLogic": null, "editable": null, "defaultAnswer": {"text":"Answer 2"}, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "q6", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "value": {"code": "c2", "text": "Answer 2", "other": null, "label": null, "score": null},
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value",
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null, "label": null, "score": null},
+        {"code": "c2", "text": "Answer 2", "other": null, "label": null, "score": null},
+        {"code": "c3", "text": "Answer 3", "other": null, "label": null, "score": null},
+        {"code": "c4", "text": "Other:", "other": true, "label": null, "score": null}],
+      "skipLogic": null, "editable": null,  "calculationMethod": null
+    },
+
+    {"questionCode": "q7", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": {"code": "c3", "text": "Answer 3", "other": null},
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE, user value over default value", "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null},
+      {"code": "c2", "text": "Answer 2", "other": null},
+      {"code": "c3", "text": "Answer 3", "other": null},
+      {"code": "c4", "text": "Other:", "other": true}],
+      "skipLogic": null, "editable": null, "defaultAnswer": "Answer 2", "displayControl": null, "calculationMethod": null, "items": null},
+
+
+    {"questionCode": "q8", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c1", "text": "Answer 1"},{"code": "c3", "text": "Answer 3"}],
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CNE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "q9", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "value": [{"code": "c2", "text": "Answer 2"},"User created answer"],
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "q10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null, "value": [{"code": "c2", "text": "Answer 2"},"User created answer"],
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE, a search field",
+      "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/variants/v3/search?df=AlleleID,RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange&ef=RefSeqID,GeneSymbol,NucleotideChange,AminoAcidChange,phenotypes",
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+
+    {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "value": 2, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"value": 1}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 200,
+      "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"minInclusive": 2}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+      "items": [
+
+        {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 201,
+          "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+        {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 202,
+          "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+      ]
+    },
+
+
+    {"questionCode": "rp-q1", "questionCardinality": {"min": "1", "max": "*"}, "question": "A Repeating Item", "value": "instance A"},
+    {"questionCode": "rp-q1", "questionCardinality": {"min": "1", "max": "*"}, "question": "A Repeating Item", "value": "instance B"},
+
+    {"questionCode": "rp-q2", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
+      "items": [
+        {"questionCode": "rp-q3", "dataType": "INT", "header": false, "units": null, "value": 300,
+          "questionCardinality": null, "answerCardinality": null, "question": "An item in a repeating section", "answers": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
+          "answerCardinality": null, "question": "A repeating section in a repeating section",
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+            {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 400,
+              "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        },
+        {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
+          "answerCardinality": null, "question": "A repeating section in a repeating section",
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+            {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 401,
+              "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        },
+        {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
+          "answerCardinality": null, "question": "A repeating section in a repeating section",
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+            {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 402,
+              "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        }
+      ]
+    },
+    {"questionCode": "rp-q2", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
+      "items": [
+        {"questionCode": "rp-q3", "dataType": "INT", "header": false, "units": null, "value": 301,
+          "questionCardinality": null, "answerCardinality": null, "question": "An item in a repeating section", "answers": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rp-q4", "dataType": "", "header": true, "questionCardinality":{"max": "*", "min": "1"},
+          "answerCardinality": null, "question": "A repeating section in a repeating section",
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+            {"questionCode": "rp-q5", "dataType": "INT", "header": false, "units": null, "codingInstructions": null, "value": 403,
+              "questionCardinality": null, "answerCardinality": null, "question": "A sub-sub item", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        }
+      ]
+    },
+
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": false
+    },
+
+
+    {"questionCode": "rpSource2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "2 to show T2", "value": 2,
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #2", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "repeatingSection1", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
+      "items": [
+
+        {"questionCode": "rpSource1", "dataType": "INT", "header": false, "units": null, "value": 3, "codingInstructions": "1 to show T1; <=5 to show header T3, and its subitem T4.",
+          "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #1", "answers": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+        {"questionCode": "rpTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source (repeating) #1' == 1", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"value": 1}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+        {"questionCode": "rpTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source (repeating) #2' == 2", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource2", "trigger": {"value": 2}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+        {"questionCode": "rpTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+
+            {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+              "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        }
+      ]
+    },
+
+    {
+      "answerCardinality": {
+        "min": "0", "max": "1"},
+      "dataType": "QTY",
+      "header": false,
+      "question": "Weight, with value and unit",
+      "questionCardinality": {
+        "min": "1", "max": "1"},
+      "questionCode": "unit1",
+      "questionCodeSystem": "LOINC",
+      "unit": {
+        "name": "kgs"},
+      "units": [{
+        "name": "lbs"},{
+        "name": "kgs"}],
+      "value": 123
+    },
+    {
+      "answerCardinality": {
+        "min": "0", "max": "1"},
+      "dataType": "QTY",
+      "header": false,
+      "question": "Weight, with value and unit, and a default unit",
+      "questionCardinality": {
+        "min": "1", "max": "1"},
+      "questionCode": "unit2",
+      "questionCodeSystem": "LOINC",
+      "unit": {
+        "name": "kgs"},
+      "units": [{
+        "name": "lbs", "default": true},{
+        "name": "kgs"}],
+      "value": 456
+    },
+    {
+      "answerCardinality": {
+        "min": "0", "max": "1"},
+      "dataType": "REAL",
+      "header": false,
+      "question": "Weight as REAL with value and unit",
+      "questionCardinality": {
+        "min": "1", "max": "1"},
+      "questionCode": "unit3",
+      "questionCodeSystem": "LOINC",
+      "unit": {
+        "name": "kgs"},
+      "units": [{
+        "name": "kgs"}],
+      "value": 789
+    },
+
+    {
+      "questionCode": "cwe-checkbox-user-value",
+      "question": "CHECKBOX --CWE, with user typed value",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": ["user typed value"]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer-code",
+      "question": "CHECKBOX --CWE, with user typed value and an answer by code",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": ["user typed value", {"code": "c1"}]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer-text",
+      "question": "CHECKBOX --CWE, with user typed value and an answer by text",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": ["user typed value", {"text": "Answer B"}]
+    },
+    {
+      "questionCode": "cwe-checkbox-user-value-and-answer",
+      "question": "CHECKBOX --CWE, with user typed value and an answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": ["user typed value", {"code": "c3", "text": "Answer C"}]
+    },
+
+    {
+      "questionCode": "cwe-checkbox-default-answer",
+      "question": "CHECKBOX --CWE, with off-list default answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "defaultAnswer": ["off-list default answer"]
+    },
+    {
+      "questionCode": "cwe-radio-user-value",
+      "question": "RADIO layout --CWE, with user typed value",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": "user typed value"
+    },
+    {
+      "questionCode": "cwe-radio-user-value-nodisplay",
+      "question": "RADIO layout --CWE, with user typed value, no-matching",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "value": {"text": "user typed value"}
+    },
+    {
+      "questionCode": "cwe-radio-default-answer",
+      "question": "RADIO layout --CWE, with off-list default answer",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "defaultAnswer": "off-list default answer"
+    },
+    {
+      "questionCode": "cwe-radio-default-answer-nodisplay",
+      "question": "RADIO layout --CWE, with off-list default answer, no-matching",
+      "dataType": "CWE",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "displayControl": {
+        "answerLayout": {"type":"RADIO_CHECKBOX", "columns": "2"}
+      },
+      "answers": [
+        {"code": "c1", "text": "Answer A"},
+        {"code": "c2", "text": "Answer B"},
+        {"code": "c3", "text": "Answer C"}
+      ],
+      "defaultAnswer": {"text": "off-list default answer"}
+    }
+
+  ]}

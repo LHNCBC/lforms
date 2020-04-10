@@ -21945,7 +21945,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = lfData.getFormData(true, true, true, true, true);
+      var source = lfData.getFormData(true, true, true);
 
       this._processRepeatingItemValues(source);
 
@@ -22010,18 +22010,6 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
-   * Get the linkId for the given item - this is to ensure that getting linkId for an item
-   * is done consistently.
-   * @param item the lforms item whose linkId is to be retrieved.
-   * @return the linkId for the item
-   * @private
-   */
-
-
-  self._getItemLinkId = function (item) {
-    return item.linkId || item._codePath;
-  };
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
@@ -22078,7 +22066,7 @@ function addCommonSDCExportFns(ns) {
     } // linkId
 
 
-    targetItem.linkId = this._getItemLinkId(item); // Text & prefix
+    targetItem.linkId = item.linkId; // Text & prefix
 
     targetItem.text = item.question;
 
@@ -22846,7 +22834,7 @@ function addCommonSDCExportFns(ns) {
     }
 
     var targetItem = isForm || lfItem.dataType === 'TITLE' ? {} : {
-      linkId: this._getItemLinkId(lfItem),
+      linkId: lfItem.linkId,
       text: lfItem.question
     }; // just handle/convert the current item's value, no-recursion to sub-items at this step.
 
@@ -22861,8 +22849,7 @@ function addCommonSDCExportFns(ns) {
         var lfSubItem = lfItem.items[i];
 
         if (!lfSubItem._isProcessed) {
-          var linkId = this._getItemLinkId(lfSubItem);
-
+          var linkId = lfSubItem.linkId;
           var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
 
           if (repeats) {
@@ -22931,8 +22918,7 @@ function addCommonSDCExportFns(ns) {
         var subItem = item.items[i]; // if it is a question and it repeats
 
         if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
-          var linkId = this._getItemLinkId(subItem);
-
+          var linkId = subItem.linkId;
           item._repeatingItems = item._repeatingItems || {};
           item._repeatingItems[linkId] = item._repeatingItems[linkId] || [];
 
@@ -23114,7 +23100,7 @@ function addSDCImportFns(ns) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
 
         var condition = {
-          source: source.questionCode
+          source: source.linkId
         };
 
         if (qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
@@ -24600,7 +24586,8 @@ function addCommonSDCImportFns(ns) {
   self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
     var item = linkIdItemMap[questionLinkId];
     var ret = {
-      dataType: self._getDataType(item)
+      dataType: self._getDataType(item),
+      linkId: questionLinkId
     };
 
     if (item.code) {

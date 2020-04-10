@@ -1,0 +1,52 @@
+{
+  "type": "LOINC",
+  "code": "formC",
+  "name": "Define LForm",
+  "items": [
+    {
+      "questionCode": "codingSystemC",
+      "question": "Coding System",
+      "dataType": "CNE",
+      "answers": "codingSystemC",
+      "header": false
+    },
+    {
+      "questionCode": "questionHeaderC",
+      "question": "Question",
+      "header": true,
+      "items": [
+        {
+          "questionCode": "questionC",
+          "question": "Label",
+          "dataType": "ST",
+          "header": false
+        },
+        {
+          "questionCode": "questionCardinalityC",
+          "question": "Question cardinality",
+          "header": true,
+          "items": [{
+            "questionCode": "minC",
+            "question": "Minimum",
+            "dataType": "INT",
+            "header": false
+          }]
+        },
+        {
+          "questionCode": "answersC",
+          "question": "Build answer list",
+          "header": true,
+          "items": [{
+            "questionCode": "textC",
+            "question": "Answer text",
+            "dataType": "ST",
+            "header": false
+          }]
+        }, {
+          "questionCode": "formulaC",
+          "question": "Formula",
+          "dataType": "ST",
+          "header": false
+        }]
+    }]
+}

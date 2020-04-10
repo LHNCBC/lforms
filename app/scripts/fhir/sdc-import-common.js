@@ -803,7 +803,10 @@ function addCommonSDCImportFns(ns) {
   self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
 
     var item = linkIdItemMap[questionLinkId];
-    var ret = {dataType: self._getDataType(item)};
+    var ret = {
+      dataType: self._getDataType(item),
+      linkId: questionLinkId
+    };
     if(item.code) {
       ret.questionCode = item.code[0].code;
     }

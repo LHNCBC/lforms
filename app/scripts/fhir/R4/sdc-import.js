@@ -101,7 +101,7 @@ function addSDCImportFns(ns) {
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
           var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
-          var condition = {source: source.questionCode, trigger: {}};
+          var condition = {source: source.linkId, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
           if(! opMapping) {

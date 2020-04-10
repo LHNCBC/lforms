@@ -5,9 +5,9 @@ describe('ExpresssionProcessor', function () {
       // Test by checking that QR.item.answer.value works to return a value (as
       // opposed to "valueString", which is what it would be without model information).
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
-        questionCode: 'q1', dataType: 'ST', value: "green"
+        linkId: '/q1', dataType: 'ST', value: "green"
       }, {
-        questionCode: 'q2', dataType: 'ST',
+        linkId: '/q2', dataType: 'ST',
         extension: [{
           "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
           "valueExpression": {
@@ -24,18 +24,18 @@ describe('ExpresssionProcessor', function () {
 
   describe('_addToIDtoQRItemMap', function() {
     it('should handle repeating items with missing data', function() {
-      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{questionCode: 'g1', items:  [{
-        questionCode: 'q1',
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{linkId: '/g1', items:  [{
+        linkId: '/g1/q1',
         questionCardinality: {"min": "1", "max": "*"},
         value: 1
       },
       {
-        questionCode: 'q1',
+        linkId: '/g1/q1',
         questionCardinality: {"min": "1", "max": "*"},
         // blank
       },
       {
-        questionCode: 'q1',
+        linkId: '/g1/q1',
         questionCardinality: {"min": "1", "max": "*"},
         value: 2
       }]}]});
@@ -51,19 +51,19 @@ describe('ExpresssionProcessor', function () {
     });
 
     it('should handle items with data that are two levels down', function() {
-      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{questionCode: 'g1', items:  [{
-        questionCode: 'g1A', items: [{
-          questionCode: 'q1',
+      var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{linkId: '/g1', items:  [{
+        linkId: '/g1/g1A', items: [{
+          linkId: '/g1/g1A/q1',
           questionCardinality: {"min": "1", "max": "*"},
           value: 1
         },
         {
-          questionCode: 'q1',
+          linkId: '/g1/g1A/q1',
           questionCardinality: {"min": "1", "max": "*"},
           // blank
         },
         {
-          questionCode: 'q1',
+          linkId: '/g1/g1A/q1',
           questionCardinality: {"min": "1", "max": "*"},
           value: 2
         }
@@ -78,18 +78,19 @@ describe('ExpresssionProcessor', function () {
       var exp = new LForms.ExpressionProcessor(lfData)
       var map = {};
       exp._addToIDtoQRItemMap(lfItem, qrItem, map);
+      console.log(Object.keys(map))
       assert.deepEqual(map, {'/g1/1': qrItem, '/g1/g1A/1/1': qrItem.item[0],
         '/g1/g1A/q1/1/1/1': qrItem.item[0].item[0], '/g1/g1A/q1/1/1/3': qrItem.item[0].item[0]});
     });
 
     it('should skip over blank LForms questions', function() {
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
-        questionCode: 'g1A', items: [{
-          questionCode: 'q1',
+        linkId: '/g1A', items: [{
+          linkId: '/g1A/q1',
           questionCardinality: {"min": "1", "max": "1"},
         },
         {
-          questionCode: 'q2',
+          linkId: '/g1A/q2',
           questionCardinality: {"min": "1", "max": "1"},
           value: 2
         }
@@ -109,11 +110,11 @@ describe('ExpresssionProcessor', function () {
 
     it('should handle two sibling sub-sections', function() {
       var lfData = new LForms.LFormsData({fhirVersion: 'R4', items: [{
-        questionCode: 'g1A', items: [{
-          questionCode: 'q1',
+        linkId: '/g1A', items: [{
+          linkId: '/g1A/q1',
           questionCardinality: {"min": "1", "max": "1"}
         }]}, {
-        questionCode: 'g2A', items: [{  questionCode: 'q2',
+        linkId: '/g2A', items: [{  linkId: '/g2A/q2',
           questionCardinality: {"min": "1", "max": "1"},
           value: 2
         }]}

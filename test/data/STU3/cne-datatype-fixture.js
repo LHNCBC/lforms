@@ -12,8 +12,7 @@ var STU3_cneDataTypeFixture = {
     "answerCardinality": {"min": "1","max": "1"},
     "dataType": "CNE",
     "questionCodeSystem": "LOINC",
-    "_codePath": "/54126-8/54131-8",
-    "_idPath": "/1/1"
+    "linkId": "/54126-8/54131-8"
   },
 
   output: {
@@ -53,8 +52,7 @@ var STU3_alWithCodeSystemFixture = {
     "questionCardinality": {"min": "1","max": "1"},
     "answers": [{"text": "X","code": "x", "system": "http://loinc.org"},{"text": "Y","code": "y", "system": "LOINC"},{"text": "Z","code": "z","other": "Please Specify", "system": "LOINC"}],
     "dataType": "CNE",
-    "_codePath": "/a/a",
-    "_idPath": "/1/1"
+    "linkId": "/a/a"
   },
 
   output: {

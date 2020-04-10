@@ -21,7 +21,7 @@ function addCommonSDCExportFns(ns) {
   self.convertLFormsToQuestionnaireResponse = function(lfData, noExtensions, subject) {
     var target = {};
     if (lfData) {
-      var source = lfData.getFormData(true,true,true,true,true);
+      var source = lfData.getFormData(true,true,true);
       this._processRepeatingItemValues(source);
       this._setResponseFormLevelFields(target, source, noExtensions);
 
@@ -74,18 +74,6 @@ function addCommonSDCExportFns(ns) {
     LForms.Util.pruneNulls(target);
     this._commonExport._setVersionTag(target);
     return target;
-  };
-
-
-  /**
-   * Get the linkId for the given item - this is to ensure that getting linkId for an item
-   * is done consistently.
-   * @param item the lforms item whose linkId is to be retrieved.
-   * @return the linkId for the item
-   * @private
-   */
-  self._getItemLinkId = function(item) {
-    return item.linkId || item._codePath;
   };
 
 
@@ -150,7 +138,7 @@ function addCommonSDCExportFns(ns) {
 
 
     // linkId
-    targetItem.linkId = this._getItemLinkId(item);
+    targetItem.linkId = item.linkId;
 
     // Text & prefix
     targetItem.text = item.question;
@@ -925,7 +913,7 @@ function addCommonSDCExportFns(ns) {
       throw new Error('_processResponseItem function signature has been changed, please check/fix.');
     }
     var targetItem = (isForm || lfItem.dataType === 'TITLE')? {}: {
-        linkId: this._getItemLinkId(lfItem),
+        linkId: lfItem.linkId,
         text: lfItem.question
       };
 
@@ -939,7 +927,7 @@ function addCommonSDCExportFns(ns) {
       for (var i=0; i < lfItem.items.length; ++i) {
         var lfSubItem = lfItem.items[i];
         if(! lfSubItem._isProcessed) {
-          var linkId = this._getItemLinkId(lfSubItem);
+          var linkId = lfSubItem.linkId;
           var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
           if(repeats) {      // Can only be questions here per _processRepeatingItemValues
             let fhirItem = { // one FHIR item for all repeats with the same linkId
@@ -1001,7 +989,7 @@ function addCommonSDCExportFns(ns) {
         var subItem = item.items[i];
         // if it is a question and it repeats
         if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
-          var linkId = this._getItemLinkId(subItem);
+          var linkId = subItem.linkId;
           item._repeatingItems = item._repeatingItems || {};
           item._repeatingItems[linkId] = item._repeatingItems[linkId] || [];
           item._repeatingItems[linkId].push(subItem);

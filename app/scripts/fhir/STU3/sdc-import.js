@@ -129,7 +129,7 @@ function addSDCImportFns(ns) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
       for(var i = 0; i < qItem.enableWhen.length; i++) {
         var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
-        var condition = {source: source.questionCode};
+        var condition = {source: source.linkId};
         if(qItem.enableWhen[i].hasOwnProperty('hasAnswer')) {
           condition.trigger = {exists: qItem.enableWhen[i].hasAnswer};
         }

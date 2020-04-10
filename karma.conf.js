@@ -21,6 +21,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'test/data/**/*.json', included: false, served: true},
+      {pattern: 'app/data/**/*.json', included: false, served: true},
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
@@ -33,8 +34,7 @@ module.exports = function(config) {
       'test/karma/*.js',
       'test/data/*.js',
       'test/data/R4/*.js',
-      'test/data/STU3/*.js',
-      'app/data/test-data.js'
+      'test/data/STU3/*.js'
     ],
 
     // list of files to exclude

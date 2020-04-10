@@ -1,0 +1,531 @@
+{ "type": "LOINC",
+  "code": "all-in-one",
+  "name": "Full-Featured Demo",
+  "dataType": null,
+  "header": null,
+  "units": null,
+  "codeSystem": "OTHER",
+  "codingInstructions": "NIH/NLM/LHNCBC",
+  "copyrightNotice": "A Copyright notice of the form",
+  "templateOptions": {
+    "showFormOptionPanel": true,
+    "formHeaderItems": [{
+      "question": "Date Done",
+      "questionCode": "date_done",
+      "dataType": "DT",
+      "answers": "",
+      "answerCardinality": {"min": "1", "max": "1"},
+      "displayControl": {"colCSS": [{"name": "width", "value": "10em"}, {"name": "min-width", "value": "4em"}]},
+      "defaultAnswer": "t"
+    }, {
+      "question": "Time Done",
+      "questionCode": "time_done",
+      "dataType": "TM",
+      "answers": "",
+      "displayControl": {"colCSS": [{"name": "width", "value": "12em"}, {"name": "min-width", "value": "4em"}]}
+    }, {
+      "question": "Where Done",
+      "questionCode": "where_done",
+      "dataType": "CWE",
+      "answers": [{"text": "Home", "code": "1"}, {"text": "Hospital", "code": "2"}, {
+        "text": "MD Office",
+        "code": "3"
+      }, {"text": "Lab", "code": "4"}, {"text": "Other", "code": "5"}],
+      "displayControl": {"colCSS": [{"name": "width", "value": "30%"}, {"name": "min-width", "value": "4em"}]}
+    }, {
+      "question": "Comment",
+      "questionCode": "comment",
+      "dataType": "ST",
+      "answers": "",
+      "displayControl": {"colCSS": [{"name": "width", "value": "70%"}, {"name": "min-width", "value": "4em"}]}
+    }]
+  },
+  "items": [
+    {
+      "questionCode": "q_lg",
+      "question": "'lg' view mode",
+      "dataType": "QTY",
+      "displayControl": {
+        "viewMode": "lg",
+        "css": [{
+          "name": "color",
+          "value": "red"
+        }]
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_md",
+      "question": "'md' view mode",
+      "dataType": "QTY",
+      "displayControl": {
+        "viewMode": "md"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_sm",
+      "question": "'sm' view mode",
+      "dataType": "QTY",
+      "displayControl": {
+        "viewMode": "sm"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {
+      "questionCode": "q_auto",
+      "question": "'auto' view mode",
+      "dataType": "QTY",
+      "displayControl": {
+        "viewMode": "auto"
+      },
+      "units": [{"name": "lbs", "default": true}, {"name": "kgs"}]
+    },
+    {"questionCode": "type0", "questionCodeSystem":"LOINC","dataType": "", "header": false, "units": null, "codingInstructions": "simple text instructions", "copyrightNotice": "A Copyright notice of the item",
+      "questionCardinality": null, "answerCardinality": null, "question": "With empty data type", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type1", "dataType": "BL", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BL, #1", "answers": null, "questionCodeSystem": "NON_LOINC",
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type1b", "dataType": "BL", "question": "With data type BL, #2", "answers": null, "questionCodeSystem": "NON_LOINC"},
+    {"questionCode": "type2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>",
+      "codingInstructionsFormat": "text",
+      "copyrightNotice": "not copyrighted",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type INT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type3", "dataType": "REAL", "header": false, "units":
+    null, "codingInstructions": "<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo3.nlm.nih.gov'>LForms Demo 3</a>",
+      "codingInstructionsFormat": "html",
+      "copyrightNotice": "not copyrighted",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type REAL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type4", "dataType": "ST", "header": false, "units": null,
+      "codingInstructions": "Extra long text for showing a vertical scroll bar: Gave read use way make spot how nor. In daughter goodness an likewise oh consider at procured wandered. Songs words wrong by me hills heard timed. Happy eat may doors songs. Be ignorant so of suitable dissuade weddings together. Least whole timed we is. An smallness deficient discourse do newspaper be an eagerness continued. Mr my ready guest ye after short at. \nAs collected deficient objection by it discovery sincerity curiosity. Quiet decay who round three world whole has mrs man. Built the china there tried jokes which gay why. Assure in adieus wicket it is. But spoke round point and one joy. Offending her moonlight men sweetness see unwilling. Often of it tears whole oh balls share an. \nDeath weeks early had their and folly timed put. Hearted forbade on an village ye in fifteen. Age attended betrayed her man raptures laughter. Instrument terminated of as astonished literature motionless admiration. The affection are determine how performed intention discourse but. On merits on so valley indeed assure of. Has add particular boisterous uncommonly are. Early wrong as so manor match. Him necessary shameless discovery consulted one but. \nUp unpacked friendly ecstatic so possible humoured do. Ample end might folly quiet one set spoke her. We no am former valley assure. Four need spot ye said we find mile. Are commanded him convinced dashwoods did estimable forfeited. Shy celebrated met sentiments she reasonably but. Proposal its disposed eat advanced marriage sociable. Drawings led greatest add subjects endeavor gay remember. Principles one yet assistance you met impossible. \nIt real sent your at. Amounted all shy set why followed declared. Repeated of endeavor mr position kindness offering ignorant so up. Simplicity are melancholy preference considered saw companions. Disposal on outweigh do speedily in on. Him ham although thoughts entirely drawings. Acceptance unreserved old admiration projection nay yet him. Lasted am so before on esteem vanity oh. \nShe suspicion dejection saw instantly. Well deny may real one told yet saw hard dear. Bed chief house rapid right the. Set noisy one state tears which. No girl oh part must fact high my he. Simplicity in excellence melancholy as remarkably discovered. Own partiality motionless was old excellence she inquietude contrasted. Sister giving so wicket cousin of an he rather marked. Of on game part body rich. Adapted mr savings venture it or comfort affixed friends. \nNo in he real went find mr. Wandered or strictly raillery stanhill as. Jennings appetite disposed me an at subjects an. To no indulgence diminution so discovered mr apartments. Are off under folly death wrote cause her way spite. Plan upon yet way get cold spot its week. Almost do am or limits hearts. Resolve parties but why she shewing. She sang know now how nay cold real case. \nAt ourselves direction believing do he departure. Celebrated her had sentiments understood are projection set. Possession ye no mr unaffected remarkably at. Wrote house in never fruit up. Pasture imagine my garrets an he. However distant she request behaved see nothing. Talking settled at pleased an of me brother weather. \nDo play they miss give so up. Words to up style of since world. We leaf to snug on no need. Way own uncommonly travelling now acceptance bed compliment solicitude. Dissimilar admiration so terminated no in contrasted it. Advantages entreaties mr he apartments do. Limits far yet turned highly repair parish talked six. Draw fond rank form nor the day eat. \nLiterature admiration frequently indulgence announcing are who you her. Was least quick after six. So it yourself repeated together cheerful. Neither it cordial so painful picture studied if. Sex him position doubtful resolved boy expenses. Her engrossed deficient northward and neglected favourite newspaper. But use peculiar produced concerns ten. \n",
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type ST", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": "default value", "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type5", "dataType": "BIN", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type BIN", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type6", "dataType": "DT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DT", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type7", "dataType": "DTM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DTM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": "2019-11-11T11:11:11Z", "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type8", "dataType": "TM", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type TM", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type9", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CNE", "answers": [
+      {"code": "c1", "text": "Answer 1", "other": null},
+      {"code": "c2", "text": "Answer 2", "other": null},
+      {"code": "c3", "text": "Answer 3", "other": null},
+      {"code": "c4", "text": "Other:", "other": true}],
+      "skipLogic": null, "editable": null, "defaultAnswer": {"text": "Answer 2"}, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type10", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type CWE", "answers": [
+      {"label": "1", "code": "c01", "text": "With a label 1", "score": 1, "other": null},
+      {"label": "2", "code": "c02", "text": "With a label 2", "score": 2, "other": null},
+      {"label": "3", "code": "c03", "text": "With a label 3", "score": 3, "other": null}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type11", "dataType": "RTO", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type RTO", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type12", "dataType": "QTY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type QTY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type13", "dataType": "YEAR", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type YEAR", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type14", "dataType": "MONTH", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type MONTH", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type15", "dataType": "DAY", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type DAY", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type16", "dataType": "URL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type URL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type17", "dataType": "EMAIL", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type EMAIL", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type18", "dataType": "PHONE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type PHONE", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "type19", "dataType": "TX", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "With data type TX", "answers": null,
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+
+    {"questionCode": "multiSelectCNE", "dataType": "CNE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CNE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "multiSelectCWE", "dataType": "CWE", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": {"min": "0", "max": "*"}, "question": "Multi Selection on CWE", "answers": [
+      {"code": "c1", "text": "Answer 1"},
+      {"code": "c2", "text": "Answer 2"},
+      {"code": "c3", "text": "Answer 3"},
+      {"code": "c4", "text": "Answer 4"}],
+      "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+
+    {"questionCode": "slSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; >=2 to show T2; <=5 to show header T3, and its subitmes T4 and T5.",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source #1", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source #1' == 1", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"value": 1}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source #1' > 1", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"minInclusive": 2}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source #1' <= 5", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slSource1", "trigger": {"maxInclusive": 5}}],
+        "action": "show"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+      "items": [
+        {"questionCode": "slTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "slTargetSubItem2","dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T5: Shown when my section header is shown", "answers": null,
+          "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+      ]
+    },
+    {
+      "questionCode": "slTargetItem6", "dataType": "INT", "question": "T6: Shown when 'Skip Logic Source #1' != 2",
+      "skipLogic": {
+        "conditions": [{"source": "slSource1", "trigger": {"notEqual": 2}}],
+        "action": "show"
+      }
+    },
+
+    {"questionCode": "54139-1-cnesrc-1", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living?",
+      "answers": [{"text": "Yes", "code": "LA33-6"}, {"text": "No", "code": "LA32-8"}, {"text": "Unknown", "code": "LA4489-6"}],
+      "dataType": "CNE", "units": "", "header": false,
+      "items": [
+        {"questionCode": "54124-3", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES)", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54124-3b", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) -- not working without 'system' in trigger value", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA33-6"}}}], "action": "show"}
+        },
+        {"questionCode": "54141-7", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age (show if Living answered)", "answers": "", "dataType": "REAL", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": true}}], "action": "show"}
+        },
+        {"questionCode": "54112-8", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death (show if Living is NO)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"value": {"code": "LA32-8", "system": "http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54113-6", "answerCodeSystem": "http://loinc.org", "questionCardinality": {"min": "1", "max": "1"}, "question": "Age at Death (show if Living not answered)",
+          "answers": [ {"text": "Pre-Birth", "code": "LA10402-8"}, {"text": "Newborn", "code": "LA10403-6"}, {"text": "Infancy", "code": "LA10394-7"}],
+          "dataType": "CNE", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"exists": false}}], "action": "show"}
+        },
+        {"questionCode": "skiplogic_not", "question": "Cause of Death #2 (show if Living is _not_ YES)",
+          "answers": [{"text": "Blood Clots", "code": "LA10533-0"}, {"text": "-- Blood Clot in Leg", "code": "LA10572-8"}, {"text": "-- Blood Clot in Lungs", "code": "LA10573-6"}],
+          "dataType": "CNE",
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-1", "trigger": {"notEqual": {"code": "LA33-6", "system": "http://loinc.org"}}}], "action": "show"}
+        }
+
+      ]
+    },
+
+    {"questionCode": "54139-1-cnesrc-2", "questionCardinality": {"min": "1", "max": "1"}, "question": "Living too?",
+      "answers": [{"text": "Yes", "code": "LA33-6"}, {"text": "No", "code": "LA32-8", "codeSystem": "http://loinc.org"}, {"text": "Unknown", "code": "LA4489-6"}],
+      "dataType": "CNE", "units": "", "header": false,
+      "items": [
+        {"questionCode": "54124-3c", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) -- not working with 'system' in trigger value", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA33-6", "system":"http://loinc.org"}}}], "action": "show"}
+        },
+        {"questionCode": "54124-3d", "questionCardinality": {"min": "1", "max": "1"}, "question": "Date of Birth (show if Living is YES) ", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA33-6"}}}], "action": "show"}
+        },
+        {"questionCode": "54112-8b", "questionCardinality": {"min": "1", "max": "1"}, "question": "Cause of Death (show if Living is NO) ", "answers": "", "dataType": "DT", "units": "", "header": false,
+          "skipLogic": {"conditions":[{"source": "54139-1-cnesrc-2", "trigger": {"value": {"code": "LA32-8", "system":"http://loinc.org"}}}], "action": "show"}
+        }
+      ]
+    },
+
+    {"questionCode": "slALLSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ALL)", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slALLSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ALL)", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slALLTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ALL)' == 1 AND Shown when 'Source #2 (ALL)' == 2 ", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slALLSource1", "trigger": {"value": 1}}, {"source": "slALLSource2", "trigger": {"value": 2}}],
+        "action": "show", "logic": "ALL"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "slANYSource1", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #1 (ANY)", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slANYSource2", "dataType": "INT", "header": false, "units": null, "questionCardinality": null, "answerCardinality": null, "question": "Source #2 (ANY)", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "slANYTargetItem", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+      "questionCardinality": null, "answerCardinality": null, "question": "Shown when 'Source #1 (ANY)' == 1 OR Shown when 'Source #2 (ANY)' == 2 ", "answers": null,
+      "skipLogic": {"conditions":[{"source": "slANYSource1", "trigger": {"value": 1}}, {"source": "slANYSource2", "trigger": {"value": 2}}],
+        "action": "show", "logic": "ANY"},
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+
+    {"questionCode": "rpSource2", "dataType": "INT", "header": false, "units": null, "codingInstructions": "2 to show T2",
+      "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #2", "answers": null,
+      "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+    {"questionCode": "repeatingSection1", "header": true, "question": "A Repeating Section","questionCardinality":{"max": "*", "min": "1"},
+      "items": [
+        {"questionCode": "rpSource1", "dataType": "INT", "header": false, "units": null, "codingInstructions": "1 to show T1; <=5 to show header T3, and its subitem T4.",
+          "questionCardinality": null, "answerCardinality": null, "question": "Skip Logic Source (repeating) #1", "answers": null,
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T1: Shown when 'Skip Logic Source (repeating) #1' == 1", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"value": 1}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetItem2", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T2: Shown when 'Skip Logic Source (repeating) #2' == 2", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource2", "trigger": {"value": 2}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null},
+        {"questionCode": "rpTargetHeader1", "dataType": "", "header": true, "units": null, "codingInstructions": null,
+          "questionCardinality": null, "answerCardinality": null, "question": "T3: Shown when 'Skip Logic Source (repeating) #1' <= 5", "answers": null,
+          "skipLogic": {"conditions":[{"source": "rpSource1", "trigger": {"maxInclusive": 5}}],
+            "action": "show"},
+          "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null,
+          "items": [
+            {"questionCode": "rpTargetSubItem1", "dataType": "INT", "header": false, "units": null, "codingInstructions": null,
+              "questionCardinality": null, "answerCardinality": null, "question": "T4: Shown when my section header is shown", "answers": null,
+              "skipLogic": null, "editable": null, "defaultAnswer": null, "displayControl": null, "calculationMethod": null, "items": null}
+          ]
+        }
+      ]
+    },
+
+    {
+      "questionCode": "dataControlExamples",
+      "header": true,
+      "question": "'dataControl' examples",
+      "items": [
+        {
+          "questionCode":"itemWithExtraData",
+          "dataType":"CNE",
+          "header":false,
+          "question":"Drug (with extra data of strengths and forms)",
+          "externallyDefined":"https://clin-table-search.lhc.nlm.nih.gov/api/rxterms/v3/search?ef=STRENGTHS_AND_FORMS,RXCUIS&autocomp=1"
+        },
+        {
+          "questionCode": "controlledItem_LIST",
+          "dataType": "CNE",
+          "header": false,
+          "question": "Strengths and Forms (from 'Drug')",
+          "dataControl": [
+            {
+              "source": {
+                "sourceType":"INTERNAL",
+                "sourceItemCode":"itemWithExtraData"
+              },
+              "construction":"ARRAY",
+              "dataFormat":{"code": "value.data.RXCUIS", "text": "value.data.STRENGTHS_AND_FORMS"},
+              "onAttribute":"answers"
+            }
+          ]
+        },
+        {
+          "questionCode": "controlledItem_TEXT",
+          "dataType": "ST",
+          "header": false,
+          "question": "The First Strength (from 'Drugs')",
+          "dataControl": [
+            {
+              "source": {
+                "sourceItemCode":"itemWithExtraData"
+              },
+              "construction":"SIMPLE",
+              "dataFormat": "value.data.STRENGTHS_AND_FORMS[0]",
+              "onAttribute":"value"
+            }
+          ]
+        }
+      ]
+
+    },
+
+
+    {
+      "questionCode": "titleHeader",
+      "question": "This is a TITLE. It looks like a section header but has no children",
+      "dataType": "TITLE",
+      "header": false
+    },
+
+    {"questionCode": "cardinalityControl",
+      "question": "This controls the initial number of rows in the horizontal table below",
+      "dataType": "CNE",
+      "answers": [
+        {"code": "c1", "text": "1 row, no repeating",    "questionCardinality": {"min": "1", "max": "1"}},
+        {"code": "c2", "text": "1 row, repeating",       "questionCardinality": {"min": "1", "max": "*"}},
+        {"code": "c3", "text": "2 rows, no repeating",  "questionCardinality": {"min": "2", "max": "2"}},
+        {"code": "c4", "text": "2 rows, repeating",      "questionCardinality": {"min": "2", "max": "*"}},
+        {"code": "c5", "text": "2 rows, repeating, 5 rows max",  "questionCardinality": {"min": "2", "max": "5"}}]
+    },
+
+    {"questionCode": "horizontalTable", "questionCardinality": {"min": "1", "max": "1"},
+      "question": "A non-repeating horizontal table", "header": true, "layout": "horizontal",
+      "dataControl": [
+        {
+          "source": {
+            "sourceType":"INTERNAL",
+            "sourceItemCode":"cardinalityControl"
+          },
+          "construction":"SIMPLE",
+          "dataFormat": "value.questionCardinality",
+          "onAttribute":"questionCardinality"
+        }
+      ],
+      "items":[
+        {"questionCode": "colA", "question": "A ST", "dataType": "ST", "prefix": "Pre. A:",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"25%"},
+              {"name": "min-width", "value":"10%"}]
+          }
+        },
+        {"questionCode": "colB", "question": "A TX", "dataType": "TX",
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"25%"},
+              {"name": "min-width", "value":"15%"}]
+          }
+        },
+        {"questionCode": "colC", "question": "A CNE", "dataType": "CNE",
+          "answers": [
+            {"code": "c1", "text": "Answer 1", "other": null},
+            {"code": "c2", "text": "Answer 2", "other": null},
+            {"code": "c3", "text": "Answer 3", "other": null},
+            {"code": "c4", "text": "Other:", "other": true}
+          ],
+          "displayControl": {
+            "colCSS": [{"name": "width", "value":"50%"}]
+          }
+        }
+      ]
+    },
+
+    {"questionCode": "listWHeaders", "question": "A list with headers",
+      "dataType": "CWE",
+      "answers": [
+        {"code": "food", "text": "Food allergies"},
+        {"code": "FOOD-2", "text": "Chocolate",
+          "parentAnswerCode": "food"},
+        {"code": "FOOD-22", "text": "Crab",
+          "parentAnswerCode": "food"},
+        {"code": "environmental", "text": "Environmental allergies"},
+        {"code": "OTHR-18", "text": "Cat",
+          "parentAnswerCode": "environmental"},
+        {"code": "OTHR-5", "text": "Cold Weather",
+          "parentAnswerCode": "environmental"}
+      ]
+    },
+
+    {
+      "questionCode": "readonlyST",
+      "dataType": "ST",
+      "question": "editable='0' data type ST",
+      "editable": "0"
+    },
+    {
+      "questionCode": "readonlyCNE-s",
+      "dataType": "CNE",
+      "question": "editable='0' data type CNE, single selection",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "value": {"code": "c1", "text": "Answer 1", "other": null},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    {
+      "questionCode": "readonlyCWE-m",
+      "dataType": "CNE",
+      "question": "editable='0' data type CWE, multiple selections",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    {
+      "questionCode": "readonlyCNE-sb",
+      "dataType": "CNE",
+      "question": "editable='0' data type CNE, single selection, radio button",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "1"},
+      "value": {"code": "c2", "text": "Answer 2", "other": null},
+      "displayControl": {"answerLayout": {"type":"RADIO_CHECKBOX", "columns": "1"}},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    {
+      "questionCode": "readonlyCWE-mb",
+      "dataType": "CNE",
+      "question": "editable='0' data type CWE, multiple selections, checkboxes",
+      "editable": "0",
+      "answerCardinality": {"min": "0", "max": "*"},
+      "displayControl": {"answerLayout": {"type":"RADIO_CHECKBOX", "columns": "1"}},
+      "answers": [
+        {"code": "c1", "text": "Answer 1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null},
+        {"code": "c4", "text": "Other:", "other": true}]
+    },
+    {
+      "questionCode": "with_prefix",
+      "dataType": "ST",
+      "header": false,
+      "prefix": "Prefix A:",
+      "question": "Question display text"
+    },
+    {
+      "questionCode": "numeric_answer",
+      "dataType": "CNE",
+      "header": false,
+      "question": "One answer is numeric, no seq num displayed",
+      "answers": [
+        {"code": "c1", "text": "1", "other": null},
+        {"code": "c2", "text": "Answer 2", "other": null},
+        {"code": "c3", "text": "Answer 3", "other": null}]
+    },
+
+    {
+      "questionCode": "answer_item",
+      "dataType": "ST",
+      "header": false,
+      "question": "item.answer.item test main item",
+      "items": [
+        {
+          "questionCode": "answer_item_name",
+          "dataType": "ST",
+          "header": false,
+          "question": "item.answer.item name"
+        },
+        {
+          "questionCode": "answer_item_age",
+          "dataType": "INT",
+          "header": false,
+          "question": "item.answer.item age"
+        }
+      ]
+    }
+  ]}
