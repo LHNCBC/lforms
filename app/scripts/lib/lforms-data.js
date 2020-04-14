@@ -841,7 +841,7 @@
           // TBD, if the parameters values are already supplied,
           totalScoreItem.calculationMethod = {"name": this._CONSTANTS.CALCULATION_METHOD.TOTALSCORE, "value": []};
 
-          var itemsWithScore = this._findItemsWithScore(totalScoreItem);
+          var itemsWithScore = this._findItemsWithScore();
           totalScoreItem.calculationMethod.value = itemsWithScore;
         }
       }
