@@ -5546,7 +5546,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             "value": []
           };
 
-          var itemsWithScore = this._findItemsWithScore(totalScoreItem);
+          var itemsWithScore = this._findItemsWithScore();
 
           totalScoreItem.calculationMethod.value = itemsWithScore;
         }
