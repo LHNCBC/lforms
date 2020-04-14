@@ -565,6 +565,5 @@
       "designation": "Vital Signs",
       "definition": "Contains data elements captured at study visits to help monitor the health of the participant/ subject and in clinical trials to help assess the safety of the intervention. (Examples of CDEs included: Heart rate; Blood pressure; and Temperature)"
     }
-  ],
-  "lformsVersion": "24.0.0"
+  ]
 }

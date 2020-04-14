@@ -789,30 +789,21 @@ function addCommonSDCImportFns(ns) {
     return type;
   };
 
-
   /**
-   * It is used to identify source item in skip logic. Get code from source item
-   * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
-   * to locate source item with item.linkId.
-   *
+   * Get skip logic source item's dataType by source item's linkId
+   * It is used to identify source item in skip logic
    * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param questionLinkId - This is the linkId in enableWhen.question
-   * @returns {string} - Returns code of the source item.
+   * @param questionLinkId - The linkId in enableWhen.question.
+   * @returns {{linkId: *, dataType: string}} Return dataType and linkId of the source item.
    * @private
    */
-  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
+  self._getSourceDataTypeByLinkId = function (linkIdItemMap, questionLinkId) {
 
     var item = linkIdItemMap[questionLinkId];
     var ret = {
       dataType: self._getDataType(item),
       linkId: questionLinkId
     };
-    if(item.code) {
-      ret.questionCode = item.code[0].code;
-    }
-    else {
-      ret.questionCode = item.linkId;
-    }
 
     return ret;
   };

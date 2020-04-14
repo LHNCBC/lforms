@@ -798,47 +798,9 @@
     },
 
 
-    // /**
-    //  * Search upwards along the tree structure to find the item with answer scores
-    //  * @param item the item to start with
-    //  * @returns {}
-    //  * @private
-    //  */
-    // _findItemsWithScoreUpwardsAlongAncestorTree: function(item) {
-    //
-    //   var itemsWithScore = [];
-    //
-    //   // check siblings
-    //   var itemToCheck = item;
-    //   while (itemToCheck) {
-    //     // check siblings
-    //     if (itemToCheck._parentItem && Array.isArray(itemToCheck._parentItem.items)) {
-    //       for (var i= 0, iLen= itemToCheck._parentItem.items.length; i<iLen; i++) {
-    //         var sourceItem = itemToCheck._parentItem.items[i];
-    //         // it has an answer list
-    //         if ((sourceItem.dataType === 'CNE' || sourceItem.dataType === 'CWE') &&
-    //             sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
-    //           // check if any one of the answers has a score
-    //           for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
-    //             if (sourceItem.answers[j] && sourceItem.answers[j].score >= 0) {
-    //               itemsWithScore.push(sourceItem.questionCode);
-    //               break;
-    //             }
-    //           } // end of answers loop
-    //         } // end if there's an answer list
-    //       }
-    //     }
-    //
-    //     // check ancestors and each ancestors siblings
-    //     itemToCheck = itemToCheck._parentItem;
-    //   }
-    //   return itemsWithScore;
-    // },
-
-
     /**
      * Find all the items across the form that have scores
-     * @returns {string[]}
+     * @returns {string[]} items that have a score value on answers
      * @private
      */
     _findItemsWithScore: function() {
@@ -853,7 +815,7 @@
             sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
           // check if any one of the answers has a score
           for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
-            if (sourceItem.answers[j] && sourceItem.answers[j].score >= 0) {
+            if (sourceItem.answers[j] && sourceItem.answers[j].hasOwnProperty('score') && !isNaN(sourceItem.answers[j].score)) {
               itemsWithScore[sourceItem.linkId] = sourceItem;
               break;
             }
@@ -1670,7 +1632,7 @@
       var maxId = item._id;
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
-          if (item._parentItem.items[i].linkId == item.linkId &&
+          if (item._parentItem.items[i].linkId === item.linkId &&
             item._parentItem.items[i]._id > maxId ) {
             maxId = item._parentItem.items[i]._id;
           }
@@ -1689,7 +1651,7 @@
       var count = 0;
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
-          if (item._parentItem.items[i].linkId == item.linkId) {
+          if (item._parentItem.items[i].linkId === item.linkId) {
             count++;
           }
         }
@@ -1793,7 +1755,7 @@
 
       this._horizontalTableInfo = {};
 
-      var tableHeaderCodePathAndParentIdPath = null;
+      var tableHeaderLinkIdAndParentIdPath = null;
       var lastHeaderId = null;
 
       for (var i= 0, iLen=this.itemList.length; i<iLen; i++) {
@@ -1805,15 +1767,15 @@
           var itemsInRow = [];
           var columnHeaders = [];
           item._inHorizontalTable = true;
-          var itemCodePathAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
+          var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
           lastHeaderId = item._elementId;
           // if it's the first row (header) of the first table,
-          if (tableHeaderCodePathAndParentIdPath === null ||
-            tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
+          if (tableHeaderLinkIdAndParentIdPath === null ||
+            tableHeaderLinkIdAndParentIdPath !== itemLinkIdAndParentIdPath) {
             // indicate this item is the table header
-            tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
+            tableHeaderLinkIdAndParentIdPath = itemLinkIdAndParentIdPath;
             item._horizontalTableHeader = true;
-            item._horizontalTableId = tableHeaderCodePathAndParentIdPath;
+            item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
 
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
@@ -1823,7 +1785,7 @@
               itemsInRow[j]._inHorizontalTable = true;
             }
 
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath] = {
               tableStartIndex: i,
               tableEndIndex: i+itemsInRow.length,
               columnHeaders: columnHeaders,
@@ -1832,10 +1794,10 @@
             };
 
             // set the last table/row in horizontal group/table flag
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
           }
           // if it's the following rows, update the tableRows and tableEndIndex
-          else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath ) {
+          else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath ) {
             item._horizontalTableHeader = false;
             itemsInRow = item.items;
             for (var j= 0, jLen=itemsInRow.length; j<jLen; j++) {
@@ -1843,13 +1805,13 @@
               itemsInRow[j]._inHorizontalTable = true;
             }
             // update rows index
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableRows.push({header: item, cells : itemsInRow});
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({header: item, cells : itemsInRow});
             // update headers index (hidden)
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(item);
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item);
             // update last item index in the table
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = i + itemsInRow.length;
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length;
             // set the last table/row in horizontal group/table flag
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
           }
         }
       }
@@ -1892,8 +1854,8 @@
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         var insertPosition = 0;
         for (var i= 0, iLen=item._parentItem.items.length; i<iLen; i++) {
-          if (item._parentItem.items[i].linkId == item.linkId &&
-            item._parentItem.items[i]._id == item._id) {
+          if (item._parentItem.items[i].linkId === item.linkId &&
+            item._parentItem.items[i]._id === item._id) {
             insertPosition = i;
             break;
           }
@@ -2956,7 +2918,7 @@
         'TOTALSCORE': function (sources) {
           var totalScore = 0;
           for (var i = 0, iLen = sources.length; i < iLen; i++) {
-            totalScore += parseInt(sources[i]);
+            totalScore += parseFloat(sources[i]);
           }
           return totalScore;
         },

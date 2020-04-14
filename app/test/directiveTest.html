@@ -62,12 +62,6 @@
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget'])
           .controller('lformsTestControllerH', ['$scope', function ($scope) {
-            // $http.get('fhir-data/'+version+'/'+name).then(function (resp) {
-            //   $scope.fhirResCache[version+name] = resp.data;
-            // }, function (err) {
-            //   console.error(err);
-            // })
-
             $.getJSON('/data/horizontalFHTData.json', function z(horizontalFHTData) {
               $scope.lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
               $scope.lfOption2 = {

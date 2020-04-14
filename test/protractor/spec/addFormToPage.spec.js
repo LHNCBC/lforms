@@ -53,7 +53,7 @@ describe('addFormToPage test page', function() {
       // Now put form USSG-FHT on the page, using the variable name method
       // (FHTData).
       browser.driver.executeScript(
-          "$.getJSON('/data/FHTData.json', function z(FHTData) {window.FHTData = FHTData; LForms.Util.addFormToPage('FHTData', 'formContainer');})"
+          "$.getJSON('/data/FHTData.json', function(FHTData) {window.FHTData = FHTData; LForms.Util.addFormToPage('FHTData', 'formContainer');})"
           );
       // Confirm it is there
       browser.wait(function() {
@@ -65,7 +65,7 @@ describe('addFormToPage test page', function() {
     it('should be able to take a form object',  function() {
       // Now put form USSG-FHT on the page, using the form object method
       browser.driver.executeScript(
-          "$.getJSON('/data/FHTData.json', function z(FHTData) {LForms.Util.addFormToPage(FHTData, 'formContainer');})"
+          "$.getJSON('/data/FHTData.json', function(FHTData) {LForms.Util.addFormToPage(FHTData, 'formContainer');})"
       );
       // Confirm it is there
       browser.wait(function() {
@@ -77,7 +77,7 @@ describe('addFormToPage test page', function() {
     it('should be able to take a JSON form definition',  function() {
       // Now put form USSG-FHT on the page, using the form JSON string method
       browser.driver.executeScript(
-          "$.getJSON('/data/FHTData.json', function z(FHTData) {LForms.Util.addFormToPage(JSON.stringify(FHTData), 'formContainer');})"
+          "$.getJSON('/data/FHTData.json', function(FHTData) {LForms.Util.addFormToPage(JSON.stringify(FHTData), 'formContainer');})"
       );
       // Confirm it is there
       browser.wait(function() {

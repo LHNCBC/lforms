@@ -45,6 +45,8 @@ describe('formula', function() {
     expect(ff.bmi2.getAttribute('value')).toBe("18.68");
   });
 
+  // Multiple total scores are not supported any more. We might bring it back if there are such use cases.
+  //
   // it('Two correctly structured TOTALSCORE rules on a form should both work', function() {
   //
   //   var answer1 = element(by.id("/44249-1/44250-9/1/1")),

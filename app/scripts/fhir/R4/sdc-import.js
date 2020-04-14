@@ -100,7 +100,7 @@ function addSDCImportFns(ns) {
       }
       else {
         for(var i = 0; i < qItem.enableWhen.length; i++) {
-          var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
+          var source = self._getSourceDataTypeByLinkId(linkIdItemMap, qItem.enableWhen[i].question);
           var condition = {source: source.linkId, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
           var opMapping = self._operatorMapping[qItem.enableWhen[i].operator];
@@ -143,10 +143,10 @@ function addSDCImportFns(ns) {
     // Two conditions based on same source with enableBehavior of all implies range.
     if(qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' &&
        qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
-      var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[0].question);
+      var source = self._getSourceDataTypeByLinkId(linkIdItemMap, qItem.enableWhen[0].question);
       if (source.dataType === 'REAL' || source.dataType === 'INT' || source.dataType === 'DT' ||
         source.dataType === 'DTM' || source.dataType === 'QTY') {
-        ret = {source: source.questionCode};
+        ret = {source: source.linkId};
         ret.trigger = {};
         var answer0 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
         var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);

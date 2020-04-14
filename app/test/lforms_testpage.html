@@ -276,17 +276,17 @@
             };
 
             $scope.testMergeDR2LForms = function() {
-              $scope.loadFHIRDataFile('contained-dr.json', 'FHTData', 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('contained-dr.json', 'FHTData', 'DiagnosticReport');
             }
             $scope.testMergeBundleDR2LForms = function() {
-              $scope.loadFHIRDataFile('searchset-bundle-dr.json', 'FHTData', 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('searchset-bundle-dr.json', 'FHTData', 'DiagnosticReport');
             }
 
             $scope.testMergeDR2LFormsWithDefaultValues = function() {
-              $scope.loadFHIRDataFile('with-defaultvalues-contained-dr.json', 'defaultAnswerForm', 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('with-defaultvalues-contained-dr.json', 'defaultAnswerForm', 'DiagnosticReport');
             }
 
-            $scope.loadFHIRDataFile = function(fhirFileName, lfDataFileName, resType) {
+            $scope.loadAndMergeFHIRDataFile = function(fhirFileName, lfDataFileName, resType) {
               $scope.getTestDataFile(lfDataFileName).then(function (formData) {
                 $scope.getFhirResource(getFHIRVersion(), fhirFileName).then(function (fhirData) {
                   var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
@@ -322,17 +322,16 @@
             };
 
             $scope.testMergeQR2LForms = function() {
-              $scope.loadFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData', 'QuestionnaireResponse');
+              $scope.loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData', 'QuestionnaireResponse');
             };
 
 
             $scope.testMergeQR2LForms_CWE = function() {
-              $scope.loadFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne', 'QuestionnaireResponse')
+              $scope.loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne', 'QuestionnaireResponse')
             };
 
 
             $scope.testSearchOnFHIRServer = function() {
-//              var dataURL = "http://fhirtest.uhn.ca/baseDstu3/DiagnosticReport?_id=663968&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
               var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
 
               $http({
@@ -413,7 +412,6 @@
               switch ($scope.selectedForm) {
                 case '54127-6N':
                   //'USSG-FHT, (with mock-up items for skip logic demo)'
-                  //lfData2 = new LForms.LFormsData(angular.copy(FHTData));
                   lfOption2 = {
                     allowMultipleEmptyRepeatingItems: false,
                     useAnimation: useAnimation,
@@ -427,17 +425,14 @@
                     useAnimation: useAnimation
                   };
                   //'USSG-FHT, (with mock-up items for horizontal layout demo)'
-                  //lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
                   $scope.loadLFormDataFile('horizontalFHTData', lfOption2);
                   break;
                 case 'two-totalscore':
                   //'A Form with two TOTALSCORE fields'
-                  //lfData2 = new LForms.LFormsData(angular.copy(twoTotalScore));
                   $scope.loadLFormDataFile('twoTotalScore');
                   break;
                 case 'QTYDemo':
                   //'A Form with two TOTALSCORE fields'
-                  //lfData2 = new LForms.LFormsData(angular.copy(QTYDemo));
                   $scope.loadLFormDataFile('QTYDemo');
                   break;
                 case '35088-4B':
@@ -446,7 +441,6 @@
                   break;
                 case 'validationTest':
                   //validation test
-                  //lfData2 = new LForms.LFormsData(angular.copy(validationTestForm));
                   $scope.loadLFormDataFile('validationTestForm');
                   break;
                 case 'all-in-one':
@@ -456,7 +450,6 @@
                     useAnimation: useAnimation,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  //lfData2 = new LForms.LFormsData(angular.copy(allInOne));
                   $scope.loadLFormDataFile('allInOne', lfOption2);
                   break;
                 case 'formC':
@@ -465,7 +458,6 @@
                   break;
                 case '54580-6NEW':
                   //'Minimum Data Set - version 3.0'
-                  //lfData2 = new LForms.LFormsData(angular.copy(MDS3));
                   $scope.loadLFormDataFile('MDS3');
                   break;
                 case 'form-with-user-data':
@@ -473,7 +465,6 @@
                   lfOption2 = {
                     allowHTMLInInstructions: true
                   };
-                  //lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
                   $scope.loadLFormDataFile('formWithUserData', lfOption2);
                   break;
                 case 'form-with-user-data-with-has-saved-data':
@@ -481,14 +472,10 @@
                   lfOption2 = {
                     allowHTMLInInstructions: true
                   };
-                  //var formData = angular.copy(formWithUserData);
-                  // formData.hasSavedData = true;
-                  // lfData2 = new LForms.LFormsData(formData);
                   $scope.loadLFormDataFile('formWithUserData', lfOption2, {hasSavedData: true});
                   break;
                 case 'X-001':
                   //'RxTerms'
-                  //lfData2 = new LForms.LFormsData(angular.copy(rxTerms));
                   $scope.loadLFormDataFile('rxTerms');
                   break;
                 case 'display-controls':
@@ -498,22 +485,18 @@
                     showItemOptionPanelButton: true,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  //lfData2 = new LForms.LFormsData(angular.copy(displayControlsDemo));
                   $scope.loadLFormDataFile('displayControlsDemo', lfOption2);
                   break;
                 case 'matrix-layout':
                   //'matrix layout'
-                  //lfData2 = new LForms.LFormsData(angular.copy(matrixLayout));
                   $scope.loadLFormDataFile('matrixLayout');
                   break;
                 case 'matrix-layout2':
                   //'matrix layout 2'
-                  //lfData2 = new LForms.LFormsData(angular.copy(matrixLayout2));
                   $scope.loadLFormDataFile('matrixLayout2');
                   break;
                 case 'question-in-question':
                   //'question/section in question'
-                  //lfData2 = new LForms.LFormsData(angular.copy(questionInQuestion));
                   lfOption2 = {
                     allowMultipleEmptyRepeatingItems: true
                   };
@@ -525,27 +508,21 @@
                     showItemOptionPanelButton: true,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  //lfData2 = new LForms.LFormsData(angular.copy(genetic));
                   $scope.loadLFormDataFile('genetic', lfOption2);
                   break;
                 case 'X2000-0':
-                  //lfData2 = new LForms.LFormsData(angular.copy(genetic2));
                   $scope.loadLFormDataFile('genetic2');
                   break;
                 case '81247-9':
-                  // lfData2 = new LForms.LFormsData(angular.copy(newGenetic));
                   $scope.loadLFormDataFile('newGenetic');
                   break;
                 case 'defaultAnswerTest':
-                  // lfData2 = new LForms.LFormsData(angular.copy(defaultAnswerForm));
                   $scope.loadLFormDataFile('defaultAnswerForm');
                   break;
                 case '76806-9':
-                  // lfData2 = new LForms.LFormsData(angular.copy(promis));
                   $scope.loadLFormDataFile('promis');
                   break;
                 case '74728-7':
-                  // lfData2 = new LForms.LFormsData(angular.copy(vitalSign));
                   $scope.loadLFormDataFile('vitalSign');
                   break;
                 case 'cde1':
@@ -556,7 +533,6 @@
                   //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
                   converter.convert("/data/cde-data.json",
                       function(data) {
-                    console.log(data)
                         $scope.lfData2 = new LForms.LFormsData(data);
                         // hide checkboxes (and show question codes for testing)
                         $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: useAnimation};

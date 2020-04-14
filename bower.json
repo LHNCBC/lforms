@@ -27,8 +27,7 @@
     "angular-file-upload": "^2.3.4",
     "angular-mocks": "^1.4.7",
     "angular-scenario": "^1.4.7",
-    "angular-route": "^1.4.7",
-    "lforms-converter": "^1.1.0"
+    "angular-route": "^1.4.7"
   },
   "appPath": "app",
   "authors": [
