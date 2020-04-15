@@ -23049,10 +23049,10 @@ function addSDCImportFns(ns) {
         lfItem.skipLogic.conditions.push(rangeCondition);
       } else {
         for (var i = 0; i < qItem.enableWhen.length; i++) {
-          var source = self._getSourceDataTypeByLinkId(linkIdItemMap, qItem.enableWhen[i].question);
+          var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
 
           var condition = {
-            source: source.linkId,
+            source: qItem.enableWhen[i].question,
             trigger: {}
           };
 
@@ -23066,9 +23066,9 @@ function addSDCImportFns(ns) {
 
           if (opMapping === 'exists') {
             condition.trigger.exists = answer; // boolean value here regardless of data type
-          } else if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+          } else if (dataType === 'CWE' || dataType === 'CNE') {
             condition.trigger.value = self._copyTriggerCoding(answer, null, false);
-          } else if (source.dataType === 'QTY') {
+          } else if (dataType === 'QTY') {
             condition.trigger[opMapping] = answer.value;
           } else {
             condition.trigger[opMapping] = answer;
@@ -23097,11 +23097,11 @@ function addSDCImportFns(ns) {
     var ret = null; // Two conditions based on same source with enableBehavior of all implies range.
 
     if (qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' && qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
-      var source = self._getSourceDataTypeByLinkId(linkIdItemMap, qItem.enableWhen[0].question);
+      var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[0].question]);
 
-      if (source.dataType === 'REAL' || source.dataType === 'INT' || source.dataType === 'DT' || source.dataType === 'DTM' || source.dataType === 'QTY') {
+      if (dataType === 'REAL' || dataType === 'INT' || dataType === 'DT' || dataType === 'DTM' || dataType === 'QTY') {
         ret = {
-          source: source.linkId
+          source: qItem.enableWhen[0].question
         };
         ret.trigger = {};
 
@@ -23109,7 +23109,7 @@ function addSDCImportFns(ns) {
 
         var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
 
-        if (source.dataType === 'QTY') {
+        if (dataType === 'QTY') {
           ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
           ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
         } else {
@@ -24572,24 +24572,6 @@ function addCommonSDCImportFns(ns) {
     }
 
     return type;
-  };
-  /**
-   * Get skip logic source item's dataType by source item's linkId
-   * It is used to identify source item in skip logic
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param questionLinkId - The linkId in enableWhen.question.
-   * @returns {{linkId: *, dataType: string}} Return dataType and linkId of the source item.
-   * @private
-   */
-
-
-  self._getSourceDataTypeByLinkId = function (linkIdItemMap, questionLinkId) {
-    var item = linkIdItemMap[questionLinkId];
-    var ret = {
-      dataType: self._getDataType(item),
-      linkId: questionLinkId
-    };
-    return ret;
   };
   /**
    * Build a map of items to linkid from a questionnaire resource.

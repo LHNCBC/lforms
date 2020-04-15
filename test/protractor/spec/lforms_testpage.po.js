@@ -51,19 +51,18 @@ var TestPage = function() {
     MDS3: 6,
     FormWithUserData: 7,
     FormWithUserDataWithHasSavedData: 8,
-    CDESampleForm: 9,
-    RxTerms: 10,
-    DisplayControlsDemo: 11,
-    MatrixLayout1: 12,
-    MatrixLayout2: 13,
-    ValidationTest: 14,
-    QuestionInQuestionForm: 15,
-    HL7GeneticPanel: 16,
-    DefaultAnswerForm: 18,
-    NewGeneticForm: 20,
-    TwoTotalScoreForm: 21,
-    VitalSign: 22,
-    QTYDemo: 23
+    RxTerms: 9,
+    DisplayControlsDemo: 10,
+    MatrixLayout1: 11,
+    MatrixLayout2: 12,
+    ValidationTest: 13,
+    QuestionInQuestionForm: 14,
+    HL7GeneticPanel: 15,
+    DefaultAnswerForm: 17,
+    NewGeneticForm: 19,
+    TwoTotalScoreForm: 20,
+    VitalSign: 21,
+    QTYDemo: 22
   };
   for (let f of Object.keys(formToIndex)) {
     rtnObj['open'+f] = (function(index) {

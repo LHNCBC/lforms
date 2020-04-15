@@ -723,10 +723,16 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
                 // Display control
                 fhirQ = fhir.SDC.convertLFormsToQuestionnaire(new LForms.LFormsData(angular.copy(displayControlsDemo)));
                 convertedLfData = fhir.SDC.convertQuestionnaireToLForms(fhirQ);
+                // TODO -
+                // unsupported fields: viewMode, css, colCSS, listColHeaders, answerLayout.columns
+                // supported fields: questionLayout, answerLayout.type
+                assert.equal(convertedLfData.items[1].displayControl.answerLayout.type, "RADIO_CHECKBOX");
+                // Vertical layout is not converted as it is default.
+                assert.equal(convertedLfData.items[5].displayControl, undefined);
+                assert.equal(convertedLfData.items[6].displayControl.questionLayout, "horizontal");
                 done();
               });
             });
-
           });
 
           describe('Units', function () {

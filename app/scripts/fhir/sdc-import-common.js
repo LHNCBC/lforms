@@ -789,24 +789,6 @@ function addCommonSDCImportFns(ns) {
     return type;
   };
 
-  /**
-   * Get skip logic source item's dataType by source item's linkId
-   * It is used to identify source item in skip logic
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param questionLinkId - The linkId in enableWhen.question.
-   * @returns {{linkId: *, dataType: string}} Return dataType and linkId of the source item.
-   * @private
-   */
-  self._getSourceDataTypeByLinkId = function (linkIdItemMap, questionLinkId) {
-
-    var item = linkIdItemMap[questionLinkId];
-    var ret = {
-      dataType: self._getDataType(item),
-      linkId: questionLinkId
-    };
-
-    return ret;
-  };
 
   /**
    * Build a map of items to linkid from a questionnaire resource.

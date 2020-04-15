@@ -350,7 +350,7 @@ about the meaning of each key:
             * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The
               default value is "INTERNAL".
             * sourceLinkId - the linkId of the source question in the form. The source question
-              must be any question on the form.
+              must be a question on the form.
         * onAttribute - optional, the attribute on this question, whose value will be updated by the newly
           constructed value. The default value is "value".
         * dataFormat - the format of the newly constructed value. It is a hash, such as

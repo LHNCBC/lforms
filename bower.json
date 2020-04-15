@@ -25,9 +25,9 @@
   },
   "devDependencies": {
     "angular-file-upload": "^2.3.4",
-    "angular-mocks": "^1.4.7",
-    "angular-scenario": "^1.4.7",
-    "angular-route": "^1.4.7"
+    "angular-mocks": "^1.7.9",
+    "angular-scenario": "^1.7.9",
+    "angular-route": "^1.7.9"
   },
   "appPath": "app",
   "authors": [
