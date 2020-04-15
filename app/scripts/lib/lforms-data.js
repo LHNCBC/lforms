@@ -815,7 +815,8 @@
             sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
           // check if any one of the answers has a score
           for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
-            if (sourceItem.answers[j] && sourceItem.answers[j].hasOwnProperty('score') && !isNaN(sourceItem.answers[j].score)) {
+            var answer = sourceItem.answers[j];
+            if (answer && answer.hasOwnProperty('score') && !isNaN(answer.score)) {
               itemsWithScore[sourceItem.linkId] = sourceItem;
               break;
             }
