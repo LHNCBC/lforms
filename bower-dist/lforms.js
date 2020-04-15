@@ -4947,8 +4947,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  observationLinkPeriod and initialExpression).
      *  Prior to calling this, LForms.Util.setFHIRContext() should have been
      *  called, so that communication with the FHIR server can take place.
-     * @param prepopulate whether or not to peform prepoluation.  If the form
-     *  being showed is going to include previously saved user data, this flag
+     * @param prepopulate whether or not to perform prepoluation.  If the form
+     *  being shown is going to include previously saved user data, this flag
      *  should be set to false (which is the default).
      */
     loadFHIRResources: function loadFHIRResources(prepopulate) {
