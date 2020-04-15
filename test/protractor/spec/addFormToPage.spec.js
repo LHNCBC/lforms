@@ -38,7 +38,7 @@ describe('addFormToPage test page', function() {
     expect(element(by.id('/type7/1')).getAttribute('value')).toBeLessThanOrEqual(minMax[1]);
   });
 
-  fdescribe('addFormToPage', function () {
+  describe('addFormToPage', function () {
     beforeEach(function(done) {
       po.openPage();
       // Pre-condition -- Form USSG-FHT should not be in formContainer
