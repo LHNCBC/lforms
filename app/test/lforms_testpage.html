@@ -109,12 +109,7 @@
     <script src="scripts/fhir/R4/lformsFHIR.js"></script>
     <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 
-    <!-- test data files -->
-    <script src="data/sample-data.js"></script>
-    <script src="data/test-data.js"></script>
-    <script src="data/ri-data.js"></script>
     <script src="../scripts/themeList.js"></script>
-    <!-- end of test data files -->
 
     <!-- lforms-converter files -->
     <script src="../bower_components/oboe/dist/oboe-browser.js"></script>
@@ -133,6 +128,7 @@
               FileUploader) {
 
             $scope.fhirResCache = {};
+            $scope.testDataCache = {};
             $scope.themeList = themeList; // see themeList.js
 
             $scope.selectedForm = null;
@@ -145,7 +141,6 @@
               {text: 'Minimum Data Set - version 3.0', id: '54580-6NEW'},
               {text: 'Form With User Data', id: 'form-with-user-data'},
               {text: 'Form With User Data, hasSavedData=true', id: 'form-with-user-data-with-has-saved-data'},
-              {text: 'CDE sample form #1', id: 'cde1'},
               {text: 'RxTerms Demo', id: 'X-001'},
               {text: 'displayControls (answerLayout and questionLayout)', id: 'display-controls'},
               {text: 'Matrix Layout, single selection', id: 'matrix-layout2'},
@@ -280,47 +275,62 @@
             };
 
             $scope.testMergeDR2LForms = function() {
-              $scope.loadFHIRDataFile('contained-dr.json', FHTData, 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('contained-dr.json', 'FHTData', 'DiagnosticReport');
             }
             $scope.testMergeBundleDR2LForms = function() {
-              $scope.loadFHIRDataFile('searchset-bundle-dr.json', FHTData, 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('searchset-bundle-dr.json', 'FHTData', 'DiagnosticReport');
             }
 
             $scope.testMergeDR2LFormsWithDefaultValues = function() {
-              $scope.loadFHIRDataFile('with-defaultvalues-contained-dr.json', defaultAnswerForm, 'DiagnosticReport');
+              $scope.loadAndMergeFHIRDataFile('with-defaultvalues-contained-dr.json', 'defaultAnswerForm', 'DiagnosticReport');
             }
 
-            $scope.loadFHIRDataFile = function(fileName, lfData, resType) {
-              $scope.getFhirResource(getFHIRVersion(), fileName).then(function (fhirData) {
+            $scope.loadAndMergeFHIRDataFile = function(fhirFileName, lfDataFileName, resType) {
+              $scope.getTestDataFile(lfDataFileName).then(function (formData) {
+                $scope.getFhirResource(getFHIRVersion(), fhirFileName).then(function (fhirData) {
+                  var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
+                          resType, fhirData, formData,
+                          getFHIRVersion());
+                  mergedFormData = new LForms.LFormsData(mergedFormData);
 
-                var mergedFormData = LForms.Util.mergeFHIRDataIntoLForms(
-                        resType, fhirData, angular.copy(lfData),
-                        getFHIRVersion());
-                mergedFormData = new LForms.LFormsData(mergedFormData);
-
-                $scope.lfData2 = mergedFormData;
-                $scope.lfOption2 = {
-                  useAnimation: !window._INTESTING_
-                };
+                  $scope.lfData2 = mergedFormData;
+                  $scope.lfOption2 = {
+                    useAnimation: !window._INTESTING_
+                  };
+                }, function (err) {
+                  window.alert('Unable to load '+getFHIRVersion()+':' + fhirFileName);
+                });
               }, function (err) {
-                window.alert('Unable to load '+getFHIRVersion()+': fileName');
+                window.alert('Unable to load ' + lfDataFileName);
               });
-
             };
 
+            $scope.loadLFormDataFile = function(fileName, lfOption, formLevelAttr) {
+              $scope.getTestDataFile(fileName).then(function (formData) {
+                var lfData = angular.copy(formData);
+                if (formLevelAttr) {
+                  lfData = jQuery.extend(lfData, formLevelAttr);
+                }
+                if (lfOption) {
+                  $scope.lfOption2 = lfOption;
+                }
+                $scope.lfData2 = new LForms.LFormsData(angular.copy(lfData));
+              }, function (err) {
+                window.alert('Unable to load ' + fileName);
+              });
+            };
 
             $scope.testMergeQR2LForms = function() {
-              $scope.loadFHIRDataFile('fhir-sdc-response-ussgfht.json', FHTData, 'QuestionnaireResponse');
+              $scope.loadAndMergeFHIRDataFile('fhir-sdc-response-ussgfht.json', 'FHTData', 'QuestionnaireResponse');
             };
 
 
             $scope.testMergeQR2LForms_CWE = function() {
-              $scope.loadFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', allInOne, 'QuestionnaireResponse')
+              $scope.loadAndMergeFHIRDataFile('questionnaire-response-allinone-cwe-userdata.json', 'allInOne', 'QuestionnaireResponse')
             };
 
 
             $scope.testSearchOnFHIRServer = function() {
-//              var dataURL = "http://fhirtest.uhn.ca/baseDstu3/DiagnosticReport?_id=663968&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
               var dataURL = "http://lhc-docker.nlm.nih.gov:8080/baseDstu3/DiagnosticReport?_id=178952&_include=DiagnosticReport:result&_include:recurse=Observation:related-target&_pretty=true";
 
               $http({
@@ -391,43 +401,46 @@
 
 
             $scope.useForm = function() {
-              var useAnimation = !window._INTESTING_;
+              var useAnimation = !window._INTESTING_, lfOption2;
 
-              var lfData2,
-                  lfOption2 = {
-                    allowMultipleEmptyRepeatingItems: true,
-                    useAnimation: useAnimation
-                  };
+              $scope.lfOption2 = {
+                allowMultipleEmptyRepeatingItems: true,
+                useAnimation: useAnimation
+              };
 
               switch ($scope.selectedForm) {
                 case '54127-6N':
                   //'USSG-FHT, (with mock-up items for skip logic demo)'
-                  lfData2 = new LForms.LFormsData(angular.copy(FHTData));
                   lfOption2 = {
                     allowMultipleEmptyRepeatingItems: false,
                     useAnimation: useAnimation,
                     showFormOptionPanel: true
                   };
+                  $scope.loadLFormDataFile('FHTData', lfOption2);
+                  break;
+                case '54127-6H':
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: true,
+                    useAnimation: useAnimation
+                  };
+                  //'USSG-FHT, (with mock-up items for horizontal layout demo)'
+                  $scope.loadLFormDataFile('horizontalFHTData', lfOption2);
                   break;
                 case 'two-totalscore':
                   //'A Form with two TOTALSCORE fields'
-                  lfData2 = new LForms.LFormsData(angular.copy(twoTotalScore));
+                  $scope.loadLFormDataFile('twoTotalScore');
                   break;
                 case 'QTYDemo':
                   //'A Form with two TOTALSCORE fields'
-                  lfData2 = new LForms.LFormsData(angular.copy(QTYDemo));
-                  break;
-                case '54127-6H':
-                  //'USSG-FHT, (with mock-up items for horizontal layout demo)'
-                  lfData2 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+                  $scope.loadLFormDataFile('QTYDemo');
                   break;
                 case '35088-4B':
                   //'Glasgow Coma Score (with score rules)'
-                  lfData2 = new LForms.LFormsData(angular.copy(glasgow));
+                  $scope.loadLFormDataFile('glasgow');
                   break;
                 case 'validationTest':
                   //validation test
-                  lfData2 = new LForms.LFormsData(angular.copy(validationTestForm));
+                  $scope.loadLFormDataFile('validationTestForm');
                   break;
                 case 'all-in-one':
                   //'Full-Featured Demo'
@@ -436,36 +449,33 @@
                     useAnimation: useAnimation,
                     allowMultipleEmptyRepeatingItems: true
                   };
-
-                  lfData2 = new LForms.LFormsData(angular.copy(allInOne));
+                  $scope.loadLFormDataFile('allInOne', lfOption2);
                   break;
                 case 'formC':
                   //'Form Builder created test form'
-                  lfData2 = new LForms.LFormsData(angular.copy(formBuilder));
+                  $scope.loadLFormDataFile('formBuilder');
                   break;
                 case '54580-6NEW':
                   //'Minimum Data Set - version 3.0'
-                  lfData2 = new LForms.LFormsData(angular.copy(MDS3));
+                  $scope.loadLFormDataFile('MDS3');
                   break;
                 case 'form-with-user-data':
                   //'Form With User Data'
                   lfOption2 = {
                     allowHTMLInInstructions: true
                   };
-                  lfData2 = new LForms.LFormsData(angular.copy(formWithUserData));
+                  $scope.loadLFormDataFile('formWithUserData', lfOption2);
                   break;
                 case 'form-with-user-data-with-has-saved-data':
                   //'Form With User Data'
                   lfOption2 = {
                     allowHTMLInInstructions: true
                   };
-                  var formData = angular.copy(formWithUserData);
-                  formData.hasSavedData = true;
-                  lfData2 = new LForms.LFormsData(formData);
+                  $scope.loadLFormDataFile('formWithUserData', lfOption2, {hasSavedData: true});
                   break;
                 case 'X-001':
                   //'RxTerms'
-                  lfData2 = new LForms.LFormsData(angular.copy(rxTerms));
+                  $scope.loadLFormDataFile('rxTerms');
                   break;
                 case 'display-controls':
                   //'displayControls (answerLayout and questionLayout)'
@@ -474,19 +484,22 @@
                     showItemOptionPanelButton: true,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  lfData2 = new LForms.LFormsData(angular.copy(displayControlsDemo));
+                  $scope.loadLFormDataFile('displayControlsDemo', lfOption2);
                   break;
                 case 'matrix-layout':
                   //'matrix layout'
-                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout));
+                  $scope.loadLFormDataFile('matrixLayout');
                   break;
                 case 'matrix-layout2':
                   //'matrix layout 2'
-                  lfData2 = new LForms.LFormsData(angular.copy(matrixLayout2));
+                  $scope.loadLFormDataFile('matrixLayout2');
                   break;
                 case 'question-in-question':
                   //'question/section in question'
-                  lfData2 = new LForms.LFormsData(angular.copy(questionInQuestion));
+                  lfOption2 = {
+                    allowMultipleEmptyRepeatingItems: true
+                  };
+                  $scope.loadLFormDataFile('questionInQuestion', lfOption2);
                   break;
                 case 'X1000-0':
                   lfOption2 = {
@@ -494,44 +507,24 @@
                     showItemOptionPanelButton: true,
                     allowMultipleEmptyRepeatingItems: true
                   };
-                  lfData2 = new LForms.LFormsData(angular.copy(genetic));
+                  $scope.loadLFormDataFile('genetic', lfOption2);
                   break;
                 case 'X2000-0':
-                  lfData2 = new LForms.LFormsData(angular.copy(genetic2));
+                  $scope.loadLFormDataFile('genetic2');
                   break;
                 case '81247-9':
-                  lfData2 = new LForms.LFormsData(angular.copy(newGenetic));
+                  $scope.loadLFormDataFile('newGenetic');
                   break;
                 case 'defaultAnswerTest':
-                  lfData2 = new LForms.LFormsData(angular.copy(defaultAnswerForm));
+                  $scope.loadLFormDataFile('defaultAnswerForm');
                   break;
                 case '76806-9':
-                  lfData2 = new LForms.LFormsData(angular.copy(promis));
+                  $scope.loadLFormDataFile('promis');
                   break;
                 case '74728-7':
-                  lfData2 = new LForms.LFormsData(angular.copy(vitalSign));
-                  break;
-                case 'cde1':
-                  //'CDE Sample form'
-                  var converter = new LFormsConverter();
-                  //var url = "https://cde.nlm.nih.gov/form/m18d81BHYg;";
-                  converter.convert("/data/cde-data.json",
-                      function(data) {
-                        $scope.lfData2 = new LForms.LFormsData(data);
-                        // hide checkboxes (and show question codes for testing)
-                        $scope.lfOption2 = {hideFormControls: true, showQuestionCode: true, useAnimation: useAnimation};
-                        // Or:   $scope.lfData2.setTemplateOptions({hideFormControls: true, showQuestionCode: true});
-                        $scope.$apply();
-                      },
-                      function(err) {
-                        console.log(err);
-                      }
-                  );
+                  $scope.loadLFormDataFile('vitalSign');
                   break;
               }
-
-              $scope.lfData2 = lfData2;
-              $scope.lfOption2 = lfOption2;
             };
 
 
@@ -547,10 +540,29 @@
                 })
               }
               else {
-                deferred.resolve($scope.fhirResCache[version+name]);
+                deferred.resolve(angular.copy($scope.fhirResCache[version+name]));
               }
               return deferred.promise;
             };
+
+
+            $scope.getTestDataFile = function(fileName) {
+              var deferred = $q.defer();
+              if(!$scope.testDataCache[fileName]) {
+                $http.get('data/' + fileName + '.json').then(function (resp) {
+                  $scope.testDataCache[fileName] = resp.data;
+                  deferred.resolve(resp.data);
+                }, function (err) {
+                  console.error(err);
+                  deferred.reject(err);
+                })
+              }
+              else {
+                deferred.resolve(angular.copy($scope.testDataCache[fileName]));
+              }
+              return deferred.promise;
+            };
+
           }]);
 
        // Set up FHIR version list

@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"23.0.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"24.0.0\"}");
 
 /***/ }),
 /* 7 */
@@ -4013,7 +4013,7 @@ LForms.HL7 = function () {
         obxIndex: 1
       }; // get form data with questions that have no values
 
-      var formData = lfData.getFormData(false, true, true);
+      var formData = lfData.getFormData(false, true);
 
       this._generateOBX4(formData); // form level info
 
@@ -4947,8 +4947,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  observationLinkPeriod and initialExpression).
      *  Prior to calling this, LForms.Util.setFHIRContext() should have been
      *  called, so that communication with the FHIR server can take place.
-     * @param prepopulate whether or not to peform prepoluation.  If the form
-     *  being showed is going to include previously saved user data, this flag
+     * @param prepopulate whether or not to perform prepoluation.  If the form
+     *  being shown is going to include previously saved user data, this flag
      *  should be set to false (which is the default).
      */
     loadFHIRResources: function loadFHIRResources(prepopulate) {
@@ -5033,9 +5033,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * Calculate internal data from the raw form definition data,
      * including:
      * structural data:
-     *    _id, _idPath, _codePath
+     *    _id, _idPath
      * data for widget control and/or performance improvement:
-     *    _displayLevel_
+     *    _displayLevel
      * @private
      */
     _initializeInternalData: function _initializeInternalData() {
@@ -5366,14 +5366,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           for (var j = 0, jLen = item.dataControl.length; j < jLen; j++) {
             var source = item.dataControl[j].source; // has a source configuration
 
-            if (source && (!source.sourceType || source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL) && source.sourceItemCode) {
+            if (source && (!source.sourceType || source.sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL) && source.sourceLinkId) {
               // get the source item object
-              var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
+              var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
 
               if (!sourceItem) {
-                // This is an error in the form defintion.  Provide a useful
+                // This is an error in the form definition.  Provide a useful
                 // debugging message.
-                throw new Error("Data control for item '" + item.question + "' refers to source item '" + source.sourceItemCode + "' which was not found as a sibling, ancestor, or ancestor sibling.");
+                throw new Error("Data control for item '" + item.question + "' refers to source item '" + source.sourceLinkId + "' which was not found as a sibling, ancestor, or ancestor sibling.");
               }
 
               if (sourceItem._dataControlTargets) {
@@ -5504,41 +5504,32 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Search upwards along the tree structure to find the item with answer scores
-     * @param item the item to start with
-     * @returns {}
+     * Find all the items across the form that have scores
+     * @returns {string[]} items that have a score value on answers
      * @private
      */
-    _findItemsWithScoreUpwardsAlongAncestorTree: function _findItemsWithScoreUpwardsAlongAncestorTree(item) {
-      var itemsWithScore = []; // check siblings
+    _findItemsWithScore: function _findItemsWithScore() {
+      var itemsWithScore = {}; // check siblings
 
-      var itemToCheck = item;
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var sourceItem = this.itemList[i]; // it has an answer list
 
-      while (itemToCheck) {
-        // check siblings
-        if (itemToCheck._parentItem && Array.isArray(itemToCheck._parentItem.items)) {
-          for (var i = 0, iLen = itemToCheck._parentItem.items.length; i < iLen; i++) {
-            var sourceItem = itemToCheck._parentItem.items[i]; // it has an answer list
+        if ((sourceItem.dataType === 'CNE' || sourceItem.dataType === 'CWE') && sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
+          // check if any one of the answers has a score
+          for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
+            var answer = sourceItem.answers[j];
 
-            if ((sourceItem.dataType === 'CNE' || sourceItem.dataType === 'CWE') && sourceItem.answers && Array.isArray(sourceItem.answers) && sourceItem.answers.length > 0) {
-              // check if any one of the answers has a score
-              for (var j = 0, jLen = sourceItem.answers.length; j < jLen; j++) {
-                if (sourceItem.answers[j] && sourceItem.answers[j].score >= 0) {
-                  itemsWithScore.push(sourceItem.questionCode);
-                  break;
-                }
-              } // end of answers loop
+            if (answer && answer.hasOwnProperty('score') && !isNaN(answer.score)) {
+              itemsWithScore[sourceItem.linkId] = sourceItem;
+              break;
+            }
+          } // end of answers loop
 
-            } // end if there's an answer list
+        } // end if there's an answer list
 
-          }
-        } // check ancestors and each ancestors siblings
-
-
-        itemToCheck = itemToCheck._parentItem;
       }
 
-      return itemsWithScore;
+      return Object.keys(itemsWithScore);
     },
 
     /**
@@ -5557,7 +5548,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             "value": []
           };
 
-          var itemsWithScore = this._findItemsWithScoreUpwardsAlongAncestorTree(totalScoreItem);
+          var itemsWithScore = this._findItemsWithScore();
 
           totalScoreItem.calculationMethod.value = itemsWithScore;
         }
@@ -5707,16 +5698,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           itemId = 1; // for each item on this level
 
       for (var i = 0; i < iLen; i++) {
-        var item = items[i]; // item's code system is optional
-        // if (this.type ==="LOINC") {
-        //   if (!item.questionCodeSystem) {
-        //     item.questionCodeSystem = "LOINC";
-        //   }
-        //   if ((item.dataType === 'CNE' || item.dataType === 'CWE') && !item.answerCodeSystem) {
-        //     item.answerCodeSystem = "LOINC";
-        //   }
-        // }
-
+        var item = items[i];
         LForms.Util.initializeCodes(item); // set display text for the item
 
         item._text = item.prefix ? item.prefix + " " + item.question : item.question; // set default dataType
@@ -5790,23 +5772,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // id
 
 
-        if (item._questionRepeatable && prevSibling && prevSibling.questionCode === item.questionCode) {
+        if (item._questionRepeatable && prevSibling && prevSibling.linkId === item.linkId) {
           itemId += 1;
         } else {
           itemId = 1;
         }
 
-        item._id = itemId; // code path, id path, element id
-
-        item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
+        item._id = itemId;
         item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
-        item._elementId = item._codePath + item._idPath;
-        item._displayLevel = parentItem._displayLevel + 1; // linkId for Questionnaire
-
-        if (!item.linkId) {
-          item.linkId = item._codePath;
-        } // set last sibling status
-
+        item._elementId = item.linkId + item._idPath;
+        item._displayLevel = parentItem._displayLevel + 1; // set last sibling status
 
         item._lastSibling = i === lastSiblingIndex; // set the first sibling status
 
@@ -5886,7 +5861,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
           this._removeUserDataAndRepeatingSubItems(itemRepeatable);
 
-          this._repeatableItems[item._codePath] = itemRepeatable;
+          this._repeatableItems[item.linkId] = itemRepeatable;
         } // set a reference to its parent item
 
 
@@ -6004,16 +5979,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       for (var i = iLen - 1; i >= 0; i--) {
         var item = items[i];
         if (!item._id) item._id = 1;
-        item._codePath = parentItem._codePath + this.PATH_DELIMITER + item.questionCode;
         item._idPath = parentItem._idPath + this.PATH_DELIMITER + item._id;
-        item._elementId = item._codePath + item._idPath;
+        item._elementId = item.linkId + item._idPath;
         item._displayLevel = parentItem._displayLevel + 1;
         item._parentItem = parentItem;
-        item._repeatingSectionList = null; // linkId for Questionnaire
-
-        if (!item.linkId) {
-          item.linkId = item._codePath;
-        }
+        item._repeatingSectionList = null;
 
         this._updateItemAttrs(item); // set the last sibling status
 
@@ -6032,13 +6002,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // before the parentItem is added to avoid circular reference that make the angular.copy really slow
 
 
-        if (item._questionRepeatable && item._id === 1 && !this._repeatableItems[item._codePath]) {
+        if (item._questionRepeatable && item._id === 1 && !this._repeatableItems[item.linkId]) {
           delete item._parentItem;
           var itemRepeatable = angular.copy(item); // remove user data
 
           this._removeUserDataAndRepeatingSubItems(itemRepeatable);
 
-          this._repeatableItems[item._codePath] = itemRepeatable;
+          this._repeatableItems[item.linkId] = itemRepeatable;
         }
 
         item._parentItem = parentItem; // process the sub items
@@ -6074,13 +6044,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * The returned data could be fed into a LForms widget directly to render the form.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-     * @param keepIdPath optional, to keep _idPath field on item, the default is false
-     * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepId optional, to keep _id field on item, the default is false
      * @return {{}} form definition JSON object
      */
-    getFormData: function getFormData(noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    getFormData: function getFormData(noEmptyValue, noHiddenItem, keepId) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // check if there is user data
+      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepId); // check if there is user data
 
       var hasSavedData = false;
 
@@ -6127,16 +6096,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-     * @param keepIdPath optional, to keep _idPath field on item, the default is false
-     * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepId optional, to keep _id field on item, the default is false
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
-    getUserData: function getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    getUserData: function getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepId) {
       var ret = {};
-      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath); // template options could be optional. Include them, only if they are present
+      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepId); // template options could be optional. Include them, only if they are present
 
       if (this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems) {
-        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepId);
       } // return a deep copy of the data
 
 
@@ -6157,12 +6125,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
      * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
-     * @param keepIdPath optional, to keep _idPath field on item, the default is false
-     * @param keepCodePath optional, to keep _codePath field on item, the default is false
+     * @param keepId optional, to keep _id field on item, the default is false
      * @returns {Array} form data on one tree level
      * @private
      */
-    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath) {
+    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noHiddenItem, keepId) {
       var itemsData = [];
 
       for (var i = 0, iLen = items.length; i < iLen; i++) {
@@ -6186,8 +6153,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
         } // otherwise include form definition data
         else {
-            // process fields
-            // process extensions 
+            // process extensions
             var extension = LForms.Util.createExtensionFromLForms(item);
 
             if (extension) {
@@ -6206,19 +6172,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                   itemData[field] = item[field];
                 }
 
-              if (keepIdPath) {
-                itemData["_idPath"] = item["_idPath"];
-              }
-
-              if (keepCodePath) {
-                itemData["_codePath"] = item["_codePath"];
+              if (keepId) {
+                itemData["_id"] = item["_id"];
               }
             }
           } // process the sub items
 
 
         if (item.items && item.items.length > 0) {
-          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepIdPath, keepCodePath);
+          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepId);
         } // not to add the section header if noEmptyValue is set, and
         // all its children has empty value (thus have not been added either) or it has not children, and
         // it has an empty value (empty object, empty array)
@@ -6359,7 +6321,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i]._codePath == item._codePath && item._parentItem.items[i]._id > maxId) {
+          if (item._parentItem.items[i].linkId === item.linkId && item._parentItem.items[i]._id > maxId) {
             maxId = item._parentItem.items[i]._id;
           }
         }
@@ -6378,7 +6340,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i]._codePath == item._codePath) {
+          if (item._parentItem.items[i].linkId === item.linkId) {
             count++;
           }
         }
@@ -6400,18 +6362,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       }
 
       var iLen = items.length;
-      var prevCodePath = ''; // process all items in the array except the last one
+      var prevLinkId = ''; // process all items in the array except the last one
 
       for (var i = 0; i < iLen; i++) {
         var item = items[i];
 
-        if (prevCodePath !== '') {
+        if (prevLinkId !== '') {
           // it's a different item, and
           // previous item is a repeating item, set the flag as the last in the repeating set
-          items[i - 1]._lastRepeatingItem = !!(prevCodePath !== item._codePath && items[i - 1]._questionRepeatable);
+          items[i - 1]._lastRepeatingItem = !!(prevLinkId !== item.linkId && items[i - 1]._questionRepeatable);
         }
 
-        prevCodePath = item._codePath; // check sub levels
+        prevLinkId = item.linkId; // check sub levels
 
         if (item.items && item.items.length > 0) {
           this._updateLastRepeatingItemsStatus(item.items);
@@ -6483,7 +6445,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      */
     _resetHorizontalTableInfo: function _resetHorizontalTableInfo() {
       this._horizontalTableInfo = {};
-      var tableHeaderCodePathAndParentIdPath = null;
+      var tableHeaderLinkIdAndParentIdPath = null;
       var lastHeaderId = null;
 
       for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
@@ -6495,14 +6457,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           var itemsInRow = [];
           var columnHeaders = [];
           item._inHorizontalTable = true;
-          var itemCodePathAndParentIdPath = item._codePath + item._parentItem._idPath;
+          var itemLinkIdAndParentIdPath = item.linkId + item._parentItem._idPath; // item._codePath + item._parentItem._idPath;
+
           lastHeaderId = item._elementId; // if it's the first row (header) of the first table,
 
-          if (tableHeaderCodePathAndParentIdPath === null || tableHeaderCodePathAndParentIdPath !== itemCodePathAndParentIdPath) {
+          if (tableHeaderLinkIdAndParentIdPath === null || tableHeaderLinkIdAndParentIdPath !== itemLinkIdAndParentIdPath) {
             // indicate this item is the table header
-            tableHeaderCodePathAndParentIdPath = itemCodePathAndParentIdPath;
+            tableHeaderLinkIdAndParentIdPath = itemLinkIdAndParentIdPath;
             item._horizontalTableHeader = true;
-            item._horizontalTableId = tableHeaderCodePathAndParentIdPath;
+            item._horizontalTableId = tableHeaderLinkIdAndParentIdPath;
             itemsInRow = item.items;
 
             for (var j = 0, jLen = itemsInRow.length; j < jLen; j++) {
@@ -6516,7 +6479,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               itemsInRow[j]._inHorizontalTable = true;
             }
 
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath] = {
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath] = {
               tableStartIndex: i,
               tableEndIndex: i + itemsInRow.length,
               columnHeaders: columnHeaders,
@@ -6527,9 +6490,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               tableHeaders: [item]
             }; // set the last table/row in horizontal group/table flag
 
-            this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+            this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
           } // if it's the following rows, update the tableRows and tableEndIndex
-          else if (tableHeaderCodePathAndParentIdPath === itemCodePathAndParentIdPath) {
+          else if (tableHeaderLinkIdAndParentIdPath === itemLinkIdAndParentIdPath) {
               item._horizontalTableHeader = false;
               itemsInRow = item.items;
 
@@ -6539,18 +6502,18 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               } // update rows index
 
 
-              this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableRows.push({
+              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableRows.push({
                 header: item,
                 cells: itemsInRow
               }); // update headers index (hidden)
 
 
-              this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableHeaders.push(item); // update last item index in the table
+              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableHeaders.push(item); // update last item index in the table
 
 
-              this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath].tableEndIndex = i + itemsInRow.length; // set the last table/row in horizontal group/table flag
+              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath].tableEndIndex = i + itemsInRow.length; // set the last table/row in horizontal group/table flag
 
-              this._horizontalTableInfo[tableHeaderCodePathAndParentIdPath]['lastHeaderId'] = lastHeaderId;
+              this._horizontalTableInfo[tableHeaderLinkIdAndParentIdPath]['lastHeaderId'] = lastHeaderId;
             }
         }
       }
@@ -6584,14 +6547,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      */
     addRepeatingItems: function addRepeatingItems(item) {
       var maxRecId = this.getRepeatingItemMaxId(item);
-      var newItem = angular.copy(this._repeatableItems[item._codePath]);
+      var newItem = angular.copy(this._repeatableItems[item.linkId]);
       newItem._id = maxRecId + 1;
 
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         var insertPosition = 0;
 
         for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i]._codePath == item._codePath && item._parentItem.items[i]._idPath == item._idPath) {
+          if (item._parentItem.items[i].linkId === item.linkId && item._parentItem.items[i]._id === item._id) {
             insertPosition = i;
             break;
           }
@@ -6621,7 +6584,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      */
     appendRepeatingItems: function appendRepeatingItems(item) {
       var maxRecId = this.getRepeatingItemMaxId(item);
-      var newItem = angular.copy(this._repeatableItems[item._codePath]);
+      var newItem = angular.copy(this._repeatableItems[item.linkId]);
       newItem._id = maxRecId + 1;
 
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
@@ -6629,11 +6592,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var inRepeating = false;
 
         for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i]._codePath === item._codePath) {
+          if (item._parentItem.items[i].linkId === item.linkId) {
             inRepeating = true;
           }
 
-          if (inRepeating && item._parentItem.items[i]._codePath !== item._codePath) {
+          if (inRepeating && item._parentItem.items[i].linkId !== item.linkId) {
             insertPosition = i;
             break;
           }
@@ -6740,7 +6703,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var items = item._parentItem.items;
 
         for (var i = 0, iLen = items.length; i < iLen; i++) {
-          if (items[i]._codePath === item._codePath) {
+          if (items[i].linkId === item.linkId) {
             repeatingItems.push(items[i]);
           }
         }
@@ -6812,7 +6775,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     removeRepeatingItems: function removeRepeatingItems(item) {
       if (item._parentItem && Array.isArray(item._parentItem.items)) {
         for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i]._codePath == item._codePath && item._parentItem.items[i]._idPath == item._idPath) {
+          if (item._parentItem.items[i].linkId == item.linkId && item._parentItem.items[i]._id == item._id) {
             item._parentItem.items.splice(i, 1);
 
             break;
@@ -6864,18 +6827,17 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     /**
      * Get a source item from the question code defined in a score rule
      * @param item the target item where a formula is defined
-     * @param questionCodes the code of a source item
-     * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
+     * @param linkIds the linkIds of source items
      * @returns {Array}
      * @private
      */
-    _getFormulaSourceItems: function _getFormulaSourceItems(item, questionCodes, checkAncestorSibling) {
+    _getFormulaSourceItems: function _getFormulaSourceItems(item, linkIds) {
       var sourceItems = [];
 
-      for (var i = 0, iLen = questionCodes.length; i < iLen; i++) {
-        var questionCode = questionCodes[i];
+      for (var i = 0, iLen = linkIds.length; i < iLen; i++) {
+        var linkId = linkIds[i];
 
-        var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
+        var sourceItem = this._findItemByLinkId(item, linkId);
 
         sourceItems.push(sourceItem);
       }
@@ -7054,13 +7016,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         if (!dataFormat) dataFormat = "value"; // has a source configuration
 
         if (source) {
-          var sourceType = source.sourceType; // the default source type is "INTERNAL", which uses "sourceItemCode" to locate the source item
+          var sourceType = source.sourceType; // the default source type is "INTERNAL", which uses "sourceLinkId" to locate the source item
 
           if (!sourceType) sourceType = this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL; // "INTERNAL"
 
-          if (sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL && source.sourceItemCode) {
+          if (sourceType === this._CONSTANTS.DATA_CONTROL.SOURCE_INTERNAL && source.sourceLinkId) {
             // get the source item object
-            var sourceItem = this._findItemsUpwardsAlongAncestorTree(item, source.sourceItemCode);
+            var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
 
             if (sourceItem) {
               // check how to create the new data on target
@@ -7662,7 +7624,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           var totalScore = 0;
 
           for (var i = 0, iLen = sources.length; i < iLen; i++) {
-            totalScore += parseInt(sources[i]);
+            totalScore += parseFloat(sources[i]);
           }
 
           return totalScore;
@@ -7799,49 +7761,61 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Search upwards along the tree structure to find the item with a matching questionCode
-     * @param item the item to start with
-     * @param questionCode the code of an item
-     * @param checkAncestorSibling, optional, to check ancestor's siblings too, default is true
-     * @returns {}
+     * Find an item by linkId. It follows the algorithm described here:
+     * https://www.hl7.org/fhir/questionnaire-definitions.html#Questionnaire.item.enableWhen.question
+     * If multiple question occurrences are present for the same question (same linkId),
+     * then this refers to the nearest question occurrence reachable by tracing first
+     * the "ancestor" axis and then the "preceding" axis and then the "following" axis.
+     * @param item an item where the search starts
+     * @param linkId a linkId
+     * @returns {null}
      * @private
      */
-    _findItemsUpwardsAlongAncestorTree: function _findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling) {
-      var sourceItem = null;
-      if (checkAncestorSibling === undefined) checkAncestorSibling = true; // check siblings
+    _findItemByLinkId: function _findItemByLinkId(item, linkId) {
+      var sourceItem = null; // check 'ancestor' axis
 
-      if (item._parentItem && Array.isArray(item._parentItem.items)) {
-        for (var i = 0, iLen = item._parentItem.items.length; i < iLen; i++) {
-          if (item._parentItem.items[i].questionCode === questionCode) {
-            sourceItem = item._parentItem.items[i];
+      var parentItem = item._parentItem;
+      var foundSource = false;
+
+      while (!foundSource && parentItem) {
+        // check the ancestor
+        if (parentItem.linkId === linkId) {
+          sourceItem = parentItem;
+          foundSource = true;
+        }
+
+        parentItem = parentItem._parentItem;
+      }
+
+      var itemIndex = null;
+
+      if (!sourceItem) {
+        // find the item's position in itemList
+        for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+          if (item._elementId === this.itemList[i]._elementId) {
+            itemIndex = i;
             break;
           }
         }
-      } // check ancestors and each ancestors siblings
+
+        if (itemIndex !== null) {
+          // check 'preceding' axis
+          for (var j = itemIndex - 1; j >= 0; j--) {
+            if (this.itemList[j].linkId === linkId) {
+              sourceItem = this.itemList[j];
+              break;
+            }
+          } // check 'following' axis
 
 
-      if (!sourceItem) {
-        var parentItem = item._parentItem;
-
-        while (parentItem) {
-          var foundSource = false; // check the ancestor
-
-          if (parentItem.questionCode === questionCode) {
-            sourceItem = parentItem;
-            foundSource = true;
-          } // check the ancestors siblings
-          else if (checkAncestorSibling && parentItem._parentItem && Array.isArray(parentItem._parentItem.items)) {
-              for (var i = 0, iLen = parentItem._parentItem.items.length; i < iLen; i++) {
-                if (parentItem._parentItem.items[i].questionCode === questionCode) {
-                  sourceItem = parentItem._parentItem.items[i];
-                  foundSource = true;
-                  break;
-                }
+          if (!sourceItem) {
+            for (var k = itemIndex + 1, kLen = this.itemList.length; k < kLen; k++) {
+              if (this.itemList[k].linkId === linkId) {
+                sourceItem = this.itemList[k];
+                break;
               }
             }
-
-          if (foundSource) break;
-          parentItem = parentItem._parentItem;
+          }
         }
       }
 
@@ -7851,13 +7825,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     /**
      * Get a source item from the question code defined in a skip logic
      * @param item the target item where a skip logic is defined
-     * @param questionCode the code of a source item
-     * @param checkAncestorSibling, optional, to check ancestor's siblings also, default is true
+     * @param linkId the linkId of a source item
      * @returns {Array}
      * @private
      */
-    _getSkipLogicSourceItem: function _getSkipLogicSourceItem(item, questionCode, checkAncestorSibling) {
-      return this._findItemsUpwardsAlongAncestorTree(item, questionCode, checkAncestorSibling);
+    _getSkipLogicSourceItem: function _getSkipLogicSourceItem(item, linkId) {
+      return this._findItemByLinkId(item, linkId);
     },
 
     /**
@@ -8141,7 +8114,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             posY += 1; // have added a row
           } // in horizontal tables and it is a table header
           else if (items[i]._horizontalTableHeader) {
-              var tableKey = [items[i]._codePath + items[i]._parentItem._idPath];
+              var tableKey = [items[i].linkId + items[i]._parentItem._idPath];
               var tableInfo = lfData._horizontalTableInfo[tableKey]; // it is the first table header
 
               if (tableInfo && tableInfo.tableStartIndex === i) {

@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "23.0.1",
+  "version": "24.0.0",
   "dependencies": {
     "jquery-ui": "^1.12.1",
     "angular": "^1.7.9",
@@ -25,10 +25,9 @@
   },
   "devDependencies": {
     "angular-file-upload": "^2.3.4",
-    "angular-mocks": "^1.4.7",
-    "angular-scenario": "^1.4.7",
-    "angular-route": "^1.4.7",
-    "lforms-converter": "^1.1.0"
+    "angular-mocks": "^1.7.9",
+    "angular-scenario": "^1.7.9",
+    "angular-route": "^1.7.9"
   },
   "appPath": "app",
   "authors": [

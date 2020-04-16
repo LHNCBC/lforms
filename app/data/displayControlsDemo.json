@@ -1,0 +1,836 @@
+{
+  "type": "LOINC",
+  "code": "display-controls",
+  "name": "displayControls (answerLayout and questionLayout)",
+  "template": "table",
+  "items": [
+    {
+      "questionCode": "q0",
+      "question": "String type",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "linkId": "/q0"
+    },
+    {
+      "questionCode": "q1a",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, --2 columns",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": "2"
+        }
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Extra long answer text 123456789 Answer X"
+        },
+        {
+          "code": "c2",
+          "text": "Extra long answer text 123456789 Answer Y"
+        },
+        {
+          "code": "c3",
+          "text": "Extra long answer text 123456789 Answer Z"
+        },
+        {
+          "code": "c4",
+          "text": "Extra long answer text 1234 Answer X1"
+        },
+        {
+          "code": "c5",
+          "text": "Extra long answer text 12345 Answer X2"
+        },
+        {
+          "code": "c6",
+          "text": "Extra long answer text 123456 Answer X3"
+        },
+        {
+          "code": "c7",
+          "text": "Extra long answer text 1234567 Answer X4"
+        },
+        {
+          "code": "c8",
+          "text": "Extra long answer text 12345678 Answer X5"
+        },
+        {
+          "code": "c9",
+          "text": "Extra long answer text 123456789 Answer X6"
+        }
+      ],
+      "value": {
+        "code": "c3",
+        "text": "Extra long answer text 123456789 Answer Z"
+      },
+      "linkId": "/q1a"
+    },
+    {
+      "questionCode": "q1b",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, --3 columns",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CWE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": "3"
+        }
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Long answer text 123 Answer X"
+        },
+        {
+          "code": "c2",
+          "text": "Long answer text 123456 Answer Y"
+        },
+        {
+          "code": "c3",
+          "text": "Long answer text 123456789 Answer Z"
+        },
+        {
+          "code": "c4",
+          "text": "Extra long answer text 1234 Answer X1"
+        },
+        {
+          "code": "c5",
+          "text": "Extra long answer text 12345 Answer X2"
+        },
+        {
+          "code": "c6",
+          "text": "Extra long answer text 123456 Answer X3"
+        },
+        {
+          "code": "c7",
+          "text": "Extra long answer text 1234567 Answer X4"
+        },
+        {
+          "code": "c8",
+          "text": "Extra long answer text 12345678 Answer X5"
+        },
+        {
+          "code": "c9",
+          "text": "Extra long answer text 123456789 Answer X6"
+        }
+      ],
+      "linkId": "/q1b"
+    },
+    {
+      "questionCode": "q1c",
+      "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": "1"
+        }
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer X"
+        },
+        {
+          "code": "c2",
+          "text": "Answer Y"
+        },
+        {
+          "code": "c3",
+          "text": "Answer Z"
+        },
+        {
+          "code": "c4",
+          "text": "Extra long answer text 1234 Answer X1"
+        },
+        {
+          "code": "c5",
+          "text": "Extra long answer text 12345 Answer X2"
+        },
+        {
+          "code": "c6",
+          "text": "Extra long answer text 123456 Answer X3"
+        },
+        {
+          "code": "c7",
+          "text": "Extra long answer text 1234567 Answer X4"
+        },
+        {
+          "code": "c8",
+          "text": "Extra long answer text 12345678 Answer X5"
+        },
+        {
+          "code": "c9",
+          "text": "Extra long answer text 123456789 Answer X6"
+        }
+      ],
+      "value": [
+        {
+          "code": "c2",
+          "text": "Answer Y"
+        },
+        {
+          "code": "c3",
+          "text": "Answer Z"
+        }
+      ],
+      "linkId": "/q1c"
+    },
+    {
+      "questionCode": "q1d",
+      "question": "Answer RADIO_CHECKBOX layout --CWE, Multiple, --flexible",
+      "copyrightNotice": "a notice",
+      "codingInstructions": "coding instructions",
+      "dataType": "CWE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "*"
+      },
+      "displayControl": {
+        "answerLayout": {
+          "type": "RADIO_CHECKBOX",
+          "columns": "0"
+        }
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer X"
+        },
+        {
+          "code": "c2",
+          "text": "Answer Y"
+        },
+        {
+          "code": "c3",
+          "text": "Answer Z"
+        },
+        {
+          "code": "c4",
+          "text": "Extra long answer text 1234 Answer X1"
+        },
+        {
+          "code": "c5",
+          "text": "Extra long answer text 12345 Answer X2"
+        },
+        {
+          "code": "c6",
+          "text": "Extra long answer text 123456 Answer X3"
+        },
+        {
+          "code": "c7",
+          "text": "Extra long answer text 1234567 Answer X4"
+        },
+        {
+          "code": "c8",
+          "text": "Extra long answer text 12345678 Answer X5"
+        },
+        {
+          "code": "c9",
+          "text": "Extra long answer text 123456789 Answer X6"
+        }
+      ],
+      "linkId": "/q1d"
+    },
+    {
+      "questionCode": "g1",
+      "question": "A repeating group",
+      "header": true,
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "displayControl": {
+        "questionLayout": "vertical"
+      },
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g1/g1m1"
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g1/g1m2"
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g1/g1m3"
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #4",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g1/g1m4"
+        },
+        {
+          "questionCode": "g1g2",
+          "question": "repeating section in a repeating section",
+          "header": true,
+          "questionCardinality": {
+            "min": "1",
+            "max": "*"
+          },
+          "items": [
+            {
+              "questionCode": "g1g2q1",
+              "dataType": "CNE",
+              "question": "Question #A",
+              "answerCardinality": {
+                "min": "1",
+                "max": "1"
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer 1"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer 2"
+                },
+                {
+                  "code": "c3",
+                  "text": "Answer 3"
+                },
+                {
+                  "code": "c4",
+                  "text": "Answer 4"
+                }
+              ],
+              "linkId": "/g1/g1g2/g1g2q1"
+            },
+            {
+              "questionCode": "g1g2q2",
+              "dataType": "CNE",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "question": "Question #B",
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer 1"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer 2"
+                },
+                {
+                  "code": "c3",
+                  "text": "Answer 3"
+                },
+                {
+                  "code": "c4",
+                  "text": "Answer 4"
+                }
+              ],
+              "linkId": "/g1/g1g2/g1g2q2"
+            }
+          ],
+          "linkId": "/g1/g1g2"
+        }
+      ],
+      "linkId": "/g1"
+    },
+    {
+      "questionCode": "g2",
+      "question": "A repeating group with horizontal layout",
+      "header": true,
+      "questionCardinality": {
+        "min": "1",
+        "max": "*"
+      },
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g2/g1m1"
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g2/g1m2"
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g2/g1m3"
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #4",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g2/g1m4"
+        }
+      ],
+      "linkId": "/g2"
+    },
+    {
+      "questionCode": "g3",
+      "question": "A non-repeating group with horizontal layout",
+      "header": true,
+      "codingInstructions": "a coding instruction string",
+      "copyrightNotice": "a copyright notice",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "displayControl": {
+        "questionLayout": "horizontal"
+      },
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "question": "Question #1",
+          "answerCardinality": {
+            "min": "1",
+            "max": "1"
+          },
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g3/g1m1"
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "question": "Question #2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g3/g1m2"
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "question": "Question #3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g3/g1m3"
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #4",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g3/g1m4"
+        }
+      ],
+      "linkId": "/g3"
+    },
+    {
+      "questionCode": "g4",
+      "question": "A group with matrix layout (non-repeating)",
+      "header": true,
+      "codingInstructions": "a coding instruction string",
+      "copyrightNotice": "a copyright notice",
+      "questionCardinality": {
+        "min": "1",
+        "max": "1"
+      },
+      "displayControl": {
+        "questionLayout": "matrix"
+      },
+      "items": [
+        {
+          "questionCode": "g1m1",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #1",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g4/g1m1"
+        },
+        {
+          "questionCode": "g1m2",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #2",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g4/g1m2"
+        },
+        {
+          "questionCode": "g1m3",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #3",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g4/g1m3"
+        },
+        {
+          "questionCode": "g1m4",
+          "dataType": "CNE",
+          "answerCardinality": {
+            "min": "0",
+            "max": "*"
+          },
+          "question": "Question #4",
+          "answers": [
+            {
+              "code": "c1",
+              "text": "Answer 1"
+            },
+            {
+              "code": "c2",
+              "text": "Answer 2"
+            },
+            {
+              "code": "c3",
+              "text": "Answer 3"
+            },
+            {
+              "code": "c4",
+              "text": "Answer 4"
+            }
+          ],
+          "linkId": "/g4/g1m4"
+        }
+      ],
+      "linkId": "/g4"
+    },
+    {
+      "questionCode": "q3",
+      "question": "Question after a repeating section",
+      "dataType": "CNE",
+      "answerCardinality": {
+        "min": "0",
+        "max": "1"
+      },
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer A"
+        },
+        {
+          "code": "c2",
+          "text": "Answer B"
+        },
+        {
+          "code": "c3",
+          "text": "Answer C"
+        }
+      ],
+      "linkId": "/q3"
+    }
+  ],
+  "lformsVersion": "24.0.0"
+}

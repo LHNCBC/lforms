@@ -1,7 +1,7 @@
 # Form Definition Format
 
-The forms rendered by the LForms widget are defined in a JSON format, an example
-of which can be seen in [sample-data.js](app/data/sample-data.js).  Note that
+The forms rendered by the LForms widget are defined in a JSON format, examples
+of which can be seen in the __app/data__ directory.  Note that
 LForms also provides APIs for importing forms defined in the FHIR Questionnaire
 format.  (See the [documentation](http://lhncbc.github.io/lforms/) for details.)  The
 basic structure (some of which is optional) is shown below, followed by comments
@@ -24,7 +24,8 @@ about the meaning of each key:
         }],
       },
       "items": [{
-        "questionCode": string
+        "questionCode": string,
+        "linkId": string,
         "questionCardinality": {
            "min": "1",
            "max": "1" or "*"
@@ -180,9 +181,9 @@ about the meaning of each key:
   at the leaf nodes.  Each question/section in the array is represented by a hash
   with the following keys:
 
-    * questionCode - (required) A code identifying the question or section.
-      This code needs to be unique among its sibling questions.
-      It should not contain '/'.
+    * linkId - (required) An ID identifying the question or section.
+      This code needs to be unique across the form.      
+    * questionCode - (optional) A code for the question or section.
     * questionCodeSystem - (optional) the code system for the question code. The default value
       is "LOINC" when the form's **type** is "LOINC".
     * questionCardinality - This controls whether the there is a button for
@@ -271,9 +272,7 @@ about the meaning of each key:
       following keys:
         * conditions - An array of the conditions to be met. Each condition is a
           hash with the following keys:
-            * source - The code of another question. The source must be either
-              a sibling of this question (in the tree), or or one of the
-              questions in the containing sections.
+            * source - The linkId of another question. The source item could be any question on the form.
             * trigger - A hash defining a condition about the value for the
               question specified by "source".  The hash can either have a "value"
               key, or some combination of minExclusive, minInclusive, maxExclusive,
@@ -317,9 +316,7 @@ about the meaning of each key:
     * <a name="calculationMethod"></a>calculationMethod - For fields whose value
       is calculated from other fields, the means of calculation is specified
       here.  At present we only support a formula for summing the <a
-      href="#score">scores</a> for all the questions on the form.  We also are
-      working on formulas like computing a body-mass index based on weight and
-      height, but that is still under development.  To have a field be the sum
+      href="#score">scores</a> for all the questions on the form. To have a field be the sum
       of the scores, set calculationMethod to `{"name": "TOTALSCORE"}`.
     * defaultAnswer - The same as [defaultAnswer](#defaultAnswer) in the
       templateOptions section.
@@ -352,9 +349,8 @@ about the meaning of each key:
         * source - an object identifying the controlling source question. It has the following fields:
             * sourceType - optional, the source type. Currently only "INTERNAL" is supported. The
               default value is "INTERNAL".
-            * sourceItemCode - the questionCode of the source question in the form. The source question
-              must be either a sibling of this question (in the tree), or or one of the questions
-              in the containing sections.
+            * sourceLinkId - the linkId of the source question in the form. The source question
+              must be a question on the form.
         * onAttribute - optional, the attribute on this question, whose value will be updated by the newly
           constructed value. The default value is "value".
         * dataFormat - the format of the newly constructed value. It is a hash, such as

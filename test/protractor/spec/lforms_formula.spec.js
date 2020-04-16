@@ -45,49 +45,51 @@ describe('formula', function() {
     expect(ff.bmi2.getAttribute('value')).toBe("18.68");
   });
 
-  it('Two correctly structured TOTALSCORE rules on a form should both work', function() {
-
-    var answer1 = element(by.id("/44249-1/44250-9/1/1")),
-        answer2 = element(by.id("/44249-1/44255-8/1/1")),
-        score1 = element(by.id("/44249-1/44261-6/1/1"));
-
-    var answer3 = element(by.id("/38213-5/38216-8/1/1")),
-        answer4 = element(by.id("/38213-5/38217-6/1/1")),
-        score2 = element(by.id("/38213-5/38215-0/1/1"));
-
-    tp.openTwoTotalScoreForm();
-    expect(score1.getAttribute('value')).toBe("0");
-    expect(score2.getAttribute('value')).toBe("0");
-
-    //check total score #1
-    answer1.click();
-    answer1.sendKeys(protractor.Key.ARROW_DOWN);
-    answer1.sendKeys(protractor.Key.ARROW_DOWN);
-    answer1.sendKeys(protractor.Key.ENTER);
-    expect(score1.getAttribute('value')).toBe("1");
-    expect(score2.getAttribute('value')).toBe("0");
-    answer2.click();
-    answer2.sendKeys(protractor.Key.ARROW_DOWN);
-    answer2.sendKeys(protractor.Key.ARROW_DOWN);
-    answer2.sendKeys(protractor.Key.ENTER);
-    expect(score1.getAttribute('value')).toBe("2");
-    expect(score2.getAttribute('value')).toBe("0");
-
-    //check total score #2
-    answer3.click();
-    answer3.sendKeys(protractor.Key.ARROW_DOWN);
-    answer3.sendKeys(protractor.Key.ARROW_DOWN);
-    answer3.sendKeys(protractor.Key.ARROW_DOWN);
-    answer3.sendKeys(protractor.Key.ENTER);
-    expect(score1.getAttribute('value')).toBe("2");
-    expect(score2.getAttribute('value')).toBe("2");
-    answer4.click();
-    answer4.sendKeys(protractor.Key.ARROW_DOWN);
-    answer4.sendKeys(protractor.Key.ARROW_DOWN);
-    answer4.sendKeys(protractor.Key.ARROW_DOWN);
-    answer4.sendKeys(protractor.Key.ENTER);
-    expect(score1.getAttribute('value')).toBe("2");
-    expect(score2.getAttribute('value')).toBe("4");
-
-  })
+  // Multiple total scores are not supported any more. We might bring it back if there are such use cases.
+  //
+  // it('Two correctly structured TOTALSCORE rules on a form should both work', function() {
+  //
+  //   var answer1 = element(by.id("/44249-1/44250-9/1/1")),
+  //       answer2 = element(by.id("/44249-1/44255-8/1/1")),
+  //       score1 = element(by.id("/44249-1/44261-6/1/1"));
+  //
+  //   var answer3 = element(by.id("/38213-5/38216-8/1/1")),
+  //       answer4 = element(by.id("/38213-5/38217-6/1/1")),
+  //       score2 = element(by.id("/38213-5/38215-0/1/1"));
+  //
+  //   tp.openTwoTotalScoreForm();
+  //   expect(score1.getAttribute('value')).toBe("0");
+  //   expect(score2.getAttribute('value')).toBe("0");
+  //
+  //   //check total score #1
+  //   answer1.click();
+  //   answer1.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer1.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer1.sendKeys(protractor.Key.ENTER);
+  //   expect(score1.getAttribute('value')).toBe("1");
+  //   expect(score2.getAttribute('value')).toBe("0");
+  //   answer2.click();
+  //   answer2.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer2.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer2.sendKeys(protractor.Key.ENTER);
+  //   expect(score1.getAttribute('value')).toBe("2");
+  //   expect(score2.getAttribute('value')).toBe("0");
+  //
+  //   //check total score #2
+  //   answer3.click();
+  //   answer3.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer3.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer3.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer3.sendKeys(protractor.Key.ENTER);
+  //   expect(score1.getAttribute('value')).toBe("2");
+  //   expect(score2.getAttribute('value')).toBe("2");
+  //   answer4.click();
+  //   answer4.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer4.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer4.sendKeys(protractor.Key.ARROW_DOWN);
+  //   answer4.sendKeys(protractor.Key.ENTER);
+  //   expect(score1.getAttribute('value')).toBe("2");
+  //   expect(score2.getAttribute('value')).toBe("4");
+  //
+  // })
 });

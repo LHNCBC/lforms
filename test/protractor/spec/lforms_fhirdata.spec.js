@@ -42,7 +42,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           tp.openBaseTestPage();
           tp.loadFromTestData('argonaut-phq9-ish.json', fhirVersion);
           expect(element(by.id('label-44249-1')).getAttribute('style')).toBe('color: green; background-color: white;');
-          var idCSS = '#label-\\/44249-1\\/44255-8\\/1\\/1';
+          var idCSS = '#label-g1\\.q2\\/1\\/1';
           expect(element(by.css(idCSS+' .prefix')).getAttribute('style')).toBe('font-weight: bold;');
           expect(element(by.css(idCSS+' .question')).getAttribute('style')).toBe('font-style: italic;');
         });
@@ -832,14 +832,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should be able to show a converted questionnaire', function() {
             // Check to see that the last question has rendered
-            expect(element(by.id('label-/4/TBD3/TBD19/TBD20/1/1/1/1')).getText()).toBe(
+            expect(element(by.id('label-4.3.3.1/1/1/1/1')).getText()).toBe(
               "Rezidiv/Progress aufgetreten");
           });
 
           it('should have functioning skiplogic when codes are not present', function() {
-            let packungenField = element(by.id('/1/1.5/1.5.4/1/1/1'));
+            let packungenField = element(by.id('1.5.4/1/1/1'));
             expect(packungenField.isPresent()).toBe(false);
-            let raucherField = element(by.id('/1/1.5/1.5.1/1/1/1'));
+            let raucherField = element(by.id('1.5.1/1/1/1'));
             raucherField.click();
             expect(packungenField.isPresent()).toBe(true);
             raucherField.click();
@@ -847,8 +847,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           });
 
           it('should have functioning skiplogic when the codes are present', function() {
-            let progressField = element(by.id('/4/TBD3/TBD19/TBD20/1/1/1/1'));
-            let zeitpunktField = element(by.id('/4/TBD3/TBD19/TBD21/1/1/1/1'));
+            let progressField = element(by.id('4.3.3.1/1/1/1/1'));
+            let zeitpunktField = element(by.id('4.3.3.2/1/1/1/1'));
             expect(zeitpunktField.isPresent()).toBe(false);
             progressField.click();
             expect(zeitpunktField.isPresent()).toBe(true);

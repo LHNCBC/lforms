@@ -1,0 +1,392 @@
+{
+  "type": "LOINC",
+  "code": "validationTest",
+  "name": "Validation Test",
+  "items": [
+    {
+      "questionCode": "BL",
+      "dataType": "BL",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "BL",
+      "linkId": "/BL"
+    },
+    {
+      "questionCode": "INT",
+      "dataType": "INT",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "INT",
+      "linkId": "/INT"
+    },
+    {
+      "questionCode": "REAL",
+      "dataType": "REAL",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "REAL",
+      "linkId": "/REAL"
+    },
+    {
+      "questionCode": "PHONE",
+      "dataType": "PHONE",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "PHONE",
+      "linkId": "/PHONE"
+    },
+    {
+      "questionCode": "EMAIL",
+      "dataType": "EMAIL",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "EMAIL",
+      "linkId": "/EMAIL"
+    },
+    {
+      "questionCode": "URL",
+      "dataType": "URL",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "URL",
+      "linkId": "/URL"
+    },
+    {
+      "questionCode": "TM",
+      "dataType": "TM",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "TM",
+      "linkId": "/TM"
+    },
+    {
+      "questionCode": "YEAR",
+      "dataType": "YEAR",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "YEAR",
+      "linkId": "/YEAR"
+    },
+    {
+      "questionCode": "MONTH",
+      "dataType": "MONTH",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "MONTH",
+      "linkId": "/MONTH"
+    },
+    {
+      "questionCode": "DAY",
+      "dataType": "DAY",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "DAY",
+      "linkId": "/DAY"
+    },
+    {
+      "questionCode": "NR",
+      "dataType": "NR",
+      "restrictions": {},
+      "answerCardinality": null,
+      "question": "NR",
+      "linkId": "/NR"
+    },
+    {
+      "questionCode": "ST",
+      "dataType": "ST",
+      "restrictions": null,
+      "answerCardinality": null,
+      "question": "ST with no restrictions",
+      "linkId": "/ST"
+    },
+    {
+      "questionCode": "INT1",
+      "dataType": "INT",
+      "restrictions": {
+        "minInclusive": 5
+      },
+      "answerCardinality": null,
+      "question": "INT with minInclusive restrictions",
+      "linkId": "/INT1"
+    },
+    {
+      "questionCode": "INT2",
+      "dataType": "INT",
+      "restrictions": {
+        "minExclusive": 5
+      },
+      "answerCardinality": null,
+      "question": "INT with minExclusive restrictions",
+      "linkId": "/INT2"
+    },
+    {
+      "questionCode": "INT3",
+      "dataType": "INT",
+      "restrictions": {
+        "maxInclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "INT with maxInclusive restrictions",
+      "linkId": "/INT3"
+    },
+    {
+      "questionCode": "INT4",
+      "dataType": "INT",
+      "restrictions": {
+        "maxExclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "INT with maxExclusive restrictions",
+      "linkId": "/INT4"
+    },
+    {
+      "questionCode": "REAL1",
+      "dataType": "REAL",
+      "restrictions": {
+        "minInclusive": 5
+      },
+      "answerCardinality": null,
+      "question": "REAL with minInclusive restrictions",
+      "linkId": "/REAL1"
+    },
+    {
+      "questionCode": "REAL2",
+      "dataType": "REAL",
+      "restrictions": {
+        "minExclusive": 5
+      },
+      "answerCardinality": null,
+      "question": "REAL with minExclusive restrictions",
+      "linkId": "/REAL2"
+    },
+    {
+      "questionCode": "REAL3",
+      "dataType": "REAL",
+      "restrictions": {
+        "maxInclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "REAL with maxInclusive restrictions",
+      "linkId": "/REAL3"
+    },
+    {
+      "questionCode": "REAL4",
+      "dataType": "REAL",
+      "restrictions": {
+        "maxExclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "REAL with maxExclusive restrictions",
+      "linkId": "/REAL4"
+    },
+    {
+      "questionCode": "ST1",
+      "dataType": "ST",
+      "restrictions": {
+        "length": 5
+      },
+      "answerCardinality": null,
+      "question": "ST with length restrictions",
+      "linkId": "/ST1"
+    },
+    {
+      "questionCode": "ST2",
+      "dataType": "ST",
+      "restrictions": {
+        "minLength": 5
+      },
+      "answerCardinality": null,
+      "question": "ST with minLength restrictions",
+      "linkId": "/ST2"
+    },
+    {
+      "questionCode": "ST3",
+      "dataType": "ST",
+      "restrictions": {
+        "maxLength": 10
+      },
+      "answerCardinality": null,
+      "question": "ST with maxLength restrictions",
+      "linkId": "/ST3"
+    },
+    {
+      "questionCode": "INTA",
+      "dataType": "INT",
+      "restrictions": {
+        "minInclusive": 5,
+        "maxExclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "INT with minInclusive, maxExclusive",
+      "linkId": "/INTA"
+    },
+    {
+      "questionCode": "REALA",
+      "dataType": "REAL",
+      "restrictions": {
+        "minInclusive": 5,
+        "maxExclusive": 10
+      },
+      "answerCardinality": null,
+      "question": "REAL with minInclusive, maxExclusive",
+      "linkId": "/REALA"
+    },
+    {
+      "questionCode": "STA",
+      "dataType": "ST",
+      "restrictions": {
+        "maxLength": 10,
+        "minLength": 5,
+        "pattern": "/^[a-z]+$/"
+      },
+      "answerCardinality": null,
+      "question": "ST with maxLength, minLength, pattern",
+      "linkId": "/STA"
+    },
+    {
+      "questionCode": "STB",
+      "dataType": "ST",
+      "restrictions": {
+        "pattern": "/^/[a-z]+$/i"
+      },
+      "answerCardinality": null,
+      "question": "ST with pattern and flags",
+      "linkId": "/STB"
+    },
+    {
+      "questionCode": "externallyDefined1",
+      "dataType": "CNE",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "Externally defined 1",
+      "externallyDefined": "https://lforms-service.nlm.nih.gov/dummy/test?var1=1&va2=a%20b",
+      "linkId": "/externallyDefined1"
+    },
+    {
+      "questionCode": "DT",
+      "dataType": "DT",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "DT",
+      "linkId": "/DT"
+    },
+    {
+      "questionCode": "ST0",
+      "dataType": "ST",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "ST required",
+      "linkId": "/ST0"
+    },
+    {
+      "questionCode": "CNE1",
+      "dataType": "CNE",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "CNE single required",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer 1"
+        },
+        {
+          "code": "c2",
+          "text": "Answer 2"
+        },
+        {
+          "code": "c3",
+          "text": "Answer 3"
+        }
+      ],
+      "linkId": "/CNE1"
+    },
+    {
+      "questionCode": "CNE2",
+      "dataType": "CNE",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "question": "CNE multiple required",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer 1"
+        },
+        {
+          "code": "c2",
+          "text": "Answer 2"
+        },
+        {
+          "code": "c3",
+          "text": "Answer 3"
+        }
+      ],
+      "linkId": "/CNE2"
+    },
+    {
+      "questionCode": "CWE1",
+      "dataType": "CWE",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "1",
+        "min": "1"
+      },
+      "question": "CWE single required",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer 1"
+        },
+        {
+          "code": "c2",
+          "text": "Answer 2"
+        },
+        {
+          "code": "c3",
+          "text": "Answer 3"
+        }
+      ],
+      "linkId": "/CWE1"
+    },
+    {
+      "questionCode": "CWE2",
+      "dataType": "CWE",
+      "restrictions": {},
+      "answerCardinality": {
+        "max": "*",
+        "min": "1"
+      },
+      "question": "CWE multiple required",
+      "answers": [
+        {
+          "code": "c1",
+          "text": "Answer 1"
+        },
+        {
+          "code": "c2",
+          "text": "Answer 2"
+        },
+        {
+          "code": "c3",
+          "text": "Answer 3"
+        }
+      ],
+      "linkId": "/CWE2"
+    }
+  ],
+  "lformsVersion": "24.0.0"
+}

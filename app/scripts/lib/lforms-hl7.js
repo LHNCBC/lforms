@@ -212,7 +212,7 @@ LForms.HL7 = (function() {
       };
 
       // get form data with questions that have no values
-      var formData = lfData.getFormData(false, true, true);
+      var formData = lfData.getFormData(false, true);
 
       this._generateOBX4(formData);
 

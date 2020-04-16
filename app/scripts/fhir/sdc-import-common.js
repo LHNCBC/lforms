@@ -791,30 +791,6 @@ function addCommonSDCImportFns(ns) {
 
 
   /**
-   * It is used to identify source item in skip logic. Get code from source item
-   * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
-   * to locate source item with item.linkId.
-   *
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param questionLinkId - This is the linkId in enableWhen.question
-   * @returns {string} - Returns code of the source item.
-   * @private
-   */
-  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
-
-    var item = linkIdItemMap[questionLinkId];
-    var ret = {dataType: self._getDataType(item)};
-    if(item.code) {
-      ret.questionCode = item.code[0].code;
-    }
-    else {
-      ret.questionCode = item.linkId;
-    }
-
-    return ret;
-  };
-
-  /**
    * Build a map of items to linkid from a questionnaire resource.
    * @param qResource - FHIR Questionnaire resource
    * @returns {*} - Hash object with link id keys pointing to their respective items.

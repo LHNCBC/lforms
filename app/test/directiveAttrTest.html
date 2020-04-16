@@ -62,13 +62,6 @@
     <script src="scripts/fhir/R4/lformsFHIR.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
 
-    <!-- data file for testing -->
-    <script src="data/sample-data.js"></script>
-    <script src="data/test-data.js"></script>
-    <script src="data/ri-data.js"></script>
-
-    <!-- end of test data files -->
-
     <!-- lforms test controller -->
     <script type="text/javascript">
       angular.module('lformsTestApp', ['lformsWidget', 'ngRoute'])
@@ -102,14 +95,20 @@
             otherwise({redirectTo: "/vertical-form-default"})
         }).
         controller('lformsTestControllerV', ['$scope', function ($scope) {
-          $scope.lfData1 = new LForms.LFormsData(angular.copy(FHTData));
-          $scope.lfData3 = new LForms.LFormsData(angular.copy(FHTData));
-          $scope.lfData3.setTemplateOptions({"hideFormControls": true});
+          $.getJSON('/data/FHTData.json', function z(FHTData) {
+            $scope.lfData1 = new LForms.LFormsData(angular.copy(FHTData));
+            $scope.lfData3 = new LForms.LFormsData(angular.copy(FHTData));
+            $scope.lfData3.setTemplateOptions({"hideFormControls": true});
+            $scope.$apply();
+          });
         }]).
         controller('lformsTestControllerH', ['$scope', function ($scope) {
-          $scope.lfData1 = new LForms.LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData3 = new LForms.LFormsData(angular.copy(horizontalFHTData));
-          $scope.lfData3.setTemplateOptions({"hideFormControls": true});
+          $.getJSON('/data/horizontalFHTData.json', function z(horizontalFHTData) {
+            $scope.lfData1 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+            $scope.lfData3 = new LForms.LFormsData(angular.copy(horizontalFHTData));
+            $scope.lfData3.setTemplateOptions({"hideFormControls": true});
+            $scope.$apply();
+          });
         }]);
     </script>
 

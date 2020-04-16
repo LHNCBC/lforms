@@ -13,15 +13,22 @@
     <script src="latestBuild/fhir/STU3/lformsFHIR.min.js"></script>
     <script src="latestBuild/fhir/R4/lformsFHIR.min.js"></script>
     <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
-    <script src="/data/test-data.js"></script>
 
     <div ng-app="fileUploadApp" ng-controller="fileUploadController">
       <input type="file" id="fileAnchor" nv-file-select uploader="uploader" class="hide" />
     </div>
 
     <script>
-      LForms.Util.addFormToPage('allInOne', 'formContainer');
-      LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+      // form def data is a string value of 'allInOne'
+      $.getJSON('/data/allInOne.json', function z(allInOne) {
+        window.allInOne = allInOne;
+        LForms.Util.addFormToPage('allInOne', 'formContainer');
+      });
+
+      // form def data is a JSON object
+      $.getJSON('/data/rxTerms.json', function z(rxTerms) {
+        LForms.Util.addFormToPage(rxTerms, jQuery('#formContainer2')[0]);
+      });
 
       // Set up FHIR version list
       var fhirVersions = Object.keys(LForms.Util.FHIRSupport);

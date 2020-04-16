@@ -39,13 +39,19 @@ describe('addFormToPage test page', function() {
   });
 
   describe('addFormToPage', function () {
-    beforeEach(function() {
+    beforeEach(function(done) {
       po.openPage();
       // Pre-condition -- Form USSG-FHT should not be in formContainer
       browser.wait(function() {
         return browser.driver.executeScript(
           'return $("#formContainer").html().indexOf("USSG-FHT") === -1');
       }, tp.WAIT_TIMEOUT_2);
+      browser.driver.executeAsyncScript(
+          "var callback = arguments[arguments.length - 1];" +
+          "$.getJSON('/data/FHTData.json', function(FHTData) {window.FHTData = FHTData; callback();})"
+      ).then(function() {
+        done()
+      });
     });
 
     it('should be able to called a second time with a new form for the same form '+
@@ -53,7 +59,8 @@ describe('addFormToPage test page', function() {
       // Now put form USSG-FHT on the page, using the variable name method
       // (FHTData).
       browser.driver.executeScript(
-        'LForms.Util.addFormToPage("FHTData", "formContainer")');
+          "LForms.Util.addFormToPage('FHTData', 'formContainer');"
+          );
       // Confirm it is there
       browser.wait(function() {
         return browser.driver.executeScript(
@@ -64,7 +71,8 @@ describe('addFormToPage test page', function() {
     it('should be able to take a form object',  function() {
       // Now put form USSG-FHT on the page, using the form object method
       browser.driver.executeScript(
-        'LForms.Util.addFormToPage(FHTData, "formContainer")');
+          "LForms.Util.addFormToPage(FHTData, 'formContainer');"
+      );
       // Confirm it is there
       browser.wait(function() {
         return browser.driver.executeScript(
@@ -73,9 +81,10 @@ describe('addFormToPage test page', function() {
     });
 
     it('should be able to take a JSON form definition',  function() {
-      // Now put form USSG-FHT on the page, using the form object method
+      // Now put form USSG-FHT on the page, using the form JSON string method
       browser.driver.executeScript(
-        'LForms.Util.addFormToPage(JSON.stringify(FHTData), "formContainer")');
+          "LForms.Util.addFormToPage(JSON.stringify(FHTData), 'formContainer')"
+      );
       // Confirm it is there
       browser.wait(function() {
         return browser.driver.executeScript(

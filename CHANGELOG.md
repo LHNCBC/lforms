@@ -2,6 +2,19 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.0.0] 2020-03-31
+### Changed
+- 'linkId' is now required on each item. 'questionCode' is no longer required.
+  The original 'questionCode', 'questionCodeSystem' are kept but might be refactored 
+  into 'codeList' in the future versions. 
+- the name 'sourceItemCode' in dataControl.source becomes 'sourceLinkId' and its value
+  becomes the source item's linkId value
+- the value of 'source' in skipLogic.conditions becomes the source item's linkId value.
+- Remove _idPath from item object.  
+- 'linkId' is used in 'skipLogic', 'dataControl' and 'calculationMethod' to identify 
+  source items across the form. The source items no longer have to be ancestors or 
+  siblings of the target item.  
+
 ## [23.0.1] 2020-03-24
 ### Fixed.
 - Fixed missing extensions when outputting lforms format.

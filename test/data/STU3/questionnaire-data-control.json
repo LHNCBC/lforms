@@ -63,7 +63,7 @@
         },
         {
           "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
-          "valueString": "[{\"source\":{\"sourceType\":\"INTERNAL\",\"sourceItemCode\":\"dataControlSource\"},\"construction\":\"ARRAY\",\"dataFormat\":{\"code\":\"value.data.RXCUIS\",\"text\":\"value.data.STRENGTHS_AND_FORMS\"},\"onAttribute\":\"answers\"}]"
+          "valueString": "[{\"source\":{\"sourceType\":\"INTERNAL\",\"sourceLinkId\":\"/dataControlSource\"},\"construction\":\"ARRAY\",\"dataFormat\":{\"code\":\"value.data.RXCUIS\",\"text\":\"value.data.STRENGTHS_AND_FORMS\"},\"onAttribute\":\"answers\"}]"
         }
       ],
       "required": false,
@@ -82,7 +82,7 @@
       "extension": [
         {
           "url": "http://lhcforms.nlm.nih.gov/fhirExt/dataControl",
-          "valueString": "[{\"source\":{\"sourceItemCode\":\"dataControlSource\"},\"construction\":\"SIMPLE\",\"dataFormat\":\"value.data.STRENGTHS_AND_FORMS[0]\",\"onAttribute\":\"value\"}]"
+          "valueString": "[{\"source\":{\"sourceLinkId\":\"/dataControlSource\"},\"construction\":\"SIMPLE\",\"dataFormat\":\"value.data.STRENGTHS_AND_FORMS[0]\",\"onAttribute\":\"value\"}]"
         }
       ],
       "required": false,

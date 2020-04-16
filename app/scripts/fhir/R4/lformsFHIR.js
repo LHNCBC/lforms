@@ -21930,7 +21930,7 @@ function addCommonSDCExportFns(ns) {
     var target = {};
 
     if (lfData) {
-      var source = lfData.getFormData(true, true, true, true, true);
+      var source = lfData.getFormData(true, true, true);
 
       this._processRepeatingItemValues(source);
 
@@ -21995,18 +21995,6 @@ function addCommonSDCExportFns(ns) {
     return target;
   };
   /**
-   * Get the linkId for the given item - this is to ensure that getting linkId for an item
-   * is done consistently.
-   * @param item the lforms item whose linkId is to be retrieved.
-   * @return the linkId for the item
-   * @private
-   */
-
-
-  self._getItemLinkId = function (item) {
-    return item.linkId || item._codePath;
-  };
-  /**
    * Process an item of the form
    * @param item an item in LForms form object
    * @param source a LForms form object
@@ -22063,7 +22051,7 @@ function addCommonSDCExportFns(ns) {
     } // linkId
 
 
-    targetItem.linkId = this._getItemLinkId(item); // Text & prefix
+    targetItem.linkId = item.linkId; // Text & prefix
 
     targetItem.text = item.question;
 
@@ -22831,7 +22819,7 @@ function addCommonSDCExportFns(ns) {
     }
 
     var targetItem = isForm || lfItem.dataType === 'TITLE' ? {} : {
-      linkId: this._getItemLinkId(lfItem),
+      linkId: lfItem.linkId,
       text: lfItem.question
     }; // just handle/convert the current item's value, no-recursion to sub-items at this step.
 
@@ -22846,8 +22834,7 @@ function addCommonSDCExportFns(ns) {
         var lfSubItem = lfItem.items[i];
 
         if (!lfSubItem._isProcessed) {
-          var linkId = this._getItemLinkId(lfSubItem);
-
+          var linkId = lfSubItem.linkId;
           var repeats = lfItem._repeatingItems && lfItem._repeatingItems[linkId];
 
           if (repeats) {
@@ -22916,8 +22903,7 @@ function addCommonSDCExportFns(ns) {
         var subItem = item.items[i]; // if it is a question and it repeats
 
         if (subItem.dataType !== 'TITLE' && subItem.dataType !== 'SECTION' && this._questionRepeats(subItem)) {
-          var linkId = this._getItemLinkId(subItem);
-
+          var linkId = subItem.linkId;
           item._repeatingItems = item._repeatingItems || {};
           item._repeatingItems[linkId] = item._repeatingItems[linkId] || [];
 
@@ -23063,10 +23049,10 @@ function addSDCImportFns(ns) {
         lfItem.skipLogic.conditions.push(rangeCondition);
       } else {
         for (var i = 0; i < qItem.enableWhen.length; i++) {
-          var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[i].question);
+          var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
 
           var condition = {
-            source: source.questionCode,
+            source: qItem.enableWhen[i].question,
             trigger: {}
           };
 
@@ -23080,9 +23066,9 @@ function addSDCImportFns(ns) {
 
           if (opMapping === 'exists') {
             condition.trigger.exists = answer; // boolean value here regardless of data type
-          } else if (source.dataType === 'CWE' || source.dataType === 'CNE') {
+          } else if (dataType === 'CWE' || dataType === 'CNE') {
             condition.trigger.value = self._copyTriggerCoding(answer, null, false);
-          } else if (source.dataType === 'QTY') {
+          } else if (dataType === 'QTY') {
             condition.trigger[opMapping] = answer.value;
           } else {
             condition.trigger[opMapping] = answer;
@@ -23111,11 +23097,11 @@ function addSDCImportFns(ns) {
     var ret = null; // Two conditions based on same source with enableBehavior of all implies range.
 
     if (qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' && qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
-      var source = self._getSourceCodeUsingLinkId(linkIdItemMap, qItem.enableWhen[0].question);
+      var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[0].question]);
 
-      if (source.dataType === 'REAL' || source.dataType === 'INT' || source.dataType === 'DT' || source.dataType === 'DTM' || source.dataType === 'QTY') {
+      if (dataType === 'REAL' || dataType === 'INT' || dataType === 'DT' || dataType === 'DTM' || dataType === 'QTY') {
         ret = {
-          source: source.questionCode
+          source: qItem.enableWhen[0].question
         };
         ret.trigger = {};
 
@@ -23123,7 +23109,7 @@ function addSDCImportFns(ns) {
 
         var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
 
-        if (source.dataType === 'QTY') {
+        if (dataType === 'QTY') {
           ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
           ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
         } else {
@@ -24586,32 +24572,6 @@ function addCommonSDCImportFns(ns) {
     }
 
     return type;
-  };
-  /**
-   * It is used to identify source item in skip logic. Get code from source item
-   * using enableWhen.question text. Use enableWhen.question (_codePath+_idPath),
-   * to locate source item with item.linkId.
-   *
-   * @param linkIdItemMap - Map of items from link ID to item from the imported resource.
-   * @param questionLinkId - This is the linkId in enableWhen.question
-   * @returns {string} - Returns code of the source item.
-   * @private
-   */
-
-
-  self._getSourceCodeUsingLinkId = function (linkIdItemMap, questionLinkId) {
-    var item = linkIdItemMap[questionLinkId];
-    var ret = {
-      dataType: self._getDataType(item)
-    };
-
-    if (item.code) {
-      ret.questionCode = item.code[0].code;
-    } else {
-      ret.questionCode = item.linkId;
-    }
-
-    return ret;
   };
   /**
    * Build a map of items to linkid from a questionnaire resource.
