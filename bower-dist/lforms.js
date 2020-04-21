@@ -1061,13 +1061,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.checkUnits = function (item) {
-    var ret = false;
-
-    if (item.dataType !== "CNE" && item.dataType !== "CWE" && item.units && jQuery.isArray(item.units)) {
-      ret = true;
-    }
-
-    return ret;
+    return !!(item._unitAutocompOptions || item._unitReadonly && item.unit && item.unit._displayUnit);
   };
   /**
    * Get an item's skip logic status
