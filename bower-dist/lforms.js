@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"24.0.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"24.0.2\"}");
 
 /***/ }),
 /* 7 */
@@ -1061,13 +1061,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.checkUnits = function (item) {
-    var ret = false;
-
-    if (item.dataType !== "CNE" && item.dataType !== "CWE" && item.units && jQuery.isArray(item.units)) {
-      ret = true;
-    }
-
-    return ret;
+    return !!(item._unitAutocompOptions || item._unitReadonly && item.unit && item.unit._displayUnit);
   };
   /**
    * Get an item's skip logic status
