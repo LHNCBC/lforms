@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.0.1] 2020-04-21
+### Fixed
+- Fixed a bug that reloading existing LForms form definition object with instances of repeating items 
+  might be very slow.
+
 ## [24.0.0] 2020-03-31
 ### Changed
 - 'linkId' is now required on each item. 'questionCode' is no longer required.
