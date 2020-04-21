@@ -689,7 +689,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should merge all DiagnosticReport (contained) data back into the form without setting default values', function() {
 
-            //tp.openUSSGFHTVertical();
+          //  tp.openUSSGFHTVertical();
             tp.setFHIRVersion(fhirVersion);
 
             element(by.id("merge-dr-default-values")).click();
@@ -703,6 +703,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             browser.wait(function() {
               try {
+                browser.wait(EC.presenceOf(intField), 2000);
                 return intField.isDisplayed(); // sometimes results in a "stale reference" error
               }
               catch (e) {
