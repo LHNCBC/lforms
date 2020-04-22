@@ -525,7 +525,7 @@
               var deferred = $q.defer();
               if(!$scope.fhirResCache[version+name]) {
                 $http.get('fhir-data/'+version+'/'+name).then(function (resp) {
-                  $scope.fhirResCache[version+name] = resp.data;
+                  $scope.fhirResCache[version+name] = angular.copy(resp.data);
                   deferred.resolve(resp.data);
                 }, function (err) {
                   console.error(err);
@@ -543,7 +543,7 @@
               var deferred = $q.defer();
               if(!$scope.testDataCache[fileName]) {
                 $http.get('data/' + fileName + '.json').then(function (resp) {
-                  $scope.testDataCache[fileName] = resp.data;
+                  $scope.testDataCache[fileName] = angular.copy(resp.data);
                   deferred.resolve(resp.data);
                 }, function (err) {
                   console.error(err);

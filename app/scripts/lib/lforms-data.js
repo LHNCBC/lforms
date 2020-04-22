@@ -1169,6 +1169,8 @@
         // before the parentItem is added to avoid circular reference that make the angular.copy really slow
         // Note: this must be processed after its sub items are processed.
         if (item._questionRepeatable && item._id === 1) {
+          // remove _parentItem if there is one
+          delete item._parentItem;
           var itemRepeatable = angular.copy(item);
           // remove user data
           this._removeUserDataAndRepeatingSubItems(itemRepeatable);

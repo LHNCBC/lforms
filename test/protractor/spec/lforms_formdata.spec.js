@@ -1,5 +1,7 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
+var EC = protractor.ExpectedConditions;
+
 describe('formdata: ', function() {
   describe('get form data', function() {
 
@@ -248,6 +250,7 @@ describe('formdata: ', function() {
     it('should work for various data types', function() {
       tp.openDefaultAnswerForm();
       var blField = element(by.id('/blField/1'));
+      browser.wait(EC.presenceOf(blField), 5000);
       expect(blField.isSelected()).toBe(true);
       blField.evaluate('item.value').then(function(val) {
         expect(val).toEqual(true);

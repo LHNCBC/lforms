@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"24.0.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"24.0.2\"}");
 
 /***/ }),
 /* 7 */
@@ -5851,6 +5851,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
         if (item._questionRepeatable && item._id === 1) {
+          // remove _parentItem if there is one
+          delete item._parentItem;
           var itemRepeatable = angular.copy(item); // remove user data
 
           this._removeUserDataAndRepeatingSubItems(itemRepeatable);
