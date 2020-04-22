@@ -22056,9 +22056,10 @@ function addCommonSDCExportFns(ns) {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
+    // TODO: disabled and hidden are different
 
 
-    if (item._isHidden) {
+    if (item._isHiddenInDef) {
       targetItem.extension.push({
         url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
         valueBoolean: true
@@ -23148,7 +23149,7 @@ function addSDCImportFns(ns) {
   /**
    * Parse questionnaire item for "hidden" extension
    *
-   * @param lfItem {object} - LForms item object to be assigned the _isHidden flag if the item is to be hidden.
+   * @param lfItem {object} - LForms item object to be assigned the _isHiddenInDef flag if the item is to be hidden.
    * @param qItem {object} - Questionnaire item object
    * @private
    * @return true if the item is hidden or if its ancestor is hidden, false otherwise
@@ -23159,10 +23160,10 @@ function addSDCImportFns(ns) {
     var ci = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlHidden);
 
     if (ci) {
-      lfItem._isHidden = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
+      lfItem._isHiddenInDef = typeof ci.valueBoolean === 'boolean' ? ci.valueBoolean : ci.valueBoolean === 'true';
     }
 
-    return lfItem._isHidden;
+    return lfItem._isHiddenInDef;
   };
   /**
    * Parse questionnaire item for answers list

@@ -116,12 +116,12 @@ LForms.Util = {
    * @param element the containing HTML element that includes the LForm's rendered form.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function(element, noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function(element, noFormDefData, noEmptyValue, noDisabledItem) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noDisabledItem) : null;
   },
 
 
@@ -131,12 +131,12 @@ LForms.Util = {
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{}} Form definition data
    */
-  getFormData: function(element, noEmptyValue, noHiddenItem) {
+  getFormData: function(element, noEmptyValue, noDisabledItem) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noDisabledItem) : null;
   },
 
 
@@ -1074,13 +1074,13 @@ LForms.Util = {
 
 
   /**
-   * Some extensions are translated to other lforms fields, some are renamed internally and some are 
+   * Some extensions are translated to other lforms fields, some are renamed internally and some are
    * preserved as they are. This function creates extension array with the renamed and preserved extensions
    * to use in output for lforms format.
-   * 
-   * Recreate 
+   *
+   * Recreate
    * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
-   * @return {array|null} Array of extensions 
+   * @return {array|null} Array of extensions
    */
   createExtensionFromLForms: function(formOrItem) {
     let extension = [];

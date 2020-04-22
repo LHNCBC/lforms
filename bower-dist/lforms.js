@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"24.0.2\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"24.1.0\"}");
 
 /***/ }),
 /* 7 */
@@ -798,7 +798,7 @@ var LForms = __webpack_require__(4);
 angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$element', '$timeout', '$interval', '$sce', 'smoothScroll', 'LF_CONSTANTS', 'lformsConfig', function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
   'use strict';
 
-  $scope.debug = false;
+  $scope.debug = true;
   $scope.hasUnused = false;
   $scope.repeatingSectionStatus = {};
   $scope.validationInitialShowTime = LF_CONSTANTS.VALIDATION_MESSAGE_INITIAL_SHOW_TIME; // Provide blank image to satisfy img tag. Bower packaging forces us to
@@ -1147,7 +1147,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
 
   $scope.targetShown = function (item) {
-    return $scope.lfData.getSkipLogicClass(item) !== 'target-hide';
+    return $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
   };
   /**
    *  Hide/show the form option panel
@@ -1514,6 +1514,10 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
       eleClass += ' lf-show-validation';
     }
 
+    if (item._isHiddenFromView) {
+      eleClass += ' lf-hidden-from-view';
+    }
+
     if (item.dataType === 'TITLE') {
       eleClass += ' lf-title-row';
     }
@@ -1708,13 +1712,13 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
    * Get user input data from the form, with or without form definition data.
    * @param noFormDefData optional, to not include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
 
 
-  $scope.getUserData = function (noFormDefData, noEmptyValue, noHiddenItem) {
-    var formData = $scope.lfData.getUserData(noFormDefData, noEmptyValue, noHiddenItem);
+  $scope.getUserData = function (noFormDefData, noEmptyValue, noDisabledItem) {
+    var formData = $scope.lfData.getUserData(noFormDefData, noEmptyValue, noDisabledItem);
     return formData;
   };
   /**
@@ -2408,13 +2412,13 @@ LForms.Util = {
    * @param element the containing HTML element that includes the LForm's rendered form.
    * @param noFormDefData optional, to include form definition data, the default is false.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
    */
-  getUserData: function getUserData(element, noFormDefData, noEmptyValue, noHiddenItem) {
+  getUserData: function getUserData(element, noFormDefData, noEmptyValue, noDisabledItem) {
     var formObj = this._getFormObjectInScope(element);
 
-    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getUserData(noFormDefData, noEmptyValue, noDisabledItem) : null;
   },
 
   /**
@@ -2423,13 +2427,13 @@ LForms.Util = {
    * @param element optional, the containing HTML element that includes the LForm's rendered form.
    *        It could either be the DOM element or its id.
    * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-   * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+   * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
    * @returns {{}} Form definition data
    */
-  getFormData: function getFormData(element, noEmptyValue, noHiddenItem) {
+  getFormData: function getFormData(element, noEmptyValue, noDisabledItem) {
     var formObj = this._getFormObjectInScope(element);
 
-    return formObj ? formObj.getFormData(noEmptyValue, noHiddenItem) : null;
+    return formObj ? formObj.getFormData(noEmptyValue, noDisabledItem) : null;
   },
 
   /**
@@ -3341,13 +3345,13 @@ LForms.Util = {
   },
 
   /**
-   * Some extensions are translated to other lforms fields, some are renamed internally and some are 
+   * Some extensions are translated to other lforms fields, some are renamed internally and some are
    * preserved as they are. This function creates extension array with the renamed and preserved extensions
    * to use in output for lforms format.
-   * 
-   * Recreate 
+   *
+   * Recreate
    * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
-   * @return {array|null} Array of extensions 
+   * @return {array|null} Array of extensions
    */
   createExtensionFromLForms: function createExtensionFromLForms(formOrItem) {
     var extension = [];
@@ -4649,11 +4653,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       },
       SKIP_LOGIC: {
-        ACTION_SHOW: "show",
-        ACTION_HIDE: "hide",
+        ACTION_ENABLE: "show",
+        ACTION_DISABLE: "hide",
         // not supported yet
-        STATUS_SHOW: "target-show",
-        STATUS_HIDE: "target-hide"
+        STATUS_ENABLED: "target-enabled",
+        STATUS_DISABLED: "target-disabled"
       },
       CALCULATION_METHOD: {
         TOTALSCORE: "TOTALSCORE",
@@ -5316,12 +5320,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         if (item.skipLogic) {
           this._updateItemSkipLogicStatus(item, null);
-        } // Hide the item via the skip logic mechanism if _isHidden flag is true. As of 2018-12-19, the _isHidden flag
-        // is set to true if the item is converted from a FHIR Questionnaire with questionnaire-hidden extension.
+        } // Hide the sub items if _isHiddenInDef flag is true.
 
 
-        if (item._isHidden) {
-          this._updateItemSkipLogicStatus(item, true);
+        if (item._isHiddenInDef) {
+          item._isHiddenFromView = true;
+
+          this._setSubItemsHidden(item, true);
         }
       } // update internal status
 
@@ -5333,6 +5338,26 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._resetHorizontalTableInfo();
 
       this._adjustLastSiblingListForHorizontalLayout();
+    },
+
+    /**
+     * Update sub items if the current item is hidden
+     * @param item the item that is hidden
+     * @param hidden if the parent item is already hidden
+     */
+    _setSubItemsHidden: function _setSubItemsHidden(item, hidden) {
+      // if one item is hidden all of its decedents should be hidden.
+      if (hidden) {
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+            var subItem = item.items[i];
+            subItem._isHiddenFromView = true;
+
+            this._setSubItemsHidden(subItem, true);
+          }
+        }
+      }
     },
 
     /**
@@ -5399,35 +5424,35 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     /**
      * Update data by running the skip logic on the target item
      * @param item the target item where there is a skip logic
-     * @param hide if the parent item is already hidden
+     * @param disabled if the parent item is already disabled
      */
-    _updateItemSkipLogicStatus: function _updateItemSkipLogicStatus(item, hide) {
+    _updateItemSkipLogicStatus: function _updateItemSkipLogicStatus(item, disabled) {
       // if one item is hidden all of its decedents should be hidden.
       // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
-      if (hide) {
-        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE);
+      if (disabled) {
+        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED);
 
-        var isHidden = true;
+        var isDisabled = true;
       } // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
       else {
           if (item.skipLogic) {
             var takeAction = this._checkSkipLogic(item);
 
-            if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_SHOW) {
-              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW : this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
+            if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
+              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
 
               this._setSkipLogicStatusValue(item, newStatus);
-            } else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_HIDE) {
-              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE : this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW;
+            } else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_DISABLE) {
+              var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED;
 
               this._setSkipLogicStatusValue(item, newStatus);
             }
           } // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-          else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
-              this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW);
+          else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+              this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
             }
 
-          var isHidden = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
+          var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
         } // process the sub items
 
 
@@ -5435,7 +5460,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         for (var i = 0, iLen = item.items.length; i < iLen; i++) {
           var subItem = item.items[i];
 
-          this._updateItemSkipLogicStatus(subItem, isHidden);
+          this._updateItemSkipLogicStatus(subItem, isDisabled);
         }
       }
     },
@@ -5449,13 +5474,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     _presetSkipLogicStatus: function _presetSkipLogicStatus(item, hide) {
       // if it has skip logic or one of its ancestors has skip logic
       if (item.skipLogic || hide) {
-        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE, true);
+        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED, true);
 
-        var isHidden = true; // process the sub items
+        var isDisabled = true; // process the sub items
 
         if (item.items) {
           for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-            this._presetSkipLogicStatus(item.items[i], isHidden);
+            this._presetSkipLogicStatus(item.items[i], isDisabled);
           }
         }
       }
@@ -5471,7 +5496,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     _setSkipLogicStatusValue: function _setSkipLogicStatusValue(item, newStatus, noLog) {
       if (item._skipLogicStatus !== newStatus) {
         if (item._skipLogicStatus) {
-          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item._text : 'Showing ' + item._text;
+          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
           if (!noLog) this._actionLogs.push(msg);
         }
 
@@ -5987,7 +6012,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         item._lastSibling = i === lastSiblingIndex; // consider if the last sibling is hidden by skip logic
 
         if (!foundLastSibling) {
-          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
             item._lastSibling = false;
             lastSiblingIndex -= 1;
           } else {
@@ -6024,7 +6049,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         item._firstSibling = i === firstSiblingIndex; // consider if the first sibling is hidden by skip logic
 
         if (!foundFirstSibling) {
-          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
             item._firstSibling = false;
             firstSiblingIndex += 1;
           } else {
@@ -6039,13 +6064,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * Get the complete form definition data, including the user input data from the form.
      * The returned data could be fed into a LForms widget directly to render the form.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @return {{}} form definition JSON object
      */
-    getFormData: function getFormData(noEmptyValue, noHiddenItem, keepId) {
+    getFormData: function getFormData(noEmptyValue, noDisabledItem, keepId) {
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepId); // check if there is user data
+      var formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId); // check if there is user data
 
       var hasSavedData = false;
 
@@ -6091,16 +6116,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * Get user input data from the form, with or without form definition data.
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
-    getUserData: function getUserData(noFormDefData, noEmptyValue, noHiddenItem, keepId) {
+    getUserData: function getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
       var ret = {};
-      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem, keepId); // template options could be optional. Include them, only if they are present
+      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem, keepId); // template options could be optional. Include them, only if they are present
 
       if (this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems) {
-        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noHiddenItem, keepId);
+        ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noDisabledItem, keepId);
       } // return a deep copy of the data
 
 
@@ -6120,12 +6145,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @param items the items array
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @returns {Array} form data on one tree level
      * @private
      */
-    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noHiddenItem, keepId) {
+    _processDataInItems: function _processDataInItems(items, noFormDefData, noEmptyValue, noDisabledItem, keepId) {
       var itemsData = [];
 
       for (var i = 0, iLen = items.length; i < iLen; i++) {
@@ -6135,7 +6160,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
 
-        if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) || noEmptyValue && this.isEmpty(item) && !item.header) {
+        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || noEmptyValue && this.isEmpty(item) && !item.header) {
           continue;
         } // include only the code and the value (and unit, other value) if no form definition data is needed
 
@@ -6176,7 +6201,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
         if (item.items && item.items.length > 0) {
-          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepId);
+          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId);
         } // not to add the section header if noEmptyValue is set, and
         // all its children has empty value (thus have not been added either) or it has not children, and
         // it has an empty value (empty object, empty array)
@@ -6401,7 +6426,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         do {
           lastItem = item.items[--i];
 
-          if (lastItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+          if (lastItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
             found = true;
           }
         } while (!found);
@@ -6558,7 +6583,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         item._parentItem.items.splice(insertPosition + 1, 0, newItem);
 
-        newItem._parentItem = item._parentItem; // preset the skip logic status to target-hide on the new items
+        newItem._parentItem = item._parentItem; // preset the skip logic status to target-disabled on the new items
 
         this._presetSkipLogicStatus(newItem, false);
       }
@@ -6605,7 +6630,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         item._parentItem.items.splice(insertPosition, 0, newItem);
 
-        newItem._parentItem = item._parentItem; // preset the skip logic status to target-hide on the new items
+        newItem._parentItem = item._parentItem; // preset the skip logic status to target-disabled on the new items
 
         this._presetSkipLogicStatus(newItem, false);
       }
@@ -6655,7 +6680,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     _isRepeatingItemEmpty: function _isRepeatingItemEmpty(item) {
       var isEmpty = true; //if it is not hidden
 
-      if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+      if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         // multiple selection answer list (array is also an object)
         if (angular.isArray(item.value) && item.value.length > 0) {
           var notEmpty = false;
@@ -8689,8 +8714,8 @@ angular.module('lformsWidget').run(['$templateCache', function ($templateCache) 
   $templateCache.put('layout-matrix.html', "<div class=\"lf-layout-matrix lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <div ng-attr-role=\"{{item.header ? 'heading' : undefined}}\"\n" + "       ng-attr-aria-level=\"{{item.header ? item._displayLevel+1 : undefined}}\"\n" + "       class=\"lf-form-matrix-table-title lf-de-label\">\n" + "    <span class=\"lf-question\"><label id=\"label-{{ item._elementId }}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "    <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "      <a ng-if=\"item._linkToDef\" href=\"{{ item._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ item.questionCode }}]</a>\n" + "      <span ng-if=\"!item._linkToDef\">[{{ item.questionCode }}]</span>\n" + "    </span>\n" + "    <span ng-switch on=\"getCodingInstructionsDisplayType(item)\" ng-if=\"item.codingInstructions\">\n" + "      <span ng-switch-when=\"inline-html\" class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(item)\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <span ng-switch-when=\"inline-escaped\" class=\"lf-prompt\" ng-bind=\"item.codingInstructions\"\n" + "       id=\"help-{{ item._elementId }}\"></span>\n" + "      <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "      <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{item.codingInstructions}}\"\n" + "              popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "              type=\"button\" id=\"helpButton-{{item._elementId}}\" aria-label=\"Help\"\n" + "              aria-describedby=\"label-{{ item._elementId }}\">\n" + "        <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "      </button>\n" + "    </span>\n" + "    <button ng-if=\"item.copyrightNotice\" id=\"copyright-{{item._elementId}}\" type=\"button\"\n" + "            class=\"lf-copyright-button btn-sm\" uib-popover=\"{{item.copyrightNotice}}\"\n" + "            popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "            aria-label=\"Copyright notice\" aria-describedby=\"label-{{ item._elementId }}\">\n" + "      <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <button ng-if=\"isItemOptionPanelButtonShown(item)\" type=\"button\" class=\"lf-control-button btn-sm\"\n" + "            ng-click=\"hideShowItemOptionPanel(item)\" aria-label=\"Item controls\"\n" + "            aria-describedby=\"label-{{item._elementId}}\">\n" + "      <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span>\n" + "    </button>\n" + "    <!-- TBD -->\n" + "    <lf-item-options></lf-item-options>\n" + "  </div>\n" + "  <table class=\"lf-form-matrix-table lf-form-table\">\n" + "      <colgroup>\n" + "        <col class=\"lf-question\">\n" + "        <col ng-repeat=\"answer in item.items[0].answers\">\n" + "        <col class=\"other-answer\" ng-if=\"item.items[0].dataType ==='CWE'\">\n" + "      </colgroup>\n" + "      <thead>\n" + "      <tr class=\"lf-\">\n" + "        <th class=\"lf-question lf-form-table-header\"></th>\n" + "        <th ng-repeat=\"answer in item.items[0].answers\"\n" + "            class=\"lf-form-matrix-cell lf-form-table-header\"\n" + "            id=\"answer-{{$index}}\">{{answer.text}}</th>\n" + "        <th class=\"lf-form-matrix-cell-other lf-form-table-header\" ng-if=\"item.items[0].dataType ==='CWE'\"\n" + "         id=\"otherAnswer\">Other</th>\n" + "      </tr>\n" + "      </thead>\n" + "      <tbody>\n" + "      <tr ng-repeat=\"subItem in item.items\" role=\"radiogroup\"\n" + "         ng-init=\"firstItem = item.items[0] ; item = subItem\"\n" + "         aria-labeledby=\"label-{{subItem._elementId }}\"\n" + "         aria-describedby=\"help-{{ subItem._parentItem._elementId }} help-{{ subItem._elementId }}\">\n" + "        <td class=\"lf-question\">\n" + "          <div class=\"lf-de-label\">\n" + "            <span class=\"lf-question\"><label id=\"label-{{ subItem._elementId }}\"\n" + "             for=\"{{subItem._elementId}}\"><ng-include src=\"'itemPrefixAndText.html'\"></label></span>\n" + "            <span class=\"lf-item-code\" ng-show=\"lfData.templateOptions.showQuestionCode\">\n" + "              <a ng-if=\"subItem._linkToDef\" href=\"{{ subItem._linkToDef }}\" target=\"_blank\" rel=\"noopener noreferrer\">[{{ subItem.questionCode }}]</a>\n" + "              <span ng-if=\"!subItem._linkToDef\">[{{ subItem.questionCode }}]</span>\n" + "            </span>\n" + "            <span ng-switch on=\"getCodingInstructionsDisplayType(subItem)\" ng-if=\"subItem.codingInstructions\">\n" + "              <span ng-switch-when=\"inline-html\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind-html=\"getTrustedCodingInstructions(subItem)\"></span>\n" + "              <span ng-switch-when=\"inline-escaped\" id=\"help-{{subItem._elementId}}\"\n" + "               class=\"lf-prompt\" ng-bind=\"subItem.codingInstructions\"></span>\n" + "              <button ng-switch-when=\"popover-html\" class=\"lf-help-button btn-sm\" uib-popover-template=\"'popover.html'\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\"\n" + "                      aria-label=\"Help\" aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "              <button ng-switch-when=\"popover-escaped\" class=\"lf-help-button btn-sm\" uib-popover=\"{{subItem.codingInstructions}}\"\n" + "                      popover-trigger=\"focus\" popover-placement=\"right\"  popover-title=\"Instruction\"\n" + "                      type=\"button\" id=\"helpButton-{{subItem._elementId}}\" aria-label=\"Help\"\n" + "                      aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "                <span class=\"glyphicon glyphicon-question-sign\" aria-hidden=\"true\"></span>\n" + "              </button>\n" + "            </span>\n" + "            <button ng-if=\"subItem.copyrightNotice\" id=\"copyright-{{subItem._elementId}}\" type=\"button\"\n" + "                    class=\"lf-copyright-button btn-sm\" uib-popover=\"{{subItem.copyrightNotice}}\"\n" + "                    popover-trigger=\"focus\" popover-placement=\"right\" popover-title=\"Copyright\"\n" + "                    aria-label=\"Copyright notice\"\n" + "                    aria-describedby=\"label-{{ subItem._elementId }}\">\n" + "              <span class=\"glyphicon glyphicon-copyright-mark\" aria-hidden=\"true\"></span>\n" + "            </button>\n" + "          </div>\n" + "        </td>\n" + "        <td ng-repeat=\"answer in firstItem.answers\"\n" + "         class=\"lf-form-matrix-cell\">\n" + "          <span class=\"lf-form-matrix-answer\">\n" + "            <label ng-if=\"subItem._multipleAnswers\">\n" + "              <input type=\"checkbox\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               ng-click=\"updateCheckboxList(subItem, answer)\" aria-labeledby=\"answer-{{$index}}\">\n" + "            </label>\n" + "            <label ng-if=\"!subItem._multipleAnswers\">\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + answer.code}}\"\n" + "               aria-labeledby=\"answer-{{$index}}\" ng-model=\"subItem.value\" ng-value=\"answer\"\n" + "                     name=\"{{subItem._elementId}}\" ng-change=\"updateRadioList(subItem)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "        <td class=\"lf-form-matrix-cell-other\" ng-if=\"subItem.dataType ==='CWE'\"\n" + "         aria-labeledby=otherAnswer>\n" + "          <!--for multiple answers-->\n" + "          <span ng-if=\"subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"checkbox\" ng-model=\"subItem._otherValueChecked\"\n" + "                     id=\"{{subItem._elementId + '_other'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" ng-model=\"subitem._answerOther\"\n" + "                     id=\"{{subItem._elementId + '_otherValue'}}\"\n" + "                     ng-change=\"updateCheckboxListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "          <!--for single answer-->\n" + "          <span ng-if=\"!subItem._multipleAnswers\" class=\"lf-form-matrix-answer\">\n" + "            <label>\n" + "              <input type=\"radio\" id=\"{{subItem._elementId + '_other'}}\" ng-model=\"subItem._otherValueChecked\"\n" + "                     ng-value=\"true\" name=\"{{subItem._elementId}}\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "            <label>\n" + "              <input type=\"text\" id=\"{{subItem._elementId + '_otherValue'}}\" ng-model=\"subitem._answerOther\"\n" + "                     ng-change=\"updateRadioListForOther(subItem, subitem._answerOther)\">\n" + "            </label>\n" + "          </span>\n" + "        </td>\n" + "      </tr>\n" + "      </tbody>\n" + "    </table>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>\n" + "\n");
   $templateCache.put('popover-content.html', "<div class=\"lf-popover\" ng-bind-html=\"getTrustedCodingInstructions(item)\"></div>\n");
   $templateCache.put('repeating-button.html', "<!--a button at the end of each repeating section-->\n" + "<div ng-if=\"item._lastRepeatingItem && targetShown(item) \"\n" + "     class=\"lf-form-table-row button-row {{getSkipLogicClass(item)}}\">\n" + "  <div class=\"has-popover-warning\">\n" + "    <button type=\"button\"\n" + "            class=\"lf-float-button\" id=\"add-{{item._elementId}}\"\n" + "            ng-click=\"addOneRepeatingItem(item)\"\n" + "            ng-blur=\"hideUnusedItemWarning(item)\"\n" + "            uib-popover='{{item._unusedItemWarning}}'\n" + "            popover-placement=\"top-left\"\n" + "            popover-trigger=\"none\"\n" + "            popover-is-open=\"item._showUnusedItemWarning\">\n" + "      + Add another \"{{item._text}}\"\n" + "    </button>\n" + "  </div>\n" + "</div>\n");
-  $templateCache.put('table-item.html', "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <!-- question -->\n" + "  <lf-item ng-style=\"getItemStyle(item)\"></lf-item>\n" + "\n" + "  <!--sub sections, check each item's layout -->\n" + "  <div ng-if=\"item.items\" class=\"section\">\n" + "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" + "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" + "         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" + "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" + "        <div ng-switch-when=\"horizontal\">\n" + "          <lf-section-horizontal></lf-section-horizontal>\n" + "        </div>\n" + "        <div ng-switch-when=\"matrix\">\n" + "          <lf-section-matrix></lf-section-matrix>\n" + "        </div>\n" + "        <div ng-switch-when=\"vertical\">\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "        <div ng-switch-default>\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "      </div>\n" + "      <div ng-if=\"!item.header\">\n" + "        <lf-table-item></lf-table-item>\n" + "      </div>\n" + "    </div>\n" + "  </div>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>");
-  $templateCache.put('template-table.html', "<form ng-if=\"lfData\" class=\"lf-form lf-template-table {{getIndentationStyle()}}\" novalidate autocomplete=\"false\"\n" + "      ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" + "    <!--form controls-->\n" + "    <lf-form-controls></lf-form-controls>\n" + "    <!--form title-->\n" + "    <lf-form-title></lf-form-title>\n" + "    <!-- form options -->\n" + "    <lf-form-options></lf-form-options>\n" + "    <!--form header-->\n" + "    <lf-form-header></lf-form-header>\n" + "    <!--form body-->\n" + "    <div class=\"lf-form-body\">\n" + "      <!--check form level questionLayout for matrix and horizontal layouts-->\n" + "      <div ng-switch on=\"lfData.templateOptions.displayControl.questionLayout\">\n" + "        <!--horizontal-->\n" + "        <div ng-switch-when=\"horizontal\" class=\"lf-top-section\">\n" + "          <lf-section-horizontal></lf-section-horizontal>\n" + "        </div>\n" + "        <!--matrix-->\n" + "        <div ng-switch-when=\"matrix\" class=\"lf-top-section\">\n" + "          <lf-section-matrix></lf-section-matrix>\n" + "        </div>\n" + "        <!--vertical-->\n" + "        <div ng-switch-default>\n" + "          <!-- data row, column header -->\n" + "          <div class=\"lf-column-header\" ng-if=\"lfData.templateOptions.showColumnHeaders\">\n" + "            <div class=\"lf-column-label-button\" id=\"th_Name\">\n" + "              {{lfData.templateOptions.columnHeaders[0].name}}\n" + "            </div>\n" + "            <div class=\"lf-column-input-unit\" ng-style=\"getFieldWidth(item)\">\n" + "              <div class=\"lf-column-input\" id=\"th_Value\">\n" + "                {{lfData.templateOptions.columnHeaders[1].name}}\n" + "              </div>\n" + "              <div ng-if=\"!lfData.templateOptions.hideUnits\" class=\"lf-column-unit\" id=\"th_Units\">\n" + "                {{lfData.templateOptions.columnHeaders[2].name}}\n" + "              </div>\n" + "            </div>\n" + "          </div>\n" + "          <!-- data row, for each item -->\n" + "          <!-- check each top level item's questionLayout -->\n" + "          <div ng-if=\"lfData.items\" class=\"lf-form-table\">\n" + "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" + "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" + "                 {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" + "              <!--header item-->\n" + "              <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" + "                <div ng-switch-when=\"horizontal\">\n" + "                  <lf-section-horizontal></lf-section-horizontal>\n" + "                </div>\n" + "                <div ng-switch-when=\"matrix\">\n" + "                  <lf-section-matrix></lf-section-matrix>\n" + "                </div>\n" + "                <div ng-switch-when=\"vertical\">\n" + "                  <lf-table-item></lf-table-item>\n" + "                </div>\n" + "                <div ng-switch-default>\n" + "                  <lf-table-item></lf-table-item>\n" + "                </div>\n" + "              </div>\n" + "              <!--non-header data item-->\n" + "              <div ng-if=\"!item.header\">\n" + "                <lf-table-item></lf-table-item>\n" + "              </div>\n" + "            </div>\n" + "          </div>\n" + "        </div>\n" + "      </div>\n" + "    </div>\n" + "</form>\n");
+  $templateCache.put('table-item.html', "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" + "  <!-- question -->\n" + "  <lf-item ng-if=\"!item._isHiddenFromView\" ng-style=\"getItemStyle(item)\"></lf-item>\n" + "\n" + "  <!--sub sections, check each item's layout -->\n" + "  <div ng-if=\"item.items\" class=\"section\">\n" + "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item) && !item._isHiddenFromView\"\n" + "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" + "         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" + "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" + "        <div ng-switch-when=\"horizontal\">\n" + "          <lf-section-horizontal></lf-section-horizontal>\n" + "        </div>\n" + "        <div ng-switch-when=\"matrix\">\n" + "          <lf-section-matrix></lf-section-matrix>\n" + "        </div>\n" + "        <div ng-switch-when=\"vertical\">\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "        <div ng-switch-default>\n" + "          <lf-table-item></lf-table-item>\n" + "        </div>\n" + "      </div>\n" + "      <div ng-if=\"!item.header\">\n" + "        <lf-table-item></lf-table-item>\n" + "      </div>\n" + "    </div>\n" + "  </div>\n" + "  <lf-repeating-button></lf-repeating-button>\n" + "</div>\n");
+  $templateCache.put('template-table.html', "<form ng-if=\"lfData\" class=\"lf-form lf-template-table {{getIndentationStyle()}}\" novalidate autocomplete=\"false\"\n" + "      ng-keydown=\"handleNavigationKeyEventByTab($event)\">\n" + "    <!--form controls-->\n" + "    <lf-form-controls></lf-form-controls>\n" + "    <!--form title-->\n" + "    <lf-form-title></lf-form-title>\n" + "    <!-- form options -->\n" + "    <lf-form-options></lf-form-options>\n" + "    <!--form header-->\n" + "    <lf-form-header></lf-form-header>\n" + "    <!--form body-->\n" + "    <div class=\"lf-form-body\">\n" + "      <!--check form level questionLayout for matrix and horizontal layouts-->\n" + "      <div ng-switch on=\"lfData.templateOptions.displayControl.questionLayout\">\n" + "        <!--horizontal-->\n" + "        <div ng-switch-when=\"horizontal\" class=\"lf-top-section\">\n" + "          <lf-section-horizontal></lf-section-horizontal>\n" + "        </div>\n" + "        <!--matrix-->\n" + "        <div ng-switch-when=\"matrix\" class=\"lf-top-section\">\n" + "          <lf-section-matrix></lf-section-matrix>\n" + "        </div>\n" + "        <!--vertical-->\n" + "        <div ng-switch-default>\n" + "          <!-- data row, column header -->\n" + "          <div class=\"lf-column-header\" ng-if=\"lfData.templateOptions.showColumnHeaders\">\n" + "            <div class=\"lf-column-label-button\" id=\"th_Name\">\n" + "              {{lfData.templateOptions.columnHeaders[0].name}}\n" + "            </div>\n" + "            <div class=\"lf-column-input-unit\" ng-style=\"getFieldWidth(item)\">\n" + "              <div class=\"lf-column-input\" id=\"th_Value\">\n" + "                {{lfData.templateOptions.columnHeaders[1].name}}\n" + "              </div>\n" + "              <div ng-if=\"!lfData.templateOptions.hideUnits\" class=\"lf-column-unit\" id=\"th_Units\">\n" + "                {{lfData.templateOptions.columnHeaders[2].name}}\n" + "              </div>\n" + "            </div>\n" + "          </div>\n" + "          <!-- data row, for each item -->\n" + "          <!-- check each top level item's questionLayout -->\n" + "          <div ng-if=\"lfData.items\" class=\"lf-form-table\">\n" + "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item) && !item._isHiddenFromView\"\n" + "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" + "                 {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" + "              <!--header item-->\n" + "              <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" + "                <div ng-switch-when=\"horizontal\">\n" + "                  <lf-section-horizontal></lf-section-horizontal>\n" + "                </div>\n" + "                <div ng-switch-when=\"matrix\">\n" + "                  <lf-section-matrix></lf-section-matrix>\n" + "                </div>\n" + "                <div ng-switch-when=\"vertical\">\n" + "                  <lf-table-item></lf-table-item>\n" + "                </div>\n" + "                <div ng-switch-default>\n" + "                  <lf-table-item></lf-table-item>\n" + "                </div>\n" + "              </div>\n" + "              <!--non-header data item-->\n" + "              <div ng-if=\"!item.header\">\n" + "                <lf-table-item></lf-table-item>\n" + "              </div>\n" + "            </div>\n" + "          </div>\n" + "        </div>\n" + "      </div>\n" + "    </div>\n" + "</form>\n");
   $templateCache.put('uib-popover-templates/uib-popover-template.html', "<div class=\"popover\"\n" + "  tooltip-animation-class=\"fade\"\n" + "  uib-tooltip-classes\n" + "  ng-class=\"{ in: isOpen() }\">\n" + "  <div class=\"arrow\"></div>\n" + "\n" + "  <div aria-live=polite class=\"popover-inner\">\n" + "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" + "      <div class=\"popover-content\"\n" + "        uib-tooltip-template-transclude=\"contentExp()\"\n" + "        tooltip-template-transclude-scope=\"originScope()\"></div>\n" + "  </div>\n" + "</div>\n");
   $templateCache.put('uib-popover-templates/uib-popover.html', "<div class=\"popover\"\n" + "  tooltip-animation-class=\"fade\"\n" + "  uib-tooltip-classes\n" + "  ng-class=\"{ in: isOpen() }\">\n" + "  <div class=\"arrow\"></div>\n" + "\n" + "  <div aria-live=polite class=\"popover-inner\">\n" + "      <h3 class=\"popover-title\" ng-bind=\"uibTitle\" ng-if=\"uibTitle\"></h3>\n" + "      <div class=\"popover-content\" ng-bind=\"content\" ng-if=\"content\"></div>\n" + "  </div>\n" + "</div>\n");
 }]);

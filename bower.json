@@ -1,12 +1,11 @@
 {
   "name": "lforms",
-  "version": "24.0.2",
+  "version": "24.1.0",
   "dependencies": {
     "jquery-ui": "^1.12.1",
     "angular": "^1.7.9",
     "angular-animate": "^1.7.9",
     "angular-bootstrap": "^1.1.0",
-    "bootstrap": "^3.4.1",
     "ngSmoothScroll": "^2.0.0",
     "element-resize-detector": "^1.1.15",
     "bootstrap-ui-datetime-picker": "^2.6.4",

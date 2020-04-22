@@ -766,11 +766,11 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('table-item.html',
     "<div class=\"lf-table-item {{getSiblingStatus(item)}}\">\n" +
     "  <!-- question -->\n" +
-    "  <lf-item ng-style=\"getItemStyle(item)\"></lf-item>\n" +
+    "  <lf-item ng-if=\"!item._isHiddenFromView\" ng-style=\"getItemStyle(item)\"></lf-item>\n" +
     "\n" +
     "  <!--sub sections, check each item's layout -->\n" +
     "  <div ng-if=\"item.items\" class=\"section\">\n" +
-    "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item)\"\n" +
+    "    <div ng-repeat=\"item in item.items\" ng-if=\"targetShown(item) && !item._isHiddenFromView\"\n" +
     "         class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" +
     "         {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" +
     "      <div ng-if=\"item.header\" ng-switch on=\"item.displayControl.questionLayout\">\n" +
@@ -793,7 +793,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "  </div>\n" +
     "  <lf-repeating-button></lf-repeating-button>\n" +
-    "</div>"
+    "</div>\n"
   );
 
 
@@ -839,7 +839,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <!-- data row, for each item -->\n" +
     "          <!-- check each top level item's questionLayout -->\n" +
     "          <div ng-if=\"lfData.items\" class=\"lf-form-table\">\n" +
-    "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item)\"\n" +
+    "            <div ng-repeat=\"item in lfData.items\" ng-if=\"targetShown(item) && !item._isHiddenFromView\"\n" +
     "                 class=\"data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}\n" +
     "                 {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}\">\n" +
     "              <!--header item-->\n" +

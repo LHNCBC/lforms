@@ -6,7 +6,7 @@ angular.module('lformsWidget')
         function ($window, $scope, $element, $timeout, $interval, $sce, smoothScroll, LF_CONSTANTS, lformsConfig) {
         'use strict';
 
-        $scope.debug = false;
+        $scope.debug = true;
 
         $scope.hasUnused = false;
         $scope.repeatingSectionStatus = {};
@@ -358,7 +358,7 @@ angular.module('lformsWidget')
          * @returns {boolean}
          */
         $scope.targetShown = function(item) {
-          return $scope.lfData.getSkipLogicClass(item) !== 'target-hide';
+          return $scope.lfData.getSkipLogicClass(item) !== 'target-disabled';
         };
 
 
@@ -712,6 +712,9 @@ angular.module('lformsWidget')
           if (item._showValidation) {
             eleClass += ' lf-show-validation';
           }
+          if (item._isHiddenFromView) {
+            eleClass += ' lf-hidden-from-view';
+          }
           if (item.dataType === 'TITLE') {
             eleClass += ' lf-title-row';
           }
@@ -916,11 +919,11 @@ angular.module('lformsWidget')
          * Get user input data from the form, with or without form definition data.
          * @param noFormDefData optional, to not include form definition data, the default is false.
          * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-         * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+         * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
          * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
          */
-        $scope.getUserData = function(noFormDefData, noEmptyValue, noHiddenItem) {
-          var formData =  $scope.lfData.getUserData(noFormDefData, noEmptyValue, noHiddenItem);
+        $scope.getUserData = function(noFormDefData, noEmptyValue, noDisabledItem) {
+          var formData =  $scope.lfData.getUserData(noFormDefData, noEmptyValue, noDisabledItem);
           return formData;
         };
 

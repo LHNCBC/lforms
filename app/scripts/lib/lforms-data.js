@@ -19,10 +19,10 @@
         EXTERNAL: "EXTERNAL" // not supported yet
       },
       SKIP_LOGIC: {
-        ACTION_SHOW: "show",
-        ACTION_HIDE: "hide", // not supported yet
-        STATUS_SHOW: "target-show",
-        STATUS_HIDE: "target-hide"
+        ACTION_ENABLE: "show",
+        ACTION_DISABLE: "hide", // not supported yet
+        STATUS_ENABLED: "target-enabled",
+        STATUS_DISABLED: "target-disabled"
       },
       CALCULATION_METHOD: {
         TOTALSCORE: "TOTALSCORE",
@@ -620,10 +620,10 @@
         if (item.skipLogic) {
           this._updateItemSkipLogicStatus(item, null);
         }
-        // Hide the item via the skip logic mechanism if _isHidden flag is true. As of 2018-12-19, the _isHidden flag
-        // is set to true if the item is converted from a FHIR Questionnaire with questionnaire-hidden extension.
-        if (item._isHidden) {
-          this._updateItemSkipLogicStatus(item, true);
+        // Hide the sub items if _isHiddenInDef flag is true.
+        if (item._isHiddenInDef) {
+          item._isHiddenFromView = true;
+          this._setSubItemsHidden(item, true);
         }
       }
 
@@ -632,6 +632,26 @@
       this._updateLastRepeatingItemsStatus(this.items);
       this._resetHorizontalTableInfo();
       this._adjustLastSiblingListForHorizontalLayout();
+    },
+
+
+    /**
+     * Update sub items if the current item is hidden
+     * @param item the item that is hidden
+     * @param hidden if the parent item is already hidden
+     */
+    _setSubItemsHidden: function(item, hidden) {
+      // if one item is hidden all of its decedents should be hidden.
+      if (hidden) {
+        // process the sub items
+        if (item.items && item.items.length > 0) {
+          for (var i=0, iLen=item.items.length; i<iLen; i++) {
+            var subItem = item.items[i];
+            subItem._isHiddenFromView = true;
+            this._setSubItemsHidden(subItem, true);
+          }
+        }
+      }
     },
 
 
@@ -699,40 +719,40 @@
     /**
      * Update data by running the skip logic on the target item
      * @param item the target item where there is a skip logic
-     * @param hide if the parent item is already hidden
+     * @param disabled if the parent item is already disabled
      */
-    _updateItemSkipLogicStatus: function(item, hide) {
+    _updateItemSkipLogicStatus: function(item, disabled) {
       // if one item is hidden all of its decedents should be hidden.
       // not necessary to check skip logic, assuming 'hide' has the priority over 'show'
-      if (hide) {
-        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE);
-        var isHidden = true;
+      if (disabled) {
+        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED);
+        var isDisabled = true;
       }
       // if the item is not hidden, show all its decedents unless they are hidden by other skip logic.
       else {
         if (item.skipLogic) {
           var takeAction = this._checkSkipLogic(item);
 
-          if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_SHOW) {
-            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW : this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
+          if (!item.skipLogic.action || item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_ENABLE) {
+            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
             this._setSkipLogicStatusValue(item, newStatus);
           }
-          else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_HIDE) {
-            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE : this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW;
+          else if (item.skipLogic.action === this._CONSTANTS.SKIP_LOGIC.ACTION_DISABLE) {
+            var newStatus = takeAction ? this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED : this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED;
             this._setSkipLogicStatusValue(item, newStatus);
           }
         }
         // if there's no skip logic, show it when it was hidden because one of its ancestors was hidden
-        else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
-          this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_SHOW);
+        else if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
+          this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_ENABLED);
         }
-        var isHidden = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE;
+        var isDisabled = item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
       }
       // process the sub items
       if (item.items && item.items.length > 0) {
         for (var i=0, iLen=item.items.length; i<iLen; i++) {
           var subItem = item.items[i];
-          this._updateItemSkipLogicStatus(subItem, isHidden);
+          this._updateItemSkipLogicStatus(subItem, isDisabled);
         }
       }
     },
@@ -747,12 +767,12 @@
     _presetSkipLogicStatus: function(item, hide) {
       // if it has skip logic or one of its ancestors has skip logic
       if (item.skipLogic || hide) {
-        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE, true);
-        var isHidden = true;
+        this._setSkipLogicStatusValue(item, this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED, true);
+        var isDisabled = true;
         // process the sub items
         if (item.items) {
           for (var i=0, iLen=item.items.length; i<iLen; i++) {
-            this._presetSkipLogicStatus(item.items[i], isHidden);
+            this._presetSkipLogicStatus(item.items[i], isDisabled);
           }
         }
       }
@@ -769,7 +789,7 @@
     _setSkipLogicStatusValue: function(item, newStatus, noLog) {
       if (item._skipLogicStatus !== newStatus) {
         if (item._skipLogicStatus) {
-          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ? 'Hiding ' + item._text : 'Showing ' + item._text;
+          var msg = newStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ? 'Hiding ' + item._text : 'Showing ' + item._text;
           if (!noLog)
             this._actionLogs.push(msg);
         }
@@ -1308,7 +1328,7 @@
 
         // consider if the last sibling is hidden by skip logic
         if (!foundLastSibling) {
-          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ) {
+          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ) {
             item._lastSibling = false;
             lastSiblingIndex -= 1;
           }
@@ -1345,7 +1365,7 @@
 
         // consider if the first sibling is hidden by skip logic
         if (!foundFirstSibling) {
-          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE ) {
+          if (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ) {
             item._firstSibling = false;
             firstSiblingIndex += 1;
           }
@@ -1362,14 +1382,14 @@
      * Get the complete form definition data, including the user input data from the form.
      * The returned data could be fed into a LForms widget directly to render the form.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @return {{}} form definition JSON object
      */
-    getFormData: function(noEmptyValue, noHiddenItem, keepId) {
+    getFormData: function(noEmptyValue, noDisabledItem, keepId) {
 
       // get the form data
-      var formData = this.getUserData(false, noEmptyValue, noHiddenItem, keepId);
+      var formData = this.getUserData(false, noEmptyValue, noDisabledItem, keepId);
 
       // check if there is user data
       var hasSavedData = false;
@@ -1415,18 +1435,18 @@
      * Get user input data from the form, with or without form definition data.
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
-    getUserData: function(noFormDefData, noEmptyValue, noHiddenItem, keepId) {
+    getUserData: function(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
       var ret = {};
-      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noHiddenItem,
+      ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem,
           keepId);
       // template options could be optional. Include them, only if they are present
       if(this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems ) {
         ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue,
-            noHiddenItem, keepId);
+            noDisabledItem, keepId);
       }
       // return a deep copy of the data
       return angular.copy(ret);
@@ -1447,12 +1467,12 @@
      * @param items the items array
      * @param noFormDefData optional, to not include form definition data, the default is false.
      * @param noEmptyValue optional, to remove items that have an empty value, the default is false.
-     * @param noHiddenItem optional, to remove items that are hidden by skip logic, the default is false.
+     * @param noDisabledItem optional, to remove items that are disabled by skip logic, the default is false.
      * @param keepId optional, to keep _id field on item, the default is false
      * @returns {Array} form data on one tree level
      * @private
      */
-    _processDataInItems: function(items, noFormDefData, noEmptyValue, noHiddenItem, keepId) {
+    _processDataInItems: function(items, noFormDefData, noEmptyValue, noDisabledItem, keepId) {
       var itemsData = [];
       for (var i=0, iLen=items.length; i<iLen; i++) {
         var item = items[i];
@@ -1462,7 +1482,7 @@
 
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
-        if (noHiddenItem && (item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE || item._isHidden) ||
+        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED ||
             noEmptyValue && this.isEmpty(item) && !item.header) {
           continue;
         }
@@ -1503,7 +1523,7 @@
 
         // process the sub items
         if (item.items && item.items.length > 0) {
-          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noHiddenItem, keepId);
+          itemData.items = this._processDataInItems(item.items, noFormDefData, noEmptyValue, noDisabledItem, keepId);
         }
         // not to add the section header if noEmptyValue is set, and
         // all its children has empty value (thus have not been added either) or it has not children, and
@@ -1715,7 +1735,7 @@
         // found the last item that is not hidden
         do {
           lastItem = item.items[--i];
-          if (lastItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+          if (lastItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
             found = true;
           }
         }
@@ -1866,7 +1886,7 @@
         item._parentItem.items.splice(insertPosition + 1, 0, newItem);
         newItem._parentItem = item._parentItem;
 
-        // preset the skip logic status to target-hide on the new items
+        // preset the skip logic status to target-disabled on the new items
         this._presetSkipLogicStatus(newItem, false);
       }
 
@@ -1911,7 +1931,7 @@
         item._parentItem.items.splice(insertPosition, 0, newItem);
         newItem._parentItem = item._parentItem;
 
-        // preset the skip logic status to target-hide on the new items
+        // preset the skip logic status to target-disabled on the new items
         this._presetSkipLogicStatus(newItem, false);
       }
 
@@ -1957,7 +1977,7 @@
 
       var isEmpty = true;
       //if it is not hidden
-      if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_HIDE) {
+      if (item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
         // multiple selection answer list (array is also an object)
         if (angular.isArray(item.value) && item.value.length > 0) {
           var notEmpty = false;

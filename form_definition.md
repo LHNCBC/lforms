@@ -300,7 +300,7 @@ about the meaning of each key:
                   or be less than
         * action - (optional) the action to take when the conditions are met.  For now the
           one supported value is "show" (which is also the default), and when
-          conditions are not met the question or section is hidden.
+          conditions are not met the question or section is disabled (and hidden).
         * logic - (optional) either "ANY" or "ALL".  If "ANY" is used, then any condition in
           "conditions" being met will trigger the action, while for "ALL" all
           conditions must be met.  If not specified, the default is "ANY".
