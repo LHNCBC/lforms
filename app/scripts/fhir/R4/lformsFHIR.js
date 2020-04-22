@@ -22041,7 +22041,6 @@ function addCommonSDCExportFns(ns) {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // TODO: disabled and hidden are different
 
 
     if (item._isHiddenInDef) {
@@ -23137,8 +23136,7 @@ function addSDCImportFns(ns) {
     if (externallyDefined && externallyDefined.valueUri) {
       lfItem.externallyDefined = externallyDefined.valueUri;
     }
-  }; // TODO: disabled and hidden are different
-
+  };
   /**
    * Parse questionnaire item for "hidden" extension
    *

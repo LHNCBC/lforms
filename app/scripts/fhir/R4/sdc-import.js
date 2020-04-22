@@ -179,7 +179,7 @@ function addSDCImportFns(ns) {
     }
   };
 
-// TODO: disabled and hidden are different
+
   /**
    * Parse questionnaire item for "hidden" extension
    *

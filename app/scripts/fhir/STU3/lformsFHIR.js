@@ -22056,7 +22056,6 @@ function addCommonSDCExportFns(ns) {
 
     this._handleRestrictions(targetItem, item); // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
-    // TODO: disabled and hidden are different
 
 
     if (item._isHiddenInDef) {

@@ -129,7 +129,6 @@ function addCommonSDCExportFns(ns) {
     // http://hl7.org/fhir/StructureDefinition/entryFormat
     // looks like tooltip, TBD
 
-// TODO: disabled and hidden are different
     if(item._isHiddenInDef) {
       targetItem.extension.push({
         url: "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden",
