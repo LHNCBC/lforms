@@ -6,7 +6,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changed
 - Separated the skip logic 'disabled' status from item's 'hidden' status. 
 ### Fixed
-- Correctly handled the import/export the questionnaire-hidden extension.
+- Correctly handled the import/export of the questionnaire-hidden extension.
 
 ## [24.0.2] 2020-04-21
 ### Fixed

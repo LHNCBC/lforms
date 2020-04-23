@@ -623,7 +623,7 @@
         // Hide the sub items if _isHiddenInDef flag is true.
         if (item._isHiddenInDef) {
           item._isHiddenFromView = true;
-          this._setSubItemsHidden(item, true);
+          this._setSubItemsHidden(item);
         }
       }
 
@@ -638,18 +638,14 @@
     /**
      * Update sub items if the current item is hidden
      * @param item the item that is hidden
-     * @param hidden if the parent item is already hidden
      */
-    _setSubItemsHidden: function(item, hidden) {
-      // if one item is hidden all of its decedents should be hidden.
-      if (hidden) {
-        // process the sub items
-        if (item.items && item.items.length > 0) {
-          for (var i=0, iLen=item.items.length; i<iLen; i++) {
-            var subItem = item.items[i];
-            subItem._isHiddenFromView = true;
-            this._setSubItemsHidden(subItem, true);
-          }
+    _setSubItemsHidden: function(item) {
+      // process the sub items
+      if (item.items && item.items.length > 0) {
+        for (var i=0, iLen=item.items.length; i<iLen; i++) {
+          var subItem = item.items[i];
+          subItem._isHiddenFromView = true;
+          this._setSubItemsHidden(subItem);
         }
       }
     },

@@ -5326,7 +5326,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         if (item._isHiddenInDef) {
           item._isHiddenFromView = true;
 
-          this._setSubItemsHidden(item, true);
+          this._setSubItemsHidden(item);
         }
       } // update internal status
 
@@ -5343,19 +5343,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     /**
      * Update sub items if the current item is hidden
      * @param item the item that is hidden
-     * @param hidden if the parent item is already hidden
      */
-    _setSubItemsHidden: function _setSubItemsHidden(item, hidden) {
-      // if one item is hidden all of its decedents should be hidden.
-      if (hidden) {
-        // process the sub items
-        if (item.items && item.items.length > 0) {
-          for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-            var subItem = item.items[i];
-            subItem._isHiddenFromView = true;
+    _setSubItemsHidden: function _setSubItemsHidden(item) {
+      // process the sub items
+      if (item.items && item.items.length > 0) {
+        for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+          var subItem = item.items[i];
+          subItem._isHiddenFromView = true;
 
-            this._setSubItemsHidden(subItem, true);
-          }
+          this._setSubItemsHidden(subItem);
         }
       }
     },
