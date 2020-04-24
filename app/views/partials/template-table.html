@@ -39,7 +39,7 @@
           <!-- data row, for each item -->
           <!-- check each top level item's questionLayout -->
           <div ng-if="lfData.items" class="lf-form-table">
-            <div ng-repeat="item in lfData.items" ng-if="targetShown(item)"
+            <div ng-repeat="item in lfData.items" ng-if="targetShown(item) && !item._isHiddenFromView"
                  class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}
                  {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}">
               <!--header item-->

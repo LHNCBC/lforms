@@ -2,6 +2,12 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.1.0] 2020-04-22
+### Changed
+- Separated the skip logic 'disabled' status from item's 'hidden' status. 
+### Fixed
+- Correctly handled the import/export of the questionnaire-hidden extension.
+
 ## [24.0.2] 2020-04-21
 ### Fixed
 - Fixed a bug that reloading existing LForms form definition object with instances of repeating items 

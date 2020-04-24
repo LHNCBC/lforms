@@ -1,10 +1,10 @@
 <div class="lf-table-item {{getSiblingStatus(item)}}">
   <!-- question -->
-  <lf-item ng-style="getItemStyle(item)"></lf-item>
+  <lf-item ng-if="!item._isHiddenFromView" ng-style="getItemStyle(item)"></lf-item>
 
   <!--sub sections, check each item's layout -->
   <div ng-if="item.items" class="section">
-    <div ng-repeat="item in item.items" ng-if="targetShown(item)"
+    <div ng-repeat="item in item.items" ng-if="targetShown(item) && !item._isHiddenFromView"
          class="data-row has-ng-animate {{getRowClass(item)}} {{getSkipLogicClass(item)}}
          {{getActiveRowClass(item)}} {{getItemViewModeClass(item)}}">
       <div ng-if="item.header" ng-switch on="item.displayControl.questionLayout">
