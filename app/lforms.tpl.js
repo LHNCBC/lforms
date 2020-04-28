@@ -392,7 +392,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          </div>\n" +
     "\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item._text}}\"\n" +
-    "                    ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
+    "                    ng-model=\"item.value\" ng-attr-placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" +
     "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
     "          </textarea>\n" +
@@ -552,7 +552,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "              <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" +
     "            </div>\n" +
     "            <textarea ng-switch-when=\"TX\" name=\"{{cell.question}}\"\n" +
-    "                      ng-model=\"cell.value\" placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
+    "                      ng-model=\"cell.value\" ng-attr-placeholder=\"{{cell._toolTip}}\" ng-disabled=\"cell._readOnly\"\n" +
     "                      id=\"{{cell._elementId}}\"\n" +
     "                      aria-labelledby=\"{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}\"\n" +
     "                      ng-keyup=\"autoExpand($event)\" rows=\"1\"\n" +

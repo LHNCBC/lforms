@@ -86,7 +86,7 @@
           </div>
 
           <textarea ng-switch-when="TX" name="{{item._text}}"
-                    ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
+                    ng-model="item.value" ng-attr-placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                     id="{{item._elementId}}" ng-keyup="autoExpand($event)" ng-blur="activeRowOnBlur(item);autoExpand($event)" rows="1"
                     ng-focus="setActiveRow(item)" aria-describedby="help-{{ item._elementId }}">
           </textarea>

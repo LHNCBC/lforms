@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.1.1] 2020-04-28
+### Fixed
+- IE11 issues have been fixed.
+
 ## [24.1.0] 2020-04-22
 ### Changed
-- Separated the skip logic 'disabled' status from item's 'hidden' status. 
+- Separated the skip logic 'disabled' status from item's 'hidden' status.
 ### Fixed
 - Correctly handled the import/export of the questionnaire-hidden extension.
 
