@@ -91,14 +91,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(88);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(90);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(92);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(93);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(94);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(95);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(96);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(97);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(87);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(89);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(90);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(91);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(92);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(93);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(94);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -107,7 +107,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
 fhir.fhirpath = __webpack_require__(2);
-fhir.fhirpathModel = __webpack_require__(85);
+fhir.fhirpathModel = __webpack_require__(82);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -185,37 +185,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 // we can make dispatching params type dependent - let see
 var parser = __webpack_require__(3);
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-__webpack_require__(71);
+__webpack_require__(68);
 
-var constants = __webpack_require__(72);
+var constants = __webpack_require__(69);
 
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(73);
+var existence = __webpack_require__(70);
 
-var filtering = __webpack_require__(74);
+var filtering = __webpack_require__(71);
 
-var combining = __webpack_require__(75);
+var combining = __webpack_require__(72);
 
-var misc = __webpack_require__(76);
+var misc = __webpack_require__(73);
 
-var equality = __webpack_require__(77);
+var equality = __webpack_require__(74);
 
-var collections = __webpack_require__(79);
+var collections = __webpack_require__(76);
 
-var math = __webpack_require__(80);
+var math = __webpack_require__(77);
 
-var strings = __webpack_require__(81);
+var strings = __webpack_require__(78);
 
-var navigation = __webpack_require__(82);
+var navigation = __webpack_require__(79);
 
-var datetime = __webpack_require__(83);
+var datetime = __webpack_require__(80);
 
-var logic = __webpack_require__(84);
+var logic = __webpack_require__(81);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_DateTime = types.FP_DateTime,
     FP_Time = types.FP_Time,
@@ -1198,7 +1198,7 @@ module.exports = {
   compile: compile,
   evaluate: evaluate,
   // Might as well export the UCUM library, since we are using it.
-  ucumUtils: __webpack_require__(62).UcumLhcUtils.getInstance()
+  ucumUtils: __webpack_require__(59).UcumLhcUtils.getInstance()
 };
 
 /***/ }),
@@ -1213,11 +1213,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 var antlr4 = __webpack_require__(4);
 
-var Lexer = __webpack_require__(52).FHIRPathLexer;
+var Lexer = __webpack_require__(49).FHIRPathLexer;
 
-var Parser = __webpack_require__(53).FHIRPathParser;
+var Parser = __webpack_require__(50).FHIRPathParser;
 
-var Listener = __webpack_require__(54).FHIRPathListener;
+var Listener = __webpack_require__(51).FHIRPathListener;
 
 var ErrorListener = function ErrorListener(errors) {
   antlr4.error.ErrorListener.call(this);
@@ -1336,6 +1336,10 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// This is a modified version of antr4's index.js, in which
+// the "require" statements of two unused classes are commented out
+// to avoid introducing a dependency on Node.js' "fs" package.
+
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -1346,14 +1350,16 @@ exports.dfa = __webpack_require__(37);
 exports.fromcodepoint = __webpack_require__(40);
 exports.tree = __webpack_require__(41);
 exports.error = __webpack_require__(42);
-exports.Token = __webpack_require__(9).Token;
-exports.CharStreams = __webpack_require__(45).CharStreams;
+exports.Token = __webpack_require__(9).Token; // Commented out to avoid the problem with 'fs' during the webpack build
+// exports.CharStreams = require('antlr4/CharStreams').CharStreams;
+
 exports.CommonToken = __webpack_require__(9).CommonToken;
-exports.InputStream = __webpack_require__(46).InputStream;
-exports.FileStream = __webpack_require__(48).FileStream;
-exports.CommonTokenStream = __webpack_require__(49).CommonTokenStream;
+exports.InputStream = __webpack_require__(45).InputStream; // Commented out to avoid the problem with 'fs' during the webpack build
+// exports.FileStream = require('antlr4/FileStream').FileStream;
+
+exports.CommonTokenStream = __webpack_require__(46).CommonTokenStream;
 exports.Lexer = __webpack_require__(25).Lexer;
-exports.Parser = __webpack_require__(51).Parser;
+exports.Parser = __webpack_require__(48).Parser;
 
 var pc = __webpack_require__(15);
 
@@ -12941,80 +12947,6 @@ exports.DefaultErrorStrategy = DefaultErrorStrategy;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var InputStream = __webpack_require__(46).InputStream;
-
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(47) : null; // Utility functions to create InputStreams from various sources.
-//
-// All returned InputStreams support the full range of Unicode
-// up to U+10FFFF (the default behavior of InputStream only supports
-// code points up to U+FFFF).
-
-var CharStreams = {
-  // Creates an InputStream from a string.
-  fromString: function fromString(str) {
-    return new InputStream(str, true);
-  },
-  // Asynchronously creates an InputStream from a blob given the
-  // encoding of the bytes in that blob (defaults to 'utf8' if
-  // encoding is null).
-  //
-  // Invokes onLoad(result) on success, onError(error) on
-  // failure.
-  fromBlob: function fromBlob(blob, encoding, onLoad, onError) {
-    var reader = FileReader();
-
-    reader.onload = function (e) {
-      var is = new InputStream(e.target.result, true);
-      onLoad(is);
-    };
-
-    reader.onerror = onError;
-    reader.readAsText(blob, encoding);
-  },
-  // Creates an InputStream from a Buffer given the
-  // encoding of the bytes in that buffer (defaults to 'utf8' if
-  // encoding is null).
-  fromBuffer: function fromBuffer(buffer, encoding) {
-    return new InputStream(buffer.toString(encoding), true);
-  },
-  // Asynchronously creates an InputStream from a file on disk given
-  // the encoding of the bytes in that file (defaults to 'utf8' if
-  // encoding is null).
-  //
-  // Invokes callback(error, result) on completion.
-  fromPath: function fromPath(path, encoding, callback) {
-    fs.readFile(path, encoding, function (err, data) {
-      var is = null;
-
-      if (data !== null) {
-        is = new InputStream(data, true);
-      }
-
-      callback(err, is);
-    });
-  },
-  // Synchronously creates an InputStream given a path to a file
-  // on disk and the encoding of the bytes in that file (defaults to
-  // 'utf8' if encoding is null).
-  fromPathSync: function fromPathSync(path, encoding) {
-    var data = fs.readFileSync(path, encoding);
-    return new InputStream(data, true);
-  }
-};
-exports.CharStreams = CharStreams;
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-//
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
 var Token = __webpack_require__(9).Token;
 
 __webpack_require__(36);
@@ -13158,44 +13090,7 @@ InputStream.prototype.toString = function () {
 exports.InputStream = InputStream;
 
 /***/ }),
-/* 47 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-//
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-//
-//  This is an InputStream that is loaded from a file all at once
-//  when you construct the object.
-//
-var InputStream = __webpack_require__(46).InputStream;
-
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(47) : null;
-
-function FileStream(fileName, decodeToUnicodeCodePoints) {
-  var data = fs.readFileSync(fileName, "utf8");
-  InputStream.call(this, data, decodeToUnicodeCodePoints);
-  this.fileName = fileName;
-  return this;
-}
-
-FileStream.prototype = Object.create(InputStream.prototype);
-FileStream.prototype.constructor = FileStream;
-exports.FileStream = FileStream;
-
-/***/ }),
-/* 49 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13231,7 +13126,7 @@ exports.FileStream = FileStream;
 ///
 var Token = __webpack_require__(9).Token;
 
-var BufferedTokenStream = __webpack_require__(50).BufferedTokenStream;
+var BufferedTokenStream = __webpack_require__(47).BufferedTokenStream;
 
 function CommonTokenStream(lexer, channel) {
   BufferedTokenStream.call(this, lexer);
@@ -13317,7 +13212,7 @@ CommonTokenStream.prototype.getNumberOfOnChannelTokens = function () {
 exports.CommonTokenStream = CommonTokenStream;
 
 /***/ }),
-/* 50 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13742,7 +13637,7 @@ BufferedTokenStream.prototype.fill = function () {
 exports.BufferedTokenStream = BufferedTokenStream;
 
 /***/ }),
-/* 51 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -14488,7 +14383,7 @@ Parser.prototype.setTrace = function (trace) {
 exports.Parser = Parser;
 
 /***/ }),
-/* 52 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
@@ -14587,14 +14482,14 @@ FHIRPathLexer.prototype.grammarFileName = "FHIRPath.g4";
 exports.FHIRPathLexer = FHIRPathLexer;
 
 /***/ }),
-/* 53 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = __webpack_require__(4);
 
-var FHIRPathListener = __webpack_require__(54).FHIRPathListener;
+var FHIRPathListener = __webpack_require__(51).FHIRPathListener;
 
 var grammarFileName = "FHIRPath.g4";
 var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03A\x97\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x03\x02\x03\x02", "\x03\x02\x03\x02\x05\x02#\n\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x07\x02K\n\x02\f\x02\x0E\x02N\x0B\x02\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05", "\x03W\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x05\x04a\n\x04\x03", "\x05\x03\x05\x03\x05\x05\x05f\n\x05\x03\x06\x03", "\x06\x03\x06\x03\x06\x03\x06\x05\x06m\n\x06\x03", "\x07\x03\x07\x03\x07\x05\x07r\n\x07\x03\x07\x03", "\x07\x03\b\x03\b\x03\b\x07\by\n\b\f\b\x0E\b|\x0B\b\x03", "\t\x03\t\x05\t\x80\n\t\x03\n\x03\n\x03\n\x05\n\x85\n", "\n\x03\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r\x03\x0E", "\x03\x0E\x03\x0E\x07\x0E\x90\n\x0E\f\x0E\x0E\x0E", "\x93\x0B\x0E\x03\x0F\x03\x0F\x03\x0F\x02\x03\x02", "\x10\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16\x18\x1A", "\x1C\x02\x0E\x03\x02\x06\x07\x03\x02\b\x0B\x04", "\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02\x14\x17", "\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02\x12\x13", "\x03\x02\"#\x03\x02)0\x03\x0218\x05\x02\x12\x13", "\x18\x19;<\x02\xA9\x02\"\x03\x02\x02\x02\x04V\x03", "\x02\x02\x02\x06`\x03\x02\x02\x02\bb\x03\x02\x02", "\x02\nl\x03\x02\x02\x02\fn\x03\x02\x02\x02\x0Eu", "\x03\x02\x02\x02\x10}\x03\x02\x02\x02\x12\x84", "\x03\x02\x02\x02\x14\x86\x03\x02\x02\x02\x16\x88", "\x03\x02\x02\x02\x18\x8A\x03\x02\x02\x02\x1A\x8C", "\x03\x02\x02\x02\x1C\x94\x03\x02\x02\x02\x1E\x1F", "\b\x02\x01\x02\x1F#\x05\x04\x03\x02 !\t\x02\x02", "\x02!#\x05\x02\x02\r\"\x1E\x03\x02\x02\x02\" \x03", "\x02\x02\x02#L\x03\x02\x02\x02$%\f\f\x02\x02%&\t\x03", "\x02\x02&K\x05\x02\x02\r'(\f\x0B\x02\x02()\t\x04", "\x02\x02)K\x05\x02\x02\f*+\f\n\x02\x02+,\x07\r\x02", "\x02,K\x05\x02\x02\x0B-.\f\t\x02\x02./\t\x05\x02\x02", "/K\x05\x02\x02\n01\f\x07\x02\x0212\t\x06\x02\x022", "K\x05\x02\x02\b34\f\x06\x02\x0245\t\x07\x02\x025K", "\x05\x02\x02\x0767\f\x05\x02\x0278\x07\x1A\x02\x02", "8K\x05\x02\x02\x069:\f\x04\x02\x02:;\t\b\x02\x02;", "K\x05\x02\x02\x05<=\f\x03\x02\x02=>\x07\x1D\x02", "\x02>K\x05\x02\x02\x04?@\f\x0F\x02\x02@A\x07\x03", "\x02\x02AK\x05\n\x06\x02BC\f\x0E\x02\x02CD\x07\x04", "\x02\x02DE\x05\x02\x02\x02EF\x07\x05\x02\x02FK\x03", "\x02\x02\x02GH\f\b\x02\x02HI\t\t\x02\x02IK\x05\x18", "\r\x02J$\x03\x02\x02\x02J'\x03\x02\x02\x02J*\x03", "\x02\x02\x02J-\x03\x02\x02\x02J0\x03\x02\x02\x02", "J3\x03\x02\x02\x02J6\x03\x02\x02\x02J9\x03\x02\x02", "\x02J<\x03\x02\x02\x02J?\x03\x02\x02\x02JB\x03\x02", "\x02\x02JG\x03\x02\x02\x02KN\x03\x02\x02\x02LJ\x03", "\x02\x02\x02LM\x03\x02\x02\x02M\x03\x03\x02\x02", "\x02NL\x03\x02\x02\x02OW\x05\n\x06\x02PW\x05\x06", "\x04\x02QW\x05\b\x05\x02RS\x07\x1E\x02\x02ST\x05", "\x02\x02\x02TU\x07\x1F\x02\x02UW\x03\x02\x02\x02", "VO\x03\x02\x02\x02VP\x03\x02\x02\x02VQ\x03\x02\x02", "\x02VR\x03\x02\x02\x02W\x05\x03\x02\x02\x02XY\x07", " \x02\x02Ya\x07!\x02\x02Za\t\n\x02\x02[a\x07=\x02", "\x02\\a\x07>\x02\x02]a\x079\x02\x02^a\x07:\x02\x02", "_a\x05\x10\t\x02`X\x03\x02\x02\x02`Z\x03\x02\x02", "\x02`[\x03\x02\x02\x02`\\\x03\x02\x02\x02`]\x03", "\x02\x02\x02`^\x03\x02\x02\x02`_\x03\x02\x02\x02", "a\x07\x03\x02\x02\x02be\x07$\x02\x02cf\x05\x1C\x0F", "\x02df\x07=\x02\x02ec\x03\x02\x02\x02ed\x03\x02", "\x02\x02f\t\x03\x02\x02\x02gm\x05\x1C\x0F\x02hm", "\x05\f\x07\x02im\x07%\x02\x02jm\x07&\x02\x02km\x07", "'\x02\x02lg\x03\x02\x02\x02lh\x03\x02\x02\x02l", "i\x03\x02\x02\x02lj\x03\x02\x02\x02lk\x03\x02\x02", "\x02m\x0B\x03\x02\x02\x02no\x05\x1C\x0F\x02oq\x07", "\x1E\x02\x02pr\x05\x0E\b\x02qp\x03\x02\x02\x02q", "r\x03\x02\x02\x02rs\x03\x02\x02\x02st\x07\x1F\x02", "\x02t\r\x03\x02\x02\x02uz\x05\x02\x02\x02vw\x07", "(\x02\x02wy\x05\x02\x02\x02xv\x03\x02\x02\x02y|", "\x03\x02\x02\x02zx\x03\x02\x02\x02z{\x03\x02\x02", "\x02{\x0F\x03\x02\x02\x02|z\x03\x02\x02\x02}\x7F", "\x07>\x02\x02~\x80\x05\x12\n\x02\x7F~\x03\x02\x02", "\x02\x7F\x80\x03\x02\x02\x02\x80\x11\x03\x02\x02", "\x02\x81\x85\x05\x14\x0B\x02\x82\x85\x05\x16\f", "\x02\x83\x85\x07=\x02\x02\x84\x81\x03\x02\x02", "\x02\x84\x82\x03\x02\x02\x02\x84\x83\x03\x02\x02", "\x02\x85\x13\x03\x02\x02\x02\x86\x87\t\x0B\x02", "\x02\x87\x15\x03\x02\x02\x02\x88\x89\t\f\x02\x02", "\x89\x17\x03\x02\x02\x02\x8A\x8B\x05\x1A\x0E\x02", "\x8B\x19\x03\x02\x02\x02\x8C\x91\x05\x1C\x0F\x02", "\x8D\x8E\x07\x03\x02\x02\x8E\x90\x05\x1C\x0F\x02", "\x8F\x8D\x03\x02\x02\x02\x90\x93\x03\x02\x02\x02", "\x91\x8F\x03\x02\x02\x02\x91\x92\x03\x02\x02\x02", "\x92\x1B\x03\x02\x02\x02\x93\x91\x03\x02\x02\x02", "\x94\x95\t\r\x02\x02\x95\x1D\x03\x02\x02\x02\x0E", "\"JLV`elqz\x7F\x84\x91"].join("");
@@ -17083,7 +16978,7 @@ FHIRPathParser.prototype.expression_sempred = function (localctx, predIndex) {
 exports.FHIRPathParser = FHIRPathParser;
 
 /***/ }),
-/* 54 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
@@ -17341,7 +17236,7 @@ FHIRPathListener.prototype.exitIdentifier = function (ctx) {};
 exports.FHIRPathListener = FHIRPathListener;
 
 /***/ }),
-/* 55 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17349,7 +17244,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // This file holds utility functions used in implementing the public functions.
 var util = {};
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var ResourceNode = types.ResourceNode;
 /**
@@ -17454,7 +17349,7 @@ util.valData = function (val) {
 module.exports = util;
 
 /***/ }),
-/* 56 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17483,11 +17378,11 @@ function _superPropBase(object, property) { while (!Object.prototype.hasOwnPrope
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var addMinutes = __webpack_require__(57);
+var addMinutes = __webpack_require__(54);
 
-var ucumUtils = __webpack_require__(62).UcumLhcUtils.getInstance();
+var ucumUtils = __webpack_require__(59).UcumLhcUtils.getInstance();
 
-var numbers = __webpack_require__(63);
+var numbers = __webpack_require__(60);
 
 var ucumSystemUrl = 'http://unitsofmeasure.org';
 var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
@@ -18175,14 +18070,14 @@ var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
 
 
 FP_TimeBase.timeUnitToAddFn = {
-  "'a'": __webpack_require__(64),
-  "'mo'": __webpack_require__(65),
-  "'wk'": __webpack_require__(67),
-  "'d'": __webpack_require__(68),
-  "'h'": __webpack_require__(69),
-  "'min'": __webpack_require__(57),
-  "'s'": __webpack_require__(70),
-  "'ms'": __webpack_require__(58)
+  "'a'": __webpack_require__(61),
+  "'mo'": __webpack_require__(62),
+  "'wk'": __webpack_require__(64),
+  "'d'": __webpack_require__(65),
+  "'h'": __webpack_require__(66),
+  "'min'": __webpack_require__(54),
+  "'s'": __webpack_require__(67),
+  "'ms'": __webpack_require__(55)
 };
 
 var FP_DateTime = /*#__PURE__*/function (_FP_TimeBase) {
@@ -18656,10 +18551,10 @@ module.exports = {
 };
 
 /***/ }),
-/* 57 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 
 var MILLISECONDS_IN_MINUTE = 60000;
 /**
@@ -18687,10 +18582,10 @@ function addMinutes(dirtyDate, dirtyAmount) {
 module.exports = addMinutes;
 
 /***/ }),
-/* 58 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Millisecond Helpers
  * @summary Add the specified number of milliseconds to the given date.
@@ -18718,12 +18613,12 @@ function addMilliseconds(dirtyDate, dirtyAmount) {
 module.exports = addMilliseconds;
 
 /***/ }),
-/* 59 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getTimezoneOffsetInMilliseconds = __webpack_require__(60);
+var getTimezoneOffsetInMilliseconds = __webpack_require__(57);
 
-var isDate = __webpack_require__(61);
+var isDate = __webpack_require__(58);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19050,7 +18945,7 @@ function dayOfISOYear(isoYear, week, day) {
 module.exports = parse;
 
 /***/ }),
-/* 60 */
+/* 57 */
 /***/ (function(module, exports) {
 
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -19075,7 +18970,7 @@ module.exports = function getTimezoneOffsetInMilliseconds(dirtyDate) {
 };
 
 /***/ }),
-/* 61 */
+/* 58 */
 /***/ (function(module, exports) {
 
 /**
@@ -19100,13 +18995,13 @@ function isDate(argument) {
 module.exports = isDate;
 
 /***/ }),
-/* 62 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = LForms.ucumPkg;
 
 /***/ }),
-/* 63 */
+/* 60 */
 /***/ (function(module, exports) {
 
 var numberFns = {}; // Returns the number of digits in the number after the decimal point, ignoring
@@ -19197,10 +19092,10 @@ numberFns.isEqual = function (actual, expected) {
 module.exports = numberFns;
 
 /***/ }),
-/* 64 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMonths = __webpack_require__(65);
+var addMonths = __webpack_require__(62);
 /**
  * @category Year Helpers
  * @summary Add the specified number of years to the given date.
@@ -19227,12 +19122,12 @@ function addYears(dirtyDate, dirtyAmount) {
 module.exports = addYears;
 
 /***/ }),
-/* 65 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 
-var getDaysInMonth = __webpack_require__(66);
+var getDaysInMonth = __webpack_require__(63);
 /**
  * @category Month Helpers
  * @summary Add the specified number of months to the given date.
@@ -19268,10 +19163,10 @@ function addMonths(dirtyDate, dirtyAmount) {
 module.exports = addMonths;
 
 /***/ }),
-/* 66 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Month Helpers
  * @summary Get the number of days in a month of the given date.
@@ -19302,10 +19197,10 @@ function getDaysInMonth(dirtyDate) {
 module.exports = getDaysInMonth;
 
 /***/ }),
-/* 67 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addDays = __webpack_require__(68);
+var addDays = __webpack_require__(65);
 /**
  * @category Week Helpers
  * @summary Add the specified number of weeks to the given date.
@@ -19333,10 +19228,10 @@ function addWeeks(dirtyDate, dirtyAmount) {
 module.exports = addWeeks;
 
 /***/ }),
-/* 68 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Day Helpers
  * @summary Add the specified number of days to the given date.
@@ -19365,10 +19260,10 @@ function addDays(dirtyDate, dirtyAmount) {
 module.exports = addDays;
 
 /***/ }),
-/* 69 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 /**
@@ -19396,10 +19291,10 @@ function addHours(dirtyDate, dirtyAmount) {
 module.exports = addHours;
 
 /***/ }),
-/* 70 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 /**
  * @category Second Helpers
  * @summary Add the specified number of seconds to the given date.
@@ -19426,7 +19321,7 @@ function addSeconds(dirtyDate, dirtyAmount) {
 module.exports = addSeconds;
 
 /***/ }),
-/* 71 */
+/* 68 */
 /***/ (function(module, exports) {
 
 // Binding the function Array.prototype.slice.call for convert Array-like objects/collections to a new Array.
@@ -19491,7 +19386,7 @@ if (!Object.assign) {
 }
 
 /***/ }),
-/* 72 */
+/* 69 */
 /***/ (function(module, exports) {
 
 // These are values that should not change during an evaluation of a FHIRPath
@@ -19522,16 +19417,16 @@ module.exports = {
 };
 
 /***/ }),
-/* 73 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var filtering = __webpack_require__(74);
+var filtering = __webpack_require__(71);
 
 var engine = {};
 engine.emptyFn = util.isEmpty;
@@ -19711,7 +19606,7 @@ engine.countFn = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 74 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -19722,7 +19617,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 /**
  *  Adds the filtering and projection functions to the given FHIRPath engine.
  */
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
 var engine = {};
 
@@ -19831,13 +19726,13 @@ engine.ofTypeFn = function (coll, type) {
 module.exports = engine;
 
 /***/ }),
-/* 75 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Combining functions.
 var combineFns = {};
 
-var existence = __webpack_require__(73);
+var existence = __webpack_require__(70);
 
 combineFns.unionOp = function (coll1, coll2) {
   return existence.distinctFn(coll1.concat(coll2));
@@ -19850,14 +19745,14 @@ combineFns.combineFn = function (coll1, coll2) {
 module.exports = combineFns;
 
 /***/ }),
-/* 76 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_Quantity = types.FP_Quantity;
 var engine = {};
@@ -20014,15 +19909,15 @@ defineTimeConverter('FP_Time');
 module.exports = engine;
 
 /***/ }),
-/* 77 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var deepEqual = __webpack_require__(78);
+var deepEqual = __webpack_require__(75);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_Type = types.FP_Type;
 var FP_DateTime = types.FP_DateTime;
@@ -20144,7 +20039,7 @@ engine.gte = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 78 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -20152,13 +20047,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_Type = types.FP_Type;
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var numbers = __webpack_require__(63);
+var numbers = __webpack_require__(60);
 
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
@@ -20333,11 +20228,11 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /***/ }),
-/* 79 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var deepEqual = __webpack_require__(78);
+var deepEqual = __webpack_require__(75);
 
 var engine = {}; // b is assumed to have one element and it tests whether b[0] is in a
 
@@ -20390,16 +20285,16 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 80 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_TimeBase = types.FP_TimeBase,
     FP_Quantity = types.FP_Quantity;
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 /**
  *  Adds the math functions to the given FHIRPath engine.
  */
@@ -20596,10 +20491,10 @@ engine.truncate = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 81 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
 var engine = {};
 
@@ -20663,14 +20558,14 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 82 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var _require = __webpack_require__(56),
+var _require = __webpack_require__(53),
     ResourceNode = _require.ResourceNode;
 
 var makeResNode = ResourceNode.makeResNode;
@@ -20726,14 +20621,14 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 83 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var engine = {};
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
-var constants = __webpack_require__(72);
+var constants = __webpack_require__(69);
 
 var FP_DateTime = types.FP_DateTime;
 /**
@@ -20776,7 +20671,7 @@ engine.today = function () {
 module.exports = engine;
 
 /***/ }),
-/* 84 */
+/* 81 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -20861,7 +20756,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 85 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -20873,29 +20768,29 @@ module.exports = {
    *  A hash of resource element paths (e.g. Observation.value) that are known
    *  to point to fiels that are choice types.
    */
-  choiceTypePaths: __webpack_require__(86),
+  choiceTypePaths: __webpack_require__(83),
 
   /**
    *  A hash from paths to the path for which their content is defined, e.g.
    *  Questionnaire.item.item -> Questionnaire.item.
    */
-  pathsDefinedElsewhere: __webpack_require__(87)
+  pathsDefinedElsewhere: __webpack_require__(84)
 };
 
 /***/ }),
-/* 86 */
+/* 83 */
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Age\",\"Period\",\"Range\",\"Duration\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"String\"],\"AuditEvent.entity.detail.value\":[\"String\",\"Base64Binary\"],\"BiologicallyDerivedProduct.collection.collected\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.manipulation.time\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.processing.time\":[\"DateTime\",\"Period\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ChargeItem.product\":[\"Reference\",\"CodeableConcept\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Claim.supportingInfo.timing\":[\"Date\",\"Period\"],\"Claim.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ClaimResponse.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ClaimResponse.addItem.serviced\":[\"Date\",\"Period\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\",\"Decimal\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Canonical\"],\"ConceptMap.target\":[\"Uri\",\"Canonical\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\"],\"Contract.legallyBinding\":[\"Attachment\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.action.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Contract.term.asset.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.term.offer.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Contract.term.topic\":[\"CodeableConcept\",\"Reference\"],\"Contract.topic\":[\"CodeableConcept\",\"Reference\"],\"Coverage.costToBeneficiary.value\":[\"Quantity\",\"Money\"],\"CoverageEligibilityRequest.item.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"CoverageEligibilityRequest.serviced\":[\"Date\",\"Period\"],\"CoverageEligibilityResponse.insurance.item.benefit.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.insurance.item.benefit.used\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.serviced\":[\"Date\",\"Period\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DataRequirement.subject\":[\"CodeableConcept\",\"Reference\"],\"DetectedIssue.identified\":[\"DateTime\",\"Period\"],\"DeviceDefinition.manufacturer\":[\"String\",\"Reference\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.doseAndRate.dose\":[\"Range\",\"Quantity\"],\"Dosage.doseAndRate.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Canonical\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"EventDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"EvidenceVariable.characteristic.definition\":[\"Reference\",\"Canonical\",\"CodeableConcept\",\"Expression\",\"DataRequirement\",\"TriggerDefinition\"],\"EvidenceVariable.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.supportingInfo.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Ratio\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\",\"Reference\"],\"GuidanceResponse.module\":[\"Uri\",\"Canonical\",\"CodeableConcept\"],\"Immunization.occurrence\":[\"DateTime\",\"String\"],\"Immunization.protocolApplied.doseNumber\":[\"PositiveInt\",\"String\"],\"Immunization.protocolApplied.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImplementationGuide.definition.page.name\":[\"Url\",\"Reference\"],\"ImplementationGuide.definition.resource.example\":[\"Boolean\",\"Canonical\"],\"ImplementationGuide.manifest.resource.example\":[\"Boolean\",\"Canonical\"],\"Invoice.lineItem.chargeItem\":[\"Reference\",\"CodeableConcept\"],\"Library.subject\":[\"CodeableConcept\",\"Reference\"],\"Measure.subject\":[\"CodeableConcept\",\"Reference\"],\"Media.created\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.statusReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic\":[\"CodeableConcept\",\"Quantity\"],\"MedicationKnowledge.drugCharacteristic.value\":[\"CodeableConcept\",\"String\",\"Quantity\",\"Base64Binary\"],\"MedicationKnowledge.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.reported\":[\"Boolean\",\"Reference\"],\"MedicationRequest.substitution.allowed\":[\"Boolean\",\"CodeableConcept\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProduct.specialDesignation.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductAuthorization.procedure.date\":[\"Period\",\"DateTime\"],\"MedicinalProductContraindication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductIndication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductInteraction.interactant.item\":[\"Reference\",\"CodeableConcept\"],\"MessageDefinition.event\":[\"Coding\",\"Uri\"],\"MessageHeader.event\":[\"Coding\",\"Uri\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\",\"Timing\",\"Instant\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.definition\":[\"Canonical\",\"Uri\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.subject\":[\"CodeableConcept\",\"Reference\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"PlanDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"Population.age\":[\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\",\"String\",\"Age\",\"Range\"],\"Provenance.occurred\":[\"Period\",\"DateTime\"],\"Questionnaire.item.answerOption.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\",\"Reference\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"ResearchDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ResearchElementDefinition.characteristic.definition\":[\"CodeableConcept\",\"Canonical\",\"Expression\",\"DataRequirement\"],\"ResearchElementDefinition.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.characteristic.studyEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"ServiceRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ServiceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ServiceRequest.quantity\":[\"Quantity\",\"Ratio\",\"Range\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.collection.fastingStatus\":[\"CodeableConcept\",\"Duration\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"SpecimenDefinition.typeTested.container.additive.additive\":[\"CodeableConcept\",\"Reference\"],\"SpecimenDefinition.typeTested.container.minimumVolume\":[\"Quantity\",\"String\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SubstanceAmount.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceReferenceInformation.target.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceSpecification.moiety.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.definingSubstance\":[\"Reference\",\"CodeableConcept\"],\"SubstanceSpecification.relationship.amount\":[\"Quantity\",\"Range\",\"Ratio\",\"String\"],\"SubstanceSpecification.relationship.substance\":[\"Reference\",\"CodeableConcept\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.timing\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Reference\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\",\"DateTime\"]}");
 
 /***/ }),
-/* 87 */
+/* 84 */
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.operation\":\"CapabilityStatement.rest.resource.operation\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ChargeItemDefinition.propertyGroup.applicability\":\"ChargeItemDefinition.applicability\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Consent.provision.provision\":\"Consent.provision\",\"Contract.term.asset.answer\":\"Contract.term.offer.answer\",\"Contract.term.group\":\"Contract.term\",\"ExampleScenario.process.step.alternative.step\":\"ExampleScenario.process.step\",\"ExampleScenario.process.step.operation.request\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.operation.response\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.process\":\"ExampleScenario.process\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.definition.page.page\":\"ImplementationGuide.definition.page\",\"Invoice.totalPriceComponent\":\"Invoice.lineItem.priceComponent\",\"MedicinalProductAuthorization.procedure.application\":\"MedicinalProductAuthorization.procedure\",\"MedicinalProductIngredient.substance.strength\":\"MedicinalProductIngredient.specifiedSubstance.strength\",\"MedicinalProductPackaged.packageItem.packageItem\":\"MedicinalProductPackaged.packageItem\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"SubstanceSpecification.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"SubstanceSpecification.name.synonym\":\"SubstanceSpecification.name\",\"SubstanceSpecification.name.translation\":\"SubstanceSpecification.name\",\"SubstanceSpecification.structure.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
 
 /***/ }),
-/* 88 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20912,7 +20807,7 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
-var LForms = __webpack_require__(89);
+var LForms = __webpack_require__(86);
 
 var dr = {
   // a prefix for references to Observation resources
@@ -21615,18 +21510,18 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 89 */
+/* 86 */
 /***/ (function(module, exports) {
 
 module.exports = LForms;
 
 /***/ }),
-/* 90 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(91);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(88);
 // R4-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -21669,7 +21564,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 91 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21686,7 +21581,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-var LForms = __webpack_require__(89);
+var LForms = __webpack_require__(86);
 
 var _versionTagStr = 'lformsVersion: ';
 /**
@@ -21896,7 +21791,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 92 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22363,7 +22258,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 93 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23386,7 +23281,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 94 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24095,7 +23990,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 95 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24250,14 +24145,14 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 96 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(89);
+var LForms = __webpack_require__(86);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -25450,13 +25345,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 97 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(98);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(95);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -25482,7 +25377,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 98 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
