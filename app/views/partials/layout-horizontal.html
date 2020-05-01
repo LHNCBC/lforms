@@ -115,7 +115,7 @@
               <button type="button" class="ui-datepicker-trigger" ng-click="openUibDtmPicker($event)"></button>
             </div>
             <textarea ng-switch-when="TX" name="{{cell.question}}"
-                      ng-model="cell.value" placeholder="{{cell._toolTip}}" ng-disabled="cell._readOnly"
+                      ng-model="cell.value" ng-attr-placeholder="{{cell._toolTip}}" ng-disabled="cell._readOnly"
                       id="{{cell._elementId}}"
                       aria-labelledby="{{lfData._horizontalTableInfo[item._horizontalTableId].columnHeaders[$index].id}}"
                       ng-keyup="autoExpand($event)" rows="1"
