@@ -22962,10 +22962,19 @@ function addSDCImportFns(ns) {
         if (vs.resourceType === 'ValueSet') {
           var answers = self.answersFromVS(vs);
           if (!answers) answers = []; // continuing with previous default; not sure if needed
+          // support both id and url based lookup
 
-          answersVS[vs.url] = {
+          var lfVS = {
             answers: answers
           };
+
+          if (vs.id !== undefined) {
+            answersVS['#' + vs.id] = lfVS;
+          }
+
+          if (vs.url !== undefined) {
+            answersVS[vs.url] = lfVS;
+          }
         }
       });
     }

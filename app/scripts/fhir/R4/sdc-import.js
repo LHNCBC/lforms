@@ -36,7 +36,15 @@ function addSDCImportFns(ns) {
           var answers = self.answersFromVS(vs);
           if (!answers)
             answers = []; // continuing with previous default; not sure if needed
-          answersVS[vs.url] = {answers: answers};
+
+          // support both id and url based lookup
+          var lfVS = {answers: answers};
+          if(vs.id !== undefined) {
+            answersVS['#' + vs.id] = lfVS;
+          }
+          if(vs.url !== undefined) {
+            answersVS[vs.url] = lfVS;
+          }
         }
       });
     }

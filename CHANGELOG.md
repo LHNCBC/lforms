@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.1.1] 2020-05-01
+### Fixed
+- Fixed contained valueset reference for R4 (from using url to using #vs-id)
+
 ## [24.1.0] 2020-04-22
 ### Changed
 - Separated the skip logic 'disabled' status from item's 'hidden' status. 

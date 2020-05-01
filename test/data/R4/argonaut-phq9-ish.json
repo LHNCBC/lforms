@@ -236,7 +236,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q2",
@@ -263,7 +263,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q3",
@@ -278,7 +278,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q4",
@@ -293,7 +293,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q5",
@@ -308,7 +308,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q6",
@@ -323,7 +323,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q7",
@@ -338,7 +338,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q8",
@@ -353,7 +353,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "linkId": "g1.q9",
@@ -368,7 +368,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
+                    "answerValueSet": "#PHQ-9"
                 },
                 {
                     "extension": [
@@ -407,7 +407,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-10"
+                    "answerValueSet": "#PHQ-10"
                 }
             ]
         }
