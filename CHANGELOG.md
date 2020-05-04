@@ -2,13 +2,20 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [24.1.1] 2020-05-01
+## [24.1.2] 2020-05-04
 ### Fixed
 - Fixed contained valueset reference for R4 (from using url to using #vs-id)
 
+## [24.1.1] 2020-04-28
+### Changed
+- Updated the fhirpath dependency to 2.1.3
+- Updated the ucum-lhc dependency to 4.1.3
+### Fixed
+- Textarea placeholder binding causes exception in IE11
+
 ## [24.1.0] 2020-04-22
 ### Changed
-- Separated the skip logic 'disabled' status from item's 'hidden' status. 
+- Separated the skip logic 'disabled' status from item's 'hidden' status.
 ### Fixed
 - Correctly handled the import/export of the questionnaire-hidden extension.
 

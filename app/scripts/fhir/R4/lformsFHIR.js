@@ -91,14 +91,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(87);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(89);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(91);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(92);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(93);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(94);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(95);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(96);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(87);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(89);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(90);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(91);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(92);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(93);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(94);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -107,7 +107,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
 fhir.fhirpath = __webpack_require__(2);
-fhir.fhirpathModel = __webpack_require__(84);
+fhir.fhirpathModel = __webpack_require__(82);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -148,6 +148,12 @@ var LOINC_URI = 'http://loinc.org';
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 // This is fhirpath interpreter
 // everything starts at evaluate function,
 // which is passed  fhirpath AST and resource.
@@ -179,37 +185,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // we can make dispatching params type dependent - let see
 var parser = __webpack_require__(3);
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-__webpack_require__(70);
+__webpack_require__(68);
 
-var constants = __webpack_require__(71);
+var constants = __webpack_require__(69);
 
 var engine = {}; // the object with all FHIRPath functions and operations
 
-var existence = __webpack_require__(72);
+var existence = __webpack_require__(70);
 
-var filtering = __webpack_require__(73);
+var filtering = __webpack_require__(71);
 
-var combining = __webpack_require__(74);
+var combining = __webpack_require__(72);
 
-var misc = __webpack_require__(75);
+var misc = __webpack_require__(73);
 
-var equality = __webpack_require__(76);
+var equality = __webpack_require__(74);
 
-var collections = __webpack_require__(78);
+var collections = __webpack_require__(76);
 
-var math = __webpack_require__(79);
+var math = __webpack_require__(77);
 
-var strings = __webpack_require__(80);
+var strings = __webpack_require__(78);
 
-var navigation = __webpack_require__(81);
+var navigation = __webpack_require__(79);
 
-var datetime = __webpack_require__(82);
+var datetime = __webpack_require__(80);
 
-var logic = __webpack_require__(83);
+var logic = __webpack_require__(81);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_DateTime = types.FP_DateTime,
     FP_Time = types.FP_Time,
@@ -351,6 +357,13 @@ engine.invocationTable = {
   },
   toTime: {
     fn: misc.toTime
+  },
+  toQuantity: {
+    fn: misc.toQuantity,
+    arity: {
+      0: [],
+      1: ["String"]
+    }
   },
   indexOf: {
     fn: strings.indexOf,
@@ -656,15 +669,9 @@ engine.LiteralTerm = function (ctx, parentData, node) {
 
 engine.StringLiteral = function (ctx, parentData, node) {
   // Remove the beginning and ending quotes.
-  var rtn = node.text.replace(/(^['"]|['"]$)/g, "");
+  var rtn = node.text.replace(/(^'|'$)/g, "");
   rtn = rtn.replace(/\\(u\d{4}|.)/g, function (match, submatch) {
     switch (match) {
-      case "\\'":
-        return "'";
-
-      case '\\"':
-        return '"';
-
       case '\\r':
         return '\r';
 
@@ -676,9 +683,6 @@ engine.StringLiteral = function (ctx, parentData, node) {
 
       case '\\f':
         return '\f';
-
-      case '\\\\':
-        return '\\';
 
       default:
         if (submatch.length > 1) return String.fromCharCode('0x' + submatch.slice(1));else return submatch;
@@ -722,7 +726,7 @@ engine.NumberLiteral = function (ctx, parentData, node) {
 };
 
 engine.Identifier = function (ctx, parentData, node) {
-  return [node.text.replace(/(^"|"$)/g, "")];
+  return [node.text.replace(/(^`|`$)/g, "")];
 };
 
 engine.InvocationTerm = function (ctx, parentData, node) {
@@ -755,12 +759,11 @@ engine.MemberInvocation = function (ctx, parentData, node) {
 
         if (actualTypes) {
           // Use actualTypes to find the field's value
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
+          var _iterator = _createForOfIteratorHelper(actualTypes),
+              _step;
 
           try {
-            for (var _iterator = actualTypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var t = _step.value;
               var field = key + t;
               toAdd = res.data[field];
@@ -771,18 +774,9 @@ engine.MemberInvocation = function (ctx, parentData, node) {
               }
             }
           } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
+            _iterator.e(err);
           } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return != null) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
+            _iterator.f();
           }
         } else toAdd = res.data[key];
 
@@ -1204,20 +1198,26 @@ module.exports = {
   compile: compile,
   evaluate: evaluate,
   // Might as well export the UCUM library, since we are using it.
-  ucumUtils: __webpack_require__(62).UcumLhcUtils.getInstance()
+  ucumUtils: __webpack_require__(59).UcumLhcUtils.getInstance()
 };
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var antlr4 = __webpack_require__(4);
 
-var Lexer = __webpack_require__(52).FHIRPathLexer;
+var Lexer = __webpack_require__(49).FHIRPathLexer;
 
-var Parser = __webpack_require__(53).FHIRPathParser;
+var Parser = __webpack_require__(50).FHIRPathParser;
 
-var Listener = __webpack_require__(54).FHIRPathListener;
+var Listener = __webpack_require__(51).FHIRPathListener;
 
 var ErrorListener = function ErrorListener(errors) {
   antlr4.error.ErrorListener.call(this);
@@ -1278,12 +1278,12 @@ var parse = function parse(path) {
         // "-", which we need.
 
         node.terminalNodeText = [];
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+
+        var _iterator = _createForOfIteratorHelper(ctx.children),
+            _step;
 
         try {
-          for (var _iterator = ctx.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
             var c = _step.value;
             // Test for node type "TerminalNodeImpl".  Minimized code no longer
             // has the original function names, so we can't rely on
@@ -1292,18 +1292,9 @@ var parse = function parse(path) {
             if (c.symbol) node.terminalNodeText.push(c.getText());
           }
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _iterator.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
+          _iterator.f();
         }
       };
     } else if (p.startsWith("exit")) {
@@ -1324,8 +1315,8 @@ var parse = function parse(path) {
     var errMsgs = [];
 
     for (var i = 0, len = errors.length; i < len; ++i) {
-      var err = errors[i];
-      var msg = "line: " + err[2] + "; column: " + err[3] + "; message: " + err[4];
+      var _err = errors[i];
+      var msg = "line: " + _err[2] + "; column: " + _err[3] + "; message: " + _err[4];
       errMsgs.push(msg);
     }
 
@@ -1345,6 +1336,10 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// This is a modified version of antr4's index.js, in which
+// the "require" statements of two unused classes are commented out
+// to avoid introducing a dependency on Node.js' "fs" package.
+
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -1355,14 +1350,16 @@ exports.dfa = __webpack_require__(37);
 exports.fromcodepoint = __webpack_require__(40);
 exports.tree = __webpack_require__(41);
 exports.error = __webpack_require__(42);
-exports.Token = __webpack_require__(9).Token;
-exports.CharStreams = __webpack_require__(45).CharStreams;
+exports.Token = __webpack_require__(9).Token; // Commented out to avoid the problem with 'fs' during the webpack build
+// exports.CharStreams = require('antlr4/CharStreams').CharStreams;
+
 exports.CommonToken = __webpack_require__(9).CommonToken;
-exports.InputStream = __webpack_require__(46).InputStream;
-exports.FileStream = __webpack_require__(48).FileStream;
-exports.CommonTokenStream = __webpack_require__(49).CommonTokenStream;
+exports.InputStream = __webpack_require__(45).InputStream; // Commented out to avoid the problem with 'fs' during the webpack build
+// exports.FileStream = require('antlr4/FileStream').FileStream;
+
+exports.CommonTokenStream = __webpack_require__(46).CommonTokenStream;
 exports.Lexer = __webpack_require__(25).Lexer;
-exports.Parser = __webpack_require__(51).Parser;
+exports.Parser = __webpack_require__(48).Parser;
 
 var pc = __webpack_require__(15);
 
@@ -12950,80 +12947,6 @@ exports.DefaultErrorStrategy = DefaultErrorStrategy;
  * can be found in the LICENSE.txt file in the project root.
  */
 //
-var InputStream = __webpack_require__(46).InputStream;
-
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(47) : null; // Utility functions to create InputStreams from various sources.
-//
-// All returned InputStreams support the full range of Unicode
-// up to U+10FFFF (the default behavior of InputStream only supports
-// code points up to U+FFFF).
-
-var CharStreams = {
-  // Creates an InputStream from a string.
-  fromString: function fromString(str) {
-    return new InputStream(str, true);
-  },
-  // Asynchronously creates an InputStream from a blob given the
-  // encoding of the bytes in that blob (defaults to 'utf8' if
-  // encoding is null).
-  //
-  // Invokes onLoad(result) on success, onError(error) on
-  // failure.
-  fromBlob: function fromBlob(blob, encoding, onLoad, onError) {
-    var reader = FileReader();
-
-    reader.onload = function (e) {
-      var is = new InputStream(e.target.result, true);
-      onLoad(is);
-    };
-
-    reader.onerror = onError;
-    reader.readAsText(blob, encoding);
-  },
-  // Creates an InputStream from a Buffer given the
-  // encoding of the bytes in that buffer (defaults to 'utf8' if
-  // encoding is null).
-  fromBuffer: function fromBuffer(buffer, encoding) {
-    return new InputStream(buffer.toString(encoding), true);
-  },
-  // Asynchronously creates an InputStream from a file on disk given
-  // the encoding of the bytes in that file (defaults to 'utf8' if
-  // encoding is null).
-  //
-  // Invokes callback(error, result) on completion.
-  fromPath: function fromPath(path, encoding, callback) {
-    fs.readFile(path, encoding, function (err, data) {
-      var is = null;
-
-      if (data !== null) {
-        is = new InputStream(data, true);
-      }
-
-      callback(err, is);
-    });
-  },
-  // Synchronously creates an InputStream given a path to a file
-  // on disk and the encoding of the bytes in that file (defaults to
-  // 'utf8' if encoding is null).
-  fromPathSync: function fromPathSync(path, encoding) {
-    var data = fs.readFileSync(path, encoding);
-    return new InputStream(data, true);
-  }
-};
-exports.CharStreams = CharStreams;
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-//
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
 var Token = __webpack_require__(9).Token;
 
 __webpack_require__(36);
@@ -13167,44 +13090,7 @@ InputStream.prototype.toString = function () {
 exports.InputStream = InputStream;
 
 /***/ }),
-/* 47 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports, __webpack_require__) {
-
-//
-
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-//
-//
-//  This is an InputStream that is loaded from a file all at once
-//  when you construct the object.
-//
-var InputStream = __webpack_require__(46).InputStream;
-
-var isNodeJs = typeof window === 'undefined' && typeof importScripts === 'undefined';
-var fs = isNodeJs ? __webpack_require__(47) : null;
-
-function FileStream(fileName, decodeToUnicodeCodePoints) {
-  var data = fs.readFileSync(fileName, "utf8");
-  InputStream.call(this, data, decodeToUnicodeCodePoints);
-  this.fileName = fileName;
-  return this;
-}
-
-FileStream.prototype = Object.create(InputStream.prototype);
-FileStream.prototype.constructor = FileStream;
-exports.FileStream = FileStream;
-
-/***/ }),
-/* 49 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13240,7 +13126,7 @@ exports.FileStream = FileStream;
 ///
 var Token = __webpack_require__(9).Token;
 
-var BufferedTokenStream = __webpack_require__(50).BufferedTokenStream;
+var BufferedTokenStream = __webpack_require__(47).BufferedTokenStream;
 
 function CommonTokenStream(lexer, channel) {
   BufferedTokenStream.call(this, lexer);
@@ -13326,7 +13212,7 @@ CommonTokenStream.prototype.getNumberOfOnChannelTokens = function () {
 exports.CommonTokenStream = CommonTokenStream;
 
 /***/ }),
-/* 50 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -13751,7 +13637,7 @@ BufferedTokenStream.prototype.fill = function () {
 exports.BufferedTokenStream = BufferedTokenStream;
 
 /***/ }),
-/* 51 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
@@ -14497,14 +14383,14 @@ Parser.prototype.setTrace = function (trace) {
 exports.Parser = Parser;
 
 /***/ }),
-/* 52 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = __webpack_require__(4);
 
-var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x02?\u01F1\b\x01\x04\x02\t\x02\x04\x03\t\x03\x04", "\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t", "\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04", "\f\t\f\x04\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10", "\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04\x13\t\x13", "\x04\x14\t\x14\x04\x15\t\x15\x04\x16\t\x16\x04\x17", "\t\x17\x04\x18\t\x18\x04\x19\t\x19\x04\x1A\t\x1A", "\x04\x1B\t\x1B\x04\x1C\t\x1C\x04\x1D\t\x1D\x04\x1E", "\t\x1E\x04\x1F\t\x1F\x04 \t \x04!\t!\x04\"\t\"\x04#", "\t#\x04$\t$\x04%\t%\x04&\t&\x04'\t'\x04(\t(\x04)\t)\x04", "*\t*\x04+\t+\x04,\t,\x04-\t-\x04.\t.\x04/\t/\x040\t0\x04", "1\t1\x042\t2\x043\t3\x044\t4\x045\t5\x046\t6\x047\t7\x04", "8\t8\x049\t9\x04:\t:\x04;\t;\x04<\t<\x04=\t=\x04>\t>\x04", "?\t?\x04@\t@\x04A\tA\x04B\tB\x03\x02\x03\x02\x03\x03", "\x03\x03\x03\x04\x03\x04\x03\x05\x03\x05\x03\x06", "\x03\x06\x03\x07\x03\x07\x03\b\x03\b\x03\t\x03\t", "\x03\t\x03\t\x03\n\x03\n\x03\n\x03\n\x03\x0B\x03\x0B", "\x03\f\x03\f\x03\r\x03\r\x03\r\x03\x0E\x03\x0E\x03", "\x0F\x03\x0F\x03\x10\x03\x10\x03\x10\x03\x11\x03", "\x11\x03\x11\x03\x12\x03\x12\x03\x12\x03\x13\x03", "\x13\x03\x14\x03\x14\x03\x15\x03\x15\x03\x15\x03", "\x16\x03\x16\x03\x16\x03\x17\x03\x17\x03\x17\x03", "\x18\x03\x18\x03\x18\x03\x18\x03\x18\x03\x18\x03", "\x18\x03\x18\x03\x18\x03\x19\x03\x19\x03\x19\x03", "\x19\x03\x1A\x03\x1A\x03\x1A\x03\x1B\x03\x1B\x03", "\x1B\x03\x1B\x03\x1C\x03\x1C\x03\x1C\x03\x1C\x03", "\x1C\x03\x1C\x03\x1C\x03\x1C\x03\x1D\x03\x1D\x03", "\x1E\x03\x1E\x03\x1F\x03\x1F\x03 \x03 \x03!\x03", "!\x03!\x03!\x03!\x03\"\x03\"\x03\"\x03\"\x03\"\x03", "\"\x03#\x03#\x03$\x03$\x03$\x03$\x03$\x03$\x03%\x03", "%\x03&\x03&\x03&\x03&\x03&\x03'\x03'\x03'\x03'", "\x03'\x03'\x03(\x03(\x03(\x03(\x03(\x03)\x03)\x03", ")\x03)\x03*\x03*\x03*\x03*\x03*\x03+\x03+\x03+\x03", "+\x03+\x03+\x03+\x03,\x03,\x03,\x03,\x03,\x03,\x03", ",\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03", "-\x03-\x03-\x03.\x03.\x03.\x03.\x03.\x03.\x03/\x03", "/\x03/\x03/\x03/\x03/\x03/\x030\x030\x030\x030\x03", "0\x030\x031\x031\x031\x031\x031\x032\x032\x032\x03", "2\x032\x032\x033\x033\x033\x033\x033\x033\x033\x03", "3\x034\x034\x034\x034\x034\x034\x034\x034\x035\x03", "5\x035\x035\x035\x035\x035\x035\x035\x035\x035\x03", "5\x035\x036\x036\x036\x036\x036\x036\x036\x036\x03", "6\x036\x036\x036\x036\x056\u0171\n6\x056\u0173\n6\x05", "6\u0175\n6\x036\x056\u0178\n6\x037\x037\x037\x037\x03", "8\x038\x038\x038\x038\x038\x038\x038\x038\x038\x06", "8\u0188\n8\r8\x0E8\u0189\x058\u018C\n8\x058\u018E\n8\x058\u0190", "\n8\x038\x038\x038\x038\x038\x038\x038\x058\u0199\n", "8\x039\x059\u019C\n9\x039\x079\u019F\n9\f9\x0E9\u01A2\x0B", "9\x03:\x03:\x03:\x07:\u01A7\n:\f:\x0E:\u01AA\x0B:\x03", ":\x03:\x03;\x03;\x03;\x07;\u01B1\n;\f;\x0E;\u01B4\x0B", ";\x03;\x03;\x03<\x06<\u01B9\n<\r<\x0E<\u01BA\x03<\x03", "<\x06<\u01BF\n<\r<\x0E<\u01C0\x05<\u01C3\n<\x03=\x06=\u01C6", "\n=\r=\x0E=\u01C7\x03=\x03=\x03>\x03>\x03>\x03>\x07", ">\u01D0\n>\f>\x0E>\u01D3\x0B>\x03>\x03>\x03>\x03>\x03", ">\x03?\x03?\x03?\x03?\x07?\u01DE\n?\f?\x0E?\u01E1\x0B", "?\x03?\x03?\x03@\x03@\x03@\x05@\u01E8\n@\x03A\x03A\x03", "A\x03A\x03A\x03A\x03B\x03B\x03\u01D1\x02C\x03\x03", "\x05\x04\x07\x05\t\x06\x0B\x07\r\b\x0F\t\x11\n\x13", "\x0B\x15\f\x17\r\x19\x0E\x1B\x0F\x1D\x10\x1F\x11", "!\x12#\x13%\x14'\x15)\x16+\x17-\x18/\x191\x1A3\x1B", "5\x1C7\x1D9\x1E;\x1F= ?!A\"C#E$G%I&K'M(O)Q*S+U,W-Y.[/]0_1a", "2c3e4g5i6k7m8o\x02q9s:u;w<y={>}?\x7F\x02\x81\x02\x83\x02", "\x03\x02\f\x03\x022;\x04\x02--//\x05\x02C\\aac|\x06", "\x022;C\\aac|\x04\x02$$^^\x03\x02))\x05\x02\x0B\f\x0F", "\x0F\"\"\x04\x02\f\f\x0F\x0F\n\x02$$))11^^hhppttvv\x05", "\x022;CHch\x02\u0202\x02\x03\x03\x02\x02\x02\x02\x05", "\x03\x02\x02\x02\x02\x07\x03\x02\x02\x02\x02\t", "\x03\x02\x02\x02\x02\x0B\x03\x02\x02\x02\x02\r", "\x03\x02\x02\x02\x02\x0F\x03\x02\x02\x02\x02\x11", "\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02\x02\x15", "\x03\x02\x02\x02\x02\x17\x03\x02\x02\x02\x02\x19", "\x03\x02\x02\x02\x02\x1B\x03\x02\x02\x02\x02\x1D", "\x03\x02\x02\x02\x02\x1F\x03\x02\x02\x02\x02!", "\x03\x02\x02\x02\x02#\x03\x02\x02\x02\x02%\x03", "\x02\x02\x02\x02'\x03\x02\x02\x02\x02)\x03\x02", "\x02\x02\x02+\x03\x02\x02\x02\x02-\x03\x02\x02", "\x02\x02/\x03\x02\x02\x02\x021\x03\x02\x02\x02", "\x023\x03\x02\x02\x02\x025\x03\x02\x02\x02\x02", "7\x03\x02\x02\x02\x029\x03\x02\x02\x02\x02;\x03", "\x02\x02\x02\x02=\x03\x02\x02\x02\x02?\x03\x02", "\x02\x02\x02A\x03\x02\x02\x02\x02C\x03\x02\x02", "\x02\x02E\x03\x02\x02\x02\x02G\x03\x02\x02\x02", "\x02I\x03\x02\x02\x02\x02K\x03\x02\x02\x02\x02", "M\x03\x02\x02\x02\x02O\x03\x02\x02\x02\x02Q\x03", "\x02\x02\x02\x02S\x03\x02\x02\x02\x02U\x03\x02", "\x02\x02\x02W\x03\x02\x02\x02\x02Y\x03\x02\x02", "\x02\x02[\x03\x02\x02\x02\x02]\x03\x02\x02\x02", "\x02_\x03\x02\x02\x02\x02a\x03\x02\x02\x02\x02", "c\x03\x02\x02\x02\x02e\x03\x02\x02\x02\x02g\x03", "\x02\x02\x02\x02i\x03\x02\x02\x02\x02k\x03\x02", "\x02\x02\x02m\x03\x02\x02\x02\x02q\x03\x02\x02", "\x02\x02s\x03\x02\x02\x02\x02u\x03\x02\x02\x02", "\x02w\x03\x02\x02\x02\x02y\x03\x02\x02\x02\x02", "{\x03\x02\x02\x02\x02}\x03\x02\x02\x02\x03\x85", "\x03\x02\x02\x02\x05\x87\x03\x02\x02\x02\x07\x89", "\x03\x02\x02\x02\t\x8B\x03\x02\x02\x02\x0B\x8D", "\x03\x02\x02\x02\r\x8F\x03\x02\x02\x02\x0F\x91", "\x03\x02\x02\x02\x11\x93\x03\x02\x02\x02\x13\x97", "\x03\x02\x02\x02\x15\x9B\x03\x02\x02\x02\x17\x9D", "\x03\x02\x02\x02\x19\x9F\x03\x02\x02\x02\x1B\xA2", "\x03\x02\x02\x02\x1D\xA4\x03\x02\x02\x02\x1F\xA6", "\x03\x02\x02\x02!\xA9\x03\x02\x02\x02#\xAC\x03", "\x02\x02\x02%\xAF\x03\x02\x02\x02'\xB1\x03\x02", "\x02\x02)\xB3\x03\x02\x02\x02+\xB6\x03\x02\x02", "\x02-\xB9\x03\x02\x02\x02/\xBC\x03\x02\x02\x02", "1\xC5\x03\x02\x02\x023\xC9\x03\x02\x02\x025\xCC", "\x03\x02\x02\x027\xD0\x03\x02\x02\x029\xD8\x03", "\x02\x02\x02;\xDA\x03\x02\x02\x02=\xDC\x03\x02", "\x02\x02?\xDE\x03\x02\x02\x02A\xE0\x03\x02\x02", "\x02C\xE5\x03\x02\x02\x02E\xEB\x03\x02\x02\x02", "G\xED\x03\x02\x02\x02I\xF3\x03\x02\x02\x02K\xF5", "\x03\x02\x02\x02M\xFA\x03\x02\x02\x02O\u0100\x03", "\x02\x02\x02Q\u0105\x03\x02\x02\x02S\u0109\x03\x02", "\x02\x02U\u010E\x03\x02\x02\x02W\u0115\x03\x02\x02", "\x02Y\u011C\x03\x02\x02\x02[\u0128\x03\x02\x02\x02", "]\u012E\x03\x02\x02\x02_\u0135\x03\x02\x02\x02a\u013B", "\x03\x02\x02\x02c\u0140\x03\x02\x02\x02e\u0146\x03", "\x02\x02\x02g\u014E\x03\x02\x02\x02i\u0156\x03\x02", "\x02\x02k\u0163\x03\x02\x02\x02m\u0179\x03\x02\x02", "\x02o\u017D\x03\x02\x02\x02q\u019B\x03\x02\x02\x02", "s\u01A3\x03\x02\x02\x02u\u01AD\x03\x02\x02\x02w\u01B8", "\x03\x02\x02\x02y\u01C5\x03\x02\x02\x02{\u01CB\x03", "\x02\x02\x02}\u01D9\x03\x02\x02\x02\x7F\u01E4\x03", "\x02\x02\x02\x81\u01E9\x03\x02\x02\x02\x83\u01EF\x03", "\x02\x02\x02\x85\x86\x070\x02\x02\x86\x04\x03", "\x02\x02\x02\x87\x88\x07]\x02\x02\x88\x06\x03", "\x02\x02\x02\x89\x8A\x07_\x02\x02\x8A\b\x03\x02", "\x02\x02\x8B\x8C\x07-\x02\x02\x8C\n\x03\x02\x02", "\x02\x8D\x8E\x07/\x02\x02\x8E\f\x03\x02\x02\x02", "\x8F\x90\x07,\x02\x02\x90\x0E\x03\x02\x02\x02", "\x91\x92\x071\x02\x02\x92\x10\x03\x02\x02\x02", "\x93\x94\x07f\x02\x02\x94\x95\x07k\x02\x02\x95", "\x96\x07x\x02\x02\x96\x12\x03\x02\x02\x02\x97", "\x98\x07o\x02\x02\x98\x99\x07q\x02\x02\x99\x9A", "\x07f\x02\x02\x9A\x14\x03\x02\x02\x02\x9B\x9C", "\x07(\x02\x02\x9C\x16\x03\x02\x02\x02\x9D\x9E", "\x07~\x02\x02\x9E\x18\x03\x02\x02\x02\x9F\xA0", "\x07>\x02\x02\xA0\xA1\x07?\x02\x02\xA1\x1A\x03", "\x02\x02\x02\xA2\xA3\x07>\x02\x02\xA3\x1C\x03", "\x02\x02\x02\xA4\xA5\x07@\x02\x02\xA5\x1E\x03", "\x02\x02\x02\xA6\xA7\x07@\x02\x02\xA7\xA8\x07", "?\x02\x02\xA8 \x03\x02\x02\x02\xA9\xAA\x07k\x02", "\x02\xAA\xAB\x07u\x02\x02\xAB\"\x03\x02\x02\x02", "\xAC\xAD\x07c\x02\x02\xAD\xAE\x07u\x02\x02\xAE", "$\x03\x02\x02\x02\xAF\xB0\x07?\x02\x02\xB0&\x03", "\x02\x02\x02\xB1\xB2\x07\x80\x02\x02\xB2(\x03", "\x02\x02\x02\xB3\xB4\x07#\x02\x02\xB4\xB5\x07", "?\x02\x02\xB5*\x03\x02\x02\x02\xB6\xB7\x07#\x02", "\x02\xB7\xB8\x07\x80\x02\x02\xB8,\x03\x02\x02", "\x02\xB9\xBA\x07k\x02\x02\xBA\xBB\x07p\x02\x02", "\xBB.\x03\x02\x02\x02\xBC\xBD\x07e\x02\x02\xBD", "\xBE\x07q\x02\x02\xBE\xBF\x07p\x02\x02\xBF\xC0", "\x07v\x02\x02\xC0\xC1\x07c\x02\x02\xC1\xC2\x07", "k\x02\x02\xC2\xC3\x07p\x02\x02\xC3\xC4\x07u\x02", "\x02\xC40\x03\x02\x02\x02\xC5\xC6\x07c\x02\x02", "\xC6\xC7\x07p\x02\x02\xC7\xC8\x07f\x02\x02\xC8", "2\x03\x02\x02\x02\xC9\xCA\x07q\x02\x02\xCA\xCB", "\x07t\x02\x02\xCB4\x03\x02\x02\x02\xCC\xCD\x07", "z\x02\x02\xCD\xCE\x07q\x02\x02\xCE\xCF\x07t\x02", "\x02\xCF6\x03\x02\x02\x02\xD0\xD1\x07k\x02\x02", "\xD1\xD2\x07o\x02\x02\xD2\xD3\x07r\x02\x02\xD3", "\xD4\x07n\x02\x02\xD4\xD5\x07k\x02\x02\xD5\xD6", "\x07g\x02\x02\xD6\xD7\x07u\x02\x02\xD78\x03\x02", "\x02\x02\xD8\xD9\x07*\x02\x02\xD9:\x03\x02\x02", "\x02\xDA\xDB\x07+\x02\x02\xDB<\x03\x02\x02\x02", "\xDC\xDD\x07}\x02\x02\xDD>\x03\x02\x02\x02\xDE", "\xDF\x07\x7F\x02\x02\xDF@\x03\x02\x02\x02\xE0", "\xE1\x07v\x02\x02\xE1\xE2\x07t\x02\x02\xE2\xE3", "\x07w\x02\x02\xE3\xE4\x07g\x02\x02\xE4B\x03\x02", "\x02\x02\xE5\xE6\x07h\x02\x02\xE6\xE7\x07c\x02", "\x02\xE7\xE8\x07n\x02\x02\xE8\xE9\x07u\x02\x02", "\xE9\xEA\x07g\x02\x02\xEAD\x03\x02\x02\x02\xEB", "\xEC\x07'\x02\x02\xECF\x03\x02\x02\x02\xED\xEE", "\x07&\x02\x02\xEE\xEF\x07v\x02\x02\xEF\xF0\x07", "j\x02\x02\xF0\xF1\x07k\x02\x02\xF1\xF2\x07u\x02", "\x02\xF2H\x03\x02\x02\x02\xF3\xF4\x07.\x02\x02", "\xF4J\x03\x02\x02\x02\xF5\xF6\x07{\x02\x02\xF6", "\xF7\x07g\x02\x02\xF7\xF8\x07c\x02\x02\xF8\xF9", "\x07t\x02\x02\xF9L\x03\x02\x02\x02\xFA\xFB\x07", "o\x02\x02\xFB\xFC\x07q\x02\x02\xFC\xFD\x07p\x02", "\x02\xFD\xFE\x07v\x02\x02\xFE\xFF\x07j\x02\x02", "\xFFN\x03\x02\x02\x02\u0100\u0101\x07y\x02\x02\u0101", "\u0102\x07g\x02\x02\u0102\u0103\x07g\x02\x02\u0103\u0104", "\x07m\x02\x02\u0104P\x03\x02\x02\x02\u0105\u0106\x07", "f\x02\x02\u0106\u0107\x07c\x02\x02\u0107\u0108\x07{\x02", "\x02\u0108R\x03\x02\x02\x02\u0109\u010A\x07j\x02\x02", "\u010A\u010B\x07q\x02\x02\u010B\u010C\x07w\x02\x02\u010C", "\u010D\x07t\x02\x02\u010DT\x03\x02\x02\x02\u010E\u010F", "\x07o\x02\x02\u010F\u0110\x07k\x02\x02\u0110\u0111\x07", "p\x02\x02\u0111\u0112\x07w\x02\x02\u0112\u0113\x07v\x02", "\x02\u0113\u0114\x07g\x02\x02\u0114V\x03\x02\x02\x02", "\u0115\u0116\x07u\x02\x02\u0116\u0117\x07g\x02\x02\u0117", "\u0118\x07e\x02\x02\u0118\u0119\x07q\x02\x02\u0119\u011A", "\x07p\x02\x02\u011A\u011B\x07f\x02\x02\u011BX\x03\x02", "\x02\x02\u011C\u011D\x07o\x02\x02\u011D\u011E\x07k\x02", "\x02\u011E\u011F\x07n\x02\x02\u011F\u0120\x07n\x02\x02", "\u0120\u0121\x07k\x02\x02\u0121\u0122\x07u\x02\x02\u0122", "\u0123\x07g\x02\x02\u0123\u0124\x07e\x02\x02\u0124\u0125", "\x07q\x02\x02\u0125\u0126\x07p\x02\x02\u0126\u0127\x07", "f\x02\x02\u0127Z\x03\x02\x02\x02\u0128\u0129\x07{\x02", "\x02\u0129\u012A\x07g\x02\x02\u012A\u012B\x07c\x02\x02", "\u012B\u012C\x07t\x02\x02\u012C\u012D\x07u\x02\x02\u012D", "\\\x03\x02\x02\x02\u012E\u012F\x07o\x02\x02\u012F\u0130", "\x07q\x02\x02\u0130\u0131\x07p\x02\x02\u0131\u0132\x07", "v\x02\x02\u0132\u0133\x07j\x02\x02\u0133\u0134\x07u\x02", "\x02\u0134^\x03\x02\x02\x02\u0135\u0136\x07y\x02\x02", "\u0136\u0137\x07g\x02\x02\u0137\u0138\x07g\x02\x02\u0138", "\u0139\x07m\x02\x02\u0139\u013A\x07u\x02\x02\u013A`\x03", "\x02\x02\x02\u013B\u013C\x07f\x02\x02\u013C\u013D\x07", "c\x02\x02\u013D\u013E\x07{\x02\x02\u013E\u013F\x07u\x02", "\x02\u013Fb\x03\x02\x02\x02\u0140\u0141\x07j\x02\x02", "\u0141\u0142\x07q\x02\x02\u0142\u0143\x07w\x02\x02\u0143", "\u0144\x07t\x02\x02\u0144\u0145\x07u\x02\x02\u0145d\x03", "\x02\x02\x02\u0146\u0147\x07o\x02\x02\u0147\u0148\x07", "k\x02\x02\u0148\u0149\x07p\x02\x02\u0149\u014A\x07w\x02", "\x02\u014A\u014B\x07v\x02\x02\u014B\u014C\x07g\x02\x02", "\u014C\u014D\x07u\x02\x02\u014Df\x03\x02\x02\x02\u014E", "\u014F\x07u\x02\x02\u014F\u0150\x07g\x02\x02\u0150\u0151", "\x07e\x02\x02\u0151\u0152\x07q\x02\x02\u0152\u0153\x07", "p\x02\x02\u0153\u0154\x07f\x02\x02\u0154\u0155\x07u\x02", "\x02\u0155h\x03\x02\x02\x02\u0156\u0157\x07o\x02\x02", "\u0157\u0158\x07k\x02\x02\u0158\u0159\x07n\x02\x02\u0159", "\u015A\x07n\x02\x02\u015A\u015B\x07k\x02\x02\u015B\u015C", "\x07u\x02\x02\u015C\u015D\x07g\x02\x02\u015D\u015E\x07", "e\x02\x02\u015E\u015F\x07q\x02\x02\u015F\u0160\x07p\x02", "\x02\u0160\u0161\x07f\x02\x02\u0161\u0162\x07u\x02\x02", "\u0162j\x03\x02\x02\x02\u0163\u0164\x07B\x02\x02\u0164", "\u0165\t\x02\x02\x02\u0165\u0166\t\x02\x02\x02\u0166\u0167", "\t\x02\x02\x02\u0167\u0174\t\x02\x02\x02\u0168\u0169\x07", "/\x02\x02\u0169\u016A\t\x02\x02\x02\u016A\u0172\t\x02\x02", "\x02\u016B\u016C\x07/\x02\x02\u016C\u016D\t\x02\x02\x02", "\u016D\u0170\t\x02\x02\x02\u016E\u016F\x07V\x02\x02\u016F", "\u0171\x05o8\x02\u0170\u016E\x03\x02\x02\x02\u0170\u0171", "\x03\x02\x02\x02\u0171\u0173\x03\x02\x02\x02\u0172\u016B", "\x03\x02\x02\x02\u0172\u0173\x03\x02\x02\x02\u0173\u0175", "\x03\x02\x02\x02\u0174\u0168\x03\x02\x02\x02\u0174\u0175", "\x03\x02\x02\x02\u0175\u0177\x03\x02\x02\x02\u0176\u0178", "\x07\\\x02\x02\u0177\u0176\x03\x02\x02\x02\u0177\u0178", "\x03\x02\x02\x02\u0178l\x03\x02\x02\x02\u0179\u017A", "\x07B\x02\x02\u017A\u017B\x07V\x02\x02\u017B\u017C\x05", "o8\x02\u017Cn\x03\x02\x02\x02\u017D\u017E\t\x02\x02\x02", "\u017E\u018F\t\x02\x02\x02\u017F\u0180\x07<\x02\x02\u0180", "\u0181\t\x02\x02\x02\u0181\u018D\t\x02\x02\x02\u0182\u0183", "\x07<\x02\x02\u0183\u0184\t\x02\x02\x02\u0184\u018B\t\x02", "\x02\x02\u0185\u0187\x070\x02\x02\u0186\u0188\t\x02\x02", "\x02\u0187\u0186\x03\x02\x02\x02\u0188\u0189\x03\x02\x02", "\x02\u0189\u0187\x03\x02\x02\x02\u0189\u018A\x03\x02\x02", "\x02\u018A\u018C\x03\x02\x02\x02\u018B\u0185\x03\x02\x02", "\x02\u018B\u018C\x03\x02\x02\x02\u018C\u018E\x03\x02\x02", "\x02\u018D\u0182\x03\x02\x02\x02\u018D\u018E\x03\x02\x02", "\x02\u018E\u0190\x03\x02\x02\x02\u018F\u017F\x03\x02\x02", "\x02\u018F\u0190\x03\x02\x02\x02\u0190\u0198\x03\x02\x02", "\x02\u0191\u0199\x07\\\x02\x02\u0192\u0193\t\x03\x02\x02", "\u0193\u0194\t\x02\x02\x02\u0194\u0195\t\x02\x02\x02\u0195", "\u0196\x07<\x02\x02\u0196\u0197\t\x02\x02\x02\u0197\u0199", "\t\x02\x02\x02\u0198\u0191\x03\x02\x02\x02\u0198\u0192", "\x03\x02\x02\x02\u0198\u0199\x03\x02\x02\x02\u0199p", "\x03\x02\x02\x02\u019A\u019C\t\x04\x02\x02\u019B\u019A", "\x03\x02\x02\x02\u019C\u01A0\x03\x02\x02\x02\u019D\u019F", "\t\x05\x02\x02\u019E\u019D\x03\x02\x02\x02\u019F\u01A2", "\x03\x02\x02\x02\u01A0\u019E\x03\x02\x02\x02\u01A0\u01A1", "\x03\x02\x02\x02\u01A1r\x03\x02\x02\x02\u01A2\u01A0", "\x03\x02\x02\x02\u01A3\u01A8\x07$\x02\x02\u01A4\u01A7", "\x05\x7F@\x02\u01A5\u01A7\n\x06\x02\x02\u01A6\u01A4\x03", "\x02\x02\x02\u01A6\u01A5\x03\x02\x02\x02\u01A7\u01AA\x03", "\x02\x02\x02\u01A8\u01A6\x03\x02\x02\x02\u01A8\u01A9\x03", "\x02\x02\x02\u01A9\u01AB\x03\x02\x02\x02\u01AA\u01A8\x03", "\x02\x02\x02\u01AB\u01AC\x07$\x02\x02\u01ACt\x03\x02", "\x02\x02\u01AD\u01B2\x07)\x02\x02\u01AE\u01B1\x05\x7F", "@\x02\u01AF\u01B1\n\x07\x02\x02\u01B0\u01AE\x03\x02\x02", "\x02\u01B0\u01AF\x03\x02\x02\x02\u01B1\u01B4\x03\x02\x02", "\x02\u01B2\u01B0\x03\x02\x02\x02\u01B2\u01B3\x03\x02\x02", "\x02\u01B3\u01B5\x03\x02\x02\x02\u01B4\u01B2\x03\x02\x02", "\x02\u01B5\u01B6\x07)\x02\x02\u01B6v\x03\x02\x02\x02", "\u01B7\u01B9\t\x02\x02\x02\u01B8\u01B7\x03\x02\x02\x02", "\u01B9\u01BA\x03\x02\x02\x02\u01BA\u01B8\x03\x02\x02\x02", "\u01BA\u01BB\x03\x02\x02\x02\u01BB\u01C2\x03\x02\x02\x02", "\u01BC\u01BE\x070\x02\x02\u01BD\u01BF\t\x02\x02\x02\u01BE", "\u01BD\x03\x02\x02\x02\u01BF\u01C0\x03\x02\x02\x02\u01C0", "\u01BE\x03\x02\x02\x02\u01C0\u01C1\x03\x02\x02\x02\u01C1", "\u01C3\x03\x02\x02\x02\u01C2\u01BC\x03\x02\x02\x02\u01C2", "\u01C3\x03\x02\x02\x02\u01C3x\x03\x02\x02\x02\u01C4", "\u01C6\t\b\x02\x02\u01C5\u01C4\x03\x02\x02\x02\u01C6\u01C7", "\x03\x02\x02\x02\u01C7\u01C5\x03\x02\x02\x02\u01C7\u01C8", "\x03\x02\x02\x02\u01C8\u01C9\x03\x02\x02\x02\u01C9\u01CA", "\b=\x02\x02\u01CAz\x03\x02\x02\x02\u01CB\u01CC\x071\x02", "\x02\u01CC\u01CD\x07,\x02\x02\u01CD\u01D1\x03\x02\x02", "\x02\u01CE\u01D0\x0B\x02\x02\x02\u01CF\u01CE\x03\x02\x02", "\x02\u01D0\u01D3\x03\x02\x02\x02\u01D1\u01D2\x03\x02\x02", "\x02\u01D1\u01CF\x03\x02\x02\x02\u01D2\u01D4\x03\x02\x02", "\x02\u01D3\u01D1\x03\x02\x02\x02\u01D4\u01D5\x07,\x02", "\x02\u01D5\u01D6\x071\x02\x02\u01D6\u01D7\x03\x02\x02", "\x02\u01D7\u01D8\b>\x02\x02\u01D8|\x03\x02\x02\x02\u01D9", "\u01DA\x071\x02\x02\u01DA\u01DB\x071\x02\x02\u01DB\u01DF", "\x03\x02\x02\x02\u01DC\u01DE\n\t\x02\x02\u01DD\u01DC\x03", "\x02\x02\x02\u01DE\u01E1\x03\x02\x02\x02\u01DF\u01DD\x03", "\x02\x02\x02\u01DF\u01E0\x03\x02\x02\x02\u01E0\u01E2\x03", "\x02\x02\x02\u01E1\u01DF\x03\x02\x02\x02\u01E2\u01E3\b", "?\x02\x02\u01E3~\x03\x02\x02\x02\u01E4\u01E7\x07^\x02", "\x02\u01E5\u01E8\t\n\x02\x02\u01E6\u01E8\x05\x81A\x02\u01E7", "\u01E5\x03\x02\x02\x02\u01E7\u01E6\x03\x02\x02\x02\u01E8", "\x80\x03\x02\x02\x02\u01E9\u01EA\x07w\x02\x02\u01EA", "\u01EB\x05\x83B\x02\u01EB\u01EC\x05\x83B\x02\u01EC\u01ED", "\x05\x83B\x02\u01ED\u01EE\x05\x83B\x02\u01EE\x82\x03", "\x02\x02\x02\u01EF\u01F0\t\x0B\x02\x02\u01F0\x84\x03", "\x02\x02\x02\x1A\x02\u0170\u0172\u0174\u0177\u0189\u018B\u018D", "\u018F\u0198\u019B\u019E\u01A0\u01A6\u01A8\u01B0\u01B2\u01BA\u01C0\u01C2", "\u01C7\u01D1\u01DF\u01E7\x03\x02\x03\x02"].join("");
+var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x02A\u0203\b\x01\x04\x02\t\x02\x04\x03\t\x03\x04", "\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t", "\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04", "\f\t\f\x04\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10", "\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04\x13\t\x13", "\x04\x14\t\x14\x04\x15\t\x15\x04\x16\t\x16\x04\x17", "\t\x17\x04\x18\t\x18\x04\x19\t\x19\x04\x1A\t\x1A", "\x04\x1B\t\x1B\x04\x1C\t\x1C\x04\x1D\t\x1D\x04\x1E", "\t\x1E\x04\x1F\t\x1F\x04 \t \x04!\t!\x04\"\t\"\x04#", "\t#\x04$\t$\x04%\t%\x04&\t&\x04'\t'\x04(\t(\x04)\t)\x04", "*\t*\x04+\t+\x04,\t,\x04-\t-\x04.\t.\x04/\t/\x040\t0\x04", "1\t1\x042\t2\x043\t3\x044\t4\x045\t5\x046\t6\x047\t7\x04", "8\t8\x049\t9\x04:\t:\x04;\t;\x04<\t<\x04=\t=\x04>\t>\x04", "?\t?\x04@\t@\x04A\tA\x04B\tB\x04C\tC\x04D\tD\x03\x02\x03", "\x02\x03\x03\x03\x03\x03\x04\x03\x04\x03\x05\x03", "\x05\x03\x06\x03\x06\x03\x07\x03\x07\x03\b\x03", "\b\x03\t\x03\t\x03\t\x03\t\x03\n\x03\n\x03\n\x03\n\x03", "\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r\x03\r\x03\x0E", "\x03\x0E\x03\x0F\x03\x0F\x03\x10\x03\x10\x03\x10", "\x03\x11\x03\x11\x03\x11\x03\x12\x03\x12\x03\x12", "\x03\x13\x03\x13\x03\x14\x03\x14\x03\x15\x03\x15", "\x03\x15\x03\x16\x03\x16\x03\x16\x03\x17\x03\x17", "\x03\x17\x03\x18\x03\x18\x03\x18\x03\x18\x03\x18", "\x03\x18\x03\x18\x03\x18\x03\x18\x03\x19\x03\x19", "\x03\x19\x03\x19\x03\x1A\x03\x1A\x03\x1A\x03\x1B", "\x03\x1B\x03\x1B\x03\x1B\x03\x1C\x03\x1C\x03\x1C", "\x03\x1C\x03\x1C\x03\x1C\x03\x1C\x03\x1C\x03\x1D", "\x03\x1D\x03\x1E\x03\x1E\x03\x1F\x03\x1F\x03 ", "\x03 \x03!\x03!\x03!\x03!\x03!\x03\"\x03\"\x03\"\x03", "\"\x03\"\x03\"\x03#\x03#\x03$\x03$\x03$\x03$\x03$", "\x03$\x03%\x03%\x03%\x03%\x03%\x03%\x03%\x03&\x03", "&\x03&\x03&\x03&\x03&\x03&\x03'\x03'\x03(\x03(\x03", "(\x03(\x03(\x03)\x03)\x03)\x03)\x03)\x03)\x03*\x03", "*\x03*\x03*\x03*\x03+\x03+\x03+\x03+\x03,\x03,\x03", ",\x03,\x03,\x03-\x03-\x03-\x03-\x03-\x03-\x03-\x03", ".\x03.\x03.\x03.\x03.\x03.\x03.\x03/\x03/\x03/\x03", "/\x03/\x03/\x03/\x03/\x03/\x03/\x03/\x03/\x030\x03", "0\x030\x030\x030\x030\x031\x031\x031\x031\x031\x03", "1\x031\x032\x032\x032\x032\x032\x032\x033\x033\x03", "3\x033\x033\x034\x034\x034\x034\x034\x034\x035\x03", "5\x035\x035\x035\x035\x035\x035\x036\x036\x036\x03", "6\x036\x036\x036\x036\x037\x037\x037\x037\x037\x03", "7\x037\x037\x037\x037\x037\x037\x037\x038\x038\x03", "8\x038\x038\x038\x038\x038\x038\x038\x038\x038\x03", "8\x058\u0183\n8\x058\u0185\n8\x058\u0187\n8\x038\x058\u018A", "\n8\x039\x039\x039\x039\x03:\x03:\x03:\x03:\x03:\x03", ":\x03:\x03:\x03:\x03:\x06:\u019A\n:\r:\x0E:\u019B\x05", ":\u019E\n:\x05:\u01A0\n:\x05:\u01A2\n:\x03:\x03:\x03:\x03", ":\x03:\x03:\x03:\x05:\u01AB\n:\x03;\x05;\u01AE\n;\x03", ";\x07;\u01B1\n;\f;\x0E;\u01B4\x0B;\x03<\x03<\x03<\x07", "<\u01B9\n<\f<\x0E<\u01BC\x0B<\x03<\x03<\x03=\x03=\x03", "=\x07=\u01C3\n=\f=\x0E=\u01C6\x0B=\x03=\x03=\x03>\x06", ">\u01CB\n>\r>\x0E>\u01CC\x03>\x03>\x06>\u01D1\n>\r>\x0E>\u01D2", "\x05>\u01D5\n>\x03?\x06?\u01D8\n?\r?\x0E?\u01D9\x03?\x03", "?\x03@\x03@\x03@\x03@\x07@\u01E2\n@\f@\x0E@\u01E5\x0B", "@\x03@\x03@\x03@\x03@\x03@\x03A\x03A\x03A\x03A\x07", "A\u01F0\nA\fA\x0EA\u01F3\x0BA\x03A\x03A\x03B\x03B\x03", "B\x05B\u01FA\nB\x03C\x03C\x03C\x03C\x03C\x03C\x03D\x03", "D\x03\u01E3\x02E\x03\x03\x05\x04\x07\x05\t\x06\x0B", "\x07\r\b\x0F\t\x11\n\x13\x0B\x15\f\x17\r\x19\x0E\x1B", "\x0F\x1D\x10\x1F\x11!\x12#\x13%\x14'\x15)\x16+", "\x17-\x18/\x191\x1A3\x1B5\x1C7\x1D9\x1E;\x1F= ?!A", "\"C#E$G%I&K'M(O)Q*S+U,W-Y.[/]0_1a2c3e4g5i6k7m8o9q:s\x02u;w<y={>}", "?\x7F@\x81A\x83\x02\x85\x02\x87\x02\x03\x02\f\x03", "\x022;\x04\x02--//\x05\x02C\\aac|\x06\x022;C\\aac|\x04", "\x02^^bb\x03\x02))\x05\x02\x0B\f\x0F\x0F\"\"\x04\x02", "\f\f\x0F\x0F\n\x02))11^^bbhhppttvv\x05\x022;CHch\x02\u0214", "\x02\x03\x03\x02\x02\x02\x02\x05\x03\x02\x02\x02", "\x02\x07\x03\x02\x02\x02\x02\t\x03\x02\x02\x02", "\x02\x0B\x03\x02\x02\x02\x02\r\x03\x02\x02\x02", "\x02\x0F\x03\x02\x02\x02\x02\x11\x03\x02\x02\x02", "\x02\x13\x03\x02\x02\x02\x02\x15\x03\x02\x02\x02", "\x02\x17\x03\x02\x02\x02\x02\x19\x03\x02\x02\x02", "\x02\x1B\x03\x02\x02\x02\x02\x1D\x03\x02\x02\x02", "\x02\x1F\x03\x02\x02\x02\x02!\x03\x02\x02\x02", "\x02#\x03\x02\x02\x02\x02%\x03\x02\x02\x02\x02", "'\x03\x02\x02\x02\x02)\x03\x02\x02\x02\x02+\x03", "\x02\x02\x02\x02-\x03\x02\x02\x02\x02/\x03\x02", "\x02\x02\x021\x03\x02\x02\x02\x023\x03\x02\x02", "\x02\x025\x03\x02\x02\x02\x027\x03\x02\x02\x02", "\x029\x03\x02\x02\x02\x02;\x03\x02\x02\x02\x02", "=\x03\x02\x02\x02\x02?\x03\x02\x02\x02\x02A\x03", "\x02\x02\x02\x02C\x03\x02\x02\x02\x02E\x03\x02", "\x02\x02\x02G\x03\x02\x02\x02\x02I\x03\x02\x02", "\x02\x02K\x03\x02\x02\x02\x02M\x03\x02\x02\x02", "\x02O\x03\x02\x02\x02\x02Q\x03\x02\x02\x02\x02", "S\x03\x02\x02\x02\x02U\x03\x02\x02\x02\x02W\x03", "\x02\x02\x02\x02Y\x03\x02\x02\x02\x02[\x03\x02", "\x02\x02\x02]\x03\x02\x02\x02\x02_\x03\x02\x02", "\x02\x02a\x03\x02\x02\x02\x02c\x03\x02\x02\x02", "\x02e\x03\x02\x02\x02\x02g\x03\x02\x02\x02\x02", "i\x03\x02\x02\x02\x02k\x03\x02\x02\x02\x02m\x03", "\x02\x02\x02\x02o\x03\x02\x02\x02\x02q\x03\x02", "\x02\x02\x02u\x03\x02\x02\x02\x02w\x03\x02\x02", "\x02\x02y\x03\x02\x02\x02\x02{\x03\x02\x02\x02", "\x02}\x03\x02\x02\x02\x02\x7F\x03\x02\x02\x02", "\x02\x81\x03\x02\x02\x02\x03\x89\x03\x02\x02\x02", "\x05\x8B\x03\x02\x02\x02\x07\x8D\x03\x02\x02\x02", "\t\x8F\x03\x02\x02\x02\x0B\x91\x03\x02\x02\x02", "\r\x93\x03\x02\x02\x02\x0F\x95\x03\x02\x02\x02", "\x11\x97\x03\x02\x02\x02\x13\x9B\x03\x02\x02\x02", "\x15\x9F\x03\x02\x02\x02\x17\xA1\x03\x02\x02\x02", "\x19\xA3\x03\x02\x02\x02\x1B\xA6\x03\x02\x02\x02", "\x1D\xA8\x03\x02\x02\x02\x1F\xAA\x03\x02\x02\x02", "!\xAD\x03\x02\x02\x02#\xB0\x03\x02\x02\x02%\xB3", "\x03\x02\x02\x02'\xB5\x03\x02\x02\x02)\xB7\x03", "\x02\x02\x02+\xBA\x03\x02\x02\x02-\xBD\x03\x02", "\x02\x02/\xC0\x03\x02\x02\x021\xC9\x03\x02\x02", "\x023\xCD\x03\x02\x02\x025\xD0\x03\x02\x02\x02", "7\xD4\x03\x02\x02\x029\xDC\x03\x02\x02\x02;\xDE", "\x03\x02\x02\x02=\xE0\x03\x02\x02\x02?\xE2\x03", "\x02\x02\x02A\xE4\x03\x02\x02\x02C\xE9\x03\x02", "\x02\x02E\xEF\x03\x02\x02\x02G\xF1\x03\x02\x02", "\x02I\xF7\x03\x02\x02\x02K\xFE\x03\x02\x02\x02", "M\u0105\x03\x02\x02\x02O\u0107\x03\x02\x02\x02Q\u010C", "\x03\x02\x02\x02S\u0112\x03\x02\x02\x02U\u0117\x03", "\x02\x02\x02W\u011B\x03\x02\x02\x02Y\u0120\x03\x02", "\x02\x02[\u0127\x03\x02\x02\x02]\u012E\x03\x02\x02", "\x02_\u013A\x03\x02\x02\x02a\u0140\x03\x02\x02\x02", "c\u0147\x03\x02\x02\x02e\u014D\x03\x02\x02\x02g\u0152", "\x03\x02\x02\x02i\u0158\x03\x02\x02\x02k\u0160\x03", "\x02\x02\x02m\u0168\x03\x02\x02\x02o\u0175\x03\x02", "\x02\x02q\u018B\x03\x02\x02\x02s\u018F\x03\x02\x02", "\x02u\u01AD\x03\x02\x02\x02w\u01B5\x03\x02\x02\x02", "y\u01BF\x03\x02\x02\x02{\u01CA\x03\x02\x02\x02}\u01D7", "\x03\x02\x02\x02\x7F\u01DD\x03\x02\x02\x02\x81\u01EB", "\x03\x02\x02\x02\x83\u01F6\x03\x02\x02\x02\x85\u01FB", "\x03\x02\x02\x02\x87\u0201\x03\x02\x02\x02\x89\x8A", "\x070\x02\x02\x8A\x04\x03\x02\x02\x02\x8B\x8C", "\x07]\x02\x02\x8C\x06\x03\x02\x02\x02\x8D\x8E", "\x07_\x02\x02\x8E\b\x03\x02\x02\x02\x8F\x90\x07", "-\x02\x02\x90\n\x03\x02\x02\x02\x91\x92\x07/\x02", "\x02\x92\f\x03\x02\x02\x02\x93\x94\x07,\x02\x02", "\x94\x0E\x03\x02\x02\x02\x95\x96\x071\x02\x02", "\x96\x10\x03\x02\x02\x02\x97\x98\x07f\x02\x02", "\x98\x99\x07k\x02\x02\x99\x9A\x07x\x02\x02\x9A", "\x12\x03\x02\x02\x02\x9B\x9C\x07o\x02\x02\x9C", "\x9D\x07q\x02\x02\x9D\x9E\x07f\x02\x02\x9E\x14", "\x03\x02\x02\x02\x9F\xA0\x07(\x02\x02\xA0\x16", "\x03\x02\x02\x02\xA1\xA2\x07~\x02\x02\xA2\x18", "\x03\x02\x02\x02\xA3\xA4\x07>\x02\x02\xA4\xA5", "\x07?\x02\x02\xA5\x1A\x03\x02\x02\x02\xA6\xA7", "\x07>\x02\x02\xA7\x1C\x03\x02\x02\x02\xA8\xA9", "\x07@\x02\x02\xA9\x1E\x03\x02\x02\x02\xAA\xAB", "\x07@\x02\x02\xAB\xAC\x07?\x02\x02\xAC \x03\x02", "\x02\x02\xAD\xAE\x07k\x02\x02\xAE\xAF\x07u\x02", "\x02\xAF\"\x03\x02\x02\x02\xB0\xB1\x07c\x02\x02", "\xB1\xB2\x07u\x02\x02\xB2$\x03\x02\x02\x02\xB3", "\xB4\x07?\x02\x02\xB4&\x03\x02\x02\x02\xB5\xB6", "\x07\x80\x02\x02\xB6(\x03\x02\x02\x02\xB7\xB8", "\x07#\x02\x02\xB8\xB9\x07?\x02\x02\xB9*\x03\x02", "\x02\x02\xBA\xBB\x07#\x02\x02\xBB\xBC\x07\x80", "\x02\x02\xBC,\x03\x02\x02\x02\xBD\xBE\x07k\x02", "\x02\xBE\xBF\x07p\x02\x02\xBF.\x03\x02\x02\x02", "\xC0\xC1\x07e\x02\x02\xC1\xC2\x07q\x02\x02\xC2", "\xC3\x07p\x02\x02\xC3\xC4\x07v\x02\x02\xC4\xC5", "\x07c\x02\x02\xC5\xC6\x07k\x02\x02\xC6\xC7\x07", "p\x02\x02\xC7\xC8\x07u\x02\x02\xC80\x03\x02\x02", "\x02\xC9\xCA\x07c\x02\x02\xCA\xCB\x07p\x02\x02", "\xCB\xCC\x07f\x02\x02\xCC2\x03\x02\x02\x02\xCD", "\xCE\x07q\x02\x02\xCE\xCF\x07t\x02\x02\xCF4\x03", "\x02\x02\x02\xD0\xD1\x07z\x02\x02\xD1\xD2\x07", "q\x02\x02\xD2\xD3\x07t\x02\x02\xD36\x03\x02\x02", "\x02\xD4\xD5\x07k\x02\x02\xD5\xD6\x07o\x02\x02", "\xD6\xD7\x07r\x02\x02\xD7\xD8\x07n\x02\x02\xD8", "\xD9\x07k\x02\x02\xD9\xDA\x07g\x02\x02\xDA\xDB", "\x07u\x02\x02\xDB8\x03\x02\x02\x02\xDC\xDD\x07", "*\x02\x02\xDD:\x03\x02\x02\x02\xDE\xDF\x07+\x02", "\x02\xDF<\x03\x02\x02\x02\xE0\xE1\x07}\x02\x02", "\xE1>\x03\x02\x02\x02\xE2\xE3\x07\x7F\x02\x02", "\xE3@\x03\x02\x02\x02\xE4\xE5\x07v\x02\x02\xE5", "\xE6\x07t\x02\x02\xE6\xE7\x07w\x02\x02\xE7\xE8", "\x07g\x02\x02\xE8B\x03\x02\x02\x02\xE9\xEA\x07", "h\x02\x02\xEA\xEB\x07c\x02\x02\xEB\xEC\x07n\x02", "\x02\xEC\xED\x07u\x02\x02\xED\xEE\x07g\x02\x02", "\xEED\x03\x02\x02\x02\xEF\xF0\x07'\x02\x02\xF0", "F\x03\x02\x02\x02\xF1\xF2\x07&\x02\x02\xF2\xF3", "\x07v\x02\x02\xF3\xF4\x07j\x02\x02\xF4\xF5\x07", "k\x02\x02\xF5\xF6\x07u\x02\x02\xF6H\x03\x02\x02", "\x02\xF7\xF8\x07&\x02\x02\xF8\xF9\x07k\x02\x02", "\xF9\xFA\x07p\x02\x02\xFA\xFB\x07f\x02\x02\xFB", "\xFC\x07g\x02\x02\xFC\xFD\x07z\x02\x02\xFDJ\x03", "\x02\x02\x02\xFE\xFF\x07&\x02\x02\xFF\u0100\x07", "v\x02\x02\u0100\u0101\x07q\x02\x02\u0101\u0102\x07v\x02", "\x02\u0102\u0103\x07c\x02\x02\u0103\u0104\x07n\x02\x02", "\u0104L\x03\x02\x02\x02\u0105\u0106\x07.\x02\x02\u0106", "N\x03\x02\x02\x02\u0107\u0108\x07{\x02\x02\u0108\u0109", "\x07g\x02\x02\u0109\u010A\x07c\x02\x02\u010A\u010B\x07", "t\x02\x02\u010BP\x03\x02\x02\x02\u010C\u010D\x07o\x02", "\x02\u010D\u010E\x07q\x02\x02\u010E\u010F\x07p\x02\x02", "\u010F\u0110\x07v\x02\x02\u0110\u0111\x07j\x02\x02\u0111", "R\x03\x02\x02\x02\u0112\u0113\x07y\x02\x02\u0113\u0114", "\x07g\x02\x02\u0114\u0115\x07g\x02\x02\u0115\u0116\x07", "m\x02\x02\u0116T\x03\x02\x02\x02\u0117\u0118\x07f\x02", "\x02\u0118\u0119\x07c\x02\x02\u0119\u011A\x07{\x02\x02", "\u011AV\x03\x02\x02\x02\u011B\u011C\x07j\x02\x02\u011C", "\u011D\x07q\x02\x02\u011D\u011E\x07w\x02\x02\u011E\u011F", "\x07t\x02\x02\u011FX\x03\x02\x02\x02\u0120\u0121\x07", "o\x02\x02\u0121\u0122\x07k\x02\x02\u0122\u0123\x07p\x02", "\x02\u0123\u0124\x07w\x02\x02\u0124\u0125\x07v\x02\x02", "\u0125\u0126\x07g\x02\x02\u0126Z\x03\x02\x02\x02\u0127", "\u0128\x07u\x02\x02\u0128\u0129\x07g\x02\x02\u0129\u012A", "\x07e\x02\x02\u012A\u012B\x07q\x02\x02\u012B\u012C\x07", "p\x02\x02\u012C\u012D\x07f\x02\x02\u012D\\\x03\x02\x02", "\x02\u012E\u012F\x07o\x02\x02\u012F\u0130\x07k\x02\x02", "\u0130\u0131\x07n\x02\x02\u0131\u0132\x07n\x02\x02\u0132", "\u0133\x07k\x02\x02\u0133\u0134\x07u\x02\x02\u0134\u0135", "\x07g\x02\x02\u0135\u0136\x07e\x02\x02\u0136\u0137\x07", "q\x02\x02\u0137\u0138\x07p\x02\x02\u0138\u0139\x07f\x02", "\x02\u0139^\x03\x02\x02\x02\u013A\u013B\x07{\x02\x02", "\u013B\u013C\x07g\x02\x02\u013C\u013D\x07c\x02\x02\u013D", "\u013E\x07t\x02\x02\u013E\u013F\x07u\x02\x02\u013F`\x03", "\x02\x02\x02\u0140\u0141\x07o\x02\x02\u0141\u0142\x07", "q\x02\x02\u0142\u0143\x07p\x02\x02\u0143\u0144\x07v\x02", "\x02\u0144\u0145\x07j\x02\x02\u0145\u0146\x07u\x02\x02", "\u0146b\x03\x02\x02\x02\u0147\u0148\x07y\x02\x02\u0148", "\u0149\x07g\x02\x02\u0149\u014A\x07g\x02\x02\u014A\u014B", "\x07m\x02\x02\u014B\u014C\x07u\x02\x02\u014Cd\x03\x02", "\x02\x02\u014D\u014E\x07f\x02\x02\u014E\u014F\x07c\x02", "\x02\u014F\u0150\x07{\x02\x02\u0150\u0151\x07u\x02\x02", "\u0151f\x03\x02\x02\x02\u0152\u0153\x07j\x02\x02\u0153", "\u0154\x07q\x02\x02\u0154\u0155\x07w\x02\x02\u0155\u0156", "\x07t\x02\x02\u0156\u0157\x07u\x02\x02\u0157h\x03\x02", "\x02\x02\u0158\u0159\x07o\x02\x02\u0159\u015A\x07k\x02", "\x02\u015A\u015B\x07p\x02\x02\u015B\u015C\x07w\x02\x02", "\u015C\u015D\x07v\x02\x02\u015D\u015E\x07g\x02\x02\u015E", "\u015F\x07u\x02\x02\u015Fj\x03\x02\x02\x02\u0160\u0161", "\x07u\x02\x02\u0161\u0162\x07g\x02\x02\u0162\u0163\x07", "e\x02\x02\u0163\u0164\x07q\x02\x02\u0164\u0165\x07p\x02", "\x02\u0165\u0166\x07f\x02\x02\u0166\u0167\x07u\x02\x02", "\u0167l\x03\x02\x02\x02\u0168\u0169\x07o\x02\x02\u0169", "\u016A\x07k\x02\x02\u016A\u016B\x07n\x02\x02\u016B\u016C", "\x07n\x02\x02\u016C\u016D\x07k\x02\x02\u016D\u016E\x07", "u\x02\x02\u016E\u016F\x07g\x02\x02\u016F\u0170\x07e\x02", "\x02\u0170\u0171\x07q\x02\x02\u0171\u0172\x07p\x02\x02", "\u0172\u0173\x07f\x02\x02\u0173\u0174\x07u\x02\x02\u0174", "n\x03\x02\x02\x02\u0175\u0176\x07B\x02\x02\u0176\u0177", "\t\x02\x02\x02\u0177\u0178\t\x02\x02\x02\u0178\u0179\t\x02", "\x02\x02\u0179\u0186\t\x02\x02\x02\u017A\u017B\x07/\x02", "\x02\u017B\u017C\t\x02\x02\x02\u017C\u0184\t\x02\x02\x02", "\u017D\u017E\x07/\x02\x02\u017E\u017F\t\x02\x02\x02\u017F", "\u0182\t\x02\x02\x02\u0180\u0181\x07V\x02\x02\u0181\u0183", "\x05s:\x02\u0182\u0180\x03\x02\x02\x02\u0182\u0183\x03", "\x02\x02\x02\u0183\u0185\x03\x02\x02\x02\u0184\u017D\x03", "\x02\x02\x02\u0184\u0185\x03\x02\x02\x02\u0185\u0187\x03", "\x02\x02\x02\u0186\u017A\x03\x02\x02\x02\u0186\u0187\x03", "\x02\x02\x02\u0187\u0189\x03\x02\x02\x02\u0188\u018A\x07", "\\\x02\x02\u0189\u0188\x03\x02\x02\x02\u0189\u018A\x03", "\x02\x02\x02\u018Ap\x03\x02\x02\x02\u018B\u018C\x07", "B\x02\x02\u018C\u018D\x07V\x02\x02\u018D\u018E\x05s:\x02", "\u018Er\x03\x02\x02\x02\u018F\u0190\t\x02\x02\x02\u0190", "\u01A1\t\x02\x02\x02\u0191\u0192\x07<\x02\x02\u0192\u0193", "\t\x02\x02\x02\u0193\u019F\t\x02\x02\x02\u0194\u0195\x07", "<\x02\x02\u0195\u0196\t\x02\x02\x02\u0196\u019D\t\x02\x02", "\x02\u0197\u0199\x070\x02\x02\u0198\u019A\t\x02\x02\x02", "\u0199\u0198\x03\x02\x02\x02\u019A\u019B\x03\x02\x02\x02", "\u019B\u0199\x03\x02\x02\x02\u019B\u019C\x03\x02\x02\x02", "\u019C\u019E\x03\x02\x02\x02\u019D\u0197\x03\x02\x02\x02", "\u019D\u019E\x03\x02\x02\x02\u019E\u01A0\x03\x02\x02\x02", "\u019F\u0194\x03\x02\x02\x02\u019F\u01A0\x03\x02\x02\x02", "\u01A0\u01A2\x03\x02\x02\x02\u01A1\u0191\x03\x02\x02\x02", "\u01A1\u01A2\x03\x02\x02\x02\u01A2\u01AA\x03\x02\x02\x02", "\u01A3\u01AB\x07\\\x02\x02\u01A4\u01A5\t\x03\x02\x02\u01A5", "\u01A6\t\x02\x02\x02\u01A6\u01A7\t\x02\x02\x02\u01A7\u01A8", "\x07<\x02\x02\u01A8\u01A9\t\x02\x02\x02\u01A9\u01AB\t\x02", "\x02\x02\u01AA\u01A3\x03\x02\x02\x02\u01AA\u01A4\x03\x02", "\x02\x02\u01AA\u01AB\x03\x02\x02\x02\u01ABt\x03\x02", "\x02\x02\u01AC\u01AE\t\x04\x02\x02\u01AD\u01AC\x03\x02", "\x02\x02\u01AE\u01B2\x03\x02\x02\x02\u01AF\u01B1\t\x05", "\x02\x02\u01B0\u01AF\x03\x02\x02\x02\u01B1\u01B4\x03\x02", "\x02\x02\u01B2\u01B0\x03\x02\x02\x02\u01B2\u01B3\x03\x02", "\x02\x02\u01B3v\x03\x02\x02\x02\u01B4\u01B2\x03\x02", "\x02\x02\u01B5\u01BA\x07b\x02\x02\u01B6\u01B9\x05\x83", "B\x02\u01B7\u01B9\n\x06\x02\x02\u01B8\u01B6\x03\x02\x02", "\x02\u01B8\u01B7\x03\x02\x02\x02\u01B9\u01BC\x03\x02\x02", "\x02\u01BA\u01B8\x03\x02\x02\x02\u01BA\u01BB\x03\x02\x02", "\x02\u01BB\u01BD\x03\x02\x02\x02\u01BC\u01BA\x03\x02\x02", "\x02\u01BD\u01BE\x07b\x02\x02\u01BEx\x03\x02\x02\x02", "\u01BF\u01C4\x07)\x02\x02\u01C0\u01C3\x05\x83B\x02\u01C1", "\u01C3\n\x07\x02\x02\u01C2\u01C0\x03\x02\x02\x02\u01C2", "\u01C1\x03\x02\x02\x02\u01C3\u01C6\x03\x02\x02\x02\u01C4", "\u01C2\x03\x02\x02\x02\u01C4\u01C5\x03\x02\x02\x02\u01C5", "\u01C7\x03\x02\x02\x02\u01C6\u01C4\x03\x02\x02\x02\u01C7", "\u01C8\x07)\x02\x02\u01C8z\x03\x02\x02\x02\u01C9\u01CB", "\t\x02\x02\x02\u01CA\u01C9\x03\x02\x02\x02\u01CB\u01CC", "\x03\x02\x02\x02\u01CC\u01CA\x03\x02\x02\x02\u01CC\u01CD", "\x03\x02\x02\x02\u01CD\u01D4\x03\x02\x02\x02\u01CE\u01D0", "\x070\x02\x02\u01CF\u01D1\t\x02\x02\x02\u01D0\u01CF\x03", "\x02\x02\x02\u01D1\u01D2\x03\x02\x02\x02\u01D2\u01D0\x03", "\x02\x02\x02\u01D2\u01D3\x03\x02\x02\x02\u01D3\u01D5\x03", "\x02\x02\x02\u01D4\u01CE\x03\x02\x02\x02\u01D4\u01D5\x03", "\x02\x02\x02\u01D5|\x03\x02\x02\x02\u01D6\u01D8\t\b\x02", "\x02\u01D7\u01D6\x03\x02\x02\x02\u01D8\u01D9\x03\x02\x02", "\x02\u01D9\u01D7\x03\x02\x02\x02\u01D9\u01DA\x03\x02\x02", "\x02\u01DA\u01DB\x03\x02\x02\x02\u01DB\u01DC\b?\x02\x02", "\u01DC~\x03\x02\x02\x02\u01DD\u01DE\x071\x02\x02\u01DE", "\u01DF\x07,\x02\x02\u01DF\u01E3\x03\x02\x02\x02\u01E0", "\u01E2\x0B\x02\x02\x02\u01E1\u01E0\x03\x02\x02\x02\u01E2", "\u01E5\x03\x02\x02\x02\u01E3\u01E4\x03\x02\x02\x02\u01E3", "\u01E1\x03\x02\x02\x02\u01E4\u01E6\x03\x02\x02\x02\u01E5", "\u01E3\x03\x02\x02\x02\u01E6\u01E7\x07,\x02\x02\u01E7", "\u01E8\x071\x02\x02\u01E8\u01E9\x03\x02\x02\x02\u01E9", "\u01EA\b@\x02\x02\u01EA\x80\x03\x02\x02\x02\u01EB\u01EC", "\x071\x02\x02\u01EC\u01ED\x071\x02\x02\u01ED\u01F1\x03", "\x02\x02\x02\u01EE\u01F0\n\t\x02\x02\u01EF\u01EE\x03\x02", "\x02\x02\u01F0\u01F3\x03\x02\x02\x02\u01F1\u01EF\x03\x02", "\x02\x02\u01F1\u01F2\x03\x02\x02\x02\u01F2\u01F4\x03\x02", "\x02\x02\u01F3\u01F1\x03\x02\x02\x02\u01F4\u01F5\bA\x02", "\x02\u01F5\x82\x03\x02\x02\x02\u01F6\u01F9\x07^\x02", "\x02\u01F7\u01FA\t\n\x02\x02\u01F8\u01FA\x05\x85C\x02\u01F9", "\u01F7\x03\x02\x02\x02\u01F9\u01F8\x03\x02\x02\x02\u01FA", "\x84\x03\x02\x02\x02\u01FB\u01FC\x07w\x02\x02\u01FC", "\u01FD\x05\x87D\x02\u01FD\u01FE\x05\x87D\x02\u01FE\u01FF", "\x05\x87D\x02\u01FF\u0200\x05\x87D\x02\u0200\x86\x03", "\x02\x02\x02\u0201\u0202\t\x0B\x02\x02\u0202\x88\x03", "\x02\x02\x02\x1A\x02\u0182\u0184\u0186\u0189\u019B\u019D\u019F", "\u01A1\u01AA\u01AD\u01B0\u01B2\u01B8\u01BA\u01C2\u01C4\u01CC\u01D2\u01D4", "\u01D9\u01E3\u01F1\u01F9\x03\x02\x03\x02"].join("");
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
 var decisionsToDFA = atn.decisionToState.map(function (ds, index) {
   return new antlr4.dfa.DFA(ds, index);
@@ -14576,42 +14462,44 @@ FHIRPathLexer.T__48 = 49;
 FHIRPathLexer.T__49 = 50;
 FHIRPathLexer.T__50 = 51;
 FHIRPathLexer.T__51 = 52;
-FHIRPathLexer.DATETIME = 53;
-FHIRPathLexer.TIME = 54;
-FHIRPathLexer.IDENTIFIER = 55;
-FHIRPathLexer.QUOTEDIDENTIFIER = 56;
-FHIRPathLexer.STRING = 57;
-FHIRPathLexer.NUMBER = 58;
-FHIRPathLexer.WS = 59;
-FHIRPathLexer.COMMENT = 60;
-FHIRPathLexer.LINE_COMMENT = 61;
+FHIRPathLexer.T__52 = 53;
+FHIRPathLexer.T__53 = 54;
+FHIRPathLexer.DATETIME = 55;
+FHIRPathLexer.TIME = 56;
+FHIRPathLexer.IDENTIFIER = 57;
+FHIRPathLexer.DELIMITEDIDENTIFIER = 58;
+FHIRPathLexer.STRING = 59;
+FHIRPathLexer.NUMBER = 60;
+FHIRPathLexer.WS = 61;
+FHIRPathLexer.COMMENT = 62;
+FHIRPathLexer.LINE_COMMENT = 63;
 FHIRPathLexer.prototype.channelNames = ["DEFAULT_TOKEN_CHANNEL", "HIDDEN"];
 FHIRPathLexer.prototype.modeNames = ["DEFAULT_MODE"];
-FHIRPathLexer.prototype.literalNames = [null, "'.'", "'['", "']'", "'+'", "'-'", "'*'", "'/'", "'div'", "'mod'", "'&'", "'|'", "'<='", "'<'", "'>'", "'>='", "'is'", "'as'", "'='", "'~'", "'!='", "'!~'", "'in'", "'contains'", "'and'", "'or'", "'xor'", "'implies'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", "'%'", "'$this'", "','", "'year'", "'month'", "'week'", "'day'", "'hour'", "'minute'", "'second'", "'millisecond'", "'years'", "'months'", "'weeks'", "'days'", "'hours'", "'minutes'", "'seconds'", "'milliseconds'"];
-FHIRPathLexer.prototype.symbolicNames = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "DATETIME", "TIME", "IDENTIFIER", "QUOTEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT"];
-FHIRPathLexer.prototype.ruleNames = ["T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", "T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", "T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", "T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", "T__33", "T__34", "T__35", "T__36", "T__37", "T__38", "T__39", "T__40", "T__41", "T__42", "T__43", "T__44", "T__45", "T__46", "T__47", "T__48", "T__49", "T__50", "T__51", "DATETIME", "TIME", "TIMEFORMAT", "IDENTIFIER", "QUOTEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT", "ESC", "UNICODE", "HEX"];
+FHIRPathLexer.prototype.literalNames = [null, "'.'", "'['", "']'", "'+'", "'-'", "'*'", "'/'", "'div'", "'mod'", "'&'", "'|'", "'<='", "'<'", "'>'", "'>='", "'is'", "'as'", "'='", "'~'", "'!='", "'!~'", "'in'", "'contains'", "'and'", "'or'", "'xor'", "'implies'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", "'%'", "'$this'", "'$index'", "'$total'", "','", "'year'", "'month'", "'week'", "'day'", "'hour'", "'minute'", "'second'", "'millisecond'", "'years'", "'months'", "'weeks'", "'days'", "'hours'", "'minutes'", "'seconds'", "'milliseconds'"];
+FHIRPathLexer.prototype.symbolicNames = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "DATETIME", "TIME", "IDENTIFIER", "DELIMITEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT"];
+FHIRPathLexer.prototype.ruleNames = ["T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", "T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", "T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", "T__25", "T__26", "T__27", "T__28", "T__29", "T__30", "T__31", "T__32", "T__33", "T__34", "T__35", "T__36", "T__37", "T__38", "T__39", "T__40", "T__41", "T__42", "T__43", "T__44", "T__45", "T__46", "T__47", "T__48", "T__49", "T__50", "T__51", "T__52", "T__53", "DATETIME", "TIME", "TIMEFORMAT", "IDENTIFIER", "DELIMITEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT", "ESC", "UNICODE", "HEX"];
 FHIRPathLexer.prototype.grammarFileName = "FHIRPath.g4";
 exports.FHIRPathLexer = FHIRPathLexer;
 
 /***/ }),
-/* 53 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
 // jshint ignore: start
 var antlr4 = __webpack_require__(4);
 
-var FHIRPathListener = __webpack_require__(54).FHIRPathListener;
+var FHIRPathListener = __webpack_require__(51).FHIRPathListener;
 
 var grammarFileName = "FHIRPath.g4";
-var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03?\x93\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x03\x02\x03\x02", "\x03\x02\x03\x02\x05\x02#\n\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x07\x02K\n\x02\f\x02\x0E\x02N\x0B\x02\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05", "\x03W\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x05\x04a\n\x04\x03", "\x05\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x05", "\x06i\n\x06\x03\x07\x03\x07\x03\x07\x05\x07n\n\x07", "\x03\x07\x03\x07\x03\b\x03\b\x03\b\x07\bu\n\b\f\b\x0E", "\bx\x0B\b\x03\t\x03\t\x05\t|\n\t\x03\n\x03\n\x03\n\x05", "\n\x81\n\n\x03\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r", "\x03\x0E\x03\x0E\x03\x0E\x07\x0E\x8C\n\x0E\f\x0E", "\x0E\x0E\x8F\x0B\x0E\x03\x0F\x03\x0F\x03\x0F\x02", "\x03\x02\x10\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16", "\x18\x1A\x1C\x02\x0E\x03\x02\x06\x07\x03\x02\b", "\x0B\x04\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02", "\x14\x17\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02", "\x12\x13\x03\x02\"#\x03\x02'.\x03\x02/6\x05\x02", "\x12\x13\x19\x199:\x02\xA2\x02\"\x03\x02\x02\x02", "\x04V\x03\x02\x02\x02\x06`\x03\x02\x02\x02\bb\x03", "\x02\x02\x02\nh\x03\x02\x02\x02\fj\x03\x02\x02\x02", "\x0Eq\x03\x02\x02\x02\x10y\x03\x02\x02\x02\x12", "\x80\x03\x02\x02\x02\x14\x82\x03\x02\x02\x02\x16", "\x84\x03\x02\x02\x02\x18\x86\x03\x02\x02\x02\x1A", "\x88\x03\x02\x02\x02\x1C\x90\x03\x02\x02\x02\x1E", "\x1F\b\x02\x01\x02\x1F#\x05\x04\x03\x02 !\t\x02", "\x02\x02!#\x05\x02\x02\r\"\x1E\x03\x02\x02\x02\"", " \x03\x02\x02\x02#L\x03\x02\x02\x02$%\f\f\x02\x02", "%&\t\x03\x02\x02&K\x05\x02\x02\r'(\f\x0B\x02\x02", "()\t\x04\x02\x02)K\x05\x02\x02\f*+\f\n\x02\x02+,\x07", "\r\x02\x02,K\x05\x02\x02\x0B-.\f\t\x02\x02./\t\x05", "\x02\x02/K\x05\x02\x02\n01\f\x07\x02\x0212\t\x06\x02", "\x022K\x05\x02\x02\b34\f\x06\x02\x0245\t\x07\x02\x02", "5K\x05\x02\x02\x0767\f\x05\x02\x0278\x07\x1A\x02", "\x028K\x05\x02\x02\x069:\f\x04\x02\x02:;\t\b\x02\x02", ";K\x05\x02\x02\x05<=\f\x03\x02\x02=>\x07\x1D\x02", "\x02>K\x05\x02\x02\x04?@\f\x0F\x02\x02@A\x07\x03", "\x02\x02AK\x05\n\x06\x02BC\f\x0E\x02\x02CD\x07\x04", "\x02\x02DE\x05\x02\x02\x02EF\x07\x05\x02\x02FK\x03", "\x02\x02\x02GH\f\b\x02\x02HI\t\t\x02\x02IK\x05\x18", "\r\x02J$\x03\x02\x02\x02J'\x03\x02\x02\x02J*\x03", "\x02\x02\x02J-\x03\x02\x02\x02J0\x03\x02\x02\x02", "J3\x03\x02\x02\x02J6\x03\x02\x02\x02J9\x03\x02\x02", "\x02J<\x03\x02\x02\x02J?\x03\x02\x02\x02JB\x03\x02", "\x02\x02JG\x03\x02\x02\x02KN\x03\x02\x02\x02LJ\x03", "\x02\x02\x02LM\x03\x02\x02\x02M\x03\x03\x02\x02", "\x02NL\x03\x02\x02\x02OW\x05\n\x06\x02PW\x05\x06", "\x04\x02QW\x05\b\x05\x02RS\x07\x1E\x02\x02ST\x05", "\x02\x02\x02TU\x07\x1F\x02\x02UW\x03\x02\x02\x02", "VO\x03\x02\x02\x02VP\x03\x02\x02\x02VQ\x03\x02\x02", "\x02VR\x03\x02\x02\x02W\x05\x03\x02\x02\x02XY\x07", " \x02\x02Ya\x07!\x02\x02Za\t\n\x02\x02[a\x07;\x02", "\x02\\a\x07<\x02\x02]a\x077\x02\x02^a\x078\x02\x02", "_a\x05\x10\t\x02`X\x03\x02\x02\x02`Z\x03\x02\x02", "\x02`[\x03\x02\x02\x02`\\\x03\x02\x02\x02`]\x03", "\x02\x02\x02`^\x03\x02\x02\x02`_\x03\x02\x02\x02", "a\x07\x03\x02\x02\x02bc\x07$\x02\x02cd\x05\x1C\x0F", "\x02d\t\x03\x02\x02\x02ei\x05\x1C\x0F\x02fi\x05", "\f\x07\x02gi\x07%\x02\x02he\x03\x02\x02\x02hf\x03", "\x02\x02\x02hg\x03\x02\x02\x02i\x0B\x03\x02\x02", "\x02jk\x05\x1C\x0F\x02km\x07\x1E\x02\x02ln\x05\x0E", "\b\x02ml\x03\x02\x02\x02mn\x03\x02\x02\x02no\x03", "\x02\x02\x02op\x07\x1F\x02\x02p\r\x03\x02\x02\x02", "qv\x05\x02\x02\x02rs\x07&\x02\x02su\x05\x02\x02", "\x02tr\x03\x02\x02\x02ux\x03\x02\x02\x02vt\x03\x02", "\x02\x02vw\x03\x02\x02\x02w\x0F\x03\x02\x02\x02", "xv\x03\x02\x02\x02y{\x07<\x02\x02z|\x05\x12\n\x02", "{z\x03\x02\x02\x02{|\x03\x02\x02\x02|\x11\x03\x02", "\x02\x02}\x81\x05\x14\x0B\x02~\x81\x05\x16\f\x02", "\x7F\x81\x07;\x02\x02\x80}\x03\x02\x02\x02\x80", "~\x03\x02\x02\x02\x80\x7F\x03\x02\x02\x02\x81", "\x13\x03\x02\x02\x02\x82\x83\t\x0B\x02\x02\x83", "\x15\x03\x02\x02\x02\x84\x85\t\f\x02\x02\x85\x17", "\x03\x02\x02\x02\x86\x87\x05\x1A\x0E\x02\x87\x19", "\x03\x02\x02\x02\x88\x8D\x05\x1C\x0F\x02\x89\x8A", "\x07\x03\x02\x02\x8A\x8C\x05\x1C\x0F\x02\x8B\x89", "\x03\x02\x02\x02\x8C\x8F\x03\x02\x02\x02\x8D\x8B", "\x03\x02\x02\x02\x8D\x8E\x03\x02\x02\x02\x8E\x1B", "\x03\x02\x02\x02\x8F\x8D\x03\x02\x02\x02\x90\x91", "\t\r\x02\x02\x91\x1D\x03\x02\x02\x02\r\"JLV`hmv{\x80", "\x8D"].join("");
+var serializedATN = ["\x03\u608B\uA72A\u8133\uB9ED\u417C\u3BE7\u7786\u5964", "\x03A\x97\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t", "\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07\x04", "\b\t\b\x04\t\t\t\x04\n\t\n\x04\x0B\t\x0B\x04\f\t\f\x04", "\r\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x03\x02\x03\x02", "\x03\x02\x03\x02\x05\x02#\n\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02", "\x07\x02K\n\x02\f\x02\x0E\x02N\x0B\x02\x03\x03\x03", "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05", "\x03W\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03", "\x04\x03\x04\x03\x04\x03\x04\x05\x04a\n\x04\x03", "\x05\x03\x05\x03\x05\x05\x05f\n\x05\x03\x06\x03", "\x06\x03\x06\x03\x06\x03\x06\x05\x06m\n\x06\x03", "\x07\x03\x07\x03\x07\x05\x07r\n\x07\x03\x07\x03", "\x07\x03\b\x03\b\x03\b\x07\by\n\b\f\b\x0E\b|\x0B\b\x03", "\t\x03\t\x05\t\x80\n\t\x03\n\x03\n\x03\n\x05\n\x85\n", "\n\x03\x0B\x03\x0B\x03\f\x03\f\x03\r\x03\r\x03\x0E", "\x03\x0E\x03\x0E\x07\x0E\x90\n\x0E\f\x0E\x0E\x0E", "\x93\x0B\x0E\x03\x0F\x03\x0F\x03\x0F\x02\x03\x02", "\x10\x02\x04\x06\b\n\f\x0E\x10\x12\x14\x16\x18\x1A", "\x1C\x02\x0E\x03\x02\x06\x07\x03\x02\b\x0B\x04", "\x02\x06\x07\f\f\x03\x02\x0E\x11\x03\x02\x14\x17", "\x03\x02\x18\x19\x03\x02\x1B\x1C\x03\x02\x12\x13", "\x03\x02\"#\x03\x02)0\x03\x0218\x05\x02\x12\x13", "\x18\x19;<\x02\xA9\x02\"\x03\x02\x02\x02\x04V\x03", "\x02\x02\x02\x06`\x03\x02\x02\x02\bb\x03\x02\x02", "\x02\nl\x03\x02\x02\x02\fn\x03\x02\x02\x02\x0Eu", "\x03\x02\x02\x02\x10}\x03\x02\x02\x02\x12\x84", "\x03\x02\x02\x02\x14\x86\x03\x02\x02\x02\x16\x88", "\x03\x02\x02\x02\x18\x8A\x03\x02\x02\x02\x1A\x8C", "\x03\x02\x02\x02\x1C\x94\x03\x02\x02\x02\x1E\x1F", "\b\x02\x01\x02\x1F#\x05\x04\x03\x02 !\t\x02\x02", "\x02!#\x05\x02\x02\r\"\x1E\x03\x02\x02\x02\" \x03", "\x02\x02\x02#L\x03\x02\x02\x02$%\f\f\x02\x02%&\t\x03", "\x02\x02&K\x05\x02\x02\r'(\f\x0B\x02\x02()\t\x04", "\x02\x02)K\x05\x02\x02\f*+\f\n\x02\x02+,\x07\r\x02", "\x02,K\x05\x02\x02\x0B-.\f\t\x02\x02./\t\x05\x02\x02", "/K\x05\x02\x02\n01\f\x07\x02\x0212\t\x06\x02\x022", "K\x05\x02\x02\b34\f\x06\x02\x0245\t\x07\x02\x025K", "\x05\x02\x02\x0767\f\x05\x02\x0278\x07\x1A\x02\x02", "8K\x05\x02\x02\x069:\f\x04\x02\x02:;\t\b\x02\x02;", "K\x05\x02\x02\x05<=\f\x03\x02\x02=>\x07\x1D\x02", "\x02>K\x05\x02\x02\x04?@\f\x0F\x02\x02@A\x07\x03", "\x02\x02AK\x05\n\x06\x02BC\f\x0E\x02\x02CD\x07\x04", "\x02\x02DE\x05\x02\x02\x02EF\x07\x05\x02\x02FK\x03", "\x02\x02\x02GH\f\b\x02\x02HI\t\t\x02\x02IK\x05\x18", "\r\x02J$\x03\x02\x02\x02J'\x03\x02\x02\x02J*\x03", "\x02\x02\x02J-\x03\x02\x02\x02J0\x03\x02\x02\x02", "J3\x03\x02\x02\x02J6\x03\x02\x02\x02J9\x03\x02\x02", "\x02J<\x03\x02\x02\x02J?\x03\x02\x02\x02JB\x03\x02", "\x02\x02JG\x03\x02\x02\x02KN\x03\x02\x02\x02LJ\x03", "\x02\x02\x02LM\x03\x02\x02\x02M\x03\x03\x02\x02", "\x02NL\x03\x02\x02\x02OW\x05\n\x06\x02PW\x05\x06", "\x04\x02QW\x05\b\x05\x02RS\x07\x1E\x02\x02ST\x05", "\x02\x02\x02TU\x07\x1F\x02\x02UW\x03\x02\x02\x02", "VO\x03\x02\x02\x02VP\x03\x02\x02\x02VQ\x03\x02\x02", "\x02VR\x03\x02\x02\x02W\x05\x03\x02\x02\x02XY\x07", " \x02\x02Ya\x07!\x02\x02Za\t\n\x02\x02[a\x07=\x02", "\x02\\a\x07>\x02\x02]a\x079\x02\x02^a\x07:\x02\x02", "_a\x05\x10\t\x02`X\x03\x02\x02\x02`Z\x03\x02\x02", "\x02`[\x03\x02\x02\x02`\\\x03\x02\x02\x02`]\x03", "\x02\x02\x02`^\x03\x02\x02\x02`_\x03\x02\x02\x02", "a\x07\x03\x02\x02\x02be\x07$\x02\x02cf\x05\x1C\x0F", "\x02df\x07=\x02\x02ec\x03\x02\x02\x02ed\x03\x02", "\x02\x02f\t\x03\x02\x02\x02gm\x05\x1C\x0F\x02hm", "\x05\f\x07\x02im\x07%\x02\x02jm\x07&\x02\x02km\x07", "'\x02\x02lg\x03\x02\x02\x02lh\x03\x02\x02\x02l", "i\x03\x02\x02\x02lj\x03\x02\x02\x02lk\x03\x02\x02", "\x02m\x0B\x03\x02\x02\x02no\x05\x1C\x0F\x02oq\x07", "\x1E\x02\x02pr\x05\x0E\b\x02qp\x03\x02\x02\x02q", "r\x03\x02\x02\x02rs\x03\x02\x02\x02st\x07\x1F\x02", "\x02t\r\x03\x02\x02\x02uz\x05\x02\x02\x02vw\x07", "(\x02\x02wy\x05\x02\x02\x02xv\x03\x02\x02\x02y|", "\x03\x02\x02\x02zx\x03\x02\x02\x02z{\x03\x02\x02", "\x02{\x0F\x03\x02\x02\x02|z\x03\x02\x02\x02}\x7F", "\x07>\x02\x02~\x80\x05\x12\n\x02\x7F~\x03\x02\x02", "\x02\x7F\x80\x03\x02\x02\x02\x80\x11\x03\x02\x02", "\x02\x81\x85\x05\x14\x0B\x02\x82\x85\x05\x16\f", "\x02\x83\x85\x07=\x02\x02\x84\x81\x03\x02\x02", "\x02\x84\x82\x03\x02\x02\x02\x84\x83\x03\x02\x02", "\x02\x85\x13\x03\x02\x02\x02\x86\x87\t\x0B\x02", "\x02\x87\x15\x03\x02\x02\x02\x88\x89\t\f\x02\x02", "\x89\x17\x03\x02\x02\x02\x8A\x8B\x05\x1A\x0E\x02", "\x8B\x19\x03\x02\x02\x02\x8C\x91\x05\x1C\x0F\x02", "\x8D\x8E\x07\x03\x02\x02\x8E\x90\x05\x1C\x0F\x02", "\x8F\x8D\x03\x02\x02\x02\x90\x93\x03\x02\x02\x02", "\x91\x8F\x03\x02\x02\x02\x91\x92\x03\x02\x02\x02", "\x92\x1B\x03\x02\x02\x02\x93\x91\x03\x02\x02\x02", "\x94\x95\t\r\x02\x02\x95\x1D\x03\x02\x02\x02\x0E", "\"JLV`elqz\x7F\x84\x91"].join("");
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
 var decisionsToDFA = atn.decisionToState.map(function (ds, index) {
   return new antlr4.dfa.DFA(ds, index);
 });
 var sharedContextCache = new antlr4.PredictionContextCache();
-var literalNames = [null, "'.'", "'['", "']'", "'+'", "'-'", "'*'", "'/'", "'div'", "'mod'", "'&'", "'|'", "'<='", "'<'", "'>'", "'>='", "'is'", "'as'", "'='", "'~'", "'!='", "'!~'", "'in'", "'contains'", "'and'", "'or'", "'xor'", "'implies'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", "'%'", "'$this'", "','", "'year'", "'month'", "'week'", "'day'", "'hour'", "'minute'", "'second'", "'millisecond'", "'years'", "'months'", "'weeks'", "'days'", "'hours'", "'minutes'", "'seconds'", "'milliseconds'"];
-var symbolicNames = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "DATETIME", "TIME", "IDENTIFIER", "QUOTEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT"];
+var literalNames = [null, "'.'", "'['", "']'", "'+'", "'-'", "'*'", "'/'", "'div'", "'mod'", "'&'", "'|'", "'<='", "'<'", "'>'", "'>='", "'is'", "'as'", "'='", "'~'", "'!='", "'!~'", "'in'", "'contains'", "'and'", "'or'", "'xor'", "'implies'", "'('", "')'", "'{'", "'}'", "'true'", "'false'", "'%'", "'$this'", "'$index'", "'$total'", "','", "'year'", "'month'", "'week'", "'day'", "'hour'", "'minute'", "'second'", "'millisecond'", "'years'", "'months'", "'weeks'", "'days'", "'hours'", "'minutes'", "'seconds'", "'milliseconds'"];
+var symbolicNames = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, "DATETIME", "TIME", "IDENTIFIER", "DELIMITEDIDENTIFIER", "STRING", "NUMBER", "WS", "COMMENT", "LINE_COMMENT"];
 var ruleNames = ["expression", "term", "literal", "externalConstant", "invocation", "functn", "paramList", "quantity", "unit", "dateTimePrecision", "pluralDateTimePrecision", "typeSpecifier", "qualifiedIdentifier", "identifier"];
 
 function FHIRPathParser(input) {
@@ -14683,15 +14571,17 @@ FHIRPathParser.T__48 = 49;
 FHIRPathParser.T__49 = 50;
 FHIRPathParser.T__50 = 51;
 FHIRPathParser.T__51 = 52;
-FHIRPathParser.DATETIME = 53;
-FHIRPathParser.TIME = 54;
-FHIRPathParser.IDENTIFIER = 55;
-FHIRPathParser.QUOTEDIDENTIFIER = 56;
-FHIRPathParser.STRING = 57;
-FHIRPathParser.NUMBER = 58;
-FHIRPathParser.WS = 59;
-FHIRPathParser.COMMENT = 60;
-FHIRPathParser.LINE_COMMENT = 61;
+FHIRPathParser.T__52 = 53;
+FHIRPathParser.T__53 = 54;
+FHIRPathParser.DATETIME = 55;
+FHIRPathParser.TIME = 56;
+FHIRPathParser.IDENTIFIER = 57;
+FHIRPathParser.DELIMITEDIDENTIFIER = 58;
+FHIRPathParser.STRING = 59;
+FHIRPathParser.NUMBER = 60;
+FHIRPathParser.WS = 61;
+FHIRPathParser.COMMENT = 62;
+FHIRPathParser.LINE_COMMENT = 63;
 FHIRPathParser.RULE_expression = 0;
 FHIRPathParser.RULE_term = 1;
 FHIRPathParser.RULE_literal = 2;
@@ -15203,6 +15093,7 @@ FHIRPathParser.prototype.expression = function (_p) {
     switch (this._input.LA(1)) {
       case FHIRPathParser.T__15:
       case FHIRPathParser.T__16:
+      case FHIRPathParser.T__21:
       case FHIRPathParser.T__22:
       case FHIRPathParser.T__27:
       case FHIRPathParser.T__29:
@@ -15210,10 +15101,12 @@ FHIRPathParser.prototype.expression = function (_p) {
       case FHIRPathParser.T__32:
       case FHIRPathParser.T__33:
       case FHIRPathParser.T__34:
+      case FHIRPathParser.T__35:
+      case FHIRPathParser.T__36:
       case FHIRPathParser.DATETIME:
       case FHIRPathParser.TIME:
       case FHIRPathParser.IDENTIFIER:
-      case FHIRPathParser.QUOTEDIDENTIFIER:
+      case FHIRPathParser.DELIMITEDIDENTIFIER:
       case FHIRPathParser.STRING:
       case FHIRPathParser.NUMBER:
         localctx = new TermExpressionContext(this, localctx);
@@ -15678,10 +15571,13 @@ FHIRPathParser.prototype.term = function () {
     switch (this._input.LA(1)) {
       case FHIRPathParser.T__15:
       case FHIRPathParser.T__16:
+      case FHIRPathParser.T__21:
       case FHIRPathParser.T__22:
       case FHIRPathParser.T__34:
+      case FHIRPathParser.T__35:
+      case FHIRPathParser.T__36:
       case FHIRPathParser.IDENTIFIER:
-      case FHIRPathParser.QUOTEDIDENTIFIER:
+      case FHIRPathParser.DELIMITEDIDENTIFIER:
         localctx = new InvocationTermContext(this, localctx);
         this.enterOuterAlt(localctx, 1);
         this.state = 77;
@@ -16049,6 +15945,10 @@ ExternalConstantContext.prototype.identifier = function () {
   return this.getTypedRuleContext(IdentifierContext, 0);
 };
 
+ExternalConstantContext.prototype.STRING = function () {
+  return this.getToken(FHIRPathParser.STRING, 0);
+};
+
 ExternalConstantContext.prototype.enterRule = function (listener) {
   if (listener instanceof FHIRPathListener) {
     listener.enterExternalConstant(this);
@@ -16071,8 +15971,29 @@ FHIRPathParser.prototype.externalConstant = function () {
     this.enterOuterAlt(localctx, 1);
     this.state = 96;
     this.match(FHIRPathParser.T__33);
-    this.state = 97;
-    this.identifier();
+    this.state = 99;
+
+    this._errHandler.sync(this);
+
+    switch (this._input.LA(1)) {
+      case FHIRPathParser.T__15:
+      case FHIRPathParser.T__16:
+      case FHIRPathParser.T__21:
+      case FHIRPathParser.T__22:
+      case FHIRPathParser.IDENTIFIER:
+      case FHIRPathParser.DELIMITEDIDENTIFIER:
+        this.state = 97;
+        this.identifier();
+        break;
+
+      case FHIRPathParser.STRING:
+        this.state = 98;
+        this.match(FHIRPathParser.STRING);
+        break;
+
+      default:
+        throw new antlr4.error.NoViableAltException(this);
+    }
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
       localctx.exception = re;
@@ -16112,6 +16033,28 @@ InvocationContext.prototype.copyFrom = function (ctx) {
   antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
 };
 
+function TotalInvocationContext(parser, ctx) {
+  InvocationContext.call(this, parser);
+  InvocationContext.prototype.copyFrom.call(this, ctx);
+  return this;
+}
+
+TotalInvocationContext.prototype = Object.create(InvocationContext.prototype);
+TotalInvocationContext.prototype.constructor = TotalInvocationContext;
+FHIRPathParser.TotalInvocationContext = TotalInvocationContext;
+
+TotalInvocationContext.prototype.enterRule = function (listener) {
+  if (listener instanceof FHIRPathListener) {
+    listener.enterTotalInvocation(this);
+  }
+};
+
+TotalInvocationContext.prototype.exitRule = function (listener) {
+  if (listener instanceof FHIRPathListener) {
+    listener.exitTotalInvocation(this);
+  }
+};
+
 function ThisInvocationContext(parser, ctx) {
   InvocationContext.call(this, parser);
   InvocationContext.prototype.copyFrom.call(this, ctx);
@@ -16131,6 +16074,28 @@ ThisInvocationContext.prototype.enterRule = function (listener) {
 ThisInvocationContext.prototype.exitRule = function (listener) {
   if (listener instanceof FHIRPathListener) {
     listener.exitThisInvocation(this);
+  }
+};
+
+function IndexInvocationContext(parser, ctx) {
+  InvocationContext.call(this, parser);
+  InvocationContext.prototype.copyFrom.call(this, ctx);
+  return this;
+}
+
+IndexInvocationContext.prototype = Object.create(InvocationContext.prototype);
+IndexInvocationContext.prototype.constructor = IndexInvocationContext;
+FHIRPathParser.IndexInvocationContext = IndexInvocationContext;
+
+IndexInvocationContext.prototype.enterRule = function (listener) {
+  if (listener instanceof FHIRPathListener) {
+    listener.enterIndexInvocation(this);
+  }
+};
+
+IndexInvocationContext.prototype.exitRule = function (listener) {
+  if (listener instanceof FHIRPathListener) {
+    listener.exitIndexInvocation(this);
   }
 };
 
@@ -16193,32 +16158,46 @@ FHIRPathParser.prototype.invocation = function () {
   this.enterRule(localctx, 8, FHIRPathParser.RULE_invocation);
 
   try {
-    this.state = 102;
+    this.state = 106;
 
     this._errHandler.sync(this);
 
-    var la_ = this._interp.adaptivePredict(this._input, 5, this._ctx);
+    var la_ = this._interp.adaptivePredict(this._input, 6, this._ctx);
 
     switch (la_) {
       case 1:
         localctx = new MemberInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 1);
-        this.state = 99;
+        this.state = 101;
         this.identifier();
         break;
 
       case 2:
         localctx = new FunctionInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 2);
-        this.state = 100;
+        this.state = 102;
         this.functn();
         break;
 
       case 3:
         localctx = new ThisInvocationContext(this, localctx);
         this.enterOuterAlt(localctx, 3);
-        this.state = 101;
+        this.state = 103;
         this.match(FHIRPathParser.T__34);
+        break;
+
+      case 4:
+        localctx = new IndexInvocationContext(this, localctx);
+        this.enterOuterAlt(localctx, 4);
+        this.state = 104;
+        this.match(FHIRPathParser.T__35);
+        break;
+
+      case 5:
+        localctx = new TotalInvocationContext(this, localctx);
+        this.enterOuterAlt(localctx, 5);
+        this.state = 105;
+        this.match(FHIRPathParser.T__36);
         break;
     }
   } catch (re) {
@@ -16285,22 +16264,22 @@ FHIRPathParser.prototype.functn = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 104;
+    this.state = 108;
     this.identifier();
-    this.state = 105;
+    this.state = 109;
     this.match(FHIRPathParser.T__27);
-    this.state = 107;
+    this.state = 111;
 
     this._errHandler.sync(this);
 
     _la = this._input.LA(1);
 
-    if ((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__3 | 1 << FHIRPathParser.T__4 | 1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__22 | 1 << FHIRPathParser.T__27 | 1 << FHIRPathParser.T__29)) !== 0 || (_la - 32 & ~0x1f) == 0 && (1 << _la - 32 & (1 << FHIRPathParser.T__31 - 32 | 1 << FHIRPathParser.T__32 - 32 | 1 << FHIRPathParser.T__33 - 32 | 1 << FHIRPathParser.T__34 - 32 | 1 << FHIRPathParser.DATETIME - 32 | 1 << FHIRPathParser.TIME - 32 | 1 << FHIRPathParser.IDENTIFIER - 32 | 1 << FHIRPathParser.QUOTEDIDENTIFIER - 32 | 1 << FHIRPathParser.STRING - 32 | 1 << FHIRPathParser.NUMBER - 32)) !== 0) {
-      this.state = 106;
+    if ((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__3 | 1 << FHIRPathParser.T__4 | 1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__21 | 1 << FHIRPathParser.T__22 | 1 << FHIRPathParser.T__27 | 1 << FHIRPathParser.T__29)) !== 0 || (_la - 32 & ~0x1f) == 0 && (1 << _la - 32 & (1 << FHIRPathParser.T__31 - 32 | 1 << FHIRPathParser.T__32 - 32 | 1 << FHIRPathParser.T__33 - 32 | 1 << FHIRPathParser.T__34 - 32 | 1 << FHIRPathParser.T__35 - 32 | 1 << FHIRPathParser.T__36 - 32 | 1 << FHIRPathParser.DATETIME - 32 | 1 << FHIRPathParser.TIME - 32 | 1 << FHIRPathParser.IDENTIFIER - 32 | 1 << FHIRPathParser.DELIMITEDIDENTIFIER - 32 | 1 << FHIRPathParser.STRING - 32 | 1 << FHIRPathParser.NUMBER - 32)) !== 0) {
+      this.state = 110;
       this.paramList();
     }
 
-    this.state = 109;
+    this.state = 113;
     this.match(FHIRPathParser.T__28);
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
@@ -16370,20 +16349,20 @@ FHIRPathParser.prototype.paramList = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 111;
+    this.state = 115;
     this.expression(0);
-    this.state = 116;
+    this.state = 120;
 
     this._errHandler.sync(this);
 
     _la = this._input.LA(1);
 
-    while (_la === FHIRPathParser.T__35) {
-      this.state = 112;
-      this.match(FHIRPathParser.T__35);
-      this.state = 113;
+    while (_la === FHIRPathParser.T__37) {
+      this.state = 116;
+      this.match(FHIRPathParser.T__37);
+      this.state = 117;
       this.expression(0);
-      this.state = 118;
+      this.state = 122;
 
       this._errHandler.sync(this);
 
@@ -16452,16 +16431,16 @@ FHIRPathParser.prototype.quantity = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 119;
+    this.state = 123;
     this.match(FHIRPathParser.NUMBER);
-    this.state = 121;
+    this.state = 125;
 
     this._errHandler.sync(this);
 
-    var la_ = this._interp.adaptivePredict(this._input, 8, this._ctx);
+    var la_ = this._interp.adaptivePredict(this._input, 9, this._ctx);
 
     if (la_ === 1) {
-      this.state = 120;
+      this.state = 124;
       this.unit();
     }
   } catch (re) {
@@ -16530,40 +16509,40 @@ FHIRPathParser.prototype.unit = function () {
   this.enterRule(localctx, 16, FHIRPathParser.RULE_unit);
 
   try {
-    this.state = 126;
+    this.state = 130;
 
     this._errHandler.sync(this);
 
     switch (this._input.LA(1)) {
-      case FHIRPathParser.T__36:
-      case FHIRPathParser.T__37:
       case FHIRPathParser.T__38:
       case FHIRPathParser.T__39:
       case FHIRPathParser.T__40:
       case FHIRPathParser.T__41:
       case FHIRPathParser.T__42:
       case FHIRPathParser.T__43:
+      case FHIRPathParser.T__44:
+      case FHIRPathParser.T__45:
         this.enterOuterAlt(localctx, 1);
-        this.state = 123;
+        this.state = 127;
         this.dateTimePrecision();
         break;
 
-      case FHIRPathParser.T__44:
-      case FHIRPathParser.T__45:
       case FHIRPathParser.T__46:
       case FHIRPathParser.T__47:
       case FHIRPathParser.T__48:
       case FHIRPathParser.T__49:
       case FHIRPathParser.T__50:
       case FHIRPathParser.T__51:
+      case FHIRPathParser.T__52:
+      case FHIRPathParser.T__53:
         this.enterOuterAlt(localctx, 2);
-        this.state = 124;
+        this.state = 128;
         this.pluralDateTimePrecision();
         break;
 
       case FHIRPathParser.STRING:
         this.enterOuterAlt(localctx, 3);
-        this.state = 125;
+        this.state = 129;
         this.match(FHIRPathParser.STRING);
         break;
 
@@ -16626,10 +16605,10 @@ FHIRPathParser.prototype.dateTimePrecision = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 128;
+    this.state = 132;
     _la = this._input.LA(1);
 
-    if (!((_la - 37 & ~0x1f) == 0 && (1 << _la - 37 & (1 << FHIRPathParser.T__36 - 37 | 1 << FHIRPathParser.T__37 - 37 | 1 << FHIRPathParser.T__38 - 37 | 1 << FHIRPathParser.T__39 - 37 | 1 << FHIRPathParser.T__40 - 37 | 1 << FHIRPathParser.T__41 - 37 | 1 << FHIRPathParser.T__42 - 37 | 1 << FHIRPathParser.T__43 - 37)) !== 0)) {
+    if (!((_la - 39 & ~0x1f) == 0 && (1 << _la - 39 & (1 << FHIRPathParser.T__38 - 39 | 1 << FHIRPathParser.T__39 - 39 | 1 << FHIRPathParser.T__40 - 39 | 1 << FHIRPathParser.T__41 - 39 | 1 << FHIRPathParser.T__42 - 39 | 1 << FHIRPathParser.T__43 - 39 | 1 << FHIRPathParser.T__44 - 39 | 1 << FHIRPathParser.T__45 - 39)) !== 0)) {
       this._errHandler.recoverInline(this);
     } else {
       this._errHandler.reportMatch(this);
@@ -16692,10 +16671,10 @@ FHIRPathParser.prototype.pluralDateTimePrecision = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 130;
+    this.state = 134;
     _la = this._input.LA(1);
 
-    if (!((_la - 45 & ~0x1f) == 0 && (1 << _la - 45 & (1 << FHIRPathParser.T__44 - 45 | 1 << FHIRPathParser.T__45 - 45 | 1 << FHIRPathParser.T__46 - 45 | 1 << FHIRPathParser.T__47 - 45 | 1 << FHIRPathParser.T__48 - 45 | 1 << FHIRPathParser.T__49 - 45 | 1 << FHIRPathParser.T__50 - 45 | 1 << FHIRPathParser.T__51 - 45)) !== 0)) {
+    if (!((_la - 47 & ~0x1f) == 0 && (1 << _la - 47 & (1 << FHIRPathParser.T__46 - 47 | 1 << FHIRPathParser.T__47 - 47 | 1 << FHIRPathParser.T__48 - 47 | 1 << FHIRPathParser.T__49 - 47 | 1 << FHIRPathParser.T__50 - 47 | 1 << FHIRPathParser.T__51 - 47 | 1 << FHIRPathParser.T__52 - 47 | 1 << FHIRPathParser.T__53 - 47)) !== 0)) {
       this._errHandler.recoverInline(this);
     } else {
       this._errHandler.reportMatch(this);
@@ -16761,7 +16740,7 @@ FHIRPathParser.prototype.typeSpecifier = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 132;
+    this.state = 136;
     this.qualifiedIdentifier();
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
@@ -16830,27 +16809,27 @@ FHIRPathParser.prototype.qualifiedIdentifier = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 134;
+    this.state = 138;
     this.identifier();
-    this.state = 139;
+    this.state = 143;
 
     this._errHandler.sync(this);
 
-    var _alt = this._interp.adaptivePredict(this._input, 10, this._ctx);
+    var _alt = this._interp.adaptivePredict(this._input, 11, this._ctx);
 
     while (_alt != 2 && _alt != antlr4.atn.ATN.INVALID_ALT_NUMBER) {
       if (_alt === 1) {
-        this.state = 135;
+        this.state = 139;
         this.match(FHIRPathParser.T__0);
-        this.state = 136;
+        this.state = 140;
         this.identifier();
       }
 
-      this.state = 141;
+      this.state = 145;
 
       this._errHandler.sync(this);
 
-      _alt = this._interp.adaptivePredict(this._input, 10, this._ctx);
+      _alt = this._interp.adaptivePredict(this._input, 11, this._ctx);
     }
   } catch (re) {
     if (re instanceof antlr4.error.RecognitionException) {
@@ -16891,8 +16870,8 @@ IdentifierContext.prototype.IDENTIFIER = function () {
   return this.getToken(FHIRPathParser.IDENTIFIER, 0);
 };
 
-IdentifierContext.prototype.QUOTEDIDENTIFIER = function () {
-  return this.getToken(FHIRPathParser.QUOTEDIDENTIFIER, 0);
+IdentifierContext.prototype.DELIMITEDIDENTIFIER = function () {
+  return this.getToken(FHIRPathParser.DELIMITEDIDENTIFIER, 0);
 };
 
 IdentifierContext.prototype.enterRule = function (listener) {
@@ -16916,10 +16895,10 @@ FHIRPathParser.prototype.identifier = function () {
 
   try {
     this.enterOuterAlt(localctx, 1);
-    this.state = 142;
+    this.state = 146;
     _la = this._input.LA(1);
 
-    if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__22)) !== 0 || _la === FHIRPathParser.IDENTIFIER || _la === FHIRPathParser.QUOTEDIDENTIFIER)) {
+    if (!((_la & ~0x1f) == 0 && (1 << _la & (1 << FHIRPathParser.T__15 | 1 << FHIRPathParser.T__16 | 1 << FHIRPathParser.T__21 | 1 << FHIRPathParser.T__22)) !== 0 || _la === FHIRPathParser.IDENTIFIER || _la === FHIRPathParser.DELIMITEDIDENTIFIER)) {
       this._errHandler.recoverInline(this);
     } else {
       this._errHandler.reportMatch(this);
@@ -16999,7 +16978,7 @@ FHIRPathParser.prototype.expression_sempred = function (localctx, predIndex) {
 exports.FHIRPathParser = FHIRPathParser;
 
 /***/ }),
-/* 54 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated from FHIRPath.g4 by ANTLR 4.7.1
@@ -17186,7 +17165,19 @@ FHIRPathListener.prototype.exitFunctionInvocation = function (ctx) {}; // Enter 
 FHIRPathListener.prototype.enterThisInvocation = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#thisInvocation.
 
 
-FHIRPathListener.prototype.exitThisInvocation = function (ctx) {}; // Enter a parse tree produced by FHIRPathParser#functn.
+FHIRPathListener.prototype.exitThisInvocation = function (ctx) {}; // Enter a parse tree produced by FHIRPathParser#indexInvocation.
+
+
+FHIRPathListener.prototype.enterIndexInvocation = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#indexInvocation.
+
+
+FHIRPathListener.prototype.exitIndexInvocation = function (ctx) {}; // Enter a parse tree produced by FHIRPathParser#totalInvocation.
+
+
+FHIRPathListener.prototype.enterTotalInvocation = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#totalInvocation.
+
+
+FHIRPathListener.prototype.exitTotalInvocation = function (ctx) {}; // Enter a parse tree produced by FHIRPathParser#functn.
 
 
 FHIRPathListener.prototype.enterFunctn = function (ctx) {}; // Exit a parse tree produced by FHIRPathParser#functn.
@@ -17245,7 +17236,7 @@ FHIRPathListener.prototype.exitIdentifier = function (ctx) {};
 exports.FHIRPathListener = FHIRPathListener;
 
 /***/ }),
-/* 55 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -17253,7 +17244,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // This file holds utility functions used in implementing the public functions.
 var util = {};
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var ResourceNode = types.ResourceNode;
 /**
@@ -17358,18 +17349,22 @@ util.valData = function (val) {
 module.exports = util;
 
 /***/ }),
-/* 56 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17383,10 +17378,13 @@ function _superPropBase(object, property) { while (!Object.prototype.hasOwnPrope
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var addMinutes = __webpack_require__(57);
+var addMinutes = __webpack_require__(54);
 
-var ucumUtils = __webpack_require__(62).UcumLhcUtils.getInstance();
+var ucumUtils = __webpack_require__(59).UcumLhcUtils.getInstance();
 
+var numbers = __webpack_require__(60);
+
+var ucumSystemUrl = 'http://unitsofmeasure.org';
 var timeFormat = '[0-9][0-9](\\:[0-9][0-9](\\:[0-9][0-9](\\.[0-9]+)?)?)?(Z|(\\+|-)[0-9][0-9]\\:[0-9][0-9])?';
 var timeRE = new RegExp('^T?' + timeFormat + '$');
 var dateTimeRE = new RegExp('^[0-9][0-9][0-9][0-9](-[0-9][0-9](-[0-9][0-9](T' + timeFormat + ')?)?)?Z?$'); // FHIR date/time regular expressions are slightly different.  For now, we will
@@ -17467,24 +17465,211 @@ var FP_Type = /*#__PURE__*/function () {
 var FP_Quantity = /*#__PURE__*/function (_FP_Type) {
   _inherits(FP_Quantity, _FP_Type);
 
+  var _super = _createSuper(FP_Quantity);
+
   function FP_Quantity(value, unit) {
     var _this;
 
     _classCallCheck(this, FP_Quantity);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(FP_Quantity).call(this));
+    _this = _super.call(this);
     _this.asStr = value + ' ' + unit;
     _this.value = value;
     _this.unit = unit;
     return _this;
   }
 
+  _createClass(FP_Quantity, [{
+    key: "equals",
+    value: function equals(otherQuantity) {
+      if (!(otherQuantity instanceof this.constructor)) {
+        return false;
+      }
+
+      if (this.unit === otherQuantity.unit) {
+        return numbers.isEqual(this.value, otherQuantity.value);
+      } // Special year/month comparison case: 1 year = 12 month
+
+
+      var compareYearsAndMonths = this._compareYearsAndMonths(otherQuantity);
+
+      if (compareYearsAndMonths) {
+        return compareYearsAndMonths.isEqual;
+      } // General comparison case
+
+
+      var thisQuantity = FP_Quantity.toUcumQuantity(this.value, this.unit),
+          normalizedOtherQuantity = FP_Quantity.toUcumQuantity(otherQuantity.value, otherQuantity.unit),
+          convResult = ucumUtils.convertUnitTo(normalizedOtherQuantity.unit, normalizedOtherQuantity.value, thisQuantity.unit);
+
+      if (convResult.status !== 'succeeded') {
+        return false;
+      }
+
+      return numbers.isEqual(thisQuantity.value, convResult.toVal);
+    }
+  }, {
+    key: "equivalentTo",
+    value: function equivalentTo(otherQuantity) {
+      if (!(otherQuantity instanceof this.constructor)) {
+        return false;
+      }
+
+      if (this.unit === otherQuantity.unit) {
+        return numbers.isEquivalent(this.value, otherQuantity.value);
+      }
+
+      var ucumUnitCode = FP_Quantity.getEquivalentUcumUnitCode(this.unit),
+          otherUcumUnitCode = FP_Quantity.getEquivalentUcumUnitCode(otherQuantity.unit),
+          convResult = ucumUtils.convertUnitTo(otherUcumUnitCode, otherQuantity.value, ucumUnitCode);
+
+      if (convResult.status !== 'succeeded') {
+        return false;
+      }
+
+      return numbers.isEquivalent(this.value, convResult.toVal);
+    }
+    /**
+     * If both quantities have one of these units: year or month,
+     * then a special case will apply; otherwise returns null.
+     * In the special case of comparison, the fact that 1 year = 12 months is used.
+     *
+     * Just note: in general, for a calendar duration:
+     * 1 year = 365 days
+     * 12 month = 12*30 days = 360 days
+     * so, 1 year != 12 month
+     * That's why this special case is needed
+     *
+     * @param {FP_Quantity} otherQuantity
+     * @return {null|{isEqual: boolean}}
+     * @private
+     */
+
+  }, {
+    key: "_compareYearsAndMonths",
+    value: function _compareYearsAndMonths(otherQuantity) {
+      var magnitude1 = FP_Quantity._yearMonthConversionFactor[this.unit],
+          magnitude2 = FP_Quantity._yearMonthConversionFactor[otherQuantity.unit];
+
+      if (magnitude1 && magnitude2) {
+        return {
+          isEqual: numbers.isEqual(this.value * magnitude1, otherQuantity.value * magnitude2)
+        };
+      }
+
+      return null;
+    }
+  }]);
+
   return FP_Quantity;
 }(FP_Type);
+
+var surroundingApostrophesRegex = /^'|'$/g;
+/**
+ * Converts a FHIR path unit to a UCUM unit code by converting a calendar duration keyword to an equivalent UCUM unit code
+ * or removing single quotes for a UCUM unit.
+ * @param {string} unit
+ * @return {string}
+ */
+
+FP_Quantity.getEquivalentUcumUnitCode = function (unit) {
+  return FP_Quantity.mapTimeUnitsToUCUMCode[unit] || unit.replace(surroundingApostrophesRegex, '');
+};
+/**
+ * Converts FHIR path value/unit to UCUM value/unit. Usable for comparison.
+ * @param {number} value
+ * @param {string} unit
+ * @returns { {value: number, unit: string} }
+ */
+
+
+FP_Quantity.toUcumQuantity = function (value, unit) {
+  var magnitude = FP_Quantity._calendarDuration2Seconds[unit];
+
+  if (magnitude) {
+    return {
+      value: magnitude * value,
+      unit: 's'
+    };
+  }
+
+  return {
+    value: value,
+    unit: unit.replace(surroundingApostrophesRegex, '')
+  };
+};
+/**
+ * Converts FHIRPath value/unit to other FHIRPath value/unit.
+ * @param {string} fromUnit
+ * @param {number} value
+ * @param {string} toUnit
+ * @return {FP_Quantity|null}
+ */
+
+
+FP_Quantity.convUnitTo = function (fromUnit, value, toUnit) {
+  // 1 Year <-> 12 Months
+  var fromYearMonthMagnitude = FP_Quantity._yearMonthConversionFactor[fromUnit],
+      toYearMonthMagnitude = FP_Quantity._yearMonthConversionFactor[toUnit];
+
+  if (fromYearMonthMagnitude && toYearMonthMagnitude) {
+    return new FP_Quantity(fromYearMonthMagnitude * value / toYearMonthMagnitude, toUnit);
+  }
+
+  var fromMagnitude = FP_Quantity._calendarDuration2Seconds[fromUnit],
+      toMagnitude = FP_Quantity._calendarDuration2Seconds[toUnit]; // To FHIR path calendar duration
+
+  if (toMagnitude) {
+    if (fromMagnitude) {
+      return new FP_Quantity(fromMagnitude * value / toMagnitude, toUnit);
+    } else {
+      var convResult = ucumUtils.convertUnitTo(fromUnit.replace(/^'|'$/g, ''), value, 's');
+
+      if (convResult.status === 'succeeded') {
+        return new FP_Quantity(convResult.toVal / toMagnitude, toUnit);
+      }
+    } // To Ucum unit
+
+  } else {
+    var _convResult = fromMagnitude ? ucumUtils.convertUnitTo('s', fromMagnitude * value, toUnit.replace(/^'|'$/g, '')) : ucumUtils.convertUnitTo(fromUnit.replace(/^'|'$/g, ''), value, toUnit.replace(/^'|'$/g, ''));
+
+    if (_convResult.status === 'succeeded') {
+      return new FP_Quantity(_convResult.toVal, toUnit);
+    }
+  }
+
+  return null;
+}; // Defines conversion factors for calendar durations
+
+
+FP_Quantity._calendarDuration2Seconds = {
+  'years': 365 * 24 * 60 * 60,
+  'months': 30 * 24 * 60 * 60,
+  'weeks': 7 * 24 * 60 * 60,
+  'days': 24 * 60 * 60,
+  'hours': 60 * 60,
+  'minutes': 60,
+  'seconds': 1,
+  'milliseconds': .001,
+  'year': 365 * 24 * 60 * 60,
+  'month': 30 * 24 * 60 * 60,
+  'week': 7 * 24 * 60 * 60,
+  'day': 24 * 60 * 60,
+  'hour': 60 * 60,
+  'minute': 60,
+  'second': 1,
+  'millisecond': .001
+}; // Defines special case to compare years with months for calendar durations
+
+FP_Quantity._yearMonthConversionFactor = {
+  'years': 12,
+  'months': 1,
+  'year': 12,
+  'month': 1
+};
 /**
  *  Defines a map from FHIRPath time units to UCUM.
  */
-
 
 FP_Quantity.timeUnitsToUCUM = {
   'years': "'a'",
@@ -17513,6 +17698,29 @@ FP_Quantity.timeUnitsToUCUM = {
   "'ms'": "'ms'"
 };
 /**
+ *  Defines a map from UCUM code to FHIRPath time units.
+ */
+
+FP_Quantity.mapUCUMCodeToTimeUnits = {
+  'a': "year",
+  'mo': "month",
+  'wk': "week",
+  'd': "day",
+  'h': "hour",
+  'min': "minute",
+  's': "second",
+  'ms': "millisecond"
+};
+/**
+ *  Defines a map from FHIRPath time units to UCUM code.
+ */
+
+FP_Quantity.mapTimeUnitsToUCUMCode = Object.keys(FP_Quantity.mapUCUMCodeToTimeUnits).reduce(function (res, key) {
+  res[FP_Quantity.mapUCUMCodeToTimeUnits[key]] = key;
+  res[FP_Quantity.mapUCUMCodeToTimeUnits[key] + 's'] = key;
+  return res;
+}, {});
+/**
  *  A map of the UCUM units that must be paired with integer values when doing
  *  arithmetic.
  */
@@ -17529,12 +17737,14 @@ FP_Quantity.integerUnits = {
 var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
   _inherits(FP_TimeBase, _FP_Type2);
 
+  var _super2 = _createSuper(FP_TimeBase);
+
   function FP_TimeBase(timeStr) {
     var _this2;
 
     _classCallCheck(this, FP_TimeBase);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(FP_TimeBase).call(this));
+    _this2 = _super2.call(this);
     _this2.asStr = timeStr;
     return _this2;
   }
@@ -17860,18 +18070,20 @@ var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
 
 
 FP_TimeBase.timeUnitToAddFn = {
-  "'a'": __webpack_require__(63),
-  "'mo'": __webpack_require__(64),
-  "'wk'": __webpack_require__(66),
-  "'d'": __webpack_require__(67),
-  "'h'": __webpack_require__(68),
-  "'min'": __webpack_require__(57),
-  "'s'": __webpack_require__(69),
-  "'ms'": __webpack_require__(58)
+  "'a'": __webpack_require__(61),
+  "'mo'": __webpack_require__(62),
+  "'wk'": __webpack_require__(64),
+  "'d'": __webpack_require__(65),
+  "'h'": __webpack_require__(66),
+  "'min'": __webpack_require__(54),
+  "'s'": __webpack_require__(67),
+  "'ms'": __webpack_require__(55)
 };
 
 var FP_DateTime = /*#__PURE__*/function (_FP_TimeBase) {
   _inherits(FP_DateTime, _FP_TimeBase);
+
+  var _super3 = _createSuper(FP_DateTime);
 
   /**
    *  Constructs an FP_DateTime, assuming dateStr is valid.  If you don't know
@@ -17880,7 +18092,7 @@ var FP_DateTime = /*#__PURE__*/function (_FP_TimeBase) {
   function FP_DateTime(dateStr) {
     _classCallCheck(this, FP_DateTime);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(FP_DateTime).call(this, dateStr));
+    return _super3.call(this, dateStr);
   }
   /**
    *  Returns -1, 0, or 1 if this date time is less then, equal to, or greater
@@ -18032,6 +18244,8 @@ FP_DateTime._datePrecisionToUnquotedUcum = ["a", "mo", "d", "h", "min", "s", "ms
 var FP_Time = /*#__PURE__*/function (_FP_TimeBase2) {
   _inherits(FP_Time, _FP_TimeBase2);
 
+  var _super4 = _createSuper(FP_Time);
+
   /**
    *  Constructs an FP_Time, assuming dateStr is valid.  If you don't know
    *  whether a string is a valid DateTime, use FP_Time.checkString instead.
@@ -18040,7 +18254,7 @@ var FP_Time = /*#__PURE__*/function (_FP_TimeBase2) {
     _classCallCheck(this, FP_Time);
 
     if (timeStr[0] == 'T') timeStr = timeStr.slice(1);
-    return _possibleConstructorReturn(this, _getPrototypeOf(FP_Time).call(this, timeStr));
+    return _super4.call(this, timeStr);
   }
   /**
    *  Returns -1, 0, or 1 if this time is less then, equal to, or greater
@@ -18276,11 +18490,13 @@ var ResourceNode = /*#__PURE__*/function () {
   function ResourceNode(data, path) {
     _classCallCheck(this, ResourceNode);
 
+    // console.log('>>>', path);
+    // console.log(JSON.stringify(data, null, 4));
     // If data is a resource (maybe a contained resource) reset the path
     // information to the resource type.
     if (data.resourceType) path = data.resourceType;
     this.path = path;
-    this.data = data;
+    this.data = getResourceNodeData(data, path);
   }
 
   _createClass(ResourceNode, [{
@@ -18292,6 +18508,26 @@ var ResourceNode = /*#__PURE__*/function () {
 
   return ResourceNode;
 }();
+/**
+ * Prepare data for ResourceNode:
+ * Converts value from FHIR Quantity to FHIRPath System.Quantity.
+ * The Mapping from FHIR Quantity to FHIRPath System.Quantity is explained here:
+ * https://www.hl7.org/fhir/fhirpath.html#quantity
+ * @param {Object|...} data
+ * @param {string} path
+ * @return {FP_Quantity|Object|...}
+ */
+
+
+function getResourceNodeData(data, path) {
+  if (path === 'Quantity' && data.system === ucumSystemUrl) {
+    if (typeof data.value === 'number' && typeof data.code === 'string') {
+      data = new FP_Quantity(data.value, FP_Quantity.mapUCUMCodeToTimeUnits[data.code] || '\'' + data.code + '\'');
+    }
+  }
+
+  return data;
+}
 /**
  *  Returns a ResourceNode for the given data node, checking first to see if the
  *  given node is already a ResourceNode.  Takes the same arguments as the
@@ -18315,10 +18551,10 @@ module.exports = {
 };
 
 /***/ }),
-/* 57 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 
 var MILLISECONDS_IN_MINUTE = 60000;
 /**
@@ -18346,10 +18582,10 @@ function addMinutes(dirtyDate, dirtyAmount) {
 module.exports = addMinutes;
 
 /***/ }),
-/* 58 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Millisecond Helpers
  * @summary Add the specified number of milliseconds to the given date.
@@ -18377,12 +18613,12 @@ function addMilliseconds(dirtyDate, dirtyAmount) {
 module.exports = addMilliseconds;
 
 /***/ }),
-/* 59 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getTimezoneOffsetInMilliseconds = __webpack_require__(60);
+var getTimezoneOffsetInMilliseconds = __webpack_require__(57);
 
-var isDate = __webpack_require__(61);
+var isDate = __webpack_require__(58);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -18709,7 +18945,7 @@ function dayOfISOYear(isoYear, week, day) {
 module.exports = parse;
 
 /***/ }),
-/* 60 */
+/* 57 */
 /***/ (function(module, exports) {
 
 var MILLISECONDS_IN_MINUTE = 60000;
@@ -18734,7 +18970,7 @@ module.exports = function getTimezoneOffsetInMilliseconds(dirtyDate) {
 };
 
 /***/ }),
-/* 61 */
+/* 58 */
 /***/ (function(module, exports) {
 
 /**
@@ -18759,16 +18995,107 @@ function isDate(argument) {
 module.exports = isDate;
 
 /***/ }),
-/* 62 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = LForms.ucumPkg;
 
 /***/ }),
-/* 63 */
+/* 60 */
+/***/ (function(module, exports) {
+
+var numberFns = {}; // Returns the number of digits in the number after the decimal point, ignoring
+// trailing zeros.
+
+function decimalPlaces(x) {
+  // Based on https://stackoverflow.com/a/9539746/360782
+  // Make sure it is a number and use the builtin number -> string.
+  var s = "" + +x,
+      match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
+  // We arbitrarily decide that Infinity is integral.
+
+  if (!match) {
+    return 0;
+  } // Count the number of digits in the fraction and subtract the
+  // exponent to simulate moving the decimal point left by exponent places.
+  // 1.234e+2 has 1 fraction digit and '234'.length -  2 == 1
+  // 1.234e-2 has 5 fraction digit and '234'.length - -2 == 5
+  //var wholeNum = match[1];
+
+
+  var fraction = match[2],
+      exponent = match[3];
+  return Math.max(0, // lower limit.
+  (fraction === '0' ? 0 : (fraction || '').length) - ( // fraction length
+  exponent || 0)); // exponent
+}
+/**
+ *  Rounds a number to the specified number of decimal places.
+ * @param x the decimal number to be rounded
+ * @param n the (maximum) number of decimal places to preserve.  (The result
+ *  could contain fewer if the decimal digits in x contain zeros).
+ */
+
+
+function roundToDecimalPlaces(x, n) {
+  var scale = Math.pow(10, n);
+  return Math.round(x * scale) / scale;
+}
+/**
+ *  The smallest representable number in FHIRPath.
+ */
+
+
+var PRECISION_STEP = 1e-8;
+/**
+ *  Rounds a number to the nearest multiple of PRECISION_STEP.
+ */
+
+function roundToMaxPrecision(x) {
+  return Math.round(x / PRECISION_STEP) * PRECISION_STEP;
+}
+/**
+ * Determines numbers equivalence
+ * @param {number} actual
+ * @param {number} expected
+ * @return {boolean}
+ */
+
+
+numberFns.isEquivalent = function (actual, expected) {
+  if (Number.isInteger(actual) && Number.isInteger(expected)) {
+    return actual === expected;
+  }
+
+  var prec = Math.min(decimalPlaces(actual), decimalPlaces(expected));
+
+  if (prec === 0) {
+    return Math.round(actual) === Math.round(expected);
+  } else {
+    // Note: Number.parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
+    // It does # of significant digits, not decimal places.
+    return roundToDecimalPlaces(actual, prec) === roundToDecimalPlaces(expected, prec);
+  }
+};
+/**
+ * Determines numbers equality
+ * @param {number} actual
+ * @param {number} expected
+ * @return {boolean}
+ */
+
+
+numberFns.isEqual = function (actual, expected) {
+  return roundToMaxPrecision(actual) === roundToMaxPrecision(expected);
+};
+
+module.exports = numberFns;
+
+/***/ }),
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMonths = __webpack_require__(64);
+var addMonths = __webpack_require__(62);
 /**
  * @category Year Helpers
  * @summary Add the specified number of years to the given date.
@@ -18795,12 +19122,12 @@ function addYears(dirtyDate, dirtyAmount) {
 module.exports = addYears;
 
 /***/ }),
-/* 64 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 
-var getDaysInMonth = __webpack_require__(65);
+var getDaysInMonth = __webpack_require__(63);
 /**
  * @category Month Helpers
  * @summary Add the specified number of months to the given date.
@@ -18836,10 +19163,10 @@ function addMonths(dirtyDate, dirtyAmount) {
 module.exports = addMonths;
 
 /***/ }),
-/* 65 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Month Helpers
  * @summary Get the number of days in a month of the given date.
@@ -18870,10 +19197,10 @@ function getDaysInMonth(dirtyDate) {
 module.exports = getDaysInMonth;
 
 /***/ }),
-/* 66 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addDays = __webpack_require__(67);
+var addDays = __webpack_require__(65);
 /**
  * @category Week Helpers
  * @summary Add the specified number of weeks to the given date.
@@ -18901,10 +19228,10 @@ function addWeeks(dirtyDate, dirtyAmount) {
 module.exports = addWeeks;
 
 /***/ }),
-/* 67 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parse = __webpack_require__(59);
+var parse = __webpack_require__(56);
 /**
  * @category Day Helpers
  * @summary Add the specified number of days to the given date.
@@ -18933,10 +19260,10 @@ function addDays(dirtyDate, dirtyAmount) {
 module.exports = addDays;
 
 /***/ }),
-/* 68 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 
 var MILLISECONDS_IN_HOUR = 3600000;
 /**
@@ -18964,10 +19291,10 @@ function addHours(dirtyDate, dirtyAmount) {
 module.exports = addHours;
 
 /***/ }),
-/* 69 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var addMilliseconds = __webpack_require__(58);
+var addMilliseconds = __webpack_require__(55);
 /**
  * @category Second Helpers
  * @summary Add the specified number of seconds to the given date.
@@ -18994,17 +19321,72 @@ function addSeconds(dirtyDate, dirtyAmount) {
 module.exports = addSeconds;
 
 /***/ }),
-/* 70 */
+/* 68 */
 /***/ (function(module, exports) {
 
-// isInteger (not in IE)
+// Binding the function Array.prototype.slice.call for convert Array-like objects/collections to a new Array.
+var slice = Function.prototype.call.bind(Array.prototype.slice); // isInteger (not in IE)
 // From Mozilla docs
+
 Number.isInteger = Number.isInteger || function (value) {
   return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
 };
 
+if (!String.prototype.startsWith) {
+  // From Mozilla docs with little changes
+  Object.defineProperty(String.prototype, 'startsWith', {
+    value: function value(searchString, position) {
+      position = position || 0;
+      return this.indexOf(searchString, position) === position;
+    }
+  });
+}
+
+if (!String.prototype.endsWith) {
+  // From Mozilla docs with little changes
+  Object.defineProperty(String.prototype, 'endsWith', {
+    value: function value(searchString, position) {
+      var subjectString = this.toString();
+
+      if (position === undefined || position > subjectString.length) {
+        position = subjectString.length;
+      }
+
+      position -= searchString.length;
+      var lastIndex = subjectString.indexOf(searchString, position);
+      return lastIndex !== -1 && lastIndex === position;
+    }
+  });
+}
+
+if (!String.prototype.includes) {
+  Object.defineProperty(String.prototype, 'includes', {
+    value: function value() {
+      return this.indexOf.apply(this, arguments) !== -1;
+    }
+  });
+}
+
+if (!Object.assign) {
+  // From Mozilla docs with little changes
+  Object.defineProperty(Object, 'assign', {
+    value: function value(target) {
+      if (target === undefined || target === null) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+
+      return slice(arguments, 1).reduce(function (to, nextSource) {
+        Object.keys(Object(nextSource)).forEach(function (nextKey) {
+          to[nextKey] = nextSource[nextKey];
+        });
+        return to;
+      }, Object(target));
+    }
+  });
+}
+
 /***/ }),
-/* 71 */
+/* 69 */
 /***/ (function(module, exports) {
 
 // These are values that should not change during an evaluation of a FHIRPath
@@ -19035,16 +19417,16 @@ module.exports = {
 };
 
 /***/ }),
-/* 72 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var filtering = __webpack_require__(73);
+var filtering = __webpack_require__(71);
 
 var engine = {};
 engine.emptyFn = util.isEmpty;
@@ -19224,7 +19606,7 @@ engine.countFn = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 73 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -19235,7 +19617,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 /**
  *  Adds the filtering and projection functions to the given FHIRPath engine.
  */
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
 var engine = {};
 
@@ -19344,13 +19726,13 @@ engine.ofTypeFn = function (coll, type) {
 module.exports = engine;
 
 /***/ }),
-/* 74 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Combining functions.
 var combineFns = {};
 
-var existence = __webpack_require__(72);
+var existence = __webpack_require__(70);
 
 combineFns.unionOp = function (coll1, coll2) {
   return existence.distinctFn(coll1.concat(coll2));
@@ -19363,15 +19745,16 @@ combineFns.combineFn = function (coll1, coll2) {
 module.exports = combineFns;
 
 /***/ }),
-/* 75 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
+var FP_Quantity = types.FP_Quantity;
 var engine = {};
 
 engine.iifMacro = function (data, cond, ok, fail) {
@@ -19421,6 +19804,42 @@ engine.toInteger = function (coll) {
   }
 
   return [];
+};
+
+var quantityRegex = /((\+|-)?\d+(\.\d+)?)\s*(('[^']+')|([a-zA-Z]+))?/,
+    quantityRegexMap = {
+  value: 1,
+  unit: 5,
+  time: 6
+};
+
+engine.toQuantity = function (coll, toUnit) {
+  var result;
+
+  if (coll.length > 1) {
+    throw new Error("Could not convert to quantity: input collection contains multiple items");
+  } else if (coll.length === 1) {
+    var item = coll[0],
+        v = util.valData(item);
+    var quantityRegexRes;
+
+    if (typeof v === "number") {
+      result = new FP_Quantity(v, '\'1\'');
+    } else if (v instanceof FP_Quantity) {
+      result = v;
+    } else if (typeof v === "string" && (quantityRegexRes = quantityRegex.exec(v))) {
+      var value = quantityRegexRes[quantityRegexMap.value],
+          unit = quantityRegexRes[quantityRegexMap.unit],
+          time = quantityRegexRes[quantityRegexMap.time];
+      result = new FP_Quantity(Number(value), unit || time || '\'1\'');
+    }
+
+    if (result && toUnit && result.unit !== toUnit) {
+      result = FP_Quantity.convUnitTo(result.unit, result.value, toUnit);
+    }
+  }
+
+  return result || [];
 };
 
 var numRegex = /^[+-]?\d+(\.\d+)?$/;
@@ -19490,15 +19909,15 @@ defineTimeConverter('FP_Time');
 module.exports = engine;
 
 /***/ }),
-/* 76 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var deepEqual = __webpack_require__(77);
+var deepEqual = __webpack_require__(75);
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_Type = types.FP_Type;
 var FP_DateTime = types.FP_DateTime;
@@ -19620,7 +20039,7 @@ engine.gte = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 77 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -19628,11 +20047,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 // Originally copied from node-deep-equal
 // (https://github.com/substack/node-deep-equal), with modifications.
 // For the license for node-deep-equal, see the bottom of this file.
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_Type = types.FP_Type;
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
+
+var numbers = __webpack_require__(60);
 
 var pSlice = Array.prototype.slice;
 var objectKeys = Object.keys;
@@ -19651,56 +20072,6 @@ function isNumber(n) {
 
 function normalizeStr(x) {
   return x.toUpperCase().replace(/\s+/, ' ');
-} // Returns the number of digits in the number after the decimal point, ignoring
-// trailing zeros.
-
-
-function decimalPlaces(x) {
-  // Based on https://stackoverflow.com/a/9539746/360782
-  // Make sure it is a number and use the builtin number -> string.
-  var s = "" + +x;
-  var match = /(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/.exec(s); // NaN or Infinity or integer.
-  // We arbitrarily decide that Infinity is integral.
-
-  if (!match) {
-    return 0;
-  } // Count the number of digits in the fraction and subtract the
-  // exponent to simulate moving the decimal point left by exponent places.
-  // 1.234e+2 has 1 fraction digit and '234'.length -  2 == 1
-  // 1.234e-2 has 5 fraction digit and '234'.length - -2 == 5
-  //var wholeNum = match[1];
-
-
-  var fraction = match[2];
-  var exponent = match[3];
-  return Math.max(0, // lower limit.
-  (fraction == '0' ? 0 : (fraction || '').length) - ( // fraction length
-  exponent || 0)); // exponent
-}
-/**
- *  The smallest representable number in FHIRPath.
- */
-
-
-var PRECISION_STEP = 1e-8;
-/**
- *  Rounds a number to the nearest multiple of PRECISION_STEP.
- */
-
-function roundToMaxPrecision(x) {
-  return Math.round(x / PRECISION_STEP) * PRECISION_STEP;
-}
-/**
- *  Rounds a number to the specified number of decimal places.
- * @param x the decimal number to be rounded
- * @param n the (maximum) number of decimal places to preserve.  (The result
- *  could contain fewer if the decimal digits in x contain zeros).
- */
-
-
-function roundToDecimalPlaces(x, n) {
-  var scale = Math.pow(10, n);
-  return Math.round(x * scale) / scale;
 }
 
 var deepEqual = function deepEqual(actual, expected, opts) {
@@ -19717,20 +20088,8 @@ var deepEqual = function deepEqual(actual, expected, opts) {
       return normalizeStr(actual) == normalizeStr(expected);
     }
 
-    if (Number.isInteger(actual) && Number.isInteger(expected)) {
-      return actual === expected;
-    }
-
     if (isNumber(actual) && isNumber(expected)) {
-      var prec = Math.min(decimalPlaces(actual), decimalPlaces(expected));
-
-      if (prec === 0) {
-        return Math.round(actual) === Math.round(expected);
-      } else {
-        // Note: Number.parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
-        // It does # of significant digits, not decimal places.
-        return roundToDecimalPlaces(actual, prec) === roundToDecimalPlaces(expected, prec);
-      }
+      return numbers.isEquivalent(actual, expected);
     }
   } else {
     // !opts.fuzzy
@@ -19738,7 +20097,7 @@ var deepEqual = function deepEqual(actual, expected, opts) {
     // precision to remove floating point arithmetic errors (e.g. 0.1+0.1+0.1 should
     // equal 0.3) before comparing.
     if (typeof actual === 'number' && typeof expected === 'number') {
-      return roundToMaxPrecision(actual) === roundToMaxPrecision(expected);
+      return numbers.isEqual(actual, expected);
     }
   }
 
@@ -19869,11 +20228,11 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /***/ }),
-/* 78 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var deepEqual = __webpack_require__(77);
+var deepEqual = __webpack_require__(75);
 
 var engine = {}; // b is assumed to have one element and it tests whether b[0] is in a
 
@@ -19926,16 +20285,16 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 79 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
 var FP_TimeBase = types.FP_TimeBase,
     FP_Quantity = types.FP_Quantity;
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 /**
  *  Adds the math functions to the given FHIRPath engine.
  */
@@ -20132,10 +20491,10 @@ engine.truncate = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 80 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
 var engine = {};
 
@@ -20199,14 +20558,14 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 81 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var util = __webpack_require__(55);
+var util = __webpack_require__(52);
 
-var _require = __webpack_require__(56),
+var _require = __webpack_require__(53),
     ResourceNode = _require.ResourceNode;
 
 var makeResNode = ResourceNode.makeResNode;
@@ -20262,14 +20621,14 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 82 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var engine = {};
 
-var types = __webpack_require__(56);
+var types = __webpack_require__(53);
 
-var constants = __webpack_require__(71);
+var constants = __webpack_require__(69);
 
 var FP_DateTime = types.FP_DateTime;
 /**
@@ -20312,7 +20671,7 @@ engine.today = function () {
 module.exports = engine;
 
 /***/ }),
-/* 83 */
+/* 81 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -20397,7 +20756,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 84 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -20409,29 +20768,29 @@ module.exports = {
    *  A hash of resource element paths (e.g. Observation.value) that are known
    *  to point to fiels that are choice types.
    */
-  choiceTypePaths: __webpack_require__(85),
+  choiceTypePaths: __webpack_require__(83),
 
   /**
    *  A hash from paths to the path for which their content is defined, e.g.
    *  Questionnaire.item.item -> Questionnaire.item.
    */
-  pathsDefinedElsewhere: __webpack_require__(86)
+  pathsDefinedElsewhere: __webpack_require__(84)
 };
 
 /***/ }),
-/* 85 */
+/* 83 */
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Age\",\"Period\",\"Range\",\"Duration\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"String\"],\"AuditEvent.entity.detail.value\":[\"String\",\"Base64Binary\"],\"BiologicallyDerivedProduct.collection.collected\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.manipulation.time\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.processing.time\":[\"DateTime\",\"Period\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ChargeItem.product\":[\"Reference\",\"CodeableConcept\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Claim.supportingInfo.timing\":[\"Date\",\"Period\"],\"Claim.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ClaimResponse.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ClaimResponse.addItem.serviced\":[\"Date\",\"Period\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\",\"Decimal\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Canonical\"],\"ConceptMap.target\":[\"Uri\",\"Canonical\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\"],\"Contract.legallyBinding\":[\"Attachment\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.action.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Contract.term.asset.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.term.offer.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Contract.term.topic\":[\"CodeableConcept\",\"Reference\"],\"Contract.topic\":[\"CodeableConcept\",\"Reference\"],\"Coverage.costToBeneficiary.value\":[\"Quantity\",\"Money\"],\"CoverageEligibilityRequest.item.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"CoverageEligibilityRequest.serviced\":[\"Date\",\"Period\"],\"CoverageEligibilityResponse.insurance.item.benefit.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.insurance.item.benefit.used\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.serviced\":[\"Date\",\"Period\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DataRequirement.subject\":[\"CodeableConcept\",\"Reference\"],\"DetectedIssue.identified\":[\"DateTime\",\"Period\"],\"DeviceDefinition.manufacturer\":[\"String\",\"Reference\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.doseAndRate.dose\":[\"Range\",\"Quantity\"],\"Dosage.doseAndRate.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Canonical\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"EventDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"EvidenceVariable.characteristic.definition\":[\"Reference\",\"Canonical\",\"CodeableConcept\",\"Expression\",\"DataRequirement\",\"TriggerDefinition\"],\"EvidenceVariable.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.supportingInfo.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Ratio\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\",\"Reference\"],\"GuidanceResponse.module\":[\"Uri\",\"Canonical\",\"CodeableConcept\"],\"Immunization.occurrence\":[\"DateTime\",\"String\"],\"Immunization.protocolApplied.doseNumber\":[\"PositiveInt\",\"String\"],\"Immunization.protocolApplied.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImplementationGuide.definition.page.name\":[\"Url\",\"Reference\"],\"ImplementationGuide.definition.resource.example\":[\"Boolean\",\"Canonical\"],\"ImplementationGuide.manifest.resource.example\":[\"Boolean\",\"Canonical\"],\"Invoice.lineItem.chargeItem\":[\"Reference\",\"CodeableConcept\"],\"Library.subject\":[\"CodeableConcept\",\"Reference\"],\"Measure.subject\":[\"CodeableConcept\",\"Reference\"],\"Media.created\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.statusReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic\":[\"CodeableConcept\",\"Quantity\"],\"MedicationKnowledge.drugCharacteristic.value\":[\"CodeableConcept\",\"String\",\"Quantity\",\"Base64Binary\"],\"MedicationKnowledge.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.reported\":[\"Boolean\",\"Reference\"],\"MedicationRequest.substitution.allowed\":[\"Boolean\",\"CodeableConcept\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProduct.specialDesignation.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductAuthorization.procedure.date\":[\"Period\",\"DateTime\"],\"MedicinalProductContraindication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductIndication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductInteraction.interactant.item\":[\"Reference\",\"CodeableConcept\"],\"MessageDefinition.event\":[\"Coding\",\"Uri\"],\"MessageHeader.event\":[\"Coding\",\"Uri\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\",\"Timing\",\"Instant\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.definition\":[\"Canonical\",\"Uri\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.subject\":[\"CodeableConcept\",\"Reference\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"PlanDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"Population.age\":[\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\",\"String\",\"Age\",\"Range\"],\"Provenance.occurred\":[\"Period\",\"DateTime\"],\"Questionnaire.item.answerOption.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\",\"Reference\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"ResearchDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ResearchElementDefinition.characteristic.definition\":[\"CodeableConcept\",\"Canonical\",\"Expression\",\"DataRequirement\"],\"ResearchElementDefinition.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.characteristic.studyEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"ServiceRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ServiceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ServiceRequest.quantity\":[\"Quantity\",\"Ratio\",\"Range\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.collection.fastingStatus\":[\"CodeableConcept\",\"Duration\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"SpecimenDefinition.typeTested.container.additive.additive\":[\"CodeableConcept\",\"Reference\"],\"SpecimenDefinition.typeTested.container.minimumVolume\":[\"Quantity\",\"String\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SubstanceAmount.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceReferenceInformation.target.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceSpecification.moiety.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.definingSubstance\":[\"Reference\",\"CodeableConcept\"],\"SubstanceSpecification.relationship.amount\":[\"Quantity\",\"Range\",\"Ratio\",\"String\"],\"SubstanceSpecification.relationship.substance\":[\"Reference\",\"CodeableConcept\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.timing\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Reference\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\",\"DateTime\"]}");
 
 /***/ }),
-/* 86 */
+/* 84 */
 /***/ (function(module) {
 
 module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.operation\":\"CapabilityStatement.rest.resource.operation\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ChargeItemDefinition.propertyGroup.applicability\":\"ChargeItemDefinition.applicability\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Consent.provision.provision\":\"Consent.provision\",\"Contract.term.asset.answer\":\"Contract.term.offer.answer\",\"Contract.term.group\":\"Contract.term\",\"ExampleScenario.process.step.alternative.step\":\"ExampleScenario.process.step\",\"ExampleScenario.process.step.operation.request\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.operation.response\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.process\":\"ExampleScenario.process\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.definition.page.page\":\"ImplementationGuide.definition.page\",\"Invoice.totalPriceComponent\":\"Invoice.lineItem.priceComponent\",\"MedicinalProductAuthorization.procedure.application\":\"MedicinalProductAuthorization.procedure\",\"MedicinalProductIngredient.substance.strength\":\"MedicinalProductIngredient.specifiedSubstance.strength\",\"MedicinalProductPackaged.packageItem.packageItem\":\"MedicinalProductPackaged.packageItem\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"SubstanceSpecification.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"SubstanceSpecification.name.synonym\":\"SubstanceSpecification.name\",\"SubstanceSpecification.name.translation\":\"SubstanceSpecification.name\",\"SubstanceSpecification.structure.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
 
 /***/ }),
-/* 87 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20448,7 +20807,7 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
-var LForms = __webpack_require__(88);
+var LForms = __webpack_require__(86);
 
 var dr = {
   // a prefix for references to Observation resources
@@ -21151,18 +21510,18 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 88 */
+/* 86 */
 /***/ (function(module, exports) {
 
 module.exports = LForms;
 
 /***/ }),
-/* 89 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(90);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(88);
 // R4-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -21205,7 +21564,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 90 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21222,7 +21581,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-var LForms = __webpack_require__(88);
+var LForms = __webpack_require__(86);
 
 var _versionTagStr = 'lformsVersion: ';
 /**
@@ -21432,7 +21791,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 91 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21899,7 +22258,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 92 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22922,7 +23281,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 93 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22962,7 +23321,9 @@ function addSDCImportFns(ns) {
         if (vs.resourceType === 'ValueSet') {
           var answers = self.answersFromVS(vs);
           if (!answers) answers = []; // continuing with previous default; not sure if needed
-          // support both id and url based lookup
+          // Support both id and url based lookup - we are only supporting our non-standard url approach
+          // for backward-compatibility with previous LForms versions. For more details on FHIR contained
+          // resource references, please see "http://hl7.org/fhir/references.html#canonical-fragments"
 
           var lfVS = {
             answers: answers
@@ -23640,7 +24001,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 94 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23795,14 +24156,14 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 95 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(88);
+var LForms = __webpack_require__(86);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -24995,13 +25356,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 96 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(97);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(95);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -25027,7 +25388,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 97 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

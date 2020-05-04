@@ -1,8 +1,5 @@
 function commonConfig() {
   return {
-    node: {
-      fs: "empty"
-    },
     output: {
       path: __dirname,
     },
@@ -26,7 +23,7 @@ function commonConfig() {
         }
       ]
     }
-  }
+  };
 }
 
 function makeConfigs(env) {
@@ -60,7 +57,7 @@ function makeConfigs(env) {
 
         let minConfig = commonConfig();
         minConfig.entry = entryFile;
-        minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js',
+        minConfig.output.filename = './dist/'+versionedDist+'/fhir/'+version+'/lformsFHIR.min.js';
         minConfig.mode = 'production';
         minConfig.externals = fhirExternals;
         minConfig.devtool = 'source-map';
@@ -71,7 +68,7 @@ function makeConfigs(env) {
     // All FHIR versions together
     let allFHIRConfig = commonConfig();
     allFHIRConfig.entry = allFHIREntryFiles;
-    allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js',
+    allFHIRConfig.output.filename = './dist/'+versionedDist+'/fhir/lformsFHIRAll.min.js';
     allFHIRConfig.mode = 'production';
     allFHIRConfig.devtool = 'source-map';
     allFHIRConfig.externals = fhirExternals;
