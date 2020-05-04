@@ -368,7 +368,7 @@
                     "type": "choice",
                     "required": true,
                     "repeats": false,
-                    "answerValueSet": "#PHQ-9"
+                    "answerValueSet": "http://fhir.org/guides/argonaut-questionnaire/ValueSet/PHQ-9"
                 },
                 {
                     "extension": [
