@@ -1231,6 +1231,15 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(item.answers[1].text, 'Several days');
             assert.equal(item.answers[1].score, 1);
           });
+
+          it('should work when using url reference for contained ValueSet', function () {
+            var item = LForms.Util.findItem(qnForm.items, 'linkId', 'g1.q9');
+            assert.equal(item.questionCode, '44260-8');
+            assert.equal(item.dataType, 'CNE');
+            assert.equal(item.answers[1].code, 'LA6569-3');
+            assert.equal(item.answers[1].text, 'Several days');
+            assert.equal(item.answers[1].score, 1);
+          });
         });
 
         describe('Export to QuestionnaireResponse', function() {

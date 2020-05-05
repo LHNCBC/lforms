@@ -4,7 +4,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [24.1.2] 2020-05-04
 ### Fixed
-- Fixed contained valueset reference for R4 (from using url to using #vs-id)
+- Fixed contained valueset reference for R4 (from using url to using #vs-id),
+  but continue to support url-based reference only for the purpose of
+  backward-compatibility with previous LForms versions.
 
 ## [24.1.1] 2020-04-28
 ### Changed
