@@ -41,10 +41,10 @@ function addSDCImportFns(ns) {
 
           // support both id and url based lookup. STU3 reference is quite vague.
           var lfVS = {answers: answers};
-          if(vs.id !== undefined) {
+          if(vs.id) {
             answersVS['#' + vs.id] = lfVS;
           }
-          if(vs.url !== undefined) {
+          if(vs.url) {
             answersVS[vs.url] = lfVS;
           }
         }

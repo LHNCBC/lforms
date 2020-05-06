@@ -19072,7 +19072,7 @@ numberFns.isEquivalent = function (actual, expected) {
   if (prec === 0) {
     return Math.round(actual) === Math.round(expected);
   } else {
-    // Note: Number.parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
+    // Note: parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
     // It does # of significant digits, not decimal places.
     return roundToDecimalPlaces(actual, prec) === roundToDecimalPlaces(expected, prec);
   }
@@ -19865,7 +19865,7 @@ engine.toDecimal = function (coll) {
 
   if (typeof v === "string") {
     if (numRegex.test(v)) {
-      return Number.parseFloat(v);
+      return parseFloat(v);
     } else {
       throw new Error("Could not convert to decimal: " + v);
     }
@@ -23321,10 +23321,21 @@ function addSDCImportFns(ns) {
         if (vs.resourceType === 'ValueSet') {
           var answers = self.answersFromVS(vs);
           if (!answers) answers = []; // continuing with previous default; not sure if needed
+          // Support both id and url based lookup - we are only supporting our non-standard url approach
+          // for backward-compatibility with previous LForms versions. For more details on FHIR contained
+          // resource references, please see "http://hl7.org/fhir/references.html#canonical-fragments"
 
-          answersVS[vs.url] = {
+          var lfVS = {
             answers: answers
           };
+
+          if (vs.id) {
+            answersVS['#' + vs.id] = lfVS;
+          }
+
+          if (vs.url) {
+            answersVS[vs.url] = lfVS;
+          }
         }
       });
     }

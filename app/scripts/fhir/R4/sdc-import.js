@@ -36,7 +36,17 @@ function addSDCImportFns(ns) {
           var answers = self.answersFromVS(vs);
           if (!answers)
             answers = []; // continuing with previous default; not sure if needed
-          answersVS[vs.url] = {answers: answers};
+
+          // Support both id and url based lookup - we are only supporting our non-standard url approach
+          // for backward-compatibility with previous LForms versions. For more details on FHIR contained
+          // resource references, please see "http://hl7.org/fhir/references.html#canonical-fragments"
+          var lfVS = {answers: answers};
+          if(vs.id) {
+            answersVS['#' + vs.id] = lfVS;
+          }
+          if(vs.url) {
+            answersVS[vs.url] = lfVS;
+          }
         }
       });
     }

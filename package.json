@@ -1,6 +1,6 @@
 {
   "name": "lforms",
-  "version": "24.1.1",
+  "version": "24.1.2",
   "keywords": [
     "fhir",
     "Questionnaire",
@@ -20,7 +20,7 @@
     "bootstrap-ui-datetime-picker": "^2.6.4",
     "element-resize-detector": "^1.1.15",
     "es6-promise": "^4.2.8",
-    "fhirpath": "^2.1.3",
+    "fhirpath": "^2.1.4",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "moment": "^2.24.0",

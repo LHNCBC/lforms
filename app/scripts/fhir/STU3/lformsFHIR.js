@@ -19072,7 +19072,7 @@ numberFns.isEquivalent = function (actual, expected) {
   if (prec === 0) {
     return Math.round(actual) === Math.round(expected);
   } else {
-    // Note: Number.parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
+    // Note: parseFloat(0.00000011).toPrecision(7) ===  "1.100000e-7"
     // It does # of significant digits, not decimal places.
     return roundToDecimalPlaces(actual, prec) === roundToDecimalPlaces(expected, prec);
   }
@@ -19865,7 +19865,7 @@ engine.toDecimal = function (coll) {
 
   if (typeof v === "string") {
     if (numRegex.test(v)) {
-      return Number.parseFloat(v);
+      return parseFloat(v);
     } else {
       throw new Error("Could not convert to decimal: " + v);
     }
@@ -23344,11 +23344,11 @@ function addSDCImportFns(ns) {
             answers: answers
           };
 
-          if (vs.id !== undefined) {
+          if (vs.id) {
             answersVS['#' + vs.id] = lfVS;
           }
 
-          if (vs.url !== undefined) {
+          if (vs.url) {
             answersVS[vs.url] = lfVS;
           }
         }
