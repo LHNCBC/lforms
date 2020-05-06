@@ -41,10 +41,10 @@ function addSDCImportFns(ns) {
           // for backward-compatibility with previous LForms versions. For more details on FHIR contained
           // resource references, please see "http://hl7.org/fhir/references.html#canonical-fragments"
           var lfVS = {answers: answers};
-          if(vs.id !== undefined) {
+          if(vs.id) {
             answersVS['#' + vs.id] = lfVS;
           }
-          if(vs.url !== undefined) {
+          if(vs.url) {
             answersVS[vs.url] = lfVS;
           }
         }

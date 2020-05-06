@@ -23344,11 +23344,11 @@ function addSDCImportFns(ns) {
             answers: answers
           };
 
-          if (vs.id !== undefined) {
+          if (vs.id) {
             answersVS['#' + vs.id] = lfVS;
           }
 
-          if (vs.url !== undefined) {
+          if (vs.url) {
             answersVS[vs.url] = lfVS;
           }
         }
