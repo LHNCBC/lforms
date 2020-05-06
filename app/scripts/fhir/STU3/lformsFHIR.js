@@ -24346,7 +24346,7 @@ function addCommonSDCImportFns(ns) {
 
               var originalSD = this._significantDigits(val.value);
 
-              if (originalSD > 0) val.value = Number.parseFloat(result.toVal.toPrecision(originalSD));else val.value = result.toVal;
+              if (originalSD > 0) val.value = parseFloat(result.toVal.toPrecision(originalSD));else val.value = result.toVal;
               val.code = ucumUnit.code;
             }
           }
