@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [24.1.3] 2020-05-06
 ### Fixed
-- Using "Number.parseFloat" replaced with "parseFloat" for IE11
+- Replaced "Number.parseFloat" with "parseFloat" for IE11
 
 ## [24.1.2] 2020-05-04
 ### Fixed
