@@ -245,7 +245,7 @@ function addCommonSDCImportFns(ns) {
               // input value.
               var originalSD = this._significantDigits(val.value);
               if (originalSD > 0)
-                val.value = Number.parseFloat(result.toVal.toPrecision(originalSD));
+                val.value = parseFloat(result.toVal.toPrecision(originalSD));
               else
                 val.value = result.toVal;
               val.code = ucumUnit.code;
