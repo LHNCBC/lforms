@@ -6127,13 +6127,31 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       return angular.copy(ret);
     },
+    //
+    // /**
+    //  *  Returns true if the given item's value is empty.
+    //  * @param item an LFormsData entry from "items".
+    //  */
+    // isEmpty: function(item) {
+    //   return item.value === undefined || item.value === null;
+    // },
 
     /**
-     *  Retuns true if the given item's value is empty.
+     *  Returns true if the given item's value is empty and its subtree has not values too.
      * @param item an LFormsData entry from "items".
      */
-    isEmpty: function isEmpty(item) {
-      return item.value === undefined || item.value === null;
+    isSubTreeEmpty: function isSubTreeEmpty(item) {
+      var valueEmpty = item.value === undefined || item.value === null || item.value === "";
+      var subTreeEmpty = true;
+
+      if (valueEmpty && item.items && item.items.length > 0) {
+        for (var i = 0, iLen = item.items.length; i < iLen; i++) {
+          subTreeEmpty = this.isSubTreeEmpty(item.items[i]);
+          if (!subTreeEmpty) break;
+        }
+      }
+
+      return valueEmpty && subTreeEmpty;
     },
 
     /**
@@ -6156,7 +6174,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
 
-        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || noEmptyValue && this.isEmpty(item) && !item.header) {
+        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || noEmptyValue && this.isSubTreeEmpty(item) && !item.header) {
           continue;
         } // include only the code and the value (and unit, other value) if no form definition data is needed
 
@@ -8646,7 +8664,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           }
         }
 
-        if (lfItem._elementId && (added || !this._lfData.isEmpty(lfItem))) {
+        if (lfItem._elementId && (added || !this._lfData.isSubTreeEmpty(lfItem))) {
           // this item has a value
           if (!qrItem) {
             // if there is data in lfItem, there should be a qrItem

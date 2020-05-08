@@ -819,10 +819,14 @@ function addCommonSDCExportFns(ns) {
    * @private
    */
   self._lfItemValueToFhirAnswer = function(item) {
+
+    // item could be an empty value if its sub-item has a value
+    if (!item.value)
+       return null;
+
     var dataType = this._getAssumedDataTypeForExport(item);
     var values = this._answerRepeats(item)? item.value: [item.value];
     var answers = [];
-
     for(var i=0; i < values.length; ++i) {
       var itemValue = values[i];
       if(itemValue !== undefined && itemValue !== null && itemValue !== '') {
