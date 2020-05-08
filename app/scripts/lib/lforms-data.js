@@ -1448,18 +1448,9 @@
       return angular.copy(ret);
     },
 
-    //
-    // /**
-    //  *  Returns true if the given item's value is empty.
-    //  * @param item an LFormsData entry from "items".
-    //  */
-    // isEmpty: function(item) {
-    //   return item.value === undefined || item.value === null;
-    // },
-
 
     /**
-     *  Returns true if the given item's value is empty and its subtree has not values too.
+     * Returns true if the given item and every sub items have no values.
      * @param item an LFormsData entry from "items".
      */
     isSubTreeEmpty: function(item) {

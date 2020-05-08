@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"24.1.3\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"24.1.4\"}");
 
 /***/ }),
 /* 7 */
@@ -6127,17 +6127,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       return angular.copy(ret);
     },
-    //
-    // /**
-    //  *  Returns true if the given item's value is empty.
-    //  * @param item an LFormsData entry from "items".
-    //  */
-    // isEmpty: function(item) {
-    //   return item.value === undefined || item.value === null;
-    // },
 
     /**
-     *  Returns true if the given item's value is empty and its subtree has not values too.
+     * Returns true if the given item and every sub items have no values.
      * @param item an LFormsData entry from "items".
      */
     isSubTreeEmpty: function isSubTreeEmpty(item) {
