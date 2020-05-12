@@ -820,7 +820,7 @@ function addCommonSDCExportFns(ns) {
    */
   self._lfItemValueToFhirAnswer = function(item) {
 
-    // item could be an empty value if its sub-item has a value
+    // item could have an empty value if its sub-item has a value
     if (!item.value)
        return null;
 

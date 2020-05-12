@@ -8654,10 +8654,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               }
             }
           }
-        }
+        } // this item has _elementId and has a value
 
-        if (lfItem._elementId && (added || !this._lfData.isSubTreeEmpty(lfItem))) {
-          // this item has a value
+
+        if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) {
             // if there is data in lfItem, there should be a qrItem
             throw new Error('Logic error in _addToIDtoQRItemMap');
