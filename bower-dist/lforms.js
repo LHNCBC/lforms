@@ -6117,10 +6117,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @returns {{itemsData: (*|Array), templateData: (*|Array)}} form data and template data
      */
     getUserData: function getUserData(noFormDefData, noEmptyValue, noDisabledItem, keepId) {
-      var ret = {};
+      var ret = {}; // check the value on each item and its subtree
+
+      this._checkSubTreeValues(this.items);
+
       ret.itemsData = this._processDataInItems(this.items, noFormDefData, noEmptyValue, noDisabledItem, keepId); // template options could be optional. Include them, only if they are present
 
       if (this.templateOptions && this.templateOptions.showFormHeader && this.templateOptions.formHeaderItems) {
+        // check the value on each item and its subtree
+        this._checkSubTreeValues(this.templateOptions.formHeaderItems);
+
         ret.templateData = this._processDataInItems(this.templateOptions.formHeaderItems, noFormDefData, noEmptyValue, noDisabledItem, keepId);
       } // return a deep copy of the data
 
@@ -6129,21 +6135,37 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Returns true if the given item and every sub items have no values.
-     * @param item an LFormsData entry from "items".
+     * Check the value on each item and set a _itemOrSubtreeHasValue flag
+     * @param items an array of items
      */
-    isSubTreeEmpty: function isSubTreeEmpty(item) {
-      var valueEmpty = item.value === undefined || item.value === null || item.value === "";
-      var subTreeEmpty = true;
+    _checkSubTreeValues: function _checkSubTreeValues(items) {
+      for (var i = 0, iLen = items.length; i < iLen; i++) {
+        this._setSubTreeHasValue(items[i]);
+      }
+    },
 
-      if (valueEmpty && item.items && item.items.length > 0) {
+    /**
+     * Set a _itemOrSubtreeHasValue flag on each item
+     * item._itemOrSubtreeHasValue is true if the item or any item in its subtree has value.
+     * @param item an item
+     */
+    _setSubTreeHasValue: function _setSubTreeHasValue(item) {
+      var hasValue = false;
+
+      if (!LForms.Util.isItemValueEmpty(item.value)) {
+        hasValue = true;
+      }
+
+      if (item.items && item.items.length > 0) {
         for (var i = 0, iLen = item.items.length; i < iLen; i++) {
-          subTreeEmpty = this.isSubTreeEmpty(item.items[i]);
-          if (!subTreeEmpty) break;
+          var subHasValue = this._setSubTreeHasValue(item.items[i]);
+
+          if (subHasValue) hasValue = true;
         }
       }
 
-      return valueEmpty && subTreeEmpty;
+      item._itemOrSubtreeHasValue = hasValue;
+      return hasValue;
     },
 
     /**
@@ -6166,7 +6188,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // skip the item if the value is empty and the flag is set to ignore the items with empty value
         // or if the item is hidden and the flag is set to ignore hidden items
 
-        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || noEmptyValue && this.isSubTreeEmpty(item) && !item.header) {
+        if (noDisabledItem && item._skipLogicStatus === this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED || noEmptyValue && !item._itemOrSubtreeHasValue && !item.header) {
           continue;
         } // include only the code and the value (and unit, other value) if no form definition data is needed
 
@@ -6213,7 +6235,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // it has an empty value (empty object, empty array)
 
 
-        if (!noEmptyValue || itemData.items && itemData.items.length !== 0 || !LForms.Util.isItemValueEmpty(item.value)) {
+        if (!noEmptyValue || itemData.items && itemData.items.length !== 0 || item._itemOrSubtreeHasValue) {
           itemsData.push(itemData);
         }
       }
