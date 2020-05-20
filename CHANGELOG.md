@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [24.1.4] 2020-05-08
+### Fixed
+- Fixed a bug that answers for questions under a question that has no answers were not exported.
+
 ## [24.1.3] 2020-05-06
 ### Fixed
 - Replaced "Number.parseFloat" with "parseFloat" for IE11

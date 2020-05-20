@@ -275,7 +275,8 @@
           }
         }
 
-        if (lfItem._elementId && (added || !this._lfData.isEmpty(lfItem))) { // this item has a value
+        // this item has _elementId and has a value
+        if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
           if (!qrItem) { // if there is data in lfItem, there should be a qrItem
             throw new Error('Logic error in _addToIDtoQRItemMap');
           }
