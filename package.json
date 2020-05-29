@@ -23,8 +23,11 @@
     "fhirpath": "^2.1.4",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
+    "js-untar": "^2.0.0",
     "moment": "^2.24.0",
     "ngSmoothScroll": "^2.0.1",
+    "pako": "^1.0.11",
+    "string-to-arraybuffer": "^1.0.2",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {

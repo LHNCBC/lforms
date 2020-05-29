@@ -41,6 +41,13 @@ var _copiedExtensions = {
 
 var LForms = require('../../lforms');
 
+//var tar = require('tar-stream');
+//var gunzip = require('gunzip-maybe');
+var pako = require('pako');
+import untar from "js-untar";
+var str2ab = require('string-to-arraybuffer');
+
+
 LForms.Util = {
   /**
    *  Adds an LForms form to the page.
@@ -1109,5 +1116,318 @@ LForms.Util = {
    */
   baseFormDef: function() {
     return {lformsVersion: LForms.lformsVersion};
+  },
+
+
+
+  testFetch: function(fileUrl) {
+    if (fileUrl) {
+      return fetch(fileUrl)
+      .then(response => {
+        //var data = pako.inflate(response.body);
+        //console.log(data);
+        return response.blob();
+      })
+    }
+  },
+
+
+  // base64Encode: function (buf) {
+  //   let string = '';
+  //   (new Uint8Array(buf)).forEach(
+  //       (byte) => { string += String.fromCharCode(byte) }
+  //     )
+  //   return btoa(string)
+  // },
+
+
+  
+  // testGzippedTarFile: function(packageUrl) {
+  //   var that = this;
+  //   if (packageUrl) {
+  //     fetch(packageUrl)
+  //     .then(res => res.blob()) //arrayBuffer())
+  //     .then(response => {
+  //       var reader = new FileReader();
+  //       reader.onload = function(event){
+  //         var base64 =   event.target.result
+
+  //         // TODO: base64 includes header info
+  //         // "data:application/gzip;base64,H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA="
+
+  //         var base64Content = base64.replace(/^data:[\/;a-z]+;base64,/, "");
+
+  //         //base64 = "H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA=";
+
+
+  //         // from base64 to ascii binary string
+  //         var decodedAsString = atob(base64Content);
+    
+  //         // ascii string to bytes in gzipped format
+  //         var data = that._binaryStringToArray(decodedAsString);
+    
+  //         // raw, uncompressed, binary image data into an array using gzip.js
+  //         var uncompressed = require('gzip-js').unzip(data);
+    
+  //         // now take the raw uncompressed png and convert it
+  //         // back to base64 to use it as a data url
+  //         var asString = that._arrayToBinaryString(uncompressed);
+
+  //         var encodedForDataUrl = btoa(asString);
+        
+  //         const tarFile = that._str2ab(encodedForDataUrl)
+  //         untar(tarFile)
+  //         .progress(function(extractedFile) {
+  //           // Do something with a single extracted file.
+  //           console.log(extractedFile);
+  //           //var jsonData = extractedFile.readAsJSON();
+  //           var strData = extractedFile.readAsString();
+  //         })
+  //         .then(function(extractedFiles) {
+  //           // Do something with all extracted files.
+  //           console.log(extractedFiles);
+  //         });
+
+  //         return asString;
+
+  //       };
+  //       reader.readAsDataURL(response);
+
+  //     });
+  //   }
+  // },
+
+  // //https://stackoverflow.com/questions/14308815/using-javascript-to-inflate-a-blob
+  // testGzipFile2: function(packageUrl) {
+
+  //   if (packageUrl) {
+  //     fetch(packageUrl)
+  //     .then(res => res.blob())
+  //     .then(response => {
+  //       //var input = 'byu9g1RZpINUpVtoKoiKIqJYoris...'; // really long string
+
+  //       // var input = response;
+
+  //       // input = "H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA=";
+
+  //       // // from base64 to ascii binary string
+  //       // var decodedAsString = atob(input);
+  
+  //       // ascii string to bytes in gzipped format
+  //       // var data = this._binaryStringToArray(decodedAsString);
+
+  //       var data = this._binaryStringToArray(response);
+
+  //       // raw, uncompressed, binary image data into an array using gzip.js
+  //       var uncompressed = require('gzip-js').unzip(data);
+  
+  //       // now take the raw uncompressed png and convert it
+  //       // back to base64 to use it as a data url
+  //       var asString = this._arrayToBinaryString(uncompressed);
+  //       var encodedForDataUrl = btoa(asString);
+
+  //       //const tarFile = (new Response(asString)).arrayBuffer();
+  //       const tarFile = this._str2ab(asString)
+  //       untar(tarFile)
+  //       .progress(function(extractedFile) {
+  //         // Do something with a single extracted file.
+  //         console.log(extractedFile);
+  //         //var jsonData = extractedFile.readAsJSON();
+  //         var strData = extractedFile.readAsString();
+  //       })
+  //       .then(function(extractedFiles) {
+  //         // Do something with all extracted files.
+  //         console.log(extractedFiles);
+  //       });
+
+
+  //       return asString;
+  //     })
+
+  //   }
+  // },
+
+  // _binaryStringToArray: function(binaryString) {
+  //   var data = [];
+
+  //   for (var i = 0; i < binaryString.length; ++i) {
+  //       data[i] = binaryString.charCodeAt(i);
+  //   }
+
+  //   return data;
+  // },
+
+  // _arrayToBinaryString: function(array) {
+  //   var str = '';
+  //   for (var i = 0; i < array.length; ++i) {
+  //       str += String.fromCharCode(array[i]);
+  //   }
+  //   return str;
+  // },
+
+  // _str2ab: function(str) {
+  //   var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  //   var bufView = new Uint16Array(buf);
+  //   for (var i=0, strLen=str.length; i < strLen; i++) {
+  //     bufView[i] = str.charCodeAt(i);
+  //   }
+  //   return buf;
+  // },
+
+  //https://stackoverflow.com/questions/47443433/extracting-gzip-data-in-javascript-with-pako-encoding-issues
+  getGzippedTarFile: function(packageUrl) {
+  
+    if (packageUrl) {
+      fetch(packageUrl)
+      .then(res => res.blob()) //arrayBuffer())
+      .then(response => {
+
+        var reader = new FileReader();
+        reader.onload = function(event){
+          var base64 =   event.target.result;
+
+          // base64 includes header info
+          // "data:application/gzip;base64,H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA="
+
+          var base64Content = base64.replace(/^data:[\/;a-z]+;base64,/, "");
+
+          const strData = atob(base64Content);
+
+          // split it into an array rather than a "string"
+          const charData = strData.split('').map(function(x){return x.charCodeAt(0); });
+  
+          // convert to binary
+          const binData = new Uint8Array(charData);
+  
+          // inflate
+          const unzippedData = pako.inflate(binData);
+          
+          // Convert gunzipped byteArray back to ascii string:
+          var strAsciiData   = String.fromCharCode.apply(null, new Uint16Array(unzippedData));
+
+          // convert string to ArrayBuffer
+          const abData = str2ab(strAsciiData);
+
+          untar(abData)
+          .progress(function(extractedFile) {
+            // do something with a single extracted file
+            console.log(extractedFile);
+            //var fileJsonContent = extractedFile.readAsJSON();
+            var fileStrContent = extractedFile.readAsString();
+            console.log(fileStrContent);
+          })
+          .then(function(extractedFiles) {
+            // all extracted files
+            console.log(extractedFiles);
+          });
+        };
+
+        reader.readAsDataURL(response);
+      });
+    }
+  },
+
+  testGzipFile: function(packageUrl) {
+  
+    if (packageUrl) {
+      fetch(packageUrl)
+      .then(res => res.blob()) //arrayBuffer())
+      .then(response => {
+
+        // HttpClient result is in response.data
+        // convert the incoming base64 -> binary
+        //const strData = atob(response);
+
+        //const strDataMod = this.base64Encode(response);
+
+
+
+        var reader = new FileReader();
+        reader.onload = function(event){
+          var base64 =   event.target.result
+
+          // TODO: base64 includes header info
+          // "data:application/gzip;base64,H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA="
+
+          // base64 = "H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA=";
+          var base64Content = base64.replace(/^data:[\/;a-z]+;base64,/, "");
+
+          const strData = atob(base64Content);
+
+          // split it into an array rather than a "string"
+          const charData = strData.split('').map(function(x){return x.charCodeAt(0); });
+  
+          // convert to binary
+          const binData = new Uint8Array(charData);
+  
+          // inflate
+          const unzipped = pako.inflate(binData);
+          console.log(unzipped);
+
+          // Convert gunzipped byteArray back to ascii string:
+          var strAsciiData   = String.fromCharCode.apply(null, new Uint16Array(unzipped));
+
+          //const tarfile = (new Response(strData)).arrayBuffer();
+          const tarfile = str2ab(strAsciiData);
+          untar(tarfile)
+          .progress(function(extractedFile) {
+            // Do something with a single extracted file.
+            console.log(extractedFile);
+            //var jsonData = extractedFile.readAsJSON();
+            var strData = extractedFile.readAsString();
+            console.log(strData);
+          })
+          .then(function(extractedFiles) {
+            // Do something with all extracted files.
+            console.log(extractedFiles);
+          });
+
+  
+          // var data = pako.ungzip(binData);
+          // console.log(data)
+          // var gunzipped = gunzip(binData);
+          // console.log(gunzipped)
+          // return gunzipped;
+        };
+
+        reader.readAsDataURL(response);
+
+        //return res.body.pipe(gunzip());
+        //res.body.on("end", () => resolve("it worked"));
+      });
+    }
+  },
+
+
+  testTarFile: function(packageUrl) {
+  
+    if (packageUrl) {
+      fetch(packageUrl)
+      .then(response => response.arrayBuffer()) //  .blob())
+      .then(tarFile => {
+        const extract = tar.extract();
+
+        untar(tarFile)
+        .progress(function(extractedFile) {
+          // Do something with a single extracted file.
+          console.log(extractedFile);
+          //var jsonData = extractedFile.readAsJSON();
+          var strData = extractedFile.readAsString();
+        })
+        .then(function(extractedFiles) {
+          // Do something with all extracted files.
+          console.log(extractedFiles);
+        });
+
+
+        return tarFile;
+        //return res.body.pipe(gunzip());
+        //res.body.on("end", () => resolve("it worked"));
+      });
+    }
   }
+    
+
 };
+
+
