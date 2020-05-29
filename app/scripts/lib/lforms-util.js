@@ -41,12 +41,9 @@ var _copiedExtensions = {
 
 var LForms = require('../../lforms');
 
-//var tar = require('tar-stream');
-//var gunzip = require('gunzip-maybe');
-var pako = require('pako');
+import pako from "pako";
 import untar from "js-untar";
-var str2ab = require('string-to-arraybuffer');
-
+import str2ab from "string-to-arraybuffer";
 
 LForms.Util = {
   /**
@@ -1276,6 +1273,8 @@ LForms.Util = {
 
   //https://stackoverflow.com/questions/47443433/extracting-gzip-data-in-javascript-with-pako-encoding-issues
   getGzippedTarFile: function(packageUrl) {
+    var packageFiles = [];
+    
   
     if (packageUrl) {
       fetch(packageUrl)
@@ -1289,7 +1288,7 @@ LForms.Util = {
           // base64 includes header info
           // "data:application/gzip;base64,H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA="
 
-          var base64Content = base64.replace(/^data:[\/;a-z]+;base64,/, "");
+          var base64Content = base64.replace(/^data:[\/;a-zA-Z0-9\._-]+;base64,/, "");
 
           const strData = atob(base64Content);
 
@@ -1303,7 +1302,17 @@ LForms.Util = {
           const unzippedData = pako.inflate(binData);
           
           // Convert gunzipped byteArray back to ascii string:
-          var strAsciiData   = String.fromCharCode.apply(null, new Uint16Array(unzippedData));
+          // var strAsciiData   = String.fromCharCode.apply(null, new Uint16Array(unzippedData));
+          
+          // unzippedData could be too long and result in an error: 
+          //  "Uncaught RangeError: Maximum call stack size exceeded"
+          // Use the following loop instead 
+          const uint16Data = new Uint16Array(unzippedData);
+          var strAsciiData ="";
+          var len = uint16Data.length;
+          for (var i = 0; i < len; i++) {
+            strAsciiData += String.fromCharCode(uint16Data[i]);
+          }
 
           // convert string to ArrayBuffer
           const abData = str2ab(strAsciiData);
@@ -1311,14 +1320,31 @@ LForms.Util = {
           untar(abData)
           .progress(function(extractedFile) {
             // do something with a single extracted file
-            console.log(extractedFile);
-            //var fileJsonContent = extractedFile.readAsJSON();
-            var fileStrContent = extractedFile.readAsString();
-            console.log(fileStrContent);
+            
+            //var fileJsonContent = extractedFile.readAsJSON(); 
+            // readAsString (and readAsJSON) encountered two errors on on sample package.tgz file
+            // 1) Uncaught RangeError: Maximum call stack size exceeded
+            //    this is caused by the same reason above
+            //    on line #89 in untar.js :
+            //    (this._string = String.fromCharCode.apply(null, charCodes))
+            //    where the side of charCodes could be too big.
+            // 2) Uncaught SyntaxError: Unexpected token ï in JSON at position 0
+
+            //var fileStrContent = extractedFile.readAsString();
+            
+            if (extractedFile && extractedFile.name.match(/\.json$/)) {              
+              packageFiles.push({
+                name: extractedFile.name,
+                content: extractedFile.readAsString()
+              });
+            }
+
           })
           .then(function(extractedFiles) {
             // all extracted files
-            console.log(extractedFiles);
+            //console.log(extractedFiles);
+            console.log(packageFiles);
+
           });
         };
 
@@ -1328,7 +1354,8 @@ LForms.Util = {
   },
 
   testGzipFile: function(packageUrl) {
-  
+
+    
     if (packageUrl) {
       fetch(packageUrl)
       .then(res => res.blob()) //arrayBuffer())

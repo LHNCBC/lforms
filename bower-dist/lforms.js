@@ -2329,8 +2329,12 @@ angular.module('lformsWidget').config(['$provide', function Decorate($provide) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var js_untar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
-/* harmony import */ var js_untar__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(js_untar__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var pako__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
+/* harmony import */ var pako__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(pako__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var js_untar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(31);
+/* harmony import */ var js_untar__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(js_untar__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var string_to_arraybuffer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(32);
+/* harmony import */ var string_to_arraybuffer__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(string_to_arraybuffer__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -2351,15 +2355,10 @@ var _copiedExtensions = {
   "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
 };
 
-var LForms = __webpack_require__(4); //var tar = require('tar-stream');
-//var gunzip = require('gunzip-maybe');
-
-
-var pako = __webpack_require__(15);
+var LForms = __webpack_require__(4);
 
 
 
-var str2ab = __webpack_require__(32);
 
 LForms.Util = {
   /**
@@ -3514,6 +3513,8 @@ LForms.Util = {
   // },
   //https://stackoverflow.com/questions/47443433/extracting-gzip-data-in-javascript-with-pako-encoding-issues
   getGzippedTarFile: function getGzippedTarFile(packageUrl) {
+    var packageFiles = [];
+
     if (packageUrl) {
       fetch(packageUrl).then(function (res) {
         return res.blob();
@@ -3525,7 +3526,7 @@ LForms.Util = {
           var base64 = event.target.result; // base64 includes header info
           // "data:application/gzip;base64,H4sIAAkTyF4AA+3RMQ6DMAyF4cw9RU6A4hDCeSIRdWMgRtDbN4BYkTpAl/9bLFtveJI1F210VXMjV8UQttn2odt3OfaDeCNtjN6JBFfv4mvSWHdnqdNcNE3WmiWN70++yuWpPFHoWVr/b4ek6fXvJgAAAAAAAAAAAAAAAACAX3wBvhQL0QAoAAA="
 
-          var base64Content = base64.replace(/^data:[\/;a-z]+;base64,/, "");
+          var base64Content = base64.replace(/^data:[\/;a-zA-Z0-9\._-]+;base64,/, "");
           var strData = atob(base64Content); // split it into an array rather than a "string"
 
           var charData = strData.split('').map(function (x) {
@@ -3534,20 +3535,43 @@ LForms.Util = {
 
           var binData = new Uint8Array(charData); // inflate
 
-          var unzippedData = pako.inflate(binData); // Convert gunzipped byteArray back to ascii string:
+          var unzippedData = pako__WEBPACK_IMPORTED_MODULE_0___default.a.inflate(binData); // Convert gunzipped byteArray back to ascii string:
+          // var strAsciiData   = String.fromCharCode.apply(null, new Uint16Array(unzippedData));
+          // unzippedData could be too long and result in an error: 
+          //  "Uncaught RangeError: Maximum call stack size exceeded"
+          // Use the following loop instead 
 
-          var strAsciiData = String.fromCharCode.apply(null, new Uint16Array(unzippedData)); // convert string to ArrayBuffer
+          var uint16Data = new Uint16Array(unzippedData);
+          var strAsciiData = "";
+          var len = uint16Data.length;
 
-          var abData = str2ab(strAsciiData);
-          js_untar__WEBPACK_IMPORTED_MODULE_0___default()(abData).progress(function (extractedFile) {
+          for (var i = 0; i < len; i++) {
+            strAsciiData += String.fromCharCode(uint16Data[i]);
+          } // convert string to ArrayBuffer
+
+
+          var abData = string_to_arraybuffer__WEBPACK_IMPORTED_MODULE_2___default()(strAsciiData);
+          js_untar__WEBPACK_IMPORTED_MODULE_1___default()(abData).progress(function (extractedFile) {
             // do something with a single extracted file
-            console.log(extractedFile); //var fileJsonContent = extractedFile.readAsJSON();
-
-            var fileStrContent = extractedFile.readAsString();
-            console.log(fileStrContent);
+            //var fileJsonContent = extractedFile.readAsJSON(); 
+            // readAsString (and readAsJSON) encountered two errors on on sample package.tgz file
+            // 1) Uncaught RangeError: Maximum call stack size exceeded
+            //    this is caused by the same reason above
+            //    on line #89 in untar.js :
+            //    (this._string = String.fromCharCode.apply(null, charCodes))
+            //    where the side of charCodes could be too big.
+            // 2) Uncaught SyntaxError: Unexpected token ï in JSON at position 0
+            //var fileStrContent = extractedFile.readAsString();
+            if (extractedFile && extractedFile.name.match(/\.json$/)) {
+              packageFiles.push({
+                name: extractedFile.name,
+                content: extractedFile.readAsString()
+              });
+            }
           }).then(function (extractedFiles) {
             // all extracted files
-            console.log(extractedFiles);
+            //console.log(extractedFiles);
+            console.log(packageFiles);
           });
         };
 
@@ -3581,13 +3605,13 @@ LForms.Util = {
 
           var binData = new Uint8Array(charData); // inflate
 
-          var unzipped = pako.inflate(binData);
+          var unzipped = pako__WEBPACK_IMPORTED_MODULE_0___default.a.inflate(binData);
           console.log(unzipped); // Convert gunzipped byteArray back to ascii string:
 
           var strAsciiData = String.fromCharCode.apply(null, new Uint16Array(unzipped)); //const tarfile = (new Response(strData)).arrayBuffer();
 
-          var tarfile = str2ab(strAsciiData);
-          js_untar__WEBPACK_IMPORTED_MODULE_0___default()(tarfile).progress(function (extractedFile) {
+          var tarfile = string_to_arraybuffer__WEBPACK_IMPORTED_MODULE_2___default()(strAsciiData);
+          js_untar__WEBPACK_IMPORTED_MODULE_1___default()(tarfile).progress(function (extractedFile) {
             // Do something with a single extracted file.
             console.log(extractedFile); //var jsonData = extractedFile.readAsJSON();
 
@@ -3615,7 +3639,7 @@ LForms.Util = {
       }) //  .blob())
       .then(function (tarFile) {
         var extract = tar.extract();
-        js_untar__WEBPACK_IMPORTED_MODULE_0___default()(tarFile).progress(function (extractedFile) {
+        js_untar__WEBPACK_IMPORTED_MODULE_1___default()(tarFile).progress(function (extractedFile) {
           // Do something with a single extracted file.
           console.log(extractedFile); //var jsonData = extractedFile.readAsJSON();
 
@@ -11986,12 +12010,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     },
     readAsString: {
       value: function value() {
-        for (var e = this.buffer, r = e.byteLength, t = 1, a = new DataView(e), n = [], i = 0; i < r; ++i) {
+        for (var e = this.buffer, r = e.byteLength, t = 1, a = new DataView(e), n = "", i = 0; i < r; ++i) {
           var o = a.getUint8(i * t, !0);
-          n.push(o);
+          n += String.fromCharCode(o);
         }
 
-        return this._string = String.fromCharCode.apply(null, n);
+        return this._string = n;
       }
     },
     readAsJSON: {
