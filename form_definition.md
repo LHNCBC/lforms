@@ -402,6 +402,6 @@ about the meaning of each key:
 
 ### Utility Functions:
 For a description of functions provided for retrieving user-entered data in
-various formats, including FHIR, and for importing and exporing FHIR resources,
+various formats, including FHIR, and for importing and exporting FHIR resources,
 see the [documentation](https://lhncbc.github.io/lforms/) website.
 

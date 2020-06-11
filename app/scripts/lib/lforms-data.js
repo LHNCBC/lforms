@@ -168,9 +168,17 @@
     /**
      * Constructor
      * @param data the lforms form definition data
+     * @param packageStore optional, an array that stores a list of FHIR resources needed by the Questionnaire. Currently only
+     *       ValueSet and CodeSystem are supported. Its format is same as the .index.json file in a FHIR resource package files
+     *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
+     *       plus a 'fileContent' field that contains the actual file contents.
      */
-    init: function(data) {
+    init: function(data, packageStore) {
       this.lformsVersion = LForms.lformsVersion;
+
+      if (packageStore) {
+        this._packageStore = packageStore;
+      }
 
       if(data && data._initializeInternalData) { // This is already a lformsData object.
         var props = Object.getOwnPropertyNames(data);
@@ -199,6 +207,51 @@
       // update internal data (_id, _idPath, _codePath, _displayLevel_),
       // that are used for widget control and/or for performance improvement.
       this._initializeInternalData();
+    },
+
+
+    /**
+     * Find the resource in the form's packageStore by resource type and identifier.
+     * @param resType FHIR resource type, e.g. ValueSet, CodeSystem.
+     * @param resIdentifier an id or an canonical URL of a FHIR resource.
+     *        "#LL12345", "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
+     *        or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0"
+     * @returns {null} a FHIR resource
+     * @private
+     */
+    _getValueSetFromPackageStore: function(resType, resIdentifier) {
+
+      if (!this._packageStore || !resIdentifier || !resType) {
+        return null;
+      }
+      var resReturn = null;
+      // id
+      if (resIdentifier[0] === '#') {
+        var id = resIdentifier.slice(1);
+        for (var i=0, iLen=this._packageStore.length; i<iLen; i++) {
+          var resource = this._packageStore[i];
+          if (resource.resourceType === resType && resource.id === id) {
+            resReturn = angular.copy(resource);
+            break;
+          }
+        }
+      }
+      // url
+      else {
+        var splited = resIdentifier.split("|");
+        var url = splited[0];
+        var version = splited[1];
+        for (var i=0, iLen=this._packageStore.length; i<iLen; i++) {
+          var resource = this._packageStore[i];
+          if (resource.resourceType === resType && resource.url === url &&
+              (version && resource.version === version || !version) ) {
+            resReturn = angular.copy(resource);
+            break;
+          }
+        }
+      }
+
+      return resReturn;
     },
 
 
@@ -343,6 +396,27 @@
       return Promise.all(pendingPromises).then(function() {
         lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
       });
+    },
+
+
+    /**
+     * Load ValueSet from package and convert it to item's answers
+     * @param item an item of lforms
+     * @private
+     */
+    _loadAnswerValueSetsFromPackage: function(item) {
+      // if a resource package is provided
+      if (this._packageStore) {
+        if (item.answerValueSet) {
+          var vs = this._getValueSetFromPackageStore("ValueSet", item.answerValueSet)
+          if (vs) {
+            var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+            if (answers) {
+              item.answers = answers;
+            }
+          }
+        }
+      }
     },
 
 
@@ -1069,6 +1143,8 @@
             this.answerLists && angular.isArray(this.answerLists[item.answers])) {
           item.answers = this.answerLists[item.answers];
         }
+
+        this._loadAnswerValueSetsFromPackage(item);
 
         // If there are answers for an answer list and there is a value, replace
         // the value objects with the corresponding objects from the answer list,

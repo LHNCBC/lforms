@@ -1,0 +1,36 @@
+{
+  "resourceType": "Questionnaire",
+  "status": "draft",
+  "date": "2018-09-12T18:03:40-04:00",
+  "version": "2.56",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ]
+  },
+  "title": "A Questionnaire to use ValueSet in the provided package file",
+  "name": "A Questionnaire to use ValueSet in the provided package file",
+  "item": [
+    {
+      "required": false,
+      "linkId": "/q1",
+      "text": "ValueSet found by url (with version) in resource package",
+      "type": "choice",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/example-expansion|20150622"
+    },
+    {
+      "required": false,
+      "linkId": "/q2",
+      "text": "ValueSet found by url (without version) in resource package",
+      "type": "choice",
+      "answerValueSet": "http://hl7.org/fhir/ValueSet/example-expansion"
+    },
+    {
+      "required": false,
+      "linkId": "/q3",
+      "text": "ValueSet found by id in resource package",
+      "type": "choice",
+      "answerValueSet": "#example-expansion"
+    }
+  ]
+}
