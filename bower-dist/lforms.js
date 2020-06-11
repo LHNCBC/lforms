@@ -3535,10 +3535,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 var LForms = __webpack_require__(4);
 
- // import { FileDetector } from 'protractor';
-// import { tar } from 'tar-stream';
-// import { gunzip } from 'gunzip-maybe';
-// import { pullout } from 'pullout';
+
 
 LForms.HL7 = function () {
   "use strict";

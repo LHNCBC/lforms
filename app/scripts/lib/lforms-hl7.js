@@ -3,10 +3,6 @@
  */
 var LForms = require('../../lforms.js');
 import {LOINC_URI} from '../fhir/fhir-common';
-// import { FileDetector } from 'protractor';
-// import { tar } from 'tar-stream';
-// import { gunzip } from 'gunzip-maybe';
-// import { pullout } from 'pullout';
 
 LForms.HL7 = (function() {
   "use strict";
