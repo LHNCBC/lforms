@@ -214,30 +214,16 @@
      * Find the resource in the form's packageStore by resource type and identifier.
      * @param resType FHIR resource type, e.g. ValueSet, CodeSystem.
      * @param resIdentifier an id or an canonical URL of a FHIR resource.
-     *        "#LL12345", "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
+     *        "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
      *        or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0"
      * @returns {null} a FHIR resource
      * @private
      */
     _getResourcesFromPackageStore: function(resType, resIdentifier) {
 
-      if (!this._packageStore || !resIdentifier || !resType) {
-        return null;
-      }
       var resReturn = null;
-      // id
-      if (resIdentifier[0] === '#') {
-        var id = resIdentifier.slice(1);
-        for (var i=0, iLen=this._packageStore.length; i<iLen; i++) {
-          var resource = this._packageStore[i];
-          if (resource.resourceType === resType && resource.id === id) {
-            resReturn = angular.copy(resource);
-            break;
-          }
-        }
-      }
-      // url
-      else {
+
+      if (this._packageStore && resIdentifier && resType) {
         var splited = resIdentifier.split("|");
         var url = splited[0];
         var version = splited[1];
@@ -245,12 +231,11 @@
           var resource = this._packageStore[i];
           if (resource.resourceType === resType && resource.url === url &&
               (version && resource.version === version || !version) ) {
-            resReturn = angular.copy(resource);
+            resReturn = JSON.parse(JSON.stringify(resource));
             break;
           }
         }
       }
-
       return resReturn;
     },
 
@@ -400,7 +385,8 @@
 
 
     /**
-     * Load ValueSet from package and convert it to item's answers
+     * Load ValueSet from the resource package, convert it the LForms' answers format
+     * and set it on item.answers
      * @param item an item of lforms
      * @private
      */

@@ -1114,7 +1114,8 @@ LForms.Util = {
 
 
   /**
-   * Converts FHIR ValueSet into an array of answers that can be used with a prefetch autocompleter.
+   * Converts FHIR ValueSet with an expansion into an array of answers that can be used with a
+   * prefetch autocompleter.
    * @param valueSet FHIR ValueSet resource
    * @return the array of answers, or null if the extraction cannot be done.
    */

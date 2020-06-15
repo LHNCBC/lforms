@@ -3386,7 +3386,8 @@ LForms.Util = {
   },
 
   /**
-   * Converts FHIR ValueSet into an array of answers that can be used with a prefetch autocompleter.
+   * Converts FHIR ValueSet with an expansion into an array of answers that can be used with a
+   * prefetch autocompleter.
    * @param valueSet FHIR ValueSet resource
    * @return the array of answers, or null if the extraction cannot be done.
    */
@@ -4913,44 +4914,28 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * Find the resource in the form's packageStore by resource type and identifier.
      * @param resType FHIR resource type, e.g. ValueSet, CodeSystem.
      * @param resIdentifier an id or an canonical URL of a FHIR resource.
-     *        "#LL12345", "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
+     *        "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
      *        or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0"
      * @returns {null} a FHIR resource
      * @private
      */
     _getResourcesFromPackageStore: function _getResourcesFromPackageStore(resType, resIdentifier) {
-      if (!this._packageStore || !resIdentifier || !resType) {
-        return null;
-      }
+      var resReturn = null;
 
-      var resReturn = null; // id
-
-      if (resIdentifier[0] === '#') {
-        var id = resIdentifier.slice(1);
+      if (this._packageStore && resIdentifier && resType) {
+        var splited = resIdentifier.split("|");
+        var url = splited[0];
+        var version = splited[1];
 
         for (var i = 0, iLen = this._packageStore.length; i < iLen; i++) {
           var resource = this._packageStore[i];
 
-          if (resource.resourceType === resType && resource.id === id) {
-            resReturn = angular.copy(resource);
+          if (resource.resourceType === resType && resource.url === url && (version && resource.version === version || !version)) {
+            resReturn = JSON.parse(JSON.stringify(resource));
             break;
           }
         }
-      } // url
-      else {
-          var splited = resIdentifier.split("|");
-          var url = splited[0];
-          var version = splited[1];
-
-          for (var i = 0, iLen = this._packageStore.length; i < iLen; i++) {
-            var resource = this._packageStore[i];
-
-            if (resource.resourceType === resType && resource.url === url && (version && resource.version === version || !version)) {
-              resReturn = angular.copy(resource);
-              break;
-            }
-          }
-        }
+      }
 
       return resReturn;
     },
@@ -5101,7 +5086,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Load ValueSet from package and convert it to item's answers
+     * Load ValueSet from the resource package, convert it the LForms' answers format
+     * and set it on item.answers
      * @param item an item of lforms
      * @private
      */

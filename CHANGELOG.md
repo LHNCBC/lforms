@@ -4,7 +4,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [24.2.0] 2020-06-10
 ### Added
-- Added a support for a FHIR resource package at the initialization.
+- Added a support for providing ValueSets via a FHIR resource package at the initialization.
 
 ## [24.1.4] 2020-05-08
 ### Fixed

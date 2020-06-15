@@ -41,8 +41,6 @@ describe('questionnaire with a provided resource package file', function () {
         assert.deepEqual(lfData.items[0].answers, answers);
         assert.equal(lfData.items[1].answerValueSet, "http://hl7.org/fhir/ValueSet/example-expansion")
         assert.deepEqual(lfData.items[1].answers, answers);
-        assert.equal(lfData.items[2].answerValueSet, "#example-expansion")
-        assert.deepEqual(lfData.items[2].answers, answers);
         done()
       });
     }).fail(function (err) {

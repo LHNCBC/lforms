@@ -24,13 +24,6 @@
       "text": "ValueSet found by url (without version) in resource package",
       "type": "choice",
       "answerValueSet": "http://hl7.org/fhir/ValueSet/example-expansion"
-    },
-    {
-      "required": false,
-      "linkId": "/q3",
-      "text": "ValueSet found by id in resource package",
-      "type": "choice",
-      "answerValueSet": "#example-expansion"
     }
   ]
 }
