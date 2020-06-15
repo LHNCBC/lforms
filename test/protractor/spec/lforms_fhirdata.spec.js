@@ -1214,6 +1214,62 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
         });
       });
+
+      describe('QuestionnaireResponse special case', function () {
+
+        if (fhirVersion === 'R4') {
+          it('should get answers from a question that is under a question that has no answer values', function() {
+            tp.openBaseTestPage();
+            tp.setFHIRVersion(fhirVersion);
+            tp.loadFromTestData('question-under-question.R4.json', fhirVersion);
+
+            let childItem = element(by.id('q2/1/1'));
+
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+              expect(fhirData.item).toBe(undefined);
+            });
+
+            childItem.sendKeys('123');
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+              expect(fhirData.item[0].answer[0].item[0].answer[0].valueString).toBe('123');
+            });
+
+          });
+
+          it('should get answers from a question in a group that is under a question that has no answer values', function() {
+            tp.openBaseTestPage();
+            tp.setFHIRVersion(fhirVersion);
+            tp.loadFromTestData('group-under-question.R4.json', fhirVersion);
+
+            let childItem = element(by.id('q2/1/1/1'));
+
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+              expect(fhirData.item).toBe(undefined);
+            });
+
+            childItem.sendKeys('123');
+            getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
+              [error, fhirData] = callbackData;
+
+              expect(error).toBeNull();
+              expect(fhirData.resourceType).toBe("QuestionnaireResponse");
+              expect(fhirData.item[0].answer[0].item[0].item[0].answer[0].valueString).toBe('123');
+            });
+          });
+        }
+      });
     });
 
   })(fhirVersions[i]);
