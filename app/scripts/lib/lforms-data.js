@@ -168,8 +168,10 @@
     /**
      * Constructor
      * @param data the lforms form definition data
-     * @param packageStore optional, an array that stores a list of FHIR resources needed by the Questionnaire. Currently only
-     *       ValueSet and CodeSystem are supported. Its format is same as the 'files' part in the .index.json file in a FHIR resource package files
+     * @param packageStore optional, an array that stores a list of FHIR resources
+     *       needed by the Questionnaire. Currently only the expanded ValueSet is
+     *       supported. Its format is same as the 'files' part in the .index.json
+     *       file in a FHIR resource package files.
      *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
      *       plus a 'fileContent' field that contains the actual file contents.
      */
@@ -216,11 +218,14 @@
      * @param resIdentifier an id or an canonical URL of a FHIR resource.
      *        "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
      *        or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0"
+     *        (or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0#vs1", TBD)
+     * Note: The reference could be a contained ValueSet in a different resource
+     * See https://www.hl7.org/fhir/references.html#canonical-fragments
      * @returns {null} a FHIR resource
      * @private
      */
     _getResourcesFromPackageStore: function(resType, resIdentifier) {
-
+      
       var resReturn = null;
 
       if (this._packageStore && resIdentifier && resType) {
