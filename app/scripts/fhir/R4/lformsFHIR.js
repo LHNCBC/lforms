@@ -24607,7 +24607,7 @@ function addCommonSDCImportFns(ns) {
 
   self._processUnitList = function (lfItem, qItem) {
     var lformsUnits = [];
-    var lformsDefaultUnit = null; // The questionnaire-unit extension is only for item.type = quantity
+    var lformsDefaultUnit = null; // The questionnaire-unitOption extension is only for item.type = quantity
 
     var unitOption = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtUrlUnitOption, 0, true);
 

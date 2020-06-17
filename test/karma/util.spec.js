@@ -268,7 +268,7 @@ describe('Util library', function() {
               }
             },
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression": {
                 "description": "BMI calculation",
                 "language" : "text/fhirpath",

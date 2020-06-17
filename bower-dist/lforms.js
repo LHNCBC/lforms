@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"24.1.4\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"25.0.0\"}");
 
 /***/ }),
 /* 7 */
@@ -2341,11 +2341,15 @@ var parseDateFormats = ['M/D/YYYY', 'M/D/YY', 'M/D', 'M-D-YYYY', 'M-D-YY', 'M-D'
 // more than one extension of the type is permitted.
 
 var _copiedExtensions = {
-  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression": ["_calculatedExprExt", false],
+  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression": ["_calculatedExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression": ["_initialExprExt", false],
   "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod": ["_obsLinkPeriodExt", false],
   "http://hl7.org/fhir/StructureDefinition/variable": ["_variableExt", true]
 };
+
+var _copiedExtFields = Object.keys(_copiedExtensions).map(function (k) {
+  return _copiedExtensions[k][0];
+});
 
 var LForms = __webpack_require__(4);
 
@@ -3355,7 +3359,8 @@ LForms.Util = {
    */
   createExtensionFromLForms: function createExtensionFromLForms(formOrItem) {
     var extension = [];
-    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+
+    _copiedExtFields.forEach(function (extName) {
       var _ext = formOrItem[extName];
 
       if (_ext) {

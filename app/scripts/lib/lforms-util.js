@@ -29,7 +29,7 @@ var parseDateFormats = [
 // which they will be stored in LFormsData, and a boolean indicating whether
 // more than one extension of the type is permitted.
 var _copiedExtensions = {
-  "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression":
+  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression":
     ["_calculatedExprExt", false],
   "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
     ["_initialExprExt", false],
@@ -38,6 +38,9 @@ var _copiedExtensions = {
   "http://hl7.org/fhir/StructureDefinition/variable":
     ["_variableExt", true],
 };
+
+var _copiedExtFields = Object.keys(_copiedExtensions).map((k)=>_copiedExtensions[k][0]);
+
 
 var LForms = require('../../lforms');
 
@@ -1084,7 +1087,7 @@ LForms.Util = {
    */
   createExtensionFromLForms: function(formOrItem) {
     let extension = [];
-    ['_variableExt', '_calculatedExprExt', '_initialExprExt', '_obsLinkPeriodExt'].forEach(function (extName) {
+    _copiedExtFields.forEach(function (extName) {
       let _ext = formOrItem[extName];
       if(_ext) {
         if(Array.isArray(_ext)) {

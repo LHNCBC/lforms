@@ -79,7 +79,7 @@
                 "comment": "A variable defined on the field where it is used"
               }
             }, {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression" : {
                 "language": "text/fhirpath",
                 "expression": "%Y + 4 + %Z"
@@ -127,7 +127,7 @@
           "type": "integer",
           "extension" : [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression" : {
                 "language": "text/fhirpath",
                 "expression": "%Y + 5",
@@ -150,7 +150,7 @@
           "type": "integer",
           "extension" : [
             {
-              "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+              "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
               "valueExpression" : {
                 "language": "text/fhirpath",
                 "expression": "%X+8"
