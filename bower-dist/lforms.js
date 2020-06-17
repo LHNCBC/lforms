@@ -5097,17 +5097,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @private
      */
     _loadAnswerValueSetsFromPackage: function _loadAnswerValueSetsFromPackage(item) {
-      // if a resource package is provided
-      if (this._packageStore) {
-        if (item.answerValueSet) {
-          var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet);
+      if (item.answerValueSet) {
+        var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet);
 
-          if (vs) {
-            var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+        if (vs) {
+          var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
 
-            if (answers) {
-              item.answers = answers;
-            }
+          if (answers) {
+            item.answers = answers;
           }
         }
       }
@@ -5858,9 +5855,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         if ((angular.isString(item.answers) || angular.isNumber(item.answers)) && this.answerLists && angular.isArray(this.answerLists[item.answers])) {
           item.answers = this.answerLists[item.answers];
-        }
+        } // if a resource package is provided
 
-        this._loadAnswerValueSetsFromPackage(item); // If there are answers for an answer list and there is a value, replace
+
+        if (this._packageStore) {
+          this._loadAnswerValueSetsFromPackage(item);
+        } // If there are answers for an answer list and there is a value, replace
         // the value objects with the corresponding objects from the answer list,
         // so that when they are displayed as radio buttons, angular will recognize the
         // one or more answer options as equal to the values.
