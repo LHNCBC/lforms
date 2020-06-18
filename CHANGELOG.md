@@ -2,6 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.0.0] 2020-06-17
+### Changed
+- Updated the URI for the FHIR calculatedExpression extension.  (If you are not
+  using FHIR, this change will not affect you.)  The lforms-updater package can
+  be used to update FHIR Questionnaires generated for previous versions of
+  LForms.
+
 ## [24.1.4] 2020-05-08
 ### Fixed
 - Fixed a bug that answers for questions under a question that has no answers were not exported.
@@ -31,7 +38,7 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [24.0.2] 2020-04-21
 ### Fixed
-- Fixed a bug that reloading existing LForms form definition object with instances of repeating items 
+- Fixed a bug that reloading existing LForms form definition object with instances of repeating items
   might be very slow.
 
 ## [24.0.1] 2020-04-21

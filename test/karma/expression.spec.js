@@ -9,7 +9,7 @@ describe('ExpresssionProcessor', function () {
       }, {
         linkId: '/q2', dataType: 'ST',
         extension: [{
-          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-calculatedExpression",
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression",
           "valueExpression": {
             "language": "text/fhirpath",
             "expression": "%resource.item.where(linkId='/q1').answer.value"
