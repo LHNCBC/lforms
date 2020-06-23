@@ -1332,8 +1332,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           // it is always the last one in current design
           lastUpdated.push(newValues[newValues.length - 1].id);
         } // removing a repeating item/section
-        else if (oldValues.length > newValues.length) {} // rules run at the remove event, TBD
-          // data changes only
+        else if (oldValues.length > newValues.length) {// rules run at the remove event, TBD
+          } // data changes only
           else {
               for (var i = 0, iLen = newValues.length; i < iLen; i++) {
                 if (!angular.equals(newValues[i], oldValues[i])) {
