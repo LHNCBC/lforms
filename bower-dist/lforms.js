@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"25.0.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"25.1.0\"}");
 
 /***/ }),
 /* 7 */
@@ -1332,8 +1332,8 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           // it is always the last one in current design
           lastUpdated.push(newValues[newValues.length - 1].id);
         } // removing a repeating item/section
-        else if (oldValues.length > newValues.length) {} // rules run at the remove event, TBD
-          // data changes only
+        else if (oldValues.length > newValues.length) {// rules run at the remove event, TBD
+          } // data changes only
           else {
               for (var i = 0, iLen = newValues.length; i < iLen; i++) {
                 if (!angular.equals(newValues[i], oldValues[i])) {
@@ -3388,6 +3388,36 @@ LForms.Util = {
     return {
       lformsVersion: LForms.lformsVersion
     };
+  },
+
+  /**
+   * Converts FHIR ValueSet with an expansion into an array of answers that can be used with a
+   * prefetch autocompleter.
+   * @param valueSet FHIR ValueSet resource
+   * @return the array of answers, or null if the extraction cannot be done.
+   */
+  convertValueSetToAnswers: function convertValueSetToAnswers(valueSet) {
+    var vs = valueSet;
+    var rtn = []; // TBD. There other formats of ValueSet. It now only support expanded one.
+
+    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
+      vs.expansion.contains.forEach(function (vsItem) {
+        var answer = {
+          code: vsItem.code,
+          text: vsItem.display,
+          system: vsItem.system
+        };
+        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+
+        if (ordExt) {
+          answer.score = ordExt.valueDecimal;
+        }
+
+        rtn.push(answer);
+      });
+    }
+
+    return rtn.length > 0 ? rtn : null;
   }
 };
 
@@ -4841,9 +4871,19 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     /**
      * Constructor
      * @param data the lforms form definition data
+     * @param packageStore optional, an array that stores a list of FHIR resources
+     *       needed by the Questionnaire. Currently only the expanded ValueSet is
+     *       supported. Its format is same as the 'files' part in the .index.json
+     *       file in a FHIR resource package files.
+     *       (see https://confluence.hl7.org/display/FHIR/NPM+Package+Specification),
+     *       plus a 'fileContent' field that contains the actual file contents.
      */
-    init: function init(data) {
+    init: function init(data, packageStore) {
       this.lformsVersion = LForms.lformsVersion;
+
+      if (packageStore) {
+        this._packageStore = packageStore;
+      }
 
       if (data && data._initializeInternalData) {
         // This is already a lformsData object.
@@ -4875,6 +4915,39 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
       this._initializeInternalData();
+    },
+
+    /**
+     * Find the resource in the form's packageStore by resource type and identifier.
+     * @param resType FHIR resource type, e.g. ValueSet, CodeSystem.
+     * @param resIdentifier an id or an canonical URL of a FHIR resource.
+     *        "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype"
+     *        or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0"
+     *        (or "http://hl7.org/fhir/uv/sdc/ValueSet/dex-mimetype|2.8.0#vs1", TBD)
+     * Note: The reference could be a contained ValueSet in a different resource
+     * See https://www.hl7.org/fhir/references.html#canonical-fragments
+     * @returns {null} a FHIR resource
+     * @private
+     */
+    _getResourcesFromPackageStore: function _getResourcesFromPackageStore(resType, resIdentifier) {
+      var resReturn = null;
+
+      if (this._packageStore && resIdentifier && resType) {
+        var splited = resIdentifier.split("|");
+        var url = splited[0];
+        var version = splited[1];
+
+        for (var i = 0, iLen = this._packageStore.length; i < iLen; i++) {
+          var resource = this._packageStore[i];
+
+          if (resource.resourceType === resType && resource.url === url && (version && resource.version === version || !version)) {
+            resReturn = JSON.parse(JSON.stringify(resource));
+            break;
+          }
+        }
+      }
+
+      return resReturn;
     },
 
     /**
@@ -5020,6 +5093,26 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
 
       });
+    },
+
+    /**
+     * Load ValueSet from the resource package, convert it the LForms' answers format
+     * and set it on item.answers
+     * @param item an item of lforms
+     * @private
+     */
+    _loadAnswerValueSetsFromPackage: function _loadAnswerValueSetsFromPackage(item) {
+      if (item.answerValueSet) {
+        var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet);
+
+        if (vs) {
+          var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+
+          if (answers) {
+            item.answers = answers;
+          }
+        }
+      }
     },
 
     /**
@@ -5767,6 +5860,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         if ((angular.isString(item.answers) || angular.isNumber(item.answers)) && this.answerLists && angular.isArray(this.answerLists[item.answers])) {
           item.answers = this.answerLists[item.answers];
+        } // if a resource package is provided
+
+
+        if (this._packageStore) {
+          this._loadAnswerValueSetsFromPackage(item);
         } // If there are answers for an answer list and there is a value, replace
         // the value objects with the corresponding objects from the answer list,
         // so that when they are displayed as radio buttons, angular will recognize the

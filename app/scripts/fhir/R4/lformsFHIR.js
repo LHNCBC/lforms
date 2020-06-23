@@ -91,14 +91,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fhir_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
-/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(87);
-/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(89);
-/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(90);
-/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(91);
-/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(92);
-/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(93);
-/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(94);
+/* harmony import */ var _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(86);
+/* harmony import */ var _export_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
+/* harmony import */ var _sdc_export_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(90);
+/* harmony import */ var _sdc_export_common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(91);
+/* harmony import */ var _sdc_import_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(92);
+/* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(93);
+/* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(94);
+/* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(95);
 // Initializes the FHIR structure for R4
 var fhirVersion = 'R4';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -107,7 +107,7 @@ var fhir = LForms.FHIR[fhirVersion] = {
   LOINC_URI: _fhir_common__WEBPACK_IMPORTED_MODULE_0__["LOINC_URI"]
 };
 fhir.fhirpath = __webpack_require__(2);
-fhir.fhirpathModel = __webpack_require__(82);
+fhir.fhirpathModel = __webpack_require__(83);
 
 fhir.DiagnosticReport = _diagnostic_report_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 
@@ -148,9 +148,9 @@ var LOINC_URI = 'http://loinc.org';
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -197,23 +197,25 @@ var existence = __webpack_require__(70);
 
 var filtering = __webpack_require__(71);
 
-var combining = __webpack_require__(72);
+var aggregate = __webpack_require__(72);
 
-var misc = __webpack_require__(73);
+var combining = __webpack_require__(73);
 
-var equality = __webpack_require__(74);
+var misc = __webpack_require__(74);
 
-var collections = __webpack_require__(76);
+var equality = __webpack_require__(75);
 
-var math = __webpack_require__(77);
+var collections = __webpack_require__(77);
 
-var strings = __webpack_require__(78);
+var math = __webpack_require__(78);
 
-var navigation = __webpack_require__(79);
+var strings = __webpack_require__(79);
 
-var datetime = __webpack_require__(80);
+var navigation = __webpack_require__(80);
 
-var logic = __webpack_require__(81);
+var datetime = __webpack_require__(81);
+
+var logic = __webpack_require__(82);
 
 var types = __webpack_require__(53);
 
@@ -292,6 +294,13 @@ engine.invocationTable = {
     fn: filtering.selectMacro,
     arity: {
       1: ["Expr"]
+    }
+  },
+  aggregate: {
+    fn: aggregate.aggregateMacro,
+    arity: {
+      1: ["Expr"],
+      2: ["Expr", "Integer"]
     }
   },
   single: {
@@ -1036,6 +1045,14 @@ engine.ThisInvocation = function (ctx) {
   return util.arraify(ctx.currentData);
 };
 
+engine.TotalInvocation = function (ctx) {
+  return util.arraify(ctx.$total);
+};
+
+engine.IndexInvocation = function (ctx) {
+  return util.arraify(ctx.$index);
+};
+
 engine.OpExpression = function (ctx, parentData, node) {
   var op = node.terminalNodeText[0];
   return infixInvoke(ctx, op, parentData, node.children);
@@ -1088,6 +1105,8 @@ engine.evalTable = {
   StringLiteral: engine.StringLiteral,
   TermExpression: engine.TermExpression,
   ThisInvocation: engine.ThisInvocation,
+  TotalInvocation: engine.TotalInvocation,
+  IndexInvocation: engine.IndexInvocation,
   UnionExpression: engine.UnionExpression,
   OrExpression: engine.OpExpression,
   ImpliesExpression: engine.OpExpression,
@@ -1205,9 +1224,9 @@ module.exports = {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -17358,7 +17377,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -17854,14 +17873,19 @@ var FP_TimeBase = /*#__PURE__*/function (_FP_Type2) {
 
           var thisUTCStr = this._getDateObj().toISOString();
 
-          var otherUTCStr = otherDateTime._getDateObj().toISOString(); // Now parse the strings and compare the adjusted time parts.
+          var otherUTCStr = otherDateTime._getDateObj().toISOString();
+
+          if (this.constructor === FP_Time) {
+            commonPrec += 3; // because we now have year, month, and day
+
+            thisPrec += 3;
+            otherPrec += 3;
+          } // Now parse the strings and compare the adjusted time parts.
+          // Dates without time specify no timezone and should be treated as already normalized to UTC. So we do not adjust the timezone, as this would change the date
 
 
-          var thisAdj = new FP_DateTime(thisUTCStr)._getTimeParts();
-
-          var otherAdj = new FP_DateTime(otherUTCStr)._getTimeParts();
-
-          if (this.constructor === FP_Time) commonPrec += 3; // because we now have year, month, and day
+          var thisAdj = thisPrec > 2 ? new FP_DateTime(thisUTCStr)._getTimeParts() : this._getTimeParts();
+          var otherAdj = otherPrec > 2 ? new FP_DateTime(otherUTCStr)._getTimeParts() : otherDateTime._getTimeParts();
 
           for (var i = 0; i <= commonPrec && rtn !== false; ++i) {
             rtn = thisAdj[i] == otherAdj[i];
@@ -19727,6 +19751,25 @@ module.exports = engine;
 
 /***/ }),
 /* 72 */
+/***/ (function(module, exports) {
+
+// Contains the FHIRPath Aggregate functions.
+// (Section 7 of the FHIRPath 2.0.0 (N1) specification).
+var engine = {};
+
+engine.aggregateMacro = function (data, expr, initialValue) {
+  var _this = this;
+
+  return data.reduce(function (total, x, i) {
+    _this.$index = i;
+    return _this.$total = expr(x);
+  }, this.$total = initialValue);
+};
+
+module.exports = engine;
+
+/***/ }),
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Combining functions.
@@ -19745,7 +19788,7 @@ combineFns.combineFn = function (coll1, coll2) {
 module.exports = combineFns;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
@@ -19909,13 +19952,13 @@ defineTimeConverter('FP_Time');
 module.exports = engine;
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
 var util = __webpack_require__(52);
 
-var deepEqual = __webpack_require__(75);
+var deepEqual = __webpack_require__(76);
 
 var types = __webpack_require__(53);
 
@@ -20039,7 +20082,7 @@ engine.gte = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -20228,11 +20271,11 @@ module.exports = deepEqual; // The license for node-deep-equal, on which the abo
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
-var deepEqual = __webpack_require__(75);
+var deepEqual = __webpack_require__(76);
 
 var engine = {}; // b is assumed to have one element and it tests whether b[0] is in a
 
@@ -20285,7 +20328,7 @@ engine.in = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // This file holds code to hande the FHIRPath Math functions.
@@ -20491,7 +20534,7 @@ engine.truncate = function (x) {
 module.exports = engine;
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var util = __webpack_require__(52);
@@ -20515,6 +20558,15 @@ engine.indexOf = function (coll, substr) {
 
 engine.substring = function (coll, start, length) {
   var str = ensureStringSingleton(coll);
+
+  if (util.isEmpty(start) || start < 0 || start >= str.length) {
+    return [];
+  }
+
+  if (length === undefined || util.isEmpty(length)) {
+    return str.substring(start);
+  }
+
   return str.substring(start, start + length);
 };
 
@@ -20558,7 +20610,7 @@ engine.length = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -20621,7 +20673,7 @@ engine.descendants = function (coll) {
 module.exports = engine;
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var engine = {};
@@ -20671,7 +20723,7 @@ engine.today = function () {
 module.exports = engine;
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports) {
 
 var engine = {};
@@ -20756,7 +20808,7 @@ engine.impliesOp = function (a, b) {
 module.exports = engine;
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -20768,29 +20820,29 @@ module.exports = {
    *  A hash of resource element paths (e.g. Observation.value) that are known
    *  to point to fiels that are choice types.
    */
-  choiceTypePaths: __webpack_require__(83),
+  choiceTypePaths: __webpack_require__(84),
 
   /**
    *  A hash from paths to the path for which their content is defined, e.g.
    *  Questionnaire.item.item -> Questionnaire.item.
    */
-  pathsDefinedElsewhere: __webpack_require__(84)
+  pathsDefinedElsewhere: __webpack_require__(85)
 };
-
-/***/ }),
-/* 83 */
-/***/ (function(module) {
-
-module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Age\",\"Period\",\"Range\",\"Duration\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"String\"],\"AuditEvent.entity.detail.value\":[\"String\",\"Base64Binary\"],\"BiologicallyDerivedProduct.collection.collected\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.manipulation.time\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.processing.time\":[\"DateTime\",\"Period\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ChargeItem.product\":[\"Reference\",\"CodeableConcept\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Claim.supportingInfo.timing\":[\"Date\",\"Period\"],\"Claim.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ClaimResponse.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ClaimResponse.addItem.serviced\":[\"Date\",\"Period\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\",\"Decimal\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Canonical\"],\"ConceptMap.target\":[\"Uri\",\"Canonical\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\"],\"Contract.legallyBinding\":[\"Attachment\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.action.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Contract.term.asset.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.term.offer.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Contract.term.topic\":[\"CodeableConcept\",\"Reference\"],\"Contract.topic\":[\"CodeableConcept\",\"Reference\"],\"Coverage.costToBeneficiary.value\":[\"Quantity\",\"Money\"],\"CoverageEligibilityRequest.item.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"CoverageEligibilityRequest.serviced\":[\"Date\",\"Period\"],\"CoverageEligibilityResponse.insurance.item.benefit.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.insurance.item.benefit.used\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.serviced\":[\"Date\",\"Period\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DataRequirement.subject\":[\"CodeableConcept\",\"Reference\"],\"DetectedIssue.identified\":[\"DateTime\",\"Period\"],\"DeviceDefinition.manufacturer\":[\"String\",\"Reference\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.doseAndRate.dose\":[\"Range\",\"Quantity\"],\"Dosage.doseAndRate.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Canonical\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"EventDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"EvidenceVariable.characteristic.definition\":[\"Reference\",\"Canonical\",\"CodeableConcept\",\"Expression\",\"DataRequirement\",\"TriggerDefinition\"],\"EvidenceVariable.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.supportingInfo.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Ratio\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\",\"Reference\"],\"GuidanceResponse.module\":[\"Uri\",\"Canonical\",\"CodeableConcept\"],\"Immunization.occurrence\":[\"DateTime\",\"String\"],\"Immunization.protocolApplied.doseNumber\":[\"PositiveInt\",\"String\"],\"Immunization.protocolApplied.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImplementationGuide.definition.page.name\":[\"Url\",\"Reference\"],\"ImplementationGuide.definition.resource.example\":[\"Boolean\",\"Canonical\"],\"ImplementationGuide.manifest.resource.example\":[\"Boolean\",\"Canonical\"],\"Invoice.lineItem.chargeItem\":[\"Reference\",\"CodeableConcept\"],\"Library.subject\":[\"CodeableConcept\",\"Reference\"],\"Measure.subject\":[\"CodeableConcept\",\"Reference\"],\"Media.created\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.statusReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic\":[\"CodeableConcept\",\"Quantity\"],\"MedicationKnowledge.drugCharacteristic.value\":[\"CodeableConcept\",\"String\",\"Quantity\",\"Base64Binary\"],\"MedicationKnowledge.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.reported\":[\"Boolean\",\"Reference\"],\"MedicationRequest.substitution.allowed\":[\"Boolean\",\"CodeableConcept\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProduct.specialDesignation.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductAuthorization.procedure.date\":[\"Period\",\"DateTime\"],\"MedicinalProductContraindication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductIndication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductInteraction.interactant.item\":[\"Reference\",\"CodeableConcept\"],\"MessageDefinition.event\":[\"Coding\",\"Uri\"],\"MessageHeader.event\":[\"Coding\",\"Uri\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\",\"Timing\",\"Instant\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.definition\":[\"Canonical\",\"Uri\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.subject\":[\"CodeableConcept\",\"Reference\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"PlanDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"Population.age\":[\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\",\"String\",\"Age\",\"Range\"],\"Provenance.occurred\":[\"Period\",\"DateTime\"],\"Questionnaire.item.answerOption.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\",\"Reference\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"ResearchDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ResearchElementDefinition.characteristic.definition\":[\"CodeableConcept\",\"Canonical\",\"Expression\",\"DataRequirement\"],\"ResearchElementDefinition.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.characteristic.studyEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"ServiceRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ServiceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ServiceRequest.quantity\":[\"Quantity\",\"Ratio\",\"Range\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.collection.fastingStatus\":[\"CodeableConcept\",\"Duration\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"SpecimenDefinition.typeTested.container.additive.additive\":[\"CodeableConcept\",\"Reference\"],\"SpecimenDefinition.typeTested.container.minimumVolume\":[\"Quantity\",\"String\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SubstanceAmount.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceReferenceInformation.target.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceSpecification.moiety.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.definingSubstance\":[\"Reference\",\"CodeableConcept\"],\"SubstanceSpecification.relationship.amount\":[\"Quantity\",\"Range\",\"Ratio\",\"String\"],\"SubstanceSpecification.relationship.substance\":[\"Reference\",\"CodeableConcept\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.timing\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Reference\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\",\"DateTime\"]}");
 
 /***/ }),
 /* 84 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.operation\":\"CapabilityStatement.rest.resource.operation\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ChargeItemDefinition.propertyGroup.applicability\":\"ChargeItemDefinition.applicability\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Consent.provision.provision\":\"Consent.provision\",\"Contract.term.asset.answer\":\"Contract.term.offer.answer\",\"Contract.term.group\":\"Contract.term\",\"ExampleScenario.process.step.alternative.step\":\"ExampleScenario.process.step\",\"ExampleScenario.process.step.operation.request\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.operation.response\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.process\":\"ExampleScenario.process\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.definition.page.page\":\"ImplementationGuide.definition.page\",\"Invoice.totalPriceComponent\":\"Invoice.lineItem.priceComponent\",\"MedicinalProductAuthorization.procedure.application\":\"MedicinalProductAuthorization.procedure\",\"MedicinalProductIngredient.substance.strength\":\"MedicinalProductIngredient.specifiedSubstance.strength\",\"MedicinalProductPackaged.packageItem.packageItem\":\"MedicinalProductPackaged.packageItem\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"SubstanceSpecification.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"SubstanceSpecification.name.synonym\":\"SubstanceSpecification.name\",\"SubstanceSpecification.name.translation\":\"SubstanceSpecification.name\",\"SubstanceSpecification.structure.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
+module.exports = JSON.parse("{\"ActivityDefinition.product\":[\"Reference\",\"CodeableConcept\"],\"ActivityDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ActivityDefinition.timing\":[\"Timing\",\"DateTime\",\"Age\",\"Period\",\"Range\",\"Duration\"],\"AllergyIntolerance.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Annotation.author\":[\"Reference\",\"String\"],\"AuditEvent.entity.detail.value\":[\"String\",\"Base64Binary\"],\"BiologicallyDerivedProduct.collection.collected\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.manipulation.time\":[\"DateTime\",\"Period\"],\"BiologicallyDerivedProduct.processing.time\":[\"DateTime\",\"Period\"],\"CarePlan.activity.detail.product\":[\"CodeableConcept\",\"Reference\"],\"CarePlan.activity.detail.scheduled\":[\"Timing\",\"Period\",\"String\"],\"ChargeItem.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ChargeItem.product\":[\"Reference\",\"CodeableConcept\"],\"Claim.accident.location\":[\"Address\",\"Reference\"],\"Claim.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"Claim.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"Claim.item.serviced\":[\"Date\",\"Period\"],\"Claim.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"Claim.supportingInfo.timing\":[\"Date\",\"Period\"],\"Claim.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"ClaimResponse.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ClaimResponse.addItem.serviced\":[\"Date\",\"Period\"],\"ClinicalImpression.effective\":[\"DateTime\",\"Period\"],\"CodeSystem.concept.property.value\":[\"Code\",\"Coding\",\"String\",\"Integer\",\"Boolean\",\"DateTime\",\"Decimal\"],\"Communication.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"CommunicationRequest.occurrence\":[\"DateTime\",\"Period\"],\"CommunicationRequest.payload.content\":[\"String\",\"Attachment\",\"Reference\"],\"Composition.relatesTo.target\":[\"Identifier\",\"Reference\"],\"ConceptMap.source\":[\"Uri\",\"Canonical\"],\"ConceptMap.target\":[\"Uri\",\"Canonical\"],\"Condition.abatement\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Condition.onset\":[\"DateTime\",\"Age\",\"Period\",\"Range\",\"String\"],\"Consent.source\":[\"Attachment\",\"Reference\"],\"Contract.friendly.content\":[\"Attachment\",\"Reference\"],\"Contract.legal.content\":[\"Attachment\",\"Reference\"],\"Contract.legallyBinding\":[\"Attachment\",\"Reference\"],\"Contract.rule.content\":[\"Attachment\",\"Reference\"],\"Contract.term.action.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"Contract.term.asset.valuedItem.entity\":[\"CodeableConcept\",\"Reference\"],\"Contract.term.offer.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"Contract.term.topic\":[\"CodeableConcept\",\"Reference\"],\"Contract.topic\":[\"CodeableConcept\",\"Reference\"],\"Coverage.costToBeneficiary.value\":[\"Quantity\",\"Money\"],\"CoverageEligibilityRequest.item.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"CoverageEligibilityRequest.serviced\":[\"Date\",\"Period\"],\"CoverageEligibilityResponse.insurance.item.benefit.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.insurance.item.benefit.used\":[\"UnsignedInt\",\"String\",\"Money\"],\"CoverageEligibilityResponse.serviced\":[\"Date\",\"Period\"],\"DataRequirement.dateFilter.value\":[\"DateTime\",\"Period\",\"Duration\"],\"DataRequirement.subject\":[\"CodeableConcept\",\"Reference\"],\"DetectedIssue.identified\":[\"DateTime\",\"Period\"],\"DeviceDefinition.manufacturer\":[\"String\",\"Reference\"],\"DeviceRequest.code\":[\"Reference\",\"CodeableConcept\"],\"DeviceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"DeviceRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"DeviceUseStatement.timing\":[\"Timing\",\"Period\",\"DateTime\"],\"DiagnosticReport.effective\":[\"DateTime\",\"Period\"],\"Dosage.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"Dosage.doseAndRate.dose\":[\"Range\",\"Quantity\"],\"Dosage.doseAndRate.rate\":[\"Ratio\",\"Range\",\"Quantity\"],\"ElementDefinition.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.example.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.extension.value\":[\"CodeableConcept\",\"Canonical\"],\"ElementDefinition.fixed\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"ElementDefinition.maxValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.minValue\":[\"Date\",\"DateTime\",\"Instant\",\"Time\",\"Decimal\",\"Integer\",\"PositiveInt\",\"UnsignedInt\",\"Quantity\"],\"ElementDefinition.pattern\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"EventDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"EvidenceVariable.characteristic.definition\":[\"Reference\",\"Canonical\",\"CodeableConcept\",\"Expression\",\"DataRequirement\",\"TriggerDefinition\"],\"EvidenceVariable.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ExplanationOfBenefit.accident.location\":[\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.addItem.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.benefitBalance.financial.allowed\":[\"UnsignedInt\",\"String\",\"Money\"],\"ExplanationOfBenefit.benefitBalance.financial.used\":[\"UnsignedInt\",\"Money\"],\"ExplanationOfBenefit.diagnosis.diagnosis\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.item.location\":[\"CodeableConcept\",\"Address\",\"Reference\"],\"ExplanationOfBenefit.item.serviced\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.procedure.procedure\":[\"CodeableConcept\",\"Reference\"],\"ExplanationOfBenefit.supportingInfo.timing\":[\"Date\",\"Period\"],\"ExplanationOfBenefit.supportingInfo.value\":[\"Boolean\",\"String\",\"Quantity\",\"Attachment\",\"Reference\"],\"Extension.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"FamilyMemberHistory.age\":[\"Age\",\"Range\",\"String\"],\"FamilyMemberHistory.born\":[\"Period\",\"Date\",\"String\"],\"FamilyMemberHistory.condition.onset\":[\"Age\",\"Range\",\"Period\",\"String\"],\"FamilyMemberHistory.deceased\":[\"Boolean\",\"Age\",\"Range\",\"Date\",\"String\"],\"Goal.start\":[\"Date\",\"CodeableConcept\"],\"Goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Ratio\"],\"Goal.target.due\":[\"Date\",\"Duration\"],\"Group.characteristic.value\":[\"CodeableConcept\",\"Boolean\",\"Quantity\",\"Range\",\"Reference\"],\"GuidanceResponse.module\":[\"Uri\",\"Canonical\",\"CodeableConcept\"],\"Immunization.occurrence\":[\"DateTime\",\"String\"],\"Immunization.protocolApplied.doseNumber\":[\"PositiveInt\",\"String\"],\"Immunization.protocolApplied.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationEvaluation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.doseNumber\":[\"PositiveInt\",\"String\"],\"ImmunizationRecommendation.recommendation.seriesDoses\":[\"PositiveInt\",\"String\"],\"ImplementationGuide.definition.page.name\":[\"Url\",\"Reference\"],\"ImplementationGuide.definition.resource.example\":[\"Boolean\",\"Canonical\"],\"ImplementationGuide.manifest.resource.example\":[\"Boolean\",\"Canonical\"],\"Invoice.lineItem.chargeItem\":[\"Reference\",\"CodeableConcept\"],\"Library.subject\":[\"CodeableConcept\",\"Reference\"],\"Measure.subject\":[\"CodeableConcept\",\"Reference\"],\"Media.created\":[\"DateTime\",\"Period\"],\"Medication.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationAdministration.dosage.rate\":[\"Ratio\",\"Quantity\"],\"MedicationAdministration.effective\":[\"DateTime\",\"Period\"],\"MedicationAdministration.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationDispense.statusReason\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic\":[\"CodeableConcept\",\"Quantity\"],\"MedicationKnowledge.drugCharacteristic.value\":[\"CodeableConcept\",\"String\",\"Quantity\",\"Base64Binary\"],\"MedicationKnowledge.ingredient.item\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicationRequest.reported\":[\"Boolean\",\"Reference\"],\"MedicationRequest.substitution.allowed\":[\"Boolean\",\"CodeableConcept\"],\"MedicationStatement.effective\":[\"DateTime\",\"Period\"],\"MedicationStatement.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProduct.specialDesignation.indication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductAuthorization.procedure.date\":[\"Period\",\"DateTime\"],\"MedicinalProductContraindication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductIndication.otherTherapy.medication\":[\"CodeableConcept\",\"Reference\"],\"MedicinalProductInteraction.interactant.item\":[\"Reference\",\"CodeableConcept\"],\"MessageDefinition.event\":[\"Coding\",\"Uri\"],\"MessageHeader.event\":[\"Coding\",\"Uri\"],\"NutritionOrder.enteralFormula.administration.rate\":[\"Quantity\",\"Ratio\"],\"Observation.component.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Observation.effective\":[\"DateTime\",\"Period\",\"Timing\",\"Instant\"],\"Observation.value\":[\"Quantity\",\"CodeableConcept\",\"String\",\"Boolean\",\"Integer\",\"Range\",\"Ratio\",\"SampledData\",\"Time\",\"DateTime\",\"Period\"],\"Parameters.parameter.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Patient.deceased\":[\"Boolean\",\"DateTime\"],\"Patient.multipleBirth\":[\"Boolean\",\"Integer\"],\"PlanDefinition.action.definition\":[\"Canonical\",\"Uri\"],\"PlanDefinition.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"PlanDefinition.action.subject\":[\"CodeableConcept\",\"Reference\"],\"PlanDefinition.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"PlanDefinition.goal.target.detail\":[\"Quantity\",\"Range\",\"CodeableConcept\"],\"PlanDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"Population.age\":[\"Range\",\"CodeableConcept\"],\"Procedure.performed\":[\"DateTime\",\"Period\",\"String\",\"Age\",\"Range\"],\"Provenance.occurred\":[\"Period\",\"DateTime\"],\"Questionnaire.item.answerOption.value\":[\"Integer\",\"Date\",\"Time\",\"String\",\"Coding\",\"Reference\"],\"Questionnaire.item.enableWhen.answer\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Coding\",\"Quantity\",\"Reference\"],\"Questionnaire.item.initial.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"QuestionnaireResponse.item.answer.value\":[\"Boolean\",\"Decimal\",\"Integer\",\"Date\",\"DateTime\",\"Time\",\"String\",\"Uri\",\"Attachment\",\"Coding\",\"Quantity\",\"Reference\"],\"RequestGroup.action.relatedAction.offset\":[\"Duration\",\"Range\"],\"RequestGroup.action.timing\":[\"DateTime\",\"Age\",\"Period\",\"Duration\",\"Range\",\"Timing\"],\"ResearchDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"ResearchElementDefinition.characteristic.definition\":[\"CodeableConcept\",\"Canonical\",\"Expression\",\"DataRequirement\"],\"ResearchElementDefinition.characteristic.participantEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.characteristic.studyEffective\":[\"DateTime\",\"Period\",\"Duration\",\"Timing\"],\"ResearchElementDefinition.subject\":[\"CodeableConcept\",\"Reference\"],\"RiskAssessment.occurrence\":[\"DateTime\",\"Period\"],\"RiskAssessment.prediction.probability\":[\"Decimal\",\"Range\"],\"RiskAssessment.prediction.when\":[\"Period\",\"Range\"],\"ServiceRequest.asNeeded\":[\"Boolean\",\"CodeableConcept\"],\"ServiceRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"ServiceRequest.quantity\":[\"Quantity\",\"Ratio\",\"Range\"],\"Specimen.collection.collected\":[\"DateTime\",\"Period\"],\"Specimen.collection.fastingStatus\":[\"CodeableConcept\",\"Duration\"],\"Specimen.container.additive\":[\"CodeableConcept\",\"Reference\"],\"Specimen.processing.time\":[\"DateTime\",\"Period\"],\"SpecimenDefinition.typeTested.container.additive.additive\":[\"CodeableConcept\",\"Reference\"],\"SpecimenDefinition.typeTested.container.minimumVolume\":[\"Quantity\",\"String\"],\"StructureMap.group.rule.source.defaultValue\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"StructureMap.group.rule.target.parameter.value\":[\"Id\",\"String\",\"Boolean\",\"Integer\",\"Decimal\"],\"Substance.ingredient.substance\":[\"CodeableConcept\",\"Reference\"],\"SubstanceAmount.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceReferenceInformation.target.amount\":[\"Quantity\",\"Range\",\"String\"],\"SubstanceSpecification.moiety.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.amount\":[\"Quantity\",\"String\"],\"SubstanceSpecification.property.definingSubstance\":[\"Reference\",\"CodeableConcept\"],\"SubstanceSpecification.relationship.amount\":[\"Quantity\",\"Range\",\"Ratio\",\"String\"],\"SubstanceSpecification.relationship.substance\":[\"Reference\",\"CodeableConcept\"],\"SupplyDelivery.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyDelivery.suppliedItem.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.item\":[\"CodeableConcept\",\"Reference\"],\"SupplyRequest.occurrence\":[\"DateTime\",\"Period\",\"Timing\"],\"SupplyRequest.parameter.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Boolean\"],\"Task.input.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Task.output.value\":[\"Base64Binary\",\"Boolean\",\"Canonical\",\"Code\",\"Date\",\"DateTime\",\"Decimal\",\"Id\",\"Instant\",\"Integer\",\"Markdown\",\"Oid\",\"PositiveInt\",\"String\",\"Time\",\"UnsignedInt\",\"Uri\",\"Url\",\"Uuid\",\"Address\",\"Age\",\"Annotation\",\"Attachment\",\"CodeableConcept\",\"Coding\",\"ContactPoint\",\"Count\",\"Distance\",\"Duration\",\"HumanName\",\"Identifier\",\"Money\",\"Period\",\"Quantity\",\"Range\",\"Ratio\",\"Reference\",\"SampledData\",\"Signature\",\"Timing\",\"ContactDetail\",\"Contributor\",\"DataRequirement\",\"Expression\",\"ParameterDefinition\",\"RelatedArtifact\",\"TriggerDefinition\",\"UsageContext\",\"Dosage\",\"Meta\"],\"Timing.repeat.bounds\":[\"Duration\",\"Range\",\"Period\"],\"TriggerDefinition.timing\":[\"Timing\",\"Reference\",\"Date\",\"DateTime\"],\"UsageContext.value\":[\"CodeableConcept\",\"Quantity\",\"Range\",\"Reference\"],\"ValueSet.expansion.parameter.value\":[\"String\",\"Boolean\",\"Integer\",\"Decimal\",\"Uri\",\"Code\",\"DateTime\"]}");
 
 /***/ }),
 /* 85 */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"Bundle.entry.link\":\"Bundle.link\",\"CapabilityStatement.rest.operation\":\"CapabilityStatement.rest.resource.operation\",\"CapabilityStatement.rest.searchParam\":\"CapabilityStatement.rest.resource.searchParam\",\"ChargeItemDefinition.propertyGroup.applicability\":\"ChargeItemDefinition.applicability\",\"ClaimResponse.addItem.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.addItem.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.adjudication\":\"ClaimResponse.item.adjudication\",\"ClaimResponse.item.detail.subDetail.adjudication\":\"ClaimResponse.item.adjudication\",\"CodeSystem.concept.concept\":\"CodeSystem.concept\",\"Composition.section.section\":\"Composition.section\",\"ConceptMap.group.element.target.product\":\"ConceptMap.group.element.target.dependsOn\",\"Consent.provision.provision\":\"Consent.provision\",\"Contract.term.asset.answer\":\"Contract.term.offer.answer\",\"Contract.term.group\":\"Contract.term\",\"ExampleScenario.process.step.alternative.step\":\"ExampleScenario.process.step\",\"ExampleScenario.process.step.operation.request\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.operation.response\":\"ExampleScenario.instance.containedInstance\",\"ExampleScenario.process.step.process\":\"ExampleScenario.process\",\"ExplanationOfBenefit.addItem.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.addItem.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"ExplanationOfBenefit.item.detail.subDetail.adjudication\":\"ExplanationOfBenefit.item.adjudication\",\"GraphDefinition.link.target.link\":\"GraphDefinition.link\",\"ImplementationGuide.definition.page.page\":\"ImplementationGuide.definition.page\",\"Invoice.totalPriceComponent\":\"Invoice.lineItem.priceComponent\",\"MedicinalProductAuthorization.procedure.application\":\"MedicinalProductAuthorization.procedure\",\"MedicinalProductIngredient.substance.strength\":\"MedicinalProductIngredient.specifiedSubstance.strength\",\"MedicinalProductPackaged.packageItem.packageItem\":\"MedicinalProductPackaged.packageItem\",\"Observation.component.referenceRange\":\"Observation.referenceRange\",\"OperationDefinition.parameter.part\":\"OperationDefinition.parameter\",\"Parameters.parameter.part\":\"Parameters.parameter\",\"PlanDefinition.action.action\":\"PlanDefinition.action\",\"Provenance.entity.agent\":\"Provenance.agent\",\"Questionnaire.item.item\":\"Questionnaire.item\",\"QuestionnaireResponse.item.answer.item\":\"QuestionnaireResponse.item\",\"QuestionnaireResponse.item.item\":\"QuestionnaireResponse.item\",\"RequestGroup.action.action\":\"RequestGroup.action\",\"StructureMap.group.rule.rule\":\"StructureMap.group.rule\",\"SubstanceSpecification.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"SubstanceSpecification.name.synonym\":\"SubstanceSpecification.name\",\"SubstanceSpecification.name.translation\":\"SubstanceSpecification.name\",\"SubstanceSpecification.structure.molecularWeight\":\"SubstanceSpecification.structure.isotope.molecularWeight\",\"TestReport.teardown.action.operation\":\"TestReport.setup.action.operation\",\"TestReport.test.action.assert\":\"TestReport.setup.action.assert\",\"TestReport.test.action.operation\":\"TestReport.setup.action.operation\",\"TestScript.teardown.action.operation\":\"TestScript.setup.action.operation\",\"TestScript.test.action.assert\":\"TestScript.setup.action.assert\",\"TestScript.test.action.operation\":\"TestScript.setup.action.operation\",\"ValueSet.compose.exclude\":\"ValueSet.compose.include\",\"ValueSet.expansion.contains.contains\":\"ValueSet.expansion.contains\",\"ValueSet.expansion.contains.designation\":\"ValueSet.compose.include.concept.designation\"}");
+
+/***/ }),
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20807,7 +20859,7 @@ __webpack_require__.r(__webpack_exports__);
  * mergeDiagnosticReportToLForms()
  * -- Merge FHIR SDC DiagnosticReport data into corresponding LForms data
  */
-var LForms = __webpack_require__(86);
+var LForms = __webpack_require__(87);
 
 var dr = {
   // a prefix for references to Observation resources
@@ -21510,18 +21562,18 @@ var dr = {
 /* harmony default export */ __webpack_exports__["default"] = (dr);
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports) {
 
 module.exports = LForms;
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(88);
+/* harmony import */ var _export_common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89);
 // R4-specific export code common to DiagnosticReport and SDC.
 
 var self = Object.create(_export_common_js__WEBPACK_IMPORTED_MODULE_0__["default"]); // copies properties to self.prototype
@@ -21564,7 +21616,7 @@ Object.assign(self, {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21581,7 +21633,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-var LForms = __webpack_require__(86);
+var LForms = __webpack_require__(87);
 
 var _versionTagStr = 'lformsVersion: ';
 /**
@@ -21791,7 +21843,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22258,7 +22310,7 @@ var self = {
 /* harmony default export */ __webpack_exports__["default"] = (self);
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23284,7 +23336,7 @@ function addCommonSDCExportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCExportFns);
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24004,7 +24056,7 @@ function addSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addSDCImportFns);
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -24159,14 +24211,14 @@ function addCommonSDCFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var LForms = __webpack_require__(86);
+var LForms = __webpack_require__(87);
 /**
  *  Defines SDC import functions that are the same across the different FHIR
  *  versions.  The function takes SDC namespace object defined in the sdc export
@@ -25359,13 +25411,13 @@ function addCommonSDCImportFns(ns) {
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCImportFns);
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addCommonRuntimeFns", function() { return addCommonRuntimeFns; });
-/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(95);
+/* harmony import */ var _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
 
 var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
@@ -25391,7 +25443,7 @@ function addCommonRuntimeFns(ns) {
 }
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

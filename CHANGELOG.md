@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.0] 2020-06-22
+### Added
+- Added a support for providing ValueSets via a FHIR resource package at the initialization.
+
 ## [25.0.0] 2020-06-17
 ### Changed
 - Updated the URI for the FHIR calculatedExpression extension.  (If you are not
