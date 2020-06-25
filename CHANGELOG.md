@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.1] 2020-06-24
+### Changed
+- Update angularjs to 1.8.0
+
 ## [25.1.0] 2020-06-22
 ### Added
 - Added a support for providing ValueSets via a FHIR resource package at the initialization.
