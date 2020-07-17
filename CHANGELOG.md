@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.2] 2020-07-17
+### Changed
+- Fix a bug with skip logic notEqual operator.
+
 ## [25.1.1] 2020-06-24
 ### Changed
 - Update angularjs to 1.8.0

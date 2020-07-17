@@ -103,13 +103,7 @@ function addSDCImportFns(ns) {
   self._processSkipLogic = function (lfItem, qItem, linkIdItemMap) {
     if(qItem.enableWhen) {
       lfItem.skipLogic = {conditions: [], action: 'show'};
-      // See if it satisfies range. Range in lforms is a single condition, in FHIR it is done with two conditions
-      var rangeCondition = _potentialRange(qItem, linkIdItemMap);
-      if(rangeCondition) {
-        lfItem.skipLogic.conditions.push(rangeCondition);
-      }
-      else {
-        for(var i = 0; i < qItem.enableWhen.length; i++) {
+      for(var i = 0; i < qItem.enableWhen.length; i++) {
           var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[i].question]);
           var condition = {source: qItem.enableWhen[i].question, trigger: {}};
           var answer = self._getFHIRValueWithPrefixKey(qItem.enableWhen[i], /^answer/);
@@ -122,7 +116,7 @@ function addSDCImportFns(ns) {
             condition.trigger.exists = answer; // boolean value here regardless of data type
           }
           else if(dataType === 'CWE' || dataType === 'CNE') {
-            condition.trigger.value = self._copyTriggerCoding(answer, null, false);
+            condition.trigger[opMapping] = self._copyTriggerCoding(answer, null, false);
           }
           else if(dataType === 'QTY') {
             condition.trigger[opMapping] = answer.value;
@@ -131,48 +125,12 @@ function addSDCImportFns(ns) {
             condition.trigger[opMapping] = answer;
           }
           lfItem.skipLogic.conditions.push(condition);
-        }
-        if(qItem.enableBehavior) {
-          lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
-        }
+      }
+      if(qItem.enableBehavior) {
+        lfItem.skipLogic.logic = qItem.enableBehavior.toUpperCase();
       }
     }
   };
-
-
-  /**
-   * See if the skip logic condition belongs to range. If yes, returns a lforms condition, otherwise null;
-   *
-   * @param qItem - Questionnaire item
-   * @param sourceQuestionnaire - Questionnaire resource to look for skip logic source item.
-   * @returns {*} - Lforms skip logic condition object.
-   * @private
-   */
-  function _potentialRange(qItem, linkIdItemMap) {
-    var ret = null;
-    // Two conditions based on same source with enableBehavior of all implies range.
-    if(qItem && qItem.enableWhen && qItem.enableWhen.length === 2 && qItem.enableBehavior === 'all' &&
-       qItem.enableWhen[0].question === qItem.enableWhen[1].question) {
-      var dataType = self._getDataType(linkIdItemMap[qItem.enableWhen[0].question]);
-      if (dataType === 'REAL' || dataType === 'INT' || dataType === 'DT' ||
-        dataType === 'DTM' || dataType === 'QTY') {
-        ret = {source: qItem.enableWhen[0].question};
-        ret.trigger = {};
-        var answer0 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[0], /^answer/);
-        var answer1 = self._getFHIRValueWithPrefixKey(qItem.enableWhen[1], /^answer/);
-
-        if(dataType === 'QTY') {
-          ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0.value;
-          ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1.value;
-        }
-        else {
-          ret.trigger[self._operatorMapping[qItem.enableWhen[0].operator]] = answer0;
-          ret.trigger[self._operatorMapping[qItem.enableWhen[1].operator]] = answer1;
-        }
-      }
-    }
-    return ret;
-  }
 
 
   /**
