@@ -697,7 +697,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               assert.deepEqual(convertedLfData.items[0].items[12].items[2].skipLogic, fhtClone.items[0].items[12].items[2].skipLogic);
               if(fhirVersion !== 'STU3') {
                 assert.deepEqual(convertedLfData.items[0].items[6].items[1].skipLogic, fhtClone.items[0].items[6].items[1].skipLogic);
-                assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic, fhtClone.items[0].items[6].items[2].skipLogic);
+                assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic.conditions[0].trigger.minExclusive,
+                    fhtClone.items[0].items[6].items[2].skipLogic.conditions[0].trigger.minExclusive);
+                assert.deepEqual(convertedLfData.items[0].items[6].items[2].skipLogic.conditions[1].trigger.maxInclusive,
+                    fhtClone.items[0].items[6].items[2].skipLogic.conditions[0].trigger.maxInclusive);
+
                 assert.deepEqual(convertedLfData.items[0].items[5].items[0].skipLogic, fhtClone.items[0].items[5].items[0].skipLogic);
                 assert.deepEqual(convertedLfData.items[0].items[5].items[1].skipLogic, fhtClone.items[0].items[5].items[1].skipLogic);
               }

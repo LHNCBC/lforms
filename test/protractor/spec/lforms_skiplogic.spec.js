@@ -1,3 +1,5 @@
+var fhirSupport = require('../../../app/scripts/fhir/versions');
+var fhirVersions = Object.keys(fhirSupport);
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
 describe('skip logic', function() {
@@ -180,5 +182,40 @@ describe('skip logic', function() {
     ff.rpSrc2.sendKeys('1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     expect(ff.rpTarget2b.isPresent()).toBe(false);
+  });
+
+  describe('Skip logic equal and notEqual operators', function () {
+    beforeAll(function () {
+      tp.openBaseTestPage();
+    });
+
+    for(let i = 0; i < fhirVersions.length; i++) {
+      if (fhirVersions[i] !== 'STU3') {
+        it('should work with = and != operators - ' + fhirVersions[i], function () {
+          tp.loadFromTestData('test-enablewhen-not-operator.json', fhirVersions[i]);
+          let source = element(by.id("4.1/1"));
+          let targetEqual = element(by.id("4.2/1"));
+          let targetNotEqual = element(by.id("4.3/1"));
+
+          expect(source.isDisplayed()).toBe(true);
+          expect(targetEqual.isPresent()).toBe(false);
+          expect(targetNotEqual.isDisplayed()).toBe(true);
+
+          source.click();
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ENTER);
+          expect(targetEqual.isDisplayed()).toBe(true);
+          expect(targetNotEqual.isPresent()).toBe(false);
+
+          source.click();
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ENTER);
+
+          expect(targetEqual.isPresent()).toBe(false);
+          expect(targetNotEqual.isDisplayed()).toBe(true);
+        });
+      }
+    }
   });
 });

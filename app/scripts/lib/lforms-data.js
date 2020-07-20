@@ -3287,7 +3287,7 @@
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.not : null;
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.notEqual : null;
             var answerValues = Array.isArray(currentValue)? currentValue: [currentValue];
             var isEqual = false;
             for (var m= 0, mLen = answerValues.length; m<mLen; m++) {

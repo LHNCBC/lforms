@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"25.1.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"25.1.2\"}");
 
 /***/ }),
 /* 7 */
@@ -8037,7 +8037,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           // the key is one of the keys in the answers.
           case this._CONSTANTS.DATA_TYPE.CNE:
           case this._CONSTANTS.DATA_TYPE.CWE:
-            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.not : null;
+            var triggerValue = trigger.hasOwnProperty('value') ? trigger.value : trigger.hasOwnProperty('notEqual') ? trigger.notEqual : null;
             var answerValues = Array.isArray(currentValue) ? currentValue : [currentValue];
             var isEqual = false;
 
