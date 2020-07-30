@@ -2423,7 +2423,7 @@
               source.sourceLinkId) {
             // get the source item object
             var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
-            if (sourceItem) {
+            if (sourceItem && sourceItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
               // check how to create the new data on target
               if (constructionType === this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_ARRAY ) {
                 var newData = this._constructArrayByDataFormat(dataFormat, sourceItem);
@@ -3272,7 +3272,7 @@
      */
     _checkSkipLogicCondition: function(item, trigger) {
       var action = false;
-      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "";
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "" && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
 
       // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
       // maxExclusive or maxInclusive.

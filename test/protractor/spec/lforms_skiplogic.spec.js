@@ -2,7 +2,7 @@ var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
-describe('skip logic', function() {
+fdescribe('skip logic', function() {
 
   it('target items should be hidden initially', function() {
     tp.openFullFeaturedForm();
@@ -192,7 +192,7 @@ describe('skip logic', function() {
     for(let i = 0; i < fhirVersions.length; i++) {
       if (fhirVersions[i] !== 'STU3') {
         it('should work with = and != operators - ' + fhirVersions[i], function () {
-          tp.loadFromTestData('test-enablewhen-not-operator.json', fhirVersions[i]);
+          tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
           let source = element(by.id("4.1/1"));
           let targetEqual = element(by.id("4.2/1"));
           let targetNotEqual = element(by.id("4.3/1"));
@@ -215,7 +215,71 @@ describe('skip logic', function() {
           expect(targetEqual.isPresent()).toBe(false);
           expect(targetNotEqual.isDisplayed()).toBe(true);
         });
+
+        it('should work with skip logic source that itself is a skip logic target - ' + fhirVersions[i], function () {
+          tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
+          let source = element(by.id("4.1/1"));
+          let targetEqual = element(by.id("4.3/1"));
+          let targetWithSklSourceExists = element(by.id("4.4/1"));
+          let targetWithSklSourceNotExists = element(by.id("4.5/1"));
+
+          expect(source.isDisplayed()).toBe(true);
+          expect(targetWithSklSourceExists.isPresent()).toBe(false);
+          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+
+          source.click();
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ENTER);
+          expect(targetWithSklSourceExists.isPresent()).toBe(false);
+          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+
+          source.click();
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ARROW_DOWN);
+          source.sendKeys(protractor.Key.ENTER);
+          expect(targetEqual.isDisplayed()).toBe(true);
+          expect(targetWithSklSourceExists.isPresent()).toBe(false);
+          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+          targetEqual.click();
+          targetEqual.clear();
+          targetEqual.sendKeys('xxx');
+          expect(targetWithSklSourceExists.isDisplayed()).toBe(true);
+          expect(targetWithSklSourceNotExists.isPresent()).toBe(false);
+
+        });
       }
     }
+
+    it('should work with data control whose source is controlled by skip logic', function () {
+      tp.loadFromTestData('test-skiplogic-datacontrol.json');
+      let source = element(by.id("1/1"));
+      let skipLogicItem = element(by.id("2/1"));
+      let dataControlItemWithSourceHavingSkipLogic = element(by.id("3/1"));
+
+      expect(source.isDisplayed()).toBe(true);
+      expect(skipLogicItem.isPresent()).toBe(false);
+      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+
+      // Not met skip logic condition
+      source.click();
+      source.sendKeys('xxx');
+      expect(skipLogicItem.isPresent()).toBe(false);
+      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+
+      // Met skip logic condition
+      source.click();
+      source.clear();
+      source.sendKeys('show 2');
+      expect(skipLogicItem.isDisplayed()).toBe(true);
+
+      // skipLogicItem is present but its value does not exists yet.
+      expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
+
+      skipLogicItem.click();
+      skipLogicItem.sendKeys('xxx');
+      expect(dataControlItemWithSourceHavingSkipLogic.isDisplayed()).toBe(true);
+      expect(dataControlItemWithSourceHavingSkipLogic.getAttribute('value')).toBe('xxx');
+    });
+
   });
 });

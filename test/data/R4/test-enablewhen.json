@@ -16,6 +16,7 @@
     {
       "linkId": "4.1",
       "text": "Diagnosis",
+      "prefix": "4.1",
       "type": "choice",
       "required": true,
       "answerOption": [
@@ -36,6 +37,7 @@
     {
       "linkId": "4.2",
       "text": "Diabetes Treatment",
+      "prefix": "4.2",
       "type": "choice",
       "required": true,
       "enableWhen": [
@@ -65,6 +67,7 @@
     {
       "linkId": "4.3",
       "text": "Other Diagnosis Description",
+      "prefix": "4.3",
       "type": "string",
       "required": true,
       "enableWhen": [
@@ -74,6 +77,34 @@
           "answerCoding": {
             "code": "Diabetes"
           }
+        }
+      ]
+    },
+    {
+      "linkId": "4.4",
+      "text": "4.3 should exists",
+      "prefix": "4.4",
+      "type": "string",
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "4.3",
+          "operator": "exists",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "linkId": "4.5",
+      "text": "4.3 should not exists",
+      "prefix": "4.5",
+      "type": "string",
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "4.3",
+          "operator": "exists",
+          "answerBoolean": false
         }
       ]
     }

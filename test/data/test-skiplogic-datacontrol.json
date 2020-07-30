@@ -1,0 +1,56 @@
+{
+  "name": "Test datacontrol with source having skiplogic",
+  "status": "draft",
+  "items": [
+    {
+      "linkId": "1",
+      "question": "Source of skip logic",
+      "prefix": "1",
+      "dataType": "ST"
+    },
+    {
+      "linkId": "2",
+      "prefix": "2",
+      "question": "1 exists",
+      "dataType": "ST",
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "1",
+            "trigger": {
+              "value": "show 2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "linkId": "3",
+      "prefix": "3",
+      "question": "value of 2",
+      "dataType": "ST",
+      "editable": "0",
+      "skipLogic": {
+        "conditions": [
+          {
+            "source": "2",
+            "trigger": {
+              "exists": true
+            }
+          }
+        ]
+      },
+      "dataControl": [
+        {
+          "source": {
+            "sourceType": "INTERNAL",
+            "sourceLinkId": "2"
+          },
+          "construction": "SIMPLE",
+          "dataFormat": "value",
+          "onAttribute": "value"
+        }
+      ]
+    }
+  ]
+}
