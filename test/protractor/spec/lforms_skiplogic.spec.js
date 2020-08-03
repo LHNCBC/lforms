@@ -224,23 +224,28 @@ describe('skip logic', function() {
         let targetWithSklSourceExists = element(by.id("4.4/1"));
         let targetWithSklSourceNotExists = element(by.id("4.5/1"));
 
+        // Initial setup
         expect(source.isDisplayed()).toBe(true);
         expect(targetWithSklSourceExists.isPresent()).toBe(false);
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
 
+        // Select to hide the skip logic target
         source.click();
         source.sendKeys(protractor.Key.ARROW_DOWN);
         source.sendKeys(protractor.Key.ENTER);
         expect(targetWithSklSourceExists.isPresent()).toBe(false);
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
 
+        // Select to show skip logic target item.
         source.click();
         source.sendKeys(protractor.Key.ARROW_DOWN);
         source.sendKeys(protractor.Key.ARROW_DOWN);
         source.sendKeys(protractor.Key.ENTER);
         expect(targetEqual.isDisplayed()).toBe(true);
+        // Field is displayed but no value entered in the item. The chained targets skip logic is not satisfied.
         expect(targetWithSklSourceExists.isPresent()).toBe(false);
         expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+        // Value entered in the item. The chained targets skip logic is satisfied.
         targetEqual.click();
         targetEqual.clear();
         targetEqual.sendKeys('xxx');
