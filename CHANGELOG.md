@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.3] 2020-07-31
+### Changed
+- Treat skip logic condition source as not existing when it is disabled.
+
 ## [25.1.2] 2020-07-17
 ### Changed
 - Fix a bug with skip logic notEqual operator.

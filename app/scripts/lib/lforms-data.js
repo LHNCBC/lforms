@@ -609,31 +609,48 @@
 
 
     /**
-     * Check skip logic, formulas and data controls when the source item changes.
-     * @param sourceItem the controlling/source item
+     * Recursively update skip logic status of a source item, and apply any process,
+     * typically update formulas or data control values.
+     *
+     * @param sourceItem - LFormsData of a source item.
+     * @param processItem - A call back function with signature:
+     *      function(item): item - Updated LFormsData of traversed item.
      */
-    updateOnSourceItemChange: function(sourceItem) {
-      // check formula
-      if(sourceItem._formulaTargets) {
-        for (var i= 0, iLen=sourceItem._formulaTargets.length; i<iLen; i++) {
-          var targetItem = sourceItem._formulaTargets[i];
-          this._processItemFormula(targetItem);
-        }
-      }
-      // check data control
-      if(sourceItem._dataControlTargets) {
-        for (var i= 0, iLen=sourceItem._dataControlTargets.length; i<iLen; i++) {
-          var targetItem = sourceItem._dataControlTargets[i];
-          this._processItemDataControl(targetItem);
-        }
-      }
+    updateSkipLogicControlledItems: function(sourceItem, processItem) {
       // check skip logic
       if(sourceItem._skipLogicTargets) {
         for (var i= 0, iLen=sourceItem._skipLogicTargets.length; i<iLen; i++) {
           var targetItem = sourceItem._skipLogicTargets[i];
           this._updateItemSkipLogicStatus(targetItem, null);
+          this.updateSkipLogicControlledItems(targetItem, processItem);
         }
       }
+      processItem(sourceItem);
+    },
+
+
+    /**
+     * Check skip logic, formulas and data controls when the source item changes.
+     * @param sourceItem the controlling/source item
+     */
+    updateOnSourceItemChange: function(sourceItem) {
+      var _self = this;
+      this.updateSkipLogicControlledItems(sourceItem, function(item) {
+        // check formula
+        if(item._formulaTargets) {
+          for (var i= 0, iLen=item._formulaTargets.length; i<iLen; i++) {
+            var targetItem = item._formulaTargets[i];
+            _self._processItemFormula(targetItem);
+          }
+        }
+        // check data control
+        if(item._dataControlTargets) {
+          for (var i= 0, iLen=item._dataControlTargets.length; i<iLen; i++) {
+            var targetItem = item._dataControlTargets[i];
+            _self._processItemDataControl(targetItem);
+          }
+        }
+      });
 
       // update internal status
       this._updateTreeNodes(this.items,this);
@@ -2218,7 +2235,8 @@
       for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
         var item = sourceItems[i];
         var score = 0;
-        if (item && item.value && item.value.score ) {
+        if (item && item.value && item.value.score &&
+            item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
           score = item.value.score
         }
         scores.push(score);
@@ -2260,7 +2278,7 @@
       for (var i= 0, iLen= sourceItems.length; i<iLen; i++) {
         var valueInStandardUnit = '';
         var item = sourceItems[i];
-        if (item.value) {
+        if (item.value && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
           if (item.unit && item.unit.name) {
             valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.name);
           }
@@ -3272,7 +3290,8 @@
      */
     _checkSkipLogicCondition: function(item, trigger) {
       var action = false;
-      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "" && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""
+                      && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED;
 
       // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
       // maxExclusive or maxInclusive.

@@ -9,7 +9,7 @@
       "prefix": "4.1",
       "type": "choice",
       "required": true,
-      "answerOption": [
+      "option": [
         {
           "valueCoding": {
             "code": "Diabetes",
@@ -33,13 +33,12 @@
       "enableWhen": [
         {
           "question": "4.1",
-          "operator": "=",
           "answerCoding": {
             "code": "Diabetes"
           }
         }
       ],
-      "answerOption": [
+      "option": [
         {
           "valueCoding": {
             "code": "Insulin Treated",
@@ -63,9 +62,8 @@
       "enableWhen": [
         {
           "question": "4.1",
-          "operator": "!=",
           "answerCoding": {
-            "code": "Diabetes"
+            "code": "Other"
           }
         }
       ]
@@ -79,8 +77,7 @@
       "enableWhen": [
         {
           "question": "4.3",
-          "operator": "exists",
-          "answerBoolean": true
+          "hasAnswer": true
         }
       ]
     },
@@ -93,8 +90,7 @@
       "enableWhen": [
         {
           "question": "4.3",
-          "operator": "exists",
-          "answerBoolean": false
+          "hasAnswer": false
         }
       ]
     }

@@ -1,0 +1,104 @@
+{
+  "code": "F",
+  "name": "Test calculation method item with source items disabled by skip logic condition",
+  "items": [
+    {
+      "question": "A skip logic source",
+      "header": false,
+      "dataType": "CNE",
+      "answers": [
+        {
+          "text": "Hide",
+          "code": "hide",
+          "label": "1"
+        },
+        {
+          "text": "Show",
+          "code": "show",
+          "label": "2"
+        }
+      ],
+      "linkId": "SKL-CONTROL"
+    },
+    {
+      "question": "A (with skip logic)",
+      "header": false,
+      "editable": "1",
+      "dataType": "CNE",
+      "answers": [
+        {
+          "text": "A1",
+          "code": "A1",
+          "label": "0",
+          "score": 0
+        },
+        {
+          "text": "A2",
+          "code": "A2",
+          "label": "1",
+          "score": 10
+        },
+        {
+          "text": "A3",
+          "code": "A3",
+          "label": "2",
+          "score": 20
+        }
+      ],
+      "linkId": "A-ITEM",
+      "skipLogic": {
+        "action": "show",
+        "conditions": [
+          {
+            "source": "SKL-CONTROL",
+            "trigger": {
+              "value": {"code": "show"}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "question": "B (without skip logic)",
+      "header": false,
+      "editable": "1",
+      "dataType": "CNE",
+      "answers": [
+        {
+          "text": "B1",
+          "code": "B1",
+          "label": "0",
+          "score": 0
+        },
+        {
+          "text": "B2",
+          "code": "B2",
+          "label": "1",
+          "score": 10
+        },
+        {
+          "text": "B3",
+          "code": "B3",
+          "label": "2",
+          "score": 20
+        }
+      ],
+      "linkId": "B-ITEM"
+    },
+    {
+      "question": "Total score",
+      "header": false,
+      "editable": "1",
+      "dataType": "REAL",
+      "units": [
+        {
+          "name": "{score}"
+        }
+      ],
+      "calculationMethod": {
+        "name": "TOTALSCORE"
+      },
+      "linkId": "TS"
+    }
+  ]
+}

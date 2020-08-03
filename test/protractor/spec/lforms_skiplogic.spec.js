@@ -2,7 +2,7 @@ var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
-fdescribe('skip logic', function() {
+describe('skip logic', function() {
 
   it('target items should be hidden initially', function() {
     tp.openFullFeaturedForm();
@@ -215,39 +215,39 @@ fdescribe('skip logic', function() {
           expect(targetEqual.isPresent()).toBe(false);
           expect(targetNotEqual.isDisplayed()).toBe(true);
         });
-
-        it('should work with skip logic source that itself is a skip logic target - ' + fhirVersions[i], function () {
-          tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
-          let source = element(by.id("4.1/1"));
-          let targetEqual = element(by.id("4.3/1"));
-          let targetWithSklSourceExists = element(by.id("4.4/1"));
-          let targetWithSklSourceNotExists = element(by.id("4.5/1"));
-
-          expect(source.isDisplayed()).toBe(true);
-          expect(targetWithSklSourceExists.isPresent()).toBe(false);
-          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
-
-          source.click();
-          source.sendKeys(protractor.Key.ARROW_DOWN);
-          source.sendKeys(protractor.Key.ENTER);
-          expect(targetWithSklSourceExists.isPresent()).toBe(false);
-          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
-
-          source.click();
-          source.sendKeys(protractor.Key.ARROW_DOWN);
-          source.sendKeys(protractor.Key.ARROW_DOWN);
-          source.sendKeys(protractor.Key.ENTER);
-          expect(targetEqual.isDisplayed()).toBe(true);
-          expect(targetWithSklSourceExists.isPresent()).toBe(false);
-          expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
-          targetEqual.click();
-          targetEqual.clear();
-          targetEqual.sendKeys('xxx');
-          expect(targetWithSklSourceExists.isDisplayed()).toBe(true);
-          expect(targetWithSklSourceNotExists.isPresent()).toBe(false);
-
-        });
       }
+
+      it('should work with skip logic source that itself is a skip logic target - ' + fhirVersions[i], function () {
+        tp.loadFromTestData('test-enablewhen.json', fhirVersions[i]);
+        let source = element(by.id("4.1/1"));
+        let targetEqual = element(by.id("4.3/1"));
+        let targetWithSklSourceExists = element(by.id("4.4/1"));
+        let targetWithSklSourceNotExists = element(by.id("4.5/1"));
+
+        expect(source.isDisplayed()).toBe(true);
+        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+
+        source.click();
+        source.sendKeys(protractor.Key.ARROW_DOWN);
+        source.sendKeys(protractor.Key.ENTER);
+        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+
+        source.click();
+        source.sendKeys(protractor.Key.ARROW_DOWN);
+        source.sendKeys(protractor.Key.ARROW_DOWN);
+        source.sendKeys(protractor.Key.ENTER);
+        expect(targetEqual.isDisplayed()).toBe(true);
+        expect(targetWithSklSourceExists.isPresent()).toBe(false);
+        expect(targetWithSklSourceNotExists.isDisplayed()).toBe(true);
+        targetEqual.click();
+        targetEqual.clear();
+        targetEqual.sendKeys('xxx');
+        expect(targetWithSklSourceExists.isDisplayed()).toBe(true);
+        expect(targetWithSklSourceNotExists.isPresent()).toBe(false);
+
+      });
     }
 
     it('should work with data control whose source is controlled by skip logic', function () {
