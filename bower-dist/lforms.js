@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"25.1.2\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"25.1.3\"}");
 
 /***/ }),
 /* 7 */
@@ -5340,37 +5340,54 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Check skip logic, formulas and data controls when the source item changes.
-     * @param sourceItem the controlling/source item
+     * Recursively update skip logic status of a source item, and apply any process,
+     * typically update formulas or data control values.
+     *
+     * @param sourceItem - LFormsData of a source item.
+     * @param processItem - A call back function with signature:
+     *      function(item): item - Updated LFormsData of traversed item.
      */
-    updateOnSourceItemChange: function updateOnSourceItemChange(sourceItem) {
-      // check formula
-      if (sourceItem._formulaTargets) {
-        for (var i = 0, iLen = sourceItem._formulaTargets.length; i < iLen; i++) {
-          var targetItem = sourceItem._formulaTargets[i];
-
-          this._processItemFormula(targetItem);
-        }
-      } // check data control
-
-
-      if (sourceItem._dataControlTargets) {
-        for (var i = 0, iLen = sourceItem._dataControlTargets.length; i < iLen; i++) {
-          var targetItem = sourceItem._dataControlTargets[i];
-
-          this._processItemDataControl(targetItem);
-        }
-      } // check skip logic
-
-
+    updateSkipLogicControlledItems: function updateSkipLogicControlledItems(sourceItem, processItem) {
+      // check skip logic
       if (sourceItem._skipLogicTargets) {
         for (var i = 0, iLen = sourceItem._skipLogicTargets.length; i < iLen; i++) {
           var targetItem = sourceItem._skipLogicTargets[i];
 
           this._updateItemSkipLogicStatus(targetItem, null);
-        }
-      } // update internal status
 
+          this.updateSkipLogicControlledItems(targetItem, processItem);
+        }
+      }
+
+      processItem(sourceItem);
+    },
+
+    /**
+     * Check skip logic, formulas and data controls when the source item changes.
+     * @param sourceItem the controlling/source item
+     */
+    updateOnSourceItemChange: function updateOnSourceItemChange(sourceItem) {
+      var _self = this;
+
+      this.updateSkipLogicControlledItems(sourceItem, function (item) {
+        // check formula
+        if (item._formulaTargets) {
+          for (var i = 0, iLen = item._formulaTargets.length; i < iLen; i++) {
+            var targetItem = item._formulaTargets[i];
+
+            _self._processItemFormula(targetItem);
+          }
+        } // check data control
+
+
+        if (item._dataControlTargets) {
+          for (var i = 0, iLen = item._dataControlTargets.length; i < iLen; i++) {
+            var targetItem = item._dataControlTargets[i];
+
+            _self._processItemDataControl(targetItem);
+          }
+        }
+      }); // update internal status
 
       this._updateTreeNodes(this.items, this);
 
@@ -6966,7 +6983,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var item = sourceItems[i];
         var score = 0;
 
-        if (item && item.value && item.value.score) {
+        if (item && item.value && item.value.score && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
           score = item.value.score;
         }
 
@@ -7013,7 +7030,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         var valueInStandardUnit = '';
         var item = sourceItems[i];
 
-        if (item.value) {
+        if (item.value && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
           if (item.unit && item.unit.name) {
             valueInStandardUnit = this.Units.getValueInStandardUnit(parseFloat(item.value), item.unit.name);
           } else {
@@ -7176,7 +7193,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             // get the source item object
             var sourceItem = this._findItemByLinkId(item, source.sourceLinkId);
 
-            if (sourceItem) {
+            if (sourceItem && sourceItem._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED) {
               // check how to create the new data on target
               if (constructionType === this._CONSTANTS.DATA_CONTROL.CONSTRUCTION_ARRAY) {
                 var newData = this._constructArrayByDataFormat(dataFormat, sourceItem); // set the data
@@ -8023,7 +8040,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      */
     _checkSkipLogicCondition: function _checkSkipLogicCondition(item, trigger) {
       var action = false;
-      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== ""; // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
+      var hasAnswer = item && item.value !== undefined && item.value !== null && item.value !== "" && item._skipLogicStatus !== this._CONSTANTS.SKIP_LOGIC.STATUS_DISABLED; // the trigger contains only one of keys of 'exists', 'not', 'value' or minExclusive, minInclusive,
       // maxExclusive or maxInclusive.
       // 'not' means '!=', 'value' means '='.
 

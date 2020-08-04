@@ -2,23 +2,14 @@
   "title": "Personal Health Record",
   "resourceType": "Questionnaire",
   "status": "draft",
-  "meta": {
-    "profile": [
-      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
-    ],
-    "tag": [
-      {
-        "code": "lformsVersion: 24.1.4"
-      }
-    ]
-  },
   "item": [
     {
       "linkId": "4.1",
       "text": "Diagnosis",
+      "prefix": "4.1",
       "type": "choice",
       "required": true,
-      "answerOption": [
+      "option": [
         {
           "valueCoding": {
             "code": "Diabetes",
@@ -36,18 +27,18 @@
     {
       "linkId": "4.2",
       "text": "Diabetes Treatment",
+      "prefix": "4.2",
       "type": "choice",
       "required": true,
       "enableWhen": [
         {
           "question": "4.1",
-          "operator": "=",
           "answerCoding": {
             "code": "Diabetes"
           }
         }
       ],
-      "answerOption": [
+      "option": [
         {
           "valueCoding": {
             "code": "Insulin Treated",
@@ -65,15 +56,41 @@
     {
       "linkId": "4.3",
       "text": "Other Diagnosis Description",
+      "prefix": "4.3",
       "type": "string",
       "required": true,
       "enableWhen": [
         {
           "question": "4.1",
-          "operator": "!=",
           "answerCoding": {
-            "code": "Diabetes"
+            "code": "Other"
           }
+        }
+      ]
+    },
+    {
+      "linkId": "4.4",
+      "text": "4.3 should exist",
+      "prefix": "4.4",
+      "type": "string",
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "4.3",
+          "hasAnswer": true
+        }
+      ]
+    },
+    {
+      "linkId": "4.5",
+      "text": "4.3 should not exist",
+      "prefix": "4.5",
+      "type": "string",
+      "required": true,
+      "enableWhen": [
+        {
+          "question": "4.3",
+          "hasAnswer": false
         }
       ]
     }
