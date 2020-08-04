@@ -5355,7 +5355,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
           this._updateItemSkipLogicStatus(targetItem, null);
 
-          this.updateSkipLogicControlledItems(targetItem, processItem); // processItem(targetItem);
+          this.updateSkipLogicControlledItems(targetItem, processItem);
         }
       }
 
