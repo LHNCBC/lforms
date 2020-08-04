@@ -265,7 +265,7 @@ describe('skip logic', function() {
       expect(skipLogicItem.isPresent()).toBe(false);
       expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
 
-      // Not met skip logic condition
+      // Not met skip logic condition ==> skip logic disabled
       source.click();
       source.sendKeys('xxx');
       expect(skipLogicItem.isPresent()).toBe(false);
