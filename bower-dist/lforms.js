@@ -2813,7 +2813,7 @@ LForms.Util = {
           } else rtn = valTest(val);
         }
 
-        if (!rtn) this._testValues(val, property, valTest); // search sub-objects
+        if (!rtn) rtn = this._testValues(val, property, valTest); // search sub-objects
       }
     }
 
