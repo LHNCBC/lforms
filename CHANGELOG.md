@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.4] 2020-08-27
+### Fixed
+- a bug in detection of STU3 Questionnaires
+
 ## [25.1.3] 2020-07-31
 ### Changed
 - Treat skip logic condition source as not existing when it is disabled.

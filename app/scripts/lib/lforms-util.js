@@ -537,7 +537,7 @@ LForms.Util = {
             rtn = valTest(val);
         }
         if (!rtn)
-          this._testValues(val, property, valTest); // search sub-objects
+          rtn = this._testValues(val, property, valTest); // search sub-objects
       }
     }
     return rtn;

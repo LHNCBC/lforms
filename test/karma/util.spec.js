@@ -327,8 +327,8 @@ describe('Util library', function() {
 
     /**
      * Collects array of extensions based on extension url.
-     * 
-     * @param {object} acc - Object with extension url as key and array of  
+     *
+     * @param {object} acc - Object with extension url as key and array of
      *  corresponding extensions as value.
      * @param {object} e - Extension
      */
@@ -373,13 +373,29 @@ describe('Util library', function() {
       Object.keys(fhirExts).forEach((url) => {
         const lfExt = lformsExts[url];
         if(url === 'http://hl7.org/fhir/StructureDefinition/questionnaire-unit') {
-          assert(!lfExt); 
+          assert(!lfExt);
           assert(formData.items[0].unit);
           assert.deepEqual(formData.items[0].units.length, fhirExts[url].length);
         } else {
           assert.deepEqual(lfExt, fhirExts[url]);
         }
       });
+    });
+  });
+
+
+  describe.only('_testValues', function() {
+    it('should handle nested structures', function () {
+      function itemTest(item) {
+        return !! item.options;
+      }
+      var q = { 'item': [{'item': {'options': 'someURI'}}] };
+      var rtn = LForms.Util._testValues(q, 'item', itemTest);
+      assert(rtn);
+      // Also try a case where it should not find it
+      q = { 'item': [{'item': {'type': 'text'}}] };
+      rtn = LForms.Util._testValues(q, 'item', itemTest);
+      assert(!rtn);
     });
   });
 });
