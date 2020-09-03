@@ -153,4 +153,47 @@ describe('Data Type', function() {
       expect(ac.searchResults.isDisplayed()).toBe(true);
     });
   });
+
+  describe('Required inputs', function () {
+    it('required indicator and aria-required should work', function () {
+      tp.openFullFeaturedForm();
+
+      const redCss = 'rgb(255, 0, 0)';
+      const otherElement = element(by.id('/type5/1')); // Used for creating blur event
+      const allFieldTypes = [
+        {field: 'real', value: 1},
+        {field: 'qty', value: 1},
+        {field: 'int', value: 1},
+        {field: 'dt', value: '1:00'},
+        {field: 'tm', value: '1:00'},
+        {field: 'st', value: 1},
+        {field: 'year', value: 1},
+        {field: 'month', value: 1},
+        {field: 'day', value: 1},
+        {field: 'url', value: 'http://example.com'},
+        {field: 'email', value: 'example@example.com'},
+        {field: 'phone', value: 12345678},
+        {field: 'nr', value: 1}
+      ];
+
+      allFieldTypes.forEach(function (type) {
+        const requiredElement = element(by.id(`/required_${type.field}/1`));
+
+        it(type.field + ' field', function () {
+          expect(requiredElement.getAttribute('aria-required')).toBe('true');
+          
+          requiredElement.sendKeys(type.value);
+          otherElement.click();
+
+          expect(requiredElement.getCssValue('border-color')).not.toEqual(redCss); // No red border
+
+          requiredElement.clear();
+          otherElement.sendKeys('');
+
+          // expect(requiredElement.getAttribute('class')).toContain('ng-invalid');
+          expect(requiredElement.getCssValue('border-color')).toEqual(redCss); // Red border
+        });
+      });
+    });
+  });
 });
