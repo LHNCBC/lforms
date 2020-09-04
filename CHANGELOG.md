@@ -2,10 +2,14 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [25.1.4] 2020-09-04
+## [25.1.5] 2020-09-04
 ### Changed
 - Display a marker `*` on labels for required items.
 - Add `aria-required` on required inputs.
+
+## [25.1.4] 2020-08-27
+### Fixed
+- a bug in detection of STU3 Questionnaires
 
 ## [25.1.3] 2020-07-31
 ### Changed

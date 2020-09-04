@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"25.1.4\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"25.1.5\"}");
 
 /***/ }),
 /* 7 */
@@ -2813,7 +2813,7 @@ LForms.Util = {
           } else rtn = valTest(val);
         }
 
-        if (!rtn) this._testValues(val, property, valTest); // search sub-objects
+        if (!rtn) rtn = this._testValues(val, property, valTest); // search sub-objects
       }
     }
 
