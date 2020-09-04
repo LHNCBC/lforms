@@ -7,7 +7,7 @@ var EC = protractor.ExpectedConditions;
 
 /**
  *  Sets up a mock server FHIR context.  This will also set the page to do
- *  prepopulation.  (If that is not desired, call setFHIRPropulation(false).
+ *  prepopulation.  (If that is not desired, call setFHIRPrepopulation(false).
  * @param fhirVersion the FHIR version number (as a string) for the mock server.
  * @param weightQuantity the quantity to return from a search for a weight.
  */
@@ -80,7 +80,7 @@ describe('Form pre-population', function() {
 
 
     for (let serverFHIRNum of ['3.0', '4.0']) {
-      describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
+      fdescribe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
         it('should load values from observationLinkPeriod', function() {
           tp.openBaseTestPage();
@@ -96,7 +96,7 @@ describe('Form pre-population', function() {
           expect(unitField.getAttribute('value')).toBe('kg');
         });
 
-        it('should populate dobservationLinkPeriod fields that are not top-level', function() {
+        it('should populate observationLinkPeriod fields that are not top-level', function() {
           //tp.openBaseTestPage();
           //setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('ussg-fhp.json', 'R4');
@@ -106,6 +106,24 @@ describe('Form pre-population', function() {
             return val == '95'
           })}, 1000);
           expect(weightField.getAttribute('value')).toBe('95');
+        });
+
+        it('should extract observationLinkPeriod fields that are not top-level', function(done) {
+          // Follows previous test on population
+          var releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
+          var resourcesPromise = browser.executeScript(
+            'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
+            releaseVersion + '", null, {"extract": true})');
+          resourcesPromise.then((resources) => {
+            console.log(JSON.stringify(resources));
+            console.log(typeof resources);
+            expect(resources.length).toBe(2); // One QR and one observation
+            var obs = resources[1];
+            expect(obs.resourceType).toBe("Observation");
+            expect(obs.valueQuantity.value).toEqual(95);
+            expect(obs.valueQuantity.code).toEqual('kg');
+            done();
+          });
         });
 
         it('should not load values from observationLinkPeriod if prepopulation is disabled', function() {

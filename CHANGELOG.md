@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.5] 2020-09-04
+### Fixed
+- a bug in FHIR Observation-based extraction that kept it from working for
+  nested items.
+
 ## [25.1.4] 2020-08-27
 ### Fixed
 - a bug in detection of STU3 Questionnaires

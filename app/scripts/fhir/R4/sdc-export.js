@@ -52,8 +52,8 @@ var self = {
 
     var qrRef = 'QuestionnaireResponse/'+qr.id;
     var rtn = [qr];
-    for (var i=0, len=lfData.items.length; i<len; ++i) {
-      var item = lfData.items[i];
+    for (var i=0, len=lfData.itemList.length; i<len; ++i) {
+      var item = lfData.itemList[i];
       if (item._obsLinkPeriodExt && item.value) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
