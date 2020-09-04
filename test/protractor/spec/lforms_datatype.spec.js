@@ -154,8 +154,8 @@ describe('Data Type', function() {
     });
   });
 
-  describe('Required inputs', function () {
-    it('required indicator and aria-required should work', function () {
+  describe('required indicator and aria-required', function () {
+    it('should display for', function () {
       tp.openFullFeaturedForm();
 
       const redCss = 'rgb(255, 0, 0)';
@@ -177,9 +177,11 @@ describe('Data Type', function() {
       ];
 
       allFieldTypes.forEach(function (type) {
+        const label = element(by.id(`label-/required_${type.field}/1`));
         const requiredElement = element(by.id(`/required_${type.field}/1`));
 
         it(type.field + ' field', function () {
+          expect(label.getText()).toMatch(/\*$/);  // Ends with required marker
           expect(requiredElement.getAttribute('aria-required')).toBe('true');
           
           requiredElement.sendKeys(type.value);

@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.4] 2020-09-04
+### Changed
+- Display a marker `*` on labels for required items.
+- Add `aria-required` on required inputs.
+
 ## [25.1.3] 2020-07-31
 ### Changed
 - Treat skip logic condition source as not existing when it is disabled.
