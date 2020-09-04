@@ -834,7 +834,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should be able to show a converted questionnaire', function() {
             // Check to see that the last question has rendered
             expect(element(by.id('label-4.3.3.1/1/1/1/1')).getText()).toBe(
-              "Rezidiv/Progress aufgetreten*");
+              "Rezidiv/Progress aufgetreten *");
           });
 
           it('should have functioning skiplogic when codes are not present', function() {

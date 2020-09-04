@@ -435,7 +435,7 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('itemPrefixAndText.html',
     "<span ng-if=\"item.prefix\" class=\"prefix\"\n" +
     "      style=\"{{item._obj_prefixCSS}}\">{{item.prefix}}</span><span\n" +
-    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}<span\n" +
+    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}} <span\n" +
     "      ng-if=\"item._answerRequired\" class=\"required\" title=\"Required\">*</span></span>\n"
   );
 
