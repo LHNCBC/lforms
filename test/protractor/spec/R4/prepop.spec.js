@@ -80,7 +80,7 @@ describe('Form pre-population', function() {
 
 
     for (let serverFHIRNum of ['3.0', '4.0']) {
-      fdescribe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
+      describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
         it('should load values from observationLinkPeriod', function() {
           tp.openBaseTestPage();
