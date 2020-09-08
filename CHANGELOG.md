@@ -2,10 +2,15 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [25.1.5] 2020-09-04
+## [25.1.6] 2020-09-08
 ### Changed
 - Display a marker `*` on labels for required items.
 - Add `aria-required` on required inputs.
+
+## [25.1.5] 2020-09-04
+### Fixed
+- a bug in FHIR Observation-based extraction that kept it from working for
+  nested items.
 
 ## [25.1.4] 2020-08-27
 ### Fixed
