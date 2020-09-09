@@ -2145,16 +2145,6 @@
         "min": "1",
         "max": "1"
       }
-    },
-    {
-      "questionCode": "required_nr",
-      "question": "Required NR field",
-      "dataType": "NR",
-      "linkId": "/required_nr",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
     }
   ],
   "lformsVersion": "24.0.0"

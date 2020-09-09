@@ -172,8 +172,7 @@ describe('Data Type', function() {
         {field: 'day', value: 1},
         {field: 'url', value: 'http://example.com'},
         {field: 'email', value: 'example@example.com'},
-        {field: 'phone', value: 12345678},
-        {field: 'nr', value: 1}
+        {field: 'phone', value: 12345678}
       ];
 
       allFieldTypes.forEach(function (type) {
