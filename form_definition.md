@@ -147,7 +147,7 @@ about the meaning of each key:
       `{"answerLayout": {"type": "RADIO_CHECKBOX", "columns": "2"}}`
     * <a name="showFormHeader"></a>showFormHeader - a boolean that controls whether to
       show a row fields above the actual form like "Date Date", "Comment", etc.
-      The default is true.
+      The default is false.
     * formHeaderItems - an array defining fields above the form (see
       [showFormHeader](#showFormHeader)).  If you omit templateOptions, a default will be
       provided which will have the fields "Date Done", "Time Done", "Where

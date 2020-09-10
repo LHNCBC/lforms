@@ -440,7 +440,9 @@
                   lfOption2 = {
                     allowHTMLInInstructions: true,
                     useAnimation: useAnimation,
-                    allowMultipleEmptyRepeatingItems: true
+                    allowMultipleEmptyRepeatingItems: true,
+                    hideFormControls: false,
+                    showFormHeader: true
                   };
                   $scope.loadLFormDataFile('allInOne', lfOption2);
                   break;
@@ -509,7 +511,10 @@
                   $scope.loadLFormDataFile('newGenetic');
                   break;
                 case 'defaultAnswerTest':
-                  $scope.loadLFormDataFile('defaultAnswerForm');
+                  lfOption2 = {
+                    showFormHeader: true
+                  };
+                  $scope.loadLFormDataFile('defaultAnswerForm', lfOption2);
                   break;
                 case '76806-9':
                   $scope.loadLFormDataFile('promis');
