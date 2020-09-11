@@ -16,7 +16,7 @@ export function addCommonRuntimeFns(ns) {
    *  retrieving that sub-node.
    */
   self.processExtensions = function(lfNode, lfFieldName) {
-    var fieldData = lfFieldName ? lfNode[lfFieldName] || lfNode;
+    var fieldData = lfFieldName ? lfNode[lfFieldName] : lfNode;
     if (fieldData) {
       var extensions = fieldData.extension;
       if (extensions) {

@@ -176,7 +176,7 @@ function addCommonSDCFns(ns) {
    *  extension structure.
    */
   self.hasInitialExpression = function(itemOrLFData) {
-    return !!(itemOrLFData._fhirExt && itemOrLFData._fhirExt[self.fhirExtInitialExp);
+    return !!(itemOrLFData._fhirExt && itemOrLFData._fhirExt[self.fhirExtInitialExp]);
   };
 
 
@@ -190,7 +190,9 @@ function addCommonSDCFns(ns) {
     if (itemOrLFData.extension) {
       var m = {};
       for (let ext of itemOrLFData.extension) {
-        var extArray = m[ext.url] ? (m[ext.url]=[]);
+        var extArray = m[ext.url];
+        if (!extArray)
+          extArray =  m[ext.url] = [];
         extArray.push(ext);
       }
       itemOrLFData._fhirExt = m;

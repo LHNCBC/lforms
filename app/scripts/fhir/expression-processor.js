@@ -1,6 +1,6 @@
 // Processes FHIR Expression Extensions
 
-let ExpressionProcessor;
+export let ExpressionProcessor = 5;
 
 (function() {
   "use strict";
@@ -15,13 +15,15 @@ let ExpressionProcessor;
    */
   ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
-    this._fhir = lfData._fhir || throw new Error('lfData._fhir should be set');
+    if (!lfData._fhir)
+      throw new Error('lfData._fhir should be set');
+    this._fhir = lfData._fhir;
     this._compiledExpressions = {};
 
     // Define some arrays that will be resued frequently.
     let sdc = this._fhir.SDC;
     this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
-    (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1 , 0
+    (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1, 0,
       sdc.fhirExtInitialExp); // add fhirExtInitialExp
   };
 
@@ -345,4 +347,4 @@ let ExpressionProcessor;
   };
 })();
 
-export default ExpressionProcessor;
+//ExportProcessor = 7;

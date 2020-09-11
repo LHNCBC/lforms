@@ -285,7 +285,7 @@
       this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
 
       if (data.extension) {
-        this._buildExtensionMap(this);
+        this._fhir.SDC.buildExtensionMap(this);
         this._hasResponsiveExpr = this._hasResponsiveExpr ||
           this._fhir.SDC.hasResponsiveExpression(this);
         this._hasInitialExpr = this._hasInitialExpr ||
@@ -1143,7 +1143,7 @@
         }
 
         if (item.extension) {
-          this._buildExtensionMap(item);
+          this._fhir.SDC.buildExtensionMap(item);
           if (this._fhir) {
             this._hasResponsiveExpr = this._hasResponsiveExpr ||
               this._fhir.SDC.hasResponsiveExpression(item);
