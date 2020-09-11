@@ -1,5 +1,7 @@
 // Processes FHIR Expression Extensions
 
+let ExpressionProcessor;
+
 (function() {
   "use strict";
   // A class whose instances handle the running of FHIR expressions.
@@ -8,17 +10,23 @@
 
   /**
    *   Constructor.
-   *  @param lfData an instance of LForms.LFormsData
+   *  @param lfData an instance of LForms.LFormsData.  The _fhir attribute
+   *   should be set before this is called.
    */
-  LForms.ExpressionProcessor = function(lfData) {
+  ExpressionProcessor = function(lfData) {
     this._lfData = lfData;
-    this._fhir = LForms.FHIR[lfData.fhirVersion];
+    this._fhir = lfData._fhir || throw new Error('lfData._fhir should be set');
     this._compiledExpressions = {};
+
+    // Define some arrays that will be resued frequently.
+    let sdc = this._fhir.SDC;
+    this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
+    (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1 , 0
+      sdc.fhirExtInitialExp); // add fhirExtInitialExp
   };
 
-  LForms.ExpressionProcessor.prototype = {
 
-
+  ExpressionProcessor.prototype = {
 
     /**
      *   Runs the FHIR expressions in the form.
@@ -32,7 +40,7 @@
       var lfData = this._lfData;
       if (!lfData._fhirVariables.questionnaire) {
         lfData._fhirVariables.questionnaire =
-          LForms.Util.getFormFHIRData('Questionnaire', lfData.fhirVersion, lfData);
+          this._fhir.SDC.convertLFormsToQuestionnaire(this._lfData);
       }
       var firstRun = true;
       var changed = true;
@@ -56,7 +64,8 @@
      */
     _evaluateVariables: function(item) {
       var rtn = false;
-      var variableExts = item._variableExt;
+      var sdc = this._fhir.SDC;
+      var variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
       if (variableExts) {
         for (let i=0, len=variableExts.length; i<len; ++i) {
           var ext = variableExts[i];
@@ -94,7 +103,6 @@
       return rtn;
     },
 
-
     /**
      *  Evaluates the expressions that set field values for the given item.
      * @param item an LFormsData or item from LFormsData.
@@ -116,22 +124,37 @@
       }
       else if (!changesOnly) {  // process this and all child items
         item._varChanged = false; // clear flag in case it was set
-        var exts = [];
-        if (includeInitialExpr && item._initialExprExt)
-          exts.push(item._initialExprExt);
-        if (item._calculatedExprExt)
-          exts.push(item._calculatedExprExt);
-        let changed = false;
-        for (let i=0, len=exts.length; i<len; ++i) {
-          var ext = exts[i];
-          if (ext && ext.valueExpression.language=="text/fhirpath") {
-            var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-            var exprChanged = this._setItemValueFromFHIRPath(item, newVal);
-            if (!changed)
-              changed = exprChanged;
+        let fhirExt = item._fhirExt;
+        if (fhirExt) {
+          let sdc = this._fhir.SDC;
+          var exts = includeInitialExpr ? item._initialFieldExpExts :
+            item._responsiveFieldExpExts;
+          if (!exts) { // compute the list of extensions to process and cache it
+            exts = [];
+            var uris = includeInitialExpr ? this._initialFieldExpURIs :
+              this._responsiveFieldExpURIs;
+            for (let uri of uris) {
+              let extsForURI = fhirExt[sdc.fhirExtAnswerExp];
+              if (extsForURI)
+                exts.push(answerExp[0]);
+            }
+            includeInitialExpr ? item._initialFieldExpExts = exts :
+              item._responsiveFieldExpExts = exts;
           }
+          let changed = false;
+          for (let i=0, len=exts.length; i<len; ++i) {
+            var ext = exts[i];
+            if (ext && ext.valueExpression.language=="text/fhirpath") {
+              var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+              var fieldChanged = (ext.uri == sdc.fhirExtAnswerExp) ?
+                this._setItemListFromFHIRPath(item, newVal) :
+                this._setItemValueFromFHIRPath(item, newVal);
+              if (!changed)
+                changed = fieldChanged;
+            }
+          }
+          rtn = changed;
         }
-        rtn = changed;
       }
 
       // Process child items
@@ -289,6 +312,17 @@
       return added;
     },
 
+    /**
+     *  Assists the given list result to the item.  If the list has changed, the
+     *  field is cleared.
+     * @param list an array of list items computed from a FHIRPath expression.
+     */
+    _setItemListFromFHIRPath: function(item, list) {
+      let currentList = item.answers;
+
+      this.lfData._updateAutocompOptions(item, true);
+    },
+
 
     /**
      *  Assigns the given FHIRPath result to the given item.
@@ -310,3 +344,5 @@
     }
   };
 })();
+
+export default ExpressionProcessor;

@@ -1,7 +1,8 @@
 /**
- *  Defines SDC functions (used by both import and export) that are the same
- *  across the different FHIR versions.  The function takes SDC namespace object
- *  defined in the sdc export code, and adds additional functions to it.
+ *  Defines SDC functions (used by both import and export, or for other
+ *  SDC-related purposes) that are the same across the different FHIR versions.
+ *  The function takes SDC namespace object defined in the sdc export code,
+ *  and adds additional functions to it.
  */
 function addCommonSDCFns(ns) {
 "use strict";
@@ -150,6 +151,52 @@ function addCommonSDCFns(ns) {
 
     return dstCoding;
   };
+
+
+  /**
+   *  Returns true if the given item (or LFormsData) has an expression
+   *  which needs to be re-evaluated when the user changes their response.
+   * @param itemOrLFData the item or LFormsData to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+  self.hasResponsiveExpression = function(itemOrLFData) {
+    var ext = itemOrLFData._fhirExt;
+    return ext ?
+      !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
+  };
+
+  /**
+   *  Returns true if the given item (or LFormsData) has an expression
+   *  which needs to be evaluated only once, when form is first rendered.
+   * @param itemOrLFData the item or LFormsData to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+  self.hasInitialExpression = function(itemOrLFData) {
+    return !!(itemOrLFData._fhirExt && itemOrLFData._fhirExt[self.fhirExtInitialExp);
+  };
+
+
+  /**
+   *  Builds a map from extension URIs to arrays of the FHIR extension
+   *  structures.
+   * @param itemOrLFData a form item or an LFormsData which possibly contain
+   *  FHIR extensions (in an "extension" property).
+   */
+  self.buildExtensionMap = function(itemOrLFData) {
+    if (itemOrLFData.extension) {
+      var m = {};
+      for (let ext of itemOrLFData.extension) {
+        var extArray = m[ext.url] ? (m[ext.url]=[]);
+        extArray.push(ext);
+      }
+      itemOrLFData._fhirExt = m;
+    }
+  }
+
 }
 
 

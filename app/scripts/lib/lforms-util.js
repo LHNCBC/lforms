@@ -25,6 +25,7 @@ var parseDateFormats = [
   'M-D HH:mm',
 ];
 
+// TBD -delete
 // A map of FHIR extensions involving Expressions to the property names on
 // which they will be stored in LFormsData, and a boolean indicating whether
 // more than one extension of the type is permitted.
@@ -39,6 +40,7 @@ var _copiedExtensions = {
     ["_variableExt", true],
 };
 
+// TBD -delete
 var _copiedExtFields = Object.keys(_copiedExtensions).map((k)=>_copiedExtensions[k][0]);
 
 
@@ -990,6 +992,7 @@ LForms.Util = {
     return codeSystem;
   },
 
+// TBD -delete
   /**
    *  Some extensions are simply copied over to the LForms data structure.
    *  This copies those extensions from qItem.extension to lfItem if they exist, and
@@ -1076,6 +1079,7 @@ LForms.Util = {
   },
 
 
+// TBD -delete
   /**
    * Some extensions are translated to other lforms fields, some are renamed internally and some are
    * preserved as they are. This function creates extension array with the renamed and preserved extensions
