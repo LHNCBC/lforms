@@ -1910,163 +1910,6 @@
       "linkId": "/answer_item"
     },
     {
-      "questionCode": "required_int",
-      "question": "Required INT field",
-      "dataType": "INT",
-      "linkId": "/required_int",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
-      "questionCode": "required_st",
-      "question": "Required ST field",
-      "dataType": "ST",
-      "linkId": "/required_st",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
-      "questionCode": "required_cne",
-      "dataType": "CNE",
-      "header": false,
-      "units": null,
-      "codingInstructions": null,
-      "questionCardinality": null,
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      },
-      "question": "Required CNE",
-      "answers": [
-        {
-          "code": "c1",
-          "text": "Answer 1",
-          "other": null
-        },
-        {
-          "code": "c2",
-          "text": "Answer 2",
-          "other": null
-        },
-        {
-          "code": "c3",
-          "text": "Answer 3",
-          "other": null
-        },
-        {
-          "code": "c4",
-          "text": "Other:",
-          "other": true
-        }
-      ],
-      "skipLogic": null,
-      "editable": null,
-      "displayControl": null,
-      "calculationMethod": null,
-      "items": null,
-      "linkId": "/required_cne"
-    },
-    {
-      "questionCode": "required_cwe_multi",
-      "dataType": "CWE",
-      "header": false,
-      "units": null,
-      "codingInstructions": null,
-      "questionCardinality": null,
-      "answerCardinality": {
-        "min": "1",
-        "max": "*"
-      },
-      "question": "Required CWE multi select",
-      "answers": [
-        {
-          "code": "c1",
-          "text": "Answer 1"
-        },
-        {
-          "code": "c2",
-          "text": "Answer 2"
-        },
-        {
-          "code": "c3",
-          "text": "Answer 3"
-        },
-        {
-          "code": "c4",
-          "text": "Answer 4"
-        }
-      ],
-      "skipLogic": null,
-      "editable": null,
-      "defaultAnswer": null,
-      "displayControl": null,
-      "calculationMethod": null,
-      "items": null,
-      "linkId": "/required_cwe_multi"
-    },
-    {
-      "questionCode": "required_cne_multi",
-      "dataType": "CNE",
-      "header": false,
-      "units": null,
-      "codingInstructions": null,
-      "questionCardinality": null,
-      "answerCardinality": {
-        "min": "1",
-        "max": "*"
-      },
-      "question": "Required CNE multi select",
-      "answers": [
-        {
-          "code": "c1",
-          "text": "Answer 1"
-        },
-        {
-          "code": "c2",
-          "text": "Answer 2"
-        },
-        {
-          "code": "c3",
-          "text": "Answer 3"
-        },
-        {
-          "code": "c4",
-          "text": "Answer 4"
-        }
-      ],
-      "skipLogic": null,
-      "editable": null,
-      "defaultAnswer": null,
-      "displayControl": null,
-      "calculationMethod": null,
-      "items": null,
-      "linkId": "/required_cne_multi"
-    },
-    {
-      "questionCode": "required_real",
-      "question": "Required REAL field",
-      "dataType": "REAL",
-      "linkId": "/required_real",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
-      "questionCode": "required_qty",
-      "question": "Required QTY field",
-      "dataType": "QTY",
-      "linkId": "/required_qty",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
       "questionCode": "required_dt",
       "question": "Required DT field",
       "dataType": "DT",
@@ -2077,70 +1920,40 @@
       }
     },
     {
-      "questionCode": "required_tm",
-      "question": "Required TM field",
-      "dataType": "TM",
-      "linkId": "/required_tm",
+      "questionCode": "required_dtm",
+      "question": "Required DTM field",
+      "dataType": "DTM",
+      "linkId": "/required_dtm",
       "answerCardinality": {
         "min": "1",
         "max": "1"
       }
     },
     {
-      "questionCode": "required_year",
-      "question": "Required year field",
-      "dataType": "YEAR",
-      "linkId": "/required_year",
-      "answerCardinality": {
-        "min": "1",
-        "max": "*"
-      }
-    },
-    {
-      "questionCode": "required_month",
-      "question": "Required MONTH field",
-      "dataType": "MONTH",
-      "linkId": "/required_month",
+      "questionCode": "required_tx",
+      "question": "Required TX field",
+      "dataType": "TX",
+      "linkId": "/required_tx",
       "answerCardinality": {
         "min": "1",
         "max": "1"
       }
     },
     {
-      "questionCode": "required_day",
-      "question": "Required DAY field",
-      "dataType": "DAY",
-      "linkId": "/required_day",
+      "questionCode": "required_bl",
+      "question": "Required BL field",
+      "dataType": "BL",
+      "linkId": "/required_bl",
       "answerCardinality": {
         "min": "1",
         "max": "1"
       }
     },
     {
-      "questionCode": "required_url",
-      "question": "Required URL field",
-      "dataType": "URL",
-      "linkId": "/required_url",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
-      "questionCode": "required_email",
-      "question": "Required EMAIL field",
-      "dataType": "EMAIL",
-      "linkId": "/required_email",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
-      "questionCode": "required_phone",
-      "question": "Required PHONE field",
-      "dataType": "PHONE",
-      "linkId": "/required_phone",
+      "questionCode": "required_st",
+      "question": "Required ST field",
+      "dataType": "ST",
+      "linkId": "/required_st",
       "answerCardinality": {
         "min": "1",
         "max": "1"

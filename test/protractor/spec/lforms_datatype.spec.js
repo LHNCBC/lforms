@@ -161,18 +161,11 @@ describe('Data Type', function() {
       const redCss = 'rgb(255, 0, 0)';
       const otherElement = element(by.id('/type5/1')); // Used for creating blur event
       const allFieldTypes = [
-        {field: 'real', value: 1},
-        {field: 'qty', value: 1},
-        {field: 'int', value: 1},
         {field: 'dt', value: '1:00'},
-        {field: 'tm', value: '1:00'},
-        {field: 'st', value: 1},
-        {field: 'year', value: 1},
-        {field: 'month', value: 1},
-        {field: 'day', value: 1},
-        {field: 'url', value: 'http://example.com'},
-        {field: 'email', value: 'example@example.com'},
-        {field: 'phone', value: 12345678}
+        {field: 'dtm', value: '1/1/2020 1:00'},
+        {field: 'tx', value: 'test'},
+        {field: 'bl', value: true},
+        {field: 'st', value: 'test'}
       ];
 
       allFieldTypes.forEach(function (type) {
