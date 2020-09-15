@@ -2,8 +2,9 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [25.1.6] 2020-09-08
-### Changed
+## [25.1.6] 2020-09-15
+### Fixed
+- Remove duplicate entry in form level fields.
 - Display a marker `*` on labels for required items.
 - Add `aria-required` on required inputs.
 
