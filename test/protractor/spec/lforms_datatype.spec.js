@@ -155,38 +155,19 @@ describe('Data Type', function() {
   });
 
   describe('required indicator and aria-required', function () {
-    it('should display for', function () {
+    beforeAll(function () {
       tp.openFullFeaturedForm();
+    });
 
-      const redCss = 'rgb(255, 0, 0)';
-      const otherElement = element(by.id('/type5/1')); // Used for creating blur event
-      const allFieldTypes = [
-        {field: 'dt', value: '1:00'},
-        {field: 'dtm', value: '1/1/2020 1:00'},
-        {field: 'tx', value: 'test'},
-        {field: 'bl', value: true},
-        {field: 'st', value: 'test'}
-      ];
+    const allFieldTypes = ['dt', 'dtm', 'tx', 'bl', 'st'];
 
-      allFieldTypes.forEach(function (type) {
-        const label = element(by.id(`label-/required_${type.field}/1`));
-        const requiredElement = element(by.id(`/required_${type.field}/1`));
+    allFieldTypes.forEach(function (type) {
+      const label = element(by.id(`label-/required_${type}/1`));
+      const requiredElement = element(by.id(`/required_${type}/1`));
 
-        it(type.field + ' field', function () {
-          expect(label.getText()).toMatch(/\*$/);  // Ends with required marker
-          expect(requiredElement.getAttribute('aria-required')).toBe('true');
-          
-          requiredElement.sendKeys(type.value);
-          otherElement.click();
-
-          expect(requiredElement.getCssValue('border-color')).not.toEqual(redCss); // No red border
-
-          requiredElement.clear();
-          otherElement.sendKeys('');
-
-          // expect(requiredElement.getAttribute('class')).toContain('ng-invalid');
-          expect(requiredElement.getCssValue('border-color')).toEqual(redCss); // Red border
-        });
+      it(`should be present for ${type} field`, function () {
+        expect(label.getText()).toMatch(/\*$/);  // Ends with required marker
+        expect(requiredElement.getAttribute('aria-required')).toBe('true');
       });
     });
   });
