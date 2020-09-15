@@ -1940,16 +1940,6 @@
       }
     },
     {
-      "questionCode": "required_bl",
-      "question": "Required BL field",
-      "dataType": "BL",
-      "linkId": "/required_bl",
-      "answerCardinality": {
-        "min": "1",
-        "max": "1"
-      }
-    },
-    {
       "questionCode": "required_st",
       "question": "Required ST field",
       "dataType": "ST",

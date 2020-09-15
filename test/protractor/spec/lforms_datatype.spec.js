@@ -159,7 +159,7 @@ describe('Data Type', function() {
       tp.openFullFeaturedForm();
     });
 
-    const allFieldTypes = ['dt', 'dtm', 'tx', 'bl', 'st'];
+    const allFieldTypes = ['dt', 'dtm', 'tx', 'st'];
 
     allFieldTypes.forEach(function (type) {
       const label = element(by.id(`label-/required_${type}/1`));

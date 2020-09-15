@@ -97,8 +97,7 @@
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"
                  ng-true-value="true" ng-false-value="false"
-                 ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}"
-                 aria-required="{{ item._answerRequired }}">
+                 ng-blur="activeRowOnBlur(item)" aria-describedby="help-{{ item._elementId }}">
           <input ng-switch-default name="{{item._text}}" type="text"
                  ng-model="item.value" placeholder="{{item._toolTip}}" ng-disabled="item._readOnly"
                  id="{{item._elementId}}" ng-focus="setActiveRow(item)"
