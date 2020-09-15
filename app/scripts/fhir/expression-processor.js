@@ -6,8 +6,6 @@ export let ExpressionProcessor = 5;
   "use strict";
   // A class whose instances handle the running of FHIR expressions.
 
-  var LForms = require('../../lforms');
-
   /**
    *   Constructor.
    *  @param lfData an instance of LForms.LFormsData.  The _fhir attribute
@@ -346,5 +344,3 @@ export let ExpressionProcessor = 5;
     }
   };
 })();
-
-//ExportProcessor = 7;

@@ -1,0 +1,61 @@
+{
+  "status": "draft",
+  "title": "answerExpression Test",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 25.1.3"
+      }
+    ]
+  },
+  "extension": [{
+    "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
+    "extension" : [{
+      "url" : "name",
+      "valueId" : "patient"
+    },
+    {
+      "url" : "type",
+      "valueCode" : "Patient"
+    },
+    {
+      "url" : "descripton",
+      "valueString" : "For filling in patient information as the subject for the form"
+    }]
+  }],
+  "item": [
+    {
+      "type": "open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+          "valueExpression":{
+             "description": "patient's langauges",
+             "name": "PatientLanguages",
+             "language": "text/fhirpath",
+             "expression": "%patient.communication.language"
+          }
+        }
+      ],
+      "required": false,
+      "text": "Preferred language"
+    }
+  ]
+}
