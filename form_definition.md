@@ -100,7 +100,7 @@ about the meaning of each key:
       to stop on the input fields only (neither buttons, nor units fields).
       The default is false.
     * hideFormControls - a boolean that controls whether to hide the controls section
-      on top of the form. The default is false.
+      on top of the form. The default is true.
     * hideUnits - a boolean that controls whether to all the Units column to
       be hidden from the data table. The default is false.
     * showFormOptionPanel - a boolean that controls whether to show the option panel
