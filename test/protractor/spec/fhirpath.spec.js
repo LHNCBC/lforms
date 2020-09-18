@@ -35,3 +35,14 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     });
   })(fhirVersions[i]);
 }
+
+describe('answerExpression', function() {
+  it('should be able to populate a list', function() {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('answerExpressionTest.json');
+    var language = $('#language\\/1');
+    language.click();
+    expect(tp.Autocomp.helpers.listIsVisible(language)).toBe(true);
+    expect(tp.Autocomp.helpers.shownItemCount()).toBe(2);
+  });
+});

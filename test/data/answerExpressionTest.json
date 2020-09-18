@@ -44,6 +44,7 @@
   }],
   "item": [
     {
+      "linkId": "language",
       "type": "open-choice",
       "extension": [
         {
@@ -62,7 +63,7 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
           "valueExpression":{
-            "description": "langauge list",
+            "description": "language list",
             "language": "text/fhirpath",
             "expression": "%questionnaire.contained.where(id='languageList').expansion.contains"
           }

@@ -25,6 +25,7 @@ function setServerFHIRContext(fhirVersion, weightQuantity) {
   setFHIRPrepopulation(true);
 }
 
+
 /**
  *  Enables or disables prepopulation (from the mock FHIR context) when a Questionnaire is
  *  loaded.
@@ -37,10 +38,11 @@ function setFHIRPrepopulation(enable) {
 
 describe('Form pre-population', function() {
   for (let serverFHIRNum of ['3.0', '4.0']) {
-    it('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
+    fit('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
       tp.openBaseTestPage();
       setServerFHIRContext(serverFHIRNum);
       tp.loadFromTestData('phq9.json', 'R4');
+  browser.sleep(200000);
       // This test form does prepoluation of the first answer.
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));
