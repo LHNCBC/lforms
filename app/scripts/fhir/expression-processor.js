@@ -1,6 +1,6 @@
 // Processes FHIR Expression Extensions
 
-export let ExpressionProcessor = 5;
+export let ExpressionProcessor;
 
 (function() {
   "use strict";
@@ -122,38 +122,43 @@ export let ExpressionProcessor = 5;
           changesOnly = false; // process all child items
         }
       }
-      else if (!changesOnly) {  // process this and all child items
+      else { // if (!changesOnly) process this and all child items
         item._varChanged = false; // clear flag in case it was set
         let fhirExt = item._fhirExt;
         if (fhirExt) {
           let sdc = this._fhir.SDC;
           var exts = includeInitialExpr ? item._initialFieldExpExts :
             item._responsiveFieldExpExts;
-          if (!exts) { // compute the list of extensions to process and cache it
+          if (exts === undefined) {  // undefined means we haven't computed them yet
+            // compute the list of extensions to process and cache it
             exts = [];
             var uris = includeInitialExpr ? this._initialFieldExpURIs :
               this._responsiveFieldExpURIs;
             for (let uri of uris) {
-              let extsForURI = fhirExt[sdc.fhirExtAnswerExp];
+              let extsForURI = fhirExt[uri];
               if (extsForURI)
-                exts.push(answerExp[0]);
+                exts.push.apply(exts, extsForURI);
             }
+            if (exts.length === 0)
+              exts = null; // a signal that we have looked and found nothing
             includeInitialExpr ? item._initialFieldExpExts = exts :
               item._responsiveFieldExpExts = exts;
           }
-          let changed = false;
-          for (let i=0, len=exts.length; i<len; ++i) {
-            var ext = exts[i];
-            if (ext && ext.valueExpression.language=="text/fhirpath") {
-              var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
-              var fieldChanged = (ext.uri == sdc.fhirExtAnswerExp) ?
-                this._setItemListFromFHIRPath(item, newVal) :
-                this._setItemValueFromFHIRPath(item, newVal);
-              if (!changed)
-                changed = fieldChanged;
+          if (exts) {
+            let changed = false;
+            for (let i=0, len=exts.length; i<len; ++i) {
+              var ext = exts[i];
+              if (ext && ext.valueExpression.language=="text/fhirpath") {
+                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+                var fieldChanged = (ext.url == sdc.fhirExtAnswerExp) ?
+                  this._setItemListFromFHIRPath(item, newVal) :
+                  this._setItemValueFromFHIRPath(item, newVal);
+                if (!changed)
+                  changed = fieldChanged;
+              }
             }
+            rtn = changed;
           }
-          rtn = changed;
         }
       }
 
@@ -319,8 +324,56 @@ export let ExpressionProcessor = 5;
      */
     _setItemListFromFHIRPath: function(item, list) {
       let currentList = item.answers;
+      let hasCurrentList = !!currentList;
+      let changed = false;
+      let newList = [];
+      if (list && Array.isArray(list)) {
+        // list should be an array of any item type, including Coding.
+        // (In R5, FHIR will start suppoing lists of types other than Coding.)
+        for (let i=0, len=list.length; i<len; ++i) {
+          // Assume type "object" means a coding, and that otherwise what we have
+          // is something useable as display text. It is probably necessary to
+          // convert them to strings in that case, which means that in the future
+          // (R5), we might have to save/re-create the original data type and value.
+          // Work will need to be done to autocomplete-lhc to support data objects
+          // associated with list values.
+          let entry = list[i], newEntry = (newList[i] = {});
+          if (typeof entry === 'object') {
+            let code = entry.code;
+            if (code !== undefined)
+              newEntry.code = code;
+            let display = entry.display;
+            if (display !== undefined)
+              newEntry.text = display;
+            let system = entry.system;
+            if (system !== undefined)
+              newEntry.system = system;
+            // TBD -get score from ordinalvalue extension (if that is supported)
+          }
+          else
+            newEntry = {'text': '' + entry};
+          if (!changed) {
+            changed = (!hasCurrentList ||
+              !this._lfData._objectEqual(newEntry, currentList[i]));
+          }
+        }
+      }
+      else
+        changed = !!currentList;
 
-      this.lfData._updateAutocompOptions(item, true);
+      if (changed) {
+        item.answers = newList;
+        this._lfData._updateAutocompOptions(item, true);
+        // The SDC specification says that implementations "SHOULD" preserve the
+        // field value (marking it invalid if that is the case in the new list).
+        // That is inconsistent with the behavior of LForms in other situations,
+        // e.g. data control, where we wipe the field value when the list is
+        // set.  So, we need to decide whether to switch to that behavior.
+        // For now, just wipe the field.
+        item.value = null;
+      }
+
+      this._lfData._updateAutocompOptions(item, true);
     },
 
 

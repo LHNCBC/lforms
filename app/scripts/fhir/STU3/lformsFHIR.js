@@ -25548,6 +25548,8 @@ function processExtension(lfNode, fieldName, extNode) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExpressionProcessor", function() { return ExpressionProcessor; });
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -25555,7 +25557,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 // Processes FHIR Expression Extensions
-var ExpressionProcessor = 5;
+var ExpressionProcessor;
 
 (function () {
   "use strict"; // A class whose instances handle the running of FHIR expressions.
@@ -25680,8 +25682,8 @@ var ExpressionProcessor = 5;
 
           changesOnly = false; // process all child items
         }
-      } else if (!changesOnly) {
-        // process this and all child items
+      } else {
+        // if (!changesOnly) process this and all child items
         item._varChanged = false; // clear flag in case it was set
 
         var fhirExt = item._fhirExt;
@@ -25690,7 +25692,8 @@ var ExpressionProcessor = 5;
           var sdc = this._fhir.SDC;
           var exts = includeInitialExpr ? item._initialFieldExpExts : item._responsiveFieldExpExts;
 
-          if (!exts) {
+          if (exts === undefined) {
+            // undefined means we haven't computed them yet
             // compute the list of extensions to process and cache it
             exts = [];
             var uris = includeInitialExpr ? this._initialFieldExpURIs : this._responsiveFieldExpURIs;
@@ -25701,8 +25704,8 @@ var ExpressionProcessor = 5;
             try {
               for (_iterator.s(); !(_step = _iterator.n()).done;) {
                 var uri = _step.value;
-                var extsForURI = fhirExt[sdc.fhirExtAnswerExp];
-                if (extsForURI) exts.push(answerExp[0]);
+                var extsForURI = fhirExt[uri];
+                if (extsForURI) exts.push.apply(exts, extsForURI);
               }
             } catch (err) {
               _iterator.e(err);
@@ -25710,23 +25713,27 @@ var ExpressionProcessor = 5;
               _iterator.f();
             }
 
+            if (exts.length === 0) exts = null; // a signal that we have looked and found nothing
+
             includeInitialExpr ? item._initialFieldExpExts = exts : item._responsiveFieldExpExts = exts;
           }
 
-          var changed = false;
+          if (exts) {
+            var changed = false;
 
-          for (var i = 0, len = exts.length; i < len; ++i) {
-            var ext = exts[i];
+            for (var i = 0, len = exts.length; i < len; ++i) {
+              var ext = exts[i];
 
-            if (ext && ext.valueExpression.language == "text/fhirpath") {
-              var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+              if (ext && ext.valueExpression.language == "text/fhirpath") {
+                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
 
-              var fieldChanged = ext.uri == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
-              if (!changed) changed = fieldChanged;
+                var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
+                if (!changed) changed = fieldChanged;
+              }
             }
-          }
 
-          rtn = changed;
+            rtn = changed;
+          }
         }
       } // Process child items
 
@@ -25906,8 +25913,55 @@ var ExpressionProcessor = 5;
      */
     _setItemListFromFHIRPath: function _setItemListFromFHIRPath(item, list) {
       var currentList = item.answers;
+      var hasCurrentList = !!currentList;
+      var changed = false;
+      var newList = [];
 
-      this.lfData._updateAutocompOptions(item, true);
+      if (list && Array.isArray(list)) {
+        // list should be an array of any item type, including Coding.
+        // (In R5, FHIR will start suppoing lists of types other than Coding.)
+        for (var i = 0, len = list.length; i < len; ++i) {
+          // Assume type "object" means a coding, and that otherwise what we have
+          // is something useable as display text. It is probably necessary to
+          // convert them to strings in that case, which means that in the future
+          // (R5), we might have to save/re-create the original data type and value.
+          // Work will need to be done to autocomplete-lhc to support data objects
+          // associated with list values.
+          var entry = list[i],
+              newEntry = newList[i] = {};
+
+          if (_typeof(entry) === 'object') {
+            var code = entry.code;
+            if (code !== undefined) newEntry.code = code;
+            var display = entry.display;
+            if (display !== undefined) newEntry.text = display;
+            var system = entry.system;
+            if (system !== undefined) newEntry.system = system; // TBD -get score from ordinalvalue extension (if that is supported)
+          } else newEntry = {
+            'text': '' + entry
+          };
+
+          if (!changed) {
+            changed = !hasCurrentList || !this._lfData._objectEqual(newEntry, currentList[i]);
+          }
+        }
+      } else changed = !!currentList;
+
+      if (changed) {
+        item.answers = newList;
+
+        this._lfData._updateAutocompOptions(item, true); // The SDC specification says that implementations "SHOULD" preserve the
+        // field value (marking it invalid if that is the case in the new list).
+        // That is inconsistent with the behavior of LForms in other situations,
+        // e.g. data control, where we wipe the field value when the list is
+        // set.  So, we need to decide whether to switch to that behavior.
+        // For now, just wipe the field.
+
+
+        item.value = null;
+      }
+
+      this._lfData._updateAutocompOptions(item, true);
     },
 
     /**
@@ -25925,7 +25979,7 @@ var ExpressionProcessor = 5;
       return oldVal != item.value;
     }
   };
-})(); //ExportProcessor = 7;
+})();
 
 /***/ })
 /******/ ]);

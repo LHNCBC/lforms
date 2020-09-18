@@ -12,6 +12,21 @@
       }
     ]
   },
+  "contained": [{
+    "resourceType": "ValueSet",
+    "id": "languageList",
+    "expansion": {
+      "contains": [{
+        "system": "languages",
+        "code": "en",
+        "display": "English"
+      }, {
+        "system": "languages",
+        "code": "fr",
+        "display": "French"
+      }]
+    }
+  }],
   "extension": [{
     "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
     "extension" : [{
@@ -47,10 +62,9 @@
         {
           "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
           "valueExpression":{
-             "description": "patient's langauges",
-             "name": "PatientLanguages",
-             "language": "text/fhirpath",
-             "expression": "%patient.communication.language"
+            "description": "langauge list",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.contained.where(id='languageList').expansion.contains"
           }
         }
       ],

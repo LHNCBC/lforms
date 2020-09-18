@@ -1375,9 +1375,9 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
     if (LForms.FHIR) {
       if (lfData) {
         // sometimes set to null to clear the page
-        if (lfData.hasFHIRPath || lfData._hasInitialExpr) {
+        if (lfData._hasResponsiveExpr || lfData._hasInitialExpr) {
           // Watch for changes that require FHIRPath to run
-          if (lfData.hasFHIRPath) {
+          if (lfData._hasResponsiveExpr) {
             if ($scope.unwatchFHIRPath) $scope.unwatchFHIRPath();
             $scope.unwatchFHIRPath = $scope.$watch(function () {
               return JSON.stringify(lfData, function (key, val) {
@@ -1393,7 +1393,7 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
           }
         }
 
-        if (!lfData._controllerInit && (lfData.hasFHIRPath || lfData._hasInitialExpr)) {
+        if (!lfData._controllerInit && (lfData._hasResponsiveExpr || lfData._hasInitialExpr)) {
           lfData._expressionProcessor.runCalculations(true);
         } // Angular calls this twice for the same lfData.  Set a flag.
         // Note:  For some reason the watches still need to be set up both times.
@@ -1401,7 +1401,6 @@ angular.module('lformsWidget').controller('LFormsCtrl', ['$window', '$scope', '$
 
         lfData._controllerInit = true;
       } else {
-        // !(lfData && $scope.lfData.hasFHIRPath)
         if ($scope.unwatchFHIRPath) {
           $scope.unwatchFHIRPath(); // stop watching because it is no longer needed
 
