@@ -14,6 +14,41 @@ var util = {
     }
   },
 
+
+  /**
+   *  The selenium sendKeys function sends events for each character and the
+   *  result is not stable, so we use this instead.
+   * @param field a protractor element locator (e.g. returned by $)
+   */
+  sendKeys: function(field, str) {
+    var allButLastChar = str.slice(0,-1);
+    if (allButLastChar.length > 0)
+      browser.executeScript('arguments[0].value = "'+allButLastChar+'"', field.getWebElement());
+    field.sendKeys(str.slice(-1));
+    browser.wait(function() {
+      return field.getAttribute('value').then(function(val) {
+        return val === str;
+      })
+    }, 30000);
+  },
+
+
+  /**
+   *  The selenium clearField function does not wait for the field to be cleared
+   *  before the next field runs (https://stackoverflow.com/a/43616117) so we
+   *  use this instead.
+   * @param field a protractor element locator (e.g. returned by $)
+   */
+  clearField: function(field) {
+    field.clearField);
+    browser.wait(function() {
+      return field.getAttribute('value').then(function(val) {
+        return val === '';
+      })
+    }, 30000);
+  },
+
+
   /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */

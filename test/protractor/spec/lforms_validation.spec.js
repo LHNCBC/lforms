@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 
 function shortenValidationMsgShowTime() {
   browser.executeScript(function () {
@@ -31,17 +32,12 @@ function waitForNotPresent(errorMsg) {
     return errorMsg.isPresent().then(function(result){return !result});
   }, tp.WAIT_TIMEOUT_1);
 }
-function sendKeys(field, str) {
-  browser.executeScript('arguments[0].value = "'+str.slice(0,-1)+'"', field.getWebElement());
-  field.sendKeys(str.slice(-1));
-}
 
 function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   // no initial validations
   expect(eleMessage.isPresent()).toBe(false);
   // no error messages on first visit
-  //eleInput.sendKeys(value1);
-  sendKeys(eleInput, value1);
+  testUtil.sendKeys(eleInput, value1);
   waitForNotDisplayed(eleMessage);
   expect(eleMessage.isPresent()).toBe(true);
   expect(eleMessage.isDisplayed()).toBe(false);
@@ -66,9 +62,8 @@ function testOneType(eleInput, eleAway, eleMessage, value1, value2) {
   waitForDisplayed(eleMessage);
   expect(eleMessage.isDisplayed()).toBe(true);
   // valid value no messages
-  tp.clearField(eleInput);
-  //eleInput.sendKeys(value2);
-  sendKeys(eleInput, value2);
+  testUtil.clearField(eleInput);
+  testUtil.sendKeys(eleInput, value2);
   waitForNotPresent(eleMessage);
   expect(eleMessage.isPresent()).toBe(false);
   // still no message when the focus is gone

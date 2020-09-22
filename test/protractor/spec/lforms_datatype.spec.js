@@ -33,7 +33,7 @@ describe('Data Type', function() {
 
     dateStr = '02/03/2019';
     dtEl.clear();
-    dtEl.sendKeys(dateStr);
+    testUtil.sendKeys(dtEl, dateStr);
     otherEl.click();
     expect(dtEl.getAttribute('value')).toEqual(dateStr);
     expect(dtEl.getAttribute('class')).toContain('ng-valid-parse');
