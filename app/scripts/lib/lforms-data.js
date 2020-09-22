@@ -521,10 +521,12 @@
           var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+          let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
           for (var i=0, len=this.itemList.length; i<len; ++i) {
             let item = this.itemList[i];
-            if (item._obsLinkPeriodExt) {
-              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+            let obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
+            if (obsExt) { // an array of at least 1 if present
+              var duration = obsExt[0].valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC')
                 itemCodeSystem = serverFHIR.LOINC_URI;
@@ -1376,7 +1378,8 @@
 
       // set up readonly flag
       item._readOnly = (item.editable && item.editable === "0") ||
-         !!(item.calculationMethod || item._calculatedExprExt);
+        !!(item.calculationMethod ||
+           (item._fhirExt && item._fhirExt[this._fhir.SDC.fhirExtCalculatedExp]));
 
       if (this._fhir) {
         this._fhir.SDC.processExtensions(item, 'obj_text');

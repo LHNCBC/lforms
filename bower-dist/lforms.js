@@ -5226,12 +5226,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+          var obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
 
           var _loop2 = function _loop2() {
             var item = _this2.itemList[i];
+            var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
 
-            if (item._obsLinkPeriodExt) {
-              duration = item._obsLinkPeriodExt.valueDuration; // optional
+            if (obsExt) {
+              // an array of at least 1 if present
+              duration = obsExt[0].valueDuration; // optional
 
               itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
@@ -6092,7 +6095,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       item._answerRequired = item.answerCardinality.min && item.answerCardinality.min && parseInt(item.answerCardinality.min) >= 1;
       item._multipleAnswers = item.answerCardinality.max && (item.answerCardinality.max === "*" || parseInt(item.answerCardinality.max) > 1); // set up readonly flag
 
-      item._readOnly = item.editable && item.editable === "0" || !!(item.calculationMethod || item._calculatedExprExt);
+      item._readOnly = item.editable && item.editable === "0" || !!(item.calculationMethod || item._fhirExt && item._fhirExt[this._fhir.SDC.fhirExtCalculatedExp]);
 
       if (this._fhir) {
         this._fhir.SDC.processExtensions(item, 'obj_text');

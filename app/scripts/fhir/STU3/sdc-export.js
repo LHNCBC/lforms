@@ -54,7 +54,7 @@ var self = {
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
     for (var i=0, len=lfData.items.length; i<len; ++i) {
       var item = lfData.items[i];
-      if (item._obsLinkPeriodExt && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following

@@ -38,11 +38,11 @@ function setFHIRPrepopulation(enable) {
 
 describe('Form pre-population', function() {
   for (let serverFHIRNum of ['3.0', '4.0']) {
-    fit('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
+    it('should be able to use %questionnaire in expressions with server FHIR version '+serverFHIRNum, function() {
       tp.openBaseTestPage();
       setServerFHIRContext(serverFHIRNum);
       tp.loadFromTestData('phq9.json', 'R4');
-  browser.sleep(200000);
+
       // This test form does prepoluation of the first answer.
       // This is also a test of prepoluation of list questions.
       var firstQ = element(by.id('/44250-9/1'));

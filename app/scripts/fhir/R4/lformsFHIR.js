@@ -21911,7 +21911,7 @@ var self = {
     for (var i = 0, len = lfData.items.length; i < len; ++i) {
       var item = lfData.items[i];
 
-      if (item._obsLinkPeriodExt && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -22665,16 +22665,7 @@ function addCommonSDCExportFns(ns) {
 
     target.name = source.shortName; // computer friendly
 
-    target.title = source.name; // Handle variable extensions.
-
-    if (source._variableExt) {
-      if (!target.extension) {
-        target.extension = [];
-      }
-
-      target.extension = target.extension.concat(source._variableExt);
-    } // Handle extensions on title
-
+    target.title = source.name; // Handle extensions on title
 
     if (source.obj_title) target._title = source.obj_title;
     target.code = source.codeList; // resourceType
