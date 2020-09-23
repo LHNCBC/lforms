@@ -27,21 +27,6 @@
       }]
     }
   }],
-  "extension": [{
-    "url" : "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
-    "extension" : [{
-      "url" : "name",
-      "valueId" : "patient"
-    },
-    {
-      "url" : "type",
-      "valueCode" : "Patient"
-    },
-    {
-      "url" : "descripton",
-      "valueString" : "For filling in patient information as the subject for the form"
-    }]
-  }],
   "item": [
     {
       "linkId": "language",
