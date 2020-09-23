@@ -46,7 +46,7 @@ var util = {
           field.sendKeys(str.slice(-1));
           util.waitForValue(field, oldVal+str);
         }, function rejected() {
-          // For type=file, you can't sent the value programmatically.  I think
+          // For type=file, you can't set the value programmatically.  I think
           // protractor does something special.  Also, the value starts with
           // something like C:\fakepath for reason, so just let
           // protractor handle it.

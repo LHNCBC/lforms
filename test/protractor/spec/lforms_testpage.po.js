@@ -297,6 +297,11 @@ var TestPage = function() {
         button.click();
       }
       browser.wait(function () { // wait for the form to render
+        // Note that this tests that a form is rendered.  If another form was already
+        // rendered, this might detect that previous form.  We could clear the
+        // form definition, wait it the form to be not rendered, and then open
+        // the new form.   I am not sure it is worth it, but I am leaving this note
+        // in case there is a problem in the future.
         return $('.lf-form-title').isPresent();
       }, this.WAIT_TIMEOUT_1);
       browser.waitForAngular();
