@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.2.0] 2020-09-23
+### Added
+- Support for the FHIR answerExpression extension (with FHIRPath expressions
+  only).
+
 ## [25.1.6] 2020-09-15
 ### Fixed
 - Remove duplicate entry in form level fields.
