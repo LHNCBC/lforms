@@ -377,7 +377,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <input ng-switch-when=\"DT\" name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" lf-date=\"dateOptions\" placeholder=\"{{item._toolTip}}\"\n" +
     "                 ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                 aria-required=\"{{ item._answerRequired }}\">\n" +
     "\n" +
     "          <!-- Gillardo boostrap datetime picker -->\n" +
     "          <div ng-switch-when=\"DTM\" class=\"lf-dtm-picker-block\">\n" +
@@ -387,14 +388,16 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "                   is-open=\"isOpen\" enable-time=\"true\" close-on-date-selection=\"true\" button-bar=\"uibDtmPickerButtonBar\"\n" +
     "                   datepicker-options=\"uibDatePickerOptions\" timepicker-options=\"uibTimePickerOptions\"\n" +
     "                   ng-disabled=\"item._readOnly\" id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                   ng-blur=\"activeRowOnBlur(item); uibDtmPickerOnBlur('input')\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "                   ng-blur=\"activeRowOnBlur(item); uibDtmPickerOnBlur('input')\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                   aria-required=\"{{ item._answerRequired }}\">\n" +
     "            <button type=\"button\" class=\"ui-datepicker-trigger\" ng-click=\"openUibDtmPicker($event)\"></button>\n" +
     "          </div>\n" +
     "\n" +
     "          <textarea ng-switch-when=\"TX\" name=\"{{item._text}}\"\n" +
     "                    ng-model=\"item.value\" ng-attr-placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                    id=\"{{item._elementId}}\" ng-keyup=\"autoExpand($event)\" ng-blur=\"activeRowOnBlur(item);autoExpand($event)\" rows=\"1\"\n" +
-    "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "                    ng-focus=\"setActiveRow(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                    aria-required=\"{{ item._answerRequired }}\">\n" +
     "          </textarea>\n" +
     "          <input ng-switch-when=\"BL\" name=\"{{item._text}}\" type=\"checkbox\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
@@ -404,7 +407,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
     "          <input ng-switch-default name=\"{{item._text}}\" type=\"text\"\n" +
     "                 ng-model=\"item.value\" placeholder=\"{{item._toolTip}}\" ng-disabled=\"item._readOnly\"\n" +
     "                 id=\"{{item._elementId}}\" ng-focus=\"setActiveRow(item)\"\n" +
-    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\">\n" +
+    "                 ng-blur=\"activeRowOnBlur(item)\" aria-describedby=\"help-{{ item._elementId }}\"\n" +
+    "                 aria-required=\"{{ item._answerRequired }}\">\n" +
     "        </div>\n" +
     "      </ng-form>\n" +
     "    </div>\n" +
@@ -430,7 +434,8 @@ angular.module('lformsWidget').run(['$templateCache', function($templateCache) {
   $templateCache.put('itemPrefixAndText.html',
     "<span ng-if=\"item.prefix\" class=\"prefix\"\n" +
     "      style=\"{{item._obj_prefixCSS}}\">{{item.prefix}}</span><span\n" +
-    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}</span>\n"
+    "      class=\"question\" style={{item._obj_textCSS}}>{{item.question}}<span\n" +
+    "      ng-if=\"item._answerRequired\" class=\"required\" title=\"Required\">&nbsp;*</span></span>\n"
   );
 
 

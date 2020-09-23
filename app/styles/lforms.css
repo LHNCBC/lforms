@@ -169,6 +169,11 @@
   padding: 0 2px 0 2px;
 }
 
+/* required indicator */
+.lf-form .required {
+  color: darkred;
+}
+
 /* form stop sign */
 .lf-form .stopped {
   text-align: center;

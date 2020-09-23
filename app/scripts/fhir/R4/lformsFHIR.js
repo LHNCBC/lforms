@@ -21908,8 +21908,8 @@ var self = {
     var qrRef = 'QuestionnaireResponse/' + qr.id;
     var rtn = [qr];
 
-    for (var i = 0, len = lfData.items.length; i < len; ++i) {
-      var item = lfData.items[i];
+    for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
+      var item = lfData.itemList[i];
 
       if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
@@ -24274,7 +24274,7 @@ function addCommonSDCImportFns(ns) {
   self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl]);
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
-  'text', 'contained', 'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
+  'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
   'date', 'version', 'identifier', 'code', // code in FHIR clashes with previous definition in lforms. It needs special handling.
   'subjectType', 'derivedFrom', // New in R4
   'status', 'experimental', 'publisher', 'contact', 'description', 'useContext', 'jurisdiction', 'purpose', 'copyright', 'approvalDate', 'reviewDate', 'effectivePeriod', 'url'];

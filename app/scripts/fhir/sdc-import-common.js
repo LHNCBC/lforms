@@ -73,8 +73,6 @@ function addCommonSDCImportFns(ns) {
     // Domain Resource
     'text',
     'contained',
-    'text',
-    'contained',
     'extension',
     'modifiedExtension',
 

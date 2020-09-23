@@ -1908,6 +1908,46 @@
         }
       ],
       "linkId": "/answer_item"
+    },
+    {
+      "questionCode": "required_dt",
+      "question": "Required DT field",
+      "dataType": "DT",
+      "linkId": "/required_dt",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_dtm",
+      "question": "Required DTM field",
+      "dataType": "DTM",
+      "linkId": "/required_dtm",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_tx",
+      "question": "Required TX field",
+      "dataType": "TX",
+      "linkId": "/required_tx",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
+    },
+    {
+      "questionCode": "required_st",
+      "question": "Required ST field",
+      "dataType": "ST",
+      "linkId": "/required_st",
+      "answerCardinality": {
+        "min": "1",
+        "max": "1"
+      }
     }
   ],
   "lformsVersion": "24.0.0"

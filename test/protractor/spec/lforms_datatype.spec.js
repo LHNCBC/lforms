@@ -153,4 +153,22 @@ describe('Data Type', function() {
       expect(ac.searchResults.isDisplayed()).toBe(true);
     });
   });
+
+  describe('required indicator and aria-required', function () {
+    beforeAll(function () {
+      tp.openFullFeaturedForm();
+    });
+
+    const allFieldTypes = ['dt', 'dtm', 'tx', 'st'];
+
+    allFieldTypes.forEach(function (type) {
+      const label = element(by.id(`label-/required_${type}/1`));
+      const requiredElement = element(by.id(`/required_${type}/1`));
+
+      it(`should be present for ${type} field`, function () {
+        expect(label.getText()).toMatch(/\*$/);  // Ends with required marker
+        expect(requiredElement.getAttribute('aria-required')).toBe('true');
+      });
+    });
+  });
 });
