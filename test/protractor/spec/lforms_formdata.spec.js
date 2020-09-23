@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 var ff = tp.USSGFHTVertical;
 var EC = protractor.ExpectedConditions;
 
@@ -21,14 +22,14 @@ describe('formdata: ', function() {
         expect(formData.itemsData[0].items[0].value).toBe(undefined); // name
         expect(Object.keys(formData.itemsData[0].items[0]).length).toBe(10); // name
         // #2 above fields have values, except dob is still empty
-        ff.comment.sendKeys("Some comments");
+        testUtil.sendKeys(ff.comment, "Some comments");
         ff.whereDone.click()
         // pick the 2nd item, Hospital
         ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
         ff.whereDone.sendKeys(protractor.Key.ARROW_DOWN);
         ff.whereDone.sendKeys(protractor.Key.TAB);
 
-        ff.name.sendKeys("Not Empty");
+        testUtil.sendKeys(ff.name, "Not Empty");
 
         ff.gender.click();
         // pick the 1st item, centimeters
@@ -43,9 +44,9 @@ describe('formdata: ', function() {
         ff.race.sendKeys(protractor.Key.ARROW_DOWN);
         ff.race.sendKeys(protractor.Key.TAB);
 
-        ff.height.sendKeys("70");
+        testUtil.sendKeys(ff.height, "70");
         expect(ff.bmi.getAttribute('value')).toBe("");
-        ff.weight.sendKeys("170");
+        testUtil.sendKeys(ff.weight, "170");
         expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
         browser.driver.executeAsyncScript(function () {
@@ -145,17 +146,17 @@ describe('formdata: ', function() {
       tp.openUSSGFHTVertical();
 
       var resetButton = element(by.id('reset-form-with-same-data'));
-      ff.comment.sendKeys("Some comments");
-      ff.name.sendKeys("Not Empty");
+      testUtil.sendKeys(ff.comment, "Some comments");
+      testUtil.sendKeys(ff.name, "Not Empty");
 
       // pick the 1st item, centimeters
       ff.gender.sendKeys(protractor.Key.ARROW_DOWN);
       ff.gender.sendKeys(protractor.Key.TAB);
       expect(ff.gender.getAttribute('value')).toBe("Male");
 
-      ff.height.sendKeys("70");
+      testUtil.sendKeys(ff.height, "70");
       expect(ff.bmi.getAttribute('value')).toBe("");
-      ff.weight.sendKeys("170");
+      testUtil.sendKeys(ff.weight, "170");
       expect(ff.bmi.getAttribute('value')).toBe("24.39");
 
       // check the data directly

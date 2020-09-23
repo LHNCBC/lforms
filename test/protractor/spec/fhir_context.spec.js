@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 var ff = tp.USSGFHTVertical;
@@ -32,13 +33,13 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
       describe('External autocomplete answerValueSets', function() {
         it('should be able to search via ValueSet expansion', function () {
           var ethnicity = ff.ethnicity;
-          ethnicity().sendKeys('arg');
+          testUtil.sendKeys(ethnicity(), 'arg');
           tp.Autocomp.helpers.waitForSearchResults();
           expect(tp.Autocomp.helpers.firstSearchRes.getText()).toBe('Argentinean');
 
           ff.disease.click();
           tp.Autocomp.helpers.waitForNoSearchResults();
-          ff.disease.sendKeys('arm');
+          testUtil.sendKeys(ff.disease, 'arm');
           tp.Autocomp.helpers.waitForSearchResults();
           tp.Autocomp.helpers.firstSearchRes.click();
           expect(ff.disease.getAttribute('value')).toBe('Arm pain');

@@ -1,6 +1,6 @@
 // Tests FHIR output and import of FHIR resources.
 
-var util = require('./util');
+var testUtil = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
 var ff = tp.USSGFHTVertical;
@@ -67,9 +67,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           it('should generate correct Observations for type integer', function() {
             tp.openFullFeaturedForm();
             let integerWithUnit = $('#\\/q_lg\\/1')
-            integerWithUnit.sendKeys(3);
+            testUtil.sendKeys(integerWithUnit, 3);
             let integerNoUnit = $('#\\/type2\\/1');
-            integerNoUnit.sendKeys(4);
+            testUtil.sendKeys(integerNoUnit, 4);
             getFHIRResource("DiagnosticReport", fhirVersion).then(function(callbackData) {
               [error, fhirData] = callbackData;
 
@@ -105,11 +105,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               // #2 has some values
               // ST, repeating
-              ff.name.sendKeys("name 1");
+              testUtil.sendKeys(ff.name, "name 1");
               ff.btnName.click();
-              ff.name2.sendKeys("name 2");
+              testUtil.sendKeys(ff.name2, "name 2");
               // DT
-              ff.dob.sendKeys("10/27/2016");
+              testUtil.sendKeys(ff.dob, "10/27/2016");
               // CWE/CNE
               ff.gender.click();
               // pick the 1st item
@@ -124,8 +124,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.race.sendKeys(protractor.Key.ARROW_DOWN);
               ff.race.sendKeys(protractor.Key.TAB);
               // REAL
-              ff.height.sendKeys("70");
-              ff.weight.sendKeys("170");
+              testUtil.sendKeys(ff.height, "70");
+              testUtil.sendKeys(ff.weight, "170");
               // repeating sub panel
               ff.disease.click();
               ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
@@ -135,7 +135,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-              util.clickAddRemoveButton(ff.btnDiseasesHist);
+              testUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -271,11 +271,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
               // #2 has some values
               // ST, repeating
-              ff.name.sendKeys("name 1");
+              testUtil.sendKeys(ff.name, "name 1");
               ff.btnName.click();
-              ff.name2.sendKeys("name 2");
+              testUtil.sendKeys(ff.name2, "name 2");
               // DT
-              ff.dob.sendKeys("10/27/2016");
+              testUtil.sendKeys(ff.dob, "10/27/2016");
               // CWE/CNE
               ff.gender.click();
               // pick the 1st item
@@ -290,8 +290,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.race.sendKeys(protractor.Key.ARROW_DOWN);
               ff.race.sendKeys(protractor.Key.TAB);
               // REAL
-              ff.height.sendKeys("70");
-              ff.weight.sendKeys("170");
+              testUtil.sendKeys(ff.height, "70");
+              testUtil.sendKeys(ff.weight, "170");
               // repeating sub panel
               ff.disease.click();
               ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
@@ -301,7 +301,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
               ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-              util.clickAddRemoveButton(ff.btnDiseasesHist);
+              testUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
               ff.disease2.click();
               ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -448,11 +448,11 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.openUSSGFHTVertical();
 
             // ST, repeating
-            ff.name.sendKeys("name 1");
+            testUtil.sendKeys(ff.name, "name 1");
             ff.btnName.click();
-            ff.name2.sendKeys("name 2");
+            testUtil.sendKeys(ff.name2, "name 2");
             // DT
-            ff.dob.sendKeys("10/27/2016");
+            testUtil.sendKeys(ff.dob, "10/27/2016");
             // CWE/CNE
             ff.gender.click();
             // pick the 1st item
@@ -467,8 +467,8 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.race.sendKeys(protractor.Key.ARROW_DOWN);
             ff.race.sendKeys(protractor.Key.TAB);
             // REAL
-            ff.height.sendKeys("70");
-            ff.weight.sendKeys("170");
+            testUtil.sendKeys(ff.height, "70");
+            testUtil.sendKeys(ff.weight, "170");
             // repeating sub panel
             ff.disease.click();
             ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
@@ -478,7 +478,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
             ff.ageAtDiag.sendKeys(protractor.Key.TAB);
 
-            util.clickAddRemoveButton(ff.btnDiseasesHist);
+            testUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
             ff.disease2.click();
             ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -598,7 +598,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
             var drugNameField = rxtermsForm.drugName;
             drugNameField.click();
-            drugNameField.sendKeys('aspercreme');
+            testUtil.sendKeys(drugNameField, 'aspercreme');
             browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
             drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
             drugNameField.sendKeys(protractor.Key.TAB);
@@ -865,7 +865,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           tp.setFHIRVersion(fhirVersion);
           tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
           var height = element(by.id('/8302-2/1'));
-          height.sendKeys('70');
+          testUtil.sendKeys(height, '70');
         });
 
         var patientRes = {
@@ -917,7 +917,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
           }, tp.WAIT_TIMEOUT_1);
 
           dcSource.click();
-          dcSource.sendKeys("ALTABAX (Topical)")
+          testUtil.sendKeys(dcSource, "ALTABAX (Topical)")
           dcSource.sendKeys(protractor.Key.ARROW_DOWN);
           dcSource.sendKeys(protractor.Key.TAB);
 
@@ -1233,7 +1233,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item).toBe(undefined);
             });
 
-            childItem.sendKeys('123');
+            testUtil.sendKeys(childItem, '123');
             getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               [error, fhirData] = callbackData;
 
@@ -1259,7 +1259,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
               expect(fhirData.item).toBe(undefined);
             });
 
-            childItem.sendKeys('123');
+            testUtil.sendKeys(childItem, '123');
             getFHIRResource("QuestionnaireResponse", fhirVersion).then(function(callbackData) {
               [error, fhirData] = callbackData;
 

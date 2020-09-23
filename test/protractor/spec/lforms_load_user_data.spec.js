@@ -1,4 +1,4 @@
-var util = require('./util');
+var testUtil = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FormWithUserData;
 describe('load saved user data', function() {
@@ -94,17 +94,17 @@ describe('load saved user data', function() {
 
   it('skip logic on repeating section should work too', function() {
     ff.rpSrc2.clear();
-    ff.rpSrc2.sendKeys('1');
+    testUtil.sendKeys(ff.rpSrc2, '1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     ff.rpSrc2.clear();
-    ff.rpSrc2.sendKeys('2');
+    testUtil.sendKeys(ff.rpSrc2, '2');
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
     ff.rpAdd.click();
 
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
-    ff.rpSrc2.sendKeys('1');
+    testUtil.sendKeys(ff.rpSrc2, '1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     expect(ff.rpTarget2b.isPresent()).toBe(false);
   });
@@ -112,13 +112,13 @@ describe('load saved user data', function() {
   it('form should be actionable', function() {
 
     // add a repeating item
-    util.clickAddRemoveButton(ff.rpq1_add_btn);
+    testUtil.clickAddRemoveButton(ff.rpq1_add_btn);
     expect(ff.rpq1_add_btn.isPresent()).toBe(false);
     expect(ff.rpq1_add_btn_3.isDisplayed()).toBe(true);
     expect(ff.rpq1_add_btn_3.getText()).toBe('+ Add another "A Repeating Item"');
     expect(ff.rpq1_3.getAttribute('value')).toBe('');
     // add a repeating section
-    util.clickAddRemoveButton(ff.rpq4_add_btn_1);
+    testUtil.clickAddRemoveButton(ff.rpq4_add_btn_1);
     expect(ff.rpq4_add_btn_1.isPresent()).toBe(false);
     expect(ff.rpq4_add_btn_1b.isDisplayed()).toBe(true);
     expect(ff.rpq4_add_btn_1b.getText()).toBe('+ Add another "A repeating section in a repeating section"');

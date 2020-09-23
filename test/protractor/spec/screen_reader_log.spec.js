@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util');
 describe('508', function() {
 
   describe('screen reader log', function() {
@@ -11,20 +12,20 @@ describe('508', function() {
     it('should be empty when the form loads', function() {
       expect(tp.readerLogEntries.getText()).toEqual([]);
     });
-    
+
     it('should contain an entry when skip logic shows a field', function() {
-      tp.heightField.sendKeys('10');
+      testUtil.sendKeys(tp.heightField, '10');
       expect(tp.readerLogEntries.getText()).toEqual(
         ['Showing Mock-up item: Shown when Height >= 10']);
     });
-    
+
     it('should not add an extra entry if the field is already showing',
        function() {
-      tp.heightField.sendKeys('2');
+      testUtil.sendKeys(tp.heightField, '2');
       expect(tp.readerLogEntries.getText()).toEqual(
         ['Showing Mock-up item: Shown when Height >= 10']);
     });
-    
+
     it('should contain an entry when skip logic hides a field', function() {
       tp.heightField.sendKeys(protractor.Key.BACK_SPACE);
       tp.heightField.sendKeys(protractor.Key.BACK_SPACE);
@@ -32,7 +33,7 @@ describe('508', function() {
         ['Showing Mock-up item: Shown when Height >= 10',
          'Hiding Mock-up item: Shown when Height >= 10']);
     });
-    
+
     it('should not add an extra entry if the field is already hidden',
        function() {
       tp.heightField.sendKeys(protractor.Key.BACK_SPACE);
@@ -41,7 +42,7 @@ describe('508', function() {
          'Hiding Mock-up item: Shown when Height >= 10',
          '"Height"requires a value']);
     });
-    
+
     it('should add an entry when a section is added or removed', function () {
       // Reset the reader log
       tp.resetReaderLog();
@@ -54,7 +55,7 @@ describe('508', function() {
       element.all(by.css(minusButtonCSS)).first().click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added section', 'Removed section']);
     });
-    
+
     it('should add an entry when a row is added or removed', function () {
       // Reset the reader log
       tp.resetReaderLog();
@@ -73,7 +74,7 @@ describe('508', function() {
       minusButton.click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added row', 'Removed row']);
     });
-    
+
     it('should add an entry when a question is added or removed', function () {
       // Switch to the first form, which has a repeating question
       tp.openUSSGFHTVertical();
@@ -86,7 +87,7 @@ describe('508', function() {
       tp.resetReaderLog();
       expect(tp.readerLogEntries.getText()).toEqual([]);
       // Add a question
-      tp.USSGFHTVertical.name.sendKeys("a name");
+      testUtil.sendKeys(tp.USSGFHTVertical.name, "a name");
       addNameButton.click();
       expect(tp.readerLogEntries.getText()).toEqual(['Added question']);
       // Remove the question

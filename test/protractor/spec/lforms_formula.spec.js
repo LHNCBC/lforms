@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 var ff = tp.USSGFHTVertical;
 describe('formula', function() {
 
@@ -7,12 +8,12 @@ describe('formula', function() {
     tp.openUSSGFHTVertical();
 
     // check bmi1
-    ff.height1.sendKeys("70");
+    testUtil.sendKeys(ff.height1, "70");
     expect(ff.bmi1.getAttribute('value')).toBe("");
-    ff.weight1.sendKeys("170");
+    testUtil.sendKeys(ff.weight1, "170");
     expect(ff.bmi1.getAttribute('value')).toBe("24.39");
     ff.height1.clear();
-    ff.height1.sendKeys("80");
+    testUtil.sendKeys(ff.height1, "80");
     expect(ff.bmi1.getAttribute('value')).toBe("18.68");
 
     // change height unit and check bmi1 again
@@ -22,7 +23,7 @@ describe('formula', function() {
     ff.heightUnit1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.heightUnit1.sendKeys(protractor.Key.TAB);
     ff.height1.clear();
-    ff.height1.sendKeys("170");
+    testUtil.sendKeys(ff.height1, "170");
     expect(ff.bmi1.getAttribute('value')).toBe("26.68");
 
     // change weight unit and check bmi1 again
@@ -32,16 +33,16 @@ describe('formula', function() {
     ff.weightUnit1.sendKeys(protractor.Key.ARROW_DOWN);
     ff.weightUnit1.sendKeys(protractor.Key.TAB);
     ff.weight1.clear();
-    ff.weight1.sendKeys("80");
+    testUtil.sendKeys(ff.weight1, "80");
     expect(ff.bmi1.getAttribute('value')).toBe("27.68");
 
     // check bmi2
-    ff.height2.sendKeys("70");
+    testUtil.sendKeys(ff.height2, "70");
     expect(ff.bmi2.getAttribute('value')).toBe("");
-    ff.weight2.sendKeys("170");
+    testUtil.sendKeys(ff.weight2, "170");
     expect(ff.bmi2.getAttribute('value')).toBe("24.39");
     ff.height2.clear();
-    ff.height2.sendKeys("80");
+    testUtil.sendKeys(ff.height2, "80");
     expect(ff.bmi2.getAttribute('value')).toBe("18.68");
   });
 
