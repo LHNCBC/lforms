@@ -1,5 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
-var util = require('./util.js');
+var testUtil = require('./util.js');
 
 describe('display controls demo', function() {
   it('should show values as selected radio buttons/checkboxes', function() {
@@ -8,7 +8,7 @@ describe('display controls demo', function() {
     var item1Answer2 = element(by.id('/q1a/1c2'))
     var item1Answer3 = element(by.id('/q1a/1c3'))
     browser.wait(function () {
-      return item1Answer2.isDisplayed();
+      return item1Answer2.isPresent();
     }, tp.WAIT_TIMEOUT_1);
 
     expect(item1Answer2.isSelected()).not.toBe(true);
@@ -37,7 +37,7 @@ describe('display controls demo', function() {
         item4OtherValue = element(by.id('/q1d/1_otherValue'));
 
     browser.wait(function () {
-      return item1answer1.isDisplayed();
+      return item1answer1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
 
     expect(item1answer1.isDisplayed()).toBe(true);
@@ -82,14 +82,14 @@ describe('display controls demo', function() {
       expect(value.code == null).toBeTruthy(); // allow undefined (Chrome)
       expect(value.text == null).toBeTruthy(); // allow undefined (Chrome)
     });
-    item2OtherValue.sendKeys('other values');
+    testUtil.sendKeys(item2OtherValue, 'other values');
     item2answer1.evaluate("item.value").then(function (value) {
       // user typed data is now only stored in text, not in code
       expect(value.code).toBe(undefined);
       expect(value.text).toBe('other values');
     });
     item2OtherValue.clear();
-    item2OtherValue.sendKeys('other values again');
+    testUtil.sendKeys(item2OtherValue, 'other values again');
     item2answer1.evaluate("item.value").then(function (value) {
       // user typed data is now only stored in text, not in code
       expect(value.code).toBe(undefined);
@@ -137,7 +137,7 @@ describe('display controls demo', function() {
       expect(value[1].text == null).toBeTruthy(); // allow undefined (Chrome)
     });
 
-    item4OtherValue.sendKeys('other values');
+    testUtil.sendKeys(item4OtherValue, 'other values');
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
@@ -148,7 +148,7 @@ describe('display controls demo', function() {
 
     // change the other value alone will update the data model when the checkbox is checked.
     item4OtherValue.clear();
-    item4OtherValue.sendKeys('other values again');
+    testUtil.sendKeys(item4OtherValue, 'other values again');
     item4answer1.evaluate("item.value").then(function (value) {
       expect(value.length).toBe(2);
       expect(value[0].code).toBe('c1');
@@ -196,7 +196,7 @@ describe('display controls demo', function() {
         q32 = element(by.id('/g2/g1m1/2/1'));
 
     browser.wait(function () {
-      return btnAdd1.isDisplayed();
+      return btnAdd1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
 
     expect(q11.isDisplayed()).toBe(true);
@@ -206,22 +206,22 @@ describe('display controls demo', function() {
     expect(q22.isPresent()).toBe(false);
     expect(q32.isPresent()).toBe(false);
 
-    util.clickAddRemoveButton(btnAdd1);
+    testUtil.clickAddRemoveButton(btnAdd1);
     expect(q12.isDisplayed()).toBe(true);
-    util.clickAddRemoveButton(btnDel1);
+    testUtil.clickAddRemoveButton(btnDel1);
     expect(q12.isPresent()).toBe(false);
 
-    util.clickAddRemoveButton(btnAdd2);
-    util.waitForElementPresent(q22);
+    testUtil.clickAddRemoveButton(btnAdd2);
+    testUtil.waitForElementPresent(q22);
     expect(q22.isDisplayed()).toBe(true);
-    util.clickAddRemoveButton(btnDel2);
-    util.waitForElementNotPresent(q22);
+    testUtil.clickAddRemoveButton(btnDel2);
+    testUtil.waitForElementNotPresent(q22);
     expect(q22.isPresent()).toBe(false);
 
 
-    util.clickAddRemoveButton(btnAdd3);
+    testUtil.clickAddRemoveButton(btnAdd3);
     expect(q32.isDisplayed()).toBe(true);
-    util.clickAddRemoveButton(btnDel3);
+    testUtil.clickAddRemoveButton(btnDel3);
     expect(browser.isElementPresent(q32)).toBe(false);
     //expect(q32.isPresent()).toBe(false);
 
@@ -236,7 +236,7 @@ describe('display controls demo', function() {
         item2answer3 = element(by.id('/g4/g1m2/1/1c3'));
 
     browser.wait(function () {
-      return item1answer1.isDisplayed();
+      return item1answer1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
 
     // first row in matrix
@@ -302,7 +302,7 @@ describe('display controls demo', function() {
     var item5c3 = element(by.id('/readonlyCWE-mb/1c3'));
     var item5c4 = element(by.id('/readonlyCWE-mb/1c4'));
     browser.wait(function () {
-      return item1.isDisplayed();
+      return item1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
     expect(item1.isEnabled()).toBe(false);
     expect(item2.isEnabled()).toBe(false);
@@ -324,7 +324,7 @@ describe('display controls demo', function() {
     var label1 = element(by.id('label-/q_lg/1'));
 
     browser.wait(function () {
-      return label1.isDisplayed();
+      return label1.isPresent();
     }, tp.WAIT_TIMEOUT_1);
     expect(label1.getCssValue('color')).toBe('rgba(255, 0, 0, 1)'); // red
 

@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 
 describe('Form level Matrix layout', function() {
 
@@ -106,7 +107,7 @@ describe('Form level Matrix layout', function() {
       expect(value[2].text == null).toBeTruthy(); // allow undefined
     });
 
-    item1OtherValue.sendKeys('other values');
+    testUtil.sendKeys(item1OtherValue, 'other values');
     item1answer1.evaluate("subItem.value").then(function(value) {
       expect(value.length).toBe(3);
       expect(value[0].code).toBe('c1');
@@ -119,7 +120,7 @@ describe('Form level Matrix layout', function() {
 
     // change the other value alone will update the data model when the checkbox is checked.
     item1OtherValue.clear();
-    item1OtherValue.sendKeys('other values again');
+    testUtil.sendKeys(item1OtherValue, 'other values again');
     item1answer1.evaluate("subItem.value").then(function(value) {
       expect(value.length).toBe(3);
       expect(value[0].code).toBe('c1');
@@ -150,7 +151,7 @@ describe('Form level Matrix layout', function() {
       expect(value[1].text).toBe('Answer 4');
     });
 
-    item4OtherValue.sendKeys('others');
+    testUtil.sendKeys(item4OtherValue, 'others');
     // model value does not change when the checkbox is not checked
     item4answer4.evaluate("subItem.value").then(function(value) {
       expect(value.length).toBe(2);

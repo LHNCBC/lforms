@@ -2,6 +2,8 @@
 var fhirVersion = 'R4';
 
 var tp = require('../lforms_testpage.po.js');
+var testUtil = require('../util.js');
+
 describe('FHIR variables', function() {
   function elID(id) {return element(by.id(id));}
   let addGroupA = elID('add-/groupA/1');
@@ -29,9 +31,9 @@ describe('FHIR variables', function() {
   });
 
   it('should have expected values after typing', function() {
-    fieldB1.sendKeys('1');
+    testUtil.sendKeys(fieldB1, '1');
     addFieldB.click();
-    fieldB2.sendKeys('2');
+    testUtil.sendKeys(fieldB2, '2');
     expect(valueOf(fieldB1)).toBe('1');
     expect(valueOf(fieldB2)).toBe('2');
     expect(valueOf(fieldC)).toBe('8');
@@ -41,7 +43,7 @@ describe('FHIR variables', function() {
 
   it('should have working expressions for added groups', function() {
     addGroupA.click();
-    fieldBg2f1.sendKeys('3');
+    testUtil.sendKeys(fieldBg2f1, '3');
     expect(valueOf(fieldC)).toBe('8');
     expect(valueOf(fieldCg2)).toBe('10');
   });

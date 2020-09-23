@@ -1,4 +1,5 @@
 var tp = require('./lforms_testpage.po.js');
+var testUtil = require('./util.js');
 var fhirSupport = require('../../../app/scripts/fhir/versions');
 var fhirVersions = Object.keys(fhirSupport);
 
@@ -11,9 +12,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             tp.loadFromTestData('weightHeightQuestionnaire.json', fhirVersion);
             let weightField = element(by.id('/29463-7/1'));
             weightField.click();
-            weightField.sendKeys('70');
+            testUtil.sendKeys(weightField, '70');
             let heightField = element(by.id('/8302-2/1'));
-            heightField.sendKeys('60');
+            testUtil.sendKeys(heightField, '60');
             heightField.click();
             weightField.click(); // so heightField gets a change event
             let bmiField = element(by.id('/39156-5/1'));

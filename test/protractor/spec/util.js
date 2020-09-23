@@ -14,6 +14,78 @@ var util = {
     }
   },
 
+
+  /**
+   *  Waits for a field to have the given value.
+   * @param field a protractor element locator (e.g. returned by $)
+   * @param value the value to wait for
+   * @return a promise that resolves when the field has the expected value.
+   */
+  waitForValue: function (field, value) {
+    return browser.wait(function() {
+      return field.getAttribute('value').then(function(val) {
+        return val === value;
+      })
+    }, 5000);// Debugging: .then(function() {console.log("got "+value)}, function() {console.log("didn't get "+value)});
+  },
+
+
+  /**
+   *  The selenium sendKeys function sends events for each character and the
+   *  result is not stable, so we use this instead.  Only the key events for the
+   *  last character are sent.
+   * @param field a protractor element locator (e.g. returned by $)
+   * @param str the value (either a string or a number)
+   * @return a promise that resolves when str has been added to the field value
+   */
+  sendKeys: function(field, str) {
+    str = '' + str; // convert numbers to strings
+    return field.getAttribute('value').then(function(oldVal) {
+      var allButLastChar = oldVal+str.slice(0,-1);
+      browser.executeScript('arguments[0].value = "'+allButLastChar+'"',
+        field.getWebElement()).then(function success() {
+          util.waitForValue(field, allButLastChar);
+          field.sendKeys(str.slice(-1));
+          return util.waitForValue(field, oldVal+str);
+        }, function rejected() {
+          // For type=file, you can't set the value programmatically.  I think
+          // protractor does something special.  Also, the value starts with
+          // something like C:\fakepath for reason, so just let
+          // protractor handle it.
+          return field.sendKeys(str);
+        });
+      });
+  },
+
+
+  /**
+   *  The selenium clearField function does not wait for the field to be cleared
+   *  before the next field runs (https://stackoverflow.com/a/43616117) so we
+   *  use this instead.
+   * @param field a protractor element locator (e.g. returned by $)
+   * @return a promise that resolves when the field is empty
+   */
+  clearField: function(field) {
+    field.clear();
+    return this.waitForValue(field, '');
+  },
+
+
+  /**
+   *  Erases the value in the given field.  Leaves the focus in the
+   *  field afterward (unlike clearField, which uses the protractor API which
+   *  does something to the focus.
+   * @param field a protractor element locator (e.g. returned by $)
+   * @return a promise that resolves when the field is empty
+   */
+  eraseField: function(field) {
+    field.click();
+    field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
+    return this.waitForValue(field, '');
+  },
+
+
   /**
    *  Clicks the given add/remove repeating item button, and sleeps a bit to let the page stop moving.
    */

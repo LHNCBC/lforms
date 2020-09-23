@@ -1,6 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
-var util = require('./util.js');
+var testUtil = require('./util.js');
 
 describe('horizontal table', function() {
   let addRemoveButtons = element.all(by.css('.lf-float-button'));
@@ -26,7 +26,7 @@ describe('horizontal table', function() {
   });
   it('should have two remove buttons visible after the user adds a row', function() {
 
-    util.clickAddRemoveButton(addRemoveButtons.get(2));
+    testUtil.clickAddRemoveButton(addRemoveButtons.get(2));
     waitForButtonCount(6);
     // the first row has a '-' button only
     expect(addRemoveButtons.get(2).getText()).toBe('-');
@@ -38,7 +38,7 @@ describe('horizontal table', function() {
 
   });
   it('should have three remove buttons visible after the user adds a row', function() {
-    util.clickAddRemoveButton(addRemoveButtons.get(4));
+    testUtil.clickAddRemoveButton(addRemoveButtons.get(4));
     waitForButtonCount(7);
     // the first row has a '-' button only
     expect(addRemoveButtons.get(2).getText()).toBe('-');
@@ -54,7 +54,7 @@ describe('horizontal table', function() {
 
   it('should have the 2 rows after the user removes the 2nd row', function() {
     waitForButtonCount(7); // precondition
-    util.clickAddRemoveButton(addRemoveButtons.get(3));
+    testUtil.clickAddRemoveButton(addRemoveButtons.get(3));
     waitForButtonCount(6);
     // the first row has a '-' button only
     expect(addRemoveButtons.get(2).getText()).toBe('-');
@@ -69,7 +69,7 @@ describe('horizontal table', function() {
     tp.openRxTerms();
     var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
-    drugNameField.sendKeys('aspercreme');
+    testUtil.sendKeys(drugNameField, 'aspercreme');
     browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, tp.WAIT_TIMEOUT_2);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);

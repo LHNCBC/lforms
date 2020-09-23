@@ -1,4 +1,5 @@
 var fhirSupport = require('../../../app/scripts/fhir/versions');
+var testUtil = require('./util');
 var fhirVersions = Object.keys(fhirSupport);
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
@@ -80,7 +81,7 @@ describe('skip logic', function() {
   });
 
   it('should show a sibling and two items in a sibling section', function() {
-    ff.src.sendKeys('1');
+    testUtil.sendKeys(ff.src, '1');
     expect(ff.t1.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
     expect(ff.t5.isDisplayed()).toBe(true);
@@ -92,7 +93,7 @@ describe('skip logic', function() {
     expect(ff.t2.isPresent()).toBeFalsy();
     expect(ff.t4.isPresent()).toBeFalsy();
     expect(ff.t5.isPresent()).toBeFalsy();
-    ff.src.sendKeys('2');
+    testUtil.sendKeys(ff.src, '2');
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isDisplayed()).toBe(true);
@@ -102,10 +103,10 @@ describe('skip logic', function() {
   it('should show/hide a sibling controlled by "notEqual"', function() {
     ff.src.clear();
     expect(ff.t6.isDisplayed()).toBe(true);
-    ff.src.sendKeys('2');
+    testUtil.sendKeys(ff.src, '2');
     expect(ff.t6.isPresent()).toBeFalsy();
     ff.src.clear();
-    ff.src.sendKeys('6');
+    testUtil.sendKeys(ff.src, '6');
     expect(ff.t6.isDisplayed()).toBe(true);
   });
 
@@ -115,7 +116,7 @@ describe('skip logic', function() {
     expect(ff.t2.isPresent()).toBeFalsy();
     expect(ff.t4.isPresent()).toBeFalsy();
     expect(ff.t5.isPresent()).toBeFalsy();
-    ff.src.sendKeys('6');
+    testUtil.sendKeys(ff.src, '6');
     expect(ff.t1.isPresent()).toBeFalsy();
     expect(ff.t2.isDisplayed()).toBe(true);
     expect(ff.t4.isPresent()).toBeFalsy();
@@ -126,12 +127,12 @@ describe('skip logic', function() {
     // check logic ALL
     ff.allSrc1.clear();
     ff.allSrc2.clear();
-    ff.allSrc1.sendKeys('1');
+    testUtil.sendKeys(ff.allSrc1, '1');
     expect(ff.allTarget.isPresent()).toBe(false);
-    ff.allSrc2.sendKeys('2');
+    testUtil.sendKeys(ff.allSrc2, '2');
     expect(ff.allTarget.isDisplayed()).toBe(true);
     ff.anySrc1.clear();
-    ff.allSrc1.sendKeys('2');
+    testUtil.sendKeys(ff.allSrc1, '2');
     expect(ff.allTarget.isPresent()).toBe(false);
   });
 
@@ -139,15 +140,15 @@ describe('skip logic', function() {
     // check logic ANY
     ff.anySrc1.clear();
     ff.anySrc2.clear();
-    ff.anySrc1.sendKeys('1');
+    testUtil.sendKeys(ff.anySrc1, '1');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
-    ff.anySrc2.sendKeys('1');
+    testUtil.sendKeys(ff.anySrc2, '1');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
-    ff.anySrc1.sendKeys('2');
+    testUtil.sendKeys(ff.anySrc1, '2');
     ff.anySrc1.clear();
     expect(ff.anyTarget.isPresent()).toBe(false);
     ff.anySrc2.clear();
-    ff.anySrc2.sendKeys('2');
+    testUtil.sendKeys(ff.anySrc2, '2');
     expect(ff.anyTarget.isDisplayed()).toBe(true);
 
   });
@@ -159,15 +160,15 @@ describe('skip logic', function() {
     ff.rpSrc2.clear();
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     expect(ff.rpTarget2b.isPresent()).toBe(false);
-    ff.rpSrc2.sendKeys('1');
+    testUtil.sendKeys(ff.rpSrc2, '1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     ff.rpSrc2.clear();
-    ff.rpSrc2.sendKeys('2');
+    testUtil.sendKeys(ff.rpSrc2, '2');
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
 
     expect(ff.rpTarget1a.isPresent()).toBe(false);
     expect(ff.rpTarget1ah1.isPresent()).toBe(false);
-    ff.rpSubSrc1.sendKeys('1');
+    testUtil.sendKeys(ff.rpSubSrc1, '1');
     expect(ff.rpTarget1a.isDisplayed()).toBe(true);
     expect(ff.rpTarget1ah1.isDisplayed()).toBe(true);
 
@@ -179,7 +180,7 @@ describe('skip logic', function() {
     expect(ff.rpTarget2a.isDisplayed()).toBe(true);
     expect(ff.rpTarget2b.isDisplayed()).toBe(true);
     ff.rpSrc2.clear();
-    ff.rpSrc2.sendKeys('1');
+    testUtil.sendKeys(ff.rpSrc2, '1');
     expect(ff.rpTarget2a.isPresent()).toBe(false);
     expect(ff.rpTarget2b.isPresent()).toBe(false);
   });
@@ -248,7 +249,7 @@ describe('skip logic', function() {
         // Value entered in the item. The chained targets skip logic is satisfied.
         targetEqual.click();
         targetEqual.clear();
-        targetEqual.sendKeys('xxx');
+        testUtil.sendKeys(targetEqual, 'xxx');
         expect(targetWithSklSourceExists.isDisplayed()).toBe(true);
         expect(targetWithSklSourceNotExists.isPresent()).toBe(false);
 
@@ -267,21 +268,21 @@ describe('skip logic', function() {
 
       // Not met skip logic condition ==> skip logic disabled
       source.click();
-      source.sendKeys('xxx');
+      testUtil.sendKeys(source, 'xxx');
       expect(skipLogicItem.isPresent()).toBe(false);
       expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
 
       // Met skip logic condition
       source.click();
       source.clear();
-      source.sendKeys('show 2');
+      testUtil.sendKeys(source, 'show 2');
       expect(skipLogicItem.isDisplayed()).toBe(true);
 
       // skipLogicItem is present but its value does not exists yet.
       expect(dataControlItemWithSourceHavingSkipLogic.isPresent()).toBe(false);
 
       skipLogicItem.click();
-      skipLogicItem.sendKeys('xxx');
+      testUtil.sendKeys(skipLogicItem, 'xxx');
       expect(dataControlItemWithSourceHavingSkipLogic.isDisplayed()).toBe(true);
       expect(dataControlItemWithSourceHavingSkipLogic.getAttribute('value')).toBe('xxx');
     });

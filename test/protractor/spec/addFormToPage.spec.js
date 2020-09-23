@@ -12,7 +12,7 @@ describe('addFormToPage test page', function() {
 
   it('should have a drug name field in the RxTerms form', function() {
     expect(po.rxDrugNameField.isDisplayed()).toBeTruthy();
-    po.rxDrugNameField.sendKeys('ar');
+    testUtil.sendKeys(po.rxDrugNameField, 'ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
@@ -23,7 +23,7 @@ describe('addFormToPage test page', function() {
     po.ffDrugNameField.click();
     expect(po.searchResults.isDisplayed()).toBeFalsy();
     expect(po.ffDrugNameField.isDisplayed()).toBeTruthy();
-    po.ffDrugNameField.sendKeys('ar');
+    testUtil.sendKeys(po.ffDrugNameField, 'ar');
     browser.wait(function() {
       return po.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
