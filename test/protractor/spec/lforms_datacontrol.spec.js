@@ -1,13 +1,13 @@
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.FullFeaturedForm;
-var util = require('./util.js');
+var testUtil = require('./util.js');
 
 describe('data control', function() {
 
   it('data change on source field should update target fields', function() {
     tp.openFullFeaturedForm();
 
-    ff.dcSource.sendKeys('Haloperidol');
+    testUtil.sendKeys(ff.dcSource, 'Haloperidol');
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
@@ -27,7 +27,7 @@ describe('data control', function() {
 
     // pick a different value on source field
     ff.dcSource.clear();
-    ff.dcSource.sendKeys('Haloperidol');
+    testUtil.sendKeys(ff.dcSource, 'Haloperidol');
     browser.wait(function() {
       return ff.searchResults.isDisplayed();
     }, tp.WAIT_TIMEOUT_1);
@@ -87,8 +87,8 @@ describe('data control', function() {
     expect(field2.isDisplayed()).toBe(true);
 
     // 'del' button works
-    ff.dcSource.sendKeys('Haloperidol');
-    util.clickAddRemoveButton(btnDel1);
+    testUtil.sendKeys(ff.dcSource, 'Haloperidol');
+    testUtil.clickAddRemoveButton(btnDel1);
     expect(btnAdd1.isPresent()).toBe(false);
     expect(btnAdd2.isDisplayed()).toBe(true);
     expect(btnDel1.isPresent()).toBe(false);

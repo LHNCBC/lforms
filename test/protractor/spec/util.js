@@ -16,20 +16,43 @@ var util = {
 
 
   /**
-   *  The selenium sendKeys function sends events for each character and the
-   *  result is not stable, so we use this instead.
+   *  Waits for the a field to have the given value.
    * @param field a protractor element locator (e.g. returned by $)
+   * @param value the value to wait for
+   */
+  waitForValue: function (field, value) {
+    return browser.wait(function() {
+      return field.getAttribute('value').then(function(val) {
+        return val === value;
+      })
+    }, 5000);// Debugging: .then(function() {console.log("got "+value)}, function() {console.log("didn't get "+value)});
+  },
+
+
+  /**
+   *  The selenium sendKeys function sends events for each character and the
+   *  result is not stable, so we use this instead.  Only the key events for the
+   *  last character are sent.
+   * @param field a protractor element locator (e.g. returned by $)
+   * @param str the value (either a string or a number)
    */
   sendKeys: function(field, str) {
-    var allButLastChar = str.slice(0,-1);
-    if (allButLastChar.length > 0)
-      browser.executeScript('arguments[0].value = "'+allButLastChar+'"', field.getWebElement());
-    field.sendKeys(str.slice(-1));
-    browser.wait(function() {
-      return field.getAttribute('value').then(function(val) {
-        return val === str;
-      })
-    }, 30000);
+    str = '' + str; // convert numbers to strings
+    field.getAttribute('value').then(function(oldVal) {
+      var allButLastChar = oldVal+str.slice(0,-1);
+      browser.executeScript('arguments[0].value = "'+allButLastChar+'"',
+        field.getWebElement()).then(function success() {
+          util.waitForValue(field, allButLastChar);
+          field.sendKeys(str.slice(-1));
+          util.waitForValue(field, oldVal+str);
+        }, function rejected() {
+          // For type=file, you can't sent the value programmatically.  I think
+          // protractor does something special.  Also, the value starts with
+          // something like C:\fakepath for reason, so just let
+          // protractor handle it.
+          field.sendKeys(str);
+        });
+      });
   },
 
 
@@ -40,12 +63,21 @@ var util = {
    * @param field a protractor element locator (e.g. returned by $)
    */
   clearField: function(field) {
-    field.clearField);
-    browser.wait(function() {
-      return field.getAttribute('value').then(function(val) {
-        return val === '';
-      })
-    }, 30000);
+    field.clear();
+    this.waitForValue(field, '');
+  },
+
+
+  /**
+   *  Erases the value in the given field.  Leaves the focus in the
+   *  field afterward (unlike clearField, which uses the protractor API which
+   *  does something to the focus.
+   */
+  eraseField: function(field) {
+    field.click();
+    field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
+    this.waitForValue(field, '');
   },
 
 

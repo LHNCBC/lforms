@@ -1,5 +1,5 @@
-let util = require('./util.js');
-const elementFactory = util.elementFactory;
+let testUtil = require('./util.js');
+const elementFactory = testUtil.elementFactory;
 
 var TestPage = function() {
 
@@ -296,6 +296,9 @@ var TestPage = function() {
       if (button) {
         button.click();
       }
+      browser.wait(function () { // wait for the form to render
+        return $('.lf-form-title').isPresent();
+      }, this.WAIT_TIMEOUT_1);
       browser.waitForAngular();
     },
 
@@ -306,8 +309,8 @@ var TestPage = function() {
     openTestPage: function(pageURL) {
       browser.get(pageURL);
       browser.waitForAngular();
-      browser.executeScript(util.disableAutocompleterScroll);
-      browser.executeScript(util.disableCssAnimate);
+      browser.executeScript(testUtil.disableAutocompleterScroll);
+      browser.executeScript(testUtil.disableCssAnimate);
     },
 
     /**
@@ -341,25 +344,14 @@ var TestPage = function() {
 
 
     /**
-     *  Erases the value in the given field.  Leaves the focus in the field
-     *  afterward.
-     */
-    clearField: function(field) {
-      field.click();
-      field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
-      field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
-    },
-
-
-    /**
      *  Selects a FHIR version.
      * @param version the FHIR version to use.
      */
     setFHIRVersion: function(version) {
       let fhirVersionField = $('#fhirVersion');
-      this.clearField(fhirVersionField);
+      testUtil.clearField(fhirVersionField);
       fhirVersionField.click();
-      fhirVersionField.sendKeys(version);
+      testUtil.sendKeys(fhirVersionField, version);
       fhirVersionField.sendKeys(protractor.Key.TAB);
     },
 
@@ -384,7 +376,7 @@ var TestPage = function() {
       let fileInput = $('#fileAnchor');
       let testFile = require('path').join(...pathParts);
       browser.executeScript("$('#fileAnchor')[0].className = ''");
-      fileInput.sendKeys(testFile);
+      testUtil.sendKeys(fileInput, testFile);
       // Re-hide the file input element
       browser.executeScript("$('#fileAnchor')[0].className = 'hide'");
     }

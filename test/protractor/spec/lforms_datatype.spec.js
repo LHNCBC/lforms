@@ -27,7 +27,7 @@ describe('Data Type', function() {
 
     let dateStr = '02/032019';
     dtEl.clear();
-    dtEl.sendKeys(dateStr);
+    testUtil.sendKeys(dtEl, dateStr);
     otherEl.click();
     expect(dtEl.getCssValue('border-color')).toEqual('rgb(255, 0, 0)'); // Red border
 
@@ -44,11 +44,11 @@ describe('Data Type', function() {
     tp.openFullFeaturedForm();
     let dtmEl = element(by.id('/type7/1'));
     dtmEl.clear();
-    dtmEl.sendKeys('02/03/201923:59');
+    testUtil.sendKeys(dtmEl, '02/03/201923:59');
     expect(dtmEl.getAttribute('class')).toContain('ng-invalid-parse');
 
     dtmEl.clear();
-    dtmEl.sendKeys('02/03/2019 23:59');
+    testUtil.sendKeys(dtmEl, '02/03/2019 23:59');
     expect(dtmEl.getAttribute('class')).toContain('ng-valid-datetime');
   });
 

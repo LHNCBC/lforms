@@ -1,6 +1,6 @@
 var tp = require('./lforms_testpage.po.js');
 var rxtermsForm = require('./rxterms.fo.js');
-var util = require('./util.js');
+var testUtil = require('./util.js');
 var ff = tp.USSGFHTVertical;
 
 describe('HL7 data', function() {
@@ -10,15 +10,15 @@ describe('HL7 data', function() {
     tp.openUSSGFHTVertical();
 
     // ST, repeating
-    ff.name.sendKeys("name1");
+    testUtil.sendKeys(ff.name, "name1");
     ff.btnName.click();
-    ff.name2.sendKeys("name2");
+    testUtil.sendKeys(ff.name2, "name2");
     ff.btnName2.click();
-    ff.name3.sendKeys("name3");
+    testUtil.sendKeys(ff.name3, "name3");
     ff.btnName3.click();
     ff.name.clear();
     // DT
-    ff.dob.sendKeys("10/27/2016");
+    testUtil.sendKeys(ff.dob, "10/27/2016");
     // CWE/CNE
     ff.gender.click();
     // pick the 1st item
@@ -31,8 +31,8 @@ describe('HL7 data', function() {
     ff.race.sendKeys(protractor.Key.ENTER);
     ff.race.sendKeys(protractor.Key.ENTER);
     // REAL
-    ff.height.sendKeys("70");
-    ff.weight.sendKeys("170");
+    testUtil.sendKeys(ff.height, "70");
+    testUtil.sendKeys(ff.weight, "170");
     // repeating sub panel
     ff.disease.click();
     ff.disease.sendKeys(protractor.Key.ARROW_DOWN);
@@ -41,9 +41,9 @@ describe('HL7 data', function() {
     ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag.sendKeys(protractor.Key.ENTER);
-    util.clickAddRemoveButton(ff.btnDiseasesHist);
+    testUtil.clickAddRemoveButton(ff.btnDiseasesHist);
 
-    util.waitForElementDisplayed(ff.disease2);
+    testUtil.waitForElementDisplayed(ff.disease2);
     ff.disease2.click();
     ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.disease2.sendKeys(protractor.Key.ARROW_DOWN);
@@ -53,7 +53,7 @@ describe('HL7 data', function() {
     ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag2.sendKeys(protractor.Key.ENTER);
-    util.clickAddRemoveButton(ff.btnDiseasesHist2);
+    testUtil.clickAddRemoveButton(ff.btnDiseasesHist2);
 
     ff.disease3.click();
     ff.disease3.sendKeys(protractor.Key.ARROW_DOWN);
@@ -66,27 +66,27 @@ describe('HL7 data', function() {
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag3.sendKeys(protractor.Key.ARROW_DOWN);
     ff.ageAtDiag3.sendKeys(protractor.Key.ENTER);
-    util.clickAddRemoveButton(ff.btnDiseasesHist3);
+    testUtil.clickAddRemoveButton(ff.btnDiseasesHist3);
 
     // clear up the first instance
     ff.disease.clear();
     ff.ageAtDiag.clear();
 
     // family member
-    ff.fmName.sendKeys("member name1");
+    testUtil.sendKeys(ff.fmName, "member name1");
     ff.fmDisease.sendKeys(protractor.Key.ARROW_DOWN);
     ff.fmDisease.sendKeys(protractor.Key.ENTER);
-    util.clickAddRemoveButton(ff.btnAnotherDiseasesHist);
+    testUtil.clickAddRemoveButton(ff.btnAnotherDiseasesHist);
 
-    util.clickAddRemoveButton(ff.btnAnotherFamily);
-    util.waitForElementDisplayed(ff.fmName2);
-    ff.fmName2.sendKeys("member name2");
+    testUtil.clickAddRemoveButton(ff.btnAnotherFamily);
+    testUtil.waitForElementDisplayed(ff.fmName2);
+    testUtil.sendKeys(ff.fmName2, "member name2");
     ff.fmDisease2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.fmDisease2.sendKeys(protractor.Key.ARROW_DOWN);
     ff.fmDisease2.sendKeys(protractor.Key.ENTER);
-    util.clickAddRemoveButton(ff.btnAnotherDiseasesHist2);
+    testUtil.clickAddRemoveButton(ff.btnAnotherDiseasesHist2);
 
-    util.clickAddRemoveButton(ff.btnAnotherFamily2);
+    testUtil.clickAddRemoveButton(ff.btnAnotherFamily2);
 
     browser.driver.executeAsyncScript(function () {
       var callback = arguments[arguments.length - 1];
@@ -104,7 +104,7 @@ describe('HL7 data', function() {
 
     var drugNameField = rxtermsForm.drugName;
     drugNameField.click();
-    drugNameField.sendKeys('aspercreme');
+    testUtil.sendKeys(drugNameField, 'aspercreme');
     browser.wait(function(){return tp.Autocomp.searchResults.isDisplayed()}, 10000);
     drugNameField.sendKeys(protractor.Key.ARROW_DOWN);
     drugNameField.sendKeys(protractor.Key.TAB);

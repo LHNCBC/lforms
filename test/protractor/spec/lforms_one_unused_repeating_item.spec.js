@@ -1,4 +1,4 @@
-var util = require('./util');
+var testUtil = require('./util');
 var tp = require('./lforms_testpage.po.js');
 var ff = tp.USSGFHTVertical;
 var EC = protractor.ExpectedConditions;
@@ -15,7 +15,7 @@ describe('Unused repeating item/section control', function() {
       expect(namePopover.isDisplayed()).toBe(true);
     });
     it('should add a new one when there is no unused item', function () {
-      ff.name.sendKeys("a name");
+      testUtil.sendKeys(ff.name, "a name");
       ff.btnName.click();
       expect(namePopover.isPresent()).toBe(false);
       // an add event emitted
@@ -48,7 +48,7 @@ describe('Unused repeating item/section control', function() {
       expect(namePopover.isDisplayed()).toBe(true);
     });
     it('should not add a new one when a previous used item becomes unused', function () {
-      ff.name2.sendKeys("another name");
+      testUtil.sendKeys(ff.name2, "another name");
       ff.name.clear();
       ff.btnName2.click();
       expect(namePopover.isDisplayed()).toBe(true);
@@ -75,10 +75,10 @@ describe('Unused repeating item/section control', function() {
       ff.ageAtDiag2.sendKeys(protractor.Key.ARROW_DOWN);
       ff.ageAtDiag2.sendKeys(protractor.Key.TAB);
       expect(ff.mockSubItem2.isDisplayed()).toBe(true);
-      ff.mockSubItem2.sendKeys("a value");
+      testUtil.sendKeys(ff.mockSubItem2, "a value");
       ff.ageAtDiag2.clear();
       expect(ff.mockSubItem2.isPresent()).toBe(false);
-      util.clickAddRemoveButton(ff.btnDiseasesHist2);
+      testUtil.clickAddRemoveButton(ff.btnDiseasesHist2);
       expect(diseasesPopover.isDisplayed()).toBe(true);
     });
 
