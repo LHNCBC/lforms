@@ -1503,9 +1503,8 @@
         templateOptions: angular.copy(this.templateOptions)
       };
 
-      var flExtensions = LForms.Util.createExtensionFromLForms(this);
-      if (flExtensions) {
-        defData.extension = flExtensions;
+      if (this.extension) {
+        defData.extension = this.extension;
       }
       if (hasSavedData) {
         defData.hasSavedData = true;
@@ -1614,9 +1613,8 @@
         // otherwise include form definition data
         else {
           // process extensions
-          let extension = LForms.Util.createExtensionFromLForms(item);
-          if(extension) {
-            itemData.extension = extension;
+          if(item.extension) {
+            itemData.extension = item.extension;
           }
           // Process other fields
           for (var field in item) {

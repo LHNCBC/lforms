@@ -318,7 +318,7 @@ export let ExpressionProcessor;
     },
 
     /**
-     *  Assists the given list result to the item.  If the list has changed, the
+     *  Assigns the given list result to the item.  If the list has changed, the
      *  field is cleared.
      * @param list an array of list items computed from a FHIRPath expression.
      */

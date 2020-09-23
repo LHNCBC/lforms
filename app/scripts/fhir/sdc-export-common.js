@@ -98,7 +98,7 @@ function addCommonSDCExportFns(ns) {
     targetItem.code = item.codeList;
 
     // extension
-    targetItem.extension = [];
+    targetItem.extension = item.extension || []; // later we delete if empty
 
     // required
     if (item._answerRequired === true || item._answerRequired === false) {
@@ -174,8 +174,6 @@ function addCommonSDCExportFns(ns) {
     }
     // data control
     this._handleDataControl(targetItem, item);
-
-    this._handleExtensions(targetItem, item);
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -874,24 +872,6 @@ function addCommonSDCExportFns(ns) {
    */
   self._lfHasSubItems = function(item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
-  };
-
-  /**
-   * Process FHIR questionnaire extensions related conversions.
-   *
-   * @param targetItem an item in FHIR SDC Questionnaire object
-   * @param item an item in LForms form object
-   * @private
-   */
-  self._handleExtensions = function (targetItem, item) {
-
-    let extension = LForms.Util.createExtensionFromLForms(item);
-    if(extension) {
-      if(!targetItem.extension) {
-        targetItem.extension = [];
-      }
-      targetItem.extension.push.apply(targetItem.extension, extension);
-    }
   };
 
 

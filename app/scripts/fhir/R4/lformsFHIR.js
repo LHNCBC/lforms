@@ -22427,7 +22427,8 @@ function addCommonSDCExportFns(ns) {
 
     targetItem.code = item.codeList; // extension
 
-    targetItem.extension = []; // required
+    targetItem.extension = item.extension || []; // later we delete if empty
+    // required
 
     if (item._answerRequired === true || item._answerRequired === false) {
       targetItem.required = item._answerRequired;
@@ -22505,8 +22506,6 @@ function addCommonSDCExportFns(ns) {
 
 
     this._handleDataControl(targetItem, item);
-
-    this._handleExtensions(targetItem, item);
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -23188,26 +23187,6 @@ function addCommonSDCExportFns(ns) {
 
   self._lfHasSubItems = function (item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
-  };
-  /**
-   * Process FHIR questionnaire extensions related conversions.
-   *
-   * @param targetItem an item in FHIR SDC Questionnaire object
-   * @param item an item in LForms form object
-   * @private
-   */
-
-
-  self._handleExtensions = function (targetItem, item) {
-    var extension = LForms.Util.createExtensionFromLForms(item);
-
-    if (extension) {
-      if (!targetItem.extension) {
-        targetItem.extension = [];
-      }
-
-      targetItem.extension.push.apply(targetItem.extension, extension);
-    }
   };
   /**
    * Process an item of the form or the form itself - if it's the form itself, the form-level
@@ -25867,7 +25846,7 @@ var ExpressionProcessor;
     },
 
     /**
-     *  Assists the given list result to the item.  If the list has changed, the
+     *  Assigns the given list result to the item.  If the list has changed, the
      *  field is cleared.
      * @param list an array of list items computed from a FHIRPath expression.
      */
