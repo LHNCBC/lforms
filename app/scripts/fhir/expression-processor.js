@@ -106,7 +106,7 @@ export let ExpressionProcessor;
     /**
      *  Evaluates the expressions that set field values for the given item.
      * @param item an LFormsData or item from LFormsData.
-     * @param invludeInitialExpr whether or not to run expressions from
+     * @param includeInitialExpr whether or not to run expressions from
      *  initialExpression extensions (which should only be run when the form is
      *  loaded).
      * @param changesOnly whether to run all field expressions, or just the ones
@@ -327,6 +327,7 @@ export let ExpressionProcessor;
       let hasCurrentList = !!currentList;
       let changed = false;
       let newList = [];
+      const scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
       if (list && Array.isArray(list)) {
         // list should be an array of any item type, including Coding.
         // (In R5, FHIR will start suppoing lists of types other than Coding.)
@@ -348,7 +349,11 @@ export let ExpressionProcessor;
             let system = entry.system;
             if (system !== undefined)
               newEntry.system = system;
-            // TBD -get score from ordinalvalue extension (if that is supported)
+            // A Coding can have the extension for scores
+            let scoreExt =
+              LForms.Util.findObjectInArray(entry.extension, 'url', scoreURI);
+            if (scoreExt)
+              newEntry.score = scoreExt.valueDecimal;
           }
           else
             newEntry = {'text': '' + entry};

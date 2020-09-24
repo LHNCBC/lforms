@@ -11,9 +11,10 @@ function addSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
-  // FHIR extension urls
 
+  // FHIR extension urls
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlValueSetScore = self.fhirExtUrlOptionScore;
 
 
   /**

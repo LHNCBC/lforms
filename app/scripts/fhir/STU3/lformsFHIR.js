@@ -23462,7 +23462,8 @@ function addSDCImportFns(ns) {
   "use strict";
 
   var self = ns;
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
@@ -25753,7 +25754,7 @@ var ExpressionProcessor;
     /**
      *  Evaluates the expressions that set field values for the given item.
      * @param item an LFormsData or item from LFormsData.
-     * @param invludeInitialExpr whether or not to run expressions from
+     * @param includeInitialExpr whether or not to run expressions from
      *  initialExpression extensions (which should only be run when the form is
      *  loaded).
      * @param changesOnly whether to run all field expressions, or just the ones
@@ -26003,6 +26004,7 @@ var ExpressionProcessor;
       var hasCurrentList = !!currentList;
       var changed = false;
       var newList = [];
+      var scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
 
       if (list && Array.isArray(list)) {
         // list should be an array of any item type, including Coding.
@@ -26023,7 +26025,10 @@ var ExpressionProcessor;
             var display = entry.display;
             if (display !== undefined) newEntry.text = display;
             var system = entry.system;
-            if (system !== undefined) newEntry.system = system; // TBD -get score from ordinalvalue extension (if that is supported)
+            if (system !== undefined) newEntry.system = system; // A Coding can have the extension for scores
+
+            var scoreExt = LForms.Util.findObjectInArray(entry.extension, 'url', scoreURI);
+            if (scoreExt) newEntry.score = scoreExt.valueDecimal;
           } else newEntry = {
             'text': '' + entry
           };
