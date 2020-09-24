@@ -19,7 +19,7 @@ export let ExpressionProcessor;
     this._compiledExpressions = {};
 
     // Define some arrays that will be reused frequently.
-    let sdc = this._fhir.SDC;
+    const sdc = this._fhir.SDC;
     this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
     (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1, 0,
       sdc.fhirExtInitialExp); // add fhirExtInitialExp
@@ -124,9 +124,9 @@ export let ExpressionProcessor;
       }
       else { // if (!changesOnly) process this and all child items
         item._varChanged = false; // clear flag in case it was set
-        let fhirExt = item._fhirExt;
+        const fhirExt = item._fhirExt;
         if (fhirExt) {
-          let sdc = this._fhir.SDC;
+          const sdc = this._fhir.SDC;
           var exts = includeInitialExpr ? item._initialFieldExpExts :
             item._responsiveFieldExpExts;
           if (exts === undefined) {  // undefined means we haven't computed them yet
@@ -135,7 +135,7 @@ export let ExpressionProcessor;
             var uris = includeInitialExpr ? this._initialFieldExpURIs :
               this._responsiveFieldExpURIs;
             for (let uri of uris) {
-              let extsForURI = fhirExt[uri];
+              const extsForURI = fhirExt[uri];
               if (extsForURI)
                 exts.push.apply(exts, extsForURI);
             }
@@ -165,7 +165,7 @@ export let ExpressionProcessor;
       // Process child items
       if (item.items) {
         for (let i=0, len=item.items.length; i<len; ++i) {
-          let changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
+          const changed = this._evaluateFieldExpressions(item.items[i], includeInitialExpr, changesOnly);
           if (!rtn)
             rtn = changed;
         }
@@ -213,7 +213,7 @@ export let ExpressionProcessor;
         var fVars = {};
         for (var k in itemVars)
           fVars[k] = itemVars[k];
-        let fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] :
+        const fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] :
           this._lfData._fhirVariables.resource;
         var compiledExpr = this._compiledExpressions[expression];
         if (!compiledExpr) {

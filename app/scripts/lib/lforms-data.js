@@ -524,7 +524,7 @@
           let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
           for (var i=0, len=this.itemList.length; i<len; ++i) {
             let item = this.itemList[i];
-            let obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
+            const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
             if (obsExt) { // an array of at least 1 if present
               var duration = obsExt[0].valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem;
@@ -1613,7 +1613,7 @@
         // otherwise include form definition data
         else {
           // process extensions
-          if(item.extension) {
+          if (item.extension) {
             itemData.extension = item.extension;
           }
           // Process other fields

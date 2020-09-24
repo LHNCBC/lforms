@@ -342,9 +342,16 @@ engine.invocationTable = {
       1: ["AnyAtRoot"]
     }
   },
+  union: {
+    fn: combining.union,
+    arity: {
+      1: ["AnyAtRoot"]
+    }
+  },
   iif: {
     fn: misc.iifMacro,
     arity: {
+      2: ["Expr", "Expr"],
       3: ["Expr", "Expr", "Expr"]
     }
   },
@@ -370,12 +377,36 @@ engine.invocationTable = {
   toTime: {
     fn: misc.toTime
   },
+  toBoolean: {
+    fn: misc.toBoolean
+  },
   toQuantity: {
     fn: misc.toQuantity,
     arity: {
       0: [],
       1: ["String"]
     }
+  },
+  convertsToBoolean: {
+    fn: misc.createConvertsToFn(misc.toBoolean, 'boolean')
+  },
+  convertsToInteger: {
+    fn: misc.createConvertsToFn(misc.toInteger, 'number')
+  },
+  convertsToDecimal: {
+    fn: misc.createConvertsToFn(misc.toDecimal, 'number')
+  },
+  convertsToString: {
+    fn: misc.createConvertsToFn(misc.toString, 'string')
+  },
+  convertsToDateTime: {
+    fn: misc.createConvertsToFn(misc.toDateTime, FP_DateTime)
+  },
+  convertsToTime: {
+    fn: misc.createConvertsToFn(misc.toTime, FP_Time)
+  },
+  convertsToQuantity: {
+    fn: misc.createConvertsToFn(misc.toQuantity, FP_Quantity)
   },
   indexOf: {
     fn: strings.indexOf,
@@ -489,7 +520,7 @@ engine.invocationTable = {
     fn: navigation.descendants
   },
   "|": {
-    fn: combining.unionOp,
+    fn: combining.union,
     arity: {
       2: ["Any", "Any"]
     }
@@ -19780,7 +19811,7 @@ var combineFns = {};
 
 var existence = __webpack_require__(70);
 
-combineFns.unionOp = function (coll1, coll2) {
+combineFns.union = function (coll1, coll2) {
   return existence.distinctFn(coll1.concat(coll2));
 };
 
@@ -19793,6 +19824,8 @@ module.exports = combineFns;
 /***/ }),
 /* 74 */
 /***/ (function(module, exports, __webpack_require__) {
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // This file holds code to hande the FHIRPath Existence functions (5.1 in the
 // specification).
@@ -19807,7 +19840,7 @@ engine.iifMacro = function (data, cond, ok, fail) {
   if (util.isTrue(cond(data))) {
     return ok(data);
   } else {
-    return fail(data);
+    return fail ? fail(data) : [];
   }
 };
 
@@ -19844,15 +19877,13 @@ engine.toInteger = function (coll) {
   if (typeof v === "string") {
     if (intRegex.test(v)) {
       return parseInt(v);
-    } else {
-      throw new Error("Could not convert to ineger: " + v);
     }
   }
 
   return [];
 };
 
-var quantityRegex = /((\+|-)?\d+(\.\d+)?)\s*(('[^']+')|([a-zA-Z]+))?/,
+var quantityRegex = /^((\+|-)?\d+(\.\d+)?)\s*(('[^']+')|([a-zA-Z]+))?$/,
     quantityRegexMap = {
   value: 1,
   unit: 5,
@@ -19860,7 +19891,11 @@ var quantityRegex = /((\+|-)?\d+(\.\d+)?)\s*(('[^']+')|([a-zA-Z]+))?/,
 };
 
 engine.toQuantity = function (coll, toUnit) {
-  var result;
+  var result; // Surround UCUM unit code in the toUnit parameter with single quotes
+
+  if (toUnit && !FP_Quantity.mapTimeUnitsToUCUMCode[toUnit]) {
+    toUnit = "'".concat(toUnit, "'");
+  }
 
   if (coll.length > 1) {
     throw new Error("Could not convert to quantity: input collection contains multiple items");
@@ -19873,11 +19908,16 @@ engine.toQuantity = function (coll, toUnit) {
       result = new FP_Quantity(v, '\'1\'');
     } else if (v instanceof FP_Quantity) {
       result = v;
+    } else if (typeof v === 'boolean') {
+      result = new FP_Quantity(v ? 1 : 0, '\'1\'');
     } else if (typeof v === "string" && (quantityRegexRes = quantityRegex.exec(v))) {
       var value = quantityRegexRes[quantityRegexMap.value],
           unit = quantityRegexRes[quantityRegexMap.unit],
-          time = quantityRegexRes[quantityRegexMap.time];
-      result = new FP_Quantity(Number(value), unit || time || '\'1\'');
+          time = quantityRegexRes[quantityRegexMap.time]; // UCUM unit code in the input string must be surrounded with single quotes
+
+      if (!time || FP_Quantity.mapTimeUnitsToUCUMCode[time]) {
+        result = new FP_Quantity(Number(value), unit || time || '\'1\'');
+      }
     }
 
     if (result && toUnit && result.unit !== toUnit) {
@@ -19943,7 +19983,7 @@ function defineTimeConverter(timeType) {
 
     if (coll.length === 1) {
       var t = types[timeType].checkString(util.valData(coll[0]));
-      if (t) rtn[0] = t;
+      if (t) rtn = t;
     }
 
     return rtn;
@@ -19951,7 +19991,84 @@ function defineTimeConverter(timeType) {
 }
 
 defineTimeConverter('FP_DateTime');
-defineTimeConverter('FP_Time');
+defineTimeConverter('FP_Time'); // Possible string values convertible to the true boolean value
+
+var trueStrings = ['true', 't', 'yes', 'y', '1', '1.0'].reduce(function (acc, val) {
+  acc[val] = true;
+  return acc;
+}, {}); // Possible string values convertible to the false boolean value
+
+var falseStrings = ['false', 'f', 'no', 'n', '0', '0.0'].reduce(function (acc, val) {
+  acc[val] = true;
+  return acc;
+}, {});
+
+engine.toBoolean = function (coll) {
+  if (coll.length !== 1) {
+    return [];
+  }
+
+  var v = util.valData(coll[0]);
+
+  switch (_typeof(v)) {
+    case 'boolean':
+      return v;
+
+    case 'number':
+      if (v === 1) {
+        return true;
+      }
+
+      if (v === 0) {
+        return false;
+      }
+
+      break;
+
+    case 'string':
+      // eslint-disable-next-line no-case-declarations
+      var lowerCaseValue = v.toLowerCase();
+
+      if (trueStrings[lowerCaseValue]) {
+        return true;
+      }
+
+      if (falseStrings[lowerCaseValue]) {
+        return false;
+      }
+
+  }
+
+  return [];
+};
+/**
+ * Creates function that checks if toFunction returns specified type
+ * @param {function(coll: array): <type|[]>} toFunction
+ * @param {string|class} type - specifies type, for example: 'string' or FP_Quantity
+ * @return {function(coll: array)}
+ */
+
+
+engine.createConvertsToFn = function (toFunction, type) {
+  if (typeof type === 'string') {
+    return function (coll) {
+      if (coll.length !== 1) {
+        return [];
+      }
+
+      return _typeof(toFunction(coll)) === type;
+    };
+  }
+
+  return function (coll) {
+    if (coll.length !== 1) {
+      return [];
+    }
+
+    return toFunction(coll) instanceof type;
+  };
+};
+
 module.exports = engine;
 
 /***/ }),
@@ -25511,7 +25628,7 @@ var ExpressionProcessor;
     this._lfData = lfData;
     if (!lfData._fhir) throw new Error('lfData._fhir should be set');
     this._fhir = lfData._fhir;
-    this._compiledExpressions = {}; // Define some arrays that will be resued frequently.
+    this._compiledExpressions = {}; // Define some arrays that will be reused frequently.
 
     var sdc = this._fhir.SDC;
     this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
