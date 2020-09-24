@@ -350,10 +350,9 @@ export let ExpressionProcessor;
             if (system !== undefined)
               newEntry.system = system;
             // A Coding can have the extension for scores
-            let scoreExt =
-              LForms.Util.findObjectInArray(entry.extension, 'url', scoreURI);
+            let scoreExt = item._fhirExt && item._fhirExt[scoreURI];
             if (scoreExt)
-              newEntry.score = scoreExt.valueDecimal;
+              newEntry.score = scoreExt[0].valueDecimal;
           }
           else
             newEntry = {'text': '' + entry};

@@ -22194,7 +22194,8 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     } // option, for answer list
     else if (item.answers && !item.answerValueSet) {
-        targetItem.option = this._handleAnswers(item, noExtensions);
+        // Make sure the answers did not come from answerExpression.
+        if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp]) targetItem.option = this._handleAnswers(item, noExtensions);
       } else if (item.answerValueSet) targetItem.options = item.answerValueSet;
   },
 
@@ -26027,8 +26028,8 @@ var ExpressionProcessor;
             var system = entry.system;
             if (system !== undefined) newEntry.system = system; // A Coding can have the extension for scores
 
-            var scoreExt = LForms.Util.findObjectInArray(entry.extension, 'url', scoreURI);
-            if (scoreExt) newEntry.score = scoreExt.valueDecimal;
+            var scoreExt = item._fhirExt && item._fhirExt[scoreURI];
+            if (scoreExt) newEntry.score = scoreExt[0].valueDecimal;
           } else newEntry = {
             'text': '' + entry
           };
