@@ -18,7 +18,7 @@ export let ExpressionProcessor;
     this._fhir = lfData._fhir;
     this._compiledExpressions = {};
 
-    // Define some arrays that will be resued frequently.
+    // Define some arrays that will be reused frequently.
     let sdc = this._fhir.SDC;
     this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
     (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1, 0,
