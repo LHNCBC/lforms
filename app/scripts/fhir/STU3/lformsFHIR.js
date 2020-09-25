@@ -26053,8 +26053,6 @@ var ExpressionProcessor;
 
         item.value = null;
       }
-
-      this._lfData._updateAutocompOptions(item, true);
     },
 
     /**

@@ -376,8 +376,6 @@ export let ExpressionProcessor;
         // For now, just wipe the field.
         item.value = null;
       }
-
-      this._lfData._updateAutocompOptions(item, true);
     },
 
 
