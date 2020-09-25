@@ -37,7 +37,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
   })(fhirVersions[i]);
 }
 
-fdescribe('answerExpression', function() {
+describe('answerExpression', function() {
   beforeAll(function() {
     tp.openBaseTestPage();
     tp.loadFromTestData('answerExpressionTest.json');
