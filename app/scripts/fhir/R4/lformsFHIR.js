@@ -23356,6 +23356,7 @@ function addSDCImportFns(ns) {
   var self = ns; // FHIR extension urls
 
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
    * @param questionnaire the FHIR questionnaire resource object
@@ -25025,7 +25026,7 @@ function addCommonSDCImportFns(ns) {
           text: vsItem.display,
           system: vsItem.system
         };
-        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', self.fhirExtUrlValueSetScore);
 
         if (ordExt) {
           answer.score = ordExt.valueDecimal;

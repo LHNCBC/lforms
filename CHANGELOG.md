@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [25.1.7] 2020-09-30
+### Fixed
+- Fixed the extensions URI for answer scores
+
 ## [25.1.6] 2020-09-15
 ### Fixed
 - Remove duplicate entry in form level fields.

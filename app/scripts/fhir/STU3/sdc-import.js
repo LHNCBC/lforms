@@ -14,9 +14,8 @@ function addSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
-
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
-
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
 
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.

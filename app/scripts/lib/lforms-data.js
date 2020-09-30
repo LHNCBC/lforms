@@ -399,8 +399,8 @@
 
       if (item.answerValueSet) {
         var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet)
-        if (vs) {
-          var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+        if (vs && this._fhir) {
+          var answers = this._fhir.SDC.answersFromVS(vs.fileContent);
           if (answers) {
             item.answers = answers;
           }

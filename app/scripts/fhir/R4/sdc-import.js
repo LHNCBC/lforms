@@ -14,7 +14,7 @@ function addSDCImportFns(ns) {
   // FHIR extension urls
 
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
-
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
 
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.
