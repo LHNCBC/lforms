@@ -151,11 +151,19 @@ var LOINC_URI = 'http://loinc.org';
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // This is fhirpath interpreter
 // everything starts at evaluate function,
@@ -226,7 +234,8 @@ var FP_DateTime = types.FP_DateTime,
     FP_Time = types.FP_Time,
     FP_Quantity = types.FP_Quantity,
     FP_Type = types.FP_Type,
-    ResourceNode = types.ResourceNode;
+    ResourceNode = types.ResourceNode,
+    TypeInfo = types.TypeInfo;
 var makeResNode = ResourceNode.makeResNode; // * fn: handler
 // * arity: is index map with type signature
 //   if type is in array (like [Boolean]) - this means
@@ -315,10 +324,22 @@ engine.invocationTable = {
   last: {
     fn: filtering.lastFn
   },
+  type: {
+    fn: types.typeFn,
+    arity: {
+      0: []
+    }
+  },
   ofType: {
     fn: filtering.ofTypeFn,
     arity: {
-      1: ["Identifier"]
+      1: ["TypeSpecifier"]
+    }
+  },
+  is: {
+    fn: types.isFn,
+    arity: {
+      1: ["TypeSpecifier"]
     }
   },
   tail: {
@@ -591,6 +612,12 @@ engine.invocationTable = {
       2: ["Any", "Any"]
     }
   },
+  "isOp": {
+    fn: types.isFn,
+    arity: {
+      2: ["Any", "TypeSpecifier"]
+    }
+  },
   "&": {
     fn: math.amp,
     arity: {
@@ -672,6 +699,16 @@ engine.InvocationExpression = function (ctx, parentData, node) {
 };
 
 engine.TermExpression = function (ctx, parentData, node) {
+  if (parentData) {
+    parentData = parentData.map(function (x) {
+      if (x instanceof Object && x.resourceType) {
+        return makeResNode(x, x.resourceType);
+      }
+
+      return x;
+    });
+  }
+
   return engine.doEval(ctx, parentData, node.children[0]);
 };
 
@@ -688,6 +725,36 @@ engine.PolarityExpression = function (ctx, parentData, node) {
   if (typeof rtn[0] != 'number' || isNaN(rtn[0])) throw new Error('Unary ' + sign + ' can only be applied to a number.');
   if (sign === '-') rtn[0] = -rtn[0];
   return rtn;
+};
+
+engine.TypeSpecifier = function (ctx, parentData, node) {
+  var namespace, name;
+  var identifiers = node.text.split('.').map(function (i) {
+    return i.replace(/(^`|`$)/g, "");
+  });
+
+  switch (identifiers.length) {
+    case 2:
+      var _identifiers = _slicedToArray(identifiers, 2);
+
+      namespace = _identifiers[0];
+      name = _identifiers[1];
+      break;
+
+    case 1:
+      var _identifiers2 = _slicedToArray(identifiers, 1);
+
+      name = _identifiers2[0];
+      break;
+
+    default:
+      throw new Error("Expected TypeSpecifier node, got " + JSON.stringify(node));
+  }
+
+  return new TypeInfo({
+    namespace: namespace,
+    name: name
+  });
 };
 
 engine.ExternalConstantTerm = function (ctx, parentData, node) {
@@ -783,9 +850,7 @@ engine.MemberInvocation = function (ctx, parentData, node) {
   if (parentData) {
     if (util.isCapitalized(key)) {
       return parentData.filter(function (x) {
-        return x.resourceType === key;
-      }).map(function (x) {
-        return makeResNode(x, key);
+        return x instanceof ResourceNode && x.path === key;
       });
     } else {
       return parentData.reduce(function (acc, res) {
@@ -935,8 +1000,12 @@ function makeParam(ctx, parentData, type, param) {
     if (param.type == "TermExpression") {
       return param.text;
     } else {
-      throw new Error("Expected identifier node, got ", JSON.stringify(param));
+      throw new Error("Expected identifier node, got " + JSON.stringify(param));
     }
+  }
+
+  if (type === "TypeSpecifier") {
+    return engine.TypeSpecifier(ctx, parentData, param);
   }
 
   var res = engine.doEval(ctx, parentData, param);
@@ -1125,6 +1194,9 @@ engine.evalTable = {
   InvocationExpression: engine.InvocationExpression,
   AdditiveExpression: engine.OpExpression,
   MultiplicativeExpression: engine.OpExpression,
+  TypeExpression: engine.AliasOpExpression({
+    "is": "isOp"
+  }),
   MembershipExpression: engine.AliasOpExpression({
     "contains": "containsOp",
     "in": "inOp"
@@ -1200,8 +1272,8 @@ function applyParsedPath(resource, parsedPath, context, model) {
         n[i] = visit(n[i]);
       }
     } else if (_typeof(n) === 'object' && !(n instanceof FP_Type)) {
-      for (var _i = 0, _Object$keys = Object.keys(n); _i < _Object$keys.length; _i++) {
-        var k = _Object$keys[_i];
+      for (var _i2 = 0, _Object$keys = Object.keys(n); _i2 < _Object$keys.length; _i2++) {
+        var k = _Object$keys[_i2];
         n[k] = visit(n[k]);
       }
     }
@@ -18556,8 +18628,30 @@ var ResourceNode = /*#__PURE__*/function () {
     this.path = path;
     this.data = getResourceNodeData(data, path);
   }
+  /**
+   * Returns resource node type info.
+   * @return {TypeInfo}
+   */
+
 
   _createClass(ResourceNode, [{
+    key: "getTypeInfo",
+    value: function getTypeInfo() {
+      var namespace = TypeInfo.FHIR; // TODO: Here we should use property index which we will extract from the specification
+
+      if (this.path.indexOf('.') === -1) {
+        return new TypeInfo({
+          namespace: namespace,
+          name: this.path
+        });
+      }
+
+      return TypeInfo.createByValueInNamespace({
+        namespace: namespace,
+        value: this.data
+      });
+    }
+  }, {
     key: "toJSON",
     value: function toJSON() {
       return JSON.stringify(this.data);
@@ -18596,6 +18690,128 @@ function getResourceNodeData(data, path) {
 ResourceNode.makeResNode = function (data, path) {
   return data instanceof ResourceNode ? data : new ResourceNode(data, path);
 };
+/**
+ * Object class defining type information.
+ * Used for minimal type support.
+ * (see http://hl7.org/fhirpath/#types-and-reflection)
+ */
+
+
+var TypeInfo = /*#__PURE__*/function () {
+  function TypeInfo(_ref) {
+    var name = _ref.name,
+        namespace = _ref.namespace;
+
+    _classCallCheck(this, TypeInfo);
+
+    this.name = name;
+    this.namespace = namespace;
+  }
+  /**
+   * Checks for equality with another TypeInfo object, or that another TypeInfo
+   * object specifies a superclass for the type specified by this object.
+   * @param {TypeInfo} other
+   * @return {boolean}
+   */
+
+
+  _createClass(TypeInfo, [{
+    key: "is",
+    value: function is(other) {
+      // TODO: Here we should use type hierarchy index which we will extract from the specification
+      return other instanceof TypeInfo && this.name === other.name && (!this.namespace || !other.namespace || this.namespace === other.namespace);
+    }
+  }]);
+
+  return TypeInfo;
+}(); // Available namespaces:
+
+
+TypeInfo.System = 'System';
+TypeInfo.FHIR = 'FHIR';
+/**
+ * Creates new TypeInfo object for specified namespace and value
+ * @param {String} namespace
+ * @param {*} value
+ * @return {TypeInfo}
+ */
+
+TypeInfo.createByValueInNamespace = function (_ref2) {
+  var namespace = _ref2.namespace,
+      value = _ref2.value;
+
+  var name = _typeof(value);
+
+  if (Number.isInteger(value)) {
+    name = 'integer';
+  } else if (name === "number") {
+    name = 'decimal';
+  } else if (value instanceof FP_DateTime) {
+    name = 'dateTime';
+  } else if (value instanceof FP_Time) {
+    name = 'time';
+  } else if (value instanceof FP_Quantity) {
+    name = 'Quantity';
+  }
+
+  if (namespace === TypeInfo.System) {
+    name = name.replace(/^\w/, function (c) {
+      return c.toUpperCase();
+    });
+  } // TODO: currently can return name = 'object" or "Object" which is probably wrong
+
+
+  return new TypeInfo({
+    namespace: namespace,
+    name: name
+  });
+};
+/**
+ * Retrieves TypeInfo by value
+ * @param {*} value
+ * @return {TypeInfo}
+ */
+
+
+TypeInfo.fromValue = function (value) {
+  return value instanceof ResourceNode ? value.getTypeInfo() : TypeInfo.createByValueInNamespace({
+    namespace: TypeInfo.System,
+    value: value
+  });
+};
+/**
+ * Basic "type()" function implementation
+ * (see http://hl7.org/fhirpath/#reflection)
+ * @param {Array<*>} coll - input collection
+ * @return {Array<*>}
+ */
+
+
+function typeFn(coll) {
+  return coll.map(function (value) {
+    return TypeInfo.fromValue(value);
+  });
+}
+/**
+ * Implementation of function "is(type : type specifier)" and operator "is"
+ * (see http://hl7.org/fhirpath/#is-type-specifier)
+ * @param {Array<*>} coll - input collection
+ * @param {TypeInfo} typeInfo
+ * @return {boolean|[]}
+ */
+
+
+function isFn(coll, typeInfo) {
+  if (coll.length === 0) {
+    return [];
+  }
+
+  if (coll.length > 1) {
+    throw new Error("Expected singleton on left side of is, got " + JSON.stringify(coll));
+  }
+
+  return TypeInfo.fromValue(coll[0]).is(typeInfo);
+}
 
 module.exports = {
   FP_Type: FP_Type,
@@ -18605,7 +18821,10 @@ module.exports = {
   FP_Quantity: FP_Quantity,
   timeRE: timeRE,
   dateTimeRE: dateTimeRE,
-  ResourceNode: ResourceNode
+  ResourceNode: ResourceNode,
+  TypeInfo: TypeInfo,
+  typeFn: typeFn,
+  isFn: isFn
 };
 
 /***/ }),
@@ -19667,8 +19886,6 @@ module.exports = engine;
 /* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 // Contains the FHIRPath Filtering and Projection functions.  (Section 5.2 of
 // the FHIRPath 1.0.0 specification).
 
@@ -19676,6 +19893,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  *  Adds the filtering and projection functions to the given FHIRPath engine.
  */
 var util = __webpack_require__(52);
+
+var _require = __webpack_require__(53),
+    TypeInfo = _require.TypeInfo;
 
 var engine = {};
 
@@ -19757,27 +19977,9 @@ engine.skipFn = function (x, num) {
   return x.slice(num, x.length);
 };
 
-function checkFHIRType(x, tp) {
-  if (_typeof(x) === tp) {
-    return true;
-  }
-
-  if (tp === "integer") {
-    return Number.isInteger(x);
-  }
-
-  if (tp === "decimal") {
-    return typeof x == "number";
-  }
-
-  return false;
-} // naive typeof implementation
-// understand only basic types like string, number etc
-
-
-engine.ofTypeFn = function (coll, type) {
-  return coll.filter(function (x) {
-    return checkFHIRType(util.valData(x), type);
+engine.ofTypeFn = function (coll, typeInfo) {
+  return coll.filter(function (value) {
+    return TypeInfo.fromValue(value).is(typeInfo);
   });
 };
 
