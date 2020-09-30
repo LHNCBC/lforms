@@ -754,7 +754,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"25.1.7\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.0.1\"}");
 
 /***/ }),
 /* 7 */
@@ -4733,7 +4733,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
       tabOnInputFieldsOnly: false,
       // whether to hide the controls section on top of the form
-      hideFormControls: false,
+      hideFormControls: true,
       // whether to show the option panel that controls all the template options
       showFormOptionPanel: false,
       // should be false by default
@@ -4765,7 +4765,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       // each item can override this setting for the item by setting its own value in displayControl.viewMode
       viewMode: "auto",
       // controls if the form's header section needs to be displayed
-      showFormHeader: true,
+      showFormHeader: false,
       // items in form header section
       formHeaderItems: [{
         "question": "Date Done",

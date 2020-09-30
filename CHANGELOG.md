@@ -2,9 +2,13 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [25.1.7] 2020-09-30
+## [26.0.1] 2020-09-30
 ### Fixed
 - Fixed the extensions URI for answer scores
+
+## [26.0.0] 2020-09-16
+### Changed
+- Changed the default template options to hide the form controls and header.
 
 ## [25.1.6] 2020-09-15
 ### Fixed
