@@ -102,7 +102,7 @@
       // whether to control TAB keys to stop on the input fields only (not buttons, or even units fields).
       tabOnInputFieldsOnly: false,
       // whether to hide the controls section on top of the form
-      hideFormControls: false,
+      hideFormControls: true,
       // whether to show the option panel that controls all the template options
       showFormOptionPanel: false, // should be false by default
       // whether to show the button that decides if 'showFormOptionPanel' is true or false, so that form's option panel will be displayed or hidden
@@ -131,7 +131,7 @@
       // each item can override this setting for the item by setting its own value in displayControl.viewMode
       viewMode: "auto",
       // controls if the form's header section needs to be displayed
-      showFormHeader: true,
+      showFormHeader: false,
       // items in form header section
       formHeaderItems: [
         {"question": "Date Done", "questionCode": "date_done", "dataType": "DT", "answers": "", "_answerRequired": true,"answerCardinality":{"min":"1", "max":"1"}},

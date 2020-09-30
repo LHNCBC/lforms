@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [26.0.0] 2020-09-16
+### Changed
+- Changed the default template options to hide the form controls and header.
+
 ## [25.1.6] 2020-09-15
 ### Fixed
 - Remove duplicate entry in form level fields.
