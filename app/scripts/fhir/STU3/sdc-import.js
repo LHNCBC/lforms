@@ -15,7 +15,8 @@ function addSDCImportFns(ns) {
 
   var self = ns;
 
-  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-optionScore";
+  self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/questionnaire-ordinalValue";
+  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue";
 
 
   /**

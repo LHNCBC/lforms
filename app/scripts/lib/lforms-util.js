@@ -25,22 +25,6 @@ var parseDateFormats = [
   'M-D HH:mm',
 ];
 
-// A map of FHIR extensions involving Expressions to the property names on
-// which they will be stored in LFormsData, and a boolean indicating whether
-// more than one extension of the type is permitted.
-var _copiedExtensions = {
-  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression":
-    ["_calculatedExprExt", false],
-  "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression":
-    ["_initialExprExt", false],
-  "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod":
-    ["_obsLinkPeriodExt", false],
-  "http://hl7.org/fhir/StructureDefinition/variable":
-    ["_variableExt", true],
-};
-
-var _copiedExtFields = Object.keys(_copiedExtensions).map((k)=>_copiedExtensions[k][0]);
-
 
 var LForms = require('../../lforms');
 
@@ -990,29 +974,6 @@ LForms.Util = {
     return codeSystem;
   },
 
-  /**
-   *  Some extensions are simply copied over to the LForms data structure.
-   *  This copies those extensions from qItem.extension to lfItem if they exist, and
-   *  LForms can support them.
-   * @param extensionArray - Questionnaire.item.extension
-   * @param lfItem an item from the LFormsData structure
-   */
-  processCopiedItemExtensions: function (lfItem, extensionArray) {
-    if(!extensionArray || extensionArray.length === 0) {
-      return;
-    }
-    // Go through selected extensions.
-    var copiedExtURLs = Object.keys(_copiedExtensions);
-    for (var i = 0,len = copiedExtURLs.length; i < len; ++i) {
-      var url = copiedExtURLs[i];
-      var extInfo = _copiedExtensions[url];
-      var prop = extInfo[0],multiple = extInfo[1];
-      var ext = LForms.Util.removeObjectsFromArray(extensionArray,'url', url,0, multiple);
-      if ((multiple && ext.length > 0) || !multiple && ext) { // If array, avoid assigning empty array
-        lfItem[prop] = ext;
-      }
-    }
-  },
 
   /**
    * Removes an object(s) from an array searching it using key/value pair with an optional start index.
@@ -1075,36 +1036,6 @@ LForms.Util = {
     return ret;
   },
 
-
-  /**
-   * Some extensions are translated to other lforms fields, some are renamed internally and some are
-   * preserved as they are. This function creates extension array with the renamed and preserved extensions
-   * to use in output for lforms format.
-   *
-   * Recreate
-   * @param {Object} - Internal item object of LFormsData, i.e. LFormsData.items[x]
-   * @return {array|null} Array of extensions
-   */
-  createExtensionFromLForms: function(formOrItem) {
-    let extension = [];
-    _copiedExtFields.forEach(function (extName) {
-      let _ext = formOrItem[extName];
-      if(_ext) {
-        if(Array.isArray(_ext)) {
-          extension.push.apply(extension, _ext);
-        }else {
-          extension.push(_ext);
-        }
-      }
-    });
-
-    if(formOrItem.extension && formOrItem.extension.length > 0) {
-      extension.push.apply(extension, formOrItem.extension);
-    }
-
-    // Return null if none
-    return extension.length > 0 ? extension : null;
-  },
 
 
   /**
