@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [26.1.2] 2020-10-01
+### Added
+- Support for using a FHIR Questionnaire as a form definition in addFormToPage.
+
 ## [26.1.0] 2020-09-23
 ### Added
 - Support for the FHIR answerExpression extension (with FHIRPath expressions

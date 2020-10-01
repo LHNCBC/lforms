@@ -38,9 +38,11 @@ LForms.Util = {
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param options A hash of options (currently just one):
-   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
-   *     the form was an imported FHIR Questionnaire).
+   * @param {Object} [options] A hash of options
+   * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
+   *  the form was an imported FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] Version of FHIR used if formDataDef is a FHIR
+   *  questionnaire. options are: `R4` or `STU3`.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -53,6 +55,14 @@ LForms.Util = {
         formDataDef = JSON.parse(formDataDef);
       else // backward compatibility
         formDataDef = window[formDataDef];
+    }
+
+    // If fhirVersion is passed in options assume formDataDef is FHIR
+    var resourceType = formDataDef.resourceType;
+    var fhirVersion = options && options.fhirVersion;
+
+    if (fhirVersion && resourceType === 'Questionnaire') {
+      formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
     }
 
     if (!this.pageFormID_)
