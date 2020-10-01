@@ -99,6 +99,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sdc_common_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(93);
 /* harmony import */ var _sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(94);
 /* harmony import */ var _runtime_common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(95);
+/* harmony import */ var _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(97);
 // Initializes the FHIR structure for STU3
 var fhirVersion = 'STU3';
 if (!LForms.FHIR) LForms.FHIR = {};
@@ -125,6 +126,8 @@ Object(_sdc_common_js__WEBPACK_IMPORTED_MODULE_6__["default"])(fhir.SDC);
 Object(_sdc_import_common_js__WEBPACK_IMPORTED_MODULE_7__["default"])(fhir.SDC);
 
 Object(_runtime_common_js__WEBPACK_IMPORTED_MODULE_8__["addCommonRuntimeFns"])(fhir.SDC);
+
+fhir.SDC.ExpressionProcessor = _expression_processor_js__WEBPACK_IMPORTED_MODULE_9__["ExpressionProcessor"];
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
@@ -21896,7 +21899,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (item._obsLinkPeriodExt && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -22074,7 +22077,8 @@ var self = {
       this._handleExternallyDefined(targetItem, item);
     } // option, for answer list
     else if (item.answers && !item.answerValueSet) {
-        targetItem.option = this._handleAnswers(item, noExtensions);
+        // Make sure the answers did not come from answerExpression.
+        if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp]) targetItem.option = this._handleAnswers(item, noExtensions);
       } else if (item.answerValueSet) targetItem.options = item.answerValueSet;
   },
 
@@ -22439,7 +22443,8 @@ function addCommonSDCExportFns(ns) {
 
     targetItem.code = item.codeList; // extension
 
-    targetItem.extension = []; // required
+    targetItem.extension = item.extension || []; // later we delete if empty
+    // required
 
     if (item._answerRequired === true || item._answerRequired === false) {
       targetItem.required = item._answerRequired;
@@ -22517,8 +22522,6 @@ function addCommonSDCExportFns(ns) {
 
 
     this._handleDataControl(targetItem, item);
-
-    this._handleExtensions(targetItem, item);
 
     if (item.items && Array.isArray(item.items)) {
       targetItem.item = [];
@@ -22677,16 +22680,7 @@ function addCommonSDCExportFns(ns) {
 
     target.name = source.shortName; // computer friendly
 
-    target.title = source.name; // Handle variable extensions.
-
-    if (source._variableExt) {
-      if (!target.extension) {
-        target.extension = [];
-      }
-
-      target.extension = target.extension.concat(source._variableExt);
-    } // Handle extensions on title
-
+    target.title = source.name; // Handle extensions on title
 
     if (source.obj_title) target._title = source.obj_title;
     target.code = source.codeList; // resourceType
@@ -23209,26 +23203,6 @@ function addCommonSDCExportFns(ns) {
 
   self._lfHasSubItems = function (item) {
     return item && item.items && Array.isArray(item.items) && item.items.length > 0;
-  };
-  /**
-   * Process FHIR questionnaire extensions related conversions.
-   *
-   * @param targetItem an item in FHIR SDC Questionnaire object
-   * @param item an item in LForms form object
-   * @private
-   */
-
-
-  self._handleExtensions = function (targetItem, item) {
-    var extension = LForms.Util.createExtensionFromLForms(item);
-
-    if (extension) {
-      if (!targetItem.extension) {
-        targetItem.extension = [];
-      }
-
-      targetItem.extension.push.apply(targetItem.extension, extension);
-    }
   };
   /**
    * Process an item of the form or the form itself - if it's the form itself, the form-level
@@ -24049,10 +24023,17 @@ function addSDCImportFns(ns) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 /**
- *  Defines SDC functions (used by both import and export) that are the same
- *  across the different FHIR versions.  The function takes SDC namespace object
- *  defined in the sdc export code, and adds additional functions to it.
+ *  Defines SDC functions (used by both import and export, or for other
+ *  SDC-related purposes) that are the same across the different FHIR versions.
+ *  The function takes SDC namespace object defined in the sdc export code,
+ *  and adds additional functions to it.
  */
 function addCommonSDCFns(ns) {
   "use strict";
@@ -24194,6 +24175,64 @@ function addCommonSDCFns(ns) {
     dstCoding = self._setIfHasValue(dstCoding, dstTextField, srcCoding[srcTextField]);
     return dstCoding;
   };
+  /**
+   *  Returns true if the given item (or LFormsData) has an expression
+   *  which needs to be re-evaluated when the user changes their response.
+   * @param itemOrLFData the item or LFormsData to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+
+
+  self.hasResponsiveExpression = function (itemOrLFData) {
+    var ext = itemOrLFData._fhirExt;
+    return ext ? !!(ext[self.fhirExtCalculatedExp] || ext[self.fhirExtAnswerExp]) : false;
+  };
+  /**
+   *  Returns true if the given item (or LFormsData) has an expression
+   *  which needs to be evaluated only once, when form is first rendered.
+   * @param itemOrLFData the item or LFormsData to be checked.  It is assumed
+   *  that the relevant extensions will be in an _fhirExt hash where
+   *  the key is the URI of the extension and the values are arrays of the FHIR
+   *  extension structure.
+   */
+
+
+  self.hasInitialExpression = function (itemOrLFData) {
+    return !!(itemOrLFData._fhirExt && itemOrLFData._fhirExt[self.fhirExtInitialExp]);
+  };
+  /**
+   *  Builds a map from extension URIs to arrays of the FHIR extension
+   *  structures.
+   * @param itemOrLFData a form item or an LFormsData which possibly contain
+   *  FHIR extensions (in an "extension" property).
+   */
+
+
+  self.buildExtensionMap = function (itemOrLFData) {
+    if (itemOrLFData.extension) {
+      var m = {};
+
+      var _iterator = _createForOfIteratorHelper(itemOrLFData.extension),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var ext = _step.value;
+          var extArray = m[ext.url];
+          if (!extArray) extArray = m[ext.url] = [];
+          extArray.push(ext);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      itemOrLFData._fhirExt = m;
+    }
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
@@ -24236,6 +24275,11 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtUrlHidden = "http://hl7.org/fhir/StructureDefinition/questionnaire-hidden";
   self.fhirExtTerminologyServer = "http://hl7.org/fhir/StructureDefinition/terminology-server";
   self.fhirExtUrlDataControl = "http://lhcforms.nlm.nih.gov/fhirExt/dataControl";
+  self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
+  self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
+  self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
+  self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
+  self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
@@ -25411,9 +25455,19 @@ var extProcessors = {};
 extProcessors[_extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].extURL] = _extensions_rendering_style__WEBPACK_IMPORTED_MODULE_0__["default"].processExtension;
 function addCommonRuntimeFns(ns) {
   var self = ns;
+  /**
+   *  Processes the extensions on either lfNode, or lfNode[lfFieldName], if
+   *  lfFieldName is provided.  Only the extensions for which processors
+   *  are written (in the "extensions" sub-directory) are considered.
+   * @param lfNode the node in the LFormsData structure on which the information
+   *  from the extension will be stored.
+   * @param lfFieldName (optional).  Sometimes the extension information is on a
+   *  sub-node, (e.g. 'obj_text') in which case this should be the field for
+   *  retrieving that sub-node.
+   */
 
   self.processExtensions = function (lfNode, lfFieldName) {
-    var fieldData = lfNode[lfFieldName]; // could be item or _text
+    var fieldData = lfFieldName ? lfNode[lfFieldName] : lfNode;
 
     if (fieldData) {
       var extensions = fieldData.extension;
@@ -25458,6 +25512,448 @@ function processExtension(lfNode, fieldName, extNode) {
   extURL: extURL,
   processExtension: processExtension
 });
+
+/***/ }),
+/* 97 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExpressionProcessor", function() { return ExpressionProcessor; });
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+// Processes FHIR Expression Extensions
+var ExpressionProcessor;
+
+(function () {
+  "use strict"; // A class whose instances handle the running of FHIR expressions.
+
+  /**
+   *   Constructor.
+   *  @param lfData an instance of LForms.LFormsData.  The _fhir attribute
+   *   should be set before this is called.
+   */
+
+  ExpressionProcessor = function ExpressionProcessor(lfData) {
+    this._lfData = lfData;
+    if (!lfData._fhir) throw new Error('lfData._fhir should be set');
+    this._fhir = lfData._fhir;
+    this._compiledExpressions = {}; // Define some arrays that will be reused frequently.
+
+    var sdc = this._fhir.SDC;
+    this._responsiveFieldExpURIs = [sdc.fhirExtAnswerExp, sdc.fhirExtCalculatedExp];
+
+    (this._initialFieldExpURIs = this._responsiveFieldExpURIs.slice()).splice(1, 0, sdc.fhirExtInitialExp); // add fhirExtInitialExp
+
+  };
+
+  ExpressionProcessor.prototype = {
+    /**
+     *   Runs the FHIR expressions in the form.
+     *  @param includeInitialExpr whether to include the "initialExpression"
+     *   expressions (which should only be run once, after asynchronous loads
+     *   from questionnaire-launchContext have been completed).
+     */
+    runCalculations: function runCalculations(includeInitialExpr) {
+      // Create an export of Questionnaire for the %questionnaire variable in
+      // FHIRPath.  We only need to do this once per form.
+      var lfData = this._lfData;
+
+      if (!lfData._fhirVariables.questionnaire) {
+        lfData._fhirVariables.questionnaire = this._fhir.SDC.convertLFormsToQuestionnaire(this._lfData);
+      }
+
+      var firstRun = true;
+      var changed = true;
+      var start = new Date();
+
+      while (changed) {
+        if (changed || firstRun) {
+          this._regenerateQuestionnaireResp();
+
+          changed = this._evaluateVariables(lfData, !firstRun);
+        }
+
+        if (changed || firstRun) changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstRun);
+        firstRun = false;
+      }
+
+      console.log("Ran FHIRPath expressions in " + (new Date() - start) + " ms");
+    },
+
+    /**
+     *  Evaluates variables on the given item.
+     * @param item an LFormsData or item from LFormsData.
+     */
+    _evaluateVariables: function _evaluateVariables(item) {
+      var rtn = false;
+      var sdc = this._fhir.SDC;
+      var variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
+
+      if (variableExts) {
+        for (var i = 0, len = variableExts.length; i < len; ++i) {
+          var ext = variableExts[i];
+
+          if (ext && ext.valueExpression.language == "text/fhirpath") {
+            var varName = ext.valueExpression.name;
+            var oldVal;
+            if (item._fhirVariables) oldVal = item._fhirVariables[varName];else {
+              // Create a hash for variables that will have access to
+              // variables defined higher up in the tree.
+              item._fhirVariables = Object.create(this._itemWithVars(item)._fhirVariables);
+            } // Delete the old value, so we don't have circular references.
+
+            delete item._fhirVariables[varName];
+
+            var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+
+            if (newVal !== undefined) item._fhirVariables[varName] = newVal;
+            var varChanged = JSON.stringify(oldVal) != JSON.stringify(newVal);
+
+            if (varChanged) {
+              item._varChanged = true; // flag for re-running expressions.
+            }
+          } // else maybe x-fhir-query, asynchronous (TBD)
+
+        }
+      }
+
+      if (item.items) {
+        for (var _i = 0, _len = item.items.length; _i < _len; ++_i) {
+          var changed = this._evaluateVariables(item.items[_i]);
+
+          if (!rtn) rtn = changed;
+        }
+      }
+
+      return rtn;
+    },
+
+    /**
+     *  Evaluates the expressions that set field values for the given item.
+     * @param item an LFormsData or item from LFormsData.
+     * @param includeInitialExpr whether or not to run expressions from
+     *  initialExpression extensions (which should only be run when the form is
+     *  loaded).
+     * @param changesOnly whether to run all field expressions, or just the ones
+     *  that are likely to have been affected by changes from variable expressions.
+     */
+    _evaluateFieldExpressions: function _evaluateFieldExpressions(item, includeInitialExpr, changesOnly) {
+      var rtn = false; // If changesOnly, for any item that has _varChanged set, we run any field
+      // expressions that are within that group (or item).
+
+      if (changesOnly) {
+        if (item.items && item._varChanged) {
+          item._varChanged = false; // clear flag
+
+          changesOnly = false; // process all child items
+        }
+      } else {
+        // if (!changesOnly) process this and all child items
+        item._varChanged = false; // clear flag in case it was set
+
+        var fhirExt = item._fhirExt;
+
+        if (fhirExt) {
+          var sdc = this._fhir.SDC;
+          var exts = includeInitialExpr ? item._initialFieldExpExts : item._responsiveFieldExpExts;
+
+          if (exts === undefined) {
+            // undefined means we haven't computed them yet
+            // compute the list of extensions to process and cache it
+            exts = [];
+            var uris = includeInitialExpr ? this._initialFieldExpURIs : this._responsiveFieldExpURIs;
+
+            var _iterator = _createForOfIteratorHelper(uris),
+                _step;
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var uri = _step.value;
+                var extsForURI = fhirExt[uri];
+                if (extsForURI) exts.push.apply(exts, extsForURI);
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+
+            if (exts.length === 0) exts = null; // a signal that we have looked and found nothing
+
+            includeInitialExpr ? item._initialFieldExpExts = exts : item._responsiveFieldExpExts = exts;
+          }
+
+          if (exts) {
+            var changed = false;
+
+            for (var i = 0, len = exts.length; i < len; ++i) {
+              var ext = exts[i];
+
+              if (ext && ext.valueExpression.language == "text/fhirpath") {
+                var newVal = this._evaluateFHIRPath(item, ext.valueExpression.expression);
+
+                var fieldChanged = ext.url == sdc.fhirExtAnswerExp ? this._setItemListFromFHIRPath(item, newVal) : this._setItemValueFromFHIRPath(item, newVal);
+                if (!changed) changed = fieldChanged;
+              }
+            }
+
+            rtn = changed;
+          }
+        }
+      } // Process child items
+
+
+      if (item.items) {
+        for (var _i2 = 0, _len2 = item.items.length; _i2 < _len2; ++_i2) {
+          var _changed = this._evaluateFieldExpressions(item.items[_i2], includeInitialExpr, changesOnly);
+
+          if (!rtn) rtn = _changed;
+        }
+      }
+
+      return rtn;
+    },
+
+    /**
+     *  Regenerates the QuestionnaireResponse resource and the map from
+     *  LFormsData _elementIDs to items in the QuestionnaireResponse.
+     */
+    _regenerateQuestionnaireResp: function _regenerateQuestionnaireResp() {
+      var questResp = this._fhir.SDC.convertLFormsToQuestionnaireResponse(this._lfData);
+
+      this._lfData._fhirVariables.resource = questResp;
+      this._elemIDToQRItem = this._createIDtoQRItemMap(questResp);
+    },
+
+    /**
+     *  Returns the nearest ancestor of item (or item itelf) that has
+     *  _fhirVariables defined.
+     * @param item either an LFormsData or an item from an LFormsData.
+     */
+    _itemWithVars: function _itemWithVars(item) {
+      var itemWithVars = item;
+
+      while (!itemWithVars._fhirVariables) {
+        itemWithVars = itemWithVars._parentItem;
+      } // should terminate at lfData
+
+
+      return itemWithVars;
+    },
+
+    /**
+     *  Evaluates the given FHIRPath expression defined in an extension on the
+     *  given item.
+     * @returns the result of the expression.
+     */
+    _evaluateFHIRPath: function _evaluateFHIRPath(item, expression) {
+      var fhirPathVal; // Find the item-level fhirpathVars
+
+      var itemVars = this._itemWithVars(item)._fhirVariables;
+
+      try {
+        // We need to flatten the fhirVariables chain into a simple hash of key/
+        // value pairs.
+        var fVars = {};
+
+        for (var k in itemVars) {
+          fVars[k] = itemVars[k];
+        }
+
+        var fhirContext = item._elementId ? this._elemIDToQRItem[item._elementId] : this._lfData._fhirVariables.resource;
+        var compiledExpr = this._compiledExpressions[expression];
+
+        if (!compiledExpr) {
+          compiledExpr = this._compiledExpressions[expression] = this._fhir.fhirpath.compile(expression, this._fhir.fhirpathModel);
+        }
+
+        fhirPathVal = compiledExpr(fhirContext, fVars);
+      } catch (e) {
+        // Sometimes an expression will rely on data that hasn't been filled in
+        // yet.
+        console.log(e);
+      }
+
+      return fhirPathVal;
+    },
+
+    /**
+     *  Returns a hash from the LForms _elementId of each item to the
+     *  corresponding QuestionnaireResponse item.
+     * @param qr the QuestionnaireResponse corresponding to the current
+     * LFormsData.
+     */
+    _createIDtoQRItemMap: function _createIDtoQRItemMap(qr) {
+      var map = {};
+
+      this._addToIDtoQRItemMap(this._lfData, qr, map);
+
+      return map;
+    },
+
+    /**
+     *  Adds to the map from LFormsData items to QuestionnaireResponse items and
+     *  returns the number of items added.
+     * @param lfItem an LFormsData, or an item within it.
+     * @param qrItem the corresponding QuestionnaireResponse or an item within
+     * it.
+     * @param map the map to which entries will be added.
+     * @return the number of items added to the map.
+     */
+    _addToIDtoQRItemMap: function _addToIDtoQRItemMap(lfItem, qrItem, map) {
+      var added = 0;
+
+      if (lfItem.linkId === qrItem.linkId) {
+        if (lfItem.items) {
+          // lfItem.items might contain items that don't have values, but
+          // qrItem.item will not, so we need to skip the blank items.
+          //
+          // Also, for a repeating question, there will be multiple answers on an
+          // qrItem.item, but repeats of the item in lfItem.items with one answer
+          // each.
+          // LForms does not currently support items that contain both answers
+          // and child items, but I am trying to accomodate that here for the
+          // future.
+          if (qrItem && qrItem.item && qrItem.item.length > 0) {
+            var lfItems = lfItem.items,
+                qrItems = qrItem.item;
+            var numLFItems = lfItems.length;
+
+            for (var i = 0, qrI = 0, len = qrItems.length; qrI < len && i < numLFItems; ++qrI) {
+              // Answers are repeated in QR, but items are repeated in LForms
+              var qrIthItem = qrItems[qrI];
+              var lfIthItem = lfItems[i];
+
+              if (!qrIthItem.answer) {
+                // process item anyway to handle child items with data
+                var newlyAdded = this._addToIDtoQRItemMap(lfIthItem, qrIthItem, map);
+
+                if (newlyAdded === 0) {
+                  // lfIthItem was blank, so qrIthItem must be for a following
+                  // item.
+                  --qrI; // so we try qrIthItem with the next lfIthItem
+                } else added += newlyAdded;
+
+                ++i;
+              } else {
+                // there are answers on the qrIthItem item
+                var numAnswers = qrIthItem.answer ? qrIthItem.answer.length : 0;
+
+                for (var a = 0; a < numAnswers; ++a, ++i) {
+                  if (i >= numLFItems) throw new Error('Logic error in _addToIDtoQRITemMap; ran out of lfItems');
+
+                  var _newlyAdded = this._addToIDtoQRItemMap(lfItems[i], qrIthItem, map);
+
+                  if (_newlyAdded === 0) {
+                    // lfItems[i] was blank; try next lfItem
+                    --a;
+                  } else {
+                    added += _newlyAdded;
+                  }
+                }
+              }
+            }
+          }
+        } // this item has _elementId and has a value
+
+
+        if (lfItem._elementId && (added || lfItem.value !== undefined && lfItem.value !== null && lfItem.value !== "")) {
+          if (!qrItem) {
+            // if there is data in lfItem, there should be a qrItem
+            throw new Error('Logic error in _addToIDtoQRItemMap');
+          } else {
+            map[lfItem._elementId] = qrItem;
+            added += 1;
+          }
+        }
+      }
+
+      return added;
+    },
+
+    /**
+     *  Assigns the given list result to the item.  If the list has changed, the
+     *  field is cleared.
+     * @param list an array of list items computed from a FHIRPath expression.
+     */
+    _setItemListFromFHIRPath: function _setItemListFromFHIRPath(item, list) {
+      var currentList = item.answers;
+      var hasCurrentList = !!currentList;
+      var changed = false;
+      var newList = [];
+      var scoreURI = this._fhir.SDC.fhirExtUrlOptionScore;
+
+      if (list && Array.isArray(list)) {
+        // list should be an array of any item type, including Coding.
+        // (In R5, FHIR will start suppoing lists of types other than Coding.)
+        for (var i = 0, len = list.length; i < len; ++i) {
+          // Assume type "object" means a coding, and that otherwise what we have
+          // is something useable as display text. It is probably necessary to
+          // convert them to strings in that case, which means that in the future
+          // (R5), we might have to save/re-create the original data type and value.
+          // Work will need to be done to autocomplete-lhc to support data objects
+          // associated with list values.
+          var entry = list[i],
+              newEntry = newList[i] = {};
+
+          if (_typeof(entry) === 'object') {
+            var code = entry.code;
+            if (code !== undefined) newEntry.code = code;
+            var display = entry.display;
+            if (display !== undefined) newEntry.text = display;
+            var system = entry.system;
+            if (system !== undefined) newEntry.system = system; // A Coding can have the extension for scores
+
+            var scoreExt = item._fhirExt && item._fhirExt[scoreURI];
+            if (scoreExt) newEntry.score = scoreExt[0].valueDecimal;
+          } else newEntry = {
+            'text': '' + entry
+          };
+
+          if (!changed) {
+            changed = !hasCurrentList || !this._lfData._objectEqual(newEntry, currentList[i]);
+          }
+        }
+      } else changed = !!currentList;
+
+      if (changed) {
+        item.answers = newList;
+
+        this._lfData._updateAutocompOptions(item, true); // The SDC specification says that implementations "SHOULD" preserve the
+        // field value (marking it invalid if that is the case in the new list).
+        // That is inconsistent with the behavior of LForms in other situations,
+        // e.g. data control, where we wipe the field value when the list is
+        // set.  So, we need to decide whether to switch to that behavior.
+        // For now, just wipe the field.
+
+
+        item.value = null;
+      }
+    },
+
+    /**
+     *  Assigns the given FHIRPath result to the given item.
+     * @param item the item from the LFormsData object that is receiving the new
+     *  value.
+     * @param fhirPathRes the result of a FHIRPath evaluation.
+     * @return true if the value changed
+     */
+    _setItemValueFromFHIRPath: function _setItemValueFromFHIRPath(item, fhirPathRes) {
+      var oldVal = item.value;
+      var fhirPathVal;
+      if (fhirPathRes !== undefined) fhirPathVal = fhirPathRes[0];
+      if (fhirPathVal === null || fhirPathVal === undefined) item.value = undefined;else this._fhir.SDC._processFHIRValues(item, fhirPathRes);
+      return oldVal != item.value;
+    }
+  };
+})();
 
 /***/ })
 /******/ ]);

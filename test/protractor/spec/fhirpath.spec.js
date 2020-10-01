@@ -36,3 +36,28 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
     });
   })(fhirVersions[i]);
 }
+
+describe('answerExpression', function() {
+  beforeAll(function() {
+    tp.openBaseTestPage();
+    tp.loadFromTestData('answerExpressionTest.json');
+  });
+
+  it('should be able to populate a list', function() {
+    var language = $('#language\\/1');
+    language.click();
+    expect(tp.Autocomp.helpers.listIsVisible(language)).toBe(true);
+    expect(tp.Autocomp.helpers.shownItemCount()).toBe(2);
+  });
+
+  it('should not cause answerOptions to be generated in the Questionnaire', function() {
+    browser.executeScript(
+      'return LForms.Util.getFormFHIRData("Questionnaire", "R4")').then((val)=>{
+      expect(val.item[0].answerOption).toBe(undefined);
+    });
+    browser.executeScript(
+      'return LForms.Util.getFormFHIRData("Questionnaire", "STU3")').then((val)=>{
+      expect(val.item[0].option).toBe(undefined);
+    });
+  });
+});

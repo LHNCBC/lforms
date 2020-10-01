@@ -13,7 +13,6 @@ require("./lib/polyfill.js");
 require("./lib/lforms-hl7.js");
 require("./lib/lforms-validate.js");
 require("./lib/lforms-data.js");
-require("./lib/expression-processor.js");
 LForms.Util.FHIRSupport = require("./fhir/versions.js");
 require("../lforms.tpl.js");
 LForms._elementResizeDetectorMaker = require("element-resize-detector");

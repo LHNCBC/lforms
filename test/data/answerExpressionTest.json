@@ -1,0 +1,61 @@
+{
+  "status": "draft",
+  "title": "answerExpression Test",
+  "resourceType": "Questionnaire",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire|2.7"
+    ],
+    "tag": [
+      {
+        "code": "lformsVersion: 25.1.3"
+      }
+    ]
+  },
+  "contained": [{
+    "resourceType": "ValueSet",
+    "id": "languageList",
+    "expansion": {
+      "contains": [{
+        "system": "languages",
+        "code": "en",
+        "display": "English"
+      }, {
+        "system": "languages",
+        "code": "fr",
+        "display": "French"
+      }]
+    }
+  }],
+  "item": [
+    {
+      "linkId": "language",
+      "type": "open-choice",
+      "extension": [
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/questionnaire-item-control",
+                "code": "drop-down",
+                "display": "Drop down"
+              }
+            ],
+            "text": "Drop down"
+          }
+        },
+        {
+          "url": "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression",
+          "valueExpression":{
+            "description": "language list",
+            "language": "text/fhirpath",
+            "expression": "%questionnaire.contained.where(id='languageList').expansion.contains"
+          }
+        }
+      ],
+      "required": false,
+      "text": "Preferred language"
+    }
+  ]
+}

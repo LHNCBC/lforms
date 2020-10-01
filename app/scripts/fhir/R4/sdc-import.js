@@ -11,10 +11,11 @@ function addSDCImportFns(ns) {
 "use strict";
 
   var self = ns;
-  // FHIR extension urls
 
+  // FHIR extension urls
   self.fhirExtUrlOptionScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
-  self.fhirExtUrlValueSetScore = "http://hl7.org/fhir/StructureDefinition/ordinalValue";
+  self.fhirExtUrlValueSetScore = self.fhirExtUrlOptionScore;
+
 
   /**
    * Extract contained VS (if any) from the given questionnaire resource object.

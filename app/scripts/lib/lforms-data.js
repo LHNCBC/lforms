@@ -280,15 +280,18 @@
       var lfData = this;
       this.fhirVersion = data.fhirVersion || 'R4'; // Default to R4
       this._fhir = LForms.FHIR[lfData.fhirVersion];
-      this._expressionProcessor = new LForms.ExpressionProcessor(this);
+      this._expressionProcessor = new this._fhir.SDC.ExpressionProcessor(this);
       this._fhirVariables = {};
       this.extension = data.extension ? data.extension.slice(0) : []; // Shallow copy
 
-      // form-level variables (really only R4+)
-      var ext = LForms.Util.removeObjectsFromArray(this.extension,'url',
-        this._fhir.SDC.fhirExtVariable,0,true);
-      if (ext.length > 0)
-        lfData._variableExt = ext;
+      if (data.extension) {
+        this._fhir.SDC.buildExtensionMap(this);
+        this._hasResponsiveExpr = this._hasResponsiveExpr ||
+          this._fhir.SDC.hasResponsiveExpression(this);
+        this._hasInitialExpr = this._hasInitialExpr ||
+          this._fhir.SDC.hasInitialExpression(this);
+      }
+
       this._fhir.SDC.processExtensions(lfData, 'obj_title');
     },
 
@@ -387,6 +390,7 @@
         lfData._notifyAsyncChangeListeners(); // TBD Not sure this is still needed
       });
     },
+
 
 
     /**
@@ -517,10 +521,12 @@
           var pendingPromises = [];
           LForms.Util.validateFHIRVersion(LForms._serverFHIRReleaseID);
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
+          let obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
           for (var i=0, len=this.itemList.length; i<len; ++i) {
             let item = this.itemList[i];
-            if (item._obsLinkPeriodExt) {
-              var duration = item._obsLinkPeriodExt.valueDuration; // optional
+            const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
+            if (obsExt) { // an array of at least 1 if present
+              var duration = obsExt[0].valueDuration; // optional
               var itemCodeSystem = item.questionCodeSystem;
               if (itemCodeSystem === 'LOINC')
                 itemCodeSystem = serverFHIR.LOINC_URI;
@@ -1138,10 +1144,16 @@
           }
         }
 
-        if(item.extension) {
-          item.extension = item.extension.slice(0); // Extension can be mutated, work with a copy.
-          LForms.Util.processCopiedItemExtensions(item, item.extension);
+        if (item.extension) {
+          this._fhir.SDC.buildExtensionMap(item);
+          if (this._fhir) {
+            this._hasResponsiveExpr = this._hasResponsiveExpr ||
+              this._fhir.SDC.hasResponsiveExpression(item);
+            this._hasInitialExpr = this._hasInitialExpr ||
+              this._fhir.SDC.hasInitialExpression(item);
+          }
         }
+
         this._updateItemAttrs(item);
 
         // reset answers if it is an answer list id
@@ -1154,6 +1166,7 @@
         if (this._packageStore) {
           this._loadAnswerValueSetsFromPackage(item);
         }
+
 
         // If there are answers for an answer list and there is a value, replace
         // the value objects with the corresponding objects from the answer list,
@@ -1365,15 +1378,8 @@
 
       // set up readonly flag
       item._readOnly = (item.editable && item.editable === "0") ||
-         !!(item.calculationMethod || item._calculatedExprExt);
-
-      var lfData = this;
-      if (LForms.FHIR && lfData.fhirVersion) {
-        lfData.hasFHIRPath = lfData.hasFHIRPath || (item._calculatedExprExt &&
-             item._calculatedExprExt.valueExpression.language === "text/fhirpath");
-        lfData._hasInitialExpr = lfData._hasInitialExpr || (item._initialExprExt &&
-           item._initialExprExt.valueExpression.language === "text/fhirpath");
-      }
+        !!(item.calculationMethod ||
+           (item._fhirExt && item._fhirExt[this._fhir.SDC.fhirExtCalculatedExp]));
 
       if (this._fhir) {
         this._fhir.SDC.processExtensions(item, 'obj_text');
@@ -1497,9 +1503,8 @@
         templateOptions: angular.copy(this.templateOptions)
       };
 
-      var flExtensions = LForms.Util.createExtensionFromLForms(this);
-      if (flExtensions) {
-        defData.extension = flExtensions;
+      if (this.extension) {
+        defData.extension = this.extension;
       }
       if (hasSavedData) {
         defData.hasSavedData = true;
@@ -1608,9 +1613,8 @@
         // otherwise include form definition data
         else {
           // process extensions
-          let extension = LForms.Util.createExtensionFromLForms(item);
-          if(extension) {
-            itemData.extension = extension;
+          if (item.extension) {
+            itemData.extension = item.extension;
           }
           // Process other fields
           for (var field in item) {

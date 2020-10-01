@@ -54,7 +54,7 @@ var self = {
     var rtn = [qr];
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
-      if (item._obsLinkPeriodExt && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -218,7 +218,9 @@ var self = {
     }
     // option, for answer list
     else if (item.answers && !item.answerValueSet) {
-      targetItem.answerOption = this._handleAnswers(item, noExtensions);
+      // Make sure the answers did not come from answerExpression.
+      if (!item._fhirExt || !item._fhirExt[this.fhirExtAnswerExp])
+        targetItem.answerOption = this._handleAnswers(item, noExtensions);
     }
     else if (item.answerValueSet)
       targetItem.answerValueSet = item.answerValueSet;

@@ -25,6 +25,8 @@ import addCommonSDCImportFns from '../sdc-import-common.js';
 addCommonSDCImportFns(fhir.SDC);
 import { addCommonRuntimeFns } from '../runtime-common.js';
 addCommonRuntimeFns(fhir.SDC);
+import { ExpressionProcessor } from '../expression-processor.js';
+fhir.SDC.ExpressionProcessor = ExpressionProcessor;
 fhir.SDC.fhirVersion = fhirVersion; // Needed by lfData for fhirpath, etc.
 
 fhir.reservedVarNames = {};
