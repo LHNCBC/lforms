@@ -384,7 +384,7 @@ describe('Util library', function() {
   });
 
 
-  describe.only('_testValues', function() {
+  describe('_testValues', function() {
     it('should handle nested structures', function () {
       function itemTest(item) {
         return !! item.options;
