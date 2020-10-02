@@ -16,7 +16,7 @@ describe('ExpresssionProcessor', function () {
           }
         }]
       }]});
-      var exp = new LForms.ExpressionProcessor(lfData)
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       exp.runCalculations();
       assert.equal(lfData.items[1].value, lfData.items[0].value);
     });
@@ -44,7 +44,7 @@ describe('ExpresssionProcessor', function () {
         answer: [1, 2]
       }]}
       var lfItem = lfData.items[0];
-      var exp = new LForms.ExpressionProcessor(lfData)
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       var map = {};
       exp._addToIDtoQRItemMap(lfItem, qrItem, map);
       assert.deepEqual(map, {'/g1/1': qrItem, '/g1/q1/1/1': qrItem.item[0], '/g1/q1/1/3': qrItem.item[0]});
@@ -75,7 +75,7 @@ describe('ExpresssionProcessor', function () {
         }]
       }]};
       var lfItem = lfData.items[0];
-      var exp = new LForms.ExpressionProcessor(lfData)
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       var map = {};
       exp._addToIDtoQRItemMap(lfItem, qrItem, map);
       console.log(Object.keys(map))
@@ -102,7 +102,7 @@ describe('ExpresssionProcessor', function () {
         }]
       };
       var lfItem = lfData.items[0];
-      var exp = new LForms.ExpressionProcessor(lfData)
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData)
       var map = {};
       exp._addToIDtoQRItemMap(lfItem, qrItem, map);
       assert.deepEqual(map, {'/g1A/1': qrItem, '/g1A/q2/1/1': qrItem.item[0]});
@@ -125,7 +125,7 @@ describe('ExpresssionProcessor', function () {
           answer: [2]
         }]
       }]};
-      var exp = new LForms.ExpressionProcessor(lfData);
+      var exp = new LForms.FHIR.R4.SDC.ExpressionProcessor(lfData);
       var map = {};
       exp._addToIDtoQRItemMap(lfData, qr, map);
       assert.deepEqual(map, {'/g2A/1': qr.item[0], '/g2A/q2/1/1': qr.item[0].item[0]});
