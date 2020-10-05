@@ -57,11 +57,11 @@ LForms.Util = {
         formDataDef = window[formDataDef];
     }
 
-    // If fhirVersion is passed in options assume formDataDef is FHIR
+    // If resourceType is specified assume formDataDef is FHIR
     var resourceType = formDataDef.resourceType;
     var fhirVersion = options && options.fhirVersion;
 
-    if (fhirVersion && resourceType === 'Questionnaire') {
+    if (resourceType) {
       formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
     }
 

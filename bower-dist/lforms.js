@@ -2363,13 +2363,13 @@ LForms.Util = {
       if (formDataDef.indexOf('{') >= 0) // test for JSON
         formDataDef = JSON.parse(formDataDef);else // backward compatibility
         formDataDef = window[formDataDef];
-    } // If fhirVersion is passed in options assume formDataDef is FHIR
+    } // If resourceType is specified assume formDataDef is FHIR
 
 
     var resourceType = formDataDef.resourceType;
     var fhirVersion = options && options.fhirVersion;
 
-    if (fhirVersion && resourceType === 'Questionnaire') {
+    if (resourceType) {
       formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
     }
 
