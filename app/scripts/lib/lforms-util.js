@@ -1044,32 +1044,6 @@ LForms.Util = {
    */
   baseFormDef: function() {
     return {lformsVersion: LForms.lformsVersion};
-  },
-
-
-  /**
-   * Converts FHIR ValueSet with an expansion into an array of answers that can be used with a
-   * prefetch autocompleter.
-   * @param valueSet FHIR ValueSet resource
-   * @return the array of answers, or null if the extraction cannot be done.
-   */
-  convertValueSetToAnswers : function(valueSet) {
-    var vs = valueSet;
-    var rtn = [];
-
-    // TBD. There other formats of ValueSet. It now only support expanded one.
-    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-      vs.expansion.contains.forEach(function (vsItem) {
-        var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
-        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-            "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
-        if(ordExt) {
-          answer.score = ordExt.valueDecimal;
-        }
-        rtn.push(answer);
-      });
-    }
-    return rtn.length > 0 ? rtn : null;
   }
 
 };

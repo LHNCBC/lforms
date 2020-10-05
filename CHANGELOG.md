@@ -2,6 +2,10 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [26.1.1] 2020-09-30
+### Fixed
+- Fixed the extensions URI for answer scores
+
 ## [26.1.0] 2020-09-23
 ### Added
 - Support for the FHIR answerExpression extension (with FHIRPath expressions

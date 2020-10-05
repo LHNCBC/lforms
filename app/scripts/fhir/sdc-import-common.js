@@ -860,7 +860,7 @@ function addCommonSDCImportFns(ns) {
       vs.expansion.contains.forEach(function (vsItem) {
         var answer = {code: vsItem.code, text: vsItem.display, system: vsItem.system};
         var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url',
-          "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
+          self.fhirExtUrlValueSetScore);
         if(ordExt) {
           answer.score = ordExt.valueDecimal;
         }

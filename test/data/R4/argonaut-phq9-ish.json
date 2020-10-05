@@ -37,7 +37,7 @@
                     {
                         "extension": [
                             {
-                                "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
+                                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
                                 "valueDecimal": 0
                             }
                         ],
@@ -49,7 +49,7 @@
                     {
                         "extension": [
                             {
-                                "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
+                                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
                                 "valueDecimal": 1
                             }
                         ],
@@ -61,7 +61,7 @@
                     {
                         "extension": [
                             {
-                                "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
+                                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
                                 "valueDecimal": 2
                             }
                         ],
@@ -73,7 +73,7 @@
                     {
                         "extension": [
                             {
-                                "url": "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue",
+                                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
                                 "valueDecimal": 3
                             }
                         ],
