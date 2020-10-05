@@ -1,5 +1,5 @@
 describe('questionnaire with items that have answerValueSet', function () {
-  it('should load value sets from the package', function (done) {
+  it('should load value sets from a provided package file', function (done) {
     var packageFile = 'test/data/vs-package.json';
     var qFile = 'test/data/questionnaire-use-package.json';
     var answers = [
@@ -48,7 +48,7 @@ describe('questionnaire with items that have answerValueSet', function () {
     });
   });
 
-  it('should genereate errors when loaded without a package or without FHIR context', function (done) {
+  it('should genereate errors when loaded without a package file or without FHIR context', function (done) {
     var qFile = 'test/data/questionnaire-use-package.json';
 
     $.get(qFile, function(qData) {

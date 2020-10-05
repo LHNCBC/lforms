@@ -245,6 +245,10 @@
     },
 
 
+    /**
+     * Get a list of warning messages where answer lists are not loaded from URLs
+     * in 'answerValueSet'
+     */ 
     checkAnswersResourceStatus: function() {
       var status = [];
       for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
@@ -415,8 +419,8 @@
 
       if (item.answerValueSet) {
         var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet)
-        if (vs) {
-          var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+        if (vs && this._fhir) {
+          var answers = this._fhir.SDC.answersFromVS(vs.fileContent);
           if (answers) {
             item.answers = answers;
           }

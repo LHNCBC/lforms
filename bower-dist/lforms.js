@@ -3314,34 +3314,12 @@ LForms.Util = {
   },
 
   /**
-   * Converts FHIR ValueSet with an expansion into an array of answers that can be used with a
-   * prefetch autocompleter.
-   * @param valueSet FHIR ValueSet resource
-   * @return the array of answers, or null if the extraction cannot be done.
-   */
-  convertValueSetToAnswers: function convertValueSetToAnswers(valueSet) {
-    var vs = valueSet;
-    var rtn = []; // TBD. There other formats of ValueSet. It now only support expanded one.
-
-    if (vs.expansion && vs.expansion.contains && vs.expansion.contains.length > 0) {
-      vs.expansion.contains.forEach(function (vsItem) {
-        var answer = {
-          code: vsItem.code,
-          text: vsItem.display,
-          system: vsItem.system
-        };
-        var ordExt = LForms.Util.findObjectInArray(vsItem.extension, 'url', "http://hl7.org/fhir/StructureDefinition/valueset-ordinalValue");
-
-        if (ordExt) {
-          answer.score = ordExt.valueDecimal;
-        }
-
-        rtn.push(answer);
-      });
-    }
-
-    return rtn.length > 0 ? rtn : null;
-  },
+   * Get a list of warning messages where answer lists are not loaded from URLs
+   * 
+   * @param {*} formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.   */
   getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return formDataSource.checkAnswersResourceStatus();
@@ -4876,6 +4854,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       return resReturn;
     },
+
+    /**
+     * Get a list of warning messages where answer lists are not loaded from URLs
+     * in 'answerValueSet'
+     */
     checkAnswersResourceStatus: function checkAnswersResourceStatus() {
       var status = [];
 
@@ -5048,8 +5031,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (item.answerValueSet) {
         var vs = this._getResourcesFromPackageStore("ValueSet", item.answerValueSet);
 
-        if (vs) {
-          var answers = LForms.Util.convertValueSetToAnswers(vs.fileContent);
+        if (vs && this._fhir) {
+          var answers = this._fhir.SDC.answersFromVS(vs.fileContent);
 
           if (answers) {
             item.answers = answers;
