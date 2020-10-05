@@ -5,7 +5,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ## [26.2.0] 2020-10-05
 ### Added
-- Add a function to check the loading status of the answer lists.
+- Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
+  of the loading of answer lists. (This only applies to forms defined as a 
+  FHIR Questionnaire.)
 
 ## [26.1.1] 2020-09-30
 ### Fixed

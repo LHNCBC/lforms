@@ -48,7 +48,7 @@ describe('questionnaire with items that have answerValueSet', function () {
     });
   });
 
-  it('should genereate errors when loaded without a package file or without FHIR context', function (done) {
+  it('should generate errors when loaded without a package file or without FHIR context', function (done) {
     var qFile = 'test/data/questionnaire-use-package.json';
 
     $.get(qFile, function(qData) {

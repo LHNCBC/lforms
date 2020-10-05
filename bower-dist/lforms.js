@@ -3314,7 +3314,8 @@ LForms.Util = {
   },
 
   /**
-   * Get a list of warning messages where answer lists are not loaded from URLs
+   * Get a list of warning messages about answer lists, which should have been 
+   * loaded from the URL in answerValueSet but were not.
    * 
    * @param {*} formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
