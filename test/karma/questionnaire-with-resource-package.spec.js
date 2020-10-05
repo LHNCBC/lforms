@@ -1,4 +1,4 @@
-describe('questionnaire with a provided resource package file', function () {
+describe('questionnaire with items that have answerValueSet', function () {
   it('should load value sets from the package', function (done) {
     var packageFile = 'test/data/vs-package.json';
     var qFile = 'test/data/questionnaire-use-package.json';
@@ -47,4 +47,21 @@ describe('questionnaire with a provided resource package file', function () {
       done(err);
     });
   });
+
+  it('should genereate errors when loaded without a package or without FHIR context', function (done) {
+    var qFile = 'test/data/questionnaire-use-package.json';
+
+    $.get(qFile, function(qData) {
+      var formData = LForms.Util.convertFHIRQuestionnaireToLForms(qData, 'R4')
+      var lfData = new LForms.LFormsData(formData);
+      var errors = lfData.checkAnswersResourceStatus();
+      assert.equal(errors.length, 2)
+      assert.equal(errors[0], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion|20150622")
+      assert.equal(errors[1], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/example-expansion")
+      done()
+    }).fail(function (err) {
+      done(err);
+    });
+  });
+
 });

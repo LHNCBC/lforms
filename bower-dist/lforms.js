@@ -3341,6 +3341,10 @@ LForms.Util = {
     }
 
     return rtn.length > 0 ? rtn : null;
+  },
+  getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
+    return formDataSource.checkAnswersResourceStatus();
   }
 };
 
@@ -4871,6 +4875,19 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       }
 
       return resReturn;
+    },
+    checkAnswersResourceStatus: function checkAnswersResourceStatus() {
+      var status = [];
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (item.answerValueSet && !item.answers) {
+          status.push("Resource not loaded: " + item.answerValueSet);
+        }
+      }
+
+      return status;
     },
 
     /**

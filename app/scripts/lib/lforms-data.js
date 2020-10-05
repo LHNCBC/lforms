@@ -245,6 +245,18 @@
     },
 
 
+    checkAnswersResourceStatus: function() {
+      var status = [];
+      for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
+        var item = this.itemList[i];
+        if (item.answerValueSet && ! item.answers) {
+          status.push("Resource not loaded: " + item.answerValueSet)
+        }
+      }
+
+      return status;
+    },
+
     /**
      *  Registers a callback for use if the rendering of the form
      *  requires the asynchronous operations (e.g. the loading of external

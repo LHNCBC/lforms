@@ -1070,6 +1070,14 @@ LForms.Util = {
       });
     }
     return rtn.length > 0 ? rtn : null;
+  },
+
+
+  getAnswersResourceStatus : function(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
+      formDataSource = this._getFormObjectInScope(formDataSource);
+
+    return formDataSource.checkAnswersResourceStatus();
   }
 
 };
