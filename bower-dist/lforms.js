@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.1.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.2.0\"}");
 
 /***/ }),
 /* 7 */

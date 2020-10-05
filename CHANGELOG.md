@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+
+## [26.2.0] 2020-10-05
+### Added
+- Add a function to check the loading status of the answer lists.
+
 ## [26.1.0] 2020-09-23
 ### Added
 - Support for the FHIR answerExpression extension (with FHIRPath expressions
