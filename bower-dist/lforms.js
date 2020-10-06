@@ -2374,7 +2374,7 @@ LForms.Util = {
     if (resourceType === 'Questionnaire') {
       formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
     } else if (resourceType) {
-      throw new Error('Only Questionnaire FHIR content is supported.');
+      throw new Error('Only Questionnaire FHIR content is supported in addFormToPage.');
     }
 
     if (!this.pageFormID_) this.pageFormID_ = 0;
