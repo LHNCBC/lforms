@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.1.1\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.1.2\"}");
 
 /***/ }),
 /* 7 */
@@ -2342,14 +2342,18 @@ LForms.Util = {
    *  Adds an LForms form to the page.
    * @param formDataDef A form definiton (either JSON or a parsed object).  Also,
    *  for backward compatibility, this can be the name of a global-scope variable
-   *  (on "window") containing that form definition object.
+   *  (on "window") containing that form definition object. A FHIR Questionnaire can be also be
+   *  used as a form definition.
    * @param formContainer The ID of a DOM element to contain the form, or the
    *  element itself.  The contents of this element will be replaced by the form.
    *  This element should be outside the scope of any existing AngularJS app on
    *  the page.
-   * @param options A hash of options (currently just one):
-   *   * prepopulate:  Set to true if you want FHIR prepopulation to happen (if
-   *     the form was an imported FHIR Questionnaire).
+   * @param {Object} [options] A hash of options
+   * @param {boolean} [options.prepopulate] Set to true if you want FHIR prepopulation to happen (if
+   *  the form was an imported FHIR Questionnaire).
+   * @param {string} [options.fhirVersion] Optional, version of FHIR used if formDataDef is a FHIR
+   *  Questionnaire. options are: `R4` or `STU3`. If not provided an attempt will be made to determine
+   *  the version from the Questionnaire content.
    * @return a Promise that will resolve after any needed external FHIR
    *  resources have been loaded (if the form was imported from a FHIR
    *  Questionnaire).
@@ -2361,6 +2365,16 @@ LForms.Util = {
       if (formDataDef.indexOf('{') >= 0) // test for JSON
         formDataDef = JSON.parse(formDataDef);else // backward compatibility
         formDataDef = window[formDataDef];
+    } // If resourceType is specified assume formDataDef is FHIR
+
+
+    var resourceType = formDataDef.resourceType;
+    var fhirVersion = options && options.fhirVersion;
+
+    if (resourceType === 'Questionnaire') {
+      formDataDef = this.convertFHIRQuestionnaireToLForms(formDataDef, fhirVersion);
+    } else if (resourceType) {
+      throw new Error('Only Questionnaire FHIR content is supported in addFormToPage.');
     }
 
     if (!this.pageFormID_) this.pageFormID_ = 0;
