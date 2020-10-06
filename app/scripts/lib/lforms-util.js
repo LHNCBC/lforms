@@ -1051,13 +1051,28 @@ LForms.Util = {
   },
 
 
-
   /**
    *   Returns the part of an LForms form definition that all form definitions
    *   should have.
    */
   baseFormDef: function() {
     return {lformsVersion: LForms.lformsVersion};
+  },
+
+
+  /**
+   * Get a list of warning messages about answer lists, which should have been 
+   * loaded from the URL in answerValueSet but were not.
+   * 
+   * @param {*} formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.   */
+  getAnswersResourceStatus : function(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string')
+      formDataSource = this._getFormObjectInScope(formDataSource);
+
+    return formDataSource.checkAnswersResourceStatus();
   }
 
 };

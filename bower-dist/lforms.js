@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.1.2\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.2.0\"}");
 
 /***/ }),
 /* 7 */
@@ -3325,6 +3325,19 @@ LForms.Util = {
     return {
       lformsVersion: LForms.lformsVersion
     };
+  },
+
+  /**
+   * Get a list of warning messages about answer lists, which should have been 
+   * loaded from the URL in answerValueSet but were not.
+   * 
+   * @param {*} formDataSource Optional.  Either the containing HTML element that
+   *  includes the LForm's rendered form, a CSS selector for that element, an
+   *  LFormsData object, or an LForms form definition (parsed).  If not
+   *  provided, the first form found in the page will be used.   */
+  getAnswersResourceStatus: function getAnswersResourceStatus(formDataSource) {
+    if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
+    return formDataSource.checkAnswersResourceStatus();
   }
 };
 
@@ -4855,6 +4868,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       }
 
       return resReturn;
+    },
+
+    /**
+     * Get a list of warning messages where answer lists are not loaded from URLs
+     * in 'answerValueSet'
+     */
+    checkAnswersResourceStatus: function checkAnswersResourceStatus() {
+      var status = [];
+
+      for (var i = 0, iLen = this.itemList.length; i < iLen; i++) {
+        var item = this.itemList[i];
+
+        if (item.answerValueSet && !item.answers) {
+          status.push("Resource not loaded: " + item.answerValueSet);
+        }
+      }
+
+      return status;
     },
 
     /**
