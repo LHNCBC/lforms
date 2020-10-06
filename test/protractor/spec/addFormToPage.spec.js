@@ -54,6 +54,20 @@ describe('addFormToPage test page', function() {
       });
     });
 
+    it('should be able to be called with FHIR Questionnaire', function () {
+      // Put form USSG-FHP on the page using a FHIR object
+      browser.driver.executeAsyncScript(function () {
+        var callback = arguments[arguments.length - 1];
+        $.getJSON('/data/R4/ussg-fhp.json', function(fhirData) {
+          LForms.Util.addFormToPage(fhirData, 'formContainer', { fhirVersion: 'R4' });
+          callback();
+        });
+      }).then(function () {
+        // Confirm it is there
+        expect($('#formContainer').getText()).toContain("US Surgeon General family health portrait");
+      });
+    });
+
     it('should be able to called a second time with a new form for the same form '+
        'container', function() {
       // Now put form USSG-FHT on the page, using the variable name method
