@@ -1017,6 +1017,14 @@ function addCommonSDCImportFns(ns) {
         "system": qrItemValue.valueCoding.system
       };
     }
+    else if (qrItemValue.valueReference) {
+        retValue = {
+          "reference": qrItemValue.valueReference.reference,
+          "display": qrItemValue.valueReference.display,
+          "type": qrItemValue.valueReference.type,
+          "identifier": qr.ItemValue.valueReference.identifier
+    }
+  }
     // a valueString, which is a user supplied value that is not in the answers
     else if (qrItemValue.valueString) {
       retValue = qrItemValue.valueString;

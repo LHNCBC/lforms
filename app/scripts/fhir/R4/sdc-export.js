@@ -56,6 +56,7 @@ var self = {
       var item = lfData.itemList[i];
       if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
         var obs = this._commonExport._createObservation(item);
+        
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
           // http://hl7.org/fhir/uv/sdc/2019May/extraction.html#observation-based-extraction
@@ -263,12 +264,23 @@ var self = {
       }
       // option's value supports integer, date, time, string and Coding
       // for LForms, all answers are Coding
-      option.valueCoding = {};
-      if (answer.code) option.valueCoding.code = answer.code;
-      if (answer.text) option.valueCoding.display = answer.text;
+      if (answer.reference) {
+        //valueReference
+        option.valueReference = {}
+        option.valueReference.reference = answer.reference;
+        if (answer.display) option.valueReference.display = answer.text;
+        if (answer.identifier) option.valueReference.identifier = answer.identifier;
+        if (answer.type) option.valueReference.type = answer.type;
+      }
 
-      if (answer.system) {
-        option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
+      else {
+        //valueCoding
+        option.valueCoding = {}
+        if (answer.code) option.valueCoding.code = answer.code;
+        if (answer.text) option.valueCoding.display = answer.text;
+        if (answer.system) {
+          option.valueCoding.system = LForms.Util.getCodeSystem(answer.system);
+        }
       }
 
       optionArray.push(option);

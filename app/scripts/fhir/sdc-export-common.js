@@ -828,10 +828,18 @@ function addCommonSDCExportFns(ns) {
             answer = { "valueString" : itemValue };
           }
           else if (!jQuery.isEmptyObject(itemValue)) {
-            var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
-            answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
-            answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
-            answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+            //valuecode
+            if (itemValue.system) {
+              var answerCoding = this._setIfHasValue(null, 'system', LForms.Util.getCodeSystem(itemValue.system));
+              answerCoding = this._setIfHasValue(answerCoding, 'code', itemValue.code);
+              answer = this._setIfHasValue(null, 'valueCoding', answerCoding);
+            }
+            else if (itemValue.reference) {
+              //valuereference
+              answerCoding = this._setIfHasValue(null, 'reference', itemValue.reference);
+              answerCoding = this._setIfHasValue(answerCoding, 'display', itemValue.text);
+              answer = this._setIfHasValue(null, 'valueReference', answerCoding);
+            }
           }
         }
         // for Quantity
