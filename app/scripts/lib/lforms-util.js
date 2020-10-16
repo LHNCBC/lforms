@@ -178,6 +178,28 @@ LForms.Util = {
 
 
   /**
+   * Check to see if all required data is entered in the form and the data is valid
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @return {boolean} true if data entered in form is valid
+   */
+  isValid: function (element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.isValid() : false;
+  },
+
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors
+   */
+  getErrors: function (element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.getErrors() : [];
+  },
+
+
+  /**
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)

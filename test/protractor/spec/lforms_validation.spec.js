@@ -687,4 +687,43 @@ describe('Validations:', function() {
     });
 
   });
+
+
+  describe('form validation', function () {
+    beforeAll(function () {
+      tp.openFullFeaturedForm();
+    });
+
+    it('should not validate when required inputs are emtpy', function () {
+      // Required fields are empty
+      const isValid = browser.driver.executeScript('return LForms.Util.isValid()');
+      expect(isValid).toBe(false);
+
+      const errors = browser.driver.executeScript('return LForms.Util.getErrors()');
+      expect(errors).toEqual([
+        'Required DT field requires a value',
+        'Required DTM field requires a value',
+        'Required TX field requires a value',
+        'Required ST field requires a value'
+      ]);
+    });
+
+    it('should validate when required inputs are entered', function () {
+      // Fill the required fields
+      const dtEl = element(by.id('/required_dt/1'));
+      testUtil.sendKeys(dtEl, '10/16/2020');
+      const dtmEl = element(by.id('/required_dtm/1'));
+      testUtil.sendKeys(dtmEl, '10/16/2020 16:00');
+      const txEl = element(by.id('/required_tx/1'));
+      testUtil.sendKeys(txEl, 'test');
+      const stEl = element(by.id('/required_st/1'));
+      testUtil.sendKeys(stEl, 'test');
+
+      const isValid = browser.driver.executeScript('return LForms.Util.isValid()');
+      expect(isValid).toBe(true);
+
+      const errors = browser.driver.executeScript('return LForms.Util.getErrors()');
+      expect(errors).toEqual([]);
+    });
+  });
 });

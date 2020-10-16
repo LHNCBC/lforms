@@ -1504,7 +1504,7 @@
         }
       }
 
-      var defData = {
+      var defData = { 
         lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -1556,6 +1556,53 @@
       }
       // return a deep copy of the data
       return angular.copy(ret);
+    },
+
+
+    /**
+     * Check to see if all required data is entered in the form and the data is valid
+     * @return {boolean} true if data entered in form is valid
+     */
+    isValid: function () {
+      let valid = true;
+      const itemListLength = this.itemList.length;
+
+      for (let i = 0; i < itemListLength; i++) {
+        const item = this.itemList[i];
+
+        this._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          valid = false;
+          break;
+        }
+      }
+
+      return valid;
+    },
+
+
+    /**
+     * Get a list of errors preventing the form from being valid.
+     * @returns {Array<string>} list of errors
+     */
+    getErrors: function () {
+      const errors = [];
+      const itemListLength = this.itemList.length;
+
+      for (let i = 0; i < itemListLength; i++) {
+        const item = this.itemList[i];
+
+        this._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          const errorDetails = item._validationErrors.map((e) => `${item.question} ${e}`);
+
+          Array.prototype.push.apply(errors, errorDetails);
+        }
+      }
+
+      return errors;
     },
 
 

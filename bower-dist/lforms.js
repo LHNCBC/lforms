@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.2.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.2.1\"}");
 
 /***/ }),
 /* 7 */
@@ -2470,6 +2470,28 @@ LForms.Util = {
   getFormFHIRData: function getFormFHIRData(resourceType, fhirVersion, formDataSource, options) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return this._convertLFormsToFHIRData(resourceType, fhirVersion, formDataSource, options);
+  },
+
+  /**
+   * Check to see if all required data is entered in the form and the data is valid
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @return {boolean} true if data entered in form is valid
+   */
+  isValid: function isValid(element) {
+    var formObj = this._getFormObjectInScope(element);
+
+    return formObj ? formObj.isValid() : false;
+  },
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @param element the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors
+   */
+  getErrors: function getErrors(element) {
+    var formObj = this._getFormObjectInScope(element);
+
+    return formObj ? formObj.getErrors() : [];
   },
 
   /**
@@ -6192,6 +6214,59 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
       return angular.copy(ret);
+    },
+
+    /**
+     * Check to see if all required data is entered in the form and the data is valid
+     * @return {boolean} true if data entered in form is valid
+     */
+    isValid: function isValid() {
+      var valid = true;
+      var itemListLength = this.itemList.length;
+
+      for (var i = 0; i < itemListLength; i++) {
+        var item = this.itemList[i];
+
+        this._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          valid = false;
+          break;
+        }
+      }
+
+      return valid;
+    },
+
+    /**
+     * Get a list of errors preventing the form from being valid.
+     * @returns {Array<string>} list of errors
+     */
+    getErrors: function getErrors() {
+      var _this3 = this;
+
+      var errors = [];
+      var itemListLength = this.itemList.length;
+
+      var _loop3 = function _loop3(i) {
+        var item = _this3.itemList[i];
+
+        _this3._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          var errorDetails = item._validationErrors.map(function (e) {
+            return "".concat(item.question, " ").concat(e);
+          });
+
+          Array.prototype.push.apply(errors, errorDetails);
+        }
+      };
+
+      for (var i = 0; i < itemListLength; i++) {
+        _loop3(i);
+      }
+
+      return errors;
     },
 
     /**
