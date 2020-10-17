@@ -62,40 +62,33 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
         var lfData = this._lfData;
         if (!lfData._fhirVariables.questionnaire) {
           lfData._fhirVariables.questionnaire =
-            this._fhir.SDC.convertLFormsToQuestionnaire(this._lfData);
+            this._fhir.SDC.convertLFormsToQuestionnaire(lfData);
         }
-        this._asyncRunCalculations(true);
+        this._asyncRunCalculations(includeInitialExpr, true);
       }
     },
 
-    // 1) Wait for pending field expression queries, then evaluate variables
-    // 2) If there are pending variable queries, defer further calls to
-    // runCalculations
-    // 3) Wait for pending variable queries, then if anything changed (or
-    // firstCall), run the field/answer expressions; else deferRuns_=false
-    // 4) If there are changes or pending field field/answer queries, go to (1);
-    // otherwise deferRuns_=false
-    // 5) If there is a pendingRun_, go to (1)
-
     /**
-     *  Waits any pending queries and runs the next step if the pending queries
-     *  indicate something has changed.
+     *  Waits any pending queries and runs the next step IF the pending queries
+     *  indicate something has changed, or if runNextStep is true.
      * @param runNextStep if set to true, nextStep will be run even if the
      *  pending queries do not indicate a change.
-     * @param nextStep the function to run the next step.
+     * @param nextStep the function to run the next step, that returns a promise
+     *  which resolves when it is finished.
      * @return a Promise the resolves when everything is finished.
      */
     _handlePendingQueries: function(runNextStep, nextStep) {
       return Promise.allSettled(this.pendingQueries_).then(function(results) {
-        this.pendingQueries_ = []; // reset
+        self.pendingQueries_ = []; // reset
         for (let i=0, len=results.length; !runNextStep && i<len; ++i) {
           if (results[i].value)
             runNextStep = true;
         }
         if (runNextStep)
-          nextStep();
+          return nextStep();
       });
     },
+
 
     /**
      *  This is conceptually a part of runCalculations, but it is this part of
@@ -103,52 +96,48 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      *  The basic algorithm is that first we evaluate the variables, and wait
      *  for any AJAX-based variables to finish loading.  Then we evaluate field
      *  expressions (calculatedExpression and answerExpresion) and again wait
-     *  for any AJAX based expressions to finish loading.
+     *  for any AJAX based expressions to finish loading.  If something has
+     *  changed, we do it again.
+     * @param includeInitialExpr whether to include the "initialExpression"
+     *   expressions (which should only be run once, after asynchronous loads
+     *   from questionnaire-launchContext have been completed).
      * @param firstCall whether this is the first call in a possibly recursive
      *  sequence.  We use this to optimize whether there is a need to evaluate
      *  all of the expressions or just the ones that might have changed.
+     * @return a promise that resolves when all Expressions which needed to be
+     *  processed have been processed and the values have stablized.
      */
-    _asyncRunCalculations: function(firstCall) {
+    _asyncRunCalculations: function(includeInitialExpr, firstCall) {
+      const self = this;
+      const lfData = this._lfData;
       var changed; // whether the calculations result in changed values
       if (firstCall) {
         this._regenerateQuestionnaireResp();
         changed = this._evaluateVariables(lfData);
       }
-      return Promise.allSettled(this.pendingQueries_).then(function(results) {
-        this.pendingQueries_ = []; // reset
-        for (let i=0, len=results.length; !changed && i<len; ++i) {
-          if (results[i].value)
-            changed = true;
-        }
-        if (changed || firstCall) {
-          changed = this._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall);
-          // In the future, field expressions might by asynchronous too.
-          // Adding support for that now.
-          return Promise.allSettled(this.pendingQueries_).then(function(results) {
-            this.pendingQueries_ = []; // reset
-            for (let i=0, len=results.length; !changed && i<len; ++i) {
-              if (results[i].value)
-                changed = true;
-            }
-            if (changed) // then return a new promise
-              return this._asyncRunCalculations(false);
-          });
-        }
+      return this._handlePendingQueries(changed || firstCall, function() {
+        let fieldsChanged =
+          self._evaluateFieldExpressions(lfData, includeInitialExpr, !firstCall);
+        return self._handlePendingQueries(fieldsChanged, function() {
+          return self._asyncRunCalculations(false, false);
+        });
       }).then(()=>{
         // At this point, every promise for the pending queries has been resolved, and we are done.
-        this.deferRuns_ = false; // we are done
-        console.log("Ran FHIRPath expressions in "+(new Date()-this.runStart_)+" ms");
-        if (this.pendingRun_)
-          this.runCalculations(false);
+        self.deferRuns_ = false; // we are done
+        console.log("Ran FHIRPath expressions in "+(new Date()-self.runStart_)+" ms");
+        if (self.pendingRun_)
+          self.runCalculations(false);
       });
     },
 
 
     /**
-     *  Updates the value of an item's FHIR variable.
+     *  Updates the value of an item's FHIR variable.  If the variable value has changed,
+     *  item._varChanged will be set to true.
      * @param item the item on which the variable is defined
      * @param varName the name of the variable
      * @param newVal the new value of the variable.
+     * @return whether the value changed.
      */
     updateItemVariable(item, varName, newVal) {
       var oldVal = item._fhirVariables[varName];
@@ -164,6 +153,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
      * @param item an LFormsData or item from LFormsData.
      */
     _evaluateVariables: function(item) {
+      const self = this;
       var rtn = false;
       var sdc = this._fhir.SDC;
       var variableExts = item._fhirExt && item._fhirExt[sdc.fhirExtVariable];
@@ -191,7 +181,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
             // The expression might have embedded FHIRPath in the URI, inside {{...}}
             queryURI = queryURI.replace(/\{\{([^}]+)\}\}/g, function(match, fpExp) {
               // Replace the FHIRPath with the evaluated expressions
-              var result = this._evaluateFHIRPath(item, fpExp)[0];
+              var result = self._evaluateFHIRPath(item, fpExp)[0];
               return (result === null || result === undefined) ? '' : '' + result;
             });
             var hasCachedResult = this.queryCache_.hasOwnProperty(queryURI);
@@ -200,22 +190,26 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               this.updateItemVariable(item, varName, newVal);
             }
             else { // query not cached
-              this.pendingQueries_.push(fetch(expURL).then(function(response) {
+              // If the queryURI is a relative URL, then if there is a FHIR
+              // context (set via LForms.Util.setFHIRContext), use that to send
+              // the query; otherwise just use fetch.
+              // TBD -- do not approve until resolved
+              this.pendingQueries_.push(fetch(queryURI).then(function(response) {
                 return response.json();
               }).then(function(parsedJSON) {
-                newVal = (this.queryCache_[queryURI] = parsedJSON);
-                this.updateItemVariable(item, varName, newVal);
-                return item._varChanged;
+                newVal = (self.queryCache_[queryURI] = parsedJSON);
+                return self.updateItemVariable(item, varName, newVal);
               }, function fail() {
-                this.updateItemVariable(item, varName, undefined);
-                console.error("Unable to load FHIR data from "+expURL);
-                return item._varChanged;
+                console.error("Unable to load FHIR data from "+queryURI);
+                return self.updateItemVariable(item, varName, undefined);
               }));
             }
           }
           // else CQL (TBD)
         }
-      }
+
+        rtn = item._varChanged;
+      } // if variableExts
       if (item.items) {
         for (let i=0, len=item.items.length; i<len; ++i) {
           var changed = this._evaluateVariables(item.items[i]);
@@ -225,6 +219,7 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       }
       return rtn;
     },
+
 
     /**
      *  Evaluates the expressions that set field values for the given item.
@@ -242,10 +237,10 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
       if (changesOnly) {
         if (item.items && item._varChanged) {
           item._varChanged = false; // clear flag
-          changesOnly = false; // process all child items
+          changesOnly = false; // process this and all child items
         }
       }
-      else { // if (!changesOnly) process this and all child items
+      if (!changesOnly) { // process this and all child items
         item._varChanged = false; // clear flag in case it was set
         const fhirExt = item._fhirExt;
         if (fhirExt) {
@@ -324,6 +319,9 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
     /**
      *  Evaluates the given FHIRPath expression defined in an extension on the
      *  given item.
+     * @param item an LFormsData item.
+     * @param expression the FHIRPath to evaluate with the context of item's
+     *i  equivalent node in the QuestionnaireResponse.
      * @returns the result of the expression.
      */
     _evaluateFHIRPath: function(item, expression) {
