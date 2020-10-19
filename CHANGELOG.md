@@ -3,6 +3,10 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [26.2.1] 2020-10-19
+### Fixed
+- Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly
+
 ## [26.2.0] 2020-10-06
 ### Added
 - Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
