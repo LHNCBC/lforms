@@ -684,7 +684,6 @@
 
     /**
      * Validate user input value
-     * Note: Not currently used since validations are handled in an Angular directive.
      * This might be used in the future.
      * @param item the question item
      * @private
@@ -1560,33 +1559,10 @@
 
 
     /**
-     * Check to see if all required data is entered in the form and the data is valid
-     * @return {boolean} true if data entered in form is valid
-     */
-    isValid: function () {
-      let valid = true;
-      const itemListLength = this.itemList.length;
-
-      for (let i = 0; i < itemListLength; i++) {
-        const item = this.itemList[i];
-
-        this._checkValidations(item);
-
-        if (item._validationErrors !== undefined && item._validationErrors.length) {
-          valid = false;
-          break;
-        }
-      }
-
-      return valid;
-    },
-
-
-    /**
      * Get a list of errors preventing the form from being valid.
-     * @returns {Array<string>} list of errors
+     * @returns {Array<string> | null} list of errors or null if no errors
      */
-    getErrors: function () {
+    checkValidity: function () {
       const errors = [];
       const itemListLength = this.itemList.length;
 
@@ -1602,7 +1578,11 @@
         }
       }
 
-      return errors;
+      if (errors.length) {
+        return errors;
+      } else {
+        return null;
+      }
     },
 
 

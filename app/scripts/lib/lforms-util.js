@@ -178,24 +178,13 @@ LForms.Util = {
 
 
   /**
-   * Check to see if all required data is entered in the form and the data is valid
-   * @param element the containing HTML element that includes the LForm's rendered form.
-   * @return {boolean} true if data entered in form is valid
-   */
-  isValid: function (element) {
-    var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.isValid() : false;
-  },
-
-
-  /**
    * Get a list of errors preventing the form from being valid.
-   * @param element the containing HTML element that includes the LForm's rendered form.
-   * @return {Array<string>} list of errors
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
    */
-  getErrors: function (element) {
+  checkValidity: function (element) {
     var formObj = this._getFormObjectInScope(element);
-    return formObj ? formObj.getErrors() : [];
+    return formObj ? formObj.checkValidity() : null;
   },
 
 

@@ -694,12 +694,9 @@ describe('Validations:', function() {
       tp.openFullFeaturedForm();
     });
 
-    it('should not validate when required inputs are emtpy', function () {
+    it('should not validate when required inputs are empty', function () {
       // Required fields are empty
-      const isValid = browser.driver.executeScript('return LForms.Util.isValid()');
-      expect(isValid).toBe(false);
-
-      const errors = browser.driver.executeScript('return LForms.Util.getErrors()');
+      const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
       expect(errors).toEqual([
         'Required DT field requires a value',
         'Required DTM field requires a value',
@@ -719,11 +716,8 @@ describe('Validations:', function() {
       const stEl = element(by.id('/required_st/1'));
       testUtil.sendKeys(stEl, 'test');
 
-      const isValid = browser.driver.executeScript('return LForms.Util.isValid()');
-      expect(isValid).toBe(true);
-
-      const errors = browser.driver.executeScript('return LForms.Util.getErrors()');
-      expect(errors).toEqual([]);
+      const errors = browser.driver.executeScript('return LForms.Util.checkValidity()');
+      expect(errors).toEqual(null);
     });
   });
 });

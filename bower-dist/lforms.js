@@ -2473,25 +2473,14 @@ LForms.Util = {
   },
 
   /**
-   * Check to see if all required data is entered in the form and the data is valid
-   * @param element the containing HTML element that includes the LForm's rendered form.
-   * @return {boolean} true if data entered in form is valid
-   */
-  isValid: function isValid(element) {
-    var formObj = this._getFormObjectInScope(element);
-
-    return formObj ? formObj.isValid() : false;
-  },
-
-  /**
    * Get a list of errors preventing the form from being valid.
-   * @param element the containing HTML element that includes the LForm's rendered form.
-   * @return {Array<string>} list of errors
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
    */
-  getErrors: function getErrors(element) {
+  checkValidity: function checkValidity(element) {
     var formObj = this._getFormObjectInScope(element);
 
-    return formObj ? formObj.getErrors() : [];
+    return formObj ? formObj.checkValidity() : null;
   },
 
   /**
@@ -5366,7 +5355,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     /**
      * Validate user input value
-     * Note: Not currently used since validations are handled in an Angular directive.
      * This might be used in the future.
      * @param item the question item
      * @private
@@ -6217,32 +6205,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
 
     /**
-     * Check to see if all required data is entered in the form and the data is valid
-     * @return {boolean} true if data entered in form is valid
-     */
-    isValid: function isValid() {
-      var valid = true;
-      var itemListLength = this.itemList.length;
-
-      for (var i = 0; i < itemListLength; i++) {
-        var item = this.itemList[i];
-
-        this._checkValidations(item);
-
-        if (item._validationErrors !== undefined && item._validationErrors.length) {
-          valid = false;
-          break;
-        }
-      }
-
-      return valid;
-    },
-
-    /**
      * Get a list of errors preventing the form from being valid.
-     * @returns {Array<string>} list of errors
+     * @returns {Array<string> | null} list of errors or null if no errors
      */
-    getErrors: function getErrors() {
+    checkValidity: function checkValidity() {
       var _this3 = this;
 
       var errors = [];
@@ -6266,7 +6232,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         _loop3(i);
       }
 
-      return errors;
+      if (errors.length) {
+        return errors;
+      } else {
+        return null;
+      }
     },
 
     /**
