@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.2.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.3.0\"}");
 
 /***/ }),
 /* 7 */
@@ -2470,6 +2470,17 @@ LForms.Util = {
   getFormFHIRData: function getFormFHIRData(resourceType, fhirVersion, formDataSource, options) {
     if (!formDataSource || formDataSource instanceof HTMLElement || typeof formDataSource === 'string') formDataSource = this._getFormObjectInScope(formDataSource);
     return this._convertLFormsToFHIRData(resourceType, fhirVersion, formDataSource, options);
+  },
+
+  /**
+   * Get a list of errors preventing the form from being valid.
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
+   */
+  checkValidity: function checkValidity(element) {
+    var formObj = this._getFormObjectInScope(element);
+
+    return formObj ? formObj.checkValidity() : null;
   },
 
   /**
@@ -5344,7 +5355,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     /**
      * Validate user input value
-     * Note: Not currently used since validations are handled in an Angular directive.
      * This might be used in the future.
      * @param item the question item
      * @private
@@ -6192,6 +6202,41 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
       return angular.copy(ret);
+    },
+
+    /**
+     * Get a list of errors preventing the form from being valid.
+     * @returns {Array<string> | null} list of errors or null if no errors
+     */
+    checkValidity: function checkValidity() {
+      var _this3 = this;
+
+      var errors = [];
+      var itemListLength = this.itemList.length;
+
+      var _loop3 = function _loop3(i) {
+        var item = _this3.itemList[i];
+
+        _this3._checkValidations(item);
+
+        if (item._validationErrors !== undefined && item._validationErrors.length) {
+          var errorDetails = item._validationErrors.map(function (e) {
+            return "".concat(item.question, " ").concat(e);
+          });
+
+          Array.prototype.push.apply(errors, errorDetails);
+        }
+      };
+
+      for (var i = 0; i < itemListLength; i++) {
+        _loop3(i);
+      }
+
+      if (errors.length) {
+        return errors;
+      } else {
+        return null;
+      }
     },
 
     /**

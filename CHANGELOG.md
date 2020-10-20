@@ -3,6 +3,12 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [26.3.0] 2020-10-16
+### Added
+- Added two functions: LForms.Util.isValid, which checks if the form fields are
+  valid and LForms.Util.getErrors to get a list of errors preventing the form
+  from being valid.
+
 ## [26.2.0] 2020-10-06
 ### Added
 - Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
