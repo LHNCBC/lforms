@@ -379,14 +379,17 @@ user to save the form so it can be redisplayed later for completion or editing.<
 
 
   <h3>
-    <a id="validation" class="anchor" href="#validation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Form Validation (version >= 26.3)</h3>
+    <a id="validation" class="anchor" href="#validation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>
+    Form Validation (version >= 26.3)
+  </h3>
 
   <p>Check to see if there are any input errors preventing the form from being valid. Depending
   on the <a href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">form definition</a>
   it can check for required fields and correct format.
   </p>
 
-  <pre><code>LForms.Util.checkValidity(formElement)</code></pre>
+  <pre><code>LForms.Util.checkValidity(formElement)
+  </code></pre>
 
   <p>An array of errors will be returned if the form is invalid.  If the form is
   valid this function returns null.
@@ -395,9 +398,9 @@ user to save the form so it can be redisplayed later for completion or editing.<
   <p>The parameter is:</p>
   
   <ol>
-  <li>formElement - (optional) an HTML element that includes the LForm's rendered form. If
-  this is omitted, the "body" tag will be used.  If there is more than one
-  LForm within formElement, the first found will be used.</li>
+    <li>formElement - (optional) an HTML element that includes the LForm's rendered form. If
+    this is omitted, the "body" tag will be used.  If there is more than one
+    LForm within formElement, the first found will be used.</li>
   </ol>
 
 
