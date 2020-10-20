@@ -178,6 +178,17 @@ LForms.Util = {
 
 
   /**
+   * Get a list of errors preventing the form from being valid.
+   * @param [element] optional, the containing HTML element that includes the LForm's rendered form.
+   * @return {Array<string>} list of errors or null if form is valid
+   */
+  checkValidity: function (element) {
+    var formObj = this._getFormObjectInScope(element);
+    return formObj ? formObj.checkValidity() : null;
+  },
+
+
+  /**
    * Convert LForms data into a FHIR resource
    * @param resourceType a FHIR resource type. it currently supports "DiagnosticReport",
    * "Questionnaire" (both standard Questionnaire and SDC Questionnaire profile)
