@@ -23928,7 +23928,7 @@ function addSDCImportFns(ns) {
 
       if (vs) {
         lfItem.answers = vs.answers;
-      } else lfItem.answerValueSet = qItem.options;
+      } else lfItem.answerValueSet = qItem.options.reference;
     }
   }
   /**

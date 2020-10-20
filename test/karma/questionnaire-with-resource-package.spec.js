@@ -48,7 +48,7 @@ describe('questionnaire with items that have answerValueSet', function () {
     });
   });
 
-  it('should generate errors when loaded without a package file or without FHIR context', function (done) {
+  it('should generate errors when a R4 Q is loaded without a package file or without FHIR context', function (done) {
     var qFile = 'test/data/questionnaire-use-package.json';
 
     $.get(qFile, function(qData) {
@@ -64,4 +64,21 @@ describe('questionnaire with items that have answerValueSet', function () {
     });
   });
 
+  it('should generate errors when a R3 Q is loaded without a package file or without FHIR context', function (done) {
+    var qFile = 'test/data/STU3/4712701.json';
+
+    $.get(qFile, function(qData) {
+      var formData = LForms.Util.convertFHIRQuestionnaireToLForms(qData, 'STU3')
+      var lfData = new LForms.LFormsData(formData);
+      var errors = lfData.checkAnswersResourceStatus();
+      assert.equal(errors.length, 11)
+      assert.equal(errors[0], "Resource not loaded: " + "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode")
+      assert.equal(errors[1], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/ecog")
+      assert.equal(errors[2], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/icd-o-3-m-lunge")
+      assert.equal(errors[10], "Resource not loaded: " + "http://uni-koeln.de/fhir/ValueSet/uicc-lunge")
+      done()
+    }).fail(function (err) {
+      done(err);
+    });
+  });
 });

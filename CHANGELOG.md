@@ -3,6 +3,10 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [26.3.1] 2020-10-19
+### Fixed
+- Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly
+
 ## [26.3.0] 2020-10-16
 ### Added
 - Added two functions: LForms.Util.isValid, which checks if the form fields are

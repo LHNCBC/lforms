@@ -257,7 +257,7 @@
           "required": false,
           "linkId": "/54126-8/54128-4",
           "text": "Adopted",
-          "options": "http://hl7.org/fhir/ValueSet/yesnodontknow"
+          "options": {"reference": "http://hl7.org/fhir/ValueSet/yesnodontknow"}
         },
         {
           "type": "choice",
@@ -538,7 +538,7 @@
           "required": false,
           "linkId": "/54126-8/54133-4",
           "text": "Ethnicity",
-          "options": "http://terminology.hl7.org/ValueSet/v3-Ethnicity"
+          "options": {"reference": "http://terminology.hl7.org/ValueSet/v3-Ethnicity"}
         },
         {
           "type": "group",
@@ -585,7 +585,7 @@
               "required": false,
               "linkId": "/54126-8/54137-5/54140-9",
               "text": "History of diseases",
-              "options": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"
+              "options": {"reference": "http://clinicaltables.nlm.nih.gov/fhir/R4/ValueSet/conditions"}
             },
             {
               "type": "choice",
@@ -1918,7 +1918,7 @@
           "required": false,
           "linkId": "/54114-4/54122-7",
           "text": "Adopted",
-          "options": "http://terminology.hl7.org/ValueSet/v3-MessageWaitingPriority"
+          "options": {"reference": "http://terminology.hl7.org/ValueSet/v3-MessageWaitingPriority"}
         },
         {
           "type": "choice",
