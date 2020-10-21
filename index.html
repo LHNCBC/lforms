@@ -383,9 +383,8 @@ user to save the form so it can be redisplayed later for completion or editing.<
     Form Validation (version >= 26.3)
   </h3>
 
-  <p>Check to see if there are any input errors preventing the form from being valid. Depending
-  on the <a href="https://github.com/lhncbc/lforms/blob/master/form_definition.md">form definition</a>
-  it can check for required fields and correct format.
+  <p>Prior to submitting the form, the form can be checked to make sure required fields are filled
+  in and that the values have the correct format, by using the following function:
   </p>
 
   <pre><code>LForms.Util.checkValidity(formElement)
