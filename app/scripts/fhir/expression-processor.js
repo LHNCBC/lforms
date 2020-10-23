@@ -194,15 +194,20 @@ const deepEqual = require('fast-deep-equal'); // faster than JSON.stringify
               // context (set via LForms.Util.setFHIRContext), use that to send
               // the query; otherwise just use fetch.
               // TBD -- do not approve until resolved
-              this.pendingQueries_.push(fetch(queryURI).then(function(response) {
-                return response.json();
-              }).then(function(parsedJSON) {
-                newVal = (self.queryCache_[queryURI] = parsedJSON);
-                return self.updateItemVariable(item, varName, newVal);
-              }, function fail() {
-                console.error("Unable to load FHIR data from "+queryURI);
-                return self.updateItemVariable(item, varName, undefined);
-              }));
+              if (!/https?:/.test(queryURI) && LForms.fhirContext) {
+                fhirContext.getFHIRAPI().search(queryURI); // TBD
+              }
+              else {
+                this.pendingQueries_.push(fetch(queryURI).then(function(response) {
+                  return response.json();
+                }).then(function(parsedJSON) {
+                  newVal = (self.queryCache_[queryURI] = parsedJSON);
+                  return self.updateItemVariable(item, varName, newVal);
+                }, function fail() {
+                  console.error("Unable to load FHIR data from "+queryURI);
+                  return self.updateItemVariable(item, varName, undefined);
+                }));
+              }
             }
           }
           // else CQL (TBD)
