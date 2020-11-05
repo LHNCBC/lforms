@@ -54,7 +54,8 @@ var self = {
     var rtn = [qr];
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
-      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract] &&
+          item._fhirExt[this.fhirExtObsExtract][0].valueBoolean === true && item.value) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following

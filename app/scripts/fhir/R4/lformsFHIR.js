@@ -22230,7 +22230,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (item._fhirExt && item._fhirExt[this.fhirExtObsLinkPeriod] && item.value) {
+      if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract] && item._fhirExt[this.fhirExtObsExtract][0].valueBoolean === true && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -24566,6 +24566,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtCalculatedExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression";
   self.fhirExtInitialExp = "http://hl7.org/fhir/StructureDefinition/questionnaire-initialExpression";
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
+  self.fhirExtObsExtract = 'http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationExtract';
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.

@@ -3,6 +3,11 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
+## [27.0.0] 2020-11-05
+- Changed the extract behavior to use the Observation Extract Extension
+  http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html 
+  as per https://jira.hl7.org/browse/FHIR-25948 instead of using observationLinkPeriod.
+
 ## [26.3.1] 2020-10-19
 ### Fixed
 - Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly
