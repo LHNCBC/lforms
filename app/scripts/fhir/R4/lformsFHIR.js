@@ -22230,7 +22230,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract] && item._fhirExt[this.fhirExtObsExtract][0].valueBoolean === true && item.value) {
+      if (this._getExtractValue(item) && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -22256,6 +22256,20 @@ var self = {
     }
 
     return rtn;
+  },
+
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+  _getExtractValue: function _getExtractValue(item) {
+    if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract]) {
+      return item._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+    } else if (item._parentItem) {
+      return this._getExtractValue(item._parentItem);
+    } else {
+      return false;
+    }
   },
 
   /**
