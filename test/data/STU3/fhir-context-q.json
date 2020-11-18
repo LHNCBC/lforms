@@ -9,7 +9,7 @@
         },
         {
           "url": "type",
-          "valueCode": "Patient"
+          "valueCode": "patient"
         },
         {
           "url": "descripton",

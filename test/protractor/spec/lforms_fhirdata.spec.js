@@ -773,7 +773,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             // ST field with a default value
             var st = element(by.id('/type4/1'));
             browser.wait(function() {
-              return cwe.isDisplayed();
+              return cwe.isPresent();
             }, tp.WAIT_TIMEOUT_1);
 
             // the default value should not be set
@@ -833,7 +833,9 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           it('should be able to show a converted questionnaire', function() {
             // Check to see that the last question has rendered
-            expect(element(by.id('label-4.3.3.1/1/1/1/1')).getText()).toBe(
+            let label = element(by.id('label-4.3.3.1/1/1/1/1'));
+            testUtil.waitForElementPresent(label);
+            expect(label.getText()).toBe(
               "Rezidiv/Progress aufgetreten *");
           });
 

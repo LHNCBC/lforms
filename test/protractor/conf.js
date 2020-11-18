@@ -75,7 +75,7 @@ exports.config = {
 
   jasmineNodeOpts: {
     // Default time to wait in ms before a test fails.
-    defaultTimeoutInterval: 200000
+    defaultTimeoutInterval: 2000001
   },
 
   onComplete: () => {

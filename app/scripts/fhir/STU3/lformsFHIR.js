@@ -25556,15 +25556,11 @@ function addCommonSDCImportFns(ns) {
             }));
           } else {
             // use FHIR context
-            fhirClient = LForms.fhirContext.getFHIRAPI();
-            pendingPromises.push(fhirClient.search({
-              type: 'ValueSet/$expand',
-              query: {
-                _format: 'application/json',
-                url: item.answerValueSet
-              }
-            }).then(function (response) {
-              var valueSet = response.data;
+            fhirClient = LForms.fhirContext;
+            pendingPromises.push(fhirClient.request(lfData._buildURL(['ValueSet', '$expand'], {
+              url: item.answerValueSet
+            })).then(function (response) {
+              var valueSet = response;
               var answers = self.answersFromVS(valueSet);
 
               if (answers) {

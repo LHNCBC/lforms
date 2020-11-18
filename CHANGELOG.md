@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+##
+### Changes
+- Breaking change:  Supported launchContext code changed from "Patient" to
+  "patient" (lower case), per the current specification.
+
 
 ## [26.3.1] 2020-10-19
 ### Fixed
@@ -16,9 +21,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [26.2.0] 2020-10-06
 ### Added
 - Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
-  of the loading of answer lists. (This only applies to forms defined as a 
+  of the loading of answer lists. (This only applies to forms defined as a
   FHIR Questionnaire.)
-  
+
 ## [26.1.2] 2020-10-05
 ### Added
 - Support for using a FHIR Questionnaire as a form definition in addFormToPage.

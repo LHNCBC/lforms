@@ -333,17 +333,8 @@ LForms.Util = {
    *  For FHIR applications, provides FHIR context information that might be
    *  needed in rendering a Quesitonnaire.
    * @param fhirContext an optional object for accessing a FHIR context and
-   *  FHIR API.  It should define the following operations:
-   *  - getCurrent(typeList, callback):  "typeList" should be a list of desired
-   *    FHIR resource types for which there is conceptually a "current" on in
-   *    the FHIR context (e.g., Patient, or Practitioner).  Only one resource
-   *    from the requested list will be returned, and the result will be null if
-   *    none of the requested resource types are available.  Because retrieving
-   *    the resource will generally be an asynchronous operation, the resource
-   *    will be returned via the first argument to the provided "callback"
-   *    function.
-   *  - getFHIRAPI():  Should return an instance of fhir.js for interacting with
-   *    the FHIR server.
+   *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
+   *  version 2.  (See http://docs.smarthealthit.org/client-js).
    */
   setFHIRContext: function(fhirContext) {
     LForms.fhirContext = fhirContext;
@@ -391,9 +382,9 @@ LForms.Util = {
     if (!LForms._serverFHIRReleaseID) {
       // Retrieve the fhir version
       try {
-        var fhirAPI = LForms.fhirContext.getFHIRAPI();
-        fhirAPI.conformance({}).then(function(res) {
-          var fhirVersion = res.data.fhirVersion;
+        var fhirAPI = LForms.fhirContext;
+        //fhirAPI.request('metadata?_elements=fhirVersion').then(function(res) // causes an error on lforms-smart-fhir (TBD)
+        fhirAPI.getFhirVersion().then(function(fhirVersion) {
           LForms._serverFHIRReleaseID = LForms.Util._fhirVersionToRelease(fhirVersion);
           console.log('Server FHIR version is '+LForms._serverFHIRReleaseID+' ('+
             fhirVersion+')');
@@ -1072,9 +1063,9 @@ LForms.Util = {
 
 
   /**
-   * Get a list of warning messages about answer lists, which should have been 
+   * Get a list of warning messages about answer lists, which should have been
    * loaded from the URL in answerValueSet but were not.
-   * 
+   *
    * @param {*} formDataSource Optional.  Either the containing HTML element that
    *  includes the LForm's rendered form, a CSS selector for that element, an
    *  LFormsData object, or an LForms form definition (parsed).  If not

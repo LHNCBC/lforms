@@ -1,6 +1,9 @@
 var tp = require('./lforms_testpage.po.js');
+const testUtil = require('./util.js');
 
 function waitForDisplayed(ele) {
+  // Note:  A similiar function with a different implementation exists in
+  // util.js
   browser.wait(function() {
     return ele.isDisplayed().then(null, function(err) {
       // Probably a stale element reference.  Get a new promise.
@@ -12,6 +15,8 @@ function waitForDisplayed(ele) {
 }
 
 function waitForNotPresent(ele) {
+  // Note:  A similiar function with a different implementation exists in
+  // util.js
   browser.wait(function() {
     return ele.isPresent().then(function(result){return !result});
   }, tp.WAIT_TIMEOUT_1);
@@ -46,9 +51,9 @@ describe('popover buttons', function() {
   describe('coding instructions help message', function() {
 
     var popover = element(by.css('.lf-de-label .popover-content'));
-    var popverHTMLLink1 = element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
-    var popverHTMLLink2 = element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
-    var popverHTMLLink3 = element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
+    var popoverHTMLLink1 = element(by.css('a[href="http://lforms-demo1.nlm.nih.gov"]'));
+    var popoverHTMLLink2 = element(by.css('a[href="http://lforms-demo2.nlm.nih.gov"]'));
+    var popoverHTMLLink3 = element(by.css('a[href="http://lforms-demo3.nlm.nih.gov"]'));
 
     var codeCheckbox = tp.checkboxesFinder.get(1);
 
@@ -68,10 +73,12 @@ describe('popover buttons', function() {
 
     var field1 = element(by.id("/type0/1"));
 
-    it('should have HTML and/or TEXT content when templateOptions.allowHTMLInInstructions is true', function () {
-
+    beforeAll(function() {
       tp.openFullFeaturedForm();
+    });
 
+
+    it('should have HTML and/or TEXT content when templateOptions.allowHTMLInInstructions is true', function () {
       // popover
       expect(helpButton0.isDisplayed()).toBe(true);
       expect(helpButton1.isDisplayed()).toBe(true);
@@ -88,7 +95,7 @@ describe('popover buttons', function() {
       helpButton1.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink1.isPresent()).toBe(false);
+      expect(popoverHTMLLink1.isPresent()).toBe(false);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
@@ -96,7 +103,7 @@ describe('popover buttons', function() {
       helpButton2.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink2.isPresent()).toBe(false);
+      expect(popoverHTMLLink2.isPresent()).toBe(false);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
@@ -104,7 +111,7 @@ describe('popover buttons', function() {
       helpButton3.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink3.isDisplayed()).toBe(true);
+      expect(popoverHTMLLink3.isDisplayed()).toBe(true);
 
       // inline
       codeCheckbox.click();
@@ -142,7 +149,7 @@ describe('popover buttons', function() {
       helpButton1.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink1.isPresent()).toBe(false);
+      expect(popoverHTMLLink1.isPresent()).toBe(false);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo1.nlm.nih.gov'>LForms Demo 1</a>");
 
       field1.click();
@@ -150,7 +157,7 @@ describe('popover buttons', function() {
       helpButton2.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink2.isPresent()).toBe(false);
+      expect(popoverHTMLLink2.isPresent()).toBe(false);
       expect(popover.getText()).toBe("<code>HTML</code> instructions, with a <button>button</button> and a link <a href='http://lforms-demo2.nlm.nih.gov'>LForms Demo 2</a>");
 
       field1.click();
@@ -170,18 +177,17 @@ describe('popover buttons', function() {
 
       expect(inline3b.isDisplayed()).toBe(true);
       expect(inlineHTMLLink3b.isPresent()).toBe(false);
-
-
     });
 
-    it('should be display HTML/Text formatted coding instructions from FHIR R4 Questionnaire', function() {
-      tp.loadFromTestData('ussg-fhp.json', 'R4');
 
+    it('should be able to display HTML/Text formatted coding instructions from '+
+       'FHIR R4 Questionnaire', function() {
+      tp.loadFromTestData('ussg-fhp.json', 'R4');
 
       var nameHelpButton = element(by.id("helpButton-/54126-8/54125-0/1/1"));
       var genderHelpButton = element(by.id("helpButton-/54126-8/54131-8/1/1"));
       var gender = element(by.id("/54126-8/54131-8/1/1"));
-      var popverHTMLLink = element(by.css('a[href="http://google.com"]'));
+      var popoverHTMLLink = element(by.css('a[href="http://google.com"]'));
 
       waitForDisplayed(nameHelpButton);
       expect(nameHelpButton.isDisplayed()).toBe(true);
@@ -191,7 +197,8 @@ describe('popover buttons', function() {
       nameHelpButton.click();
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink.isDisplayed()).toBe(true);
+      testUtil.waitForElementDisplayed(popoverHTMLLink);
+      expect(popoverHTMLLink.isDisplayed()).toBe(true);
 
       gender.click()
 
@@ -200,7 +207,7 @@ describe('popover buttons', function() {
       popover = element(by.css('.lf-de-label .popover-content')); // refresh
       waitForDisplayed(popover);
       expect(popover.isDisplayed()).toBe(true);
-      expect(popverHTMLLink.isPresent()).toBe(false);
+      expect(popoverHTMLLink.isPresent()).toBe(false);
 
     });
 

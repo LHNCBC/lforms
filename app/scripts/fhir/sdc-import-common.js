@@ -980,19 +980,20 @@ function addCommonSDCImportFns(ns) {
             }));
           }
           else { // use FHIR context
-            var fhirClient = LForms.fhirContext.getFHIRAPI();
-            pendingPromises.push(fhirClient.search({type: 'ValueSet/$expand',
-              query: {_format: 'application/json', url: item.answerValueSet}}).then(function(response) {
-                var valueSet = response.data;
-                var answers = self.answersFromVS(valueSet);
-                if (answers) {
-                  LForms._valueSetAnswerCache[vsKey] = answers;
-                  item.answers = answers;
-                  lfData._updateAutocompOptions(item, true);
-                }
-              }, function fail() {
-                throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
-              }));
+            var fhirClient = LForms.fhirContext;
+            pendingPromises.push(fhirClient.request(lfData._buildURL(
+              ['ValueSet','$expand'], {url: item.answerValueSet})
+            ).then(function(response) {
+              var valueSet = response;
+              var answers = self.answersFromVS(valueSet);
+              if (answers) {
+                LForms._valueSetAnswerCache[vsKey] = answers;
+                item.answers = answers;
+                lfData._updateAutocompOptions(item, true);
+              }
+            }, function fail() {
+              throw new Error("Unable to load ValueSet "+item.answerValueSet+ " from FHIR server");
+            }));
           }
         }
       }
