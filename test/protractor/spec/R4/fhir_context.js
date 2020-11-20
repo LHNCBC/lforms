@@ -14,17 +14,6 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
     };
   }
 
-  var weightCode = {
-    "coding": [
-      {
-        "system": "http://loinc.org",
-        "code": "29463-7",
-        "display": "Body Weight"
-      }
-    ],
-    "text": "Body Weight"
-  };
-
   return {
     getCurrent:  function(typeList, callback) {
       var rtn = null;
@@ -62,7 +51,16 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
           };
           switch(queryParams.query.code) {
             case 'http://loinc.org|29463-7':
-              entry.resource.code = weightCode;
+              entry.resource.code = {
+                "coding": [
+                  {
+                    "system": "http://loinc.org",
+                    "code": "29463-7",
+                    "display": "Body Weight"
+                  }
+                ],
+                "text": "Body Weight"
+              };
               entry.resource.valueQuantity = weightQuantity;
               break;
             case 'http://loinc.org|44250-9':
