@@ -129,7 +129,7 @@ describe('Form pre-population', function() {
         });
 
         it('should populate observationLinkPeriod fields when multiple codes are present', function () {
-          tp.loadFromTestData('weightHeightQuestionnaireMultipleCodes.json', 'R4');
+          tp.loadFromTestData('multipleCodes.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
           browser.wait(EC.presenceOf(weightField), 2000);
           browser.wait(function () {return weightField.getAttribute('value').then(function (val) {
