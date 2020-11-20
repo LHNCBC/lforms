@@ -14,6 +14,17 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
     };
   }
 
+  var weightCode = {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "29463-7",
+        "display": "Body Weight"
+      }
+    ],
+    "text": "Body Weight"
+  };
+
   return {
     getCurrent:  function(typeList, callback) {
       var rtn = null;
@@ -51,16 +62,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
           };
           switch(queryParams.query.code) {
             case 'http://loinc.org|29463-7':
-              entry.resource.code = {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "29463-7",
-                    "display": "Body Weight"
-                  }
-                ],
-                "text": "Body Weight"
-              };
+              entry.resource.code = weightCode;
               entry.resource.valueQuantity = weightQuantity;
               break;
             case 'http://loinc.org|44250-9':
@@ -85,6 +87,27 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
                 "text": "Not at all"
               };
               break;
+            case 'http://example.org|example,http://loinc.org|29463-7':
+              entry.resource.code = {
+                "coding": [
+                  {
+                    "system": "http://example.org",
+                    "code": "example",
+                    "display": "Example"
+                  }
+                ],
+                "text": "Example"
+              };
+              entry.resource.valueQuantity = weightQuantity;
+              entry.resource.valueQuantity.value = 96;
+              entry.resource.effectiveDateTime = "2020-06-29T19:14:57-04:00";
+              entry.resource.issued = "2020-06-29T19:14:57-04:00";
+              // Need a deep copy of the data
+              entry = [entry, JSON.parse(JSON.stringify(entry))];
+              entry[1].resource.valueQuantity.value = 95;
+              entry[1].resource.effectiveDateTime = "2016-06-29T19:14:57-04:00";
+              entry[1].resource.issued = "2016-06-29T19:14:57-04:00";
+              break;
             default:
               entry = null;
               break;
@@ -96,8 +119,11 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
                 "resourceType": "Bundle",
                 "type": "searchset",
               };
-              if (entry)
+              if (entry && entry.length) {
+                data.entry = entry;
+              } else if (entry) {
                 data.entry = [entry];
+              }
               setTimeout(function() { // preserve expected async behavior
                 callback({data: data});
               });
