@@ -3,7 +3,7 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
-## [27.1.0] 2020-11-24
+## [26.4.0] 2020-12-01
 ### Added
 - Multiple code support for observationLinkPeriod prepopulation.
 
