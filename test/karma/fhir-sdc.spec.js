@@ -340,6 +340,148 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
+          it('should covert answer layout to choice orientation: columns="1" ==> "vertical"', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+              "dataType": "CNE",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "columns": "1"
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }]
+              };
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
+            assert.equal(out.type, "choice");
+            assert.deepEqual(out.extension, [
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                      "coding": [
+                          {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "check-box",
+                              "display": "Check-box"
+                          }
+                      ],
+                      "text": "Check-box"
+                  }
+              },
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                  "valueCode": "vertical"
+              }
+            ]);
+          });
+
+          it('should covert answer layout to choice orientation: columns="0" ==> "horizontal"', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 row",
+              "dataType": "CNE",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "columns": "0"
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }]
+              };
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
+            assert.equal(out.type, "choice");
+            assert.deepEqual(out.extension, [
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                      "coding": [
+                          {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "check-box",
+                              "display": "Check-box"
+                          }
+                      ],
+                      "text": "Check-box"
+                  }
+              },
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                  "valueCode": "horizontal"
+              }
+            ]);
+            
+          });
+
+          it('should not covert answer layout to choice orientation, if columns is not "0" or "1"', function () {
+            var item = {
+              "questionCode": "q1c",
+              "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
+              "dataType": "CNE",
+              "answerCardinality": {
+                "min": "0",
+                "max": "*"
+              },
+              "displayControl": {
+                "answerLayout": {
+                  "type": "RADIO_CHECKBOX",
+                  "columns": "2"
+                }
+              },
+              "answers": [
+                {
+                  "code": "c1",
+                  "text": "Answer X"
+                },
+                {
+                  "code": "c2",
+                  "text": "Answer Y"
+                }]
+              };
+            var out = fhir.SDC._processItem(LForms.Util.initializeCodes(item), {});
+            assert.equal(out.type, "choice");
+            assert.deepEqual(out.extension, [
+              {
+                  "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                  "valueCodeableConcept": {
+                      "coding": [
+                          {
+                              "system": "http://hl7.org/fhir/questionnaire-item-control",
+                              "code": "check-box",
+                              "display": "Check-box"
+                          }
+                      ],
+                      "text": "Check-box"
+                  }
+              }
+            ]);
+            
+          });
+
           it('should convert an item with CNE data type without answerCodeSystem', function () {
             var cneFixture = window[fhirVersion+'_'+'cneDataTypeFixture'];
             var out = fhir.SDC._processItem(LForms.Util.initializeCodes(cneFixture.input), {});
@@ -644,6 +786,121 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.items[0].prefix, "A:");
             assert.equal(out.items[1].prefix, undefined);
           });
+
+          it('should covert choice orientation to answer layout:: "vertical" ==> columns="1"', function () {
+            var qItem = {
+              "type": "choice",
+              "code": [
+                  {
+                      "code": "q1c",
+                      "display": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column"
+                  }
+              ],
+              "extension": [
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                          "coding": [
+                              {
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                  "code": "check-box",
+                                  "display": "Check-box"
+                              }
+                          ],
+                          "text": "Check-box"
+                      }
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "vertical"
+                  }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+              "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "c1",
+                        "display": "Answer X"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "c2",
+                        "display": "Answer Y"
+                    }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "columns": "1"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
+          it('should covert choice orientation to answer layout:: "horizontal" ==> columns="0"', function () {
+            var qItem = {
+              "type": "choice",
+              "code": [
+                  {
+                      "code": "q1c",
+                      "display": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column"
+                  }
+              ],
+              "extension": [
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl",
+                      "valueCodeableConcept": {
+                          "coding": [
+                              {
+                                  "system": "http://hl7.org/fhir/questionnaire-item-control",
+                                  "code": "check-box",
+                                  "display": "Check-box"
+                              }
+                          ],
+                          "text": "Check-box"
+                      }
+                  },
+                  {
+                      "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+                      "valueCode": "horizontal"
+                  }
+              ],
+              "required": false,
+              "linkId": "/q1c",
+              "text": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
+              "answerOption": [
+                {
+                    "valueCoding": {
+                        "code": "c1",
+                        "display": "Answer X"
+                    }
+                },
+                {
+                    "valueCoding": {
+                        "code": "c2",
+                        "display": "Answer Y"
+                    }
+                }
+              ]
+            };
+            var itemDisplayControl =  {
+              "answerLayout": {
+                "type": "RADIO_CHECKBOX",
+                "columns": "0"
+              }
+            };
+            var targetItem = {};
+            fhir.SDC._processDisplayControl(targetItem, qItem);
+            assert.deepEqual(targetItem.displayControl, itemDisplayControl);
+          });
+
 
           it('should convert FHTData to lforms', function (done) {
             $.get('/base/app/data/FHTData.json', function (FHTData) {
