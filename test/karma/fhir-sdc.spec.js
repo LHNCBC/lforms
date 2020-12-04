@@ -293,7 +293,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(fhirCodeSystem, "http://loinc.org");
           });
 
-          it('should covert an item with ST data type', function () {
+          it('should convert an item with ST data type', function () {
             var item = {
               "questionCodeSystem":"LOINC",
               "questionCode": "54125-0",
@@ -323,7 +323,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out3.extension[0].valueInteger, 2);
           });
 
-          it('should covert an item with QTY data type to type quantity in FHIR Questionnaire', function () {
+          it('should convert an item with QTY data type to type quantity in FHIR Questionnaire', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
               "questionCode": "12345",
@@ -340,7 +340,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should covert answer layout to choice orientation: columns="1" ==> "vertical"', function () {
+          it('should convert answer layout to choice orientation: columns="1" ==> "vertical"', function () {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 column",
@@ -388,7 +388,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             ]);
           });
 
-          it('should covert answer layout to choice orientation: columns="0" ==> "horizontal"', function () {
+          it('should convert answer layout to choice orientation: columns="0" ==> "horizontal"', function () {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --1 row",
@@ -437,7 +437,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             
           });
 
-          it('should not covert answer layout to choice orientation, if columns is not "0" or "1"', function () {
+          it('should not convert answer layout to choice orientation, if columns is not "0" or "1"', function () {
             var item = {
               "questionCode": "q1c",
               "question": "Answer RADIO_CHECKBOX layout --CNE, Multiple, --2 column",
@@ -758,7 +758,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
 
           });
 
-          it('should covert prefix of an item', function () {
+          it('should convert prefix of an item', function () {
             var fhirData = {
               title: 'test title',
               name: 'test name',
@@ -787,7 +787,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.equal(out.items[1].prefix, undefined);
           });
 
-          it('should covert choice orientation to answer layout:: "vertical" ==> columns="1"', function () {
+          it('should convert choice orientation to answer layout:: "vertical" ==> columns="1"', function () {
             var qItem = {
               "type": "choice",
               "code": [
@@ -844,7 +844,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             assert.deepEqual(targetItem.displayControl, itemDisplayControl);
           });
 
-          it('should covert choice orientation to answer layout:: "horizontal" ==> columns="0"', function () {
+          it('should convert choice orientation to answer layout:: "horizontal" ==> columns="0"', function () {
             var qItem = {
               "type": "choice",
               "code": [
@@ -1251,7 +1251,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
-          it('should covert a prefix of an item', function () {
+          it('should convert a prefix of an item', function () {
             var item = {
               "questionCode": "12345",
               "prefix": "A:",
@@ -1418,7 +1418,7 @@ for (var i=0, len=fhirVersions.length; i<len; ++i) {
             });
           });
 
-          it('should covert an item of QTY to valueQuantity in FHIR QuestionnaireResponse', function () {
+          it('should convert an item of QTY to valueQuantity in FHIR QuestionnaireResponse', function () {
             var item = {
               "questionCodeSystem":"ad-hoc",
               "questionCode": "12345",
