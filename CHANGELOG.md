@@ -8,6 +8,10 @@ This project follows [Semantic Versioning](http://semver.org/).
   http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html 
   as per https://jira.hl7.org/browse/FHIR-25948 instead of using observationLinkPeriod.
 
+## [26.4.0] 2020-12-01
+### Added
+- Multiple code support for observationLinkPeriod prepopulation.
+
 ## [26.3.1] 2020-10-19
 ### Fixed
 - Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly

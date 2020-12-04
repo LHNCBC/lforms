@@ -128,6 +128,33 @@ describe('Form pre-population', function() {
           });
         });
 
+        it('should populate observationLinkPeriod fields when multiple codes are present', function () {
+          tp.loadFromTestData('multipleCodes.json', 'R4');
+          var weightField = element(by.id('/29463-7/1'));
+          browser.wait(EC.presenceOf(weightField), 2000);
+          browser.wait(function () {return weightField.getAttribute('value').then(function (val) {
+            return val == '96'
+          })}, 1000);
+          expect(weightField.getAttribute('value')).toBe('96');
+        });
+
+        it('should extract observationLinkPeriod fields when multiple codes are present', function (done) {
+          // Follows previous test on population
+          var releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
+          var resourcesPromise = browser.executeScript(
+            'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
+            releaseVersion + '", null, {"extract": true})');
+          resourcesPromise.then((resources) => {
+            expect(resources.length).toBe(2); // One QR and one observation
+            var obs = resources[1];
+            expect(obs.code.coding.length).toEqual(2);
+            expect(obs.resourceType).toBe("Observation");
+            expect(obs.valueQuantity.value).toEqual(96);
+            expect(obs.valueQuantity.code).toEqual('kg');
+            done();
+          });
+        });
+
         it('should not load values from observationLinkPeriod if prepopulation is disabled', function() {
           setServerFHIRContext(serverFHIRNum);
           setFHIRPrepopulation(false);
