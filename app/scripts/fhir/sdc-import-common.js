@@ -33,6 +33,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
+  self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
 
   self.fhirExtUrlRestrictionArray = [
     self.fhirExtUrlMinValue,

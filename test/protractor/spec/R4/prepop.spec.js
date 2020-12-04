@@ -74,8 +74,7 @@ describe('Form pre-population', function() {
       var launchContextExt = browser.executeScript(function(fhirVersion) {
         var q2Data = LForms.Util.getFormFHIRData('Questionnaire', fhirVersion);
         return LForms.Util.findObjectInArray(q2Data.extension, 'url',
-          "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext",
-          0);
+          LForms.FHIR.R4.SDC.fhirExtLaunchContext, 0);
       }, fhirVersion);
       expect(launchContextExt).not.toBeNull();
     });

@@ -352,61 +352,10 @@
       }
       var lfData = this;
 
-      var pendingPromises = [];
-
-      // launchContext
-      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
-        "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-      const supportedContexts = {patient: 1, user: 1, encounter: 1};
-      for (var i=0, len=contextItems.length; i<len; ++i) {
-        let contextItemExt = contextItems[i].extension;
-        let name=null, type=null;
-
-        for (var j=0, jLen=contextItemExt.length; j<jLen && !(name && type); ++j) {
-          var fieldExt = contextItemExt[j];
-          if (!name && fieldExt.url === 'name') {
-            name = fieldExt.valueId;
-            this._checkFHIRVarName(name); // might throw
-          }
-          else if (fieldExt.url === 'type') {
-            let typeCode = fieldExt.valueCode;
-            if (supportedContexts[typeCode])
-              type = typeCode;
-          }
-        }
-        if (name && type) {
-          pendingPromises.push(new Promise(function(resolve, reject) {
-            let contextResource = LForms.fhirContext[type];
-            if (!contextResource.id) {
-              console.error('A context resource of type '+type+' was requested, '+
-                'but none was available');
-              // The loading of this resource should not be critical for the
-              // Questionnaire, because it is just for prepopulation.  Don't
-              // reject the promise.
-              resolve();
-            }
-            else {
-              contextResource.read().then(function(resource) {
-                if (resource)
-                  lfData._fhirVariables[name] = resource;
-                resolve();
-              },
-              function fail(reason) {
-                console.log('A context resource of type '+type+' was requested, '+
-                  'but could not be read.');
-                console.error(reason);
-                resolve(); // per above, we are not rejecting the promise
-              });
-            }
-          }));
-        }
-      }
+      var sdc = this._fhir.SDC;
+      var pendingPromises = sdc.loadLaunchContext(this);
 
       // answerValueSet (for prefetched lists)
-      // For this import, we don't actually care which version of FHIR;
-      // the implementation is common.  If either support file is loaded use
-      // that (for both the terminology server case and the FHIR server case).
-      var sdc = this._getFHIRSupport().SDC;
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
 
       if (prepopulate)

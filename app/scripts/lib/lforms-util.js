@@ -332,11 +332,16 @@ LForms.Util = {
   /**
    *  For FHIR applications, provides FHIR context information that might be
    *  needed in rendering a Quesitonnaire.
+   *  Priort to calling this, the LHC-Forms FHIR support files should be loaded.
    * @param fhirContext an optional object for accessing a FHIR context and
    *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
    *  version 2.  (See http://docs.smarthealthit.org/client-js).
    */
   setFHIRContext: function(fhirContext) {
+    if (!LForms.FHIR) {
+      throw new Error('LHC-Forms FHIR support files have not been loaded.' +
+        'See http://lhncbc.github.io/lforms/#fhirScripts');
+    }
     LForms.fhirContext = fhirContext;
     LForms.fhirCapabilities = {}; // our own flags about what the server can do
     delete LForms._serverFHIRReleaseID; // in case the version changed

@@ -2614,11 +2614,16 @@ LForms.Util = {
   /**
    *  For FHIR applications, provides FHIR context information that might be
    *  needed in rendering a Quesitonnaire.
+   *  Priort to calling this, the LHC-Forms FHIR support files should be loaded.
    * @param fhirContext an optional object for accessing a FHIR context and
    *  a FHIR API.  It should be an instance of 'client-js', a.k.a. npm package fhirclient,
    *  version 2.  (See http://docs.smarthealthit.org/client-js).
    */
   setFHIRContext: function setFHIRContext(fhirContext) {
+    if (!LForms.FHIR) {
+      throw new Error('LHC-Forms FHIR support files have not been loaded.' + 'See http://lhncbc.github.io/lforms/#fhirScripts');
+    }
+
     LForms.fhirContext = fhirContext;
     LForms.fhirCapabilities = {}; // our own flags about what the server can do
 
@@ -4971,77 +4976,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  should be set to false (which is the default).
      */
     loadFHIRResources: function loadFHIRResources(prepopulate) {
-      var _this = this;
-
       if (!LForms.fhirContext) {
         throw new Error('LForms.Util.setFHIRContext() must be called before loadFHIRResources');
       }
 
       var lfData = this;
-      var pendingPromises = []; // launchContext
-
-      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url', "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-      var supportedContexts = {
-        patient: 1,
-        user: 1,
-        encounter: 1
-      };
-
-      var _loop = function _loop() {
-        var contextItemExt = contextItems[i].extension;
-        var name = null,
-            type = null;
-
-        for (j = 0, jLen = contextItemExt.length; j < jLen && !(name && type); ++j) {
-          fieldExt = contextItemExt[j];
-
-          if (!name && fieldExt.url === 'name') {
-            name = fieldExt.valueId;
-
-            _this._checkFHIRVarName(name); // might throw
-
-          } else if (fieldExt.url === 'type') {
-            var typeCode = fieldExt.valueCode;
-            if (supportedContexts[typeCode]) type = typeCode;
-          }
-        }
-
-        if (name && type) {
-          pendingPromises.push(new Promise(function (resolve, reject) {
-            var contextResource = LForms.fhirContext[type];
-
-            if (!contextResource.id) {
-              console.error('A context resource of type ' + type + ' was requested, ' + 'but none was available'); // The loading of this resource should not be critical for the
-              // Questionnaire, because it is just for prepopulation.  Don't
-              // reject the promise.
-
-              resolve();
-            } else {
-              contextResource.read().then(function (resource) {
-                if (resource) lfData._fhirVariables[name] = resource;
-                resolve();
-              }, function fail(reason) {
-                console.log('A context resource of type ' + type + ' was requested, ' + 'but could not be read.');
-                console.error(reason);
-                resolve(); // per above, we are not rejecting the promise
-              });
-            }
-          }));
-        }
-      };
-
-      for (var i = 0, len = contextItems.length; i < len; ++i) {
-        var j, jLen;
-        var fieldExt;
-
-        _loop();
-      } // answerValueSet (for prefetched lists)
-      // For this import, we don't actually care which version of FHIR;
-      // the implementation is common.  If either support file is loaded use
-      // that (for both the terminology server case and the FHIR server case).
-
-
-      var sdc = this._getFHIRSupport().SDC;
+      var sdc = this._fhir.SDC;
+      var pendingPromises = sdc.loadLaunchContext(this); // answerValueSet (for prefetched lists)
 
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
       if (prepopulate) pendingPromises.push(this._requestLinkedObs());
@@ -5161,7 +5102,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      *  any prepopulation has been performed.
      */
     _requestLinkedObs: function _requestLinkedObs() {
-      var _this2 = this;
+      var _this = this;
 
       if (LForms.fhirContext && this._fhir) {
         // We will need to know what version of FHIR the server is using.  Make
@@ -5181,8 +5122,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           var serverFHIR = LForms.FHIR[LForms._serverFHIRReleaseID];
           var obsLinkURI = this._fhir.SDC.fhirExtObsLinkPeriod;
 
-          var _loop2 = function _loop2() {
-            var item = _this2.itemList[i];
+          var _loop = function _loop() {
+            var item = _this.itemList[i];
             var obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
 
             if (obsExt) {
@@ -5217,7 +5158,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
               // this too             // resolved promise.  Wrap it in a Promise object.
 
 
-              pendingPromises.push(fhirClient.patient.request(_this2._buildURL(['Observation'], queryParams)).then(function (successData) {
+              pendingPromises.push(fhirClient.patient.request(_this._buildURL(['Observation'], queryParams)).then(function (successData) {
                 var bundle = successData;
 
                 if (bundle.entry) {
@@ -5248,7 +5189,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             var result;
             var date;
 
-            _loop2();
+            _loop();
           }
 
           return Promise.all(pendingPromises);
@@ -6207,15 +6148,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
      * @returns {Array<string> | null} list of errors or null if no errors
      */
     checkValidity: function checkValidity() {
-      var _this3 = this;
+      var _this2 = this;
 
       var errors = [];
       var itemListLength = this.itemList.length;
 
-      var _loop3 = function _loop3(i) {
-        var item = _this3.itemList[i];
+      var _loop2 = function _loop2(i) {
+        var item = _this2.itemList[i];
 
-        _this3._checkValidations(item);
+        _this2._checkValidations(item);
 
         if (item._validationErrors !== undefined && item._validationErrors.length) {
           var errorDetails = item._validationErrors.map(function (e) {
@@ -6227,7 +6168,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       };
 
       for (var i = 0; i < itemListLength; i++) {
-        _loop3(i);
+        _loop2(i);
       }
 
       if (errors.length) {

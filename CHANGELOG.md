@@ -4,8 +4,6 @@ This project follows [Semantic Versioning](http://semver.org/).
 
 ##
 ### Changes
-- Breaking change:  Supported launchContext code changed from "Patient" to
-  "patient" (lower case), per the current specification.
 
 
 ## [26.3.1] 2020-10-19
