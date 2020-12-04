@@ -529,8 +529,6 @@
                   queryParams._lastUpdated = 'gt'+date.toISOString();
                 }
               }
-// TBD -delete              // I'm not sure why, but fhirjs.search.then() returns an already
-// this too             // resolved promise.  Wrap it in a Promise object.
               pendingPromises.push(
                 fhirClient.patient.request(this._buildURL(['Observation'],
                   queryParams)
