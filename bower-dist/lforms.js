@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.4.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"26.4.1\"}");
 
 /***/ }),
 /* 7 */
@@ -5184,20 +5184,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             if (obsExt) {
               // an array of at least 1 if present
               duration = obsExt[0].valueDuration; // optional
+              // Get a comma separated list of codes
 
-              itemCodeSystem = item.questionCodeSystem;
-              if (itemCodeSystem === 'LOINC') itemCodeSystem = serverFHIR.LOINC_URI;
-              fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
+              var codeQuery = item.codeList.map(function (code) {
+                var codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
+                return [codeSystem, code.code].join('|');
+              }).join(',');
+              var fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
 
-              queryParams = {
+              var queryParams = {
                 type: 'Observation',
                 query: {
-                  code: itemCodeSystem + '|' + item.questionCode,
+                  code: codeQuery,
                   _sort: '-date',
-                  _count: 5
+                  _count: 5 // only need one, but we need to filter out focus=true below
+
                 }
-              }; // only need one, but we need to filter out focus=true below
-              // Temporarily disabling the addition of the focus search
+              }; // Temporarily disabling the addition of the focus search
               // parameter, because of support issues.  Instead, for now, we
               // will check the focus parameter when the Observation is
               // returned.  Later, we might query the server to find out whether
@@ -5244,9 +5247,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
           for (var i = 0, len = this.itemList.length; i < len; ++i) {
             var duration;
-            var itemCodeSystem;
-            var fhirjs;
-            var queryParams;
             var result;
             var date;
 

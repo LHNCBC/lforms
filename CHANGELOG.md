@@ -3,9 +3,13 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 
-## [26.4.0] 2020-12-02
+## [26.4.1] 2020-12-02
 ### Added
 - Support for the FHIR questionnaire choice orientation extension.
+
+## [26.4.0] 2020-12-01
+### Added
+- Multiple code support for observationLinkPeriod prepopulation.
 
 ## [26.3.1] 2020-10-19
 ### Fixed
