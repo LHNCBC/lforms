@@ -2,9 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-##
+## [27.0.0]
 ### Changes
-
+- Breaking change to FHIR support.  LForms.Util.setFHIRContext now takes an
+  instance of 'client-js', a.k.a. npm package fhirclient,
+  version 2.  (See http://docs.smarthealthit.org/client-js).
 
 ## [26.4.0] 2020-12-01
 ### Added

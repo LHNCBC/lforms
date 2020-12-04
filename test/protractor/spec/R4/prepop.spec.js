@@ -83,9 +83,13 @@ describe('Form pre-population', function() {
     for (let serverFHIRNum of ['3.0', '4.0']) {
       describe('by observationLinkPeriod with server FHIR version '+serverFHIRNum,
                function() {
-        it('should load values from observationLinkPeriod', function() {
+        beforeAll(() => {
           tp.openBaseTestPage();
           setServerFHIRContext(serverFHIRNum);
+        });
+
+
+        it('should load values from observationLinkPeriod', function() {
           tp.loadFromTestData('weightHeightQuestionnaire.json', 'R4');
           var weightField = element(by.id('/29463-7/1'));
           browser.wait(EC.presenceOf(weightField), 2000);
@@ -98,8 +102,6 @@ describe('Form pre-population', function() {
         });
 
         it('should populate observationLinkPeriod fields that are not top-level', function() {
-          //tp.openBaseTestPage();
-          //setServerFHIRContext(serverFHIRNum);
           tp.loadFromTestData('ussg-fhp.json', 'R4');
           var weightField = element(by.id('/54126-8/29463-7/1/1'));
           browser.wait(EC.presenceOf(weightField), 2000);
