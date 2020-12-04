@@ -48,6 +48,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
         };
         let url = new URL(relativeURL, 'https://example.com');
         let params = url.searchParams;
+        let entries = [];
 
         switch(params.get('code')) {
           case 'http://loinc.org|29463-7':
@@ -62,6 +63,7 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
               "text": "Body Weight"
             };
             entry.resource.valueQuantity = weightQuantity;
+            entries.push(entry);
             break;
           case 'http://loinc.org|44250-9':
             entry.resource.code = {
@@ -84,6 +86,30 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
               ],
               "text": "Not at all"
             };
+            entries.push(entry);
+            break;
+          case 'http://example.org|example,http://loinc.org|29463-7':
+            entry.resource.code = {
+              "coding": [
+                {
+                  "system": "http://example.org",
+                  "code": "example",
+                  "display": "Example"
+                }
+              ],
+              "text": "Example"
+            };
+            entry.resource.valueQuantity = weightQuantity;
+            entry.resource.valueQuantity.value = 96;
+            entry.resource.effectiveDateTime = "2020-06-29T19:14:57-04:00";
+            entry.resource.issued = "2020-06-29T19:14:57-04:00";
+            entries.push(entry);
+            // Need a deep copy of the data
+            entry = JSON.parse(JSON.stringify(entry));
+            entry.resource.valueQuantity.value = 95;
+            entry.resource.effectiveDateTime = "2016-06-29T19:14:57-04:00";
+            entry.resource.issued = "2016-06-29T19:14:57-04:00";
+            entries.push(entry);
             break;
           default:
             entry = null;
@@ -96,8 +122,8 @@ module.exports = function mockFHIRContext(fhirVersion, weightQuantity) {
               "resourceType": "Bundle",
               "type": "searchset",
             };
-            if (entry)
-              data.entry = [entry];
+            if (entries.length)
+              data.entry = entries;
             setTimeout(function() { // preserve expected async behavior
               callback(data);
             });

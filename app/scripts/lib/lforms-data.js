@@ -502,13 +502,18 @@
             const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
             if (obsExt) { // an array of at least 1 if present
               var duration = obsExt[0].valueDuration; // optional
-              var itemCodeSystem = item.questionCodeSystem;
-              if (itemCodeSystem === 'LOINC')
-                itemCodeSystem = serverFHIR.LOINC_URI;
               var fhirClient = LForms.fhirContext;
-              var queryParams = {
-                code: itemCodeSystem + '|'+ item.questionCode, _sort: '-date',
-                _count: 5};  // only need one, but we need to filter out focus=true below
+
+              // Get a comma separated list of codes
+              const codeQuery = item.codeList.map((code) => {
+                const codeSystem = code.system === 'LOINC' ? serverFHIR.LOINC_URI : code.system;
+                return [codeSystem, code.code].join('|');
+              }).join(',');
+
+              const queryParams = {
+                code: codeQuery, _sort: '-date',
+                _count: 5  // only need one, but we need to filter out focus=true below
+              };
               // Temporarily disabling the addition of the focus search
               // parameter, because of support issues.  Instead, for now, we
               // will check the focus parameter when the Observation is

@@ -6,6 +6,10 @@ This project follows [Semantic Versioning](http://semver.org/).
 ### Changes
 
 
+## [26.4.0] 2020-12-01
+### Added
+- Multiple code support for observationLinkPeriod prepopulation.
+
 ## [26.3.1] 2020-10-19
 ### Fixed
 - Fixed a bug in STU3 Questionnaire import that 'options' is not handled correctly
