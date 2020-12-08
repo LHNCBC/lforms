@@ -54,7 +54,7 @@ var self = {
     var objPerformers = ['Practitioner', 'Patient', 'RelatedPerson']; // intersected with qr.author
     for (var i=0, len=lfData.itemList.length; i<len; ++i) {
       var item = lfData.itemList[i];
-      if (this._getExtractValue(item) && item.value) {
+      if (LForms.FHIR['STU3'].SDC._getExtractValue(item) && item.value) {
         var obs = this._commonExport._createObservation(item);
         for (var j=0, jLen=obs.length; j<jLen; j++) {
           // Following
@@ -77,21 +77,6 @@ var self = {
       }
     }
     return rtn;
-  },
-
-
-  /**
-   * Get the extract value for the item or the closest parent
-   * @param item an item in Questionnaire
-   */
-  _getExtractValue: function (item) {
-    if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract]) {
-      return item._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
-    } else if (item._parentItem) {
-      return this._getExtractValue(item._parentItem);
-    } else {
-      return false;
-    }
   },
 
 

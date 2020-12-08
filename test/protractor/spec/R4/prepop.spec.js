@@ -145,7 +145,7 @@ describe('Form pre-population', function() {
             'return LForms.Util.getFormFHIRData("QuestionnaireResponse", "'+
             releaseVersion + '", null, {"extract": true})');
           resourcesPromise.then((resources) => {
-            expect(resources.length).toBe(2); // One QR and one observation
+            expect(resources.length).toBe(3); // One QR and two observations
             var obs = resources[1];
             expect(obs.code.coding.length).toEqual(2);
             expect(obs.resourceType).toBe("Observation");

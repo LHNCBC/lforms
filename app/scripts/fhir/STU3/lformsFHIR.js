@@ -22218,7 +22218,7 @@ var self = {
     for (var i = 0, len = lfData.itemList.length; i < len; ++i) {
       var item = lfData.itemList[i];
 
-      if (this._getExtractValue(item) && item.value) {
+      if (LForms.FHIR['STU3'].SDC._getExtractValue(item) && item.value) {
         var obs = this._commonExport._createObservation(item);
 
         for (var j = 0, jLen = obs.length; j < jLen; j++) {
@@ -22240,20 +22240,6 @@ var self = {
     }
 
     return rtn;
-  },
-
-  /**
-   * Get the extract value for the item or the closest parent
-   * @param item an item in Questionnaire
-   */
-  _getExtractValue: function _getExtractValue(item) {
-    if (item._fhirExt && item._fhirExt[this.fhirExtObsExtract]) {
-      return item._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
-    } else if (item._parentItem) {
-      return this._getExtractValue(item._parentItem);
-    } else {
-      return false;
-    }
   },
 
   /**
@@ -23651,6 +23637,25 @@ function addCommonSDCExportFns(ns) {
           this._processRepeatingItemValues(subItem);
         }
       }
+    }
+  };
+  /**
+   * Get the extract value for the item or the closest parent
+   * @param item an item in Questionnaire
+   */
+
+
+  self._getExtractValue = function (item) {
+    var currentItem = item;
+
+    while (true) {
+      if (currentItem._fhirExt && currentItem._fhirExt[this.fhirExtObsExtract]) {
+        return currentItem._fhirExt[this.fhirExtObsExtract][0].valueBoolean;
+      } else if (!currentItem._parentItem) {
+        return false;
+      }
+
+      currentItem = currentItem._parentItem;
     }
   };
 }
