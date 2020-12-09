@@ -2,6 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [27.0.0]
+### Changes
+- Breaking change to FHIR support.  LForms.Util.setFHIRContext now takes an
+  instance of 'client-js', a.k.a. npm package fhirclient,
+  version 2.  (See http://docs.smarthealthit.org/client-js).
 
 ## [27.0.0] 2020-11-05
 - Changed the extract behavior to use the Observation Extract Extension
@@ -25,9 +30,9 @@ This project follows [Semantic Versioning](http://semver.org/).
 ## [26.2.0] 2020-10-06
 ### Added
 - Added a function, LForms.Util.getAnswersResourceStatus, which checks the status
-  of the loading of answer lists. (This only applies to forms defined as a 
+  of the loading of answer lists. (This only applies to forms defined as a
   FHIR Questionnaire.)
-  
+
 ## [26.1.2] 2020-10-05
 ### Added
 - Support for using a FHIR Questionnaire as a form definition in addFormToPage.
