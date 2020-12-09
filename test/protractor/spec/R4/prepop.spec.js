@@ -138,7 +138,7 @@ describe('Form pre-population', function() {
           expect(weightField.getAttribute('value')).toBe('96');
         });
 
-        it('should extract observationLinkPeriod fields when multiple codes are present', function (done) {
+        it('should extract observationExtract fields when multiple codes are present', function (done) {
           // Follows previous test on population
           var releaseVersion = serverFHIRNum == '3.0' ? 'STU3' : 'R4';
           var resourcesPromise = browser.executeScript(
