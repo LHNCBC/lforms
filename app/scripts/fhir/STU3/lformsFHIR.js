@@ -24552,6 +24552,120 @@ function addCommonSDCFns(ns) {
       itemOrLFData._fhirExt = m;
     }
   };
+  /**
+   *  Requests launchContext resources.  Assumes LForms.Util.setFHIRContext() has
+   *  been called.
+   * @param lfData a LFormsData object for the form.
+   * @return an array of Promises which resolve when the attempt to load the
+   *  resources has completed (succesful or not, they resolve without being
+   *  rejected).
+   */
+
+
+  self.loadLaunchContext = function (lfData) {
+    // launchContext
+    var contextItems = LForms.Util.findObjectInArray(lfData.extension, 'url', self.fhirExtLaunchContext, 0, true); // Per https://jira.hl7.org/browse/FHIR-29664 (approved; not yet applied- // 2020-11-19).
+
+    var validContexts = {
+      patient: {
+        Patient: 1
+      },
+      encounter: {
+        Encounter: 1
+      },
+      user: {
+        Patient: 1,
+        Practitioner: 1,
+        PractitionerRole: 1,
+        RelatedPerson: 1
+      },
+      study: {
+        Study: 1
+      }
+    };
+    var supportedContextNames = {
+      Patient: 1,
+      User: 1,
+      Encounter: 1
+    };
+    var pendingPromises = [];
+
+    var _loop = function _loop() {
+      var contextItemExt = contextItems[i].extension;
+      var name = null,
+          typeList = [];
+
+      for (j = 0, jLen = contextItemExt.length; j < jLen; ++j) {
+        fieldExt = contextItemExt[j];
+
+        if (!name && fieldExt.url === 'name') {
+          var nameCode = fieldExt.valueId;
+
+          if (validContexts[nameCode]) {
+            name = nameCode; // It is no longer necessary to check that the name is a valid
+            // FHIR variable, because per
+            // https://jira.hl7.org/browse/FHIR-29664, the values are now
+            // constrained to a known list.  I am leaving the line below
+            // comented out for reference in case that changes again.
+            // lfData._checkFHIRVarName(name); // might throw
+          } else {
+            console.warn("A launch context of name " + nameCode + " was requested by the form, but the supported types are: " + Object.keys(validContexts).join(", "));
+          }
+        } else if (fieldExt.url === 'type') {
+          // there can be more than one
+          typeList.push(fieldExt.valueCode);
+        }
+      }
+
+      if (name && typeList.length) {
+        pendingPromises.push(new Promise(function (resolve, reject) {
+          var contextResource = LForms.fhirContext[name];
+
+          if (!contextResource.id) {
+            console.warn('A launch context resource of name ' + name + ' was requested by the form, but none was available'); // The loading of this resource should not be critical for the
+            // Questionnaire, because it is just for prepopulation.  Don't
+            // reject the promise.
+
+            resolve();
+          } else {
+            contextResource.read().then(function (resource) {
+              if (resource) {
+                var resType = resource.resourceType;
+
+                if (typeList.indexOf(resType) == -1) {
+                  console.warn("Could not retrieve a resource of the requested" + " types for launch context name " + name);
+                } else {
+                  // Validate the "type"
+                  var validTypes = validContexts[name];
+
+                  if (!validTypes[resType]) {
+                    console.warn("A launch context resource of type " + resType + " was requested by the form, but the supported types for name " + name + " are: " + Object.keys(validTypes).join(", "));
+                  } else {
+                    lfData._fhirVariables[name] = resource;
+                  }
+                }
+              }
+
+              resolve();
+            }, function fail(reason) {
+              console.warn('A launch context of name ' + name + ' was requested, ' + 'but could not be read.');
+              console.error(reason);
+              resolve(); // per above, we are not rejecting the promise
+            });
+          }
+        }));
+      }
+    };
+
+    for (var i = 0, len = contextItems.length; i < len; ++i) {
+      var j, jLen;
+      var fieldExt;
+
+      _loop();
+    }
+
+    return pendingPromises;
+  };
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (addCommonSDCFns);
@@ -24599,6 +24713,7 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
+  self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
@@ -25556,15 +25671,11 @@ function addCommonSDCImportFns(ns) {
             }));
           } else {
             // use FHIR context
-            fhirClient = LForms.fhirContext.getFHIRAPI();
-            pendingPromises.push(fhirClient.search({
-              type: 'ValueSet/$expand',
-              query: {
-                _format: 'application/json',
-                url: item.answerValueSet
-              }
-            }).then(function (response) {
-              var valueSet = response.data;
+            fhirClient = LForms.fhirContext;
+            pendingPromises.push(fhirClient.request(lfData._buildURL(['ValueSet', '$expand'], {
+              url: item.answerValueSet
+            })).then(function (response) {
+              var valueSet = response;
               var answers = self.answersFromVS(valueSet);
 
               if (answers) {

@@ -25,13 +25,10 @@
 
     <script src="latestBuild/lforms.min.js"></script>
     <script src="latestBuild/fhir/lformsFHIRAll.min.js"></script>
-    <script src="nativeFhir.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient@2.3.10/build/fhir-client.min.js"></script>
     <script>
-      var fhirAPI = fhir({baseUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
-      LForms.Util.setFHIRContext({getCurrent: function(typeList, callback) {
-          callback(null);
-        },
-        getFHIRAPI: function() {return fhirAPI}});
+      var fhirAPI = FHIR.client({serverUrl: 'https://lforms-fhir.nlm.nih.gov/baseR4'});
+      LForms.Util.setFHIRContext(fhirAPI);
     </script>
     <script src="../bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 

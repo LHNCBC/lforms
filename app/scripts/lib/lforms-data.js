@@ -248,7 +248,7 @@
     /**
      * Get a list of warning messages where answer lists are not loaded from URLs
      * in 'answerValueSet'
-     */ 
+     */
     checkAnswersResourceStatus: function() {
       var status = [];
       for (var i=0, iLen=this.itemList.length; i<iLen; i++) {
@@ -352,51 +352,10 @@
       }
       var lfData = this;
 
-      var pendingPromises = [];
-
-      // launchContext
-      var contextItems = LForms.Util.findObjectInArray(this.extension, 'url',
-        "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext", 0, true);
-      for (var i=0, len=contextItems.length; i<len; ++i) {
-        let contextItemExt = contextItems[i].extension;
-        let name;
-
-        let typeList = [];
-        for (var j=0, jLen=contextItemExt.length; j<jLen; ++j) {
-          var fieldExt = contextItemExt[j];
-          if (!name && fieldExt.url === 'name') {
-            name = fieldExt.valueId;
-            this._checkFHIRVarName(name); // might throw
-          }
-          else if (fieldExt.url === 'type')
-            typeList.push(fieldExt.valueCode)
-        }
-        if (name && typeList.length > 0) {
-          pendingPromises.push(new Promise(function(resolve, reject) {
-            // Enforce that this is truly asynchronous with setTimeout.
-            // Some implementations of getCurrent (e.g in testing) might be
-            // synchronous.
-            setTimeout(function() {
-              try {
-                LForms.fhirContext.getCurrent(typeList, function(resource) {
-                  if (resource)
-                    lfData._fhirVariables[name] = resource;
-                  resolve();
-                });
-              }
-              catch(e) {
-                reject(e);
-              }
-            }, 1);
-          }));
-        }
-      }
+      var sdc = this._fhir.SDC;
+      var pendingPromises = sdc.loadLaunchContext(this);
 
       // answerValueSet (for prefetched lists)
-      // For this import, we don't actually care which version of FHIR;
-      // the implementation is common.  If either support file is loaded use
-      // that (for both the terminology server case and the FHIR server case).
-      var sdc = this._getFHIRSupport().SDC;
       pendingPromises = pendingPromises.concat(sdc.loadAnswerValueSets(this));
 
       if (prepopulate)
@@ -543,6 +502,7 @@
             const obsExt = item._fhirExt && item._fhirExt[obsLinkURI];
             if (obsExt) { // an array of at least 1 if present
               var duration = obsExt[0].valueDuration; // optional
+              var fhirClient = LForms.fhirContext;
 
               // Get a comma separated list of codes
               const codeQuery = item.codeList.map((code) => {
@@ -550,35 +510,30 @@
                 return [codeSystem, code.code].join('|');
               }).join(',');
 
-              const fhirjs = LForms.fhirContext.getFHIRAPI(); // a fhir.js client
               const queryParams = {
-                type: 'Observation',
-                query: {
-                  code: codeQuery,
-                  _sort: '-date',
-                  _count: 5  // only need one, but we need to filter out focus=true below
-                }
-              };  
+                code: codeQuery, _sort: '-date',
+                _count: 5  // only need one, but we need to filter out focus=true below
+              };
               // Temporarily disabling the addition of the focus search
               // parameter, because of support issues.  Instead, for now, we
               // will check the focus parameter when the Observation is
               // returned.  Later, we might query the server to find out whether
               // :missing is supported.
               //if (LForms._serverFHIRReleaseID != 'STU3') // STU3 does not know about "focus"
-              //  queryParams.query.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
+              //  queryParams.focus = {$missing: true}; // TBD -- sometimes :missing is not supported
               if (duration && duration.value && duration.code) {
                 // Convert value to milliseconds
                 var result = LForms.ucumPkg.UcumLhcUtils.getInstance().convertUnitTo(duration.code, duration.value, 'ms');
                 if (result.status === 'succeeded') {
                   var date = new Date(new Date() - result.toVal);
-                  queryParams.query._lastUpdated = 'gt'+date.toISOString();
+                  queryParams._lastUpdated = 'gt'+date.toISOString();
                 }
               }
-              // I'm not sure why, but fhirjs.search.then() returns an already
-              // resolved promise.  Wrap it in a Promise object.
-              pendingPromises.push(new Promise(function(resolve, reject) {
-                fhirjs.search(queryParams).then(function(successData) {
-                  var bundle = successData.data;
+              pendingPromises.push(
+                fhirClient.patient.request(this._buildURL(['Observation'],
+                  queryParams)
+                ).then(function(successData) {
+                  var bundle = successData;
                   if (bundle.entry) {
                     var foundObs;
                     for (var j=0, jLen=bundle.entry.length; j<jLen && !foundObs; ++j) {
@@ -592,9 +547,9 @@
                       }
                     }
                   }
-                  resolve(item.questionCode); // code is not needed, but useful for debugging
+                  return item.questionCode; // code is not needed, but useful for debugging
                 })
-              }));
+              );
             }
           }
           return Promise.all(pendingPromises);
@@ -1512,7 +1467,7 @@
         }
       }
 
-      var defData = { 
+      var defData = {
         lformsVersion: this.lformsVersion,
         PATH_DELIMITER: this.PATH_DELIMITER,
         code: this.code,
@@ -2883,12 +2838,31 @@
      * @return a Promise that will resolve to the ValueSet expansion.
      */
     _fhirClientSearchByValueSetID: function(valueSetID, fieldVal, count) {
-      var fhirClient = LForms.fhirContext.getFHIRAPI();
-      return fhirClient.search({type: 'ValueSet/'+valueSetID+'/$expand',
-        query: {_format: 'application/json', count: count,
-        filter: fieldVal}}).then(function(response) {
-          return response.data;
-        });
+      var fhirClient = LForms.fhirContext;
+      return fhirClient.request(this._buildURL(['ValueSet',valueSetID,'$expand'],
+        {count: count, filter: fieldVal}
+      ));
+    },
+
+    /**
+     *  An internal function for safely constructing a URL based on a path
+     *  segments and query parameters.
+     * @param pathParts An array of path segments (not including the protocol).
+     *  These will be URL-encoded.
+     * @param queryParams (optional) A object of key/value pairs (string values)
+     *  for the query part of the URL.  Values be URL-encoded.
+     */
+    _buildURL: function(pathParts, queryParams) {
+      // Would Use URL and URLSearchParams, except for the need to support IE11
+      // It looks like if we update babel, we could have a polyfill, but I don't
+      // want to revise the build configuration at the moment.
+      let url = pathParts.map(part=>encodeURIComponent(part)).join('/');
+      if (queryParams) {
+        // Assuming a single value per key, for now.
+        url += '?' + Object.keys(queryParams).map(
+          k=>k+'='+encodeURIComponent(queryParams[k])).join('&');
+      }
+      return url;
     },
 
 
@@ -2900,40 +2874,39 @@
      * @param count the maximum count to return
      * @return a Promise that will resolve to the ValueSet expansion.
      */
-     _findValueSetIDAndSearch: function(item, fieldVal, count) {
-       // Fetch the ValueSet
-       var failMsg = "Could not retrieve the ValueSet definition for "+
-             item.answerValueSet;
-       var fhirClient = LForms.fhirContext.getFHIRAPI();
-       // Cache the lookup of ValueSet IDs, which should not change.  (A page
-       // reload will clear the cache.)
-       if (!LForms._valueSetUrlToID)
-         LForms._valueSetUrlToID = {}
-       var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
-       if (valueSetID) {
-         return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
-       }
-       else {
-         var self = this;
-         return fhirClient.search({type: 'ValueSet',
-            query: {_format: 'application/json', url: item.answerValueSet,
-                    _total: 'accurate'}})
-           .then(function(response) {
-             var data = response.data;
-             if (data.total === 1) {
-               var valueSetID = data.entry[0].resource.id;
-               LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
-               return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
-             }
-             else {
-               console.log(failMsg);
-               return Promise.reject(failMsg);
-             }
-           },
-           function(errorData) {
-             console.log(failMsg);
-             return Promise.reject(failMsg);
-           });
+    _findValueSetIDAndSearch: function(item, fieldVal, count) {
+      // Fetch the ValueSet
+      var failMsg = "Could not retrieve the ValueSet definition for "+
+            item.answerValueSet;
+      var fhirClient = LForms.fhirContext;
+      // Cache the lookup of ValueSet IDs, which should not change.  (A page
+      // reload will clear the cache.)
+      if (!LForms._valueSetUrlToID)
+        LForms._valueSetUrlToID = {}
+      var valueSetID =  LForms._valueSetUrlToID[item.answerValueSet];
+      if (valueSetID) {
+        return this._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+      }
+      else {
+        var self = this;
+        return fhirClient.request(this._buildURL(['ValueSet'],
+           {url: item.answerValueSet, _total: 'accurate'})
+        ).then(function(response) {
+          var data = response;
+          if (data.total === 1) {
+            var valueSetID = data.entry[0].resource.id;
+            LForms._valueSetUrlToID[item.answerValueSet] = valueSetID;
+            return self._fhirClientSearchByValueSetID(valueSetID, fieldVal, count);
+          }
+          else {
+            console.log(failMsg);
+            return Promise.reject(failMsg);
+          }
+        },
+        function(errorData) {
+          console.log(failMsg);
+          return Promise.reject(failMsg);
+        });
       }
     },
 
@@ -2996,13 +2969,10 @@
               if (LForms.fhirCapabilities.urlExpandBroken)
                 return self._findValueSetIDAndSearch(item, fieldVal, count);
               else {
-                var fhirClient = LForms.fhirContext.getFHIRAPI();
-                return fhirClient.search({type: 'ValueSet/$expand',
-                  query: {_format: 'application/json', count: count,
-                          filter: fieldVal, url: item.answerValueSet}
-                }).then(function(successData) {
-                  return successData.data;
-                }, function (errorData) {
+                var fhirClient =  LForms.fhirContext;
+                return fhirClient.request(self._buildURL(['ValueSet/$expand'],
+                  {count: count, filter: fieldVal, url: item.answerValueSet}
+                )).catch((errorData) => {
                   LForms.fhirCapabilities.urlExpandBroken = true;
                   // HAPI does not support (maybe just because of a bug) $expand
                   // when both "url" and "filter" parameters are present.  In that
