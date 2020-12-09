@@ -2,16 +2,16 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
+## [28.0.0] 2020-12-09
+- Changed the extract behavior to use the Observation Extract Extension
+  http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html 
+  as per https://jira.hl7.org/browse/FHIR-25948 instead of using observationLinkPeriod.
+
 ## [27.0.0]
 ### Changes
 - Breaking change to FHIR support.  LForms.Util.setFHIRContext now takes an
   instance of 'client-js', a.k.a. npm package fhirclient,
   version 2.  (See http://docs.smarthealthit.org/client-js).
-
-## [27.0.0] 2020-11-05
-- Changed the extract behavior to use the Observation Extract Extension
-  http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html 
-  as per https://jira.hl7.org/browse/FHIR-25948 instead of using observationLinkPeriod.
 
 ## [26.4.0] 2020-12-01
 ### Added
