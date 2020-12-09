@@ -752,7 +752,7 @@ module.exports = Def;
 /* 6 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"lformsVersion\":\"26.4.0\"}");
+module.exports = JSON.parse("{\"lformsVersion\":\"27.0.0\"}");
 
 /***/ }),
 /* 7 */
@@ -5157,9 +5157,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
                   date = new Date(new Date() - result.toVal);
                   queryParams._lastUpdated = 'gt' + date.toISOString();
                 }
-              } // TBD -delete              // I'm not sure why, but fhirjs.search.then() returns an already
-              // this too             // resolved promise.  Wrap it in a Promise object.
-
+              }
 
               pendingPromises.push(fhirClient.patient.request(_this._buildURL(['Observation'], queryParams)).then(function (successData) {
                 var bundle = successData;
