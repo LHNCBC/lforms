@@ -23022,7 +23022,7 @@ function addCommonSDCExportFns(ns) {
   self._handleItemControl = function (targetItem, item) {
     // http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl
     var itemControlType = "";
-    var itemControlDisplay; // Fly-over, Table, Checkbox, Combo-box, Lookup
+    var itemControlDisplay, answerChoiceOrientation; // Fly-over, Table, Checkbox, Combo-box, Lookup
 
     if (!jQuery.isEmptyObject(item.displayControl)) {
       var dataType = this._getAssumedDataTypeForExport(item); // for answers
@@ -23046,6 +23046,13 @@ function addCommonSDCExportFns(ns) {
               } else {
                 itemControlType = "radio-button";
                 itemControlDisplay = "Radio Button";
+              } // answer choice orientation
+
+
+              if (item.displayControl.answerLayout.columns === "0") {
+                answerChoiceOrientation = "horizontal";
+              } else if (item.displayControl.answerLayout.columns === "1") {
+                answerChoiceOrientation = "vertical";
               }
             }
       } // for section item
@@ -23079,7 +23086,14 @@ function addCommonSDCExportFns(ns) {
             }],
             "text": itemControlDisplay || itemControlType
           }
-        });
+        }); // answer choice orientation
+
+        if (answerChoiceOrientation) {
+          targetItem.extension.push({
+            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation",
+            "valueCode": answerChoiceOrientation
+          });
+        }
       }
     }
   };
@@ -24713,11 +24727,12 @@ function addCommonSDCImportFns(ns) {
   self.fhirExtObsLinkPeriod = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-observationLinkPeriod";
   self.fhirExtVariable = "http://hl7.org/fhir/StructureDefinition/variable";
   self.fhirExtAnswerExp = "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-answerExpression";
+  self.fhirExtChoiceOrientation = "http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation";
   self.fhirExtLaunchContext = "http://hl7.org/fhir/StructureDefinition/questionnaire-launchContext";
   self.fhirExtUrlRestrictionArray = [self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex]; // One way or the other, the following extensions are converted to lforms internal fields.
   // Any extensions not listed here (there are many) are recognized as lforms extensions as they are.
 
-  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl]);
+  self.handledExtensionSet = new Set([self.fhirExtUrlCardinalityMin, self.fhirExtUrlCardinalityMax, self.fhirExtUrlItemControl, self.fhirExtUrlUnit, self.fhirExtUrlUnitOption, self.fhirExtUrlOptionPrefix, self.fhirExtUrlMinValue, self.fhirExtUrlMaxValue, self.fhirExtUrlMinLength, self.fhirExtUrlRegex, self.fhirExtUrlAnswerRepeats, self.fhirExtUrlExternallyDefined, self.argonautExtUrlExtensionScore, self.fhirExtUrlHidden, self.fhirExtTerminologyServer, self.fhirExtUrlDataControl, self.fhirExtChoiceOrientation]);
   self.formLevelFields = [// Resource
   'id', 'meta', 'implicitRules', 'language', // Domain Resource
   'text', 'contained', 'extension', 'modifiedExtension', // Questionnaire
@@ -25229,6 +25244,16 @@ function addCommonSDCImportFns(ns) {
           displayControl.answerLayout = {
             type: 'RADIO_CHECKBOX'
           };
+          var answerChoiceOrientation = LForms.Util.findObjectInArray(qItem.extension, 'url', self.fhirExtChoiceOrientation);
+
+          if (answerChoiceOrientation) {
+            if (answerChoiceOrientation.valueCode === "vertical") {
+              displayControl.answerLayout.columns = "1";
+            } else if (answerChoiceOrientation.valueCode === "horizontal") {
+              displayControl.answerLayout.columns = "0";
+            }
+          }
+
           break;
 
         case 'Table': // backward-compatibility with old export

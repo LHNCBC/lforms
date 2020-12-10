@@ -2,7 +2,11 @@
 
 This project follows [Semantic Versioning](http://semver.org/).
 
-## [27.0.0]
+## [27.1.0] 2020-12-09
+### Added
+- Support for the FHIR questionnaire choice orientation extension.
+
+## [27.0.0] 2020-12-08
 ### Changes
 - Breaking change to FHIR support.  LForms.Util.setFHIRContext now takes an
   instance of 'client-js', a.k.a. npm package fhirclient,
