@@ -3,7 +3,8 @@
 This project follows [Semantic Versioning](http://semver.org/).
 
 ## [28.0.0] 2020-12-10
-- Changed the extract behavior to use the Observation Extract Extension
+### Changed
+- Breaking change to FHIR support. Changed the extract behavior to use the Observation Extract Extension
   http://build.fhir.org/ig/HL7/sdc/StructureDefinition-sdc-questionnaire-observationExtract.html.
   
 ## [27.1.0] 2020-12-09
